@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240614004635
+ * @version 3.12.4-nightly-20240618004623
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -19217,13 +19217,11 @@ function none() {
 
 
 /* harmony default export */ function selection_select(select) {
-  if (typeof select !== "function")
-    select = selector(select);
+  if (typeof select !== "function") select = selector(select);
   for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = new Array(n), node, subnode, i = 0; i < n; ++i) {
       if ((node = group[i]) && (subnode = select.call(node, node.__data__, i, group))) {
-        if ("__data__" in node)
-          subnode.__data__ = node.__data__;
+        if ("__data__" in node) subnode.__data__ = node.__data__;
         subgroup[i] = subnode;
       }
     }
@@ -19256,10 +19254,8 @@ function arrayAll(select) {
   };
 }
 /* harmony default export */ function selectAll(select) {
-  if (typeof select === "function")
-    select = arrayAll(select);
-  else
-    select = selectorAll(select);
+  if (typeof select === "function") select = arrayAll(select);
+  else select = selectorAll(select);
   for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, node, i = 0; i < n; ++i) {
       if (node = group[i]) {
@@ -19317,8 +19313,7 @@ function childrenFilter(match) {
 
 
 /* harmony default export */ function selection_filter(match) {
-  if (typeof match !== "function")
-    match = matcher(match);
+  if (typeof match !== "function") match = matcher(match);
   for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n; ++i) {
       if ((node = group[i]) && match.call(node, node.__data__, i, group)) {
@@ -19422,20 +19417,16 @@ function datum(node) {
   return node.__data__;
 }
 /* harmony default export */ function data(value, key) {
-  if (!arguments.length)
-    return Array.from(this, datum);
+  if (!arguments.length) return Array.from(this, datum);
   var bind = key ? bindKey : bindIndex, parents = this._parents, groups = this._groups;
-  if (typeof value !== "function")
-    value = constant(value);
+  if (typeof value !== "function") value = constant(value);
   for (var m = groups.length, update = new Array(m), enter = new Array(m), exit = new Array(m), j = 0; j < m; ++j) {
     var parent = parents[j], group = groups[j], groupLength = group.length, data = arraylike(value.call(parent, parent && parent.__data__, j, parents)), dataLength = data.length, enterGroup = enter[j] = new Array(dataLength), updateGroup = update[j] = new Array(dataLength), exitGroup = exit[j] = new Array(groupLength);
     bind(parent, group, enterGroup, updateGroup, exitGroup, data, key);
     for (var i0 = 0, i1 = 0, previous, next; i0 < dataLength; ++i0) {
       if (previous = enterGroup[i0]) {
-        if (i0 >= i1)
-          i1 = i0 + 1;
-        while (!(next = updateGroup[i1]) && ++i1 < dataLength)
-          ;
+        if (i0 >= i1) i1 = i0 + 1;
+        while (!(next = updateGroup[i1]) && ++i1 < dataLength) ;
         previous._next = next || null;
       }
     }
@@ -19461,20 +19452,16 @@ function arraylike(data) {
   var enter = this.enter(), update = this, exit = this.exit();
   if (typeof onenter === "function") {
     enter = onenter(enter);
-    if (enter)
-      enter = enter.selection();
+    if (enter) enter = enter.selection();
   } else {
     enter = enter.append(onenter + "");
   }
   if (onupdate != null) {
     update = onupdate(update);
-    if (update)
-      update = update.selection();
+    if (update) update = update.selection();
   }
-  if (onexit == null)
-    exit.remove();
-  else
-    onexit(exit);
+  if (onexit == null) exit.remove();
+  else onexit(exit);
   return enter && update ? enter.merge(update).order() : update;
 }
 
@@ -19500,8 +19487,7 @@ function arraylike(data) {
   for (var groups = this._groups, j = -1, m = groups.length; ++j < m; ) {
     for (var group = groups[j], i = group.length - 1, next = group[i], node; --i >= 0; ) {
       if (node = group[i]) {
-        if (next && node.compareDocumentPosition(next) ^ 4)
-          next.parentNode.insertBefore(node, next);
+        if (next && node.compareDocumentPosition(next) ^ 4) next.parentNode.insertBefore(node, next);
         next = node;
       }
     }
@@ -19512,8 +19498,7 @@ function arraylike(data) {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/sort.js
 
 /* harmony default export */ function sort(compare) {
-  if (!compare)
-    compare = ascending;
+  if (!compare) compare = ascending;
   function compareNode(a, b) {
     return a && b ? compare(a.__data__, b.__data__) : !a - !b;
   }
@@ -19549,8 +19534,7 @@ function ascending(a, b) {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length; i < n; ++i) {
       var node = group[i];
-      if (node)
-        return node;
+      if (node) return node;
     }
   }
   return null;
@@ -19559,8 +19543,7 @@ function ascending(a, b) {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/size.js
 /* harmony default export */ function size() {
   let size = 0;
-  for (const node of this)
-    ++size;
+  for (const node of this) ++size;
   return size;
 }
 
@@ -19573,8 +19556,7 @@ function ascending(a, b) {
 /* harmony default export */ function each(callback) {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
-      if (node = group[i])
-        callback.call(node, node.__data__, i, group);
+      if (node = group[i]) callback.call(node, node.__data__, i, group);
     }
   }
   return this;
@@ -19594,8 +19576,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
 
 /* harmony default export */ function namespace(name) {
   var prefix = name += "", i = prefix.indexOf(":");
-  if (i >= 0 && (prefix = name.slice(0, i)) !== "xmlns")
-    name = name.slice(i + 1);
+  if (i >= 0 && (prefix = name.slice(0, i)) !== "xmlns") name = name.slice(i + 1);
   return namespaces.hasOwnProperty(prefix) ? { space: namespaces[prefix], local: name } : name;
 }
 
@@ -19624,19 +19605,15 @@ function attrConstantNS(fullname, value) {
 function attrFunction(name, value) {
   return function() {
     var v = value.apply(this, arguments);
-    if (v == null)
-      this.removeAttribute(name);
-    else
-      this.setAttribute(name, v);
+    if (v == null) this.removeAttribute(name);
+    else this.setAttribute(name, v);
   };
 }
 function attrFunctionNS(fullname, value) {
   return function() {
     var v = value.apply(this, arguments);
-    if (v == null)
-      this.removeAttributeNS(fullname.space, fullname.local);
-    else
-      this.setAttributeNS(fullname.space, fullname.local, v);
+    if (v == null) this.removeAttributeNS(fullname.space, fullname.local);
+    else this.setAttributeNS(fullname.space, fullname.local, v);
   };
 }
 /* harmony default export */ function attr(name, value) {
@@ -19668,10 +19645,8 @@ function styleConstant(name, value, priority) {
 function styleFunction(name, value, priority) {
   return function() {
     var v = value.apply(this, arguments);
-    if (v == null)
-      this.style.removeProperty(name);
-    else
-      this.style.setProperty(name, v, priority);
+    if (v == null) this.style.removeProperty(name);
+    else this.style.setProperty(name, v, priority);
   };
 }
 /* harmony default export */ function style(name, value, priority) {
@@ -19695,10 +19670,8 @@ function propertyConstant(name, value) {
 function propertyFunction(name, value) {
   return function() {
     var v = value.apply(this, arguments);
-    if (v == null)
-      delete this[name];
-    else
-      this[name] = v;
+    if (v == null) delete this[name];
+    else this[name] = v;
   };
 }
 /* harmony default export */ function property(name, value) {
@@ -19737,13 +19710,11 @@ ClassList.prototype = {
 };
 function classedAdd(node, names) {
   var list = classList(node), i = -1, n = names.length;
-  while (++i < n)
-    list.add(names[i]);
+  while (++i < n) list.add(names[i]);
 }
 function classedRemove(node, names) {
   var list = classList(node), i = -1, n = names.length;
-  while (++i < n)
-    list.remove(names[i]);
+  while (++i < n) list.remove(names[i]);
 }
 function classedTrue(names) {
   return function() {
@@ -19764,9 +19735,7 @@ function classedFunction(names, value) {
   var names = classArray(name + "");
   if (arguments.length < 2) {
     var list = classList(this.node()), i = -1, n = names.length;
-    while (++i < n)
-      if (!list.contains(names[i]))
-        return false;
+    while (++i < n) if (!list.contains(names[i])) return false;
     return true;
   }
   return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
@@ -19812,8 +19781,7 @@ function htmlFunction(value) {
 
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/raise.js
 function raise() {
-  if (this.nextSibling)
-    this.parentNode.appendChild(this);
+  if (this.nextSibling) this.parentNode.appendChild(this);
 }
 /* harmony default export */ function selection_raise() {
   return this.each(raise);
@@ -19821,8 +19789,7 @@ function raise() {
 
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/lower.js
 function lower() {
-  if (this.previousSibling)
-    this.parentNode.insertBefore(this, this.parentNode.firstChild);
+  if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
 }
 /* harmony default export */ function selection_lower() {
   return this.each(lower);
@@ -19872,8 +19839,7 @@ function constantNull() {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/remove.js
 function remove() {
   var parent = this.parentNode;
-  if (parent)
-    parent.removeChild(this);
+  if (parent) parent.removeChild(this);
 }
 /* harmony default export */ function selection_remove() {
   return this.each(remove);
@@ -19906,16 +19872,14 @@ function contextListener(listener) {
 function parseTypenames(typenames) {
   return typenames.trim().split(/^|\s+/).map(function(t) {
     var name = "", i = t.indexOf(".");
-    if (i >= 0)
-      name = t.slice(i + 1), t = t.slice(0, i);
+    if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
     return { type: t, name };
   });
 }
 function onRemove(typename) {
   return function() {
     var on = this.__on;
-    if (!on)
-      return;
+    if (!on) return;
     for (var j = 0, i = -1, m = on.length, o; j < m; ++j) {
       if (o = on[j], (!typename.type || o.type === typename.type) && o.name === typename.name) {
         this.removeEventListener(o.type, o.listener, o.options);
@@ -19923,49 +19887,42 @@ function onRemove(typename) {
         on[++i] = o;
       }
     }
-    if (++i)
-      on.length = i;
-    else
-      delete this.__on;
+    if (++i) on.length = i;
+    else delete this.__on;
   };
 }
 function onAdd(typename, value, options) {
   return function() {
     var on = this.__on, o, listener = contextListener(value);
-    if (on)
-      for (var j = 0, m = on.length; j < m; ++j) {
-        if ((o = on[j]).type === typename.type && o.name === typename.name) {
-          this.removeEventListener(o.type, o.listener, o.options);
-          this.addEventListener(o.type, o.listener = listener, o.options = options);
-          o.value = value;
-          return;
-        }
+    if (on) for (var j = 0, m = on.length; j < m; ++j) {
+      if ((o = on[j]).type === typename.type && o.name === typename.name) {
+        this.removeEventListener(o.type, o.listener, o.options);
+        this.addEventListener(o.type, o.listener = listener, o.options = options);
+        o.value = value;
+        return;
       }
+    }
     this.addEventListener(typename.type, listener, options);
     o = { type: typename.type, name: typename.name, value, listener, options };
-    if (!on)
-      this.__on = [o];
-    else
-      on.push(o);
+    if (!on) this.__on = [o];
+    else on.push(o);
   };
 }
 /* harmony default export */ function on(typename, value, options) {
   var typenames = parseTypenames(typename + ""), i, n = typenames.length, t;
   if (arguments.length < 2) {
     var on = this.node().__on;
-    if (on)
-      for (var j = 0, m = on.length, o; j < m; ++j) {
-        for (i = 0, o = on[j]; i < n; ++i) {
-          if ((t = typenames[i]).type === o.type && t.name === o.name) {
-            return o.value;
-          }
+    if (on) for (var j = 0, m = on.length, o; j < m; ++j) {
+      for (i = 0, o = on[j]; i < n; ++i) {
+        if ((t = typenames[i]).type === o.type && t.name === o.name) {
+          return o.value;
         }
       }
+    }
     return;
   }
   on = value ? onAdd : onRemove;
-  for (i = 0; i < n; ++i)
-    this.each(on(typenames[i], value, options));
+  for (i = 0; i < n; ++i) this.each(on(typenames[i], value, options));
   return this;
 }
 
@@ -19977,10 +19934,8 @@ function dispatchEvent(node, type, params) {
     event = new event(type, params);
   } else {
     event = window.document.createEvent("Event");
-    if (params)
-      event.initEvent(type, params.bubbles, params.cancelable), event.detail = params.detail;
-    else
-      event.initEvent(type, false, false);
+    if (params) event.initEvent(type, params.bubbles, params.cancelable), event.detail = params.detail;
+    else event.initEvent(type, false, false);
   }
   node.dispatchEvent(event);
 }
@@ -20002,8 +19957,7 @@ function dispatchFunction(type, params) {
 /* harmony default export */ function* iterator() {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
-      if (node = group[i])
-        yield node;
+      if (node = group[i]) yield node;
     }
   }
 }
@@ -20103,10 +20057,7 @@ Selection.prototype = selection.prototype = {
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => {
-  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 class Plugin {
   /**
    * Constructor
@@ -20153,15 +20104,12 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.12.4-nightly-20240614004635");
+__publicField(Plugin, "version", "3.12.4-nightly-20240618004623");
 
 ;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
 var bubblecompare_defProp = Object.defineProperty;
 var bubblecompare_defNormalProp = (obj, key, value) => key in obj ? bubblecompare_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var bubblecompare_publicField = (obj, key, value) => {
-  bubblecompare_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var bubblecompare_publicField = (obj, key, value) => bubblecompare_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 const _BubbleCompare = class _BubbleCompare extends Plugin {
@@ -20199,8 +20147,7 @@ const _BubbleCompare = class _BubbleCompare extends Plugin {
   getBubbleR(d) {
     const { minR, maxR } = this.options;
     const curVal = this.getZData(d);
-    if (!curVal)
-      return minR;
+    if (!curVal) return minR;
     const [min, max] = this.$$.data.targets.reduce(
       ([accMin, accMax], cur) => {
         const val = this.getZData(cur.values[0]);

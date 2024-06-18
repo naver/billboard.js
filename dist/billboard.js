@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240614004635
+ * @version 3.12.4-nightly-20240618004623
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2688,10 +2688,7 @@ var Options_spreadValues = (a, b) => {
     }
   return a;
 };
-var __publicField = (obj, key, value) => {
-  Options_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var __publicField = (obj, key, value) => Options_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 
@@ -2972,10 +2969,7 @@ class Store {
 ;// CONCATENATED MODULE: ./src/module/Cache.ts
 var Cache_defProp = Object.defineProperty;
 var Cache_defNormalProp = (obj, key, value) => key in obj ? Cache_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var Cache_publicField = (obj, key, value) => {
-  Cache_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var Cache_publicField = (obj, key, value) => Cache_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 const KEY = {
   bubbleBaseLength: "$baseLength",
@@ -8501,10 +8495,7 @@ function getGroupedDataPointsFn(d) {
 ;// CONCATENATED MODULE: ./src/ChartInternal/ChartInternal.ts
 var ChartInternal_defProp = Object.defineProperty;
 var ChartInternal_defNormalProp = (obj, key, value) => key in obj ? ChartInternal_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var ChartInternal_publicField = (obj, key, value) => {
-  ChartInternal_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var ChartInternal_publicField = (obj, key, value) => ChartInternal_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 
@@ -10257,10 +10248,7 @@ const tooltip_tooltip = {
 ;// CONCATENATED MODULE: ./src/Chart/Chart.ts
 var Chart_defProp = Object.defineProperty;
 var Chart_defNormalProp = (obj, key, value) => key in obj ? Chart_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var Chart_publicField = (obj, key, value) => {
-  Chart_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var Chart_publicField = (obj, key, value) => Chart_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 
@@ -12594,10 +12582,7 @@ var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack
 ;// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRendererHelper.ts
 var AxisRendererHelper_defProp = Object.defineProperty;
 var AxisRendererHelper_defNormalProp = (obj, key, value) => key in obj ? AxisRendererHelper_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var AxisRendererHelper_publicField = (obj, key, value) => {
-  AxisRendererHelper_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var AxisRendererHelper_publicField = (obj, key, value) => AxisRendererHelper_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 class AxisRendererHelper {
@@ -12721,10 +12706,7 @@ class AxisRendererHelper {
 ;// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRenderer.ts
 var AxisRenderer_defProp = Object.defineProperty;
 var AxisRenderer_defNormalProp = (obj, key, value) => key in obj ? AxisRenderer_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var AxisRenderer_publicField = (obj, key, value) => {
-  AxisRenderer_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var AxisRenderer_publicField = (obj, key, value) => AxisRenderer_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 
@@ -13094,10 +13076,7 @@ class AxisRenderer {
 ;// CONCATENATED MODULE: ./src/ChartInternal/Axis/Axis.ts
 var Axis_defProp = Object.defineProperty;
 var Axis_defNormalProp = (obj, key, value) => key in obj ? Axis_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var Axis_publicField = (obj, key, value) => {
-  Axis_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var Axis_publicField = (obj, key, value) => Axis_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 
@@ -21530,7 +21509,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.12.4-nightly-20240614004635",
+  version: "3.12.4-nightly-20240618004623",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

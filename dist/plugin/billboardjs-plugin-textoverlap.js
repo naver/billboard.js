@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240614004635
+ * @version 3.12.4-nightly-20240618004623
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -568,10 +568,7 @@ function loadConfig(config) {
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
 var Plugin_defProp = Object.defineProperty;
 var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => {
-  Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 class Plugin {
   /**
    * Constructor
@@ -618,7 +615,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.12.4-nightly-20240614004635");
+__publicField(Plugin, "version", "3.12.4-nightly-20240618004623");
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 class Options {
@@ -663,10 +660,7 @@ class Options {
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/index.ts
 var textoverlap_defProp = Object.defineProperty;
 var textoverlap_defNormalProp = (obj, key, value) => key in obj ? textoverlap_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var textoverlap_publicField = (obj, key, value) => {
-  textoverlap_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var textoverlap_publicField = (obj, key, value) => textoverlap_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240614004635
+ * @version 3.12.4-nightly-20240618004623
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -549,10 +549,7 @@ function loadConfig(config) {
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
 var Plugin_defProp = Object.defineProperty;
 var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => {
-  Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 class Plugin {
   /**
    * Constructor
@@ -599,7 +596,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.12.4-nightly-20240614004635");
+__publicField(Plugin, "version", "3.12.4-nightly-20240618004623");
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/const.ts
 
@@ -760,10 +757,7 @@ var tableview_spreadValues = (a, b) => {
   return a;
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-var tableview_publicField = (obj, key, value) => {
-  tableview_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var tableview_publicField = (obj, key, value) => tableview_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240614004635
+ * @version 3.12.4-nightly-20240618004623
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -767,10 +767,7 @@ function loadConfig(config) {
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
 var Plugin_defProp = Object.defineProperty;
 var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => {
-  Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 class Plugin {
   /**
    * Constructor
@@ -817,7 +814,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.12.4-nightly-20240614004635");
+__publicField(Plugin, "version", "3.12.4-nightly-20240618004623");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);
@@ -836,10 +833,7 @@ var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __w
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/ColorScale.ts
 var ColorScale_defProp = Object.defineProperty;
 var ColorScale_defNormalProp = (obj, key, value) => key in obj ? ColorScale_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var ColorScale_publicField = (obj, key, value) => {
-  ColorScale_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var ColorScale_publicField = (obj, key, value) => ColorScale_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 
@@ -957,10 +951,7 @@ function getCentroid(points) {
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Elements.ts
 var Elements_defProp = Object.defineProperty;
 var Elements_defNormalProp = (obj, key, value) => key in obj ? Elements_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var Elements_publicField = (obj, key, value) => {
-  Elements_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var Elements_publicField = (obj, key, value) => Elements_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 class Elements {
@@ -1182,10 +1173,7 @@ class Options {
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/index.ts
 var stanford_defProp = Object.defineProperty;
 var stanford_defNormalProp = (obj, key, value) => key in obj ? stanford_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var stanford_publicField = (obj, key, value) => {
-  stanford_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var stanford_publicField = (obj, key, value) => stanford_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240614004635
+ * @version 3.12.4-nightly-20240618004623
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -86,10 +86,7 @@ var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => {
-  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 class Plugin {
   /**
    * Constructor
@@ -136,15 +133,12 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.12.4-nightly-20240614004635");
+__publicField(Plugin, "version", "3.12.4-nightly-20240618004623");
 
 ;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
 var bubblecompare_defProp = Object.defineProperty;
 var bubblecompare_defNormalProp = (obj, key, value) => key in obj ? bubblecompare_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var bubblecompare_publicField = (obj, key, value) => {
-  bubblecompare_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var bubblecompare_publicField = (obj, key, value) => bubblecompare_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 const _BubbleCompare = class _BubbleCompare extends Plugin {
@@ -182,8 +176,7 @@ const _BubbleCompare = class _BubbleCompare extends Plugin {
   getBubbleR(d) {
     const { minR, maxR } = this.options;
     const curVal = this.getZData(d);
-    if (!curVal)
-      return minR;
+    if (!curVal) return minR;
     const [min, max] = this.$$.data.targets.reduce(
       ([accMin, accMax], cur) => {
         const val = this.getZData(cur.values[0]);

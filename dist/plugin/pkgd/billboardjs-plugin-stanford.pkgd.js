@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240614004635
+ * @version 3.12.4-nightly-20240618004623
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -19213,8 +19213,7 @@ __webpack_require__.d(__webpack_exports__, {
 }
 function extend(parent, definition) {
   var prototype = Object.create(parent.prototype);
-  for (var key in definition)
-    prototype[key] = definition[key];
+  for (var key in definition) prototype[key] = definition[key];
   return prototype;
 }
 
@@ -19411,15 +19410,12 @@ function rgbn(n) {
   return new Rgb(n >> 16 & 255, n >> 8 & 255, n & 255, 1);
 }
 function rgba(r, g, b, a) {
-  if (a <= 0)
-    r = g = b = NaN;
+  if (a <= 0) r = g = b = NaN;
   return new Rgb(r, g, b, a);
 }
 function rgbConvert(o) {
-  if (!(o instanceof Color))
-    o = color(o);
-  if (!o)
-    return new Rgb();
+  if (!(o instanceof Color)) o = color(o);
+  if (!o) return new Rgb();
   o = o.rgb();
   return new Rgb(o.r, o.g, o.b, o.opacity);
 }
@@ -19478,32 +19474,22 @@ function hex(value) {
   return (value < 16 ? "0" : "") + value.toString(16);
 }
 function hsla(h, s, l, a) {
-  if (a <= 0)
-    h = s = l = NaN;
-  else if (l <= 0 || l >= 1)
-    h = s = NaN;
-  else if (s <= 0)
-    h = NaN;
+  if (a <= 0) h = s = l = NaN;
+  else if (l <= 0 || l >= 1) h = s = NaN;
+  else if (s <= 0) h = NaN;
   return new Hsl(h, s, l, a);
 }
 function hslConvert(o) {
-  if (o instanceof Hsl)
-    return new Hsl(o.h, o.s, o.l, o.opacity);
-  if (!(o instanceof Color))
-    o = color(o);
-  if (!o)
-    return new Hsl();
-  if (o instanceof Hsl)
-    return o;
+  if (o instanceof Hsl) return new Hsl(o.h, o.s, o.l, o.opacity);
+  if (!(o instanceof Color)) o = color(o);
+  if (!o) return new Hsl();
+  if (o instanceof Hsl) return o;
   o = o.rgb();
   var r = o.r / 255, g = o.g / 255, b = o.b / 255, min = Math.min(r, g, b), max = Math.max(r, g, b), h = NaN, s = max - min, l = (max + min) / 2;
   if (s) {
-    if (r === max)
-      h = (g - b) / s + (g < b) * 6;
-    else if (g === max)
-      h = (b - r) / s + 2;
-    else
-      h = (r - g) / s + 4;
+    if (r === max) h = (g - b) / s + (g < b) * 6;
+    else if (g === max) h = (b - r) / s + 2;
+    else h = (r - g) / s + 4;
     s /= l < 0.5 ? max + min : 2 - max - min;
     h *= 60;
   } else {
@@ -19676,12 +19662,10 @@ var rgbBasisClosed = rgbSpline(basisClosed);
 
 ;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/numberArray.js
 /* harmony default export */ function numberArray(a, b) {
-  if (!b)
-    b = [];
+  if (!b) b = [];
   var n = a ? Math.min(b.length, a.length) : 0, c = b.slice(), i;
   return function(t) {
-    for (i = 0; i < n; ++i)
-      c[i] = a[i] * (1 - t) + b[i] * t;
+    for (i = 0; i < n; ++i) c[i] = a[i] * (1 - t) + b[i] * t;
     return c;
   };
 }
@@ -19697,13 +19681,10 @@ function isNumberArray(x) {
 }
 function genericArray(a, b) {
   var nb = b ? b.length : 0, na = a ? Math.min(nb, a.length) : 0, x = new Array(na), c = new Array(nb), i;
-  for (i = 0; i < na; ++i)
-    x[i] = value(a[i], b[i]);
-  for (; i < nb; ++i)
-    c[i] = b[i];
+  for (i = 0; i < na; ++i) x[i] = value(a[i], b[i]);
+  for (; i < nb; ++i) c[i] = b[i];
   return function(t) {
-    for (i = 0; i < na; ++i)
-      c[i] = x[i](t);
+    for (i = 0; i < na; ++i) c[i] = x[i](t);
     return c;
   };
 }
@@ -19727,10 +19708,8 @@ function genericArray(a, b) {
 
 /* harmony default export */ function object(a, b) {
   var i = {}, c = {}, k;
-  if (a === null || typeof a !== "object")
-    a = {};
-  if (b === null || typeof b !== "object")
-    b = {};
+  if (a === null || typeof a !== "object") a = {};
+  if (b === null || typeof b !== "object") b = {};
   for (k in b) {
     if (k in a) {
       i[k] = value(a[k], b[k]);
@@ -19739,8 +19718,7 @@ function genericArray(a, b) {
     }
   }
   return function(t) {
-    for (k in i)
-      c[k] = i[k](t);
+    for (k in i) c[k] = i[k](t);
     return c;
   };
 }
@@ -19764,16 +19742,12 @@ function one(b) {
   while ((am = reA.exec(a)) && (bm = reB.exec(b))) {
     if ((bs = bm.index) > bi) {
       bs = b.slice(bi, bs);
-      if (s[i])
-        s[i] += bs;
-      else
-        s[++i] = bs;
+      if (s[i]) s[i] += bs;
+      else s[++i] = bs;
     }
     if ((am = am[0]) === (bm = bm[0])) {
-      if (s[i])
-        s[i] += bm;
-      else
-        s[++i] = bm;
+      if (s[i]) s[i] += bm;
+      else s[++i] = bm;
     } else {
       s[++i] = null;
       q.push({ i, x: number(am, bm) });
@@ -19782,14 +19756,11 @@ function one(b) {
   }
   if (bi < b.length) {
     bs = b.slice(bi);
-    if (s[i])
-      s[i] += bs;
-    else
-      s[++i] = bs;
+    if (s[i]) s[i] += bs;
+    else s[++i] = bs;
   }
   return s.length < 2 ? q[0] ? one(q[0].x) : zero(b) : (b = q.length, function(t) {
-    for (var i2 = 0, o; i2 < b; ++i2)
-      s[(o = q[i2]).i] = o.x(t);
+    for (var i2 = 0, o; i2 < b; ++i2) s[(o = q[i2]).i] = o.x(t);
     return s.join("");
   });
 }
@@ -19842,28 +19813,22 @@ function bisector(f) {
   }
   function left(a, x, lo = 0, hi = a.length) {
     if (lo < hi) {
-      if (compare1(x, x) !== 0)
-        return hi;
+      if (compare1(x, x) !== 0) return hi;
       do {
         const mid = lo + hi >>> 1;
-        if (compare2(a[mid], x) < 0)
-          lo = mid + 1;
-        else
-          hi = mid;
+        if (compare2(a[mid], x) < 0) lo = mid + 1;
+        else hi = mid;
       } while (lo < hi);
     }
     return lo;
   }
   function right(a, x, lo = 0, hi = a.length) {
     if (lo < hi) {
-      if (compare1(x, x) !== 0)
-        return hi;
+      if (compare1(x, x) !== 0) return hi;
       do {
         const mid = lo + hi >>> 1;
-        if (compare2(a[mid], x) <= 0)
-          lo = mid + 1;
-        else
-          hi = mid;
+        if (compare2(a[mid], x) <= 0) lo = mid + 1;
+        else hi = mid;
       } while (lo < hi);
     }
     return lo;
@@ -19937,18 +19902,15 @@ function normalize(a, b) {
 }
 function clamper(a, b) {
   var t;
-  if (a > b)
-    t = a, a = b, b = t;
+  if (a > b) t = a, a = b, b = t;
   return function(x) {
     return Math.max(a, Math.min(b, x));
   };
 }
 function bimap(domain, range, interpolate) {
   var d0 = domain[0], d1 = domain[1], r0 = range[0], r1 = range[1];
-  if (d1 < d0)
-    d0 = normalize(d1, d0), r0 = interpolate(r1, r0);
-  else
-    d0 = normalize(d0, d1), r0 = interpolate(r0, r1);
+  if (d1 < d0) d0 = normalize(d1, d0), r0 = interpolate(r1, r0);
+  else d0 = normalize(d0, d1), r0 = interpolate(r0, r1);
   return function(x) {
     return r0(d0(x));
   };
@@ -19975,8 +19937,7 @@ function transformer() {
   var domain = unit, range = unit, interpolate = value, transform, untransform, unknown, clamp = identity, piecewise, output, input;
   function rescale() {
     var n = Math.min(domain.length, range.length);
-    if (clamp !== identity)
-      clamp = clamper(domain[0], domain[n - 1]);
+    if (clamp !== identity) clamp = clamper(domain[0], domain[n - 1]);
     piecewise = n > 2 ? polymap : bimap;
     output = input = null;
     return scale;
@@ -20033,18 +19994,14 @@ function initInterpolator(domain, interpolator) {
     case 0:
       break;
     case 1: {
-      if (typeof domain === "function")
-        this.interpolator(domain);
-      else
-        this.range(domain);
+      if (typeof domain === "function") this.interpolator(domain);
+      else this.range(domain);
       break;
     }
     default: {
       this.domain(domain);
-      if (typeof interpolator === "function")
-        this.interpolator(interpolator);
-      else
-        this.range(interpolator);
+      if (typeof interpolator === "function") this.interpolator(interpolator);
+      else this.range(interpolator);
       break;
     }
   }
@@ -20060,48 +20017,32 @@ function tickSpec(start, stop, count) {
     inc = Math.pow(10, -power) / factor;
     i1 = Math.round(start * inc);
     i2 = Math.round(stop * inc);
-    if (i1 / inc < start)
-      ++i1;
-    if (i2 / inc > stop)
-      --i2;
+    if (i1 / inc < start) ++i1;
+    if (i2 / inc > stop) --i2;
     inc = -inc;
   } else {
     inc = Math.pow(10, power) * factor;
     i1 = Math.round(start / inc);
     i2 = Math.round(stop / inc);
-    if (i1 * inc < start)
-      ++i1;
-    if (i2 * inc > stop)
-      --i2;
+    if (i1 * inc < start) ++i1;
+    if (i2 * inc > stop) --i2;
   }
-  if (i2 < i1 && 0.5 <= count && count < 2)
-    return tickSpec(start, stop, count * 2);
+  if (i2 < i1 && 0.5 <= count && count < 2) return tickSpec(start, stop, count * 2);
   return [i1, i2, inc];
 }
 function ticks(start, stop, count) {
   stop = +stop, start = +start, count = +count;
-  if (!(count > 0))
-    return [];
-  if (start === stop)
-    return [start];
+  if (!(count > 0)) return [];
+  if (start === stop) return [start];
   const reverse = stop < start, [i1, i2, inc] = reverse ? tickSpec(stop, start, count) : tickSpec(start, stop, count);
-  if (!(i2 >= i1))
-    return [];
+  if (!(i2 >= i1)) return [];
   const n = i2 - i1 + 1, ticks2 = new Array(n);
   if (reverse) {
-    if (inc < 0)
-      for (let i = 0; i < n; ++i)
-        ticks2[i] = (i2 - i) / -inc;
-    else
-      for (let i = 0; i < n; ++i)
-        ticks2[i] = (i2 - i) * inc;
+    if (inc < 0) for (let i = 0; i < n; ++i) ticks2[i] = (i2 - i) / -inc;
+    else for (let i = 0; i < n; ++i) ticks2[i] = (i2 - i) * inc;
   } else {
-    if (inc < 0)
-      for (let i = 0; i < n; ++i)
-        ticks2[i] = (i1 + i) / -inc;
-    else
-      for (let i = 0; i < n; ++i)
-        ticks2[i] = (i1 + i) * inc;
+    if (inc < 0) for (let i = 0; i < n; ++i) ticks2[i] = (i1 + i) / -inc;
+    else for (let i = 0; i < n; ++i) ticks2[i] = (i1 + i) * inc;
   }
   return ticks2;
 }
@@ -20118,8 +20059,7 @@ function tickStep(start, stop, count) {
 ;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatSpecifier.js
 var re = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
 function formatSpecifier(specifier) {
-  if (!(match = re.exec(specifier)))
-    throw new Error("invalid format: " + specifier);
+  if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
   var match;
   return new FormatSpecifier({
     fill: match[1],
@@ -20156,8 +20096,7 @@ FormatSpecifier.prototype.toString = function() {
   return Math.abs(x = Math.round(x)) >= 1e21 ? x.toLocaleString("en").replace(/,/g, "") : x.toString(10);
 }
 function formatDecimalParts(x, p) {
-  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0)
-    return null;
+  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null;
   var i, coefficient = x.slice(0, i);
   return [
     coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient,
@@ -20182,11 +20121,9 @@ function formatDecimalParts(x, p) {
   return function(value, width) {
     var i = value.length, t = [], j = 0, g = grouping[0], length = 0;
     while (i > 0 && g > 0) {
-      if (length + g + 1 > width)
-        g = Math.max(1, width - length);
+      if (length + g + 1 > width) g = Math.max(1, width - length);
       t.push(value.substring(i -= g, i + g));
-      if ((length += g + 1) > width)
-        break;
+      if ((length += g + 1) > width) break;
       g = grouping[j = (j + 1) % grouping.length];
     }
     return t.reverse().join(thousands);
@@ -20204,25 +20141,21 @@ function formatDecimalParts(x, p) {
 
 ;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTrim.js
 /* harmony default export */ function formatTrim(s) {
-  out:
-    for (var n = s.length, i = 1, i0 = -1, i1; i < n; ++i) {
-      switch (s[i]) {
-        case ".":
-          i0 = i1 = i;
-          break;
-        case "0":
-          if (i0 === 0)
-            i0 = i;
-          i1 = i;
-          break;
-        default:
-          if (!+s[i])
-            break out;
-          if (i0 > 0)
-            i0 = 0;
-          break;
-      }
+  out: for (var n = s.length, i = 1, i0 = -1, i1; i < n; ++i) {
+    switch (s[i]) {
+      case ".":
+        i0 = i1 = i;
+        break;
+      case "0":
+        if (i0 === 0) i0 = i;
+        i1 = i;
+        break;
+      default:
+        if (!+s[i]) break out;
+        if (i0 > 0) i0 = 0;
+        break;
     }
+  }
   return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
 }
 
@@ -20231,8 +20164,7 @@ function formatDecimalParts(x, p) {
 var prefixExponent;
 /* harmony default export */ function formatPrefixAuto(x, p) {
   var d = formatDecimalParts(x, p);
-  if (!d)
-    return x + "";
+  if (!d) return x + "";
   var coefficient = d[0], exponent = d[1], i = exponent - (prefixExponent = Math.max(-8, Math.min(8, Math.floor(exponent / 3))) * 3) + 1, n = coefficient.length;
   return i === n ? coefficient : i > n ? coefficient + new Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + new Array(1 - i).join("0") + formatDecimalParts(x, Math.max(0, p + i - 1))[0];
 }
@@ -20241,8 +20173,7 @@ var prefixExponent;
 
 /* harmony default export */ function formatRounded(x, p) {
   var d = formatDecimalParts(x, p);
-  if (!d)
-    return x + "";
+  if (!d) return x + "";
   var coefficient = d[0], exponent = d[1];
   return exponent < 0 ? "0." + new Array(-exponent).join("0") + coefficient : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1) : coefficient + new Array(exponent - coefficient.length + 2).join("0");
 }
@@ -20287,12 +20218,9 @@ var map = Array.prototype.map, prefixes = ["y", "z", "a", "f", "p", "n", "\xB5",
   function newFormat(specifier) {
     specifier = formatSpecifier(specifier);
     var fill = specifier.fill, align = specifier.align, sign = specifier.sign, symbol = specifier.symbol, zero = specifier.zero, width = specifier.width, comma = specifier.comma, precision = specifier.precision, trim = specifier.trim, type = specifier.type;
-    if (type === "n")
-      comma = true, type = "g";
-    else if (!formatTypes[type])
-      precision === void 0 && (precision = 12), trim = true, type = "g";
-    if (zero || fill === "0" && align === "=")
-      zero = true, fill = "0", align = "=";
+    if (type === "n") comma = true, type = "g";
+    else if (!formatTypes[type]) precision === void 0 && (precision = 12), trim = true, type = "g";
+    if (zero || fill === "0" && align === "=") zero = true, fill = "0", align = "=";
     var prefix = symbol === "$" ? currencyPrefix : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : "", suffix = symbol === "$" ? currencySuffix : /[%p]/.test(type) ? percent : "";
     var formatType = formatTypes[type], maybeSuffix = /[defgprs%]/.test(type);
     precision = precision === void 0 ? 6 : /[gprs]/.test(type) ? Math.max(1, Math.min(21, precision)) : Math.max(0, Math.min(20, precision));
@@ -20305,10 +20233,8 @@ var map = Array.prototype.map, prefixes = ["y", "z", "a", "f", "p", "n", "\xB5",
         value = +value;
         var valueNegative = value < 0 || 1 / value < 0;
         value = isNaN(value) ? nan : formatType(Math.abs(value), precision);
-        if (trim)
-          value = formatTrim(value);
-        if (valueNegative && +value === 0 && sign !== "+")
-          valueNegative = false;
+        if (trim) value = formatTrim(value);
+        if (valueNegative && +value === 0 && sign !== "+") valueNegative = false;
         valuePrefix = (valueNegative ? sign === "(" ? sign : minus : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
         valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
         if (maybeSuffix) {
@@ -20322,11 +20248,9 @@ var map = Array.prototype.map, prefixes = ["y", "z", "a", "f", "p", "n", "\xB5",
           }
         }
       }
-      if (comma && !zero)
-        value = group(value, Infinity);
+      if (comma && !zero) value = group(value, Infinity);
       var length = valuePrefix.length + value.length + valueSuffix.length, padding = length < width ? new Array(width - length + 1).join(fill) : "";
-      if (comma && zero)
-        value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = "";
+      if (comma && zero) value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = "";
       switch (align) {
         case "<":
           value = valuePrefix + value + valueSuffix + padding;
@@ -20399,8 +20323,7 @@ function tickFormat(start, stop, count, specifier) {
   switch (specifier.type) {
     case "s": {
       var value = Math.max(Math.abs(start), Math.abs(stop));
-      if (specifier.precision == null && !isNaN(precision = precisionPrefix(step, value)))
-        specifier.precision = precision;
+      if (specifier.precision == null && !isNaN(precision = precisionPrefix(step, value))) specifier.precision = precision;
       return formatPrefix(specifier, value);
     }
     case "":
@@ -20408,14 +20331,12 @@ function tickFormat(start, stop, count, specifier) {
     case "g":
     case "p":
     case "r": {
-      if (specifier.precision == null && !isNaN(precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop)))))
-        specifier.precision = precision - (specifier.type === "e");
+      if (specifier.precision == null && !isNaN(precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop))))) specifier.precision = precision - (specifier.type === "e");
       break;
     }
     case "f":
     case "%": {
-      if (specifier.precision == null && !isNaN(precision = precisionFixed(step)))
-        specifier.precision = precision - (specifier.type === "%") * 2;
+      if (specifier.precision == null && !isNaN(precision = precisionFixed(step))) specifier.precision = precision - (specifier.type === "%") * 2;
       break;
     }
   }
@@ -20438,8 +20359,7 @@ function linearish(scale) {
     return tickFormat(d[0], d[d.length - 1], count == null ? 10 : count, specifier);
   };
   scale.nice = function(count) {
-    if (count == null)
-      count = 10;
+    if (count == null) count = 10;
     var d = domain();
     var i0 = 0;
     var i1 = d.length - 1;
@@ -20552,8 +20472,7 @@ function loggish(transform) {
     let u = d[0];
     let v = d[d.length - 1];
     const r = v < u;
-    if (r)
-      [u, v] = [v, u];
+    if (r) [u, v] = [v, u];
     let i = logs(u);
     let j = logs(v);
     let k;
@@ -20562,52 +20481,40 @@ function loggish(transform) {
     let z = [];
     if (!(base % 1) && j - i < n) {
       i = Math.floor(i), j = Math.ceil(j);
-      if (u > 0)
-        for (; i <= j; ++i) {
-          for (k = 1; k < base; ++k) {
-            t = i < 0 ? k / pows(-i) : k * pows(i);
-            if (t < u)
-              continue;
-            if (t > v)
-              break;
-            z.push(t);
-          }
+      if (u > 0) for (; i <= j; ++i) {
+        for (k = 1; k < base; ++k) {
+          t = i < 0 ? k / pows(-i) : k * pows(i);
+          if (t < u) continue;
+          if (t > v) break;
+          z.push(t);
         }
-      else
-        for (; i <= j; ++i) {
-          for (k = base - 1; k >= 1; --k) {
-            t = i > 0 ? k / pows(-i) : k * pows(i);
-            if (t < u)
-              continue;
-            if (t > v)
-              break;
-            z.push(t);
-          }
+      }
+      else for (; i <= j; ++i) {
+        for (k = base - 1; k >= 1; --k) {
+          t = i > 0 ? k / pows(-i) : k * pows(i);
+          if (t < u) continue;
+          if (t > v) break;
+          z.push(t);
         }
-      if (z.length * 2 < n)
-        z = ticks(u, v, n);
+      }
+      if (z.length * 2 < n) z = ticks(u, v, n);
     } else {
       z = ticks(i, j, Math.min(j - i, n)).map(pows);
     }
     return r ? z.reverse() : z;
   };
   scale.tickFormat = (count, specifier) => {
-    if (count == null)
-      count = 10;
-    if (specifier == null)
-      specifier = base === 10 ? "s" : ",";
+    if (count == null) count = 10;
+    if (specifier == null) specifier = base === 10 ? "s" : ",";
     if (typeof specifier !== "function") {
-      if (!(base % 1) && (specifier = formatSpecifier(specifier)).precision == null)
-        specifier.trim = true;
+      if (!(base % 1) && (specifier = formatSpecifier(specifier)).precision == null) specifier.trim = true;
       specifier = format(specifier);
     }
-    if (count === Infinity)
-      return specifier;
+    if (count === Infinity) return specifier;
     const k = Math.max(1, base * count / scale.ticks().length);
     return (d) => {
       let i = d / pows(Math.round(logs(d)));
-      if (i * base < base - 0.5)
-        i *= base;
+      if (i * base < base - 0.5) i *= base;
       return i <= k ? specifier(d) : "";
     };
   };
@@ -20951,8 +20858,7 @@ var noop = { value: () => {
 } };
 function dispatch() {
   for (var i = 0, n = arguments.length, _ = {}, t; i < n; ++i) {
-    if (!(t = arguments[i] + "") || t in _ || /[\s.]/.test(t))
-      throw new Error("illegal type: " + t);
+    if (!(t = arguments[i] + "") || t in _ || /[\s.]/.test(t)) throw new Error("illegal type: " + t);
     _[t] = [];
   }
   return new Dispatch(_);
@@ -20963,10 +20869,8 @@ function Dispatch(_) {
 function parseTypenames(typenames, types) {
   return typenames.trim().split(/^|\s+/).map(function(t) {
     var name = "", i = t.indexOf(".");
-    if (i >= 0)
-      name = t.slice(i + 1), t = t.slice(0, i);
-    if (t && !types.hasOwnProperty(t))
-      throw new Error("unknown type: " + t);
+    if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
+    if (t && !types.hasOwnProperty(t)) throw new Error("unknown type: " + t);
     return { type: t, name };
   });
 }
@@ -20975,42 +20879,29 @@ Dispatch.prototype = dispatch.prototype = {
   on: function(typename, callback) {
     var _ = this._, T = parseTypenames(typename + "", _), t, i = -1, n = T.length;
     if (arguments.length < 2) {
-      while (++i < n)
-        if ((t = (typename = T[i]).type) && (t = get(_[t], typename.name)))
-          return t;
+      while (++i < n) if ((t = (typename = T[i]).type) && (t = get(_[t], typename.name))) return t;
       return;
     }
-    if (callback != null && typeof callback !== "function")
-      throw new Error("invalid callback: " + callback);
+    if (callback != null && typeof callback !== "function") throw new Error("invalid callback: " + callback);
     while (++i < n) {
-      if (t = (typename = T[i]).type)
-        _[t] = set(_[t], typename.name, callback);
-      else if (callback == null)
-        for (t in _)
-          _[t] = set(_[t], typename.name, null);
+      if (t = (typename = T[i]).type) _[t] = set(_[t], typename.name, callback);
+      else if (callback == null) for (t in _) _[t] = set(_[t], typename.name, null);
     }
     return this;
   },
   copy: function() {
     var copy = {}, _ = this._;
-    for (var t in _)
-      copy[t] = _[t].slice();
+    for (var t in _) copy[t] = _[t].slice();
     return new Dispatch(copy);
   },
   call: function(type, that) {
-    if ((n = arguments.length - 2) > 0)
-      for (var args = new Array(n), i = 0, n, t; i < n; ++i)
-        args[i] = arguments[i + 2];
-    if (!this._.hasOwnProperty(type))
-      throw new Error("unknown type: " + type);
-    for (t = this._[type], i = 0, n = t.length; i < n; ++i)
-      t[i].value.apply(that, args);
+    if ((n = arguments.length - 2) > 0) for (var args = new Array(n), i = 0, n, t; i < n; ++i) args[i] = arguments[i + 2];
+    if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
+    for (t = this._[type], i = 0, n = t.length; i < n; ++i) t[i].value.apply(that, args);
   },
   apply: function(type, that, args) {
-    if (!this._.hasOwnProperty(type))
-      throw new Error("unknown type: " + type);
-    for (var t = this._[type], i = 0, n = t.length; i < n; ++i)
-      t[i].value.apply(that, args);
+    if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
+    for (var t = this._[type], i = 0, n = t.length; i < n; ++i) t[i].value.apply(that, args);
   }
 };
 function get(type, name) {
@@ -21027,8 +20918,7 @@ function set(type, name, callback) {
       break;
     }
   }
-  if (callback != null)
-    type.push({ name, value: callback });
+  if (callback != null) type.push({ name, value: callback });
   return type;
 }
 /* harmony default export */ var src_dispatch = (dispatch);
@@ -21046,13 +20936,11 @@ function none() {
 
 
 /* harmony default export */ function selection_select(select) {
-  if (typeof select !== "function")
-    select = selector(select);
+  if (typeof select !== "function") select = selector(select);
   for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = new Array(n), node, subnode, i = 0; i < n; ++i) {
       if ((node = group[i]) && (subnode = select.call(node, node.__data__, i, group))) {
-        if ("__data__" in node)
-          subnode.__data__ = node.__data__;
+        if ("__data__" in node) subnode.__data__ = node.__data__;
         subgroup[i] = subnode;
       }
     }
@@ -21085,10 +20973,8 @@ function arrayAll(select) {
   };
 }
 /* harmony default export */ function selectAll(select) {
-  if (typeof select === "function")
-    select = arrayAll(select);
-  else
-    select = selectorAll(select);
+  if (typeof select === "function") select = arrayAll(select);
+  else select = selectorAll(select);
   for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, node, i = 0; i < n; ++i) {
       if (node = group[i]) {
@@ -21146,8 +21032,7 @@ function childrenFilter(match) {
 
 
 /* harmony default export */ function selection_filter(match) {
-  if (typeof match !== "function")
-    match = matcher(match);
+  if (typeof match !== "function") match = matcher(match);
   for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n; ++i) {
       if ((node = group[i]) && match.call(node, node.__data__, i, group)) {
@@ -21251,20 +21136,16 @@ function datum(node) {
   return node.__data__;
 }
 /* harmony default export */ function data(value, key) {
-  if (!arguments.length)
-    return Array.from(this, datum);
+  if (!arguments.length) return Array.from(this, datum);
   var bind = key ? bindKey : bindIndex, parents = this._parents, groups = this._groups;
-  if (typeof value !== "function")
-    value = src_constant(value);
+  if (typeof value !== "function") value = src_constant(value);
   for (var m = groups.length, update = new Array(m), enter = new Array(m), exit = new Array(m), j = 0; j < m; ++j) {
     var parent = parents[j], group = groups[j], groupLength = group.length, data = arraylike(value.call(parent, parent && parent.__data__, j, parents)), dataLength = data.length, enterGroup = enter[j] = new Array(dataLength), updateGroup = update[j] = new Array(dataLength), exitGroup = exit[j] = new Array(groupLength);
     bind(parent, group, enterGroup, updateGroup, exitGroup, data, key);
     for (var i0 = 0, i1 = 0, previous, next; i0 < dataLength; ++i0) {
       if (previous = enterGroup[i0]) {
-        if (i0 >= i1)
-          i1 = i0 + 1;
-        while (!(next = updateGroup[i1]) && ++i1 < dataLength)
-          ;
+        if (i0 >= i1) i1 = i0 + 1;
+        while (!(next = updateGroup[i1]) && ++i1 < dataLength) ;
         previous._next = next || null;
       }
     }
@@ -21290,20 +21171,16 @@ function arraylike(data) {
   var enter = this.enter(), update = this, exit = this.exit();
   if (typeof onenter === "function") {
     enter = onenter(enter);
-    if (enter)
-      enter = enter.selection();
+    if (enter) enter = enter.selection();
   } else {
     enter = enter.append(onenter + "");
   }
   if (onupdate != null) {
     update = onupdate(update);
-    if (update)
-      update = update.selection();
+    if (update) update = update.selection();
   }
-  if (onexit == null)
-    exit.remove();
-  else
-    onexit(exit);
+  if (onexit == null) exit.remove();
+  else onexit(exit);
   return enter && update ? enter.merge(update).order() : update;
 }
 
@@ -21329,8 +21206,7 @@ function arraylike(data) {
   for (var groups = this._groups, j = -1, m = groups.length; ++j < m; ) {
     for (var group = groups[j], i = group.length - 1, next = group[i], node; --i >= 0; ) {
       if (node = group[i]) {
-        if (next && node.compareDocumentPosition(next) ^ 4)
-          next.parentNode.insertBefore(node, next);
+        if (next && node.compareDocumentPosition(next) ^ 4) next.parentNode.insertBefore(node, next);
         next = node;
       }
     }
@@ -21341,8 +21217,7 @@ function arraylike(data) {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/sort.js
 
 /* harmony default export */ function sort(compare) {
-  if (!compare)
-    compare = sort_ascending;
+  if (!compare) compare = sort_ascending;
   function compareNode(a, b) {
     return a && b ? compare(a.__data__, b.__data__) : !a - !b;
   }
@@ -21378,8 +21253,7 @@ function sort_ascending(a, b) {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length; i < n; ++i) {
       var node = group[i];
-      if (node)
-        return node;
+      if (node) return node;
     }
   }
   return null;
@@ -21388,8 +21262,7 @@ function sort_ascending(a, b) {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/size.js
 /* harmony default export */ function size() {
   let size = 0;
-  for (const node of this)
-    ++size;
+  for (const node of this) ++size;
   return size;
 }
 
@@ -21402,8 +21275,7 @@ function sort_ascending(a, b) {
 /* harmony default export */ function each(callback) {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
-      if (node = group[i])
-        callback.call(node, node.__data__, i, group);
+      if (node = group[i]) callback.call(node, node.__data__, i, group);
     }
   }
   return this;
@@ -21423,8 +21295,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
 
 /* harmony default export */ function namespace(name) {
   var prefix = name += "", i = prefix.indexOf(":");
-  if (i >= 0 && (prefix = name.slice(0, i)) !== "xmlns")
-    name = name.slice(i + 1);
+  if (i >= 0 && (prefix = name.slice(0, i)) !== "xmlns") name = name.slice(i + 1);
   return namespaces.hasOwnProperty(prefix) ? { space: namespaces[prefix], local: name } : name;
 }
 
@@ -21453,19 +21324,15 @@ function attrConstantNS(fullname, value) {
 function attrFunction(name, value) {
   return function() {
     var v = value.apply(this, arguments);
-    if (v == null)
-      this.removeAttribute(name);
-    else
-      this.setAttribute(name, v);
+    if (v == null) this.removeAttribute(name);
+    else this.setAttribute(name, v);
   };
 }
 function attrFunctionNS(fullname, value) {
   return function() {
     var v = value.apply(this, arguments);
-    if (v == null)
-      this.removeAttributeNS(fullname.space, fullname.local);
-    else
-      this.setAttributeNS(fullname.space, fullname.local, v);
+    if (v == null) this.removeAttributeNS(fullname.space, fullname.local);
+    else this.setAttributeNS(fullname.space, fullname.local, v);
   };
 }
 /* harmony default export */ function attr(name, value) {
@@ -21497,10 +21364,8 @@ function styleConstant(name, value, priority) {
 function styleFunction(name, value, priority) {
   return function() {
     var v = value.apply(this, arguments);
-    if (v == null)
-      this.style.removeProperty(name);
-    else
-      this.style.setProperty(name, v, priority);
+    if (v == null) this.style.removeProperty(name);
+    else this.style.setProperty(name, v, priority);
   };
 }
 /* harmony default export */ function style(name, value, priority) {
@@ -21524,10 +21389,8 @@ function propertyConstant(name, value) {
 function propertyFunction(name, value) {
   return function() {
     var v = value.apply(this, arguments);
-    if (v == null)
-      delete this[name];
-    else
-      this[name] = v;
+    if (v == null) delete this[name];
+    else this[name] = v;
   };
 }
 /* harmony default export */ function property(name, value) {
@@ -21566,13 +21429,11 @@ ClassList.prototype = {
 };
 function classedAdd(node, names) {
   var list = classList(node), i = -1, n = names.length;
-  while (++i < n)
-    list.add(names[i]);
+  while (++i < n) list.add(names[i]);
 }
 function classedRemove(node, names) {
   var list = classList(node), i = -1, n = names.length;
-  while (++i < n)
-    list.remove(names[i]);
+  while (++i < n) list.remove(names[i]);
 }
 function classedTrue(names) {
   return function() {
@@ -21593,9 +21454,7 @@ function classedFunction(names, value) {
   var names = classArray(name + "");
   if (arguments.length < 2) {
     var list = classList(this.node()), i = -1, n = names.length;
-    while (++i < n)
-      if (!list.contains(names[i]))
-        return false;
+    while (++i < n) if (!list.contains(names[i])) return false;
     return true;
   }
   return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
@@ -21641,8 +21500,7 @@ function htmlFunction(value) {
 
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/raise.js
 function raise() {
-  if (this.nextSibling)
-    this.parentNode.appendChild(this);
+  if (this.nextSibling) this.parentNode.appendChild(this);
 }
 /* harmony default export */ function selection_raise() {
   return this.each(raise);
@@ -21650,8 +21508,7 @@ function raise() {
 
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/lower.js
 function lower() {
-  if (this.previousSibling)
-    this.parentNode.insertBefore(this, this.parentNode.firstChild);
+  if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
 }
 /* harmony default export */ function selection_lower() {
   return this.each(lower);
@@ -21701,8 +21558,7 @@ function constantNull() {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/remove.js
 function remove() {
   var parent = this.parentNode;
-  if (parent)
-    parent.removeChild(this);
+  if (parent) parent.removeChild(this);
 }
 /* harmony default export */ function selection_remove() {
   return this.each(remove);
@@ -21735,16 +21591,14 @@ function contextListener(listener) {
 function on_parseTypenames(typenames) {
   return typenames.trim().split(/^|\s+/).map(function(t) {
     var name = "", i = t.indexOf(".");
-    if (i >= 0)
-      name = t.slice(i + 1), t = t.slice(0, i);
+    if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
     return { type: t, name };
   });
 }
 function onRemove(typename) {
   return function() {
     var on = this.__on;
-    if (!on)
-      return;
+    if (!on) return;
     for (var j = 0, i = -1, m = on.length, o; j < m; ++j) {
       if (o = on[j], (!typename.type || o.type === typename.type) && o.name === typename.name) {
         this.removeEventListener(o.type, o.listener, o.options);
@@ -21752,49 +21606,42 @@ function onRemove(typename) {
         on[++i] = o;
       }
     }
-    if (++i)
-      on.length = i;
-    else
-      delete this.__on;
+    if (++i) on.length = i;
+    else delete this.__on;
   };
 }
 function onAdd(typename, value, options) {
   return function() {
     var on = this.__on, o, listener = contextListener(value);
-    if (on)
-      for (var j = 0, m = on.length; j < m; ++j) {
-        if ((o = on[j]).type === typename.type && o.name === typename.name) {
-          this.removeEventListener(o.type, o.listener, o.options);
-          this.addEventListener(o.type, o.listener = listener, o.options = options);
-          o.value = value;
-          return;
-        }
+    if (on) for (var j = 0, m = on.length; j < m; ++j) {
+      if ((o = on[j]).type === typename.type && o.name === typename.name) {
+        this.removeEventListener(o.type, o.listener, o.options);
+        this.addEventListener(o.type, o.listener = listener, o.options = options);
+        o.value = value;
+        return;
       }
+    }
     this.addEventListener(typename.type, listener, options);
     o = { type: typename.type, name: typename.name, value, listener, options };
-    if (!on)
-      this.__on = [o];
-    else
-      on.push(o);
+    if (!on) this.__on = [o];
+    else on.push(o);
   };
 }
 /* harmony default export */ function on(typename, value, options) {
   var typenames = on_parseTypenames(typename + ""), i, n = typenames.length, t;
   if (arguments.length < 2) {
     var on = this.node().__on;
-    if (on)
-      for (var j = 0, m = on.length, o; j < m; ++j) {
-        for (i = 0, o = on[j]; i < n; ++i) {
-          if ((t = typenames[i]).type === o.type && t.name === o.name) {
-            return o.value;
-          }
+    if (on) for (var j = 0, m = on.length, o; j < m; ++j) {
+      for (i = 0, o = on[j]; i < n; ++i) {
+        if ((t = typenames[i]).type === o.type && t.name === o.name) {
+          return o.value;
         }
       }
+    }
     return;
   }
   on = value ? onAdd : onRemove;
-  for (i = 0; i < n; ++i)
-    this.each(on(typenames[i], value, options));
+  for (i = 0; i < n; ++i) this.each(on(typenames[i], value, options));
   return this;
 }
 
@@ -21806,10 +21653,8 @@ function dispatchEvent(node, type, params) {
     event = new event(type, params);
   } else {
     event = window.document.createEvent("Event");
-    if (params)
-      event.initEvent(type, params.bubbles, params.cancelable), event.detail = params.detail;
-    else
-      event.initEvent(type, false, false);
+    if (params) event.initEvent(type, params.bubbles, params.cancelable), event.detail = params.detail;
+    else event.initEvent(type, false, false);
   }
   node.dispatchEvent(event);
 }
@@ -21831,8 +21676,7 @@ function dispatchFunction(type, params) {
 /* harmony default export */ function* iterator() {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
-      if (node = group[i])
-        yield node;
+      if (node = group[i]) yield node;
     }
   }
 }
@@ -21971,8 +21815,7 @@ function yesdrag(view, noclick) {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/sourceEvent.js
 /* harmony default export */ function sourceEvent(event) {
   let sourceEvent;
-  while (sourceEvent = event.sourceEvent)
-    event = sourceEvent;
+  while (sourceEvent = event.sourceEvent) event = sourceEvent;
   return event;
 }
 
@@ -21980,8 +21823,7 @@ function yesdrag(view, noclick) {
 
 /* harmony default export */ function src_pointer(event, node) {
   event = sourceEvent(event);
-  if (node === void 0)
-    node = event.currentTarget;
+  if (node === void 0) node = event.currentTarget;
   if (node) {
     var svg = node.ownerSVGElement || node;
     if (svg.createSVGPoint) {
@@ -22014,14 +21856,11 @@ function Timer() {
 Timer.prototype = timer.prototype = {
   constructor: Timer,
   restart: function(callback, delay, time) {
-    if (typeof callback !== "function")
-      throw new TypeError("callback is not a function");
+    if (typeof callback !== "function") throw new TypeError("callback is not a function");
     time = (time == null ? now() : +time) + (delay == null ? 0 : +delay);
     if (!this._next && taskTail !== this) {
-      if (taskTail)
-        taskTail._next = this;
-      else
-        taskHead = this;
+      if (taskTail) taskTail._next = this;
+      else taskHead = this;
       taskTail = this;
     }
     this._call = callback;
@@ -22046,8 +21885,7 @@ function timerFlush() {
   ++timer_frame;
   var t = taskHead, e;
   while (t) {
-    if ((e = clockNow - t._time) >= 0)
-      t._call.call(void 0, e);
+    if ((e = clockNow - t._time) >= 0) t._call.call(void 0, e);
     t = t._next;
   }
   --timer_frame;
@@ -22065,15 +21903,13 @@ function wake() {
 }
 function poke() {
   var now2 = clock.now(), delay = now2 - clockLast;
-  if (delay > pokeDelay)
-    clockSkew -= delay, clockLast = now2;
+  if (delay > pokeDelay) clockSkew -= delay, clockLast = now2;
 }
 function nap() {
   var t0, t1 = taskHead, t2, time = Infinity;
   while (t1) {
     if (t1._call) {
-      if (time > t1._time)
-        time = t1._time;
+      if (time > t1._time) time = t1._time;
       t0 = t1, t1 = t1._next;
     } else {
       t2 = t1._next, t1._next = null;
@@ -22084,19 +21920,14 @@ function nap() {
   sleep(time);
 }
 function sleep(time) {
-  if (timer_frame)
-    return;
-  if (timeout)
-    timeout = clearTimeout(timeout);
+  if (timer_frame) return;
+  if (timeout) timeout = clearTimeout(timeout);
   var delay = time - clockNow;
   if (delay > 24) {
-    if (time < Infinity)
-      timeout = setTimeout(wake, time - clock.now() - clockSkew);
-    if (interval)
-      interval = clearInterval(interval);
+    if (time < Infinity) timeout = setTimeout(wake, time - clock.now() - clockSkew);
+    if (interval) interval = clearInterval(interval);
   } else {
-    if (!interval)
-      clockLast = clock.now(), interval = setInterval(poke, pokeDelay);
+    if (!interval) clockLast = clock.now(), interval = setInterval(poke, pokeDelay);
     timer_frame = 1, setFrame(wake);
   }
 }
@@ -22127,10 +21958,8 @@ var ENDING = 5;
 var ENDED = 6;
 /* harmony default export */ function schedule(node, name, id, index, group, timing) {
   var schedules = node.__transition;
-  if (!schedules)
-    node.__transition = {};
-  else if (id in schedules)
-    return;
+  if (!schedules) node.__transition = {};
+  else if (id in schedules) return;
   create(node, id, {
     name,
     index,
@@ -22149,20 +21978,17 @@ var ENDED = 6;
 }
 function init(node, id) {
   var schedule = schedule_get(node, id);
-  if (schedule.state > CREATED)
-    throw new Error("too late; already scheduled");
+  if (schedule.state > CREATED) throw new Error("too late; already scheduled");
   return schedule;
 }
 function schedule_set(node, id) {
   var schedule = schedule_get(node, id);
-  if (schedule.state > STARTED)
-    throw new Error("too late; already running");
+  if (schedule.state > STARTED) throw new Error("too late; already running");
   return schedule;
 }
 function schedule_get(node, id) {
   var schedule = node.__transition;
-  if (!schedule || !(schedule = schedule[id]))
-    throw new Error("transition not found");
+  if (!schedule || !(schedule = schedule[id])) throw new Error("transition not found");
   return schedule;
 }
 function create(node, id, self) {
@@ -22172,19 +21998,15 @@ function create(node, id, self) {
   function schedule(elapsed) {
     self.state = SCHEDULED;
     self.timer.restart(start, self.delay, self.time);
-    if (self.delay <= elapsed)
-      start(elapsed - self.delay);
+    if (self.delay <= elapsed) start(elapsed - self.delay);
   }
   function start(elapsed) {
     var i, j, n, o;
-    if (self.state !== SCHEDULED)
-      return stop();
+    if (self.state !== SCHEDULED) return stop();
     for (i in schedules) {
       o = schedules[i];
-      if (o.name !== self.name)
-        continue;
-      if (o.state === STARTED)
-        return src_timeout(start);
+      if (o.name !== self.name) continue;
+      if (o.state === STARTED) return src_timeout(start);
       if (o.state === RUNNING) {
         o.state = ENDED;
         o.timer.stop();
@@ -22206,8 +22028,7 @@ function create(node, id, self) {
     });
     self.state = STARTING;
     self.on.call("start", node, node.__data__, self.index, self.group);
-    if (self.state !== STARTING)
-      return;
+    if (self.state !== STARTING) return;
     self.state = STARTED;
     tween = new Array(n = self.tween.length);
     for (i = 0, j = -1; i < n; ++i) {
@@ -22231,8 +22052,7 @@ function create(node, id, self) {
     self.state = ENDED;
     self.timer.stop();
     delete schedules[id];
-    for (var i in schedules)
-      return;
+    for (var i in schedules) return;
     delete node.__transition;
   }
 }
@@ -22241,8 +22061,7 @@ function create(node, id, self) {
 
 /* harmony default export */ function interrupt(node, name) {
   var schedules = node.__transition, schedule, active, empty = true, i;
-  if (!schedules)
-    return;
+  if (!schedules) return;
   name = name == null ? null : name + "";
   for (i in schedules) {
     if ((schedule = schedules[i]).name !== name) {
@@ -22255,8 +22074,7 @@ function create(node, id, self) {
     schedule.on.call(active ? "interrupt" : "cancel", node, node.__data__, schedule.index, schedule.group);
     delete schedules[i];
   }
-  if (empty)
-    delete node.__transition;
+  if (empty) delete node.__transition;
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/interrupt.js
@@ -22279,14 +22097,10 @@ var decompose_identity = {
 };
 /* harmony default export */ function decompose(a, b, c, d, e, f) {
   var scaleX, scaleY, skewX;
-  if (scaleX = Math.sqrt(a * a + b * b))
-    a /= scaleX, b /= scaleX;
-  if (skewX = a * c + b * d)
-    c -= a * skewX, d -= b * skewX;
-  if (scaleY = Math.sqrt(c * c + d * d))
-    c /= scaleY, d /= scaleY, skewX /= scaleY;
-  if (a * d < b * c)
-    a = -a, b = -b, skewX = -skewX, scaleX = -scaleX;
+  if (scaleX = Math.sqrt(a * a + b * b)) a /= scaleX, b /= scaleX;
+  if (skewX = a * c + b * d) c -= a * skewX, d -= b * skewX;
+  if (scaleY = Math.sqrt(c * c + d * d)) c /= scaleY, d /= scaleY, skewX /= scaleY;
+  if (a * d < b * c) a = -a, b = -b, skewX = -skewX, scaleX = -scaleX;
   return {
     translateX: e,
     translateY: f,
@@ -22305,13 +22119,10 @@ function parseCss(value) {
   return m.isIdentity ? decompose_identity : decompose(m.a, m.b, m.c, m.d, m.e, m.f);
 }
 function parseSvg(value) {
-  if (value == null)
-    return decompose_identity;
-  if (!svgNode)
-    svgNode = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  if (value == null) return decompose_identity;
+  if (!svgNode) svgNode = document.createElementNS("http://www.w3.org/2000/svg", "g");
   svgNode.setAttribute("transform", value);
-  if (!(value = svgNode.transform.baseVal.consolidate()))
-    return decompose_identity;
+  if (!(value = svgNode.transform.baseVal.consolidate())) return decompose_identity;
   value = value.matrix;
   return decompose(value.a, value.b, value.c, value.d, value.e, value.f);
 }
@@ -22333,10 +22144,8 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
   }
   function rotate(a, b, s, q) {
     if (a !== b) {
-      if (a - b > 180)
-        b += 360;
-      else if (b - a > 180)
-        a += 360;
+      if (a - b > 180) b += 360;
+      else if (b - a > 180) a += 360;
       q.push({ i: s.push(pop(s) + "rotate(", null, degParen) - 2, x: number(a, b) });
     } else if (b) {
       s.push(pop(s) + "rotate(" + b + degParen);
@@ -22367,8 +22176,7 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
     a = b = null;
     return function(t) {
       var i = -1, n = q.length, o;
-      while (++i < n)
-        s[(o = q[i]).i] = o.x(t);
+      while (++i < n) s[(o = q[i]).i] = o.x(t);
       return s.join("");
     };
   };
@@ -22397,8 +22205,7 @@ function tweenRemove(id, name) {
 }
 function tweenFunction(id, name, value) {
   var tween0, tween1;
-  if (typeof value !== "function")
-    throw new Error();
+  if (typeof value !== "function") throw new Error();
   return function() {
     var schedule = schedule_set(this, id), tween = schedule.tween;
     if (tween !== tween0) {
@@ -22409,8 +22216,7 @@ function tweenFunction(id, name, value) {
           break;
         }
       }
-      if (i === n)
-        tween1.push(t);
+      if (i === n) tween1.push(t);
     }
     schedule.tween = tween1;
   };
@@ -22481,8 +22287,7 @@ function attr_attrFunction(name, interpolate2, value) {
   var string00, string10, interpolate0;
   return function() {
     var string0, value1 = value(this), string1;
-    if (value1 == null)
-      return void this.removeAttribute(name);
+    if (value1 == null) return void this.removeAttribute(name);
     string0 = this.getAttribute(name);
     string1 = value1 + "";
     return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate2(string00 = string0, value1));
@@ -22492,8 +22297,7 @@ function attr_attrFunctionNS(fullname, interpolate2, value) {
   var string00, string10, interpolate0;
   return function() {
     var string0, value1 = value(this), string1;
-    if (value1 == null)
-      return void this.removeAttributeNS(fullname.space, fullname.local);
+    if (value1 == null) return void this.removeAttributeNS(fullname.space, fullname.local);
     string0 = this.getAttributeNS(fullname.space, fullname.local);
     string1 = value1 + "";
     return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate2(string00 = string0, value1));
@@ -22520,8 +22324,7 @@ function attrTweenNS(fullname, value) {
   var t0, i0;
   function tween() {
     var i = value.apply(this, arguments);
-    if (i !== i0)
-      t0 = (i0 = i) && attrInterpolateNS(fullname, i);
+    if (i !== i0) t0 = (i0 = i) && attrInterpolateNS(fullname, i);
     return t0;
   }
   tween._value = value;
@@ -22531,8 +22334,7 @@ function attrTween(name, value) {
   var t0, i0;
   function tween() {
     var i = value.apply(this, arguments);
-    if (i !== i0)
-      t0 = (i0 = i) && attrInterpolate(name, i);
+    if (i !== i0) t0 = (i0 = i) && attrInterpolate(name, i);
     return t0;
   }
   tween._value = value;
@@ -22540,12 +22342,9 @@ function attrTween(name, value) {
 }
 /* harmony default export */ function transition_attrTween(name, value) {
   var key = "attr." + name;
-  if (arguments.length < 2)
-    return (key = this.tween(key)) && key._value;
-  if (value == null)
-    return this.tween(key, null);
-  if (typeof value !== "function")
-    throw new Error();
+  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
+  if (value == null) return this.tween(key, null);
+  if (typeof value !== "function") throw new Error();
   var fullname = namespace(name);
   return this.tween(key, (fullname.local ? attrTweenNS : attrTween)(fullname, value));
 }
@@ -22587,8 +22386,7 @@ function durationConstant(id, value) {
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/ease.js
 
 function easeConstant(id, value) {
-  if (typeof value !== "function")
-    throw new Error();
+  if (typeof value !== "function") throw new Error();
   return function() {
     schedule_set(this, id).ease = value;
   };
@@ -22603,14 +22401,12 @@ function easeConstant(id, value) {
 function easeVarying(id, value) {
   return function() {
     var v = value.apply(this, arguments);
-    if (typeof v !== "function")
-      throw new Error();
+    if (typeof v !== "function") throw new Error();
     schedule_set(this, id).ease = v;
   };
 }
 /* harmony default export */ function transition_easeVarying(value) {
-  if (typeof value !== "function")
-    throw new Error();
+  if (typeof value !== "function") throw new Error();
   return this.each(easeVarying(this._id, value));
 }
 
@@ -22618,8 +22414,7 @@ function easeVarying(id, value) {
 
 
 /* harmony default export */ function transition_filter(match) {
-  if (typeof match !== "function")
-    match = matcher(match);
+  if (typeof match !== "function") match = matcher(match);
   for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n; ++i) {
       if ((node = group[i]) && match.call(node, node.__data__, i, group)) {
@@ -22633,8 +22428,7 @@ function easeVarying(id, value) {
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/merge.js
 
 /* harmony default export */ function transition_merge(transition) {
-  if (transition._id !== this._id)
-    throw new Error();
+  if (transition._id !== this._id) throw new Error();
   for (var groups0 = this._groups, groups1 = transition._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
     for (var group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = new Array(n), node, i = 0; i < n; ++i) {
       if (node = group0[i] || group1[i]) {
@@ -22653,8 +22447,7 @@ function easeVarying(id, value) {
 function start(name) {
   return (name + "").trim().split(/^|\s+/).every(function(t) {
     var i = t.indexOf(".");
-    if (i >= 0)
-      t = t.slice(0, i);
+    if (i >= 0) t = t.slice(0, i);
     return !t || t === "start";
   });
 }
@@ -22662,8 +22455,7 @@ function onFunction(id, name, listener) {
   var on0, on1, sit = start(name) ? init : schedule_set;
   return function() {
     var schedule = sit(this, id), on = schedule.on;
-    if (on !== on0)
-      (on1 = (on0 = on).copy()).on(name, listener);
+    if (on !== on0) (on1 = (on0 = on).copy()).on(name, listener);
     schedule.on = on1;
   };
 }
@@ -22676,11 +22468,8 @@ function onFunction(id, name, listener) {
 function removeFunction(id) {
   return function() {
     var parent = this.parentNode;
-    for (var i in this.__transition)
-      if (+i !== id)
-        return;
-    if (parent)
-      parent.removeChild(this);
+    for (var i in this.__transition) if (+i !== id) return;
+    if (parent) parent.removeChild(this);
   };
 }
 /* harmony default export */ function transition_remove() {
@@ -22693,13 +22482,11 @@ function removeFunction(id) {
 
 /* harmony default export */ function transition_select(select) {
   var name = this._name, id = this._id;
-  if (typeof select !== "function")
-    select = selector(select);
+  if (typeof select !== "function") select = selector(select);
   for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = new Array(n), node, subnode, i = 0; i < n; ++i) {
       if ((node = group[i]) && (subnode = select.call(node, node.__data__, i, group))) {
-        if ("__data__" in node)
-          subnode.__data__ = node.__data__;
+        if ("__data__" in node) subnode.__data__ = node.__data__;
         subgroup[i] = subnode;
         schedule(subgroup[i], name, id, i, subgroup, schedule_get(node, id));
       }
@@ -22714,8 +22501,7 @@ function removeFunction(id) {
 
 /* harmony default export */ function transition_selectAll(select) {
   var name = this._name, id = this._id;
-  if (typeof select !== "function")
-    select = selectorAll(select);
+  if (typeof select !== "function") select = selectorAll(select);
   for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, node, i = 0; i < n; ++i) {
       if (node = group[i]) {
@@ -22768,8 +22554,7 @@ function style_styleFunction(name, interpolate2, value) {
   var string00, string10, interpolate0;
   return function() {
     var string0 = styleValue(this, name), value1 = value(this), string1 = value1 + "";
-    if (value1 == null)
-      string1 = value1 = (this.style.removeProperty(name), styleValue(this, name));
+    if (value1 == null) string1 = value1 = (this.style.removeProperty(name), styleValue(this, name));
     return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate2(string00 = string0, value1));
   };
 }
@@ -22777,8 +22562,7 @@ function styleMaybeRemove(id, name) {
   var on0, on1, listener0, key = "style." + name, event = "end." + key, remove;
   return function() {
     var schedule = schedule_set(this, id), on = schedule.on, listener = schedule.value[key] == null ? remove || (remove = style_styleRemove(name)) : void 0;
-    if (on !== on0 || listener0 !== listener)
-      (on1 = (on0 = on).copy()).on(event, listener0 = listener);
+    if (on !== on0 || listener0 !== listener) (on1 = (on0 = on).copy()).on(event, listener0 = listener);
     schedule.on = on1;
   };
 }
@@ -22797,8 +22581,7 @@ function styleTween(name, value, priority) {
   var t, i0;
   function tween() {
     var i = value.apply(this, arguments);
-    if (i !== i0)
-      t = (i0 = i) && styleInterpolate(name, i, priority);
+    if (i !== i0) t = (i0 = i) && styleInterpolate(name, i, priority);
     return t;
   }
   tween._value = value;
@@ -22806,12 +22589,9 @@ function styleTween(name, value, priority) {
 }
 /* harmony default export */ function transition_styleTween(name, value, priority) {
   var key = "style." + (name += "");
-  if (arguments.length < 2)
-    return (key = this.tween(key)) && key._value;
-  if (value == null)
-    return this.tween(key, null);
-  if (typeof value !== "function")
-    throw new Error();
+  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
+  if (value == null) return this.tween(key, null);
+  if (typeof value !== "function") throw new Error();
   return this.tween(key, styleTween(name, value, priority == null ? "" : priority));
 }
 
@@ -22842,8 +22622,7 @@ function textTween(value) {
   var t0, i0;
   function tween() {
     var i = value.apply(this, arguments);
-    if (i !== i0)
-      t0 = (i0 = i) && textInterpolate(i);
+    if (i !== i0) t0 = (i0 = i) && textInterpolate(i);
     return t0;
   }
   tween._value = value;
@@ -22851,12 +22630,9 @@ function textTween(value) {
 }
 /* harmony default export */ function transition_textTween(value) {
   var key = "text";
-  if (arguments.length < 1)
-    return (key = this.tween(key)) && key._value;
-  if (value == null)
-    return this.tween(key, null);
-  if (typeof value !== "function")
-    throw new Error();
+  if (arguments.length < 1) return (key = this.tween(key)) && key._value;
+  if (value == null) return this.tween(key, null);
+  if (typeof value !== "function") throw new Error();
   return this.tween(key, textTween(value));
 }
 
@@ -22887,8 +22663,7 @@ function textTween(value) {
   var on0, on1, that = this, id = that._id, size = that.size();
   return new Promise(function(resolve, reject) {
     var cancel = { value: reject }, end = { value: function() {
-      if (--size === 0)
-        resolve();
+      if (--size === 0) resolve();
     } };
     that.each(function() {
       var schedule = schedule_set(this, id), on = schedule.on;
@@ -22900,8 +22675,7 @@ function textTween(value) {
       }
       schedule.on = on1;
     });
-    if (size === 0)
-      resolve();
+    if (size === 0) resolve();
   });
 }
 
@@ -23183,9 +22957,7 @@ function defaultTouchable() {
   return navigator.maxTouchPoints || "ontouchstart" in this;
 }
 function local(node) {
-  while (!node.__brush)
-    if (!(node = node.parentNode))
-      return;
+  while (!node.__brush) if (!(node = node.parentNode)) return;
   return node.__brush;
 }
 function brush_empty(extent) {
@@ -23282,15 +23054,12 @@ function brush_brush(dim) {
   }
   Emitter.prototype = {
     beforestart: function() {
-      if (++this.active === 1)
-        this.state.emitter = this, this.starting = true;
+      if (++this.active === 1) this.state.emitter = this, this.starting = true;
       return this;
     },
     start: function(event, mode) {
-      if (this.starting)
-        this.starting = false, this.emit("start", event, mode);
-      else
-        this.emit("brush", event);
+      if (this.starting) this.starting = false, this.emit("start", event, mode);
+      else this.emit("brush", event);
       return this;
     },
     brush: function(event, mode) {
@@ -23298,8 +23067,7 @@ function brush_brush(dim) {
       return this;
     },
     end: function(event, mode) {
-      if (--this.active === 0)
-        delete this.state.emitter, this.emit("end", event, mode);
+      if (--this.active === 0) delete this.state.emitter, this.emit("end", event, mode);
       return this;
     },
     emit: function(type2, event, mode) {
@@ -23319,10 +23087,8 @@ function brush_brush(dim) {
     }
   };
   function started(event) {
-    if (touchending && !event.touches)
-      return;
-    if (!filter.apply(this, arguments))
-      return;
+    if (touchending && !event.touches) return;
+    if (!filter.apply(this, arguments)) return;
     var that = this, type2 = event.target.__data__.type, mode = (keys && event.metaKey ? type2 = "overlay" : type2) === "selection" ? MODE_DRAG : keys && event.altKey ? MODE_CENTER : MODE_HANDLE, signX = dim === Y ? null : signsX[type2], signY = dim === X ? null : signsY[type2], state = local(that), extent2 = state.extent, selection = state.selection, W = extent2[0][0], w0, w1, N = extent2[0][1], n0, n1, E = extent2[1][0], e0, e1, S = extent2[1][1], s0, s1, dx = 0, dy = 0, moving, shifting = signX && signY && keys && event.shiftKey, lockX, lockY, points = Array.from(event.touches || [event], (t) => {
       const i = t.identifier;
       t = src_pointer(t, that);
@@ -23333,8 +23099,7 @@ function brush_brush(dim) {
     interrupt(that);
     var emit = emitter(that, arguments, true).beforestart();
     if (type2 === "overlay") {
-      if (selection)
-        moving = true;
+      if (selection) moving = true;
       const pts = [points[0], points[1] || points[0]];
       state.selection = selection = [[
         w0 = dim === Y ? W : min(pts[0][0], pts[1][0]),
@@ -23343,8 +23108,7 @@ function brush_brush(dim) {
         e0 = dim === Y ? E : max(pts[0][0], pts[1][0]),
         s0 = dim === X ? S : max(pts[0][1], pts[1][1])
       ]];
-      if (points.length > 1)
-        move(event);
+      if (points.length > 1) move(event);
     } else {
       w0 = selection[0][0];
       n0 = selection[0][1];
@@ -23362,8 +23126,7 @@ function brush_brush(dim) {
       emit.ended = ended;
     } else {
       var view = src_select(event.view).on("mousemove.brush", moved, true).on("mouseup.brush", ended, true);
-      if (keys)
-        view.on("keydown.brush", keydowned, true).on("keyup.brush", keyupped, true);
+      if (keys) view.on("keydown.brush", keydowned, true).on("keyup.brush", keyupped, true);
       nodrag(event.view);
     }
     redraw.call(that);
@@ -23371,8 +23134,7 @@ function brush_brush(dim) {
     function moved(event2) {
       for (const p of event2.changedTouches || [event2]) {
         for (const d of points)
-          if (d.identifier === p.identifier)
-            d.cur = src_pointer(p, that);
+          if (d.identifier === p.identifier) d.cur = src_pointer(p, that);
       }
       if (shifting && !lockX && !lockY && points.length === 1) {
         const point = points[0];
@@ -23382,8 +23144,7 @@ function brush_brush(dim) {
           lockX = true;
       }
       for (const point of points)
-        if (point.cur)
-          point[0] = point.cur[0], point[1] = point.cur[1];
+        if (point.cur) point[0] = point.cur[0], point[1] = point.cur[1];
       moving = true;
       src_noevent(event2);
       move(event2);
@@ -23396,35 +23157,25 @@ function brush_brush(dim) {
       switch (mode) {
         case MODE_SPACE:
         case MODE_DRAG: {
-          if (signX)
-            dx = max(W - w0, min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx;
-          if (signY)
-            dy = max(N - n0, min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy;
+          if (signX) dx = max(W - w0, min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx;
+          if (signY) dy = max(N - n0, min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy;
           break;
         }
         case MODE_HANDLE: {
           if (points[1]) {
-            if (signX)
-              w1 = max(W, min(E, points[0][0])), e1 = max(W, min(E, points[1][0])), signX = 1;
-            if (signY)
-              n1 = max(N, min(S, points[0][1])), s1 = max(N, min(S, points[1][1])), signY = 1;
+            if (signX) w1 = max(W, min(E, points[0][0])), e1 = max(W, min(E, points[1][0])), signX = 1;
+            if (signY) n1 = max(N, min(S, points[0][1])), s1 = max(N, min(S, points[1][1])), signY = 1;
           } else {
-            if (signX < 0)
-              dx = max(W - w0, min(E - w0, dx)), w1 = w0 + dx, e1 = e0;
-            else if (signX > 0)
-              dx = max(W - e0, min(E - e0, dx)), w1 = w0, e1 = e0 + dx;
-            if (signY < 0)
-              dy = max(N - n0, min(S - n0, dy)), n1 = n0 + dy, s1 = s0;
-            else if (signY > 0)
-              dy = max(N - s0, min(S - s0, dy)), n1 = n0, s1 = s0 + dy;
+            if (signX < 0) dx = max(W - w0, min(E - w0, dx)), w1 = w0 + dx, e1 = e0;
+            else if (signX > 0) dx = max(W - e0, min(E - e0, dx)), w1 = w0, e1 = e0 + dx;
+            if (signY < 0) dy = max(N - n0, min(S - n0, dy)), n1 = n0 + dy, s1 = s0;
+            else if (signY > 0) dy = max(N - s0, min(S - s0, dy)), n1 = n0, s1 = s0 + dy;
           }
           break;
         }
         case MODE_CENTER: {
-          if (signX)
-            w1 = max(W, min(E, w0 - dx * signX)), e1 = max(W, min(E, e0 + dx * signX));
-          if (signY)
-            n1 = max(N, min(S, n0 - dy * signY)), s1 = max(N, min(S, s0 + dy * signY));
+          if (signX) w1 = max(W, min(E, w0 - dx * signX)), e1 = max(W, min(E, e0 + dx * signX));
+          if (signY) n1 = max(N, min(S, n0 - dy * signY)), s1 = max(N, min(S, s0 + dy * signY));
           break;
         }
       }
@@ -23432,22 +23183,17 @@ function brush_brush(dim) {
         signX *= -1;
         t = w0, w0 = e0, e0 = t;
         t = w1, w1 = e1, e1 = t;
-        if (type2 in flipX)
-          overlay.attr("cursor", cursors[type2 = flipX[type2]]);
+        if (type2 in flipX) overlay.attr("cursor", cursors[type2 = flipX[type2]]);
       }
       if (s1 < n1) {
         signY *= -1;
         t = n0, n0 = s0, s0 = t;
         t = n1, n1 = s1, s1 = t;
-        if (type2 in flipY)
-          overlay.attr("cursor", cursors[type2 = flipY[type2]]);
+        if (type2 in flipY) overlay.attr("cursor", cursors[type2 = flipY[type2]]);
       }
-      if (state.selection)
-        selection = state.selection;
-      if (lockX)
-        w1 = selection[0][0], e1 = selection[1][0];
-      if (lockY)
-        n1 = selection[0][1], s1 = selection[1][1];
+      if (state.selection) selection = state.selection;
+      if (lockX) w1 = selection[0][0], e1 = selection[1][0];
+      if (lockY) n1 = selection[0][1], s1 = selection[1][1];
       if (selection[0][0] !== w1 || selection[0][1] !== n1 || selection[1][0] !== e1 || selection[1][1] !== s1) {
         state.selection = [[w1, n1], [e1, s1]];
         redraw.call(that);
@@ -23457,10 +23203,8 @@ function brush_brush(dim) {
     function ended(event2) {
       noevent_nopropagation(event2);
       if (event2.touches) {
-        if (event2.touches.length)
-          return;
-        if (touchending)
-          clearTimeout(touchending);
+        if (event2.touches.length) return;
+        if (touchending) clearTimeout(touchending);
         touchending = setTimeout(function() {
           touchending = null;
         }, 500);
@@ -23470,10 +23214,8 @@ function brush_brush(dim) {
       }
       group.attr("pointer-events", "all");
       overlay.attr("cursor", cursors.overlay);
-      if (state.selection)
-        selection = state.selection;
-      if (brush_empty(selection))
-        state.selection = null, redraw.call(that);
+      if (state.selection) selection = state.selection;
+      if (brush_empty(selection)) state.selection = null, redraw.call(that);
       emit.end(event2, mode.name);
     }
     function keydowned(event2) {
@@ -23484,10 +23226,8 @@ function brush_brush(dim) {
         }
         case 18: {
           if (mode === MODE_HANDLE) {
-            if (signX)
-              e0 = e1 - dx * signX, w0 = w1 + dx * signX;
-            if (signY)
-              s0 = s1 - dy * signY, n0 = n1 + dy * signY;
+            if (signX) e0 = e1 - dx * signX, w0 = w1 + dx * signX;
+            if (signY) s0 = s1 - dy * signY, n0 = n1 + dy * signY;
             mode = MODE_CENTER;
             move(event2);
           }
@@ -23495,14 +23235,10 @@ function brush_brush(dim) {
         }
         case 32: {
           if (mode === MODE_HANDLE || mode === MODE_CENTER) {
-            if (signX < 0)
-              e0 = e1 - dx;
-            else if (signX > 0)
-              w0 = w1 - dx;
-            if (signY < 0)
-              s0 = s1 - dy;
-            else if (signY > 0)
-              n0 = n1 - dy;
+            if (signX < 0) e0 = e1 - dx;
+            else if (signX > 0) w0 = w1 - dx;
+            if (signY < 0) s0 = s1 - dy;
+            else if (signY > 0) n0 = n1 - dy;
             mode = MODE_SPACE;
             overlay.attr("cursor", cursors.selection);
             move(event2);
@@ -23525,14 +23261,10 @@ function brush_brush(dim) {
         }
         case 18: {
           if (mode === MODE_CENTER) {
-            if (signX < 0)
-              e0 = e1;
-            else if (signX > 0)
-              w0 = w1;
-            if (signY < 0)
-              s0 = s1;
-            else if (signY > 0)
-              n0 = n1;
+            if (signX < 0) e0 = e1;
+            else if (signX > 0) w0 = w1;
+            if (signY < 0) s0 = s1;
+            else if (signY > 0) n0 = n1;
             mode = MODE_HANDLE;
             move(event2);
           }
@@ -23541,20 +23273,14 @@ function brush_brush(dim) {
         case 32: {
           if (mode === MODE_SPACE) {
             if (event2.altKey) {
-              if (signX)
-                e0 = e1 - dx * signX, w0 = w1 + dx * signX;
-              if (signY)
-                s0 = s1 - dy * signY, n0 = n1 + dy * signY;
+              if (signX) e0 = e1 - dx * signX, w0 = w1 + dx * signX;
+              if (signY) s0 = s1 - dy * signY, n0 = n1 + dy * signY;
               mode = MODE_CENTER;
             } else {
-              if (signX < 0)
-                e0 = e1;
-              else if (signX > 0)
-                w0 = w1;
-              if (signY < 0)
-                s0 = s1;
-              else if (signY > 0)
-                n0 = n1;
+              if (signX < 0) e0 = e1;
+              else if (signX > 0) w0 = w1;
+              if (signY < 0) s0 = s1;
+              else if (signY > 0) n0 = n1;
               mode = MODE_HANDLE;
             }
             overlay.attr("cursor", cursors[type2]);
@@ -24062,10 +23788,7 @@ function loadConfig(config) {
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
 var Plugin_defProp = Object.defineProperty;
 var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => {
-  Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 class Plugin {
   /**
    * Constructor
@@ -24112,7 +23835,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.12.4-nightly-20240614004635");
+__publicField(Plugin, "version", "3.12.4-nightly-20240618004623");
 
 ;// CONCATENATED MODULE: ./node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {
@@ -24133,8 +23856,7 @@ function axis_number(scale) {
 }
 function center(scale, offset) {
   offset = Math.max(0, scale.bandwidth() - offset * 2) / 2;
-  if (scale.round())
-    offset = Math.round(offset);
+  if (scale.round()) offset = Math.round(offset);
   return (d) => +scale(d) + offset;
 }
 function entering() {
@@ -24231,10 +23953,7 @@ function axisLeft(scale) {
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/ColorScale.ts
 var ColorScale_defProp = Object.defineProperty;
 var ColorScale_defNormalProp = (obj, key, value) => key in obj ? ColorScale_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var ColorScale_publicField = (obj, key, value) => {
-  ColorScale_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var ColorScale_publicField = (obj, key, value) => ColorScale_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 
@@ -24352,10 +24071,7 @@ function getCentroid(points) {
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Elements.ts
 var Elements_defProp = Object.defineProperty;
 var Elements_defNormalProp = (obj, key, value) => key in obj ? Elements_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var Elements_publicField = (obj, key, value) => {
-  Elements_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var Elements_publicField = (obj, key, value) => Elements_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 class Elements {
@@ -24577,10 +24293,7 @@ class Options {
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/index.ts
 var stanford_defProp = Object.defineProperty;
 var stanford_defNormalProp = (obj, key, value) => key in obj ? stanford_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var stanford_publicField = (obj, key, value) => {
-  stanford_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
+var stanford_publicField = (obj, key, value) => stanford_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 
