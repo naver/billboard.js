@@ -15,6 +15,7 @@ export {
 	areaSpline,
 	areaSplineRange,
 	areaStep,
+	areaStepRange,
 	bar,
 	bubble,
 	candlestick,

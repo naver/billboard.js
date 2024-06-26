@@ -201,9 +201,9 @@ describe("API export", () => {
 
 			// pattern for local: preserveFontStyle=true
 			[
-				"fvvffeIxM58XrgmUMC0SNAARi9nDKiAAjwhhcARJoIHYFUKvVBAE8WOPZ7AO",
-				"bMh8hbpc48ut3UqlbpHVTcVEV1rrbX2nj17NreBKRce69VEQHtib0KH9wfMuHmnNRmtc",
-				"FIFP52aPiu66mVdn4sl1yFwBoCIgBLrzXo5SlXNQwb9Cn1PKYRZRvpGmo"
+				"ymoWfHISTA6yGESaFLJFAjAQrAGgGyeTQJ8IYXzbwyquoI8HqojhtbkUCYCVAAhjk79",
+				"JDN4Us7NC5wxte6FJCh5pIgNdDE+GzaxKoEwEKwDqBrdZs",
+				"ZvfqsPjumwLUq9B8WWwndf8Zr8n9ooA9ASjl5mIAPSSZsDzym3A"
 			],
 
 			// pattern for CI: preserveFontStyle=false
@@ -215,9 +215,9 @@ describe("API export", () => {
 
 			// pattern for CI: preserveFontStyle=true
 			[
-				"DiWRLpDAhEQaGQFMA9gzgRjWwG4wRR1ewOwq4C2jBeAT4UrgFPVb0MBGEHGaaImAjzh",
-				"H0OkOuguimMPAoMXokgcw9E9im3ldJ+gPcKFJXdKBQPVQTh5PWSG3TmjT",
-				"RrAEqAxCwmQAAmQAAmQAAm4TIAG0GX1GDsJkAAJkAAJkAAJlECABr"
+				"Y2qtWP1Xg3AYmsmlBQxSAnANJJZDP5y8H8Jkp4isBWDubzS4fbcPjIamzgX",
+				"Y9JUCsM6Jy+ZOENCezn8CehhUI917sy0C0BI05itQPV9yQz9yAiidIIEEE6AA",
+				"aWV7xEDDrkhf0fgX/bLgG8I6wWjMTYt7S5hUPATMJ8LVBquISlXg0MLWYtfrmGzn"
 			]
 		];
 
