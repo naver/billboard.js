@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.12.4-nightly-20240619004631
+ * @version 3.12.4-nightly-20240626004635
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -1302,6 +1302,7 @@ var data$2 = {
      * - area-spline
      * - area-spline-range
      * - area-step
+     * - area-step-range
      * - bar
      * - bubble
      * - candlestick
@@ -1333,6 +1334,7 @@ var data$2 = {
      *   areaSpline,
      *   areaSplineRange,
      *   areaStep,
+     *   areaStepRange,
      *   bar,
      *   bubble,
      *   candlestick,
@@ -1381,6 +1383,7 @@ var data$2 = {
      *   areaSpline,
      *   areaSplineRange,
      *   areaStep,
+     *   areaStepRange,
      *   bar,
      *   bubble,
      *   candlestick,
@@ -1769,7 +1772,7 @@ var data$2 = {
     data_onhidden: undefined,
     /**
      * Set a callback for minimum data
-     * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
+     * - **NOTE:** For 'area-line-range', 'area-step-range' and 'area-spline-range', `mid` data will be taken for the comparison
      * @name data․onmin
      * @memberof Options
      * @type {Function}
@@ -1784,7 +1787,7 @@ var data$2 = {
     data_onmin: undefined,
     /**
      * Set a callback for maximum data
-     * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
+     * - **NOTE:** For 'area-line-range', 'area-step-range' and 'area-spline-range', `mid` data will be taken for the comparison
      * @name data․onmax
      * @memberof Options
      * @type {Function}
@@ -1887,7 +1890,7 @@ var data$2 = {
      *   type: "bar"
      * }
      *
-     * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
+     * // for 'range' types('area-line-range' or 'area-step-range' or 'area-spline-range'), data should contain:
      * // - an array of [high, mid, low] data following the order
      * // - or an object with 'high', 'mid' and 'low' key value
      * data: {
@@ -1972,7 +1975,7 @@ var data$2 = {
      *   type: "bar"
      * }
      *
-     * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
+     * // for 'range' types('area-line-range' or 'area-step-range' or 'area-spline-range'), data should contain:
      * // - an array of [high, mid, low] data following the order
      * // - or an object with 'high', 'mid' and 'low' key value
      * data: {
@@ -3238,6 +3241,7 @@ var TYPE = {
     AREA_SPLINE: "area-spline",
     AREA_SPLINE_RANGE: "area-spline-range",
     AREA_STEP: "area-step",
+    AREA_STEP_RANGE: "area-step-range",
     BAR: "bar",
     BUBBLE: "bubble",
     CANDLESTICK: "candlestick",
@@ -3263,6 +3267,7 @@ var TYPE_METHOD_NEEDED = {
     AREA_SPLINE: "initArea",
     AREA_SPLINE_RANGE: "initArea",
     AREA_STEP: "initArea",
+    AREA_STEP_RANGE: "initArea",
     BAR: "initBar",
     BUBBLE: "initCircle",
     CANDLESTICK: "initCandlestick",
@@ -3288,11 +3293,13 @@ var TYPE_BY_CATEGORY = {
         TYPE.AREA_SPLINE,
         TYPE.AREA_SPLINE_RANGE,
         TYPE.AREA_LINE_RANGE,
-        TYPE.AREA_STEP
+        TYPE.AREA_STEP,
+        TYPE.AREA_STEP_RANGE
     ],
     AreaRange: [
         TYPE.AREA_SPLINE_RANGE,
-        TYPE.AREA_LINE_RANGE
+        TYPE.AREA_LINE_RANGE,
+        TYPE.AREA_STEP_RANGE
     ],
     Arc: [
         TYPE.PIE,
@@ -3309,11 +3316,13 @@ var TYPE_BY_CATEGORY = {
         TYPE.AREA_SPLINE_RANGE,
         TYPE.AREA_LINE_RANGE,
         TYPE.STEP,
-        TYPE.AREA_STEP
+        TYPE.AREA_STEP,
+        TYPE.AREA_STEP_RANGE
     ],
     Step: [
         TYPE.STEP,
-        TYPE.AREA_STEP
+        TYPE.AREA_STEP,
+        TYPE.AREA_STEP_RANGE
     ],
     Spline: [
         TYPE.SPLINE,
@@ -9510,7 +9519,7 @@ var shape = {
         }
         else if ((_a = $$.hasValidPointType) === null || _a === void 0 ? void 0 : _a.call($$, that.nodeName)) {
             isWithin = $$.isStepType(d) ?
-                $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) :
+                $$.isWithinStep(that, $$.getYScaleById(d.id)($$.getBaseValue(d))) :
                 $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0);
         }
         else if (that.nodeName === "path") {
@@ -22486,6 +22495,7 @@ function extendArc(module, option) {
 // Area types
 var area = function () { return (extendLine(shapeArea, [optArea]), (area = function () { return TYPE.AREA; })()); };
 var areaLineRange = function () { return (extendLine(shapeArea, [optArea]), (areaLineRange = function () { return TYPE.AREA_LINE_RANGE; })()); };
+var areaStepRange = function () { return (extendLine(shapeArea, [optArea]), (areaStepRange = function () { return TYPE.AREA_STEP_RANGE; })()); };
 var areaSpline = function () { return (extendLine(shapeArea, [optArea, optSpline]), (areaSpline = function () { return TYPE.AREA_SPLINE; })()); };
 var areaSplineRange = function () { return (extendLine(shapeArea, [optArea, optSpline]), (areaSplineRange = function () { return TYPE.AREA_SPLINE_RANGE; })()); };
 var areaStep = function () { return (extendLine(shapeArea, [optArea]), (areaStep = function () { return TYPE.AREA_STEP; })()); };
@@ -24223,7 +24233,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.12.4-nightly-20240619004631
+ * @version 3.12.4-nightly-20240626004635
  */
 var bb = {
     /**
@@ -24233,7 +24243,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.12.4-nightly-20240619004631",
+    version: "3.12.4-nightly-20240626004635",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -24362,4 +24372,4 @@ var bb = {
     plugin: {}
 };
 
-export { area, areaLineRange, areaSpline, areaSplineRange, areaStep, bar, bb, bubble, candlestick, bb as default, donut, funnel, gauge, line, pie, polar, radar, scatter, selectionModule as selection, spline, step, subchartModule as subchart, treemap, zoomModule as zoom };
+export { area, areaLineRange, areaSpline, areaSplineRange, areaStep, areaStepRange, bar, bb, bubble, candlestick, bb as default, donut, funnel, gauge, line, pie, polar, radar, scatter, selectionModule as selection, spline, step, subchartModule as subchart, treemap, zoomModule as zoom };

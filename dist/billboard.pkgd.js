@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240619004631
+ * @version 3.12.4-nightly-20240626004635
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -19240,6 +19240,7 @@ __webpack_require__.d(resolver_shape_namespaceObject, {
   areaSpline: function() { return areaSpline; },
   areaSplineRange: function() { return areaSplineRange; },
   areaStep: function() { return areaStep; },
+  areaStepRange: function() { return areaStepRange; },
   bar: function() { return resolver_shape_bar; },
   bubble: function() { return resolver_shape_bubble; },
   candlestick: function() { return resolver_shape_candlestick; },
@@ -22083,6 +22084,7 @@ const $ZOOM = {
    * - area-spline
    * - area-spline-range
    * - area-step
+   * - area-step-range
    * - bar
    * - bubble
    * - candlestick
@@ -22114,6 +22116,7 @@ const $ZOOM = {
    *   areaSpline,
    *   areaSplineRange,
    *   areaStep,
+   *   areaStepRange,
    *   bar,
    *   bubble,
    *   candlestick,
@@ -22162,6 +22165,7 @@ const $ZOOM = {
    *   areaSpline,
    *   areaSplineRange,
    *   areaStep,
+   *   areaStepRange,
    *   bar,
    *   bubble,
    *   candlestick,
@@ -22553,7 +22557,7 @@ const $ZOOM = {
   data_onhidden: void 0,
   /**
    * Set a callback for minimum data
-   * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
+   * - **NOTE:** For 'area-line-range', 'area-step-range' and 'area-spline-range', `mid` data will be taken for the comparison
    * @name data․onmin
    * @memberof Options
    * @type {Function}
@@ -22568,7 +22572,7 @@ const $ZOOM = {
   data_onmin: void 0,
   /**
    * Set a callback for maximum data
-   * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
+   * - **NOTE:** For 'area-line-range', 'area-step-range' and 'area-spline-range', `mid` data will be taken for the comparison
    * @name data․onmax
    * @memberof Options
    * @type {Function}
@@ -22671,7 +22675,7 @@ const $ZOOM = {
    *   type: "bar"
    * }
    *
-   * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
+   * // for 'range' types('area-line-range' or 'area-step-range' or 'area-spline-range'), data should contain:
    * // - an array of [high, mid, low] data following the order
    * // - or an object with 'high', 'mid' and 'low' key value
    * data: {
@@ -22756,7 +22760,7 @@ const $ZOOM = {
    *   type: "bar"
    * }
    *
-   * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
+   * // for 'range' types('area-line-range' or 'area-step-range' or 'area-spline-range'), data should contain:
    * // - an array of [high, mid, low] data following the order
    * // - or an object with 'high', 'mid' and 'low' key value
    * data: {
@@ -25901,6 +25905,7 @@ const TYPE = {
   AREA_SPLINE: "area-spline",
   AREA_SPLINE_RANGE: "area-spline-range",
   AREA_STEP: "area-step",
+  AREA_STEP_RANGE: "area-step-range",
   BAR: "bar",
   BUBBLE: "bubble",
   CANDLESTICK: "candlestick",
@@ -25922,6 +25927,7 @@ const TYPE_METHOD_NEEDED = {
   AREA_SPLINE: "initArea",
   AREA_SPLINE_RANGE: "initArea",
   AREA_STEP: "initArea",
+  AREA_STEP_RANGE: "initArea",
   BAR: "initBar",
   BUBBLE: "initCircle",
   CANDLESTICK: "initCandlestick",
@@ -25943,11 +25949,13 @@ const TYPE_BY_CATEGORY = {
     TYPE.AREA_SPLINE,
     TYPE.AREA_SPLINE_RANGE,
     TYPE.AREA_LINE_RANGE,
-    TYPE.AREA_STEP
+    TYPE.AREA_STEP,
+    TYPE.AREA_STEP_RANGE
   ],
   AreaRange: [
     TYPE.AREA_SPLINE_RANGE,
-    TYPE.AREA_LINE_RANGE
+    TYPE.AREA_LINE_RANGE,
+    TYPE.AREA_STEP_RANGE
   ],
   Arc: [
     TYPE.PIE,
@@ -25964,11 +25972,13 @@ const TYPE_BY_CATEGORY = {
     TYPE.AREA_SPLINE_RANGE,
     TYPE.AREA_LINE_RANGE,
     TYPE.STEP,
-    TYPE.AREA_STEP
+    TYPE.AREA_STEP,
+    TYPE.AREA_STEP_RANGE
   ],
   Step: [
     TYPE.STEP,
-    TYPE.AREA_STEP
+    TYPE.AREA_STEP,
+    TYPE.AREA_STEP_RANGE
   ],
   Spline: [
     TYPE.SPLINE,
@@ -33591,7 +33601,7 @@ function getGroupedDataPointsFn(d) {
     if (!$$.isTargetToShow(d.id)) {
       isWithin = false;
     } else if ((_a = $$.hasValidPointType) == null ? void 0 : _a.call($$, that.nodeName)) {
-      isWithin = $$.isStepType(d) ? $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) : $$.isWithinCircle(
+      isWithin = $$.isStepType(d) ? $$.isWithinStep(that, $$.getYScaleById(d.id)($$.getBaseValue(d))) : $$.isWithinCircle(
         that,
         $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0
       );
@@ -48077,6 +48087,7 @@ function extendArc(module, option) {
 }
 let resolver_shape_area = () => (extendLine(shape_area, [Options_shape_area]), (resolver_shape_area = () => TYPE.AREA)());
 let areaLineRange = () => (extendLine(shape_area, [Options_shape_area]), (areaLineRange = () => TYPE.AREA_LINE_RANGE)());
+let areaStepRange = () => (extendLine(shape_area, [Options_shape_area]), (areaStepRange = () => TYPE.AREA_STEP_RANGE)());
 let areaSpline = () => (extendLine(shape_area, [Options_shape_area, spline]), (areaSpline = () => TYPE.AREA_SPLINE)());
 let areaSplineRange = () => (extendLine(shape_area, [Options_shape_area, spline]), (areaSplineRange = () => TYPE.AREA_SPLINE_RANGE)());
 let areaStep = () => (extendLine(shape_area, [Options_shape_area]), (areaStep = () => TYPE.AREA_STEP)());
@@ -48119,7 +48130,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.12.4-nightly-20240619004631",
+  version: "3.12.4-nightly-20240626004635",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
