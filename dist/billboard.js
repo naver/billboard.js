@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240626004635
+ * @version 3.12.4-nightly-20240628004651
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -20423,12 +20423,17 @@ ${percentValue}%`;
    * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
    * @property {number} [bar.width] Change the width of bar chart.
    * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
+   * - **NOTE:** Criteria for ratio.
+   *   - When x ticks count is same with the data count, the baseline for ratio is the minimum interval value of x ticks.
+   * 	   - ex. when timeseries x values are: [2024-01-01, 2024-02-01, 2024-03-01], the minimum interval will be `2024-02-01 ~ 2024-03-01`
+   *     - if the minimum interval is 30px, then ratio=1 means 30px.
+   *   - When x ticks count is lower than the data count, the baseline will be calculated as `chart width / data count`.
+   * 	   - ex. when chart width is 500, data count is 5, then ratio=1 means 100px.
    * @property {number} [bar.width.max] The maximum width value for ratio.
    * @property {number} [bar.width.dataname] Change the width of bar for indicated dataset only.
-   * - **NOTE:**
-   *   - Works only for non-stacked bar
-   *   - Bars are centered accoding its total width value
    * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
+   *  - **NOTE:** 
+   *   - Works only for non-stacked bar
    * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
    * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
    * @see [Demo: bar front](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarFront)
@@ -21520,7 +21525,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.12.4-nightly-20240626004635",
+  version: "3.12.4-nightly-20240628004651",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
