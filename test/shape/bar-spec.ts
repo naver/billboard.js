@@ -806,6 +806,45 @@ describe("SHAPE BAR", () => {
 			expect(bars.previousSibling.classList.contains($LINE.chartLines)).to.be.true;
 			expect(bars.nextSibling.classList.contains($EVENT.eventRects)).to.be.true;
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [ 
+						["data1", 30, 200, 100],
+						["data2", 130, 100, 140]
+					],
+					type: "bar"
+				},
+				bar: {
+					width: function(width, targetsNum, maxDataCount) {
+						return width / (targetsNum * maxDataCount)
+					}
+				}
+			}
+		});
+
+		it("should bar width size adjust from width callback", () => {
+			const getTargetWidth = () => {
+				const chartWidth = chart.internal.state.width;
+				const data = chart.data();
+				const targetsNum = data.length;
+				const maxDataCount = data[0].values.length;
+				
+				return args.bar.width(chartWidth, targetsNum, maxDataCount);
+			}
+
+			chart.$.bar.bars.each(function() {
+				expect(this.getBoundingClientRect().width).to.be.closeTo(getTargetWidth(), 1);
+			});
+
+			// when
+			chart.resize({width: 500});
+
+			chart.$.bar.bars.each(function() {
+				expect(this.getBoundingClientRect().width).to.be.closeTo(getTargetWidth(), 1);
+			});
+		});
 	});
 
 	describe("bar indices", () => {

@@ -217,7 +217,16 @@ export interface BarOptions {
 	/**
 	 * Change the width of bar chart. If ratio is specified, change the width of bar chart by ratio.
 	 */
-	width?: number | {
+	width?: number | (
+		/**
+		 * Specify width callback
+		 * The callback will receive width, targetsNum, maxDataCount as arguments.
+	 	 * - width: chart area width
+	 	 * - targetsNum: number of targets
+	 	 * - maxDataCount: maximum data count among targets
+		 */
+		(width: number, targetsNum: number, maxDataCount: number) => number
+	) | {
 		/**
 		 * Set the width of each bar by ratio
 		 */
