@@ -5157,24 +5157,49 @@ d3.select(".chart_area")
 				}
 			},
 		],
-		BarWidth: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 130, 100, 140, 200, 150, 50],
-						["data3", 130, 100, 140, 200, 150, 50]
-					],
-					type: "bar"
-				},
-				bar: {
-					width: {
-						ratio: 0.9,
-						max: 30
+		BarWidth: [
+			{
+				options: {
+					title: {
+						text: "set width in ratio with max limit"
+					},
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 130, 100, 140, 200, 150, 50],
+							["data3", 130, 100, 140, 200, 150, 50]
+						],
+						type: "bar"
+					},
+					bar: {
+						width: {
+							ratio: 0.9,
+							max: 30
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "set width in callback"
+					},
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 130, 100, 140, 200, 150, 50],
+							["data3", 130, 100, 140, 200, 150, 50]
+						],
+						type: "bar"
+					},
+					bar: {
+						width: function(width, targetsNum, maxDataCount) {
+						return width / (targetsNum * maxDataCount);
+						}
 					}
 				}
 			}
-		},
+		],
 		BarWidthVariant: {
 			options: {
 				data: {

@@ -26,7 +26,7 @@ export default {
 	 * @property {number} [bar.radius] Set the radius of bar edge in pixel.
 	 * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
 	 * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
-	 * @property {number} [bar.width] Change the width of bar chart.
+	 * @property {number|Function|object} [bar.width] Change the width of bar chart.
 	 * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
 	 * - **NOTE:** Criteria for ratio.
 	 *   - When x ticks count is same with the data count, the baseline for ratio is the minimum interval value of x ticks.
@@ -106,7 +106,15 @@ export default {
 	 *
 	 *      width: 10,
 	 *
-	 *      // or
+	 *      // or specify width callback. The callback will receive width, targetsNum, maxDataCount as arguments.
+	 *      // - width: chart area width
+	 *      // - targetsNum: number of targets
+	 *      // - maxDataCount: maximum data count among targets
+	 *      width: function(width, targetsNum, maxDataCount) {
+	 *            return width / (targetsNum * maxDataCount);
+	 *      }
+	 *
+	 *      // or specify ratio & max
 	 *      width: {
 	 *          ratio: 0.2,
 	 *          max: 20
@@ -137,7 +145,10 @@ export default {
 	bar_radius: <number | {ratio: number} | undefined>undefined,
 	bar_radius_ratio: <number | undefined>undefined,
 	bar_sensitivity: 2,
-	bar_width: <number | {ratio?: number, max?: number} | undefined>undefined,
+	bar_width: <number | ((width: number, targetsNum: number, maxDataCount: number) => number) | {
+		ratio?: number,
+		max?: number
+	} | undefined>undefined,
 	bar_width_ratio: 0.6,
 	bar_width_max: undefined,
 	bar_zerobased: true
