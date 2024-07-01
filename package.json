@@ -169,7 +169,7 @@
 		"style-loader": "^4.0.0",
 		"taffydb": "^2.7.3",
 		"tslib": "^2.6.3",
-		"typescript": "5.5.2",
+		"typescript": "5.5.3",
 		"typescript-eslint": "^7.14.1",
 		"webpack": "^5.92.1",
 		"webpack-bundle-analyzer": "^4.10.2",
