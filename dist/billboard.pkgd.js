@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240628004651
+ * @version 3.12.4-nightly-20240702004625
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -33535,7 +33535,7 @@ function getGroupedDataPointsFn(d) {
   getBarW(type, axis, targetsNum) {
     var _a, _b, _c, _d, _e;
     const $$ = this;
-    const { config, org, scale } = $$;
+    const { config, org, scale, state } = $$;
     const maxDataCount = $$.getMaxDataCount();
     const isGrouped = type === "bar" && ((_a = config.data_groups) == null ? void 0 : _a.length);
     const configName = `${type}_width`;
@@ -33556,7 +33556,7 @@ function getGroupedDataPointsFn(d) {
       const width = id ? config[configName][id] : config[configName];
       const ratio = id ? width.ratio : config[`${configName}_ratio`];
       const max = id ? width.max : config[`${configName}_max`];
-      const w = isNumber(width) ? width : targetsNum ? tickInterval * ratio / targetsNum : 0;
+      const w = isNumber(width) ? width : isFunction(width) ? width.call($$, state.width, targetsNum, maxDataCount) : targetsNum ? tickInterval * ratio / targetsNum : 0;
       return max && w > max ? max : w;
     };
     let result = getWidth();
@@ -47031,7 +47031,7 @@ ${percentValue}%`;
    * @property {number} [bar.radius] Set the radius of bar edge in pixel.
    * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
    * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
-   * @property {number} [bar.width] Change the width of bar chart.
+   * @property {number|Function|object} [bar.width] Change the width of bar chart.
    * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
    * - **NOTE:** Criteria for ratio.
    *   - When x ticks count is same with the data count, the baseline for ratio is the minimum interval value of x ticks.
@@ -47111,7 +47111,15 @@ ${percentValue}%`;
    *
    *      width: 10,
    *
-   *      // or
+   *      // or specify width callback. The callback will receive width, targetsNum, maxDataCount as arguments.
+   *      // - width: chart area width
+   *      // - targetsNum: number of targets
+   *      // - maxDataCount: maximum data count among targets
+   *      width: function(width, targetsNum, maxDataCount) {
+   *            return width / (targetsNum * maxDataCount);
+   *      }
+   *
+   *      // or specify ratio & max
    *      width: {
    *          ratio: 0.2,
    *          max: 20
@@ -48135,7 +48143,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.12.4-nightly-20240628004651",
+  version: "3.12.4-nightly-20240702004625",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.12.4-nightly-20240628004651
+ * @version 3.12.4-nightly-20240702004625
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -9443,7 +9443,7 @@ var shape = {
     getBarW: function (type, axis, targetsNum) {
         var _a, _b, _c, _d, _e;
         var $$ = this;
-        var config = $$.config, org = $$.org, scale = $$.scale;
+        var config = $$.config, org = $$.org, scale = $$.scale, state = $$.state;
         var maxDataCount = $$.getMaxDataCount();
         var isGrouped = type === "bar" && ((_a = config.data_groups) === null || _a === void 0 ? void 0 : _a.length);
         var configName = "".concat(type, "_width");
@@ -9464,9 +9464,9 @@ var shape = {
             var width = id ? config[configName][id] : config[configName];
             var ratio = id ? width.ratio : config["".concat(configName, "_ratio")];
             var max = id ? width.max : config["".concat(configName, "_max")];
-            var w = isNumber(width) ?
-                width :
-                (targetsNum ? (tickInterval * ratio) / targetsNum : 0);
+            var w = isNumber(width) ? width : (isFunction(width) ?
+                width.call($$, state.width, targetsNum, maxDataCount) :
+                (targetsNum ? (tickInterval * ratio) / targetsNum : 0));
             return max && w > max ? max : w;
         };
         var result = getWidth();
@@ -21375,7 +21375,7 @@ var optBar = {
      * @property {number} [bar.radius] Set the radius of bar edge in pixel.
      * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
      * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
-     * @property {number} [bar.width] Change the width of bar chart.
+     * @property {number|Function|object} [bar.width] Change the width of bar chart.
      * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
      * - **NOTE:** Criteria for ratio.
      *   - When x ticks count is same with the data count, the baseline for ratio is the minimum interval value of x ticks.
@@ -21455,7 +21455,15 @@ var optBar = {
      *
      *      width: 10,
      *
-     *      // or
+     *      // or specify width callback. The callback will receive width, targetsNum, maxDataCount as arguments.
+     *      // - width: chart area width
+     *      // - targetsNum: number of targets
+     *      // - maxDataCount: maximum data count among targets
+     *      width: function(width, targetsNum, maxDataCount) {
+     *            return width / (targetsNum * maxDataCount);
+     *      }
+     *
+     *      // or specify ratio & max
      *      width: {
      *          ratio: 0.2,
      *          max: 20
@@ -24238,7 +24246,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.12.4-nightly-20240628004651
+ * @version 3.12.4-nightly-20240702004625
  */
 var bb = {
     /**
@@ -24248,7 +24256,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.12.4-nightly-20240628004651",
+    version: "3.12.4-nightly-20240702004625",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
