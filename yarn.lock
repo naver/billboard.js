@@ -371,40 +371,40 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"
   integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
 
-"@dprint/darwin-arm64@0.47.0":
-  version "0.47.0"
-  resolved "https://registry.yarnpkg.com/@dprint/darwin-arm64/-/darwin-arm64-0.47.0.tgz#d9a093f7ca8dd3001cdd758aa82c7a71e987e56c"
-  integrity sha512-UoQA2kBSSooLx+DPUeml8xr75D7wwpNmH1xmDeX9c0JzFA5j7ZtykT/gNqGSRk9TRHH12nV3/e8VSamUbnbRfA==
+"@dprint/darwin-arm64@0.47.1":
+  version "0.47.1"
+  resolved "https://registry.yarnpkg.com/@dprint/darwin-arm64/-/darwin-arm64-0.47.1.tgz#c7f2a6ca83682c8e31135d94dc67651646e4a040"
+  integrity sha512-Ur2atF1NVhNfzRxDVwLMaCWfU0eQ9JSm9ewdFvPWK5BZ/G5ywum9Cph6XTwyZhG9UB0nxNtf6DP/37aezCBa7g==
 
-"@dprint/darwin-x64@0.47.0":
-  version "0.47.0"
-  resolved "https://registry.yarnpkg.com/@dprint/darwin-x64/-/darwin-x64-0.47.0.tgz#cb28cd222bd373b29f8dcadcb10e5c6684bd9034"
-  integrity sha512-gL2qYooB1mSatS0CQ6/UrplyUewnWD3cg1U7S+CZAVpgSkJgOX3haWinoD66kaBdWAPJo4NjeMnlIS7WVXmbXg==
+"@dprint/darwin-x64@0.47.1":
+  version "0.47.1"
+  resolved "https://registry.yarnpkg.com/@dprint/darwin-x64/-/darwin-x64-0.47.1.tgz#8ce71251227e0be02325c199945eaedd0a35ef25"
+  integrity sha512-yP7UuG32uR7We3E3StuuemL5nnegbB8IXaY9o23ADiq4sE3Aa58kM/MUERCuCsZ5lZiXMnGs4FxbeWI6xKnOYQ==
 
-"@dprint/linux-arm64-glibc@0.47.0":
-  version "0.47.0"
-  resolved "https://registry.yarnpkg.com/@dprint/linux-arm64-glibc/-/linux-arm64-glibc-0.47.0.tgz#ecbb2a2015a42e65194a252ed650ab8aa391ab92"
-  integrity sha512-VrY41zk75f07tfD9bIiYpRom7j4jc/5a8ifWhebnA7jwitTIInkPBUAwJwygGQA/bY7uKYuoykEnipjOzXE48A==
+"@dprint/linux-arm64-glibc@0.47.1":
+  version "0.47.1"
+  resolved "https://registry.yarnpkg.com/@dprint/linux-arm64-glibc/-/linux-arm64-glibc-0.47.1.tgz#0c26debc7e76099fd99b8d1356cf8ba48c213a87"
+  integrity sha512-hD3sbFhSKqadUWcDanvJu0w/kxs7lbOk/VXNTkt+9VVCzT5ewDtqEy/CgUdm6YuLeZjoY3ApP8TBY1fxbAnaOQ==
 
-"@dprint/linux-arm64-musl@0.47.0":
-  version "0.47.0"
-  resolved "https://registry.yarnpkg.com/@dprint/linux-arm64-musl/-/linux-arm64-musl-0.47.0.tgz#4e86f96184c9481099215447ba91fac757d44e30"
-  integrity sha512-UlrOe1cD/bZmoGVdxo7wpIn6DI70SdPeeQe5LFex8csKERM1H0GmrwDTpHlvN2OzZ4W8d6j7dVQEw5K3defxSg==
+"@dprint/linux-arm64-musl@0.47.1":
+  version "0.47.1"
+  resolved "https://registry.yarnpkg.com/@dprint/linux-arm64-musl/-/linux-arm64-musl-0.47.1.tgz#c8f26cc1c219c83f6f7c43b6e57751a45786b11f"
+  integrity sha512-tXOsfvIkZQl2+2WHE26yx8DIjmCbzNRnXBT3qplGvm8/cH5zUUfApoDIbK6JH1H0T0Hf0uYfw6LoguXW1Fy6Nw==
 
-"@dprint/linux-x64-glibc@0.47.0":
-  version "0.47.0"
-  resolved "https://registry.yarnpkg.com/@dprint/linux-x64-glibc/-/linux-x64-glibc-0.47.0.tgz#7bd16afe4194ebb293d28e0fe0f1e6abdb9ebc11"
-  integrity sha512-06j1qJtipRIds7I9f+gYAK5hNEjX3BoIT08axb9eo1VTUOUQjnJ4NwOBsT8rw8mqtTuePtWIWzZMsELom8UXZA==
+"@dprint/linux-x64-glibc@0.47.1":
+  version "0.47.1"
+  resolved "https://registry.yarnpkg.com/@dprint/linux-x64-glibc/-/linux-x64-glibc-0.47.1.tgz#e4393a525faa58cc8101a7f4306a69a83e73eec1"
+  integrity sha512-rI/q0narrWDL/XeoLkxNase0c/ITOQEU31WklidP6MvwYtGFooy9ZBIQqGYLh+eDjPEKDIPmkEUpLsaL1RkuCw==
 
-"@dprint/linux-x64-musl@0.47.0":
-  version "0.47.0"
-  resolved "https://registry.yarnpkg.com/@dprint/linux-x64-musl/-/linux-x64-musl-0.47.0.tgz#4cbddfe3f9581c2147e6e654dad658ea30922969"
-  integrity sha512-yjT5Tua7E0aIaUvuyslfYf2h2NB6lipRFOMKySX5MHSjKHjJKdXiIddaTx9EHg6NHzyrYYH6/jD2ZqllgKjY/g==
+"@dprint/linux-x64-musl@0.47.1":
+  version "0.47.1"
+  resolved "https://registry.yarnpkg.com/@dprint/linux-x64-musl/-/linux-x64-musl-0.47.1.tgz#7e32f263b3ef857a488fb87cc3ffb32ba978ce65"
+  integrity sha512-P/PMHo37/SSLWbQeq6KQKuklsPNVwmrNf1c+wzqbydJ9ET0zqKl/w99JhfrRTyyl6mimNN/40AROGNBUVTFCQQ==
 
-"@dprint/win32-x64@0.47.0":
-  version "0.47.0"
-  resolved "https://registry.yarnpkg.com/@dprint/win32-x64/-/win32-x64-0.47.0.tgz#1c5812dcdbe61cfd3aa32919500a9024e46ca508"
-  integrity sha512-gfqV74GdQF7DWH5ClpottRS5qrEb14KncMR/bkL5ek40JqZZAeRFfYpWnuppE2rm5j9iQ+vs3Yx/YsW2u13q6Q==
+"@dprint/win32-x64@0.47.1":
+  version "0.47.1"
+  resolved "https://registry.yarnpkg.com/@dprint/win32-x64/-/win32-x64-0.47.1.tgz#865af03b8f196f3425461516cf08848286e52fb4"
+  integrity sha512-LFnhMbHjB200K6SOq1hyYTe1ukz13AjI9LudSQ44j5pdL410rVwhkIwTah7iG221d2cJo3jhK3AFiHqSnqKTrw==
 
 "@es-joy/jsdoccomment@~0.43.1":
   version "0.43.1"
@@ -4678,17 +4678,17 @@ dot-prop@^5.1.0:
     is-obj "^2.0.0"
 
 dprint@^0.47.0:
-  version "0.47.0"
-  resolved "https://registry.yarnpkg.com/dprint/-/dprint-0.47.0.tgz#8d9aef76613b9c1e594faf4d6dd3fd0bfcb7f8a1"
-  integrity sha512-rcfbkLkxVusprh4DNvv8fzpnwZmAk3ttHzu6gOeZyeq8AtH86Py4sPcJ1XZKs/iD29QOUAbObR2VQm49NFAAxw==
+  version "0.47.1"
+  resolved "https://registry.yarnpkg.com/dprint/-/dprint-0.47.1.tgz#570dd0373e7c1ecbf91fb8817a01947f4b63c18f"
+  integrity sha512-gZUxs5LmrwCsYoQ5h+QdGB36qrDc2cLAF4q3UgYOFvWnuYyF5rH/xvdpgLgAcltRspDc4bQy0wP650FaFbaVGg==
   optionalDependencies:
-    "@dprint/darwin-arm64" "0.47.0"
-    "@dprint/darwin-x64" "0.47.0"
-    "@dprint/linux-arm64-glibc" "0.47.0"
-    "@dprint/linux-arm64-musl" "0.47.0"
-    "@dprint/linux-x64-glibc" "0.47.0"
-    "@dprint/linux-x64-musl" "0.47.0"
-    "@dprint/win32-x64" "0.47.0"
+    "@dprint/darwin-arm64" "0.47.1"
+    "@dprint/darwin-x64" "0.47.1"
+    "@dprint/linux-arm64-glibc" "0.47.1"
+    "@dprint/linux-arm64-musl" "0.47.1"
+    "@dprint/linux-x64-glibc" "0.47.1"
+    "@dprint/linux-x64-musl" "0.47.1"
+    "@dprint/win32-x64" "0.47.1"
 
 duplexer2@~0.1.0:
   version "0.1.4"
@@ -11652,7 +11652,16 @@ string-replace-loader@^3.1.0:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
-"string-width-cjs@npm:string-width@^4.2.0", "string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
+"string-width-cjs@npm:string-width@^4.2.0":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
+  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
+  dependencies:
+    emoji-regex "^8.0.0"
+    is-fullwidth-code-point "^3.0.0"
+    strip-ansi "^6.0.1"
+
+"string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -11738,7 +11747,7 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -11765,6 +11774,13 @@ strip-ansi@^5.0.0, strip-ansi@^5.1.0:
   integrity sha512-DuRs1gKbBqsMKIZlrffwlug8MHkcnpjs5VPmL1PAh+mA30U0DTotfDZ0d2UUsXpPmPmMMJ6W773MaA3J+lbiWA==
   dependencies:
     ansi-regex "^4.1.0"
+
+strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
+  dependencies:
+    ansi-regex "^5.0.1"
 
 strip-ansi@^7.0.1, strip-ansi@^7.1.0:
   version "7.1.0"
@@ -13033,7 +13049,16 @@ workerpool@6.2.1:
   resolved "https://registry.yarnpkg.com/workerpool/-/workerpool-6.2.1.tgz#46fc150c17d826b86a008e5a4508656777e9c343"
   integrity sha512-ILEIE97kDZvF9Wb9f6h5aXK4swSlKGUcOEGiIYb2OOu/IrDU9iwj0fD//SsA6E5ibwJxpEvhullJY4Sl4GcpAw==
 
-"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
+  integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
+  dependencies:
+    ansi-styles "^4.0.0"
+    string-width "^4.1.0"
+    strip-ansi "^6.0.0"
+
+wrap-ansi@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
