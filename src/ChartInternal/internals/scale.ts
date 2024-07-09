@@ -99,7 +99,15 @@ export default {
 		const $$ = this;
 		const offset = offsetValue || (() => $$.axis.x.tickOffset());
 		const isInverted = $$.config.axis_x_inverted;
-		const scale = function(d, raw) {
+
+		/**
+		 * Get scaled value
+		 * @param {object} d Data object
+		 * @param {boolean} raw Get the raw value
+		 * @returns {number}
+		 * @private
+		 */
+		const scale = function(d: IDataRow, raw?: boolean): number {
 			const v = scaleValue(d) + offset();
 
 			return raw ? v : Math.ceil(v);
