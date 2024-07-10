@@ -37,7 +37,7 @@ export default {
 	 * @property {number} [bar.width.max] The maximum width value for ratio.
 	 * @property {number} [bar.width.dataname] Change the width of bar for indicated dataset only.
 	 * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
-	 *  - **NOTE:** 
+	 *  - **NOTE:**
 	 *   - Works only for non-stacked bar
 	 * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
 	 * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.

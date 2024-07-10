@@ -98,6 +98,7 @@ export default {
 	 * @param {boolean} withTransition With or without transition
 	 * @param {boolean} isSub Subchart draw
 	 * @returns {Array}
+	 * @private
 	 */
 	redrawLine(drawFn, withTransition?: boolean, isSub = false) {
 		const $$ = this;
@@ -259,15 +260,34 @@ export default {
 				return generateM(points);
 			} :
 			(d0, d1, k, otherDiff) => {
+				const x0 = x(d1.x, !isRotated);
+				const y0 = y(d1.value, isRotated);
+
+				const gap = k + otherDiff;
+				const xValue = x(xp(k), !isRotated);
+				const yValue = y(yp(k), isRotated);
+
+				let xDiff = x(xp(gap), !isRotated);
+				let yDiff = y(yp(gap), isRotated);
+
+				// fix diff values not to overflow
+				if (xDiff > x0) {
+					xDiff = x0;
+				}
+
+				if (d0.value > d1.value && (isRotated ? yDiff < y0 : yDiff > y0)) {
+					yDiff = y0;
+				}
+
 				const points = isRotated ?
-					[[y(yp(k), true), x(xp(k))], [
-						y(yp(k + otherDiff), true),
-						x(xp(k + otherDiff))
-					]] :
-					[[x(xp(k), true), y(yp(k))], [
-						x(xp(k + otherDiff), true),
-						y(yp(k + otherDiff))
-					]];
+					[
+						[yValue, xValue],
+						[yDiff, xDiff]
+					] :
+					[
+						[xValue, yValue],
+						[xDiff, yDiff]
+					];
 
 				return generateM(points);
 			};
@@ -290,11 +310,7 @@ export default {
 			if (isUndefined(regions) || !style || !hasPrevData) {
 				path += `${i && hasPrevData ? "L" : "M"}${xValue(data)},${yValue(data)}`;
 			} else if (hasPrevData) {
-				try {
-					style = style.dasharray.split(" ");
-				} catch (e) {
-					style = dasharray.split(" ");
-				}
+				style = (style?.dasharray || dasharray).split(" ").map(Number);
 
 				// Draw with region // TODO: Fix for horizotal charts
 				xp = getScale(axisType.x, prevData.x, data.x);
@@ -304,8 +320,8 @@ export default {
 				const dy = y(data.value) - y(prevData.value);
 				const dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
-				diff = style[0] / dd;
-				diffx2 = diff * style[1];
+				diff = style[0] / dd; // dash
+				diffx2 = diff * style[1]; // gap
 
 				for (let j = diff; j <= 1; j += diffx2) {
 					path += sWithRegion(prevData, data, j, diff);
