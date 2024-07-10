@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.12.4-nightly-20240703004630
+ * @version 3.12.4-nightly-20240710004622
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -7096,6 +7096,13 @@ var scale = {
         var $$ = this;
         var offset = offsetValue || (function () { return $$.axis.x.tickOffset(); });
         var isInverted = $$.config.axis_x_inverted;
+        /**
+         * Get scaled value
+         * @param {object} d Data object
+         * @param {boolean} raw Get the raw value
+         * @returns {number}
+         * @private
+         */
         var scale = function (d, raw) {
             var v = scaleValue(d) + offset();
             return raw ? v : Math.ceil(v);
@@ -19682,6 +19689,7 @@ var shapeLine = {
      * @param {boolean} withTransition With or without transition
      * @param {boolean} isSub Subchart draw
      * @returns {Array}
+     * @private
      */
     redrawLine: function (drawFn, withTransition, isSub) {
         if (isSub === void 0) { isSub = false; }
@@ -19810,15 +19818,29 @@ var shapeLine = {
                 return generateM(points);
             } :
             function (d0, d1, k, otherDiff) {
+                var x0 = x(d1.x, !isRotated);
+                var y0 = y(d1.value, isRotated);
+                var gap = k + otherDiff;
+                var xValue = x(xp(k), !isRotated);
+                var yValue = y(yp(k), isRotated);
+                var xDiff = x(xp(gap), !isRotated);
+                var yDiff = y(yp(gap), isRotated);
+                // fix diff values not to overflow
+                if (xDiff > x0) {
+                    xDiff = x0;
+                }
+                if (d0.value > d1.value && (isRotated ? yDiff < y0 : yDiff > y0)) {
+                    yDiff = y0;
+                }
                 var points = isRotated ?
-                    [[y(yp(k), true), x(xp(k))], [
-                            y(yp(k + otherDiff), true),
-                            x(xp(k + otherDiff))
-                        ]] :
-                    [[x(xp(k), true), y(yp(k))], [
-                            x(xp(k + otherDiff), true),
-                            y(yp(k + otherDiff))
-                        ]];
+                    [
+                        [yValue, xValue],
+                        [yDiff, xDiff]
+                    ] :
+                    [
+                        [xValue, yValue],
+                        [xDiff, yDiff]
+                    ];
                 return generateM(points);
             };
         // Generate
@@ -19837,20 +19859,15 @@ var shapeLine = {
                 path += "".concat(i && hasPrevData ? "L" : "M").concat(xValue(data), ",").concat(yValue(data));
             }
             else if (hasPrevData) {
-                try {
-                    style = style.dasharray.split(" ");
-                }
-                catch (e) {
-                    style = dasharray.split(" ");
-                }
+                style = ((style === null || style === void 0 ? void 0 : style.dasharray) || dasharray).split(" ").map(Number);
                 // Draw with region // TODO: Fix for horizotal charts
                 xp = getScale(axisType.x, prevData.x, data.x);
                 yp = getScale(axisType.y, prevData.value, data.value);
                 var dx = x(data.x) - x(prevData.x);
                 var dy = y(data.value) - y(prevData.value);
                 var dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-                diff = style[0] / dd;
-                diffx2 = diff * style[1];
+                diff = style[0] / dd; // dash
+                diffx2 = diff * style[1]; // gap
                 for (var j = diff; j <= 1; j += diffx2) {
                     path += sWithRegion(prevData, data, j, diff);
                     // to make sure correct line drawing
@@ -24246,7 +24263,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.12.4-nightly-20240703004630
+ * @version 3.12.4-nightly-20240710004622
  */
 var bb = {
     /**
@@ -24256,7 +24273,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.12.4-nightly-20240703004630",
+    version: "3.12.4-nightly-20240710004622",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

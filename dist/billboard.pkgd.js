@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240703004630
+ * @version 3.12.4-nightly-20240710004622
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -45123,6 +45123,7 @@ function updateRatio(data) {
    * @param {boolean} withTransition With or without transition
    * @param {boolean} isSub Subchart draw
    * @returns {Array}
+   * @private
    */
   redrawLine(drawFn, withTransition, isSub = false) {
     const $$ = this;
@@ -45230,13 +45231,26 @@ function updateRatio(data) {
       const points = isRotated ? [[y(yp(k)), x(xv0)], [y(yp(k + diff)), x(xv1)]] : [[x(xv0), y(yp(k))], [x(xv1), y(yp(k + diff))]];
       return generateM(points);
     } : (d0, d1, k, otherDiff) => {
-      const points = isRotated ? [[y(yp(k), true), x(xp(k))], [
-        y(yp(k + otherDiff), true),
-        x(xp(k + otherDiff))
-      ]] : [[x(xp(k), true), y(yp(k))], [
-        x(xp(k + otherDiff), true),
-        y(yp(k + otherDiff))
-      ]];
+      const x0 = x(d1.x, !isRotated);
+      const y0 = y(d1.value, isRotated);
+      const gap = k + otherDiff;
+      const xValue2 = x(xp(k), !isRotated);
+      const yValue2 = y(yp(k), isRotated);
+      let xDiff = x(xp(gap), !isRotated);
+      let yDiff = y(yp(gap), isRotated);
+      if (xDiff > x0) {
+        xDiff = x0;
+      }
+      if (d0.value > d1.value && (isRotated ? yDiff < y0 : yDiff > y0)) {
+        yDiff = y0;
+      }
+      const points = isRotated ? [
+        [yValue2, xValue2],
+        [yDiff, xDiff]
+      ] : [
+        [xValue2, yValue2],
+        [xDiff, yDiff]
+      ];
       return generateM(points);
     };
     const axisType = { x: $$.axis.getAxisType("x"), y: $$.axis.getAxisType("y") };
@@ -45251,11 +45265,7 @@ function updateRatio(data) {
       if (isUndefined(regions) || !style || !hasPrevData) {
         path += `${i && hasPrevData ? "L" : "M"}${xValue(data)},${yValue(data)}`;
       } else if (hasPrevData) {
-        try {
-          style = style.dasharray.split(" ");
-        } catch (e) {
-          style = dasharray.split(" ");
-        }
+        style = ((style == null ? void 0 : style.dasharray) || dasharray).split(" ").map(Number);
         xp = getScale(axisType.x, prevData.x, data.x);
         yp = getScale(axisType.y, prevData.value, data.value);
         const dx = x(data.x) - x(prevData.x);
@@ -47042,7 +47052,7 @@ ${percentValue}%`;
    * @property {number} [bar.width.max] The maximum width value for ratio.
    * @property {number} [bar.width.dataname] Change the width of bar for indicated dataset only.
    * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
-   *  - **NOTE:** 
+   *  - **NOTE:**
    *   - Works only for non-stacked bar
    * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
    * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
@@ -48143,7 +48153,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.12.4-nightly-20240703004630",
+  version: "3.12.4-nightly-20240710004622",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
