@@ -684,9 +684,20 @@ export default {
 	},
 
 	/**
+	 * Determine if has null value
+	 * @param {Array} targets Data array to be evaluated
+	 * @returns {boolean}
+	 * @private
+	 */
+	hasNullDataValue(targets: IDataRow[]): boolean {
+		return targets.some(({value}) => value === null);
+	},
+
+	/**
 	 * Get data index from the event coodinates
 	 * @param {Event} event Event object
 	 * @returns {number}
+	 * @private
 	 */
 	getDataIndexFromEvent(event): number {
 		const $$ = this;
