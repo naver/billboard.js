@@ -15,12 +15,12 @@ import type {IDataRow, IGridData} from "../data/IData";
 /**
  * Get scale
  * @param {string} [type='linear'] Scale type
- * @param {number} [min] Min range
- * @param {number} [max] Max range
+ * @param {number|Date} [min] Min range
+ * @param {number|Date} [max] Max range
  * @returns {d3.scaleLinear|d3.scaleTime} scale
  * @private
  */
-export function getScale(type = "linear", min = 0, max = 1): any {
+export function getScale(type = "linear", min, max): any {
 	const scale = ({
 		linear: d3ScaleLinear,
 		log: d3ScaleSymlog,
@@ -32,7 +32,7 @@ export function getScale(type = "linear", min = 0, max = 1): any {
 	scale.type = type;
 	/_?log/.test(type) && scale.clamp(true);
 
-	return scale.range([min, max]);
+	return scale.range([min ?? 0, max ?? 1]);
 }
 
 export default {
@@ -99,7 +99,15 @@ export default {
 		const $$ = this;
 		const offset = offsetValue || (() => $$.axis.x.tickOffset());
 		const isInverted = $$.config.axis_x_inverted;
-		const scale = function(d, raw) {
+
+		/**
+		 * Get scaled value
+		 * @param {object} d Data object
+		 * @param {boolean} raw Get the raw value
+		 * @returns {number}
+		 * @private
+		 */
+		const scale = function(d: IDataRow, raw?: boolean): number {
 			const v = scaleValue(d) + offset();
 
 			return raw ? v : Math.ceil(v);

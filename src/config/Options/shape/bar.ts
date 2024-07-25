@@ -26,14 +26,19 @@ export default {
 	 * @property {number} [bar.radius] Set the radius of bar edge in pixel.
 	 * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
 	 * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
-	 * @property {number} [bar.width] Change the width of bar chart.
+	 * @property {number|Function|object} [bar.width] Change the width of bar chart.
 	 * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
+	 * - **NOTE:** Criteria for ratio.
+	 *   - When x ticks count is same with the data count, the baseline for ratio is the minimum interval value of x ticks.
+	 * 	   - ex. when timeseries x values are: [2024-01-01, 2024-02-01, 2024-03-01], the minimum interval will be `2024-02-01 ~ 2024-03-01`
+	 *     - if the minimum interval is 30px, then ratio=1 means 30px.
+	 *   - When x ticks count is lower than the data count, the baseline will be calculated as `chart width / data count`.
+	 * 	   - ex. when chart width is 500, data count is 5, then ratio=1 means 100px.
 	 * @property {number} [bar.width.max] The maximum width value for ratio.
 	 * @property {number} [bar.width.dataname] Change the width of bar for indicated dataset only.
-	 * - **NOTE:**
-	 *   - Works only for non-stacked bar
-	 *   - Bars are centered accoding its total width value
 	 * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
+	 *  - **NOTE:**
+	 *   - Works only for non-stacked bar
 	 * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
 	 * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
 	 * @see [Demo: bar front](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarFront)
@@ -101,7 +106,15 @@ export default {
 	 *
 	 *      width: 10,
 	 *
-	 *      // or
+	 *      // or specify width callback. The callback will receive width, targetsNum, maxDataCount as arguments.
+	 *      // - width: chart area width
+	 *      // - targetsNum: number of targets
+	 *      // - maxDataCount: maximum data count among targets
+	 *      width: function(width, targetsNum, maxDataCount) {
+	 *            return width / (targetsNum * maxDataCount);
+	 *      }
+	 *
+	 *      // or specify ratio & max
 	 *      width: {
 	 *          ratio: 0.2,
 	 *          max: 20
@@ -132,7 +145,10 @@ export default {
 	bar_radius: <number | {ratio: number} | undefined>undefined,
 	bar_radius_ratio: <number | undefined>undefined,
 	bar_sensitivity: 2,
-	bar_width: <number | {ratio?: number, max?: number} | undefined>undefined,
+	bar_width: <number | ((width: number, targetsNum: number, maxDataCount: number) => number) | {
+		ratio?: number,
+		max?: number
+	} | undefined>undefined,
 	bar_width_ratio: 0.6,
 	bar_width_max: undefined,
 	bar_zerobased: true

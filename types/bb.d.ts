@@ -38,6 +38,7 @@ export function areaLineRange(): "area-line-range";
 export function areaSpline(): "area-spline";
 export function areaSplineRange(): "area-spline-range";
 export function areaStep(): "area-step";
+export function areaStepRange(): "area-step-range";
 export function bar(): "bar";
 export function bubble(): "bubble";
 export function candlestick(): "candlestick";

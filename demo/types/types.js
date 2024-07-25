@@ -5,6 +5,7 @@ const Types = {
         "area-spline",
         "area-spline-range",
         "area-step",
+        "area-step-range",
         "bar",
         "grouped-bar",
         "bubble",
@@ -16,6 +17,7 @@ const Types = {
         "treemap",
         "polar",
         "radar",
+        "funnel",
         "gauge",
         "gauge-multi",
         "gauge-stack-data",
@@ -104,6 +106,16 @@ const Types = {
             bubble: {
                 maxR: 15
             },
+            funnel: {
+                neck: {
+                    width: {
+                        ratio: 0.3
+                    },
+                    height: {
+                        ratio: 0.35
+                    }
+                }
+            },
             gauge: {
                 title: "100%",
                 label: {
@@ -180,6 +192,19 @@ const Types = {
             } else if (type === "grouped-bar") {
                 type = "bar";
                 options.data.groups = [["data0", "data1"]];
+
+            } else if (type === "funnel") {
+                options.data.columns = [
+                    ["data0", 100],
+                    ["data1", 50],
+                    ["data2", 30]
+                ];
+
+                options.padding = {
+                    top: 30,
+                    left: 10,
+                    right: 10
+                };
 
             } else if (type === "gauge") {
                 options.data.columns = [["data0", 70]];
@@ -448,6 +473,10 @@ const Types = {
                     .classed("title", true)
                     .text(v);
             }
+
+        // if (type === "gauge") {
+        //     debugger;
+        // }
 
             bb.generate(options);
         });

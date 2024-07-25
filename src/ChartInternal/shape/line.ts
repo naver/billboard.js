@@ -13,7 +13,71 @@ import {
 	isValue,
 	parseDate
 } from "../../module/util";
+import type {IDataRow} from "../data/IData";
 import {getScale} from "../internals/scale";
+
+/**
+ * Get stroke dasharray style value
+ * @param {number} start Start position in path length
+ * @param {number} end End position in path length
+ * @param {Array} pattern Dash array pattern
+ * @param {boolean} isLastX Weather is last x tick
+ * @returns {object} Stroke dasharray style value and its length
+ * @private
+ */
+function getStrokeDashArray(start: number, end: number, pattern: [number, number],
+	isLastX = false): {dash: string, length: number} {
+	const dash = start ? [start, 0] : pattern;
+
+	for (let i = start ? start : pattern.reduce((a, c) => a + c); i <= end;) {
+		pattern.forEach(v => {
+			if (i + v <= end) {
+				dash.push(v);
+			}
+
+			i += v;
+		});
+	}
+
+	// make sure to have even length
+	dash.length % 2 !== 0 && dash.push(isLastX ? pattern[1] : 0);
+
+	return {
+		dash: dash.join(" "),
+		length: dash.reduce((a, b) => a + b, 0)
+	};
+}
+
+/**
+ * Get regions data
+ * @param {Array} d Data object
+ * @param {object} _regions regions to be set
+ * @param {boolean} isTimeSeries whether is time series
+ * @returns {object} Regions data
+ * @private
+ */
+function getRegions(d, _regions, isTimeSeries) {
+	const $$ = this;
+	const regions: {start: number | string, end: number | string, style: string}[] = [];
+	const dasharray = "2 2"; // default value
+
+	// Check start/end of regions
+	if (isDefined(_regions)) {
+		const getValue = (v: Date | any, def: number | Date): Date | any => (
+			isUndefined(v) ? def : (isTimeSeries ? parseDate.call($$, v) : v)
+		);
+
+		for (let i = 0, reg; (reg = _regions[i]); i++) {
+			const start = getValue(reg.start, d[0].x);
+			const end = getValue(reg.end, d[d.length - 1].x);
+			const style = reg.style || {dasharray};
+
+			regions[i] = {start, end, style};
+		}
+	}
+
+	return regions;
+}
 
 export default {
 	initLine(): void {
@@ -98,6 +162,7 @@ export default {
 	 * @param {boolean} withTransition With or without transition
 	 * @param {boolean} isSub Subchart draw
 	 * @returns {Array}
+	 * @private
 	 */
 	redrawLine(drawFn, withTransition?: boolean, isSub = false) {
 		const $$ = this;
@@ -210,33 +275,30 @@ export default {
 		};
 	},
 
-	lineWithRegions(d, x, y, _regions): string {
+	/**
+	 * Set regions dasharray and get path
+	 * @param {Array} d Data object
+	 * @param {Function} x x scale function
+	 * @param {Function} y y scale function
+	 * @param {object} _regions regions to be set
+	 * @returns {stirng} Path string
+	 * @private
+	 */
+	lineWithRegions(d: IDataRow[], x, y, _regions): string {
 		const $$ = this;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
 		const isTimeSeries = $$.axis.isTimeSeries();
-		const regions: any[] = [];
 		const dasharray = "2 2"; // default value
+		const regions = getRegions.bind($$)(d, _regions, isTimeSeries);
+
+		// when contains null data, can't apply style dashed
+		const hasNullDataValue = $$.hasNullDataValue(d);
 
 		let xp;
 		let yp;
 		let diff;
 		let diffx2;
-
-		// Check start/end of regions
-		if (isDefined(_regions)) {
-			const getValue = (v: Date | any, def: number): Date | any => (
-				isUndefined(v) ? def : (isTimeSeries ? parseDate.call($$, v) : v)
-			);
-
-			for (let i = 0, reg; (reg = _regions[i]); i++) {
-				const start = getValue(reg.start, d[0].x);
-				const end = getValue(reg.end, d[d.length - 1].x);
-				const style = reg.style || {dasharray};
-
-				regions[i] = {start, end, style};
-			}
-		}
 
 		// Set scales
 		const xValue = isRotated ? dt => y(dt.value) : dt => x(dt.x);
@@ -259,15 +321,31 @@ export default {
 				return generateM(points);
 			} :
 			(d0, d1, k, otherDiff) => {
-				const points = isRotated ?
-					[[y(yp(k), true), x(xp(k))], [
-						y(yp(k + otherDiff), true),
-						x(xp(k + otherDiff))
-					]] :
-					[[x(xp(k), true), y(yp(k))], [
-						x(xp(k + otherDiff), true),
-						y(yp(k + otherDiff))
-					]];
+				const x0 = x(d1.x, !isRotated);
+				const y0 = y(d1.value, isRotated);
+
+				const gap = k + otherDiff;
+				const xValue = x(xp(k), !isRotated);
+				const yValue = y(yp(k), isRotated);
+
+				let xDiff = x(xp(gap), !isRotated);
+				let yDiff = y(yp(gap), isRotated);
+
+				// fix diff values not to overflow
+				if (xDiff > x0) {
+					xDiff = x0;
+				}
+
+				if (d0.value > d1.value && (isRotated ? yDiff < y0 : yDiff > y0)) {
+					yDiff = y0;
+				}
+
+				const points = [
+					[xValue, yValue],
+					[xDiff, yDiff]
+				];
+
+				isRotated && points.forEach(v => v.reverse());
 
 				return generateM(points);
 			};
@@ -275,6 +353,16 @@ export default {
 		// Generate
 		const axisType = {x: $$.axis.getAxisType("x"), y: $$.axis.getAxisType("y")};
 		let path = "";
+
+		// clone the line path to be used to get length value
+		const target = $$.$el.line.filter(({id}) => id === d[0].id);
+		const tempNode = target.clone().style("display", "none");
+		const getLength = (node, path) => node.attr("d", path).node().getTotalLength();
+		const dashArray = {
+			dash: <string[]>[],
+			lastLength: 0
+		};
+		let isLastX = false;
 
 		for (let i = 0, data; (data = d[i]); i++) {
 			const prevData = d[i - 1];
@@ -290,32 +378,73 @@ export default {
 			if (isUndefined(regions) || !style || !hasPrevData) {
 				path += `${i && hasPrevData ? "L" : "M"}${xValue(data)},${yValue(data)}`;
 			} else if (hasPrevData) {
-				try {
-					style = style.dasharray.split(" ");
-				} catch (e) {
-					style = dasharray.split(" ");
-				}
+				style = (style?.dasharray || dasharray).split(" ").map(Number);
 
 				// Draw with region // TODO: Fix for horizotal charts
 				xp = getScale(axisType.x, prevData.x, data.x);
 				yp = getScale(axisType.y, prevData.value, data.value);
 
-				const dx = x(data.x) - x(prevData.x);
-				const dy = y(data.value) - y(prevData.value);
-				const dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+				// when it contains null data, dash can't be applied with style
+				if (hasNullDataValue) {
+					const dx = x(data.x) - x(prevData.x);
+					const dy = y(data.value) - y(prevData.value);
+					const dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
-				diff = style[0] / dd;
-				diffx2 = diff * style[1];
+					diff = style[0] / dd; // dash
+					diffx2 = diff * style[1]; // gap
 
-				for (let j = diff; j <= 1; j += diffx2) {
-					path += sWithRegion(prevData, data, j, diff);
+					for (let j = diff; j <= 1; j += diffx2) {
+						path += sWithRegion(prevData, data, j, diff);
 
-					// to make sure correct line drawing
-					if (j + diffx2 >= 1) {
-						path += sWithRegion(prevData, data, 1, 0);
+						// to make sure correct line drawing
+						if (j + diffx2 >= 1) {
+							path += sWithRegion(prevData, data, 1, 0);
+						}
 					}
+				} else {
+					let points = <number[][]>[];
+					isLastX = data.x === d[d.length - 1].x;
+
+					if (isTimeSeries) {
+						const x0 = +prevData.x;
+						const xv0 = new Date(x0);
+						const xv1 = new Date(x0 + (+data.x - x0));
+
+						points = [
+							[x(xv0), y(yp(0))], // M
+							[x(xv1), y(yp(1))] // L
+						];
+					} else {
+						points = [
+							[x(xp(0)), y(yp(0))], // M
+							[x(xp(1)), y(yp(1))] // L
+						];
+					}
+
+					isRotated && points.forEach(v => v.reverse());
+
+					const startLength = getLength(tempNode, path);
+					const endLength = getLength(tempNode, path += `L${points[1].join(",")}`);
+
+					const strokeDashArray = getStrokeDashArray(
+						startLength - dashArray.lastLength,
+						endLength - dashArray.lastLength,
+						style,
+						isLastX
+					);
+
+					dashArray.lastLength += strokeDashArray.length;
+					dashArray.dash.push(strokeDashArray.dash);
 				}
 			}
+		}
+
+		if (dashArray.dash.length) {
+			// if not last x tick, then should draw rest of path that is not drawed yet
+			!isLastX && dashArray.dash.push(getLength(tempNode, path));
+
+			tempNode.remove();
+			target.attr("stroke-dasharray", dashArray.dash.join(" "));
 		}
 
 		return path;

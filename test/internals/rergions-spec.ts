@@ -180,14 +180,14 @@ describe("REGIONS", function() {
 		});
 	});
 
-	describe("regions", () => {
+	describe("regions with dasharray", () => {
 		before(() => {
 			args = {
 				data: {
 					x: "x",
 					columns: [
-						["x", "2023-08-25", "2023-08-26", "2023-08-27"],
-						["data1", 50, 20, 10]
+						["x", "2023-08-25", "2023-08-26", "2023-08-27", "2023-08-28", "2023-08-29"],
+						["data1", 50, 20, 10, null, 20, 30]
 					],
 					regions: {
 						data1: [{
@@ -213,7 +213,96 @@ describe("REGIONS", function() {
 		it("should regions applied for timeseries chart.", () => {
 			const lCnt = chart.$.line.lines.attr("d").split("L").length;
 
-			expect(lCnt).to.be.above(30);
+			expect(lCnt).to.be.above(19);
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", null, 200, 100, 152, 150, 250, 30]
+					],
+					type: "line",
+					regions: {
+						data1: [
+							{
+								start: 1,
+								end: 2,
+								style: {
+									dasharray: "5 3"
+								}
+							},
+							{
+								start: 3,
+								end: 4,
+								style: {
+									dasharray: "10 5"
+								}
+							}
+						]
+					}
+				},
+				axis: {
+					y: {
+						show: false
+					}
+				},
+				point: {
+					show: false
+				}
+			};
+		});
+
+		it("shouldn't have any overflowed dashed lines.", () => {
+			const path = chart.$.line.lines.attr("d").split("M").map(v => {
+				return v && v.split("L").map(v2 => +v2.replace(/,.*/,""))
+			}).filter(Boolean);
+
+			const hasOverflow = path.some((v, i, arr) => {
+				if (v.length > 2) {
+					return arr[i - 1][1] > v[0];
+				}
+
+				return false;
+			});
+
+			expect(hasOverflow).to.be.false;
+		});
+
+		it("set options", () => {
+			args.axis.rotated = true;
+			args.data.regions.data1 = [
+				{
+					start: 1,
+					end: 2,
+					style: {
+						dasharray: "10 2"
+					}
+				},
+				{
+					start: 3,
+					end: 4,
+					style: {
+						dasharray: "9 2"
+					}
+				}
+			];
+		});
+
+		it("shouldn't have any overflowed dashed lines on rotated axis.", () => {
+			const path = chart.$.line.lines.attr("d").split("M").map(v => {
+				return v && v.split("L").map(v2 => +v2.replace(/,.*/,""))
+			}).filter(Boolean);
+
+			const hasOverflow = path.some((v, i, arr) => {
+				if (v.length > 2) {
+					return v[0] > arr[i-1][1];
+				}
+
+				return false;
+			});
+
+			expect(hasOverflow).to.be.false;
 		});
 	});
 });

@@ -52,6 +52,7 @@ export {
 	areaSpline,
 	areaSplineRange,
 	areaStep,
+	areaStepRange,
 	bar,
 	bubble,
 	candlestick,
@@ -108,6 +109,9 @@ let area = (): string => (
 );
 let areaLineRange = (): string => (
 	extendLine(shapeArea, [optArea]), (areaLineRange = () => TYPE.AREA_LINE_RANGE)()
+);
+let areaStepRange = (): string => (
+	extendLine(shapeArea, [optArea]), (areaStepRange = () => TYPE.AREA_STEP_RANGE)()
 );
 let areaSpline = () => (
 	extendLine(shapeArea, [optArea, optSpline]), (areaSpline = () => TYPE.AREA_SPLINE)()

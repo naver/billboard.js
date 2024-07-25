@@ -1120,7 +1120,7 @@ export interface Data {
 	/**
 	 * Set chart type at once.
 	 * If this option is specified, the type will be applied to every data. This setting can be overwritten by data.types.
-	 * - Available Values: area, area-line-range, area-spline, area-spline-range, area-step, bar, bubble, candlestick, donut, gauge, line, pie, radar, scatter, spline, step
+	 * - Available Values: area, area-line-range, area-spline, area-spline-range, area-step, area-step-range, bar, bubble, candlestick, donut, gauge, line, pie, radar, scatter, spline, step
 	 */
 	type?: ChartTypes;
 
@@ -1344,13 +1344,13 @@ export interface Data {
 
 	/**
 	 * Set a callback for minimum data
-	 * - NOTE: For 'area-line-range' and 'area-spline-range', mid data will be taken for the comparison
+	 * - NOTE: For 'area-line-range', 'area-step-range' and 'area-spline-range', mid data will be taken for the comparison
 	 */
 	onmin?(this: Chart, d: DataItem[]): void;
 
 	/**
 	 * Set a callback for maximum data
-	 * - NOTE: For 'area-line-range' and 'area-spline-range', mid data will be taken for the comparison
+	 * - NOTE: For 'area-line-range', 'area-step-range' and 'area-spline-range', mid data will be taken for the comparison
 	 */
 	onmax?(this: Chart, d: DataItem[]): void;
 

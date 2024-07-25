@@ -66,3 +66,5 @@ RobinDeeCee <robindecock@gmail.com>
 nekoya <ryo.studiom@gmail.com>
 Ubin Park <https://github.com/Ubinquitous>
 William Nolden <william.nolden@able-group.de>
+Sergiu Statache <sergiu.statache@trisoft.ro>
+vlaforet <vlaforet@users.noreply.github.com>

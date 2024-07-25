@@ -30,6 +30,7 @@ import {
 	getPointer,
 	getRectSegList,
 	getUnique,
+	isFunction,
 	isNumber,
 	isObjectType,
 	isUndefined,
@@ -441,7 +442,7 @@ export default {
 
 	getBarW(type, axis, targetsNum: number): number | IOffset {
 		const $$ = this;
-		const {config, org, scale} = $$;
+		const {config, org, scale, state} = $$;
 		const maxDataCount = $$.getMaxDataCount();
 		const isGrouped = type === "bar" && config.data_groups?.length;
 		const configName = `${type}_width`;
@@ -467,9 +468,11 @@ export default {
 			const width = id ? config[configName][id] : config[configName];
 			const ratio = id ? width.ratio : config[`${configName}_ratio`];
 			const max = id ? width.max : config[`${configName}_max`];
-			const w = isNumber(width) ?
-				width :
-				(targetsNum ? (tickInterval * ratio) / targetsNum : 0);
+			const w = isNumber(width) ? width : (
+				isFunction(width) ?
+					width.call($$, state.width, targetsNum, maxDataCount) :
+					(targetsNum ? (tickInterval * ratio) / targetsNum : 0)
+			);
 
 			return max && w > max ? max : w;
 		};
@@ -531,7 +534,7 @@ export default {
 			isWithin = false;
 		} else if ($$.hasValidPointType?.(that.nodeName)) {
 			isWithin = $$.isStepType(d) ?
-				$$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) :
+				$$.isWithinStep(that, $$.getYScaleById(d.id)($$.getBaseValue(d))) :
 				$$.isWithinCircle(
 					that,
 					$$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0
