@@ -108,8 +108,12 @@ export default {
 	 * - The object type should be as:
 	 *   - start {number}: Start data point number. If not set, the start will be the first data point.
 	 *   - [end] {number}: End data point number. If not set, the end will be the last data point.
-	 *   - [style.dasharray="2 2"] {object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
-	 * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
+	 *   - [style.dasharray="2 2"] {string}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
+	 * - **NOTE:**
+	 *   - Supports only line type.
+	 *   - `start` and `end` values should be in the exact x value range.
+	 *   - Dashes will be applied using `stroke-dasharray` css property when data doesn't contain nullish value(or nullish value with `line.connectNull=true` set).
+	 *   - Dashes will be applied via path command when data contains nullish value.
 	 * @name data․regions
 	 * @memberof Options
 	 * @type {object}

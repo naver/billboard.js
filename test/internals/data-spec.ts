@@ -759,42 +759,6 @@ describe("DATA", () => {
 			args = {
 				data: {
 					columns: [
-						["data1", 30, 200, 200, 400, 150, 250]
-					],
-					regions: {
-						data1: [
-							{
-								start: 1,
-								end: 2,
-								style: {
-									dasharray: "5 3"
-								}
-							},
-							{
-								start: 3
-							}
-						]
-					}
-				}
-			};
-		});
-
-		const checkPathLengths = expected => {
-			const line = chart.$.main.select(`path.${$LINE.line}-data1`);
-			const path = line.attr("d");
-
-			expect(path.split("M").length).to.be.equal(expected.M);
-			expect(path.split("L").length).to.be.equal(expected.L);
-		}
-
-		it("should be generating correct dashed path data", () => {
-			checkPathLengths({M: 118, L: 119});
-		});
-
-		it("set options for null data", () => {
-			args = {
-				data: {
-					columns: [
 						["data1", null, 100, 200, null, 100, 20, 30, null, null]
 					],
 					regions: {
@@ -815,6 +779,34 @@ describe("DATA", () => {
 			};
 		});
 
+		const checkPathLengths = expected => {
+			const line = chart.$.main.select(`path.${$LINE.line}-data1`);
+			const path = line.attr("d");
+
+			expect(path.split("M").length).to.be.equal(expected.M);
+			expect(path.split("L").length).to.be.equal(expected.L);
+		}
+
+		const checkStyleLengths = (dataId, closeTo = 1) => {
+			const {line: {lines}} = chart.$;
+			const target = lines.filter(({id}) => id === dataId);
+			const strokeDashArray = target.attr("stroke-dasharray");
+			const dashLength = strokeDashArray.split(" ").map(Number).reduce((a, c) => a + c);
+			const totalLength = target.node().getTotalLength();
+			const lastDashLength = +strokeDashArray.match(/\d+(\.\d+)?$/)[0];
+			const path = target.attr("d");
+
+			expect(path.split("M").length).to.be.equal(2);
+			expect(path.split("L").length).to.be.equal(chart.data.values(dataId).filter(Boolean).length);
+
+
+			if(lastDashLength === totalLength) {
+				expect(dashLength).to.be.greaterThan(totalLength);
+			} else {
+				expect(totalLength).to.be.closeTo(dashLength, closeTo);			
+			}
+		};
+
 		it("should be generating correct dashed path data", () => {
 			checkPathLengths({M: 38, L: 37});
 		});
@@ -823,11 +815,11 @@ describe("DATA", () => {
 			args.line = {connectNull: true};
 		});
 
-		it("should be generating correct dashed path data", () => {
-			checkPathLengths({M: 37, L: 38});
+		it("should be generating correct dashed style", () => {
+			checkStyleLengths("data1");
 		});
 
-		it("set options", () => {
+		it("set options: category type axis", () => {
 			args = {
 				data: {
 					columns: [
@@ -850,17 +842,81 @@ describe("DATA", () => {
 		});
 
 		it("check regions for 'category' type axis", () => {
-			const d = chart.$.line.lines.attr("d").split("M").filter(Boolean);
+			checkStyleLengths("data1");
+		});
 
-			expect(d.length).to.be.greaterThan(50);
+		it("set options: axis.rotated=true", () => {
+			args.axis.rotated = true;
+		});
 
-			// check x coordinate starts
-			d.slice(0,4).forEach(v => {
-				const x = parseInt(v, 10);
+		it("check regions for 'category' type axis on roated axis", () => {
+			checkStyleLengths("data1");
+		});
 
-				// should be between 70 ~ 80
-				expect(x > 70 && x < 80).to.be.true;
-			});
+		it("set options: timeseries type axis", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2023-08-25", "2023-08-26", "2023-08-27", "2023-08-29", , "2023-09-02"],
+						["data1", 50, 20, 10, 30, 50],
+						["data2", 23, 50, 30, 70, 25]
+					],
+					regions: {
+						data1: [
+							{
+								end: "2023-08-27",
+								style: {
+									dasharray: "5 2"
+								}
+							},
+							{
+								start: "2023-08-29",
+								style: {
+									dasharray: "10 10"
+								}
+							},
+						],
+						data2: [
+							{
+								end: "2023-08-26",
+								style: {
+									dasharray: "1 3"
+								}
+							},
+							{
+								start: "2023-08-27",
+								end: "2023-08-29",
+								style: {
+									dasharray: "8 8"
+								}
+							}
+						]
+					}
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d",
+						}
+					}
+				}
+			};
+		});
+
+		it("check regions for 'timeseries' type axis", () => {
+			checkStyleLengths("data1", 4);
+			checkStyleLengths("data2");
+		});
+
+		it("set options: axis.rotated=true", () => {
+			args.axis.rotated = true;
+		});
+
+		it("check regions for 'timeseries' type axis on roated axis", () => {
+			checkStyleLengths("data1", 4);
+			checkStyleLengths("data2");
 		});
 	});
 

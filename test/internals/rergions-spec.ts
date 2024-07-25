@@ -186,8 +186,8 @@ describe("REGIONS", function() {
 				data: {
 					x: "x",
 					columns: [
-						["x", "2023-08-25", "2023-08-26", "2023-08-27"],
-						["data1", 50, 20, 10]
+						["x", "2023-08-25", "2023-08-26", "2023-08-27", "2023-08-28", "2023-08-29"],
+						["data1", 50, 20, 10, null, 20, 30]
 					],
 					regions: {
 						data1: [{
@@ -213,14 +213,14 @@ describe("REGIONS", function() {
 		it("should regions applied for timeseries chart.", () => {
 			const lCnt = chart.$.line.lines.attr("d").split("L").length;
 
-			expect(lCnt).to.be.above(30);
+			expect(lCnt).to.be.above(19);
 		});
 
 		it("set options", () => {
 			args = {
 				data: {
 					columns: [
-						["data1", 30, 200, 100, 400 , 150, 250, 30]
+						["data1", null, 200, 100, 152, 150, 250, 30]
 					],
 					type: "line",
 					regions: {
