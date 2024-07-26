@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.12.4-nightly-20240724004639
+ * @version 3.12.4-nightly-20240726004631
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -4456,9 +4456,22 @@ var data$1 = {
             (isObjectType(dataLabels) && notEmpty(dataLabels));
     },
     /**
+     * Determine if has null value
+     * @param {Array} targets Data array to be evaluated
+     * @returns {boolean}
+     * @private
+     */
+    hasNullDataValue: function (targets) {
+        return targets.some(function (_a) {
+            var value = _a.value;
+            return value === null;
+        });
+    },
+    /**
      * Get data index from the event coodinates
      * @param {Event} event Event object
      * @returns {number}
+     * @private
      */
     getDataIndexFromEvent: function (event) {
         var $$ = this;
@@ -7020,15 +7033,13 @@ var redraw = {
 /**
  * Get scale
  * @param {string} [type='linear'] Scale type
- * @param {number} [min] Min range
- * @param {number} [max] Max range
+ * @param {number|Date} [min] Min range
+ * @param {number|Date} [max] Max range
  * @returns {d3.scaleLinear|d3.scaleTime} scale
  * @private
  */
 function getScale(type, min, max) {
     if (type === void 0) { type = "linear"; }
-    if (min === void 0) { min = 0; }
-    if (max === void 0) { max = 1; }
     var scale = ({
         linear: scaleLinear,
         log: scaleSymlog,
@@ -7038,7 +7049,7 @@ function getScale(type, min, max) {
     })[type]();
     scale.type = type;
     /_?log/.test(type) && scale.clamp(true);
-    return scale.range([min, max]);
+    return scale.range([min !== null && min !== void 0 ? min : 0, max !== null && max !== void 0 ? max : 1]);
 }
 var scale = {
     /**
@@ -17497,8 +17508,12 @@ var optDataAxis = {
      * - The object type should be as:
      *   - start {number}: Start data point number. If not set, the start will be the first data point.
      *   - [end] {number}: End data point number. If not set, the end will be the last data point.
-     *   - [style.dasharray="2 2"] {object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
-     * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
+     *   - [style.dasharray="2 2"] {string}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
+     * - **NOTE:**
+     *   - Supports only line type.
+     *   - `start` and `end` values should be in the exact x value range.
+     *   - Dashes will be applied using `stroke-dasharray` css property when data doesn't contain nullish value(or nullish value with `line.connectNull=true` set).
+     *   - Dashes will be applied via path command when data contains nullish value.
      * @name data․regions
      * @memberof Options
      * @type {object}
@@ -19622,6 +19637,63 @@ var shapeGauge = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+/**
+ * Get stroke dasharray style value
+ * @param {number} start Start position in path length
+ * @param {number} end End position in path length
+ * @param {Array} pattern Dash array pattern
+ * @param {boolean} isLastX Weather is last x tick
+ * @returns {object} Stroke dasharray style value and its length
+ * @private
+ */
+function getStrokeDashArray(start, end, pattern, isLastX) {
+    if (isLastX === void 0) { isLastX = false; }
+    var dash = start ? [start, 0] : pattern;
+    var _loop_1 = function (i) {
+        pattern.forEach(function (v) {
+            if (i + v <= end) {
+                dash.push(v);
+            }
+            i += v;
+        });
+        out_i_1 = i;
+    };
+    var out_i_1;
+    for (var i = start ? start : pattern.reduce(function (a, c) { return a + c; }); i <= end;) {
+        _loop_1(i);
+        i = out_i_1;
+    }
+    // make sure to have even length
+    dash.length % 2 !== 0 && dash.push(isLastX ? pattern[1] : 0);
+    return {
+        dash: dash.join(" "),
+        length: dash.reduce(function (a, b) { return a + b; }, 0)
+    };
+}
+/**
+ * Get regions data
+ * @param {Array} d Data object
+ * @param {object} _regions regions to be set
+ * @param {boolean} isTimeSeries whether is time series
+ * @returns {object} Regions data
+ * @private
+ */
+function getRegions(d, _regions, isTimeSeries) {
+    var $$ = this;
+    var regions = [];
+    var dasharray = "2 2"; // default value
+    // Check start/end of regions
+    if (isDefined(_regions)) {
+        var getValue = function (v, def) { return (isUndefined(v) ? def : (isTimeSeries ? parseDate.call($$, v) : v)); };
+        for (var i = 0, reg = void 0; (reg = _regions[i]); i++) {
+            var start = getValue(reg.start, d[0].x);
+            var end = getValue(reg.end, d[d.length - 1].x);
+            var style = reg.style || { dasharray: dasharray };
+            regions[i] = { start: start, end: end, style: style };
+        }
+    }
+    return regions;
+}
 var shapeLine = {
     initLine: function () {
         var $el = this.$el;
@@ -19778,27 +19850,28 @@ var shapeLine = {
             return path || "M 0 0";
         };
     },
+    /**
+     * Set regions dasharray and get path
+     * @param {Array} d Data object
+     * @param {Function} x x scale function
+     * @param {Function} y y scale function
+     * @param {object} _regions regions to be set
+     * @returns {stirng} Path string
+     * @private
+     */
     lineWithRegions: function (d, x, y, _regions) {
         var $$ = this;
         var config = $$.config;
         var isRotated = config.axis_rotated;
         var isTimeSeries = $$.axis.isTimeSeries();
-        var regions = [];
         var dasharray = "2 2"; // default value
+        var regions = getRegions.bind($$)(d, _regions, isTimeSeries);
+        // when contains null data, can't apply style dashed
+        var hasNullDataValue = $$.hasNullDataValue(d);
         var xp;
         var yp;
         var diff;
         var diffx2;
-        // Check start/end of regions
-        if (isDefined(_regions)) {
-            var getValue = function (v, def) { return (isUndefined(v) ? def : (isTimeSeries ? parseDate.call($$, v) : v)); };
-            for (var i = 0, reg = void 0; (reg = _regions[i]); i++) {
-                var start = getValue(reg.start, d[0].x);
-                var end = getValue(reg.end, d[d.length - 1].x);
-                var style = reg.style || { dasharray: dasharray };
-                regions[i] = { start: start, end: end, style: style };
-            }
-        }
         // Set scales
         var xValue = isRotated ? function (dt) { return y(dt.value); } : function (dt) { return x(dt.x); };
         var yValue = isRotated ? function (dt) { return x(dt.x); } : function (dt) { return y(dt.value); };
@@ -19832,20 +19905,28 @@ var shapeLine = {
                 if (d0.value > d1.value && (isRotated ? yDiff < y0 : yDiff > y0)) {
                     yDiff = y0;
                 }
-                var points = isRotated ?
-                    [
-                        [yValue, xValue],
-                        [yDiff, xDiff]
-                    ] :
-                    [
-                        [xValue, yValue],
-                        [xDiff, yDiff]
-                    ];
+                var points = [
+                    [xValue, yValue],
+                    [xDiff, yDiff]
+                ];
+                isRotated && points.forEach(function (v) { return v.reverse(); });
                 return generateM(points);
             };
         // Generate
         var axisType = { x: $$.axis.getAxisType("x"), y: $$.axis.getAxisType("y") };
         var path = "";
+        // clone the line path to be used to get length value
+        var target = $$.$el.line.filter(function (_a) {
+            var id = _a.id;
+            return id === d[0].id;
+        });
+        var tempNode = target.clone().style("display", "none");
+        var getLength = function (node, path) { return node.attr("d", path).node().getTotalLength(); };
+        var dashArray = {
+            dash: [],
+            lastLength: 0
+        };
+        var isLastX = false;
         for (var i = 0, data = void 0; (data = d[i]); i++) {
             var prevData = d[i - 1];
             var hasPrevData = prevData && isValue(prevData.value);
@@ -19863,19 +19944,53 @@ var shapeLine = {
                 // Draw with region // TODO: Fix for horizotal charts
                 xp = getScale(axisType.x, prevData.x, data.x);
                 yp = getScale(axisType.y, prevData.value, data.value);
-                var dx = x(data.x) - x(prevData.x);
-                var dy = y(data.value) - y(prevData.value);
-                var dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-                diff = style[0] / dd; // dash
-                diffx2 = diff * style[1]; // gap
-                for (var j = diff; j <= 1; j += diffx2) {
-                    path += sWithRegion(prevData, data, j, diff);
-                    // to make sure correct line drawing
-                    if (j + diffx2 >= 1) {
-                        path += sWithRegion(prevData, data, 1, 0);
+                // when it contains null data, dash can't be applied with style
+                if (hasNullDataValue) {
+                    var dx = x(data.x) - x(prevData.x);
+                    var dy = y(data.value) - y(prevData.value);
+                    var dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+                    diff = style[0] / dd; // dash
+                    diffx2 = diff * style[1]; // gap
+                    for (var j = diff; j <= 1; j += diffx2) {
+                        path += sWithRegion(prevData, data, j, diff);
+                        // to make sure correct line drawing
+                        if (j + diffx2 >= 1) {
+                            path += sWithRegion(prevData, data, 1, 0);
+                        }
                     }
                 }
+                else {
+                    var points = [];
+                    isLastX = data.x === d[d.length - 1].x;
+                    if (isTimeSeries) {
+                        var x0 = +prevData.x;
+                        var xv0 = new Date(x0);
+                        var xv1 = new Date(x0 + (+data.x - x0));
+                        points = [
+                            [x(xv0), y(yp(0))], // M
+                            [x(xv1), y(yp(1))] // L
+                        ];
+                    }
+                    else {
+                        points = [
+                            [x(xp(0)), y(yp(0))], // M
+                            [x(xp(1)), y(yp(1))] // L
+                        ];
+                    }
+                    isRotated && points.forEach(function (v) { return v.reverse(); });
+                    var startLength = getLength(tempNode, path);
+                    var endLength = getLength(tempNode, path += "L".concat(points[1].join(",")));
+                    var strokeDashArray = getStrokeDashArray(startLength - dashArray.lastLength, endLength - dashArray.lastLength, style, isLastX);
+                    dashArray.lastLength += strokeDashArray.length;
+                    dashArray.dash.push(strokeDashArray.dash);
+                }
             }
+        }
+        if (dashArray.dash.length) {
+            // if not last x tick, then should draw rest of path that is not drawed yet
+            !isLastX && dashArray.dash.push(getLength(tempNode, path));
+            tempNode.remove();
+            target.attr("stroke-dasharray", dashArray.dash.join(" "));
         }
         return path;
     },
@@ -24263,7 +24378,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.12.4-nightly-20240724004639
+ * @version 3.12.4-nightly-20240726004631
  */
 var bb = {
     /**
@@ -24273,7 +24388,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.12.4-nightly-20240724004639",
+    version: "3.12.4-nightly-20240726004631",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240724004639
+ * @version 3.12.4-nightly-20240726004631
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -4084,9 +4084,19 @@ function getDataKeyForJson(keysParam, config) {
     return isBoolean(dataLabels) && dataLabels || isObjectType(dataLabels) && notEmpty(dataLabels);
   },
   /**
+   * Determine if has null value
+   * @param {Array} targets Data array to be evaluated
+   * @returns {boolean}
+   * @private
+   */
+  hasNullDataValue(targets) {
+    return targets.some(({ value }) => value === null);
+  },
+  /**
    * Get data index from the event coodinates
    * @param {Event} event Event object
    * @returns {number}
+   * @private
    */
   getDataIndexFromEvent(event) {
     const $$ = this;
@@ -6270,7 +6280,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/scale.ts
 
 
-function getScale(type = "linear", min = 0, max = 1) {
+function getScale(type = "linear", min, max) {
   const scale = {
     linear: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleLinear,
     log: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSymlog,
@@ -6280,7 +6290,7 @@ function getScale(type = "linear", min = 0, max = 1) {
   }[type]();
   scale.type = type;
   /_?log/.test(type) && scale.clamp(true);
-  return scale.range([min, max]);
+  return scale.range([min != null ? min : 0, max != null ? max : 1]);
 }
 /* harmony default export */ var scale = ({
   /**
@@ -17075,8 +17085,12 @@ var axis_spreadValues = (a, b) => {
    * - The object type should be as:
    *   - start {number}: Start data point number. If not set, the start will be the first data point.
    *   - [end] {number}: End data point number. If not set, the end will be the last data point.
-   *   - [style.dasharray="2 2"] {object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
-   * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
+   *   - [style.dasharray="2 2"] {string}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
+   * - **NOTE:**
+   *   - Supports only line type.
+   *   - `start` and `end` values should be in the exact x value range.
+   *   - Dashes will be applied using `stroke-dasharray` css property when data doesn't contain nullish value(or nullish value with `line.connectNull=true` set).
+   *   - Dashes will be applied via path command when data contains nullish value.
    * @name data․regions
    * @memberof Options
    * @type {object}
@@ -18925,6 +18939,37 @@ function updateRatio(data) {
 
 
 
+function getStrokeDashArray(start, end, pattern, isLastX = false) {
+  const dash = start ? [start, 0] : pattern;
+  for (let i = start ? start : pattern.reduce((a, c) => a + c); i <= end; ) {
+    pattern.forEach((v) => {
+      if (i + v <= end) {
+        dash.push(v);
+      }
+      i += v;
+    });
+  }
+  dash.length % 2 !== 0 && dash.push(isLastX ? pattern[1] : 0);
+  return {
+    dash: dash.join(" "),
+    length: dash.reduce((a, b) => a + b, 0)
+  };
+}
+function getRegions(d, _regions, isTimeSeries) {
+  const $$ = this;
+  const regions = [];
+  const dasharray = "2 2";
+  if (isDefined(_regions)) {
+    const getValue = (v, def) => isUndefined(v) ? def : isTimeSeries ? parseDate.call($$, v) : v;
+    for (let i = 0, reg; reg = _regions[i]; i++) {
+      const start = getValue(reg.start, d[0].x);
+      const end = getValue(reg.end, d[d.length - 1].x);
+      const style = reg.style || { dasharray };
+      regions[i] = { start, end, style };
+    }
+  }
+  return regions;
+}
 /* harmony default export */ var line = ({
   initLine() {
     const { $el } = this;
@@ -19046,26 +19091,27 @@ function updateRatio(data) {
       return path || "M 0 0";
     };
   },
+  /**
+   * Set regions dasharray and get path
+   * @param {Array} d Data object
+   * @param {Function} x x scale function
+   * @param {Function} y y scale function
+   * @param {object} _regions regions to be set
+   * @returns {stirng} Path string
+   * @private
+   */
   lineWithRegions(d, x, y, _regions) {
     const $$ = this;
     const { config } = $$;
     const isRotated = config.axis_rotated;
     const isTimeSeries = $$.axis.isTimeSeries();
-    const regions = [];
     const dasharray = "2 2";
+    const regions = getRegions.bind($$)(d, _regions, isTimeSeries);
+    const hasNullDataValue = $$.hasNullDataValue(d);
     let xp;
     let yp;
     let diff;
     let diffx2;
-    if (isDefined(_regions)) {
-      const getValue = (v, def) => isUndefined(v) ? def : isTimeSeries ? parseDate.call($$, v) : v;
-      for (let i = 0, reg; reg = _regions[i]; i++) {
-        const start = getValue(reg.start, d[0].x);
-        const end = getValue(reg.end, d[d.length - 1].x);
-        const style = reg.style || { dasharray };
-        regions[i] = { start, end, style };
-      }
-    }
     const xValue = isRotated ? (dt) => y(dt.value) : (dt) => x(dt.x);
     const yValue = isRotated ? (dt) => x(dt.x) : (dt) => y(dt.value);
     const generateM = (points) => `M${points[0][0]},${points[0][1]}L${points[1][0]},${points[1][1]}`;
@@ -19090,17 +19136,23 @@ function updateRatio(data) {
       if (d0.value > d1.value && (isRotated ? yDiff < y0 : yDiff > y0)) {
         yDiff = y0;
       }
-      const points = isRotated ? [
-        [yValue2, xValue2],
-        [yDiff, xDiff]
-      ] : [
+      const points = [
         [xValue2, yValue2],
         [xDiff, yDiff]
       ];
+      isRotated && points.forEach((v) => v.reverse());
       return generateM(points);
     };
     const axisType = { x: $$.axis.getAxisType("x"), y: $$.axis.getAxisType("y") };
     let path = "";
+    const target = $$.$el.line.filter(({ id }) => id === d[0].id);
+    const tempNode = target.clone().style("display", "none");
+    const getLength = (node, path2) => node.attr("d", path2).node().getTotalLength();
+    const dashArray = {
+      dash: [],
+      lastLength: 0
+    };
+    let isLastX = false;
     for (let i = 0, data; data = d[i]; i++) {
       const prevData = d[i - 1];
       const hasPrevData = prevData && isValue(prevData.value);
@@ -19114,18 +19166,57 @@ function updateRatio(data) {
         style = ((style == null ? void 0 : style.dasharray) || dasharray).split(" ").map(Number);
         xp = getScale(axisType.x, prevData.x, data.x);
         yp = getScale(axisType.y, prevData.value, data.value);
-        const dx = x(data.x) - x(prevData.x);
-        const dy = y(data.value) - y(prevData.value);
-        const dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-        diff = style[0] / dd;
-        diffx2 = diff * style[1];
-        for (let j = diff; j <= 1; j += diffx2) {
-          path += sWithRegion(prevData, data, j, diff);
-          if (j + diffx2 >= 1) {
-            path += sWithRegion(prevData, data, 1, 0);
+        if (hasNullDataValue) {
+          const dx = x(data.x) - x(prevData.x);
+          const dy = y(data.value) - y(prevData.value);
+          const dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+          diff = style[0] / dd;
+          diffx2 = diff * style[1];
+          for (let j = diff; j <= 1; j += diffx2) {
+            path += sWithRegion(prevData, data, j, diff);
+            if (j + diffx2 >= 1) {
+              path += sWithRegion(prevData, data, 1, 0);
+            }
           }
+        } else {
+          let points = [];
+          isLastX = data.x === d[d.length - 1].x;
+          if (isTimeSeries) {
+            const x0 = +prevData.x;
+            const xv0 = new Date(x0);
+            const xv1 = new Date(x0 + (+data.x - x0));
+            points = [
+              [x(xv0), y(yp(0))],
+              // M
+              [x(xv1), y(yp(1))]
+              // L
+            ];
+          } else {
+            points = [
+              [x(xp(0)), y(yp(0))],
+              // M
+              [x(xp(1)), y(yp(1))]
+              // L
+            ];
+          }
+          isRotated && points.forEach((v) => v.reverse());
+          const startLength = getLength(tempNode, path);
+          const endLength = getLength(tempNode, path += `L${points[1].join(",")}`);
+          const strokeDashArray = getStrokeDashArray(
+            startLength - dashArray.lastLength,
+            endLength - dashArray.lastLength,
+            style,
+            isLastX
+          );
+          dashArray.lastLength += strokeDashArray.length;
+          dashArray.dash.push(strokeDashArray.dash);
         }
       }
+    }
+    if (dashArray.dash.length) {
+      !isLastX && dashArray.dash.push(getLength(tempNode, path));
+      tempNode.remove();
+      target.attr("stroke-dasharray", dashArray.dash.join(" "));
     }
     return path;
   },
@@ -21543,7 +21634,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.12.4-nightly-20240724004639",
+  version: "3.12.4-nightly-20240726004631",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
