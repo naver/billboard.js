@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240726004631
+ * @version 3.12.4-nightly-20240727004635
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -36605,6 +36605,7 @@ util_extend(zoom, {
 
 
 
+
 /* harmony default export */ var interactions_zoom = ({
   /**
    * Initialize zoom.
@@ -36814,8 +36815,12 @@ util_extend(zoom, {
    */
   bindZoomOnEventRect() {
     const $$ = this;
-    const { config, $el: { eventRect } } = $$;
+    const { config, $el: { eventRect, svg } } = $$;
     const behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
+    if (win.GestureEvent && /^((?!chrome|android|mobile).)*safari/i.test(navigator.userAgent)) {
+      svg.on("wheel", () => {
+      });
+    }
     eventRect == null ? void 0 : eventRect.call(behaviour).on("dblclick.zoom", null);
   },
   /**
@@ -48244,7 +48249,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.12.4-nightly-20240726004631",
+  version: "3.12.4-nightly-20240727004635",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
