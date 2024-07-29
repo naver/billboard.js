@@ -161,7 +161,7 @@
 		"regenerator-runtime": "^0.14.1",
 		"rollup": "^4.19.0",
 		"rollup-plugin-delete": "^2.0.0",
-		"sass-loader": "^14.2.1",
+		"sass-loader": "^16.0.0",
 		"semantic-release": "^24.0.0",
 		"simulant": "^0.2.2",
 		"sinon": "^18.0.0",
