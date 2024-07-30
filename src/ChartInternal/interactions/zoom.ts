@@ -337,7 +337,9 @@ export default {
 		// for workaround, register wheel event on <svg> element first
 		// https://bugs.webkit.org/show_bug.cgi?id=226683#c3
 		// https://stackoverflow.com/questions/67836886/wheel-event-is-not-fired-on-a-svg-group-element-in-safari
-		if (window.GestureEvent && /^((?!chrome|android|mobile).)*safari/i.test(navigator.userAgent)) {
+		if (
+			window.GestureEvent && /^((?!chrome|android|mobile).)*safari/i.test(navigator.userAgent)
+		) {
 			svg.on("wheel", () => {});
 		}
 
