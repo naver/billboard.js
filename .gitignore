@@ -2,6 +2,7 @@
 *.log
 *.iml
 package-lock.json
+.yarn/*
 /*.css
 /*.html
 /*.js
