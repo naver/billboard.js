@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import {$AREA, $AXIS, $CIRCLE, $COMMON, $LINE} from "../../src/config/classes";
 import util from "../assets/util";
@@ -23,7 +23,7 @@ describe("SHAPE AREA", () => {
 	});
 
 	describe("timeseries stacked area when line.connectNull=true", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -64,7 +64,7 @@ describe("SHAPE AREA", () => {
 	});
 
 	describe("area path generation", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -136,7 +136,7 @@ describe("SHAPE AREA", () => {
 	});
 
 	describe("rotated area-step type", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -197,7 +197,7 @@ describe("SHAPE AREA", () => {
 	});
 
 	describe("Stacked area-step with category & timeseries x Axis type", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -329,7 +329,7 @@ describe("SHAPE AREA", () => {
 	});
 
 	describe("area linear gradient", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 				columns: [
@@ -429,23 +429,21 @@ describe("SHAPE AREA", () => {
 			};
 		});
 
-		it("should generate customized liearGradient element", done => {
-			setTimeout(() => {
-				chart.load({
-				  columns: [
-					["data", 10, 20, 30, 40]
-				  ],
-				  done: () => {
-					  expect(chart.$.defs.select("linearGradient").empty()).to.be.false;
-					  done();
-				  }
-				});
-			  }, 1000);
-		});
+		it("should generate customized liearGradient element", () => new Promise(done => {
+			chart.load({
+				columns: [
+				["data", 10, 20, 30, 40]
+				],
+				done() {
+					expect(chart.$.defs.select("linearGradient").empty()).to.be.false;
+					done(1);
+				}
+			});
+		}));
 	});
 
 	describe("area options", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -481,7 +479,7 @@ describe("SHAPE AREA", () => {
 	});
 
 	describe("area fill options: above & below", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

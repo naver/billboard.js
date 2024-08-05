@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$AXIS, $COMMON, $LEVEL, $RADAR} from "../../src/config/classes";
 
@@ -19,7 +19,7 @@ describe("SHAPE RADAR", () => {
 	describe("default radar", () => {
 		let points;
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -44,16 +44,16 @@ describe("SHAPE RADAR", () => {
 			expect(chart.internal.$el.radar.select(`.${$COMMON.target}-data1 polygon`).node().nextSibling.querySelectorAll("circle").length).to.equal(3);
 		});
 
-		it("check for shape rendering", done => {
+		it("check for shape rendering", () => new Promise(done => {
 			const radar = chart.$.main.select(`.${$RADAR.chartRadars}`);
 			const expectedPoints = "233,30.290000000000003 233,233 309.32696069614934,277.06739130434784";
 
 			setTimeout(() => {
 				expect(radar.select(".bb-shapes polygon").attr("points")).to.be.equal(expectedPoints);
 
-				done();
+				done(1);
 			}, 300)
-		});
+		}));
 
 		it("Should render level, axes and data edges", () => {
 			const radar = chart.$.main.select(`.${$RADAR.chartRadars}`);
@@ -203,7 +203,7 @@ describe("SHAPE RADAR", () => {
 	describe("Axis", () => {
 		const textPos: any = [];
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -333,7 +333,7 @@ describe("SHAPE RADAR", () => {
 	});
 
 	describe("point.focus.only", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -391,7 +391,7 @@ describe("SHAPE RADAR", () => {
 	});
 
 	describe("size & position", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -406,7 +406,7 @@ describe("SHAPE RADAR", () => {
 			};
 		});
 
-		it("should resize with axes texts", done => {
+		it("should resize with axes texts", () => new Promise(done => {
 			const {$el: {radar}, state} = chart.internal;
 			const yPos = util.parseNum(radar.attr("transform").replace(/[^,]+/, ""));
 
@@ -417,8 +417,8 @@ describe("SHAPE RADAR", () => {
 				expect(util.parseNum(radar.attr("transform").replace(/[^,]+/, ""))).to.be.greaterThan(yPos);
 				expect(radar.node().getBoundingClientRect().width).to.be.below(state.width);
 
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 	});
 });

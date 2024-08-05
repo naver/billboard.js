@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$GRID} from "../../src/config/classes";
@@ -11,7 +11,7 @@ import {$GRID} from "../../src/config/classes";
 describe("API grid", function() {
 	let chart;
 
-	before(() => {
+	beforeAll(() => {
 		return new Promise((resolve) => {
 			chart = util.generate({
 				data: {
@@ -28,7 +28,7 @@ describe("API grid", function() {
 	});
 
 	describe("ygrids.add() / ygrids.remove()", () => {
-		it("should update y grids", done => {
+		it("should update y grids", () => new Promise(done => {
 			const main = chart.$.main;
 			const expectedGrids = [{
 					value: 100,
@@ -63,11 +63,11 @@ describe("API grid", function() {
 				grids = main.selectAll(`.${$GRID.ygridLine}`);
 
 				expect(grids.size()).to.be.equal(0);
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
-		it("should update x ygrids even if it's zoomed", done => {
+		it("should update x ygrids even if it's zoomed", () => new Promise(done => {
 			const main = chart.$.main;
 			const expectedGrids = [{
 					value: 0,
@@ -118,15 +118,15 @@ describe("API grid", function() {
 						grids = main.selectAll(`.${$GRID.xgridLine}`);
 
 						expect(grids.size()).to.be.equal(0);
-						done();
-					}, 500);
-				}, 500);
-			}, 500);
-		});
+						done(1);
+					}, 300);
+				}, 300);
+			}, 300);
+		}));
 	});
 
 	describe("xgrids()", () => {
-		before(() => {
+		beforeAll(() => {
 			chart = util.generate({
 				data: {
 					columns: [
@@ -201,7 +201,7 @@ describe("API grid", function() {
 	});
 
 	describe("Add xgrids() when is zoomed", () => {
-		before(() => {
+		beforeAll(() => {
 			chart = util.generate({
 				data: {
 					columns: [
@@ -235,7 +235,7 @@ describe("API grid", function() {
 	});
 
 	describe("ygrids()", () => {
-		before(() => {
+		beforeAll(() => {
 			chart = util.generate({
 				data: {
 					columns: [

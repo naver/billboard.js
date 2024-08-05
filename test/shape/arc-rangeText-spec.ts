@@ -5,7 +5,7 @@
 /* eslint-disable */
 // @ts-nocheck
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import {$ARC} from "../../src/config/classes";
 import util from "../assets/util";
 
@@ -42,7 +42,7 @@ describe("SHAPE ARC: rangeText option", () => {
         chart = util.generate(args);
     });
 
-    it("basic functionality: donut", () => {
+    it("basic functionality: donut", () => new Promise(done => {
         const expected = [
             [98, -192],
             [218, 3],
@@ -57,8 +57,8 @@ describe("SHAPE ARC: rangeText option", () => {
             const [x, y] = this.getAttribute("transform").split(",").map(util.parseNum);
             const [nx, ny] = expected[i];
             
-            expect(x).to.be.closeTo(nx, 1);
-            expect(y).to.be.closeTo(ny, 1);
+            expect(x).closeTo(nx, 1);
+            expect(y).closeTo(ny, 1);
         });
 
         // check for format function
@@ -83,9 +83,9 @@ describe("SHAPE ARC: rangeText option", () => {
                 expect(this.style.opacity).to.be.empty;
             });
 
-            done();
+            done(1);
         });
-    });
+    }));
 
     it("set options: data.type='pie' / rangeText.unit='%'", () => {
         args.arc.rangeText.values = [10, 25, 50, 75, 99];
@@ -93,7 +93,7 @@ describe("SHAPE ARC: rangeText option", () => {
         args.data.type = "pie";
     });
 
-    it("basic functionality: pie", done => {
+    it("basic functionality: pie", () => new Promise(done => {
         const expected = [
             [128, -174],
             [218, 3],
@@ -131,15 +131,15 @@ describe("SHAPE ARC: rangeText option", () => {
                 expect(this.style.opacity).to.be.empty;
             });
 
-            done();
+            done(1);
         });
-    });
+    }));
 
     it("set options: data.type='gauge'", () => {
         args.data.type = "gauge";
     });
 
-    it("basic functionality: gauge", done => {
+    it("basic functionality: gauge", () => new Promise(done => {
         const expected = [
             [-297, -95],
             [-220, -220],
@@ -187,15 +187,15 @@ describe("SHAPE ARC: rangeText option", () => {
                 expect(y).to.be.closeTo(ny, 1);
             });
 
-            done();
+            done(1);
         });
-    });
+    }));
 
     it("set options: arc.rangeText.fixed=true", () => {
         args.arc.rangeText.fixed = true;
     });
 
-    it("should rangeText position fixed on gauge type.", done => {
+    it("should rangeText position fixed on gauge type.", () => new Promise(done => {
         const expected = [
             [-297, -95],
             [-220, -220],
@@ -243,9 +243,9 @@ describe("SHAPE ARC: rangeText option", () => {
                 expect(y).to.be.closeTo(ny, 1);
             });
 
-            done();
+            done(1);
         });
-    });
+    }));
 
     it("set options: arc.rangeText.position #1", () => {
         args.arc.rangeText.position = {

@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$AXIS} from "../../src/config/classes";
 
@@ -16,7 +16,7 @@ describe("API x", () => {
 	});
 
 	describe(".x()", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -84,7 +84,7 @@ describe("API x", () => {
 			x2: [30, 50, 75]
 		};
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					xs: {

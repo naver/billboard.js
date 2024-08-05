@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import TableView from "../../../src/Plugin/tableview";
 import {defaultStyle} from "../../../src/Plugin/tableview/const";
@@ -30,7 +30,7 @@ describe("PLUGIN: TABLE-VIEW", () => {
 	describe("default style", () => {
 		let spy;
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -163,7 +163,7 @@ describe("PLUGIN: TABLE-VIEW", () => {
 	describe("Specify non table element as target", () => {
 		const divId = "tableView_div_wrapper";
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -187,7 +187,7 @@ describe("PLUGIN: TABLE-VIEW", () => {
 			document.body.appendChild(div);
 		});
 
-		after(() => {
+		afterAll(() => {
 			document.getElementById(divId)?.remove();
 		});
 
@@ -200,7 +200,7 @@ describe("PLUGIN: TABLE-VIEW", () => {
 	});
 
 	describe("different x axis types", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -269,7 +269,7 @@ describe("PLUGIN: TABLE-VIEW", () => {
 	});
 
 	describe("nullString option", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",

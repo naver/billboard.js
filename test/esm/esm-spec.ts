@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {describe, expect, it} from "vitest";
 import * as bb from "../../src/index.esm";
 import {$RADAR} from "../../src/config/classes";
 

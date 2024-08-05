@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 
 describe("API export", () => {
@@ -26,17 +26,17 @@ describe("API export", () => {
 	});
 
 	describe("Basic export functionalities", () => {
-		it("should invoke a callback when ready", done => {
+		it("should invoke a callback when ready", () => new Promise(done => {
 			function exportCallback(dataUrl) {
 				expect(dataUrl).to.not.be.equal("");
-				done();
+				done(1);
 			}
 
 			expect(/^data:image\/svg\+xml;base64,.+/.test(chart.export())).to.be.true;
 			chart.export(null, exportCallback);
-		});
+		}));
 
-		it("should export chart as image/png", done => {
+		it("should export chart as image/png", () => new Promise(done => {
 			function exportCallback(dataUrl) {
 				const link: any = document.createElement("link");
 
@@ -44,13 +44,13 @@ describe("API export", () => {
 				link.href = dataUrl;
 				expect(link.getAttribute("href").length).to.be.not.equal(0);
 
-				done();
+				done(1);
 			}
 
 			chart.export({mimeType: "image/png"}, exportCallback);
-		});
+		}));
 
-		it("should export in different size", done => {
+		it("should export in different size", () => new Promise(done => {
 			const expectedDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA+gAAAJYCAYAAA";
 
 			setTimeout(() => {
@@ -59,12 +59,12 @@ describe("API export", () => {
 				}, data => {
 					expect(data.indexOf(expectedDataURL) >= 0).to.be.true;
 					
-					done();
+					done(1);
 				});
-			}, 500);
-		});
+			}, 300);
+		}));
 
-		it("should export in different aspectRatio", done => {
+		it("should export in different aspectRatio", () => new Promise(done => {
 			const expectedDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAEsCAYAAACG+vy+AAA";
 
 			setTimeout(() => {
@@ -73,10 +73,10 @@ describe("API export", () => {
 				}, data => {
 					expect(data.indexOf(expectedDataURL) > -1).to.be.true;
 
-					done();
+					done(1);
 				});
-			}, 500);
-		});
+			}, 300);
+		}));
 
 		it("set options", () => {
 			args = {
@@ -118,16 +118,16 @@ describe("API export", () => {
 			};
 		});
 
-		it("should export custom points properly", done => {
+		it("should export custom points properly", () => new Promise(done => {
 			const expectedDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAA";
 
 			setTimeout(() => {
 				chart.export(null, data => {
 					expect(data.indexOf(expectedDataURL) > -1).to.be.true;
-					done();
+					done(1);
 				});
-			}, 500);
-		});
+			}, 300);
+		}));
 	
 		it("should export valid svg even with weird css", () => {
 			document.body.innerHTML += `<style>@font-face{src:url("#&<>'\0");}</style>`;
@@ -145,7 +145,7 @@ describe("API export", () => {
 	});
 
 	describe("Additional functionalities", () => {
-		before(() => { 
+		beforeAll(() => { 
 			args = {
 				svg: {
 					classname: "export-preserve-font-style"
@@ -201,9 +201,14 @@ describe("API export", () => {
 
 			// pattern for local: preserveFontStyle=true
 			[
-				"ymoWfHISTA6yGESaFLJFAjAQrAGgGyeTQJ8IYXzbwyquoI8HqojhtbkUCYCVAAhjk79",
-				"JDN4Us7NC5wxte6FJCh5pIgNdDE+GzaxKoEwEKwDqBrdZs",
-				"ZvfqsPjumwLUq9B8WWwndf8Zr8n9ooA9ASjl5mIAPSSZsDzym3A"
+				"byuVSgeSACZuGnZIBBJFgAQwUbjZWVoQIAFMi6UoZ1gEhoeHzxORj7",
+				"gEMwIYvjgilxAsgoYFymZLtEoI4ACaBlzpB5Aqh4u1HAwik2LwOTAFo2",
+				"n3KPP7RFhvxMH97ZLyZpsgzMpjX2Qk8O3IUePj1WqYqk0kYkwz"
+			],
+			[
+				"nSetJ0vvOG1XcoZ8BQEeD3w9CCB6BGIkmCiAIze",
+				"BhTIwMPCQiOxewt4m8Xj8HxSAQVGnnXoQ0J7YGzDD",
+				"ANwDC7nf6iqhRcXno2cQP2wnXM4qpFnSLACzpHlfYysmAV1jezaWxGgmFrai6bp9Y6Ryp2AaM"
 			],
 
 			// pattern for CI: preserveFontStyle=false
@@ -221,7 +226,7 @@ describe("API export", () => {
 			]
 		];
 
-		it("check when 'preserveFontStyle=false'", done => {
+		it("check when 'preserveFontStyle=false'", () => new Promise(done => {
 			chart.export({
 				preserveFontStyle: false
 			}, function(dataUrl) {
@@ -229,11 +234,11 @@ describe("API export", () => {
 					expected.some(pttr => pttr.every(v => dataUrl.indexOf(v) == -1))
 				).to.be.true;
 
-				done();
+				done(1);
 			});
-		});
+		}));
 
-		it("check when 'preserveFontStyle=true'", done => {
+		it("check when 'preserveFontStyle=true'", () => new Promise(done => {
 			const font = new FontFace("Alfa Slab One", "url(https://fonts.gstatic.com/s/alfaslabone/v17/6NUQ8FmMKwSEKjnm5-4v-4Jh2dJhe_escmA.woff2)", {
 				style: "normal",
 				weight: "400"
@@ -261,9 +266,9 @@ describe("API export", () => {
 						.style("margin-left", null)
 						.style("padding-top", null);
 
-					done();
+					done(1);
 				});
 			});
-		});
+		}));
 	});
 });

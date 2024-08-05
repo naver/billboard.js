@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
 import sinon from "sinon";
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {
 	select as d3Select,
 	selectAll as d3SelectAll
@@ -28,7 +28,7 @@ describe("SELECTION", () => {
 
 	describe("check for callbacks", () => {
 		describe("data.selction.enabled", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -147,7 +147,7 @@ describe("SELECTION", () => {
 	});
 
 	describe("check for selection", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -168,7 +168,7 @@ describe("SELECTION", () => {
 			};
 		});
 
-		it("check one selection only.", done => {
+		it("check one selection only.", () => new Promise(done => {
 			const eventRect = chart.internal.$el.eventRect.node();
 
 			// when
@@ -187,8 +187,8 @@ describe("SELECTION", () => {
 				expect(selected.size()).to.be.equal(1);
 				expect(selected.datum().id).to.be.equal("data2");
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 	});
 });

@@ -532,8 +532,8 @@ function getCssRules(styleSheets: any[]) {
  */
 function getScrollPosition(node: HTMLElement) {
 	return {
-		x: (window.pageXOffset ?? window.scrollX ?? 0) + node.scrollLeft ?? 0,
-		y: (window.pageYOffset ?? window.scrollY ?? 0) + node.scrollTop ?? 0
+		x: (window.pageXOffset ?? window.scrollX ?? 0) + (node.scrollLeft ?? 0),
+		y: (window.pageYOffset ?? window.scrollY ?? 0) + (node.scrollTop ?? 0)
 	};
 }
 

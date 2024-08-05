@@ -41,7 +41,7 @@ function getObjectURL(fn: Function, depsFn?: Function[]): string {
  * @returns {object} WebWorker instance
  * @private
  */
-function getWorker(src) {
+export function getWorker(src) {
 	const worker = new window.Worker(src);
 
 	// handle error

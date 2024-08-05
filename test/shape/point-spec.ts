@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
 import sinon from "sinon";
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$CIRCLE} from "../../src/config/classes";
 import {fireEvent} from "../assets/helper";
@@ -19,7 +19,7 @@ describe("SHAPE POINT", () => {
 	});
 
 	describe("default point type", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -51,7 +51,7 @@ describe("SHAPE POINT", () => {
 	});
 
 	describe("rectangle point type", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -78,7 +78,7 @@ describe("SHAPE POINT", () => {
 	});
 
 	describe("custom point type", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -145,7 +145,7 @@ describe("SHAPE POINT", () => {
 			expect(chart.$.circles.filter(":last-child").attr("y")).to.not.equal("NaN");
 		});
 
-		it("set optiosn", () => {
+		it("set options", () => {
 			args = {
 				data: {
 					columns: [
@@ -165,7 +165,7 @@ describe("SHAPE POINT", () => {
 			};
 		});
 
-		it("", done => {
+		it("should custom point hidden", () => new Promise(done => {
 			const target = {
 				id: "data3",
 				index: 2
@@ -179,13 +179,13 @@ describe("SHAPE POINT", () => {
 				const point = chart.$.circles.filter(d => d.id === target.id && d.index == target.index).node();
 
 				expect(point.parentNode.style.opacity).to.be.equal("0");
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 	});
 
 	describe("point transition", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -196,7 +196,7 @@ describe("SHAPE POINT", () => {
 			};
 		});
 
-		it("newly added points shouldn't be transitioning from the top/left", done => {
+		it("newly added points shouldn't be transitioning from the top/left", () => new Promise(done => {
 			const main = chart.$.main;
 			const pos: number[] = [];
 			let point;
@@ -220,12 +220,12 @@ describe("SHAPE POINT", () => {
 							expect(Math.round(pos[0])).to.not.equal(0);
 							expect(pos.every(v => v === currPos)).to.be.true;
 
-							done();
-						}, 500);
+							done(1);
+						}, 300);
 					}
 				});
-			}, 500);
-		});
+			}, 300);
+		}));
 	});
 
 	describe("point sensitivity", () => {
@@ -260,7 +260,7 @@ describe("SHAPE POINT", () => {
 			}
 		}
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				size: {
 					width: 400,
@@ -322,7 +322,7 @@ describe("SHAPE POINT", () => {
 			};
 		});
 
-		it("check when point.sensitivity='radius'", done => {
+		it("check when point.sensitivity='radius'", () => new Promise(done => {
 			const {$el} = chart.internal;
 			const values = chart.data.values("data1");
 
@@ -343,9 +343,9 @@ describe("SHAPE POINT", () => {
 					setTimeout(resolve, 300);
 				});
 			}).then(() => {
-				done();
+				done(1);
 			});
-		});
+		}));
 
 		it("set options point.sensitivity=Function", () => {
 			args.point.sensitivity = function(d) {
@@ -364,7 +364,7 @@ describe("SHAPE POINT", () => {
 			};
 		});
 
-		it("check when point.sensitivity=Function", done => {
+		it("check when point.sensitivity=Function", () => new Promise(done => {
 			const {$el} = chart.internal;
 			const values = chart.data.values("data1");
 
@@ -385,13 +385,13 @@ describe("SHAPE POINT", () => {
 					setTimeout(resolve, 300);
 				});
 			}).then(() => {
-				done();
+				done(1);
 			});
-		});
+		}));
 	});
 
 	describe("point.focus.only", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -441,7 +441,7 @@ describe("SHAPE POINT", () => {
 			}).size()).to.be.equal(1);
 		});
 
-		it("visibility with data toggle", done => {
+		it("visibility with data toggle", () => new Promise(done => {
 			const {circles} = chart.$;
 			let x = 2;
 			
@@ -464,11 +464,11 @@ describe("SHAPE POINT", () => {
 					}
 				});
 
-				done();
+				done(1);
 			});
-		});
+		}));
 
-		it("visibility with data load", done => {
+		it("visibility with data load", () => new Promise(done => {
 			let {circles} = chart.$;
 			const size = circles.size();
 
@@ -496,10 +496,10 @@ describe("SHAPE POINT", () => {
 						expect(+this.getAttribute("cx")).to.be.equal(cx);
 					});
 					
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 
 		it("set option: data.type=bar", () => {
 			args.data.types = {
@@ -507,7 +507,7 @@ describe("SHAPE POINT", () => {
 			};
 		});
 
-		it("visibility with combination with bar type", done => {
+		it("visibility with combination with bar type", () => new Promise(done => {
 			const {circles} = chart.$;
 			let x = 2;
 
@@ -525,15 +525,15 @@ describe("SHAPE POINT", () => {
 						expect(d.x).to.be.equal(x);
 					});
 
-				done();
+				done(1);
 			});
-		});
+		}));
 
 		it("set option: data.type=bubble", () => {
 			args.data.type = "bubble";
 		});
 
-		it("should render bubble circles", done => {
+		it("should render bubble circles", () => new Promise(done => {
 			setTimeout(() => {
 				chart.$.circles.each(function() {
 					expect(+this.style.opacity).to.not.be.equal(0);
@@ -541,15 +541,15 @@ describe("SHAPE POINT", () => {
 					expect(+this.getAttribute("cy") > 0).to.be.true;
 				});
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
 		it("set option: data.type=scatter", () => {
 			args.data.type = "scatter";
 		});
 
-		it("should render scatter circles", done => {
+		it("should render scatter circles", () => new Promise(done => {
 			setTimeout(() => {
 				chart.$.circles.each(function() {
 					expect(+this.style.opacity).to.not.be.equal(0);
@@ -557,13 +557,13 @@ describe("SHAPE POINT", () => {
 					expect(+this.getAttribute("cy") > 0).to.be.true;
 				});
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 	});
 
 	describe("point.opacity", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -601,7 +601,7 @@ describe("SHAPE POINT", () => {
 	});
 
 	describe("point expand", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -637,7 +637,7 @@ describe("SHAPE POINT", () => {
 	});
 
 	describe("point radialGradient", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

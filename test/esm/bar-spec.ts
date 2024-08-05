@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import bb, {bar, zoom} from "../../src/index.esm";
 import util from "../assets/util";
@@ -78,7 +78,7 @@ describe("ESM bar", function() {
     });
 
     describe("Focus grid line: on mobile", () => {
-		before(() => {
+		beforeAll(() => {
             chart = util.generate({
                 data: {
                     type: bar(),

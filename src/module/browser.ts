@@ -26,7 +26,7 @@ function getGlobal() {
  * @returns {Array} fallback object array
  * @private
  */
-function getFallback(w) {
+export function getFallback(w?) {
 	const hasRAF = typeof w?.requestAnimationFrame === "function" &&
 		typeof w?.cancelAnimationFrame === "function";
 	const hasRIC = typeof w?.requestIdleCallback === "function" &&

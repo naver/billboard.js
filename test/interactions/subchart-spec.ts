@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$AREA, $AXIS, $BAR, $FOCUS, $LINE, $SUBCHART} from "../../src/config/classes";
 
@@ -17,7 +17,7 @@ describe("SUBCHART", () => {
 	});
 
 	describe("generate subchart", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -135,7 +135,7 @@ describe("SUBCHART", () => {
 	});
 
 	describe("subchart x axis tick format", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -203,7 +203,7 @@ describe("SUBCHART", () => {
 	});
 
 	describe("subchart selection", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -219,7 +219,7 @@ describe("SUBCHART", () => {
 			};
 		});
 
-		const checkSelection = done => {
+		const checkSelection = () => new Promise(done => {
 			const selection = chart.$.svg.select(".selection");
 			const baseWidth = 100;
 
@@ -235,9 +235,10 @@ describe("SUBCHART", () => {
 			setTimeout(() => {
 				expect(+selection.attr("width")).to.be.below(baseWidth);
 				expect(chart.internal.scale.x.domain()).to.not.deep.equal(chart.internal.orgXDomain);
-				done();
+
+				done(1);
 			}, 300);
-		};
+		});
 
 		it("check initial subchart range selection", () => {
 			const currRange = chart.internal.scale.x.domain().map(Math.round);
@@ -261,7 +262,7 @@ describe("SUBCHART", () => {
 	});
 
 	describe("the extent", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -328,7 +329,7 @@ describe("SUBCHART", () => {
 	});
 
 	describe("subchart rendering", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -475,7 +476,7 @@ describe("SUBCHART", () => {
 	});
 
 	describe("subchart with touch inputType", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -518,7 +519,7 @@ describe("SUBCHART", () => {
 	});
 
 	describe("x Axis tick shouldn't be transitioning", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -538,7 +539,7 @@ describe("SUBCHART", () => {
 			expect(transition.every(v => v)).to.be.true;
 		});
 
-		it("transition config should be set to true after .load() API is called", done => {
+		it("transition config should be set to true after .load() API is called", () => new Promise(done => {
 			chart.load({
 				columns: [
 					["data3", 130, 120, 150, 140, 160, 150],
@@ -549,15 +550,15 @@ describe("SUBCHART", () => {
 					const transition = [config.withoutTransition, config.noTransition];
 		
 					expect(transition.every(v => v)).to.be.true;
-					done();
+					done(1);
 				}
 			});
-		})
+		}));
 	});
 
 
 	describe("dynamic data load via .load() API", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -570,7 +571,7 @@ describe("SUBCHART", () => {
 			};
 		});
 
-		it("shouldn't generate duplicated nodes #1", done => {
+		it("shouldn't generate duplicated nodes #1", () => new Promise(done => {
 			// when
 			chart.load({
 				columns: [
@@ -582,12 +583,12 @@ describe("SUBCHART", () => {
 						this.internal.$el.subchart.main.selectAll(`.${$LINE.line}-data1`).size()
 					).to.be.equal(1);
 
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 
-		it("shouldn't generate duplicated nodes #2", done => {
+		it("shouldn't generate duplicated nodes #2", () => new Promise(done => {
 			// when
 			chart.load({
 				columns: [
@@ -605,14 +606,14 @@ describe("SUBCHART", () => {
 						main.selectAll(`.${$LINE.line}-data2`).size()
 					).to.be.equal(1);
 
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 	});
 
 	describe("subchart handle", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import {$AREA, $CIRCLE, $COMMON} from "../../../src/config/classes";
 import Sparkline from "../../../src/Plugin/sparkline";
 import util from "../../assets/util";
@@ -43,14 +43,14 @@ describe("PLUGIN: SPARKLINE", () => {
 	};
 	let body = document.body.innerHTML;
 
-	before(() => {
+	beforeAll(() => {
 		const div = document.createElement("div");
 
 		div.className = selector.replace(".", "");
 		document.body.append(div);
 	});
 
-	after(() => {
+	afterAll(() => {
 		chart.destroy();
 		document.body.innerHTML = body;
 	});
@@ -238,7 +238,7 @@ describe("PLUGIN: SPARKLINE", () => {
 	});
 
 	describe("point option", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				size: {
 					width: 150,

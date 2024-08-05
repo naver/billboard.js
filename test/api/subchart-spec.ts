@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 import sinon from "sinon";
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {fireEvent} from "../assets/helper";
 
@@ -17,7 +17,7 @@ describe("API subchart", () => {
 	});
 
 	describe("Initialization", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -55,7 +55,7 @@ describe("API subchart", () => {
 	});
 
 	describe(".subchart.show/hide/toggle()", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -98,7 +98,7 @@ describe("API subchart", () => {
 			expect(util.parseNum(axis.x.attr("transform"))).to.be.above(xAxisYPos);
 		});
 
-		it("dynamic data load", done => {
+		it("dynamic data load", () => new Promise(done => {
 			// when
 			chart.subchart.show();
 
@@ -118,16 +118,16 @@ describe("API subchart", () => {
 
 					expect(currentPath).to.be.not.equal(path);
 					expect(currentPath).to.be.equal("M6,38.694L300,55.083L594,5.917");
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 	});
 
 	describe("usage with other combination", () => {
 		const spy = sinon.spy();
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -181,7 +181,7 @@ describe("API subchart", () => {
 	describe(".subchart() / .subchart.reset()", () => {
 		const spy = sinon.spy();
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

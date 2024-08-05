@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll,  describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import {$COMMON, $LINE} from "../../src/config/classes";
 import util from "../assets/util";
@@ -26,7 +26,7 @@ describe("SHAPE AREA-RANGE", () => {
 		const min = 120;
 		const max = 220;
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "timestamps",
@@ -76,13 +76,13 @@ describe("SHAPE AREA-RANGE", () => {
 			})
 		};
 
-		it("Should render the lines correctly when array data supplied", done => {
+		it("Should render the lines correctly when array data supplied", () => new Promise(done => {
 			setTimeout(() => {
 				checkLineLen("data1");
 				checkLineLen("data2");
-				done();
+				done(1);
 			}, 300)
-		});
+		}));
 
 		it("should use cardinal interpolation by default", () => {
 			expect(chart.internal.config.spline_interpolation_type).to.be.equal("cardinal");
@@ -97,7 +97,7 @@ describe("SHAPE AREA-RANGE", () => {
 	});
 
 	describe("combined area-range type with grouped data", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -177,7 +177,7 @@ describe("SHAPE AREA-RANGE", () => {
 	});
 
 	describe("area-step-range", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

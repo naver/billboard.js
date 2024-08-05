@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {timeFormat as d3TimeFormat} from "d3-time-format";
 import util from "../assets/util";
 import {$TOOLTIP} from "../../src/config/classes";
@@ -98,7 +98,7 @@ describe("API tooltip", () => {
 		const spy1 = sinon.spy();
 		const spy2 = sinon.spy();
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					xs: {
@@ -232,7 +232,7 @@ describe("API tooltip", () => {
 		const spy1 = sinon.spy();
 		const spy2 = sinon.spy();
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -278,7 +278,7 @@ describe("API tooltip", () => {
 	});
 
 	describe("when tooltip.show=false option is set", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [['rating', 70]],
@@ -302,7 +302,7 @@ describe("API tooltip", () => {
 	});
 
 	describe("tooltip.show() for arc types", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -319,7 +319,7 @@ describe("API tooltip", () => {
 			};
 		});
 
-		it("should show tooltip correctly using 'index'?", done => {
+		it("should show tooltip correctly using 'index'?", () => new Promise(done => {
 			setTimeout(() => {
 				const {tooltip} = chart.$;
 
@@ -329,11 +329,11 @@ describe("API tooltip", () => {
 				expect(tooltip.select(".name").text()).to.be.equal("data3");
 				expect(tooltip.select(".value").text()).to.be.equal("19.2%");
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
-		it("should show tooltip correctly using 'id'?", done => {
+		it("should show tooltip correctly using 'id'?", () => new Promise(done => {
 			setTimeout(() => {
 				const {tooltip} = chart.$;
 
@@ -343,9 +343,9 @@ describe("API tooltip", () => {
 				expect(tooltip.select(".name").text()).to.be.equal("data3");
 				expect(tooltip.select(".value").text()).to.be.equal("19.2%");
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
 		it("set options tooltip.init", () => {
 			args.tooltip = {
@@ -365,7 +365,7 @@ describe("API tooltip", () => {
 	});
 
 	describe("on rotated axis", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

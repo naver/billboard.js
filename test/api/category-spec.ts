@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$AXIS} from "../../src/config/classes";
@@ -16,7 +16,7 @@ describe("API category", () => {
 		chart = util.generate(args);
 	});
 
-	before(() => {
+	beforeAll(() => {
 		args = {
 			data: {
 				x: "x",
@@ -128,7 +128,7 @@ describe("API category", () => {
 
 	});
 
-	it("should load without error when categories=null is given.", done => {
+	it("should load without error when categories=null is given.", () => new Promise(done => {
 		chart.load({
 			columns: [
 				["data1", 20,30,33, 22]
@@ -136,10 +136,10 @@ describe("API category", () => {
 			categories: null,
 			done() {
 				expect(true).to.be.ok;
-				done();
+				done(1);
 			}
 		});
-	});
+	}));
 
 	it("set options", () => {
 		args = {

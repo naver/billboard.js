@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 
 describe("TYPES", () => {
@@ -16,7 +16,7 @@ describe("TYPES", () => {
 	});
 
 	describe("data.type / data.types", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					type: "bars",
@@ -49,10 +49,9 @@ describe("TYPES", () => {
 		});
 	});
 
-
 	describe("internal.hasArcType", () => {
 		describe("with data", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -79,7 +78,7 @@ describe("TYPES", () => {
 		});
 
 		describe("with empty data", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [],
@@ -103,7 +102,7 @@ describe("TYPES", () => {
 	});
 
 	describe("internal.hasType", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

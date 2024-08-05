@@ -3,11 +3,11 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import util from "../assets/util";
 import {window} from "../../src/module/browser";
-import {isTabVisible} from "../../src/module/util";
+import {isTabVisible} from "../assets/module/util";
 
 describe("GENERATOR", function() {
 	let chart;
@@ -20,7 +20,7 @@ describe("GENERATOR", function() {
 	describe("generateWait()", () => {
 		const spy = sinon.spy();
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -33,7 +33,7 @@ describe("GENERATOR", function() {
 			};
 		});
 
-		it("should onrendered callback called, when tab isn't visible", done => {
+		it("should onrendered callback called, when tab isn't visible", () => new Promise(done => {
 			window.$$TEST$$.isTabVisible = false;
 
 			// when
@@ -45,8 +45,8 @@ describe("GENERATOR", function() {
 
 				// restore
 				delete window.$$TEST$$.isTabVisible;
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 	});
 });

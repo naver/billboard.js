@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {$DRAG, $SELECT} from "../../src/config/classes";
 import util from "../assets/util";
 
@@ -65,7 +65,7 @@ describe("DRAG", function() {
 			expect(main.selectAll(`.${$DRAG.INCLUDED}`).size()).to.be.equal(3);
 		});
 
-		it("selected points should be unselected and drag area should be removed", done => {
+		it("selected points should be unselected and drag area should be removed", () => new Promise(done => {
 			const {internal} = chart;
 			const {main} = chart.$;
 
@@ -81,13 +81,13 @@ describe("DRAG", function() {
 				// dragging flag to be set false
 				expect(internal.state.dragging).to.be.false;
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 	});
 
 	describe("selection.draggable", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -102,7 +102,7 @@ describe("DRAG", function() {
 			};
 		});
 
-		it("should select data points by dragging event", done => {
+		it("should select data points by dragging event", () => new Promise(done => {
 			const {internal: {$el}} = chart;
 
 			util.doDrag($el.eventRect.node(), {
@@ -117,15 +117,15 @@ describe("DRAG", function() {
 				const selectedCircle = $el.chart.selectAll(`.${$SELECT.selectedCircles}`);
 
 				expect(selectedCircle.size()).to.be.equal(2);
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
 		it("set options: data.type='bar'", () => {
 			args.data.type = "bar";
 		});
 
-		it("bar should be selected by drag", done => {
+		it("bar should be selected by drag", () => new Promise(done => {
 			const {internal: {$el}} = chart;
 
 			util.doDrag($el.eventRect.node(), {
@@ -142,15 +142,15 @@ describe("DRAG", function() {
 				
 				expect(selected.size()).to.be.equal(4);
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
 		it("set options: data.selection.enabled=fasle", () => {
 			args.data.selection.enabled = false;
 		});
 
-		it("shouldn't be selected by drag", done => {
+		it("shouldn't be selected by drag", () => new Promise(done => {
 			const {internal: {$el}} = chart;
 
 			util.doDrag($el.eventRect.node(), {
@@ -166,8 +166,8 @@ describe("DRAG", function() {
 				
 				expect(selected.size()).to.be.equal(0);
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 	});
 });
