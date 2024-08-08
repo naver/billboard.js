@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import BubbleCompare from "../../../src/Plugin/bubblecompare";
 import util from "../../assets/util";

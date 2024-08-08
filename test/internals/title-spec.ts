@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 
 describe("TITLE", () => {
@@ -55,7 +55,7 @@ describe("TITLE", () => {
 		});
 
 		describe("with padding", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -107,7 +107,7 @@ describe("TITLE", () => {
 			});
 
 			describe("and position left", () => {
-				before(() => {
+				beforeAll(() => {
 					args.title.position = "left";
 				});
 
@@ -124,7 +124,7 @@ describe("TITLE", () => {
 			});
 
 			describe("and position right", () => {
-				before(() => {
+				beforeAll(() => {
 					args.title.position = "right";
 				});
 

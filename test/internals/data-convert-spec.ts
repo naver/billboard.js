@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {describe, expect, it} from "vitest";
 import util from "../assets/util";
 
 describe("DATA Convert", () => {

@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import bb, {scatter} from "../../src/index.esm";
 import util from "../assets/util";

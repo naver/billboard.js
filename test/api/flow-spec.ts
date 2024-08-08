@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import util from "../assets/util";
 import {$AXIS, $GRID, $LINE, $TEXT} from "../../src/config/classes";
@@ -32,11 +32,11 @@ describe("API flow", () => {
 	};
 
 	describe("basic functionality #1", () => {
-		before(()=> {
+		beforeAll(()=> {
 			chart = util.generate(args);
 		});
 
-		it("should flow updating the data", done => {
+		it("should flow updating the data", () => new Promise(done => {
 			chart.flow({
 				columns: [
 					["x", "2017-02-11", "2017-02-21"],
@@ -48,12 +48,12 @@ describe("API flow", () => {
 					const lineSize = this.internal.$el.main.selectAll(`.${$LINE.chartLines} > g`).size();
 
 					expect(lineSize).to.be.equal(this.data().length);
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 
-		it("should flow correctly with options", done => {
+		it("should flow correctly with options", () => new Promise(done => {
 			const spy = sinon.spy(function() {
 				chart.internal.$el.main.selectAll(`.${$AXIS.axisX} .tick tspan`).each(function(d, i) {
 					expect(this.textContent).to.be.equal(tickText[i]);
@@ -61,7 +61,7 @@ describe("API flow", () => {
 				});
 
 				expect(spy.called).to.be.true;
-				done();
+				done(1);
 			});
 			const tickText = ["01/25", "02/11", "02/21", "03/11", "03/21"];
 
@@ -74,7 +74,7 @@ describe("API flow", () => {
 				duration: 1000,
 				done: spy
 			});
-		});
+		}));
 
 		it("check when is not visible", () => {
 			const spy = sinon.spy();
@@ -102,7 +102,7 @@ describe("API flow", () => {
 	});
 
 	describe("basic functionality #2", () => {
-		before(()=> {
+		beforeAll(()=> {
 			args = {
 				data: {
 					x: "x",
@@ -127,7 +127,7 @@ describe("API flow", () => {
 			chart = util.generate(args);
 		});
 
-		it("ticks should translate", done => {
+		it("ticks should translate", () => new Promise(done => {
 			const moved: number[] = [];
 			let interval;
 
@@ -139,7 +139,7 @@ describe("API flow", () => {
 					["data3", 200, 120]
 				],
 				duration: 1500,
-				done: () => {
+				done() {
 					clearInterval(interval);
 
 					moved.reduce((a, c) => {
@@ -147,7 +147,7 @@ describe("API flow", () => {
 						return a + c;
 					});
 
-					done();
+					done(1);
 				}
 			});
 		
@@ -162,11 +162,11 @@ describe("API flow", () => {
 					moved.push(Math.abs(translateX));
 				}				
 			}, 100);
-		});
+		}));
 	});
 
 	describe("Indexed and category type axis", () => {
-		it("Indexed axis: should flow without error", done => {
+		it("Indexed axis: should flow without error", () => new Promise(done => {
 			const chart = util.generate({
 				data: {
 					columns: [
@@ -183,12 +183,12 @@ describe("API flow", () => {
 					expect(true).to.be.true;
 					this.destroy();
 
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 
-		it("Category axis: should flow without error", done => {
+		it("Category axis: should flow without error", () => new Promise(done => {
 			const chart = util.generate({
 				data: {
 					x: "x",
@@ -213,10 +213,10 @@ describe("API flow", () => {
 					expect(true).to.be.true;
 					this.destroy();
 
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 	});
 
 	describe("check options", () => {
@@ -228,7 +228,7 @@ describe("API flow", () => {
 			chart?.destroy();
 		});
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -250,7 +250,7 @@ describe("API flow", () => {
 			};
 		});
 
-		it("should flow not surpassing indicated 'to' option value.", done => {
+		it("should flow not surpassing indicated 'to' option value.", () => new Promise(done => {
 			chart.flow({
 				columns: [
 					["x", '2017-02-01', '2017-02-10'],
@@ -265,10 +265,10 @@ describe("API flow", () => {
 					expect(tick.text()).to.be.equal("17/01/11");
 					expect(tick.attr("transform")).to.be.equal("translate(6,0)");
 
-					done();
+					done(1);
 				}
 			})
-		});
+		}));
 
 		it("set options", () => {
 			args = {
@@ -288,7 +288,7 @@ describe("API flow", () => {
 			};
 		});
 
-		it("when flows from timeseries x axis empty data", done => {
+		it("when flows from timeseries x axis empty data", () => new Promise(done => {
 			chart.flow({
 				columns: [
 					["x", '2017-02-01', '2017-02-10'],
@@ -300,10 +300,10 @@ describe("API flow", () => {
 					const tick = this.internal.$el.axis.x.select(".tick");
 
 					expect(tick.text()).to.be.equal("2017-02-01");
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 
 		it("set options", () => {
 			args = {
@@ -314,7 +314,7 @@ describe("API flow", () => {
 			};
 		});
 
-		it("indexed axis: when flows from indexed x axis empty data", done => {
+		it("indexed axis: when flows from indexed x axis empty data", () => new Promise(done => {
 			chart.flow({
 				columns: [
 					["data1", 100]
@@ -326,10 +326,10 @@ describe("API flow", () => {
 
 					expect(tick.text()).to.be.equal("0");
 
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 
 		it("set options", () => {
 			args = {
@@ -350,7 +350,7 @@ describe("API flow", () => {
 			};
 		});
 
-		it("timeseires axis: when flows from indexed x axis empty data", done => {
+		it("timeseires axis: when flows from indexed x axis empty data", () => new Promise(done => {
 			chart.flow({
 				columns: [
 					["x", "2023-08-25"],
@@ -363,10 +363,10 @@ describe("API flow", () => {
 
 					expect(tick.text()).to.be.equal("2023-08-25");
 
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 
 		it("set options", () => {
 			args = {
@@ -399,7 +399,7 @@ describe("API flow", () => {
 			};
 		});
 
-		it("grid & regions should flow", done => {
+		it("grid & regions should flow", () => new Promise(done => {
 			chart.flow({
 				columns: [
 					["data1", 200]
@@ -426,11 +426,10 @@ describe("API flow", () => {
 						expect(+this.textContent).to.be.equal(d.value);						
 					});
 
-					done();
+					done(1);
 				}
 			});
-
-		});
+		}));
 
 		it("set options", () => {
 			args = {
@@ -442,7 +441,7 @@ describe("API flow", () => {
 			}
 		});
 
-		it("should flow correctly with newly added data", done => {
+		it("should flow correctly with newly added data", () => new Promise(done => {
 			chart.flow({
 				columns: [
 					["data1", 50, 60],
@@ -459,9 +458,9 @@ describe("API flow", () => {
 						expect([rect.width, rect.x]).to.be.deep.equal(expected[d.id]);
 					});
 
-					done();
+					done(1);
 				}
 			});
-		})
+		}));
 	});
 });

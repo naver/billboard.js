@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
 import util from "../assets/util";
@@ -34,7 +34,7 @@ describe("TEXT", () => {
 
     describe("data.labels", () => {
 		describe("on line chart", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					padding: {
 						left: 50
@@ -181,7 +181,7 @@ describe("TEXT", () => {
 
 		describe("rotate", () => {
 			describe("normal axis", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							columns: [
@@ -269,7 +269,7 @@ describe("TEXT", () => {
 			});
 
 			describe("rotated axis", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							columns: [
@@ -315,7 +315,7 @@ describe("TEXT", () => {
 		});
 
 		describe("on bar chart", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					padding: {
 						left: 50
@@ -427,7 +427,7 @@ describe("TEXT", () => {
 		});
 
 		describe("on ranged value(AreaRange/Bar range) chart", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -518,7 +518,7 @@ describe("TEXT", () => {
 		});
 
 		describe("for all targets", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -549,7 +549,7 @@ describe("TEXT", () => {
 		});
 
 		describe("on area chart", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					padding: {
 						left: 50
@@ -617,7 +617,7 @@ describe("TEXT", () => {
 
 		describe("for each target", () => {
 			describe("as true", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							columns: [
@@ -654,7 +654,7 @@ describe("TEXT", () => {
 			describe("as function", () => {
 				const temp: any = [];
 
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							columns: [
@@ -713,7 +713,7 @@ describe("TEXT", () => {
 		});
 
 		describe("with small values", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -734,7 +734,7 @@ describe("TEXT", () => {
 
 		describe("with positive values and null", () => {
 			describe("on not rotated axis", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						padding: {
 							left: 40
@@ -787,7 +787,7 @@ describe("TEXT", () => {
 			});
 
 			describe("on rotated axis", () => {
-				before(() => {
+				beforeAll(() => {
 					args.padding.bottom = 50;
 					args.padding.top = 5;
 					args.data.type = "bar";
@@ -835,7 +835,7 @@ describe("TEXT", () => {
 
 		describe("with negative values and null", () => {
 			describe("on not rotated axis", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						padding: {
 							left: 50
@@ -890,7 +890,7 @@ describe("TEXT", () => {
 			});
 
 			describe("on rotated axis", () => {
-				before(() => {
+				beforeAll(() => {
 					args.padding.left = 50;
 					args.padding.bottom = 0;
 
@@ -940,7 +940,7 @@ describe("TEXT", () => {
 
 		describe("with positive and negative values and null", () => {
 			describe("on non rotated axis", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							columns: [
@@ -992,7 +992,7 @@ describe("TEXT", () => {
 			});
 
 			describe("on rotated axis", () => {
-				before(() => {
+				beforeAll(() => {
 					args.data.type = "bar";
 					args.axis = {
 						rotated: true
@@ -1037,7 +1037,7 @@ describe("TEXT", () => {
 
 		describe("with positive grouped values", () => {
 			describe("on non rotated axis", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							columns: [
@@ -1088,7 +1088,7 @@ describe("TEXT", () => {
 			});
 
 			describe("on rotated axis", () => {
-				before(() => {
+				beforeAll(() => {
 					args.data.type = "bar";
 					args.axis = {
 						rotated: true
@@ -1133,7 +1133,7 @@ describe("TEXT", () => {
 
 		describe("with negative grouped values", () => {
 			describe("on non rotated axis", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							columns: [
@@ -1184,7 +1184,7 @@ describe("TEXT", () => {
 			});
 
 			describe("on rotated axis", () => {
-				before(() => {
+				beforeAll(() => {
 					args.data.type = "bar";
 					args.axis = {
 						rotated: true
@@ -1228,7 +1228,7 @@ describe("TEXT", () => {
 		});
 
 		describe("on scatter type", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -1277,7 +1277,7 @@ describe("TEXT", () => {
 		});
 
 		describe("on scatter + line type", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -1312,7 +1312,7 @@ describe("TEXT", () => {
 		});
 
 		describe("on line with array points option", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -1343,7 +1343,7 @@ describe("TEXT", () => {
 		});
 
 		describe("text transition", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -1358,7 +1358,7 @@ describe("TEXT", () => {
 				};
 			});
 
-			it("newly added text shouldn't be transitioning from the top/left", done => {
+			it("newly added text shouldn't be transitioning from the top/left", () => new Promise(done => {
 				const main = chart.$.main;
 				const pos: number[] = [];
 				let text;
@@ -1377,8 +1377,8 @@ describe("TEXT", () => {
 							expect(Math.round(pos[0])).to.not.equal(0);
 							expect(pos.every(v => v === currPos)).to.be.true;
 
-							done();
-						}, 500);
+							done(1);
+						}, 300);
 					}
 				});
 
@@ -1391,11 +1391,11 @@ describe("TEXT", () => {
 					}
 				}, 80);
 
-			});
+			}));
 		});
 
 		describe("when all data values are 0", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -1435,7 +1435,7 @@ describe("TEXT", () => {
 		describe("Labels' postion", () => {
 			const pos = {};
 
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -1491,7 +1491,7 @@ describe("TEXT", () => {
 		});
 
 		describe("Labels' postion on inverted axis", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 					  columns: [
@@ -1579,7 +1579,7 @@ describe("TEXT", () => {
 		describe("Labels' postion callback", () => {
 			let pos: number[] = [];
 
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -1629,7 +1629,7 @@ describe("TEXT", () => {
 		describe("labels.colors callback", () => {
 			let ctx: any = [];
 
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -1662,7 +1662,7 @@ describe("TEXT", () => {
 		describe("labels.backgroundColors", () => {
 			let ctx = [];
 
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -1728,7 +1728,7 @@ describe("TEXT", () => {
 		});
 
 		describe("text positon with xs option", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						xs: { data1: "x", data2: "x2" },

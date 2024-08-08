@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import util from "../../assets/util";
 import Stanford from "../../../src/Plugin/stanford/index";
@@ -20,7 +20,7 @@ describe("PLUGIN: STANFORD", () => {
 	});
 
 	describe("countEpochsInRegion", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -146,7 +146,7 @@ describe("PLUGIN: STANFORD", () => {
 	});
 
 	describe("regions", () => {
-		before(() => {
+		beforeAll(() => {
 			args.plugins = [
 				new Stanford({
 					epochs: [30, 35],
@@ -184,7 +184,7 @@ describe("PLUGIN: STANFORD", () => {
 	});
 
 	describe("tooltip", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "Datetime",
@@ -254,7 +254,7 @@ describe("PLUGIN: STANFORD", () => {
 	});
 
 	describe("scale", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "HPE",
@@ -293,7 +293,7 @@ describe("PLUGIN: STANFORD", () => {
 	});
 
 	describe("check options", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "HPE",

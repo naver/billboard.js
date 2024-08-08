@@ -3,14 +3,14 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$LEGEND} from "../../src/config/classes";
 
 describe("API legend", () => {
 	let chart;
 
-	before(() => {
+	beforeAll(() => {
 		return new Promise((resolve) => {
 			chart = util.generate({
 				data: {
@@ -39,7 +39,7 @@ describe("API legend", () => {
 		});
 	});
 
-	it("it should show all hide legends", done => {
+	it("it should show all hide legends", () => new Promise(done => {
 		chart.legend.show();
 
 		setTimeout(() => {
@@ -48,9 +48,9 @@ describe("API legend", () => {
 				expect(this.style.opacity).to.be.equal("");
 			});
 
-			done();
+			done(1);
 		}, 300)
-	});
+	}));
 
 	it("it should hide 'data1' legend", () => {
 		chart.legend.hide("data1");
@@ -61,7 +61,7 @@ describe("API legend", () => {
 	});
 
 
-	it("it should show 'data1' legend", done => {
+	it("it should show 'data1' legend", () => new Promise(done => {
 		chart.legend.show("data1");
 
 		setTimeout(() => {
@@ -69,7 +69,7 @@ describe("API legend", () => {
 				expect(this.style.opacity).to.be.equal("");
 			});
 
-			done();
+			done(1);
 		}, 300);
-	});
+	}));
 });

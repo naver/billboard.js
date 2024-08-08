@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 // @ts-nocheck
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import {$AXIS} from "../../src/config/classes";
 import util from "../assets/util";
 
@@ -151,7 +151,7 @@ describe("X AXIS", function() {
 		});
 
 		describe("subchart", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -185,7 +185,7 @@ describe("X AXIS", function() {
 		});
 
 		describe("zoom", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -229,7 +229,7 @@ describe("X AXIS", function() {
 		});
 
 		describe("x Axis dimension", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						x: "x",
@@ -290,7 +290,7 @@ describe("X AXIS", function() {
 		});
 
 		describe("tick.text.inner", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						x: "x",
@@ -360,7 +360,7 @@ describe("X AXIS", function() {
 	});
 
 	describe("axis.x.forceAsSingle", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 				  columns: [

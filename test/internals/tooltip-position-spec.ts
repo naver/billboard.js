@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 // @ts-nocheck
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$ARC, $CIRCLE, $SHAPE} from "../../src/config/classes";
 
@@ -48,11 +48,11 @@ describe("TOOLTIP Position", function() {
 		});
 	  
 		describe("with left margin", () => {
-		  before(() => {
+		  beforeAll(() => {
 			chart.$.chart.style("marginLeft", "300px");
 		  });
 	  
-		  after(() => {
+		  afterAll(() => {
 			// reset to not affect other tests
 			chart.$.chart.style("marginLeft", null);
 		  });
@@ -113,7 +113,7 @@ describe("TOOLTIP Position", function() {
 		  describe("do not overlap data point", () => {
 			let prevArgs = args;
 	  
-			before(() => {
+			beforeAll(() => {
 			  args = {
 				data: {
 				  columns: [
@@ -128,11 +128,11 @@ describe("TOOLTIP Position", function() {
 			  };					
 			});
 	  
-			after(() => {
+			afterAll(() => {
 			  args = prevArgs;
 			});
 	  
-			it("check if tooltip position updates according mouse pointer moves", done => {
+			it("check if tooltip position updates according mouse pointer moves", () => new Promise(done => {
 			  const top = {
 				a: 0, b: 0
 			  };
@@ -160,22 +160,22 @@ describe("TOOLTIP Position", function() {
 	  
 				expect(top.b).to.be.greaterThan(top.a);
 	  
-				done();
+				done(1);
 			  });
-			})
+			}));
 		  });
 		});
 	  
 		describe("flex display tooltip", () => {
-		  before(() => {
+		  beforeAll(() => {
 			args.bindto = "#display_flex";
 		  });
 	  
-		  after(() => {
+		  afterAll(() => {
 			delete args.bindto;
 		  });
 	  
-		  it("check tooltip position", done => {
+		  it("check tooltip position", () => new Promise(done => {
 			chart.resize({width:300});
 	  
 			setTimeout(() => {
@@ -190,17 +190,17 @@ describe("TOOLTIP Position", function() {
 			  expect(pointRect.left > tooltipPos).to.be.true;
 			  expect(pointRect.left).to.be.above(tooltipPos, "20");
 	  
-			  done();
+			  done(1);
 			}, 300);
-		  })
+		  }));
 		});
 	  
 		describe("when zoomed", () => {
-		  before(() => {
+		  beforeAll(() => {
 			args.zoom = {enabled: true};
 		  });
 	  
-		  it("should show tooltip on proper position", done => {
+		  it("should show tooltip on proper position", () => new Promise(done => {
 			chart.zoom([4,7]);
 	  
 			setTimeout(() => {
@@ -220,16 +220,16 @@ describe("TOOLTIP Position", function() {
 			  expect(top).to.be.equal(tooltipPos.top);
 			  expect(left).to.be.equal(tooltipPos.left);
 	  
-			  done();
+			  done(1);
 			}, 350);
-		  });
+		  }));
 		});
 	  
 		describe("step-after tooltip position", () => {
 		  const orgArgs = args;
 		  const posX = [];
 	  
-		  before(() => {				
+		  beforeAll(() => {				
 			args = {
 			  data: {
 				columns: [
@@ -328,7 +328,7 @@ describe("TOOLTIP Position", function() {
 	  
 		describe('tooltip index with step types and tooltipMatch', function () {
 		  // x axis ticks getBoundingClientRect x are at [43.4375, 336.4375, 630.4375]
-		  before(() => {
+		  beforeAll(() => {
 			args = {
 			  data: {
 				columns: [
@@ -434,7 +434,7 @@ describe("TOOLTIP Position", function() {
 		});
 	  
 		describe("with padding", () => {
-		  before(() => {
+		  beforeAll(() => {
 			args = {
 			  data: {
 				columns: [
@@ -563,7 +563,7 @@ describe("TOOLTIP Position", function() {
 		});
 	  
 		describe("when document or container element is scrolled", () => {
-		  before(() => {
+		  beforeAll(() => {
 			args = {
 			  size: {
 				width: 640,
@@ -581,7 +581,7 @@ describe("TOOLTIP Position", function() {
 			};
 		  });
 	  
-		  it("tooltip correctly showed?", function(done) {
+		  it("tooltip correctly showed?", () => new Promise(function(done) {
 			chart.$.chart.attr("style", "position: relative; top: 0px; left: 0px; width:300px;height:400px;overflow:scroll;");
 	  
 			const top = chart.$.chart.node().getBoundingClientRect().top;
@@ -615,9 +615,9 @@ describe("TOOLTIP Position", function() {
 			  expect(index).to.be.deep.equal([0, 5]);
 	  
 			  chart.$.chart.node().scrollTo(0, 0);
-			  done();
+			  done(1);
 			});
-		  });
+		  }));
 	  
 		  it("set option: axis.rotated=true", () => {
 			args.size = {
@@ -628,7 +628,7 @@ describe("TOOLTIP Position", function() {
 			args.axis.rotated = true;
 		  });
 	  
-		  it("tooltip correctly showed on rotated axis?", function(done) {
+		  it("tooltip correctly showed on rotated axis?", () => new Promise(function(done) {
 			chart.$.chart.attr("style", "position: relative; top: 0px; left: 0px; width:480px;height:640px;overflow:scroll;");
 			const {tooltip} = chart.$;
 			const index = [];
@@ -661,13 +661,13 @@ describe("TOOLTIP Position", function() {
 	  
 			  chart.$.chart.attr("style", "position: relative; top: 0px; left: 0px; width:640px;height:480px;");
 	  
-			  done();
+			  done(1);
 			});
-		  });
+		  }));
 		});
 	  
 		describe("check interference", () => {
-		  before(() => {
+		  beforeAll(() => {
 			args = {
 			  data: {
 				x: "x",
@@ -738,7 +738,7 @@ describe("TOOLTIP Position", function() {
 			};
 		  });
 	  
-		  it("check pie's tooltip position.", done => {
+		  it("check pie's tooltip position.", () => new Promise(done => {
 			const {$: {arc, tooltip}} = chart;
 			const path = arc.select(".bb-shapes-data2 path").node();
 			
@@ -749,9 +749,9 @@ describe("TOOLTIP Position", function() {
 			  util.hoverChart(chart, "mousemove", {clientX: 630, clientY: 470}, path);
 			  checkPos(tooltip, [445.5, 524.5]);
 	  
-			  done();
+			  done(1);
 			}, 300)
-		  });
+		  }));
 	  
 		  it("set options: data.type='treemap'", () => {
 			args = {
@@ -799,7 +799,7 @@ describe("TOOLTIP Position", function() {
 		});
 	  
 		describe("on rotated axis", () => {
-		  before(() => {
+		  beforeAll(() => {
 			args = {
 			  data: {
 				columns: [
@@ -854,7 +854,7 @@ describe("TOOLTIP Position", function() {
 		describe("Narrow width container's tooltip position", () => {
 		  const orgArgs = args;
 	  
-		  before(() => {
+		  beforeAll(() => {
 			args = {
 			  "transition":{
 				"duration": 0
@@ -903,7 +903,7 @@ describe("TOOLTIP Position", function() {
 			chart.$.chart.style("width", "200px");
 		  });
 	  
-		  after(() => {
+		  afterAll(() => {
 			// revert
 			chart.$.chart.style("width", "640px");
 			args = orgArgs;
@@ -919,7 +919,7 @@ describe("TOOLTIP Position", function() {
 	});
 
 	describe("Gauge with arc.rangeText with title option", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				title: {
 					text: "Range text in 'absolute' value"

@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../../assets/util";
 import Stanford from "../../../src/Plugin/stanford/index";
 import CLASS from "../../../src/Plugin/stanford/classes";
@@ -88,7 +88,7 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 	});
 
 	describe("timseries axis", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "Datetime",
@@ -141,7 +141,7 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 			};
 		});
 
-		it("check line position", done => {
+		it("check line position", () => new Promise(done => {
 			const {$el: {main}} = chart.internal;
 			const line = main.selectAll(".bb-stanford-line line");
 			const expected = [6, 543, 391, 30];
@@ -160,15 +160,15 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 					expect(v).to.be.closeTo(expected[i], 10);
 				});
 
-				done();
+				done(1);
 			}, 100);			
-		});
+		}));
 
 		it("set options: axis.rotated=true", () => {
 			args.axis.rotated = true;			
 		});
 
-		it("check rotated axis line position", done => {
+		it("check rotated axis line position", () => new Promise(done => {
 			const {$el: {main}} = chart.internal;
 			const line = main.selectAll(".bb-stanford-line line");
 			const expected = [43, 476, 6, 421];
@@ -187,13 +187,13 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 					expect(v).to.be.closeTo(expected[i], 3);
 				});
 
-				done();
+				done(1);
 			}, 100);			
-		});
+		}));
 	});
 
 	describe("category axis", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -234,7 +234,7 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 			};
 		});
 
-		it("", done => {
+		it("", () => new Promise(done => {
 			const {$el: {main}} = chart.internal;
 			const line = main.selectAll(".bb-stanford-line line");
 			const expected = [69, 1439, 391, 210];
@@ -255,8 +255,8 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 
 				expect(chart.categories()).to.be.deep.equal(["a", "b", "c", "d"]);
 
-				done();
+				done(1);
 			}, 100);	
-		});
+		}));
 	});
 });

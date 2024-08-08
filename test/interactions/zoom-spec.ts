@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import {zoomTransform as d3ZoomTransform} from "d3-zoom";
 import sinon from "sinon";
 import {$AXIS, $EVENT, $GRID, $REGION, $ZOOM} from "../../src/config/classes";
@@ -19,7 +19,7 @@ describe("ZOOM", function() {
 	});
 
 	describe("default extent", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -90,7 +90,7 @@ describe("ZOOM", function() {
 		let zoomDomain;
 		let eventOrder: string[] = [];
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				size: {
 					width: 300,
@@ -125,7 +125,7 @@ describe("ZOOM", function() {
 			expect(coords[2].x).to.be.above(xValue);
 		});
 
-		it("check for zoom event callbacks", done => {
+		it("check for zoom event callbacks", () => new Promise(done => {
 			const {$el: {eventRect}} = chart.internal;
 			const rect = eventRect.node();
 
@@ -151,7 +151,7 @@ describe("ZOOM", function() {
 
 							resolve("--> onzoomstart callback called!");
 						}
-					}, 500);
+					}, 300);
 				});
 			}).then((msg) => {
 				console.log(msg);
@@ -171,7 +171,7 @@ describe("ZOOM", function() {
 
 							resolve("--> onzoom callback called!");
 						};
-					}, 500);
+					}, 300);
 				})
 			}).then((msg) => {
 				console.log(msg);
@@ -179,9 +179,9 @@ describe("ZOOM", function() {
 
 				expect(spyOnZoomEnd.called).to.be.true;
 
-				done();
+				done(1);
 			});
-		});
+		}));
 
 		it("check for data zoom", () => {
 			const {coords} = chart.internal.state.eventReceiver;
@@ -263,7 +263,7 @@ describe("ZOOM", function() {
 			};
 		});
 
-		it("check on zoom event triggering during drag zooming", done => {
+		it("check on zoom event triggering during drag zooming", () => new Promise(done => {
 			const {$: {main}, internal: {scale, $el}} = chart;
 			const eventRect = $el.eventRect.node();;
 
@@ -284,7 +284,7 @@ describe("ZOOM", function() {
 						}, chart);
 
 						resolve(true);
-					}, 500);
+					}, 300);
 				});
 			}).then(() => {
 				setTimeout(() => {
@@ -301,14 +301,14 @@ describe("ZOOM", function() {
 					// the call of .unzoom() shouldn't be triggering zooming event
 					expect(eventOrder).to.be.deep.equal(["start", "zoom", "end"]);
 
-					done();
-				}, 500);
+					done(1);
+				}, 300);
 			});
-		});
+		}));
 	});
 
 	describe("zoom wheel", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				size: {
 					width: 300,
@@ -388,7 +388,7 @@ describe("ZOOM", function() {
 			});
 		});
 
-		it("grid also should scale", done => {
+		it("grid also should scale", () => new Promise(done => {
 			const getX = selector => chart.$.main.select(selector).node().getBoundingClientRect().x;
 
 			// when zoom in
@@ -401,11 +401,11 @@ describe("ZOOM", function() {
 					getX(`.${$AXIS.axisX} g.tick:nth-child(5) line`)
 				);
 
-				done();
+				done(1);
 			}, 350);
-		});
+		}));
 
-		it("should eventReceiver size to be updated", done => {
+		it("should eventReceiver size to be updated", () => new Promise(done => {
 			const {internal: {$el, state: {eventReceiver}}} = chart;
 			const eventRect = $el.eventRect.node();
 			const {w} = eventReceiver.coords[1];
@@ -429,13 +429,13 @@ describe("ZOOM", function() {
 				chart.tooltip.show({x:2});
 				expect(parseInt(chart.$.tooltip.style("left"), 10)).to.be.below(tooltipLeft);
 
-				done();
-			}, 500);
-		})
+				done(1);
+			}, 300);
+		}));
 	});
 
 	describe("wheel zoom doesn't stick", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				size: {
 					width: 300,
@@ -485,7 +485,7 @@ describe("ZOOM", function() {
 			})
 		}
 
-		it("check doesn't stick left", (done) => {
+		it("check doesn't stick left",  () => new Promise(done => {
 			const {internal: {$el}} = chart;
 			const eventRect = $el.eventRect.node();
 
@@ -496,36 +496,37 @@ describe("ZOOM", function() {
 				drag({x: 150, y: 150}, {x: 0, y: 130}, {x: 0, y: 130}).then(() => {
 					expect(d3ZoomTransform(eventRect).x).to.approximately(-150, 0.01);
 					expect(chart.zoom()[0]).to.greaterThan(0);
-					done();
+
+					done(1);
 				});
 			});
-		});
+		}));
 
-		it("check doesn't stick right", (done) => {
+		it("check doesn't stick right",  () => new Promise(done => {
 			chart.zoom([4, 5]);
 			drag({x: 150, y: 150}, {x: -2000, y: 120}, {x: -2000, y: 120}).then(() => {
 				expect(chart.zoom()[1]).to.greaterThan(5);
 				drag({x: 150, y: 150}, {x: 300, y: 130}, {x: 300, y: 130}).then(() => {
 					expect(chart.zoom()[1]).to.lessThan(5);
-					done();
+					done(1);
 				});
 			});
-		});
+		}));
 
 		it("set rotated", () => {
 			args.axis = {rotated: true};
 		});
 
-		it("check doesn't stick rotated", (done) => {
+		it("check doesn't stick rotated",  () => new Promise(done => {
 			chart.zoom([0, 3]);
 			drag({x: 150, y: 150}, {x: 150, y: 2000}, {x: 150, y: 2000}).then(() => {
 				expect(chart.zoom()[0]).to.approximately(0, 0.1);
 				drag({x: 150, y: 150}, {x: 150, y: 0}, {x: 150, y: 0}).then(() => {
 					expect(chart.zoom()[0]).to.greaterThan(0);
-					done();
+					done(1);
 				});
 			});
-		})
+		}));
 	});
 
 
@@ -533,7 +534,7 @@ describe("ZOOM", function() {
 		const spy = sinon.spy();
 		let clickedData;
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				size: {
 					width: 300,
@@ -569,7 +570,7 @@ describe("ZOOM", function() {
 			expect(internal.onZoomEnd()).to.not.throw;
 		});
 
-		it("check for data zoom", done => {
+		it("check for data zoom", () => new Promise(done => {
 			const {eventReceiver} = chart.internal.state;
 			const xValue = eventReceiver.coords[2].x;
 
@@ -578,9 +579,9 @@ describe("ZOOM", function() {
 
 			setTimeout(() => {
 				expect(eventReceiver.coords[2].x).to.be.above(xValue);
-				done();
+				done(1);
 			}, 350);
-		});
+		}));
 
 		it("check for x axis resize after zoom", () => {
 			const main = chart.$.main;
@@ -697,7 +698,7 @@ describe("ZOOM", function() {
 			expect(clickedData).to.not.be.undefined;
 		});
 
-		it("shouldn't throw error on '.flow() -> .zoom()' flow calls", done => {
+		it("shouldn't throw error on '.flow() -> .zoom()' flow calls", () => new Promise(done => {
 			// when flow
 			chart.flow({
 				columns: [
@@ -707,14 +708,14 @@ describe("ZOOM", function() {
 				duration: 0,
 				done: function() {
 					expect(this.zoom([1,2])).to.not.throw;
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 	});
 
 	describe("zoom on regions", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				zoom: {
 					enabled: true,
@@ -743,7 +744,7 @@ describe("ZOOM", function() {
 			};
 		});
 
-		it("region area should be resized on zoom", done => {
+		it("region area should be resized on zoom", () => new Promise(done => {
 			const main = chart.$.main;
 			const regionRect = main.select(`.${$REGION.region}-0 rect`);
 			const lineWidth = util.getBBox(chart.$.line.lines).width;
@@ -761,13 +762,13 @@ describe("ZOOM", function() {
 				expect(+regionRect.attr("x")).to.be.below(size.x);
 				expect(+util.getBBox(chart.$.line.lines).width).to.be.above(lineWidth);
 
-				done();
+				done(1);
 			}, 350);
-		});
+		}));
 	});
 
 	describe("zoom scale consistency for dragging", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -784,7 +785,7 @@ describe("ZOOM", function() {
 			};
 		});
 
-		it("zoom scale should maintained on dragging interaction", done => {
+		it("zoom scale should maintained on dragging interaction", () => new Promise(done => {
 			const internal = chart.internal;
 			const {main} = internal.$el;
 			const zoomDomain = [0,2];
@@ -813,7 +814,7 @@ describe("ZOOM", function() {
 						}, chart);
 
 						resolve(true);
-					}, 500);
+					}, 300);
 				});
 			}).then(() => {
 				setTimeout(() => {
@@ -824,14 +825,14 @@ describe("ZOOM", function() {
 
 					//expect(internal.scale.x.domain()).to.be.deep.equal(zoomedDomain);
 
-					done();
-				}, 500);
+					done(1);
+				}, 300);
 			});
-		});
+		}));
 	});
 
 	describe("zoom tick fit", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -906,7 +907,7 @@ describe("ZOOM", function() {
 	});
 
 	describe("zoom for rotated axis", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				size: {
 					width: 300,
@@ -929,7 +930,7 @@ describe("ZOOM", function() {
 			};
 		});
 
-		it("check on drag zooming", done => {
+		it("check on drag zooming", () => new Promise(done => {
 			const {$: {main}, internal: {scale, $el}} = chart;
 			const eventRect = $el.eventRect.node();;
 
@@ -960,7 +961,7 @@ describe("ZOOM", function() {
 						}, chart);
 
 						resolve(true);
-					}, 500);
+					}, 300);
 				});
 			}).then(() => {
 				setTimeout(() => {
@@ -983,10 +984,10 @@ describe("ZOOM", function() {
 						expect(v).to.be[i ? "below" : "above"](zoomedDomain[i]);
 					});
 
-					done();
-				}, 500);
+					done(1);
+				}, 300);
 			});
-		});
+		}));
 
 		it("set options", () => {
 			args = {
@@ -1106,7 +1107,7 @@ describe("ZOOM", function() {
 	});
 
 	describe("zoom on legend toggle", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1143,7 +1144,7 @@ describe("ZOOM", function() {
 	});
 
 	describe("zoom rescale culling", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1178,7 +1179,7 @@ describe("ZOOM", function() {
 	});
 
 	describe("bar's width based on ratio", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -1258,7 +1259,7 @@ describe("ZOOM", function() {
 			};
 		});
 
-		it("bar width should scales as zoom scales", done => {
+		it("bar width should scales as zoom scales", () => new Promise(done => {
 			const {bars} = chart.$.bar;
 			const width: number[] = [];
 
@@ -1281,13 +1282,13 @@ describe("ZOOM", function() {
 					last = w;
 				});
 
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 	});
 
 	describe("bar's width with x Axis min/max", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -1312,7 +1313,7 @@ describe("ZOOM", function() {
 			};
 		});
 
-		it("check bar's width during zoom in/out: timeseries", done => {
+		it("check bar's width during zoom in/out: timeseries", () => new Promise(done => {
 			const width: number[] = [];
 			const {bar: {bars}} = chart.$;
 
@@ -1341,9 +1342,9 @@ describe("ZOOM", function() {
 					expect(this.getBoundingClientRect().width).to.be.equal(width[i]);
 				});
 
-				done();
+				done(1);
 			});
-		});
+		}));
 
 		it("set options: axis.x.type='indexed'", () => {
 			args = {
@@ -1367,7 +1368,7 @@ describe("ZOOM", function() {
 			}
 		});
 
-		it("check bar's width during zoom in/out: indexed", done => {
+		it("check bar's width during zoom in/out: indexed", () => new Promise(done => {
 			const width: number[] = [];
 			const {bar: {bars}} = chart.$;
 
@@ -1396,13 +1397,13 @@ describe("ZOOM", function() {
 					expect(this.getBoundingClientRect().width).to.be.equal(width[i]);
 				});
 
-				done();
+				done(1);
 			});
-		});
+		}));
 	});
 
 	describe("Multiple Xs zooming", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				"data": {
 				"columns": [
@@ -1551,7 +1552,7 @@ describe("ZOOM", function() {
 	});
 
 	describe("with API combination", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1568,7 +1569,7 @@ describe("ZOOM", function() {
 			};
 		});
 
-		it("shouldn't be throwing error during the zoom", done => {
+		it("shouldn't be throwing error during the zoom", () => new Promise(done => {
 			const line = chart.$.line.lines.node();
 			const eventRect = chart.internal.$el.eventRect.node();
 
@@ -1587,13 +1588,13 @@ describe("ZOOM", function() {
 			setTimeout(() => {
 				expect(line.getTotalLength()).to.be.below(len);
 
-				done();
+				done(1);
 			}, 350);
-		});
+		}));
 	});
 
 	describe("with region API combination", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					type: "area",
