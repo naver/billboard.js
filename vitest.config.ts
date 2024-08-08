@@ -30,8 +30,8 @@ export default defineConfig({
         ],
         browser: {
             enabled: true,
-            provider: "webdriverio",
-            name: "chrome",
+            provider: "playwright",
+            name: "chromium",
             headless: true,
             viewport: {
                 width: 800,

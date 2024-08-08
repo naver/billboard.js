@@ -114,6 +114,7 @@ describe("API chart", () => {
 				expect(/^\(\)\s?=\>\s?\{/.test(chart[key].toString())).to.be.true;
 			});
 
+			// @ts-ignore
 			expect(bb.instance.indexOf(chart) === -1).to.be.true;
 
 			const el = <HTMLDivElement>document.getElementById("chart");

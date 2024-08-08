@@ -161,6 +161,6 @@ describe("MODULE", function() {
                 },
                 [depsFn]
             )();
-        }));
+        }), 5000);
     });
 });
