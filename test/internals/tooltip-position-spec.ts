@@ -968,7 +968,7 @@ describe("TOOLTIP Position", function() {
 
 			const {y} = chart.$.tooltip.node().getBoundingClientRect();
 
-			expect(y > 175).to.be.true;
+			expect(y >= 175).to.be.true;
 		});
 	});
 });

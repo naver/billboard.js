@@ -205,10 +205,19 @@ describe("API export", () => {
 				"gEMwIYvjgilxAsgoYFymZLtEoI4ACaBlzpB5Aqh4u1HAwik2LwOTAFo2",
 				"n3KPP7RFhvxMH97ZLyZpsgzMpjX2Qk8O3IUePj1WqYqk0kYkwz"
 			],
+			
+			// pattern for webdriverio
 			[
 				"nSetJ0vvOG1XcoZ8BQEeD3w9CCB6BGIkmCiAIze",
 				"BhTIwMPCQiOxewt4m8Xj8HxSAQVGnnXoQ0J7YGzDD",
 				"ANwDC7nf6iqhRcXno2cQP2wnXM4qpFnSLACzpHlfYysmAV1jezaWxGgmFrai6bp9Y6Ryp2AaM"
+			],
+
+			// pattern for playwright
+			[
+				"31YqlQ4kAUzcNOyQCCSKAAlgonCzs7QgQAKYFktRzrAIDA8PnyciH2vz3va",
+				"VSxTBFAVCvG9EcqwrJwaBEx59kIYM9JQYJFFMGbYFyyozdCPQ4p7",
+				"2vI8zkABqEdwKQD1iANHAPWIAwWgHnHgCGDV4qCTYBoXGfC6I05zJgMYW4lmeko"
 			],
 
 			// pattern for CI: preserveFontStyle=false

@@ -28,10 +28,11 @@ export default defineConfig({
             "test/assets/common.css",
             "src/scss/billboard.scss"
         ],
+        pool: "threads",
         browser: {
             enabled: true,
-            provider: "webdriverio",
-            name: "chrome",
+            provider: "playwright",
+            name: "chromium",
             headless: true,
             viewport: {
                 width: 800,

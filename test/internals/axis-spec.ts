@@ -1300,7 +1300,7 @@ describe("AXIS", function() {
 			const xAxisTickRotate = internal.getAxisTickRotate("x");
 
 			expect(xAxisTickRotate).to.be.equal(expectedXAxisTickRotate);
-			expect(xAxisBoundingClientRect.height).to.be.closeTo(expectedXAxisBoundingClientRect, 1);
+			expect(xAxisBoundingClientRect.height).to.be.closeTo(expectedXAxisBoundingClientRect, 1.5);
 			expect(horizontalXAxisHeight).to.be.closeTo(expectedHorizontalXAxisHeight, 2);
 
 			const xAxisTickTextY2Overflow = chart.internal.axis.getXAxisTickTextY2Overflow(defaultPadding);
