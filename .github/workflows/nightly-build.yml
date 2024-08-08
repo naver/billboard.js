@@ -27,6 +27,7 @@ jobs:
         run: |
           npm config set package-lock false
           npm install --save --legacy-peer-deps
+          npx playwright install
 
       - name: Deploy
         env:
