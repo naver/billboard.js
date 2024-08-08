@@ -36,7 +36,7 @@ function showHide(show: boolean, targetIdsValue: string[], options: any): void {
 			// https://github.com/naver/billboard.js/issues/1758
 			if (!show && hiddenIds.length === 0) {
 				targets.style("display", "none");
-				callFn($$.config.data_onhidden, this, targetIds);
+				callFn($$.config?.data_onhidden, this, targetIds);
 			}
 
 			targets.style("opacity", opacity);

@@ -28,6 +28,7 @@ export default defineConfig({
             "test/assets/common.css",
             "src/scss/billboard.scss"
         ],
+        pool: "threads",
         browser: {
             enabled: true,
             provider: "playwright",
