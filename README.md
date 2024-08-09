@@ -188,7 +188,7 @@ If you want to use 'billboard.js' without installation, load files directly from
  4.x ~ 5.x | 1.x ~ 2.x
  6.x+ | 3.x+
 
-## Getting Started
+# Getting Started
 
 Load billboard.js after D3.js.
 
