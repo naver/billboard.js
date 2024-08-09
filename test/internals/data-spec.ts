@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import sinon from "sinon";
 import util from "../assets/util";
@@ -39,7 +39,7 @@ describe("DATA", () => {
 	};
 
 	describe("load json #1", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					json: {
@@ -60,7 +60,7 @@ describe("DATA", () => {
 	});
 
 	describe("load json #2", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					json: [{
@@ -102,7 +102,7 @@ describe("DATA", () => {
 	});
 
 	describe("load json #3", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					json: [{
@@ -144,7 +144,7 @@ describe("DATA", () => {
 			};
 		});
 
-		after(() => {
+		afterAll(() => {
 			args = {};
 		})
 
@@ -185,7 +185,7 @@ describe("DATA", () => {
 	});
 
 	describe("load rows", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					rows: [
@@ -211,9 +211,9 @@ describe("DATA", () => {
 	});
 
 	describe("XHR data loading", () => {
-		const path = "/base/test/assets/data/";
+		const path = "/test/assets/data/";
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					url: `${path}test.csv`
@@ -221,7 +221,7 @@ describe("DATA", () => {
 			};
 		});
 
-		it("check for CSV file loading", done => {
+		it("check for CSV file loading", () => new Promise(done => {
 			setTimeout(() => {
 				const data = chart.data();
 
@@ -229,9 +229,9 @@ describe("DATA", () => {
 				expect(data).to.not.be.null;
 				expect(data.length).to.be.equal(3);
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
 		it("set options data.mimeType='json'", () => {
 			args = {
@@ -242,7 +242,7 @@ describe("DATA", () => {
 			}
 		});
 
-		it("check for JSON file loading", done => {
+		it("check for JSON file loading", () => new Promise(done => {
 			setTimeout(() => {
 				const data = chart.data();
 
@@ -250,13 +250,13 @@ describe("DATA", () => {
 				expect(data.length).to.be.equal(3);
 				expect(chart.data.values("data1")).to.deep.equal([220, 240, 270, 250, 280]);
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 	});
 
 	describe("check data.order", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -407,7 +407,7 @@ describe("DATA", () => {
 	});
 
 	describe("data.xs", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -442,7 +442,7 @@ describe("DATA", () => {
 
 		describe("timeseries x", () => {
 			describe("without xFormat", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							x: "date",
@@ -478,7 +478,7 @@ describe("DATA", () => {
 
 			describe("with xFormat", () => {
 				describe("timeseries x with xFormat", () => {
-					before(() => {
+					beforeAll(() => {
 						args = {
 							data: {
 								x: "date",
@@ -517,7 +517,7 @@ describe("DATA", () => {
 
 		describe("milliseconds timeseries x", () => {
 			describe("as date string", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							x: "date",
@@ -567,7 +567,7 @@ describe("DATA", () => {
 			});
 
 			describe("as unixtime number", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							x: "date",
@@ -609,7 +609,7 @@ describe("DATA", () => {
 	});
 
 	describe("data.xSort", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					xSort: false,
@@ -672,7 +672,7 @@ describe("DATA", () => {
 		let minData;
 		let maxData;
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -689,7 +689,7 @@ describe("DATA", () => {
 			};
 		});
 
-		it("check for onmin callback", done => {
+		it("check for onmin callback", () => new Promise(done => {
 			setTimeout(() => {
 				expect(minData.length > 0).to.be.true;
 
@@ -697,24 +697,24 @@ describe("DATA", () => {
 				expect(minData[0].value).to.be.equal(minData[1].value);
 				expect(minData[0].id).to.not.be.equal(minData[1].id);
 
-				done();
+				done(1);
 			}, 100);
-		});
+		}));
 
-		it("check for onmax callback", done => {
+		it("check for onmax callback", () => new Promise(done => {
 			setTimeout(() => {
 				expect(maxData.length > 0).to.be.true;
 
 				expect(maxData[0].value).to.be.equal(400);
 				expect(maxData[0].id).to.be.equal("data1");
 
-				done();
+				done(1);
 			}, 100);
-		});
+		}));
 	});
 
 	describe("data.hide", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -755,7 +755,7 @@ describe("DATA", () => {
 	});
 
 	describe("data.regions", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -923,7 +923,7 @@ describe("DATA", () => {
 	describe("data.stack", () => {
 		let chartHeight = 0;
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -959,7 +959,7 @@ describe("DATA", () => {
 			});
 		});
 
-		it("check when hiding data", done => {
+		it("check when hiding data", () => new Promise(done => {
 			// when
 			chart.hide("data1");
 
@@ -968,9 +968,9 @@ describe("DATA", () => {
 					expect(this.getBBox().height).to.be.equal(chartHeight);
 				});
 
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 
 		it("set options data.columns", () => {
 			args.data.columns = [
@@ -981,7 +981,7 @@ describe("DATA", () => {
 			args.data.hide = ["false-data"];
 		});
 
-		it("check for null data", done => {
+		it("check for null data", () => new Promise(done => {
 			const main = chart.$.main;
 			const data1Bar = main.select(`.${$BAR.bars}-data1 .${$BAR.bar}-2`).node();
 			const data2Bar = main.select(`.${$BAR.bars}-data2 .${$BAR.bar}-1`).node();
@@ -995,9 +995,9 @@ describe("DATA", () => {
 			setTimeout(() => {
 				expect(data2Bar.getBBox().height).to.be.equal(0);
 
-				done();
+				done(1);
 			}, 500)
-		});
+		}));
 
 		it("set options data.type='area'", () => {
 			args.data.type = "area";
@@ -1032,7 +1032,7 @@ describe("DATA", () => {
 	});
 
 	describe("data.empty.label.text", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1054,7 +1054,7 @@ describe("DATA", () => {
 			expect(emptyLabelText.style("display")).to.be.equal("block");
 		});
 
-		it("check the visiblity on data toggles", done => {
+		it("check the visiblity on data toggles", () => new Promise(done => {
 			const emptyLabelText = chart.$.main.select(`.${$TEXT.text}.${$COMMON.empty}`);
 
 			// display data
@@ -1067,9 +1067,9 @@ describe("DATA", () => {
 
 			setTimeout(() => {
 				expect(emptyLabelText.style("display")).to.be.equal("block");
-				done();
+				done(1);
 			}, 300)
-		});
+		}));
 
 		it("set options empty.label.text=''", () => {
 			args.data.empty.label.text = "";
@@ -1105,7 +1105,7 @@ describe("DATA", () => {
 			args.data.columns = [["data", 10]];
 		});
 
-		it("check when no data is shown.", done => {
+		it("check when no data is shown.", () => new Promise(done => {
 			const bgArc = chart.$.main.select(`.${$ARC.chartArcsBackground}`);
 
 			// when
@@ -1120,13 +1120,13 @@ describe("DATA", () => {
 				// background arc shouldn't be drawn
 				expect(bgArc.attr("d")).to.be.equal("M 0 0");
 
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 	});
 
 	describe("Multilined data.label text", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1165,7 +1165,7 @@ describe("DATA", () => {
 	});
 
 	describe("data.idConverter", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					idConverter: function(id) {
@@ -1202,7 +1202,7 @@ describe("DATA", () => {
 	});
 
 	describe("data.groups", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1258,7 +1258,7 @@ describe("DATA", () => {
 	});
 
 	describe("ranged data", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					type: "bar",
@@ -1287,7 +1287,7 @@ describe("DATA", () => {
 	});
 
 	describe("null data", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1316,7 +1316,7 @@ describe("DATA", () => {
 		const spyShown = sinon.spy();
 		const spyHidden = sinon.spy();
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1355,7 +1355,7 @@ describe("DATA", () => {
 			expect(spyShown.callCount).to.be.equal(1);
 		});
 
-		it("check on continuous .hide()/.show() APIs giving specific data id.", done => {
+		it("check on continuous .hide()/.show() APIs giving specific data id.", () => new Promise(done => {
 			const id = "data1";
 
 			new Promise((resolve, reject) => {
@@ -1398,9 +1398,9 @@ describe("DATA", () => {
 				setTimeout(() => {
 					expect(spyShown.callCount).to.be.equal(1);
 
-					done();
+					done(1);
 				}, 300);
 			});
-		});
+		}));
 	});
 });

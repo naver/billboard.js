@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$BAR, $SELECT, $SHAPE} from "../../src/config/classes";
 
@@ -26,7 +26,7 @@ describe("API select", () => {
 	};
 
 	describe("selection for circle data points", () => {
-		before(() => {
+		beforeAll(() => {
 			chart = util.generate(args);
 			main = chart.$.main;
 		});
@@ -96,7 +96,7 @@ describe("API select", () => {
 	});
 
 	describe("selection for bar", () => {
-		before(() => {
+		beforeAll(() => {
 			args.data.type = "bar";
 			chart = util.generate(args);
 			main = chart.$.main;
@@ -149,7 +149,7 @@ describe("API select", () => {
 	});
 
 	describe("when selection is disabled", () => {
-		before(() => {
+		beforeAll(() => {
 			args.data.selection = false;
 			chart = util.generate(args);
 			main = chart.$.main;

@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {isArray} from "../../src/module/util";
 import {$CANDLESTICK, $COMMON} from "../../src/config/classes";
@@ -18,7 +18,7 @@ describe("SHAPE CANDLESTICK", () => {
 	});
 
 	describe("default candlestick", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -154,7 +154,7 @@ describe("SHAPE CANDLESTICK", () => {
 	});
 
 	describe("rotated axis", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -197,7 +197,7 @@ describe("SHAPE CANDLESTICK", () => {
 	});
 
 	describe("candlestick + combination", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -327,7 +327,7 @@ describe("SHAPE CANDLESTICK", () => {
 	});
 
 	describe("dynamic load", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [],
@@ -336,7 +336,7 @@ describe("SHAPE CANDLESTICK", () => {
 			};
 		});
 
-		it("should generate candlestick from empty chart", done => {
+		it("should generate candlestick from empty chart", () => new Promise(done => {
 			const data = [					
 					["data1",
 						{open: 100, high: 130, low: 5, close: 30, volume: 100},
@@ -364,9 +364,9 @@ describe("SHAPE CANDLESTICK", () => {
 
 					expect(str).to.be.equal(tooltip.select(".value").text().toLowerCase());
 
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 	});
 });

@@ -13,3 +13,4 @@ package-lock.json
 /doc
 /monitor
 /node_modules
+/test/**/__screenshots__

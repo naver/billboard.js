@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$AXIS, $LEGEND, $LINE} from "../../src/config/classes";
 
@@ -14,7 +14,7 @@ describe("API data", function() {
 		["data2", 5000, 2000, 1000, 4000, 1500, 2500]
 	];
 
-	before(() => {
+	beforeAll(() => {
 		return new Promise((resolve) => {
 			chart = util.generate({				
 				data: {
@@ -200,7 +200,7 @@ describe("API data", function() {
 			expect(toHex(results.data2)).to.be.equal("#FF0000");
 		});
 
-		it("should set data.colors specified as API", done => {
+		it("should set data.colors specified as API", () => new Promise(done => {
 			setTimeout(() => {
 				const svg = chart.$.svg;
 
@@ -216,9 +216,9 @@ describe("API data", function() {
 				expect(toHex(svg.select(`.${$LEGEND.legendItem}-data2 .${$LEGEND.legendItem}-tile`).style("stroke")))
 					.to.be.equal("#ff0000");
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
 	});
 
@@ -237,7 +237,7 @@ describe("API data", function() {
 				.to.be.equal("1000");
 		});
 
-		it("should return data.axes specified as API", done => {
+		it("should return data.axes specified as API", () => new Promise(done => {
 			const main = chart.$.main;
 			const results = chart.data.axes({
 				data: "y2",
@@ -254,9 +254,9 @@ describe("API data", function() {
 				expect(main.select(`.${$AXIS.axisY2} g.tick text`).text())
 					.to.be.equal("0");
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 	});
 
 	describe("data.min/max()", () => {

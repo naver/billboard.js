@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$COMMON, $FUNNEL, $SHAPE} from "../../src/config/classes";
 
@@ -17,7 +17,7 @@ describe("SHAPE FUNNEL", () => {
 	});
 
 	describe("default funnel", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -81,7 +81,7 @@ describe("SHAPE FUNNEL", () => {
 			expect(path).to.be.equal(expected);
 		});
 
-		it("data shape hide correctly?", done => {
+		it("data shape hide correctly?", () => new Promise(done => {
 			const {internal} = chart;
 			const {$el: {funnel}} = internal;
 			const targetId = "data4";
@@ -101,11 +101,11 @@ describe("SHAPE FUNNEL", () => {
 
 				expect(accumulatedHeight).to.be.equal(internal.state.current.height);
 
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 
-		it("data shape hide -> show correctly?", done => {
+		it("data shape hide -> show correctly?", () => new Promise(done => {
 			const {internal} = chart;
 			const {$el: {funnel}} = internal;
 			const targetId = "data4";
@@ -123,9 +123,9 @@ describe("SHAPE FUNNEL", () => {
 
 				expect(parseInt(`${accumulatedHeight}`)).to.be.equal(internal.state.current.height);
 
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 
 		it("should .tooltip.show/hide() API works", () => {
 			const targetId = "data1";
@@ -162,7 +162,7 @@ describe("SHAPE FUNNEL", () => {
 	});
 
 	describe("padding option", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -198,7 +198,7 @@ describe("SHAPE FUNNEL", () => {
 	});
 
 	describe("neck option", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -283,7 +283,7 @@ describe("SHAPE FUNNEL", () => {
 	});
 
 	describe(".load() API", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -303,7 +303,7 @@ describe("SHAPE FUNNEL", () => {
 			};
 		});
 
-		it("should dynamic data load work", done => {
+		it("should dynamic data load work", () => new Promise(done => {
 			chart.load({
 				columns: [
 					["data5", 30],
@@ -321,12 +321,12 @@ describe("SHAPE FUNNEL", () => {
 					expect(shapes.size()).to.be.equal(6);
 					expect(accumulatedHeight).to.be.equal(rect.height);
 
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 
-		it("should dynamic data load w/unload work", done => {
+		it("should dynamic data load w/unload work", () => new Promise(done => {
 			chart.load({
 				columns: [
 					["data5", 80],
@@ -345,14 +345,14 @@ describe("SHAPE FUNNEL", () => {
 					expect(shapes.size()).to.be.equal(4);
 					expect(accumulatedHeight).to.be.equal(rect.height);
 
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 	});
 
 	describe(".unload() API", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -368,7 +368,7 @@ describe("SHAPE FUNNEL", () => {
 			};
 		});
 
-		it("should unload and shape resized correctly.", done => {
+		it("should unload and shape resized correctly.", () => new Promise(done => {
 			// when
 			chart.unload({
 				ids: ["data1"],
@@ -380,9 +380,9 @@ describe("SHAPE FUNNEL", () => {
 					expect(targets.size()).to.be.equal(2);
 					expect(+$el.svg.attr("height")).to.be.equal(height);
 
-					done();
+					done(1);
 				}
 			});			
-		});
+		}));
 	});
 });

@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$AXIS, $BAR, $COMMON, $EVENT, $LINE, $SHAPE} from "../../src/config/classes";
@@ -19,7 +19,7 @@ describe("SHAPE BAR", () => {
 
 	describe("with groups", () => {
 		describe("with indexed data", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -49,7 +49,7 @@ describe("SHAPE BAR", () => {
 		describe("with timeseries data", () => {
 			let barWidth = 0;
 
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						x: "date",
@@ -102,7 +102,7 @@ describe("SHAPE BAR", () => {
 		});
 
 		describe("with category data", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						x: "date",
@@ -137,7 +137,7 @@ describe("SHAPE BAR", () => {
 		});
 
 		describe("Stacking order", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						json: [
@@ -319,7 +319,7 @@ describe("SHAPE BAR", () => {
 
 	describe("internal.isWithinBar", () => {
 		describe("with normal axis", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -335,128 +335,128 @@ describe("SHAPE BAR", () => {
 				};
 			});
 
-			it("should not be within bar", done => {
+			it("should not be within bar", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data1 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.not.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 0,
 					clientY: 0
 				}, chart);
-			});
+			}));
 
-			it("should be within bar", done => {
+			it("should be within bar", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data1 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 31,
 					clientY: 280
 				}, chart);
-			});
+			}));
 
-			it("should not be within bar of negative value", done => {
+			it("should not be within bar of negative value", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data3 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.not.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 68,
 					clientY: 280
 				}, chart);
-			});
+			}));
 
-			it("should be within bar of negative value", done => {
+			it("should be within bar of negative value", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data3 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 68,
 					clientY: 350
 				}, chart);
-			});
+			}));
 		});
 
 		describe("with rotated axis", () => {
-			before(() => {
+			beforeAll(() => {
 				args.axis.rotated = true;
   			});
 
-			it("should not be within bar", done => {
+			it("should not be within bar", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data1 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.not.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 0,
 					clientY: 0
 				}, chart);
-			});
+			}));
 
-			it("should be within bar", done => {
+			it("should be within bar", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data1 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 190,
 					clientY: 20
 				}, chart);
-			});
+			}));
 
-			it("should be within bar of negative value", done => {
+			it("should be within bar of negative value", () => new Promise(done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${$COMMON.target}-data3 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
 						expect(internal.isWithinBar(this)).to.be.ok;
-						done();
+						done(1);
 					});
 
 				util.fireEvent(bar.node(), "click", {
 					clientX: 68,
 					clientY: 50
 				}, chart);
-			});
+			}));
 		});
 	});
 
 	describe("multiple xs", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					type: "bar",
@@ -617,7 +617,7 @@ describe("SHAPE BAR", () => {
 		const width = 15;
 		const padding = 3;
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					type: "bar",
@@ -848,7 +848,7 @@ describe("SHAPE BAR", () => {
 	});
 
 	describe("bar indices", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -880,7 +880,7 @@ describe("SHAPE BAR", () => {
 	});
 
 	describe("bar radius", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -991,7 +991,7 @@ describe("SHAPE BAR", () => {
 			};
 		});
 
-		it("path data should remain with Arc command with value 0(zero).", done => {
+		it("path data should remain with Arc command with value 0(zero).", () => new Promise(done => {
 			// when
 			chart.load({
 				columns: [["d3", 3, 5, 8, 3, 9, 0]],
@@ -999,10 +999,10 @@ describe("SHAPE BAR", () => {
 					const d = this.$.bar.bars.filter(":last-child").attr("d");
 
 					expect(/\sa\d+/.test(d)).to.be.true;
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 
 		it("set options", () => {
 			args = {				
@@ -1054,7 +1054,7 @@ describe("SHAPE BAR", () => {
 	});
 
 	describe("bar linear gradient", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1173,24 +1173,22 @@ describe("SHAPE BAR", () => {
 			};
 		});
 
-		it("should generate customized liearGradient element", done => {
-			setTimeout(() => {
-				chart.load({
-				  columns: [
+		it("should generate customized liearGradient element", () => new Promise(done => {
+			chart.load({
+				columns: [
 					["data", 10, 20, 30, 40]
-				  ],
-				  done: () => {
-					  expect(chart.$.defs.select("linearGradient").empty()).to.be.false;
-					  done();
-				  }
-				});
-			  }, 1000);
-		});
+				],
+				done() {
+					expect(chart.$.defs.select("linearGradient").empty()).to.be.false;
+					done(1);
+				}
+			});
+		}));
 
 	});
 
 	describe("bar overlap", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1223,7 +1221,7 @@ describe("SHAPE BAR", () => {
 				const bar = bars.filter(d => d.id === id).nodes();
 
 				ticks.forEach((t, i) => {
-					const xPos = +bar[i].getAttribute("d").match(re)?.[1] ?? 0;
+					const xPos = +bar[i].getAttribute("d").match(re)?.[1] || 0;
 					const expectedX = t - width[id] / 2;
 
 					expect(xPos).to.be.closeTo(expectedX, 1);
@@ -1233,7 +1231,7 @@ describe("SHAPE BAR", () => {
 	});
 
 	describe("bar position", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 				  columns: [
@@ -1347,7 +1345,7 @@ describe("SHAPE BAR", () => {
 	});
 
 	describe("bar sensitivity", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				size: {
 					width: 400,
@@ -1392,7 +1390,7 @@ describe("SHAPE BAR", () => {
 	});
 
 	describe("bar label.threshold", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1425,7 +1423,7 @@ describe("SHAPE BAR", () => {
 			expect(res).to.be.deep.equal(expected);
 		}
 
-		it("check data label shown #1", done => {
+		it("check data label shown #1", () => new Promise(done => {
 			checkLabel([1000, -1000]);
 
 			// when
@@ -1433,33 +1431,33 @@ describe("SHAPE BAR", () => {
 
 			setTimeout(() => {
 				checkLabel([230, -230, -1000]);
-				done();
+				done(1);
 			}, 350);
-		});
+		}));
 
-		it("check data label shown #2", done => {
+		it("check data label shown #2", () => new Promise(done => {
 			// when
 			chart.hide(["data2", "data4"]);
 
 			setTimeout(() => {
 				checkLabel([230, -230]);
-				done();
+				done(1);
 			}, 350);
-		});
+		}));
 
-		it("check data label shown #3", done => {
+		it("check data label shown #3", () => new Promise(done => {
 			// when
 			chart.hide(["data1", "data2", "data4"]);
 
 			setTimeout(() => {
 				checkLabel([-30, -230]);
-				done();
+				done(1);
 			}, 350);
-		});
+		}));
 	});
 
 	describe("bar width on zoom", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1476,7 +1474,7 @@ describe("SHAPE BAR", () => {
 			};
 		});
 
-		it("should maintain width size after toggle", done => {
+		it("should maintain width size after toggle", () => new Promise(done => {
 			const zoomBarWidth: number[] = [];
 
 			// when
@@ -1509,9 +1507,9 @@ describe("SHAPE BAR", () => {
 					expect(w).to.be.equal(zoomBarWidth[i]);
 				});
 
-				done();
+				done(1);
 			});
-		});
+		}));
 	});
 
 	describe("bar within a range", () => {
@@ -1647,7 +1645,7 @@ describe("SHAPE BAR", () => {
 	});
 
 	describe("rotated & inverted axis", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

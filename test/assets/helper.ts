@@ -4,8 +4,9 @@
  */
 /* eslint-disable */
 // @ts-nocheck
-/* global sandbox, window */
+/* global window */
 import simulant from "simulant";
+import Simulator from "./module/hammer-simulator";
 
 export {
 	doDrag,

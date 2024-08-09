@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import {
 	curveStepAfter as d3CurveStepAfter,
@@ -29,7 +29,7 @@ describe("SHAPE LINE", () => {
 	const parseSvgPath = util.parseSvgPath;
 
 	describe("shape-rendering for line chart", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -83,7 +83,7 @@ describe("SHAPE LINE", () => {
 	});
 
 	describe("point.show option", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -96,7 +96,7 @@ describe("SHAPE LINE", () => {
 			};
 		});
 
-		it("should not show the circle for null", (done) => {
+		it("should not show the circle for null",  () => new Promise(done => {
 			const target = chart.$.circles.filter(d => d.id === "data1");
 
 			setTimeout(() => {
@@ -104,12 +104,12 @@ describe("SHAPE LINE", () => {
 					expect(this.style.opacity).to.be.equal(d.index === 1 ? "0" : "");
 				});
 
-				done();
+				done(1);
 			}, 300)
 
-		});
+		}));
 
-		it("should not draw a line segment for null data", done => {
+		it("should not draw a line segment for null data", () => new Promise(done => {
 			setTimeout(() => {
 				const target = chart.$.main.select(`.${$LINE.chartLine}.${$COMMON.target}-data1`);
 				const commands: any = parseSvgPath(target.select(`.${$LINE.line}-data1`).attr("d"));
@@ -121,13 +121,13 @@ describe("SHAPE LINE", () => {
 
 				expect(segments).to.be.equal(3);
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 	});
 
 	describe("spline.interpolation option", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -163,7 +163,7 @@ describe("SHAPE LINE", () => {
 	});
 
 	describe("data point nodes generation", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -205,7 +205,7 @@ describe("SHAPE LINE", () => {
 	});
 
 	describe("step type generation", () => {
-		before(() => {
+		beforeAll(() => {
 			skipEach = true;
 
 			args = {
@@ -224,7 +224,7 @@ describe("SHAPE LINE", () => {
 			};
 		});
 
-		after(() => { skipEach = false; });
+		afterAll(() => { skipEach = false; });
 
 		it("check line.step.type=step-after option", () => {
 			const generateChartWithStep = () => {
@@ -288,7 +288,7 @@ describe("SHAPE LINE", () => {
 	});
 
 	describe("step type: category axis & line.ConnectNull", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -323,7 +323,7 @@ describe("SHAPE LINE", () => {
 	});
 
 	describe("line options", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

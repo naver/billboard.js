@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import util from "../assets/util";
 import {parseNum} from "../assets/helper";
@@ -18,7 +18,7 @@ describe("TREEMAP", () => {
 	});
 
 	describe("shapes rendering", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				padding: {
 					top: 0,
@@ -212,7 +212,7 @@ describe("TREEMAP", () => {
 	});
 
 	describe("label options", () => {
-		before(() => {
+		beforeAll(() => {
 			args.treemap.label = {
 				show: false,
 				format: function(value, ratio, id) {
@@ -221,7 +221,7 @@ describe("TREEMAP", () => {
 			};
 		});
 
-		after(() => {
+		afterAll(() => {
 			args.treemap.label = {
 				show: true
 			};
@@ -236,7 +236,7 @@ describe("TREEMAP", () => {
 	});
 
 	describe("interaction", () => {
-		it("data load via .load() API", done => {
+		it("data load via .load() API", () => new Promise(done => {
 			const orgValue = chart.data.values("data1");
 			const dataLen = chart.data().length;
 
@@ -248,10 +248,10 @@ describe("TREEMAP", () => {
 				done: function() {
 					expect(this.data.values("data1")[0]).to.be.equal(300);
 					expect(chart.data().length).to.be.equal(dataLen - 1);
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 
 		it("tooltip show via .tooltip.show() API", () => {
 			const id = "data1";
@@ -304,7 +304,7 @@ describe("TREEMAP", () => {
 		let overSpy = sinon.spy();
 		let outSpy = sinon.spy();
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

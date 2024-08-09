@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import {$ARC, $COMMON, $GAUGE, $SHAPE} from "../../src/config/classes";
 import util from "../assets/util";
@@ -18,7 +18,7 @@ describe("SHAPE GAUGE", () => {
 	};
 
     describe("show gauge", () => {
-		it("should have correct d for Pi radian gauge", done => {
+		it("should have correct d for Pi radian gauge", () => new Promise(done => {
 			const chart = util.generate({
 				gauge: {
 					width: 10,
@@ -50,9 +50,9 @@ describe("SHAPE GAUGE", () => {
 
 				expect(chartArc.select(`.${$GAUGE.gaugeValue}`).attr("dy")).to.be.equal("-.1em");
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
 		it("gauge max value should be equal to totalSum if gauge max < totalSum", () => {
 			const chart = util.generate({
@@ -78,7 +78,7 @@ describe("SHAPE GAUGE", () => {
 			expect(gaugeMax).to.be.equal(totalSum);
 		});
 
-		it("should have correct d for 2 Pi radian gauge starting at Pi/2", done => {
+		it("should have correct d for 2 Pi radian gauge starting at Pi/2", () => new Promise(done => {
 			const chart = util.generate({
 				gauge: {
 					width: 10,
@@ -106,9 +106,9 @@ describe("SHAPE GAUGE", () => {
 				expect(path)
 					.to.be.equal("M-211.85,0A211.85,211.85,0,1,1,-65.465,201.481L-62.375,191.971A201.85,201.85,0,1,0,-201.85,0Z");
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
 		it("should render correctly based when min value is specified", () => {
 			const chart = util.generate({
@@ -192,7 +192,7 @@ describe("SHAPE GAUGE", () => {
 			expect(max.empty()).to.be.true;
 		});
 
-		it("check for fullCircle option", done => {
+		it("check for fullCircle option", () => new Promise(done => {
 			const chart = util.generate({
 				gauge: {
 					width: 10,
@@ -228,11 +228,11 @@ describe("SHAPE GAUGE", () => {
 				expect(min.empty()).to.be.false;
 				expect(max.empty()).to.be.true;
 
-				done();
+				done(1);
 			}, 100);
-		});
+		}));
 
-		it("check for arcLength option", done => {
+		it("check for arcLength option", () => new Promise(done => {
 			const chart = util.generate({
 				gauge: {
 					width: 10,
@@ -265,11 +265,11 @@ describe("SHAPE GAUGE", () => {
 				
 				expect(arcPath).to.be.equal("M-211.85,0A211.85,211.85,0,1,1,0,211.85L0,201.85A201.85,201.85,0,1,0,-201.85,0Z");
 
-				done();
+				done(1);
 			}, 100);
-		});
+		}));
 
-		it("check for stack data #1", done => {
+		it("check for stack data #1", () => new Promise(done => {
 			const chart = util.generate({
 				size: {
 					width: 640,
@@ -304,11 +304,11 @@ describe("SHAPE GAUGE", () => {
 					expect(this.getAttribute("d")).to.be.equal(expected[i]);
 				});
 
-				done();
+				done(1);
 			}, 200);
-		});
+		}));
 
-		it("check for stack data #2", done => {
+		it("check for stack data #2", () => new Promise(done => {
 			const args = {
 				size: {
 					width: 640,
@@ -345,11 +345,11 @@ describe("SHAPE GAUGE", () => {
 					expect(this.getAttribute("d")).to.be.equal(expected[i]);
 				});
 
-				done();
+				done(1);
 			}, 100);
-		});
+		}));
 
-		it("check for stack data #3", done => {
+		it("check for stack data #3", () => new Promise(done => {
 			const chart = util.generate({
 				size: {
 					width: 640,
@@ -377,9 +377,9 @@ describe("SHAPE GAUGE", () => {
 					expect(this.getAttribute("d")).to.be.equal(expected[i]);
 				});
 				
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
 		it("check for startingAngle option", () => {
 			const chart = util.generate({
@@ -456,7 +456,6 @@ describe("SHAPE GAUGE", () => {
 
 		beforeEach(() => {
 			chart = util.generate(args);
-			//console.log(JSON.stringify(args));
 		});
 
 		it("shoudn't render data when given value is less than min.", () => {
@@ -484,7 +483,7 @@ describe("SHAPE GAUGE", () => {
 			}
 		});
 
-		it("shoud render data shape in a range of min/max value.", done => {
+		it("shoud render data shape in a range of min/max value.", () => new Promise(done => {
 			const expected = [
 				{value: 0, length: 70},
 				{value: 50, length: 720},
@@ -497,9 +496,9 @@ describe("SHAPE GAUGE", () => {
 					expect(this.querySelector("path").getTotalLength() < expected[i].length).to.be
 				});
 
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 	});
 
 	describe("show multi-arc-gauge", () => {
@@ -565,7 +564,7 @@ describe("SHAPE GAUGE", () => {
 			});
 		});
 
-		it("each arc should have the color from color_pattern if color_treshold is given ", done => {
+		it("each arc should have the color from color_pattern if color_treshold is given ", () => new Promise(done => {
 			setTimeout(() => {
 				const arc = chart.$.arc;
 				const chartArcs = arc.selectAll(`.${$ARC.chartArc} .${$ARC.arc}`);
@@ -574,9 +573,9 @@ describe("SHAPE GAUGE", () => {
 					expect(d3Select(this).style("fill")).to.be.equal(arcColor[i]);
 				});
 
-				done();
+				done(1);
 			}, 100);
-		});
+		}));
 
 		it("each data_column should have one background", () => {
 			const arc = chart.$.arc;
@@ -596,7 +595,7 @@ describe("SHAPE GAUGE", () => {
 			});
 		});
 
-		it("each data_column should have a label", done => {
+		it("each data_column should have a label", () => new Promise(done => {
 			setTimeout(() => {
 				const arc = chart.$.arc;
 				const gaugeValues = arc.selectAll(`${selector.arc} text.${$GAUGE.gaugeValue}`);
@@ -605,9 +604,9 @@ describe("SHAPE GAUGE", () => {
 					expect(d3Select(this).text()).to.be.equal(`${args.data.columns[i][1]}%`);
 				});
 
-				done();
+				done(1);
 			}, 100);
-		});
+		}));
 
 		it("each label should have the same color", () => {
 			const arc = chart.$.arc;
@@ -721,7 +720,7 @@ describe("SHAPE GAUGE", () => {
 			expect(args.gauge.startingAngle).to.be.equal(-1);
 		});
 
-		it("should mirror the starting angle", done => {
+		it("should mirror the starting angle", () => new Promise(done => {
 			setTimeout(() => {
 				const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
 
@@ -749,9 +748,9 @@ describe("SHAPE GAUGE", () => {
 					expect(elements[index].getAttribute('d')).to.be.equal(expectedArcPaths[index])
 				})
 
-				done();
+				done(1);
 			}, 100);
-		});
+		}));
 
 		it("set gauge.fullCircle", () => {
 			args.gauge.fullCircle = true;
@@ -760,7 +759,7 @@ describe("SHAPE GAUGE", () => {
 			expect(args.gauge.fullCircle).to.be.true;
 		});
 
-		it("check for fullCircle option", done => {
+		it("check for fullCircle option", () => new Promise(done => {
 			setTimeout(() => {
 				const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
 				const min = chartArc.select(`.${$GAUGE.chartArcsGaugeMin}`);
@@ -794,16 +793,16 @@ describe("SHAPE GAUGE", () => {
 				expect(min.empty()).to.be.false;
 				expect(max.empty()).to.be.true;
 
-				done();
+				done(1);
 			}, 100);
-		});
+		}));
 
 		it("set gauge.arcLength", () => {
 			args.gauge.arcLength = 75;
 			expect(args.gauge.arcLength).to.be.equal(75);
 		});
 
-		it("check for arcLength option", done => {
+		it("check for arcLength option", () => new Promise(done => {
 			setTimeout(() => {
 				const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
 
@@ -831,9 +830,9 @@ describe("SHAPE GAUGE", () => {
 					expect(elements[index].getAttribute('d')).to.be.equal(expectedArcPaths[index])
 				})
 
-				done();
+				done(1);
 			}, 100);
-		});
+		}));
 
 		const gaugeSizeWithoutLabel = {
 			width: 0,

@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, describe, expect, it} from "vitest";
 import util from "../../assets/util";
 import {$TEXT} from "../../../src/config/classes";
 import TextOverlap from "../../../src/Plugin/textoverlap";
