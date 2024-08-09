@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240801004648
+ * @version 3.12.4-nightly-20240809004639
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -331,10 +331,10 @@ function getCssRules(styleSheets) {
   return rules;
 }
 function getScrollPosition(node) {
-  var _a, _b, _c, _d;
+  var _a, _b, _c, _d, _e, _f;
   return {
-    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + node.scrollLeft,
-    y: ((_d = (_c = win.pageYOffset) != null ? _c : win.scrollY) != null ? _d : 0) + node.scrollTop
+    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + ((_c = node.scrollLeft) != null ? _c : 0),
+    y: ((_e = (_d = win.pageYOffset) != null ? _d : win.scrollY) != null ? _e : 0) + ((_f = node.scrollTop) != null ? _f : 0)
   };
 }
 function getTranslation(node) {
@@ -596,7 +596,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.12.4-nightly-20240801004648");
+__publicField(Plugin, "version", "3.12.4-nightly-20240809004639");
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/const.ts
 

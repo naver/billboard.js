@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240801004648
+ * @version 3.12.4-nightly-20240809004639
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2490,10 +2490,10 @@ function getCssRules(styleSheets) {
   return rules;
 }
 function getScrollPosition(node) {
-  var _a, _b, _c, _d;
+  var _a, _b, _c, _d, _e, _f;
   return {
-    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + node.scrollLeft,
-    y: ((_d = (_c = win.pageYOffset) != null ? _c : win.scrollY) != null ? _d : 0) + node.scrollTop
+    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + ((_c = node.scrollLeft) != null ? _c : 0),
+    y: ((_e = (_d = win.pageYOffset) != null ? _d : win.scrollY) != null ? _e : 0) + ((_f = node.scrollTop) != null ? _f : 0)
   };
 }
 function getTranslation(node) {
@@ -10055,9 +10055,10 @@ function showHide(show, targetIdsValue, options) {
     callFn($$.config.data_onshown, this, hiddenIds);
   }
   $$.$T(targets).style("opacity", opacity, "important").call(endall, () => {
+    var _a;
     if (!show && hiddenIds.length === 0) {
       targets.style("display", "none");
-      callFn($$.config.data_onhidden, this, targetIds);
+      callFn((_a = $$.config) == null ? void 0 : _a.data_onhidden, this, targetIds);
     }
     targets.style("opacity", opacity);
   });
@@ -21639,7 +21640,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.12.4-nightly-20240801004648",
+  version: "3.12.4-nightly-20240809004639",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

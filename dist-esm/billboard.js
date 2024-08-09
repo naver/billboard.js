@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.12.4-nightly-20240801004648
+ * @version 3.12.4-nightly-20240809004639
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -2582,8 +2582,8 @@ function getCssRules(styleSheets) {
 function getScrollPosition(node) {
     var _a, _b, _c, _d, _e, _f;
     return {
-        x: (_c = ((_b = (_a = win.pageXOffset) !== null && _a !== void 0 ? _a : win.scrollX) !== null && _b !== void 0 ? _b : 0) + node.scrollLeft) !== null && _c !== void 0 ? _c : 0,
-        y: (_f = ((_e = (_d = win.pageYOffset) !== null && _d !== void 0 ? _d : win.scrollY) !== null && _e !== void 0 ? _e : 0) + node.scrollTop) !== null && _f !== void 0 ? _f : 0
+        x: ((_b = (_a = win.pageXOffset) !== null && _a !== void 0 ? _a : win.scrollX) !== null && _b !== void 0 ? _b : 0) + ((_c = node.scrollLeft) !== null && _c !== void 0 ? _c : 0),
+        y: ((_e = (_d = win.pageYOffset) !== null && _d !== void 0 ? _d : win.scrollY) !== null && _e !== void 0 ? _e : 0) + ((_f = node.scrollTop) !== null && _f !== void 0 ? _f : 0)
     };
 }
 /**
@@ -11302,10 +11302,11 @@ function showHide(show, targetIdsValue, options) {
     $$.$T(targets)
         .style("opacity", opacity, "important")
         .call(endall, function () {
+        var _a;
         // https://github.com/naver/billboard.js/issues/1758
         if (!show && hiddenIds.length === 0) {
             targets.style("display", "none");
-            callFn($$.config.data_onhidden, _this, targetIds);
+            callFn((_a = $$.config) === null || _a === void 0 ? void 0 : _a.data_onhidden, _this, targetIds);
         }
         targets.style("opacity", opacity);
     });
@@ -24385,7 +24386,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.12.4-nightly-20240801004648
+ * @version 3.12.4-nightly-20240809004639
  */
 var bb = {
     /**
@@ -24395,7 +24396,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.12.4-nightly-20240801004648",
+    version: "3.12.4-nightly-20240809004639",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
