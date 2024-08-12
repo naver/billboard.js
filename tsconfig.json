@@ -18,5 +18,9 @@
 		"test/**/*.ts"
 	],
 	"noEmit": true,
-	"forceConsistentCasingInFileNames": true
+	"forceConsistentCasingInFileNames": true,
+	"types": [
+      "@vitest/browser/providers/webdriverio",
+      "@vitest/browser/providers/playwright"
+    ]
 }
