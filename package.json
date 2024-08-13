@@ -141,7 +141,6 @@
 		"jsdoc": "^4.0.3",
 		"lint-staged": "^15.2.7",
 		"mini-css-extract-plugin": "^2.9.0",
-		"node-sass": "^9.0.0",
 		"playwright": "^1.46.0",
 		"regenerator-runtime": "^0.14.1",
 		"rollup": "^4.19.1",
