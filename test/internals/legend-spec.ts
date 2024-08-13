@@ -964,5 +964,18 @@ describe("LEGEND", () => {
 
 			expect(legendTitle).to.be.deep.equal(dataNames);
 		});
+
+		it("set options: legend.format", () => {
+			args.legend.format = function(id, dataId) {
+				return id === "Name Detailed" ? dataId : id;
+			};
+		});
+
+		it("should legend format function receive original data id.", () => {
+			const legend = chart.$.legend.select("g:last-child");
+
+			expect(legend.select("text").text()).to.be.equal("data2");
+			expect(legend.select("title").text()).to.be.equal("Name Detailed");
+		});
 	});
 });
