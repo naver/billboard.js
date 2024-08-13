@@ -1,3 +1,15 @@
+# [3.13.0-next.2](https://github.com/naver/billboard.js/compare/3.13.0-next.1...3.13.0-next.2) (2024-08-13)
+
+
+### Bug Fixes
+
+* **zoom:** Fix zoom wheel interaction ([81ea359](https://github.com/naver/billboard.js/commit/81ea359cb284fe478c4b4c3a0daa2a2806b00416)), closes [#3856](https://github.com/naver/billboard.js/issues/3856)
+
+
+### Features
+
+* **legend:** Provide original data id in format callback ([5ce41c7](https://github.com/naver/billboard.js/commit/5ce41c74c7e9131539182210feec3a4061afbe83)), closes [#3663](https://github.com/naver/billboard.js/issues/3663)
+
 # [3.13.0-next.1](https://github.com/naver/billboard.js/compare/3.12.4...3.13.0-next.1) (2024-07-25)
 
 
