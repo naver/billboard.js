@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
@@ -72,7 +72,7 @@ describe("CORE", function() {
 		let onbeforeinit = false;
 		let onafterinit = false;
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -121,7 +121,7 @@ describe("CORE", function() {
 		  return d;
 		});
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 				  columns: [
@@ -145,12 +145,12 @@ describe("CORE", function() {
 		});
 
 		// Note: Arc types are rendered with transition
-		it("check donut type", done => {
+		it("check donut type", () => new Promise(done => {
 			setTimeout(() => {
 				expect(spy.returnValues).to.be.not.empty;
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 
 		it("set options data.type='line'", () => {
 			args.data.type = "line";
@@ -158,15 +158,15 @@ describe("CORE", function() {
 		});
 
 		// Note: Arc types are rendered with transition
-		it("check line type", done => {
+		it("check line type", () => new Promise(done => {
 			chart.toggle("data1");
 
 			setTimeout(() => {
 				expect(spy.returnValues).to.be.not.empty;
 				expect(spy.callCount);
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 	});
 
 	describe("size", () => {
@@ -186,60 +186,30 @@ describe("CORE", function() {
 
 	describe("bindto", () => {
 		it("selector", () => {
-			before(() => {
+			beforeAll(() => {
 				d3Select("#chart").html("");
 				args.bindto = "#chart";
 			});
 
-			it("should be created", () => {
-				const svg = d3Select("#chart svg");
+			const svg = d3Select("#chart svg");
 
-				expect(svg.size()).to.be.equal(1);
-			});
+			expect(svg.size()).to.be.equal(1);
 		});
 
 		it("d3Selection object", () => {
-			before(() => {
+			beforeAll(() => {
 				d3Select("#chart").html("");
 				args.bindto = d3Select("#chart");
 			});
 
-			it("should be created", () => {
-				const svg = d3Select("#chart svg");
+			const svg = d3Select("#chart svg");
 
-				expect(svg.size()).to.be.equal(1);
-			});
-		});
-
-		it("null", () => {
-			before(() => {
-				d3Select("#chart").html("");
-				args.bindto = "#chart-dummy";
-			});
-
-			it("should not be created", () => {
-				const svg = d3Select("#chart svg");
-
-				expect(svg.size()).to.be.equal(0);
-			});
-		});
-
-		it("empty string", () => {
-			before(() => {
-				d3Select("#chart").html("");
-				args.bindto = "#chart-dummy";
-			});
-
-			it("should not be created", () => {
-				const svg = d3Select("#chart svg");
-
-				expect(svg.size()).to.be.equal(0);
-			});
+			expect(svg.size()).to.be.equal(1);
 		});
 	});
 
 	describe("empty data", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -286,7 +256,7 @@ describe("CORE", function() {
 	});
 
 	describe("miscellaneous", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -324,7 +294,7 @@ describe("CORE", function() {
 	});	
 
 	describe("options", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

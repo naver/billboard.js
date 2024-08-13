@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 
 describe("SHAPE", () => {
@@ -16,7 +16,7 @@ describe("SHAPE", () => {
 	});
 
 	describe("shapes rendering", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

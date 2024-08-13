@@ -5,7 +5,7 @@
 /* eslint-disable */
 // @ts-nocheck
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
@@ -21,7 +21,7 @@ describe("INTERACTION", () => {
 
 	describe("generate event rects", () => {
 		describe("custom x #1", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						x: "x",
@@ -50,7 +50,7 @@ describe("INTERACTION", () => {
 		});
 
 		describe("custom x #2", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						x: "x",
@@ -78,7 +78,7 @@ describe("INTERACTION", () => {
 		});
 
 		describe("timeseries #1", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						x: "x",
@@ -102,7 +102,7 @@ describe("INTERACTION", () => {
 		});
 
 		describe("timeseries #2", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						x: "x",
@@ -128,7 +128,7 @@ describe("INTERACTION", () => {
 			});
 
 			describe("timeseries #3", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							x: "x",
@@ -171,7 +171,7 @@ describe("INTERACTION", () => {
 			});
 
 			describe("timeseries #4", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							x: "x",
@@ -214,7 +214,7 @@ describe("INTERACTION", () => {
 			});
 
 			describe("timeseries #5", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							x: "x",
@@ -264,7 +264,7 @@ describe("INTERACTION", () => {
 					});
 				});
 
-				it("check changes when 'sample' data is hidden", done => {
+				it("check changes when 'sample' data is hidden", () => new Promise(done => {
 					// when
 					chart.toggle("sample");
 
@@ -285,13 +285,13 @@ describe("INTERACTION", () => {
 							expect(d.index).to.be.equal(i);
 						});
 
-						done();
-					}, 500);
-				});
+						done(1);
+					}, 300);
+				}));
 			});
 
 			describe("indexed", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							columns: [
@@ -318,7 +318,7 @@ describe("INTERACTION", () => {
 			});
 
 			describe("flow", () => {
-				before(() => {
+				beforeAll(() => {
 					args = {
 						data: {
 							x: "x",
@@ -339,7 +339,7 @@ describe("INTERACTION", () => {
 					};
 				});
 
-				it("check rect & data points generated after flow correctly", done => {
+				it("check rect & data points generated after flow correctly", () => new Promise(done => {
 					setTimeout(() => {
 						chart.flow({
 							columns: [
@@ -368,11 +368,11 @@ describe("INTERACTION", () => {
 									});
 								});
 
-								done();
+								done(1);
 							}
 						});
-					}, 500);
-				});
+					}, 300);
+				}));
 			});
 		});
 	});
@@ -385,7 +385,7 @@ describe("INTERACTION", () => {
 			const spyOver = sinon.spy((d, element) => itemOver.push({d, element}));
 			const spyOut = sinon.spy((d, element) => itemOut.push({d, element}));
 
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -405,7 +405,7 @@ describe("INTERACTION", () => {
 				spyOut.resetHistory();
 			});
 
-			it("Callbacks were called correctly with its arguments?", done => {
+			it("Callbacks were called correctly with its arguments?", () => new Promise(done => {
 				setTimeout(() => {
 					const index = 1;
 					const rect = chart.internal.$el.eventRect.node();
@@ -433,9 +433,9 @@ describe("INTERACTION", () => {
 						expect(itemOut[i].element).to.be.deep.equal(v.element);
 					});
 
-					done();
-				}, 500);
-			});
+					done(1);
+				}, 300);
+			}));
 
 			it("set options data.groups / tooltip.grouped=false", () => {
 				args.data.groups = [["data1", "data2"]];
@@ -443,7 +443,7 @@ describe("INTERACTION", () => {
 				args.point = {r:5};
 			});
 
-			it("Tooltip grouped false: Callbacks were called correctly with its arguments?", done => {
+			it("Tooltip grouped false: Callbacks were called correctly with its arguments?", () => new Promise(done => {
 				setTimeout(() => {
 					const index = 2;
 
@@ -461,11 +461,11 @@ describe("INTERACTION", () => {
 						expect(itemOut[i].element).to.be.deep.equal(v.element);
 					});
 
-					done();
-				}, 500);
-			});
+					done(1);
+				}, 300);
+			}));
 
-			it("Overlapped circles: Callbacks were called correctly with its arguments?", done => {
+			it("Overlapped circles: Callbacks were called correctly with its arguments?", () => new Promise(done => {
 				setTimeout(() => {
 					const index = 3;
 
@@ -483,9 +483,9 @@ describe("INTERACTION", () => {
 						expect(itemOut.some(t => t.element === v.element)).to.be.true;
 					});
 
-					done();
-				}, 500);
-			});
+					done(1);
+				}, 300);
+			}));
 
 			it("set options", () => {
 				args = {
@@ -512,7 +512,7 @@ describe("INTERACTION", () => {
 				};
 			});
 
-			it("callback should called correctly on same x Axis for bar type.", done => {
+			it("callback should called correctly on same x Axis for bar type.", () => new Promise(done => {
 				new Promise(resolve => {
 					util.hoverChart(chart, "mousemove", {
 						clientX: 360,
@@ -560,11 +560,11 @@ describe("INTERACTION", () => {
 							expect(expectedFlow.out[i]).to.be.equal(v.id);
 						});
 
-					done();
+					done(1);
 				});
-			});
+			}));
 
-			it("should focused/defocused state class set & unset correctly.", done => {
+			it("should focused/defocused state class set & unset correctly.", () => new Promise(done => {
 				new Promise(resolve => {
 					util.hoverChart(chart, "mousemove", {
 						clientX: 360,
@@ -590,16 +590,16 @@ describe("INTERACTION", () => {
 						expect(d.index).to.be.equal(2);
 					});
 
-					done();
+					done(1);
 				});
-			});
+			}));
 		});
 
 		describe("check for data.onclick", () => {
 			let clicked = false;
 			let data;
 
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						x: "x",
@@ -901,7 +901,7 @@ describe("INTERACTION", () => {
 			let clicked = false;
 			let data;
 
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -922,7 +922,7 @@ describe("INTERACTION", () => {
 				};
 			});
 
-			it("should be called data.oncick", done => {
+			it("should be called data.oncick", () => new Promise(done => {
 				new Promise((resolve, reject) => {
 					args.onrendered = resolve;
 
@@ -950,13 +950,13 @@ describe("INTERACTION", () => {
 						name: 'data2'
 					});
 
-					done();
+					done(1);
 				});
-			});
+			}));
 		});
 
 		describe("check for event binding", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						x: "x",
@@ -1052,7 +1052,7 @@ describe("INTERACTION", () => {
 		});
 
 		describe("check for data.selection", () => {
-			before(() => {
+			beforeAll(() => {
 				args = {
 					data: {
 						columns: [
@@ -1091,7 +1091,7 @@ describe("INTERACTION", () => {
 		describe("check for touch move selection #1", () => {
 			const selection = [];
 
-			before(() => {
+			beforeAll(() => {
 				// Given
 				args = {
 					size: {
@@ -1127,7 +1127,7 @@ describe("INTERACTION", () => {
 				expect(chart.internal.state.inputType).to.be.equal("touch");
 			});
 
-			it("showed each data points tooltip?", done => {
+			it("showed each data points tooltip?", () => new Promise(done => {
 				util.simulator(chart.internal.$el.eventRect.node(), {
 					pos: [250,150],
 					deltaX: -200,
@@ -1135,15 +1135,15 @@ describe("INTERACTION", () => {
 					duration: 500,
 				}, () => {
 					expect(selection).to.deep.equal([5, 4, 3, 2, 1, 0]);
-					done();
+					done(1);
 				});
-			});
+			}));
 
 			it("set options zoom.enabled=true", () => {
 				args.zoom = {enabled: true};
 			});
 
-			it("showed each data points tooltip?", done => {
+			it("showed each data points tooltip?", () => new Promise(done => {
 				chart.tooltip.show({x:1});
 
 				chart.$.tooltip.selectAll(".value").each(function(d, i) {
@@ -1157,15 +1157,15 @@ describe("INTERACTION", () => {
 					duration: 500,
 				}, () => {
 					expect(selection).to.deep.equal([5, 4, 3, 2, 1, 0]);
-					done();
+					done(1);
 				});
-			});
+			}));
 
 			it("set option onresized", () => {
 				args.onresized = sinon.spy();
 			});
 
-			it("check if tooltip visibility maintained and position updated after resize", done => {
+			it("check if tooltip visibility maintained and position updated after resize", () => new Promise(done => {
 				let left;
 
 				new Promise(resolve => {
@@ -1191,12 +1191,12 @@ describe("INTERACTION", () => {
 						expect(args.onresized.calledOnce).to.be.true;
 						expect(parseInt(chart.$.tooltip.style("left"))).to.be.above(left);
 	
-						done();
+						done(1);
 					}, 300);
 				});
-			});
+			}));
 
-			it("check if data point radius size roll back after hide API is called", done => {
+			it("check if data point radius size roll back after hide API is called", () => new Promise(done => {
 				const x = 2;
 				chart.tooltip.show({x});
 				chart.tooltip.hide();
@@ -1205,16 +1205,16 @@ describe("INTERACTION", () => {
 					const points = chart.$.circles.filter(`.${$CIRCLE.circle}-${x}`);
 
 					expect(+points.attr("r")).to.be.equal(chart.config("point.r"));
-					done();
+					done(1);
 				}, 100);
-			});
+			}));
 		});
 	});
 
 	describe("check for touch move selection #2", () => {
 		const selection = [];
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {	
 					columns: [
@@ -1229,7 +1229,7 @@ describe("INTERACTION", () => {
 			};
 		});
 
-		it("x focus grid position & visibility should be maintained after resize", done => {
+		it("x focus grid position & visibility should be maintained after resize", () => new Promise(done => {
 			new Promise(resolve => {
 				// when
 				util.simulator(chart.internal.$el.eventRect.node(), {
@@ -1252,10 +1252,10 @@ describe("INTERACTION", () => {
 					expect(x).to.be.equal(+xGridFocus.attr("x2"));
 					expect(xGridFocus.style("visibility")).to.be.equal("visible");
 	
-					done();
-				}, 500);
+					done(1);
+				}, 300);
 			});
-		});
+		}));
 
 		it("set option grid.focus.show=false", () => {
 			args.grid = {
@@ -1274,7 +1274,7 @@ describe("INTERACTION", () => {
 		const spy1 = sinon.spy();
 		const spy2 = sinon.spy();
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1321,7 +1321,7 @@ describe("INTERACTION", () => {
 			args.interaction.inputType.touch = true;
 		});
 
-		it("should be called callbacks for touch events", done => {
+		it("should be called callbacks for touch events", () => new Promise(done => {
 			const {internal: {$el, callOverOutForTouch}} = chart;
 
 			callOverOutForTouch.last = null;
@@ -1335,9 +1335,9 @@ describe("INTERACTION", () => {
 				expect(spy1.callCount).to.be.equal(4);
 				expect(spy2.calledTwice).to.be.true;
 
-				done();
+				done(1);
 			});
-		});
+		}));
 
 		it("set options data.type=radar", () => {
 			args.data.type = "radar";
@@ -1363,7 +1363,7 @@ describe("INTERACTION", () => {
 	});
 
 	describe("check for arc data name", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1389,7 +1389,7 @@ describe("INTERACTION", () => {
 	});
 
 	describe("check for bubble null data", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					json: [

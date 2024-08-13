@@ -5,7 +5,8 @@
 /* eslint-disable */
 // @ts-nocheck
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
+import sinon from "sinon";
 import util from "../assets/util";
 import {fireEvent} from "../assets/helper";
 
@@ -22,7 +23,7 @@ describe("INTERACTION: touch", () => {
 	});
 
 	describe("generate event rects", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -39,7 +40,7 @@ describe("INTERACTION: touch", () => {
 			}
 		});
 		
-		it("when touch event fired on svg element, should be in unselected mode.", done => {
+		it("when touch event fired on svg element, should be in unselected mode.", () => new Promise(done => {
 			// when
 			chart.tooltip.show({index: 1});
 
@@ -51,9 +52,9 @@ describe("INTERACTION: touch", () => {
 			}, () => {
 				expect(chart.$.tooltip.style("display")).to.be.equal("none");
 
-				done();
+				done(1);
 			});
-		});
+		}));
 
 		it("set options: data.xs", () => {
 			args = {
@@ -100,7 +101,7 @@ describe("INTERACTION: touch", () => {
 	describe("arc type", () => {
 		const spy = sinon.spy();
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

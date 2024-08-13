@@ -41,7 +41,7 @@ function getFormattedText<T = string>(id: T, formatted = true): T {
 	let text = config.data_names[id] ?? id;
 
 	if (formatted && isFunction(config.legend_format)) {
-		text = config.legend_format(text);
+		text = config.legend_format(text, id !== text ? id : undefined);
 	}
 
 	return text;

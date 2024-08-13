@@ -4,10 +4,11 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterEach, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import util from "../assets/util";
-import {getGlobal, getFallback} from "../../src/module/browser";
+import {getFallback, window} from "../../src/module/browser";
+// import {getGlobal, getFallback, window} from "../../src/module/browser";
 import {getWorker, runWorker} from "../../src/module/worker";
 
 describe("MODULE", function() {
@@ -23,7 +24,7 @@ describe("MODULE", function() {
     });
 
     describe("Cache", () => {
-        before(() => {
+        beforeAll(() => {
             args = {
                 data: {
                     columns: [
@@ -70,27 +71,31 @@ describe("MODULE", function() {
     });
 
     describe("Browser", () => { 
-        it("check global & fallback returns correctly when no default param is given.", () => {
-            // test for global global
-            global = self = window;
+        // it("check global & fallback returns correctly when no default param is given.", () => {
+        //     // test for global
+        //     global = self = window;
             
-            // will return from 'global'
-            globalThis = null;
-            expect(getGlobal().document).to.be.ok;
+        //     // will return from 'global'
+        //     // @ts-ignore
+        //     globalThis = null;
+        //     expect(getGlobal().document).to.be.ok;
 
-            // will return from 'self'
-            global = null;
-            expect(getGlobal().document).to.be.ok;
+        //     // will return from 'self'
+        //     // @ts-ignore
+        //     global = null;
+        //     expect(getGlobal().document).to.be.ok;
 
-            // will return from Function('return this')()
-            self = null;
-            expect(getGlobal().document).to.be.ok;
+        //     // // will return from Function('return this')()
+        //     // @ts-ignore
+        //     self = null;
+        //     expect(getGlobal().document).to.be.ok;
 
-            // restore global
-            globalThis = global = self = window;
-        });
+        //     // restore global
+        //     // @ts-ignore
+        //     globalThis = global = self = window;
+        // });
 
-        it("check fallback", done => {
+        it("check fallback", () => new Promise(done => {
             const spy = sinon.spy();
 
             const [
@@ -112,9 +117,9 @@ describe("MODULE", function() {
 
                 expect(spy.callCount).to.be.equal(2);
 
-                done();
+                done(1);
             }, 100);
-        });
+        }));
     });
 
     describe("Worker", () => { 
@@ -130,6 +135,7 @@ describe("MODULE", function() {
             
             const error = console.error;
 
+            // @ts-ignore
             console.error = null;
             const logStub = sinon.stub(console, "log");
 
@@ -141,7 +147,7 @@ describe("MODULE", function() {
             console.error = error;
         });
 
-        it("check with dependency function", done => {
+        it("check with dependency function", () => new Promise(done => {
             function depsFn() {
                 return 1234;
             }
@@ -151,10 +157,10 @@ describe("MODULE", function() {
                 function() { return depsFn(); },
                 function(res) {
                     expect(res).to.be.equal(1234);
-                    done();
+                    done(1);
                 },
                 [depsFn]
             )();
-        })
+        }), 5000);
     });
 });

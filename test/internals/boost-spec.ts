@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {runWorker} from "../../src/module/worker";
 
@@ -70,19 +70,15 @@ describe("BOOST", () => {
 	});
 
 	describe("useWorker", function() {
-		this.timeout(4000);
-
-		it("check if given function run on WebWorker thread.", done => {
+		it("check if given function run on WebWorker thread.", () => new Promise(done => {
 			runWorker(undefined, function test_for_worker(p) {
 					return `${p}_123`;
 				},
 				function(res) {
 					expect(res).to.be.equal("abcd_123");
-					done();
+					done(1);
 				}
 			)("abcd");
-
-			setTimeout(done, 3800);
-		});
+		}), 5000);
 	});
 });

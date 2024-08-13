@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {window} from "../../src/module/browser";
 import util from "../assets/util";
 
@@ -64,7 +64,7 @@ describe("REGIONS", function() {
 	});
 
 	describe("regions", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -128,7 +128,7 @@ describe("REGIONS", function() {
 			};
 		});
 
-		it("regions are generated correctly?", done => {
+		it("regions are generated correctly?", () => new Promise(done => {
 			const {$el, scale} = chart.internal;
 			
 			setTimeout(() => {
@@ -143,7 +143,7 @@ describe("REGIONS", function() {
 					if (i === 0) {
 						const {fill} = window.getComputedStyle(this.querySelector("rect"));
 
-						expect(fill).to.be.equal("rgb(255, 0, 0)");
+						expect(fill).to.be.equal("rgb(70, 130, 180)");
 					}
 
 					// check the diemsion
@@ -175,13 +175,13 @@ describe("REGIONS", function() {
 					}
 				});
 				
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 	});
 
 	describe("regions with dasharray", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",

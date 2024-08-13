@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 // @ts-nocheck
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import {
 	select as d3Select,
@@ -128,13 +128,13 @@ describe("TOOLTIP", function() {
 			});
 		}
 
-		before(() => {
+		beforeAll(() => {
 			check((name) => {
 				args.tooltip[name] = spy[name];
 			});
 		});
 
-		after(() => {
+		afterAll(() => {
 			// restore original args
 			args = orgArgs;
 		});
@@ -199,7 +199,7 @@ describe("TOOLTIP", function() {
 			};
 		})
 		
-		it("tooltip events should be called", function(done) {
+		it("tooltip events should be called", () => new Promise(function(done) {
 			new Promise(resolve => {
 				util.hoverChart(chart, "mousemove", {
 					clientX: 360,
@@ -255,13 +255,13 @@ describe("TOOLTIP", function() {
 					expect([type, d.id]).to.be.deep.equal(expectedFlow[i]);
 				})
 				
-				done();
+				done(1);
 			});
-		});
+		}));
 	});
 
 	describe("tooltip.position callback function", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -278,7 +278,7 @@ describe("TOOLTIP", function() {
 			}
 		});
 
-		after(() => {
+		afterAll(() => {
 			delete args.tooltip.position;
 		});
 
@@ -305,7 +305,7 @@ describe("TOOLTIP", function() {
 			args.tooltip.doNotHide = true;
 		});
 
-		it("tooltip repositioning: when the pos is greater than the current width", done => {
+		it("tooltip repositioning: when the pos is greater than the current width", () => new Promise(done => {
 			util.hoverChart(chart);
 
 			const {tooltip} = chart.$;
@@ -316,9 +316,9 @@ describe("TOOLTIP", function() {
 
 			setTimeout(() => {
 				expect(parseInt(tooltip.style("left"))).to.be.below(left);
-				done();
+				done(1);
 			}, 200);
-		});
+		}));
 
 		it("set option tooltip.position", () => {
 			args.data.axes = {
@@ -362,7 +362,7 @@ describe("TOOLTIP", function() {
 			};
 		});
 
-		it("tooltip repositioning: when the chart width is increasing", done => {
+		it("tooltip repositioning: when the chart width is increasing", () => new Promise(done => {
 			chart.resize({width:450});
 			util.hoverChart(chart);
 
@@ -376,13 +376,9 @@ describe("TOOLTIP", function() {
 			setTimeout(() => {
 				expect(parseInt(tooltip.style("left"))).to.be.above(left);
 
-				done();
+				done(1);
 			}, 200);
-		});
-
-		it("", () => {
-
-		})
+		}));
 	});
 
 	describe("tooltip order", () => {
@@ -530,7 +526,7 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("linked tooltip positionFunction", () => {
-		before(() => {
+		beforeAll(() => {
 			args2.tooltip.position = args.tooltip.position = tooltipPosition;
 			chart2 = util.generate(args2);
 		});
@@ -560,7 +556,7 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("linked tooltip order", () => {
-		before(() => {
+		beforeAll(() => {
 			delete args.tooltip.position;
 			delete args2.tooltip.position;
 		});
@@ -685,7 +681,7 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("tooltip display at initialization", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -794,7 +790,7 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("tooltip grouped=false", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -857,7 +853,7 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("tooltip for area-range", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -902,7 +898,7 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("tooltip for null data", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -924,7 +920,7 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("tooltip for dynamic loaded data", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -935,12 +931,12 @@ describe("TOOLTIP", function() {
 			};
 		});
 
-		it("load data to be adding more columns", done => {
+		it("load data to be adding more columns", () => new Promise(done => {
 				chart.load({
 					columns: [
 						["data2", 44, 134, 98, 170]
 					],
-					done: () => {
+					done() {
 						try {
 							chart.tooltip.show({index: 3});
 							expect(+chart.$.tooltip.select(".value").html()).to.be.equal(170);
@@ -949,10 +945,10 @@ describe("TOOLTIP", function() {
 						}
 
 						expect(true).to.be.true;
-						done();
+						done(1);
 					}
 				});
-		});
+		}));
 
 		it("set options", () => {
 			args = {
@@ -974,13 +970,13 @@ describe("TOOLTIP", function() {
 			};
 		});
 
-		it("should correctly showing tooltip for loaded data", done => {
+		it("should correctly showing tooltip for loaded data", () => new Promise(done => {
 			chart.load({
 				columns: [
 					["x", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05"],
 					["data2", 220, 150, 40, 250]
 				],
-				done: () => {
+				done() {
 					const index = 1;
 					const expected = [200, 220];
 
@@ -992,10 +988,10 @@ describe("TOOLTIP", function() {
 						expect(+tooltipValue[i].textContent).to.be.equal(expected[i]);
 					 });
 
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 
 		it("set options", () => {
 			args = {
@@ -1009,14 +1005,14 @@ describe("TOOLTIP", function() {
 			};
 		});
 
-		it("should correclty show tooltip for new added x Axis ticks", done => {
+		it("should correclty show tooltip for new added x Axis ticks", () => new Promise(done => {
 			chart.load({
 				columns: [
 				  	// when load different data name than the generated, it will add new axis ticks
 					["x", 35, 60, 85],
 					["data2", 10, 20, 160]
 				],
-				done: () => {
+				done() {
 					const value = [];
 
 					[1, 2, 5, 6].forEach(v => {
@@ -1035,36 +1031,35 @@ describe("TOOLTIP", function() {
 						chart.tooltip.show({index: 2});
 						expect(+chart.$.tooltip.select(".value").html()).to.be.equal(160);
 
-						done();
-					}, 500);
+						done(1);
+					}, 300);
 				}
 			});
-		});
+		}));
 
-		it("should correclty show tooltip for overriden x Axis ticks", done => {
+		it("should correclty show tooltip for overriden x Axis ticks", () => new Promise(done => {
 			chart.load({
 				columns: [
 				  	// when load same data name than the generated, it will add override axis ticks
 					["x", 35, 60, 85],
 					["data1", 10, 20, 160]
 				],
-				done: () => {
+				done() {
 					chart.data()[0].values.forEach((v, i) => {
 						chart.tooltip.show({index: i});
 
 						expect(+chart.$.tooltip.select(".value").html()).to.be.equal(v.value);
 					});
 
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 	});
 
 	describe("tooltip display", () => {
-		before(() => {
-			// @ts-ignore
-			sandbox("tooltip-wrapper").innerHTML = "<div id='tooltip'></div>";
+		beforeAll(() => {
+			util.sandbox("tooltip-wrapper").innerHTML = "<div id='tooltip'></div>";
 
 			args = {
 				data: {
@@ -1219,7 +1214,7 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("tooltip display: after dynamic dimension update", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1263,7 +1258,7 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("tooltip: candlestick type with xs option", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					xs: {
@@ -1319,7 +1314,7 @@ describe("TOOLTIP", function() {
 			return [value, ratio, id, index];
 		});
 	
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -1341,7 +1336,7 @@ describe("TOOLTIP", function() {
 			};
 		});
 
-		after(() => {
+		afterAll(() => {
 			spyTitle.resetHistory();
 			spyName.resetHistory();
 			spy.resetHistory();
@@ -1568,7 +1563,7 @@ describe("TOOLTIP", function() {
 	});	
 
 	describe("tooltip: show", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

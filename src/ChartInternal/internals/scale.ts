@@ -20,7 +20,7 @@ import type {IDataRow, IGridData} from "../data/IData";
  * @returns {d3.scaleLinear|d3.scaleTime} scale
  * @private
  */
-export function getScale(type = "linear", min, max): any {
+export function getScale<T = IDataRow["x"]>(type = "linear", min?: T, max?: T): any {
 	const scale = ({
 		linear: d3ScaleLinear,
 		log: d3ScaleSymlog,

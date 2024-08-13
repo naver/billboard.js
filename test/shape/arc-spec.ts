@@ -5,7 +5,7 @@
 /* eslint-disable */
 // @ts-nocheck
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import {selectAll as d3SelectAll} from "d3-selection";
 import {$ARC, $COMMON, $LEGEND, $SHAPE} from "../../src/config/classes";
@@ -19,14 +19,14 @@ describe("SHAPE ARC", () => {
 		shape: `path.${$SHAPE.shape}.${$ARC.arc}.${$ARC.arc}`
 	};
 
-	// after(() => {
+	// afterAll(() => {
 	// 	util.destroyAll();
 	// });
 
 	describe("show pie chart", () => {
 		let instChart;
 
-		before(() => {
+		beforeAll(() => {
 			return new Promise((resolve) => {
 				instChart = util.generate({
 					data: {
@@ -94,7 +94,7 @@ describe("SHAPE ARC", () => {
 			expect(total).to.be.equal(100);
 		});
 
-		it("should have correct d even if data id can be converted to a color", done => {
+		it("should have correct d even if data id can be converted to a color", () => new Promise(done => {
 			const chart = util.generate({
 				data: {
 					columns: [
@@ -110,15 +110,15 @@ describe("SHAPE ARC", () => {
 				expect(chart.$.main.select(`.${$ARC.arc}-black`).attr("d"))
 					.to.be.equal("M-124.522,-171.39A211.85,211.85,0,0,1,0,-211.85L0,0Z");
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 	});
 
 	describe("Check attribute", () => {
 		let instChart;
 
-		before(() => {
+		beforeAll(() => {
 			return new Promise((resolve) => {
 				instChart = util.generate({
 					data: {
@@ -212,7 +212,7 @@ describe("SHAPE ARC", () => {
 			});
 		});
 
-		it("check for variant innerRadius", done => {
+		it("check for variant innerRadius", () => new Promise(done => {
 			const innerRadius = {
 				data1: 50,
 				data2: 80,
@@ -244,11 +244,11 @@ describe("SHAPE ARC", () => {
 				chart.$.arc.selectAll("path").each(function(d) {
 					expect(this.getAttribute("d").indexOf(expectedPath[d.data.id]) > -1).to.be.ok;
 				});
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
-		it("check for outerRadius", done => {
+		it("check for outerRadius", () => new Promise(done => {
 			const chart = util.generate({
 				data: {
 					columns: [
@@ -272,11 +272,11 @@ describe("SHAPE ARC", () => {
 
 				expect(chart.internal.state.outerRadius).to.be.equal(chart.config("pie.outerRadius"));
 
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 
-		it("check for variant outerRadius", done => {
+		it("check for variant outerRadius", () => new Promise(done => {
 			const outerRadius = {
 				data1: 120,
 				data2: 80
@@ -315,13 +315,13 @@ describe("SHAPE ARC", () => {
 					expect(this.getAttribute("transform")).to.be.equal(expectedTextPos[d.data.id]);
 				});
 
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 	});
 
 	describe("Check position & data label text", () => {
-		it("check for Pie's threshold data label text", done => {
+		it("check for Pie's threshold data label text", () => new Promise(done => {
 			const chart = util.generate({
 				data: {
 					columns: [
@@ -364,10 +364,10 @@ describe("SHAPE ARC", () => {
 
 				setTimeout(() => {
 					checkText();
-					done();
+					done(1);
 				}, 200);
 			});
-		});
+		}));
 
 		it("check if Pie's size adjusts when legend is positioned to right.", () => {
 			const chart = util.generate({
@@ -395,7 +395,7 @@ describe("SHAPE ARC", () => {
 		const spyOver = sinon.spy();
 		const spyOut = sinon.spy();
 
-		before(() => {
+		beforeAll(() => {
 			chart = util.generate({
 				data: {
 					columns: [
@@ -415,7 +415,7 @@ describe("SHAPE ARC", () => {
 			spyOut.resetHistory();
 		});*/
 
-		it("should interact properly for mouseover & mouseout", done => {
+		it("should interact properly for mouseover & mouseout", () => new Promise(done => {
 			setTimeout(() => {
 				const path = chart.$.main.select(`path.${$ARC.arc}-data2`).node();
 
@@ -433,15 +433,15 @@ describe("SHAPE ARC", () => {
 				expect(spyOut.calledOnce).to.be.true;
 
 				expect(chart.$.tooltip.select(".value").text()).to.be.equal("50.0%");
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 	});
 
 	describe("check for 0 or null value rendering", () => {
 		let chart;
 
-		before(() => {
+		beforeAll(() => {
 			chart = util.generate({
 				data: {
 					columns: [["data1", 100], ["data2", 0], ["data3", null]],
@@ -534,35 +534,35 @@ describe("SHAPE ARC", () => {
 			const titlePos = title.top - arc.top + (title.height / 2);
 
 			expect(titlePos).to.be.closeTo(arc.height / 2, 2);
-			done && done();
+			done && done(1);
 		};
 
-		it("check for two lined text position", done => {
+		it("check for two lined text position", () => new Promise(done => {
 			setTimeout(() => {
 				checkAtMiddle(done);
 			}, 100);
-		});
+		}));
 
 		it("set option args.donut.title", () => {
 			args.donut.title = "Title 1\nTitle 2\nTitle 3";
 		});
 
-		it("check for three lined text position", done => {
+		it("check for three lined text position", () => new Promise(done => {
 			setTimeout(() => {
 				checkAtMiddle(done);
 			}, 100);
-		});
+		}));
 	});
 
 	describe("check for data loading", () => {
-		it("Interaction of chart when initialized with 0 and .load()", done => {
+		it("Interaction of chart when initialized with 0 and .load()", () => new Promise(done => {
 			const chart = util.generate({
 				data: {
-				columns: [
-					["data1", 0],
-					["data2", 0],
-				],
-				type: "pie",
+					columns: [
+						["data1", 0],
+						["data2", 0],
+					],
+					type: "pie",
 				}
 			});
 
@@ -572,7 +572,7 @@ describe("SHAPE ARC", () => {
 						["data1", 3],
 						["data2", 6],
 					],
-					done: () => {
+					done() {
 						const legend = chart.$.legend.select(`.${$LEGEND.legendItem}-data2`).node();
 
 						util.fireEvent(legend, "mouseover");
@@ -586,12 +586,12 @@ describe("SHAPE ARC", () => {
 								expect(rect.width > 0 && rect.height > 0).to.be.true;
 							});
 
-							done();
-						}, 1000);
+							done(1);
+						}, 300);
 					}
 				});
-			}, 1000);
-		});
+			}, 300);
+		}));
 	});
 
 	describe("check for startingAngle", () => {
@@ -617,7 +617,7 @@ describe("SHAPE ARC", () => {
 			chart = util.generate(args);
 		});
 
-		it("check Pie's startingAngle", done => {
+		it("check Pie's startingAngle", () => new Promise(done => {
 			const expectedPath = [
 				"M-134.17,163.948A211.85,211.85,0,0,1,-114.463,-178.266L0,0Z",
 				"M178.266,-114.463A211.85,211.85,0,0,1,-134.17,163.948L0,0Z",
@@ -629,15 +629,15 @@ describe("SHAPE ARC", () => {
 					expect(this.getAttribute("d")).to.be.equal(expectedPath[i]);
 				});
 
-				done();
+				done(1);
 			}, 100);
-		});
+		}));
 
 		it("set options data.type=donut", () => {
 			args.data.type = "donut";
 		});
 
-		it("check Donut's startingAngle", done => {
+		it("check Donut's startingAngle", () => new Promise(done => {
 			const expectedPath = [
 				"M-39.144,208.202A211.85,211.85,0,0,1,-185.916,-101.566L-111.55,-60.94A127.11,127.11,0,0,0,-23.486,124.921Z",
 				"M101.566,-185.916A211.85,211.85,0,0,1,-39.144,208.202L-23.486,124.921A127.11,127.11,0,0,0,60.94,-111.55Z",
@@ -649,9 +649,9 @@ describe("SHAPE ARC", () => {
 					expect(this.getAttribute("d")).to.be.equal(expectedPath[i]);
 				});
 
-				done();
+				done(1);
 			}, 100);
-		});
+		}));
 	});
 
 	describe("check for expand rate", () => {
@@ -708,30 +708,30 @@ describe("SHAPE ARC", () => {
 			}).then(() => {
 				setTimeout(() => {
 					expect(path.getTotalLength()).to.be.greaterThan(length);
-					done();
+					done(1);
 				}, 300);
 			});
 		};
 
-		it("check Pie's expand", done => {
+		it("check Pie's expand", () => new Promise(done => {
 			checkExpand(done);
-		});
+		}));
 
 		it("set options: data.type='donut'", () => {
 			args.data.type = "donut";
 		});
 
-		it("check Donut's expand", done => {
+		it("check Donut's expand", () => new Promise(done => {
 			checkExpand(done);
-		});
+		}));
 
 		it("set options: data.type='gauge'", () => {
 			args.data.type = "donut";
 		});
 
-		it("check Gauge's expand", done => {
+		it("check Gauge's expand", () => new Promise(done => {
 			checkExpand(done);
-		});
+		}));
 	});
 
 	describe("Arc options", () => {
@@ -777,7 +777,7 @@ describe("SHAPE ARC", () => {
 			};
 		});
 
-		it("check the corner radius in 'ratio' value, applied correctly.", done => {
+		it("check the corner radius in 'ratio' value, applied correctly.", () => new Promise(done => {
 			const expected = [
 				['M28.424,87.481', '23.75,23.75,0,0,1,7.296,118.526'],
 				['M0,-91.983', '23.75,23.75,0,0,1,29.688,-114.979'],
@@ -794,9 +794,9 @@ describe("SHAPE ARC", () => {
 					expect(path).to.be.deep.equal(expected[i]);
 				});
 
-				done();
+				done(1);
 			}, 300);
-		});
+		}));
 
 		it("set option: function", () => {
 			args.arc.cornerRadius = function(id, value, outerRadius) {
@@ -844,7 +844,7 @@ describe("SHAPE ARC", () => {
 			};
 		});
 
-		it("should exapnd Arc shape correctly on transition.", done => {
+		it("should exapnd Arc shape correctly on transition.", () => new Promise(done => {
 			const {arc} = instChart.$;
 			const rx = /^[01]$/;
 			let i = 0;
@@ -855,7 +855,7 @@ describe("SHAPE ARC", () => {
 			const interval = setInterval(function() {
 				if (i > 10) {
 					clearInterval(interval);
-					done();
+					done(1);
 				}
 
 				const arcCommand = arc.select(`.${$ARC.arc}-data1`)
@@ -878,9 +878,9 @@ describe("SHAPE ARC", () => {
 
 				i++;
 			}, 15);
-		});
+		}));
 
-		it("when colorish string value is used as data name", done => {
+		it("when colorish string value is used as data name", () => new Promise(done => {
 			const chart = util.generate({
 				data: {
 					columns: [
@@ -900,10 +900,10 @@ describe("SHAPE ARC", () => {
 						// shape shouldn't be an empty path
 						expect(d).to.not.be.equal("M 0 0");
 
-						done();
-					}, 500);
+						done(1);
+					}, 300);
 				}
 			});			
-		});
+		}));
 	});
 });

@@ -9,6 +9,7 @@ import {
 	zoomTransform as d3ZoomTransform
 } from "d3-zoom";
 import {$COMMON, $ZOOM} from "../../config/classes";
+import {window} from "../../module/browser";
 import {callFn, diffDomain, getPointer, isFunction} from "../../module/util";
 
 export default {
@@ -329,8 +330,18 @@ export default {
 	 */
 	bindZoomOnEventRect(): void {
 		const $$ = this;
-		const {config, $el: {eventRect}} = $$;
+		const {config, $el: {eventRect, svg}} = $$;
 		const behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
+
+		// On Safari, event can't be built inside the svg content
+		// for workaround, register wheel event on <svg> element first
+		// https://bugs.webkit.org/show_bug.cgi?id=226683#c3
+		// https://stackoverflow.com/questions/67836886/wheel-event-is-not-fired-on-a-svg-group-element-in-safari
+		if (
+			window.GestureEvent && /^((?!chrome|android|mobile).)*safari/i.test(navigator.userAgent)
+		) {
+			svg.on("wheel", () => {});
+		}
 
 		eventRect?.call(behaviour)
 			.on("dblclick.zoom", null);

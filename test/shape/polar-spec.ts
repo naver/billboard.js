@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$LEVEL} from "../../src/config/classes";
 
@@ -65,7 +65,7 @@ describe("SHAPE POLAR", () => {
             });
         });
 
-        it("check for polar arc shapes", done => {
+        it("check for polar arc shapes", () => new Promise(done => {
             const {internal} = chart;
             const {config, $el: {arcs}} = internal;
 
@@ -93,22 +93,22 @@ describe("SHAPE POLAR", () => {
                     expect(this.textContent).to.be.equal(expectedLabel[i]);
                 });
 
-                done();
+                done(1);
             }, 300);
-        });
+        }));
     });
 
     describe("polar options #1", () => {        
-        const originalPath = [];
-        const originalAngle = [];
+        const originalPath: number[] = [];
+        const originalAngle: [number, number][] = [];
 
-        after(() => {
+        afterAll(() => {
             args.polar.padAngle = 0;
             args.polar.padding = 0;
             args.polar.startingAngle = 0;
         });
 
-        it("Retrieve original path data", done => {
+        it("Retrieve original path data", () => new Promise(done => {
             setTimeout(() => {
                 chart.internal.$el.arcs.selectAll("path").each(function(d) {
                     const {startAngle, endAngle} = d;
@@ -117,38 +117,38 @@ describe("SHAPE POLAR", () => {
                     originalAngle.push([startAngle, endAngle]);
                 });
 
-                done();
+                done(1);
             }, 300);
-        });
+        }));
 
         it("set options: padAngle=0.3", () => {
             args.polar.padAngle = 0.3;
         });
 
-        it("should padAngle applied correctly?", done => {
+        it("should padAngle applied correctly?", () => new Promise(done => {
             setTimeout(() => {
                 chart.internal.$el.arcs.selectAll("path").each(function(d, i) {
                     expect(this.getTotalLength()).to.be.below(originalPath[i]);
                 });
 
-                done();
+                done(1);
             }, 300);
-        });
+        }));
 
         it("set options: padding=10", () => {
             args.polar.padAngle = 0;
             args.polar.padding = 10;
         });
 
-        it("should padding applied correctly?", done => {
+        it("should padding applied correctly?", () => new Promise(done => {
             setTimeout(() => {
                 chart.internal.$el.arcs.selectAll("path").each(function(d, i) {
                     expect(this.getTotalLength()).to.be.below(originalPath[i]);
                 });
 
-                done();
+                done(1);
             }, 300);
-        });
+        }));
 
         it("set options: startingAngle=3", () => {
             args.polar.padAngle = 0;
@@ -156,7 +156,7 @@ describe("SHAPE POLAR", () => {
             args.polar.startingAngle = 1.5;
         });
 
-        it("should startingAngle applied correctly?", done => {
+        it("should startingAngle applied correctly?", () => new Promise(done => {
             setTimeout(() => {
                 chart.internal.$el.arcs.selectAll("path").each(function(d, i) {
                     const {startAngle, endAngle} = d;
@@ -165,13 +165,13 @@ describe("SHAPE POLAR", () => {
                     expect(endAngle).to.be.above(originalAngle[i][1]);
                 });
 
-                done();
+                done(1);
             }, 300);
-        });
+        }));
     });
 
     describe("polar options #2: level", () => {
-        before(() => {
+        beforeAll(() => {
             args.polar.level = {
                 depth: 5,
                 max: 150,
@@ -264,7 +264,7 @@ describe("SHAPE POLAR", () => {
     });
 
     describe("polar options #3: label", () => {
-        before(() => {
+        beforeAll(() => {
             args.polar.label = {
                 show: true,
                 format: function(value, ratio, id) {

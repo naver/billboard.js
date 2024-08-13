@@ -3,13 +3,14 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterEach, afterAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
+
 import bb from "../../src";
+import {convertInputType, extend} from "../assets/module/util";
 import util from "../assets/util";
 import {$AXIS, $COMMON} from "../../src/config/classes";
 import Chart from "../../src/Chart/Chart";
-import {convertInputType, extend} from "../../src/module/util";
 
 describe("Interface & initialization", () => {
 	function getWrapper(id) {
@@ -165,14 +166,12 @@ describe("Interface & initialization", () => {
 			}
 		});
 
-		after(() => {
+		afterAll(() => {
 			//document.body.removeAttribute("style");
 		});
 
-		it("should resize correctly in flex container", function(done) {
+		it("should resize correctly in flex container", () => new Promise(done => {
 			const innerHTML = document.body.innerHTML;
-
-			this.timeout(5000);
 
 			// set flex container
 			const div = document.createElement("div");
@@ -207,12 +206,12 @@ describe("Interface & initialization", () => {
 				div.parentNode?.removeChild(div);
 				//document.body.innerHTML = innerHTML;
 
-				done();
+				done(1);
 			}, 200);
-		});
+		}));
 
-		it("height shouldn't be increased on resize event", function(done) {
-			before(() => {
+		it("height shouldn't be increased on resize event", () => new Promise(done => {
+			beforeAll(() => {
 				return new Promise((resolve) => {
 					chart = util.generate({
 						bindto: "#chartResize",
@@ -226,8 +225,6 @@ describe("Interface & initialization", () => {
 					});
 				});
 			});
-
-			this.timeout(5000);
 
 			container.innerHTML = '<div id="chartResize"></div>';
 
@@ -247,16 +244,15 @@ describe("Interface & initialization", () => {
 
 			setTimeout(() => {
 				expect(+chart.internal.$el.svg.attr("height")).to.be.equal(chartHeight);
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
-		it("should be resizing all generated chart elements", function(done) {
-			this.timeout(6000);
+		it("should be resizing all generated chart elements", () => new Promise(done => {
 			const width = 300;
 			const inst: any[] = [];
 
-			before(() => {
+			beforeAll(() => {
 				container.innerHTML = '<div id="chartResize1"></div><div id="chartResize2"></div>';
 	
 				const args = {
@@ -287,9 +283,9 @@ describe("Interface & initialization", () => {
 					expect(+c.internal.$el.svg.attr("width")).to.be.equal(width);
 				});
 
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
 		it("should set correct height value", () => {
 			const height = 450;
@@ -328,11 +324,11 @@ describe("Interface & initialization", () => {
 			}
 		};
 
-		before(() => {
+		beforeAll(() => {
 			bb.defaults(args);
 		});
 
-		after(() => {
+		afterAll(() => {
 			bb.defaults({});
 		})
 
@@ -392,7 +388,7 @@ describe("Interface & initialization", () => {
 		let chart;
 		const spy = sinon.spy();
 
-		before(() => {
+		beforeAll(() => {
 			const args = {
 				data: {
 					columns: [
@@ -470,7 +466,7 @@ describe("Interface & initialization", () => {
 			}
 		});
 
-		it("check lazy rendering & mutation observer: style attribute", done => {
+		it("check lazy rendering & mutation observer: style attribute", () => new Promise(done => {
 			const el: any = document.body.querySelector("#chart");
 
 			// hide to lazy render
@@ -492,11 +488,11 @@ describe("Interface & initialization", () => {
 
 				expect(spy.afterinit.called).to.be.true;
 				expect(spy.rendered.called).to.be.true;
-				done();
-			}, 500);
-		});
+				done(1);
+			}, 300);
+		}));
 
-		it("check lazy rendering & mutation observer: class attribute", done => {
+		it("check lazy rendering & mutation observer: class attribute", () => new Promise(done => {
 			const el = document.body.querySelector("#chart");
 
 			// hide to lazy render
@@ -516,11 +512,12 @@ describe("Interface & initialization", () => {
 				expect(el?.innerHTML).to.be.not.empty;
 				expect(spy.afterinit.called).to.be.true;
 				expect(spy.rendered.called).to.be.true;
-				done();
-			}, 500);
-		});
+				
+				done(1);
+			}, 300);
+		}));
 
-		it("check lazy rendering on callbacks", done => {
+		it("check lazy rendering on callbacks", () => new Promise(done => {
 			const el: any = document.body.querySelector("#chart");
 
 			// hide to lazy render
@@ -551,12 +548,13 @@ describe("Interface & initialization", () => {
 				setTimeout(() => {
 					expect(spy.resize.called).to.be.true;
 					expect(spy.resized.called).to.be.true;
-					done();
+					
+					done(1);
 				}, 300);				
-			}, 500);
-		});
+			}, 300);
+		}), 4000);
 
-		it("check lazy rendering via option", done => {
+		it("check lazy rendering via option", () => new Promise(done => {
 			const el = document.body.querySelector("#chart");
 
 			args.render = {
@@ -580,9 +578,10 @@ describe("Interface & initialization", () => {
 				expect(el?.innerHTML).to.be.not.empty;
 				expect(spy.afterinit.called).to.be.true;
 				expect(spy.rendered.called).to.be.true;
-				done();
-			}, 500);
-		});
+		
+				done(1);
+			}, 300);
+		}));
 	});
 
 	describe("check for background", () => {
@@ -655,7 +654,7 @@ describe("Interface & initialization", () => {
 			container = getWrapper(containerName);
 		});
 
-		it("check for the resize timer using requestIdleCallback()", done => {			
+		it("check for the resize timer using requestIdleCallback()", () => new Promise(done => {
 			const width = 300;
 			const chart = util.generate({
 				bindto: `#${containerName}`,
@@ -674,7 +673,8 @@ describe("Interface & initialization", () => {
 				onresized: function() {
 					expect(this).to.be.deep.equal(chart);
 					expect(chart.$.chart.style("width")).to.be.equal(`${width}px`);
-					done();
+			
+					done(1);
 				}
 			});
 
@@ -683,18 +683,18 @@ describe("Interface & initialization", () => {
 
 			// trigger resize eventize 
 			window.dispatchEvent(new Event("resize"));
-		});
+		}));
 	});
 
 	describe("resize legend", () => {
 		const containerName = "containerForLegend";
 		let container;
 
-		before(() => {
+		beforeAll(() => {
 			container = getWrapper(containerName);
 		});
 
-		it("should legend resized correctly?", function(done) {
+		it("should legend resized correctly?", () => new Promise(function(done) {
 			container.innerHTML = `<div id="${containerName}"></div>`;
 
 			const chart = util.generate({
@@ -719,13 +719,13 @@ describe("Interface & initialization", () => {
 						util.parseNum(legend.attr("transform")) + rect.height
 					).to.be.below(internal.state.current.height);
 
-					done();
+					done(``);
 				}
 			});
 
 			// resize chart holder
 			chart.$.chart.style("width", "100px");
 			window.dispatchEvent(new Event("resize"));
-		});
+		}));
 	});
 });

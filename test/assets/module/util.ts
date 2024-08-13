@@ -5,9 +5,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import {window} from "./browser";
-
-// fake module replaced during test build to '/src/module/util.ts' by webpack.NormalModuleReplacementPlugin
-import * as orgUtil from "../../test/assets/module/fake";
+import * as orgUtil from "../../../src/module/util";
 
 export const {
 	addCssRules,
@@ -60,6 +58,11 @@ export const {
 	tplProcess
 } = orgUtil;
 
+// specify fake values
+const fakeUtil = {
+	isTabVisible: () => true
+};
+
 // Expose to global
 // To mock return value, set returned value setting value
 // ex) To mock 'convertInputType' to return true:
@@ -68,7 +71,7 @@ window.$$TEST$$ = {};
 
 function getMock(name, ...args) {
 	return name in window.$$TEST$$ ?
-		window.$$TEST$$[name] : orgUtil[name](...args);
+		window.$$TEST$$[name] : fakeUtil[name]?.(...args) ?? orgUtil[name](...args);
 }
 
 export function convertInputType(...args) {

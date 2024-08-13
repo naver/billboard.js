@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {beforeEach, describe, expect, it} from "vitest";
 import bb, {donut} from "../../src/index.esm";
 
 describe("ESM donut", function() {
@@ -32,7 +32,7 @@ describe("ESM donut", function() {
 		chart = bb.generate(args);
 	});
 
-    it("should tooltip.hide() work", done => {
+    it("should tooltip.hide() work", () => new Promise(done => {
         const {internal} = chart;
         const {hideGridFocus} = internal;
         
@@ -48,9 +48,9 @@ describe("ESM donut", function() {
             // revert internal method
             internal.hideGridFocus = hideGridFocus;
 
-            done();
-        }, 500);        
-    });
+            done(1);
+        }, 300);        
+    }));
 
     it("shouldn't throw error on call of tooltip API.", () => {
         delete chart.internal.config.axis_y_label;

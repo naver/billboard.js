@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 // @ts-nocheck
-import {expect} from "chai";
+import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$COMMON, $ARC} from "../../src/config/classes";
 
@@ -26,7 +26,7 @@ describe("TOOLTIP: on redraws", function() {
 	}
 
 	describe("Multiple xs", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					xs: {
@@ -44,7 +44,7 @@ describe("TOOLTIP: on redraws", function() {
 			};
 		});
 
-		it("tooltip has been updated?", done => {
+		it("tooltip has been updated?", () => new Promise(done => {
 			util.hoverChart(chart, "mousemove", {
 				clientX: 487,
 				clientY: 317
@@ -66,14 +66,14 @@ describe("TOOLTIP: on redraws", function() {
 					expect(name.filter((d, i) => i === 2).text()).to.be.equal("data3");
 					expect(+value.filter((d, i) => i === 2).text()).to.be.equal(100);
 
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 	});
 
 	describe("Single x", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -89,7 +89,7 @@ describe("TOOLTIP: on redraws", function() {
 			};
 		});
 
-		it("tooltip has been updated?", done => {
+		it("tooltip has been updated?", () => new Promise(done => {
 			util.hoverChart(chart, "mousemove", {
 				clientX: 487,
 				clientY: 317
@@ -114,14 +114,14 @@ describe("TOOLTIP: on redraws", function() {
 					expect(name.filter((d, i) => i === 1).text()).to.be.equal("data3");
 					expect(+value.filter((d, i) => i === 1).text()).to.be.equal(100);
 					
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 	});
 
 	describe("Single x, load different value", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -137,7 +137,7 @@ describe("TOOLTIP: on redraws", function() {
 			};
 		});
 
-		it("tooltip has been updated?", done => {
+		it("tooltip has been updated?", () => new Promise(done => {
 			util.hoverChart(chart, "mousemove", {
 				clientX: 487,
 				clientY: 317
@@ -153,14 +153,14 @@ describe("TOOLTIP: on redraws", function() {
 					expect(value.size()).to.be.equal(1);
 					expect(+value.text()).to.be.equal(100);
 					
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 	});
 
 	describe("Treemap", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -183,7 +183,7 @@ describe("TOOLTIP: on redraws", function() {
 			};
 		});
 
-		it("tooltip has been updated?", done => {
+		it("tooltip has been updated?", () => new Promise(done => {
 			chart.tooltip.show({
 				data: {
 					id: "data1"
@@ -203,15 +203,15 @@ describe("TOOLTIP: on redraws", function() {
 						expect(value.size()).to.be.equal(1);
 						expect(value.text()).to.be.equal("38.20%");
 
-						done();
+						done(1);
 					}, 300);
 				}
 			});
-		});
+		}));
 	});
 
 	describe("Pie", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -223,7 +223,7 @@ describe("TOOLTIP: on redraws", function() {
 			};
 		});
 
-		it("tooltip has been updated?", done => {
+		it("tooltip has been updated?", () => new Promise(done => {
 			const target = chart.$.arc.select(`path.${$ARC.arc}-data2`).node();
 
 			setTimeout(() => {
@@ -247,16 +247,16 @@ describe("TOOLTIP: on redraws", function() {
 							expect(prev).to.not.equal(current);
 							expect(current).to.be.equal("70.6%");
 							
-							done();
+							done(1);
 						}, 300);
 					}
 				});
 			}, 300);
-		});
+		}));
 	});
 
 	describe("Radar", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					x: "x",
@@ -283,7 +283,7 @@ describe("TOOLTIP: on redraws", function() {
 			};
 		});
 
-		it("tooltip has been updated?", done => {
+		it("tooltip has been updated?", () => new Promise(done => {
 			chart.tooltip.show({index: 2})
 
 			chart.load({
@@ -299,14 +299,14 @@ describe("TOOLTIP: on redraws", function() {
 						return this.textContent === "data4";
 					}).size()).to.be.equal(1);
 
-					done();
+					done(1);
 				}
 			});
-		});
+		}));
 	});
 
 	describe("Using .groups() API", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -325,7 +325,7 @@ describe("TOOLTIP: on redraws", function() {
 			};
 		});
 
-		it("tooltip has been updated?", done => {
+		it("tooltip has been updated?", () => new Promise(done => {
 			// when
 			chart.tooltip.show({index: 3});
 			chart.groups([["data1", "data2", "data3"]]);
@@ -342,10 +342,10 @@ describe("TOOLTIP: on redraws", function() {
 							return this.textContent === "data4";
 						}).size()).to.be.equal(1);
 
-						done();
+						done(1);
 					}
 				});
 			}, 300);
-		});
+		}));
 	});
 });

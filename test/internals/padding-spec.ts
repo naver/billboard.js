@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import util from "../assets/util";
 import {$AXIS} from "../../src/config/classes";
@@ -37,7 +37,7 @@ describe("PADDING", () => {
 	describe("basic", () => {
 		let margin;
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [["data", 130, 100, 140, 35, 110, 50]],
@@ -207,7 +207,7 @@ describe("PADDING", () => {
 	});
 
 	describe("margin: normal mode", () => {
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [
@@ -407,7 +407,7 @@ describe("PADDING", () => {
 	describe("margin: 'fit' mode", () => {
 		let temp;
 
-		before(() => {
+		beforeAll(() => {
 			args = {
 				data: {
 					columns: [

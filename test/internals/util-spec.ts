@@ -4,11 +4,11 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {expect} from "chai";
+import {describe, expect, it} from "vitest";
 import sinon from "sinon";
 import {timeParse as d3TimeParse} from "d3-time-format";
 import {window} from "../../src/module/browser";
-import {toArray, getBoundingRect, getCssRules, getPathBox, getPointer, getUnique, isArray, isNumber, sortValue, parseDate} from "../../src/module/util";
+import {toArray, getBoundingRect, getCssRules, getPathBox, getPointer, getUnique, isArray, isNumber, sortValue, parseDate} from "../assets/module/util";
 
 describe("UTIL", function() {
 	describe("toArray", () => {
@@ -79,11 +79,16 @@ describe("UTIL", function() {
 
 	describe("getPathBox", () => {
 		it("should return element's path box value", () => {
-			const pathBox = getPathBox(document.body.querySelector("svg") as SVGGraphicsElement);
+			const svg: SVGGraphicsElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+			document.body.appendChild(svg);
+
+			const pathBox = getPathBox(svg);
 
 			for (let x in pathBox) {
 				expect(isNumber(pathBox[x])).to.be.true;
 			}
+
+			svg.parentElement?.removeChild(svg);
 		});
 	});
 
