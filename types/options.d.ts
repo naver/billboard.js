@@ -440,7 +440,7 @@ export interface LegendOptions {
 	 * Change the position of legend.
 	 * Currently bottom, right and inset are supported.
 	 */
-	position?: string;
+	position?: "bottom" | "right" | "inset";
 
 	/**
 	 * Change inset legend attributes.
@@ -450,7 +450,7 @@ export interface LegendOptions {
 	 * - step: defines the max step the lagend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
 	 */
 	inset?: {
-		anchor?: string;
+		anchor?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
 		x?: number;
 		y?: number;
 		step?: number;
@@ -552,7 +552,7 @@ export interface LegendOptions {
 	/**
 	 * Set formatter function for legend text.
 	 */
-	format?: (id: string) => string;
+	format?: (id: string, dataId?: string) => string;
 
 	/**
 	 * Show full legend text value using system tooltip(via 'title' element).

@@ -3517,28 +3517,51 @@ d3.select(".chart_area")
 				}
 			}
 		},
-		LegendFormat: {
-			description: "Stay hovering on each of legend items to see full data name text.",
-			options: {
-				data: {
-					columns: [
-						["SELECT idx, title, date, count from TEST_TABLE WHERE idx=5", 2, 3, 5],
-						["very long long data name needed to be", 1, 2, 2],
-					],
-					type: "line"
-				},
-				legend: {
-					format: function(id) {
-						if (id.length > 5) {
-							id = id.substr(0, 5) + "...";
-						}
-			
-						return id;
+		LegendFormat: [
+			{
+				description: "Stay hovering on each of legend items to see full data name text.",
+				options: {
+					data: {
+						columns: [
+							["SELECT idx, title, date, count from TEST_TABLE WHERE idx=5", 2, 3, 5],
+							["very long long data name needed to be", 1, 2, 2],
+						],
+						type: "line"
 					},
-					tooltip: true
+					legend: {
+						format: function(id) {
+							if (id.length > 5) {
+								id = id.substr(0, 5) + "...";
+							}
+				
+							return id;
+						},
+						tooltip: true
+					}
+				}
+			}, 
+			{
+				options: {
+					data: {
+						names: {
+							"data1": "Detailed Name",
+							"data2": "Name Detailed"
+						},
+						columns: [
+							["data1", 71.4],
+							["data2", 10],
+						],
+						type: "gauge"
+					},
+					legend: {
+						format: function(id, dataId) {
+						return id === "Name Detailed" ? dataId : id;
+    },
+						tooltip: true
+					}
 				}
 			}
-		},
+		],
 		LegendItemInteraction: [
 			{
 				description: "<b>Single click + AltKey(Win)/optionKey(Mac)</b><br>or <b>Double click</b> legend item to show/hide data series",
