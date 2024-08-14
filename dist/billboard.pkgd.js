@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240813004629
+ * @version 3.12.4-nightly-20240814004634
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -21242,7 +21242,8 @@ const $ZOOM = {
    *   - rectangle
    * @property {boolean} [legend.format] Set formatter function for legend text.
    * The argument:<br>
-   *  - `id`: legend text value. When `data.names` is specified, will pass from it, otherwise will pass data id.
+   *  - `id`: Legend text value. When `data.names` is specified, will pass from it, otherwise will pass data id.
+   *  - `dataId`: When `data.names` specified, will pass the original data id. Otherwise will be undefined.
    * @property {boolean} [legend.tooltip=false] Show full legend text value using system tooltip(via `<title>` element).
    * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
    * @see [Demo: format](https://naver.github.io/billboard.js/demo/#Legend.LegendFormat)
@@ -21308,7 +21309,7 @@ const $ZOOM = {
    *              r: 10
    *          }
    *      },
-   *      format: function(id) {
+   *      format: function(id, dataId) {
    *          // set ellipsis string when length is > 5
    *          // to get full legend value, combine with 'legend.tooltip=true'
    *          if (id.length > 5) {
@@ -28789,7 +28790,7 @@ function getFormattedText(id, formatted = true) {
   const { config } = this;
   let text = (_a = config.data_names[id]) != null ? _a : id;
   if (formatted && isFunction(config.legend_format)) {
-    text = config.legend_format(text);
+    text = config.legend_format(text, id !== text ? id : void 0);
   }
   return text;
 }
@@ -48272,7 +48273,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.12.4-nightly-20240813004629",
+  version: "3.12.4-nightly-20240814004634",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
