@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.12.4-nightly-20240814004634
+ * @version 3.12.4-nightly-20240815004626
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -23705,14 +23705,15 @@ var zoom = {
      * @private
      */
     bindZoomOnEventRect: function () {
+        var _a;
         var $$ = this;
-        var config = $$.config, _a = $$.$el, eventRect = _a.eventRect, svg = _a.svg;
+        var config = $$.config, _b = $$.$el, eventRect = _b.eventRect, svg = _b.svg;
         var behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
         // On Safari, event can't be built inside the svg content
         // for workaround, register wheel event on <svg> element first
         // https://bugs.webkit.org/show_bug.cgi?id=226683#c3
         // https://stackoverflow.com/questions/67836886/wheel-event-is-not-fired-on-a-svg-group-element-in-safari
-        if (win.GestureEvent && /^((?!chrome|android|mobile).)*safari/i.test(navigator.userAgent)) {
+        if (win.GestureEvent && /^((?!chrome|android|mobile).)*safari/i.test((_a = win.navigator) === null || _a === void 0 ? void 0 : _a.userAgent)) {
             svg.on("wheel", function () { });
         }
         eventRect === null || eventRect === void 0 ? void 0 : eventRect.call(behaviour).on("dblclick.zoom", null);
@@ -24387,7 +24388,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.12.4-nightly-20240814004634
+ * @version 3.12.4-nightly-20240815004626
  */
 var bb = {
     /**
@@ -24397,7 +24398,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.12.4-nightly-20240814004634",
+    version: "3.12.4-nightly-20240815004626",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.4-nightly-20240814004634
+ * @version 3.12.4-nightly-20240815004626
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -11212,10 +11212,11 @@ extend(zoom, {
    * @private
    */
   bindZoomOnEventRect() {
+    var _a;
     const $$ = this;
     const { config, $el: { eventRect, svg } } = $$;
     const behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
-    if (win.GestureEvent && /^((?!chrome|android|mobile).)*safari/i.test(navigator.userAgent)) {
+    if (win.GestureEvent && /^((?!chrome|android|mobile).)*safari/i.test((_a = win.navigator) == null ? void 0 : _a.userAgent)) {
       svg.on("wheel", () => {
       });
     }
@@ -21641,7 +21642,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.12.4-nightly-20240814004634",
+  version: "3.12.4-nightly-20240815004626",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
