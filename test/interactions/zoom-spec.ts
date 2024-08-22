@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
+import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {zoomTransform as d3ZoomTransform} from "d3-zoom";
 import sinon from "sinon";
 import {$AXIS, $EVENT, $GRID, $REGION, $ZOOM} from "../../src/config/classes";

@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
+import {beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$BAR, $SELECT, $SHAPE} from "../../src/config/classes";
 

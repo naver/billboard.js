@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
+import {beforeEach, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {runWorker} from "../../src/module/worker";
 
