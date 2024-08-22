@@ -4,8 +4,8 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import sinon from "sinon";
 import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
+import sinon from "sinon";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$FOCUS, $LEGEND} from "../../src/config/classes";

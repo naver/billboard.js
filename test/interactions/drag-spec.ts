@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {beforeEach, beforeAll, describe, expect, it} from "vitest";
+import {beforeEach, beforeAll, afterEach, describe, expect, it} from "vitest";
 import {$DRAG, $SELECT} from "../../src/config/classes";
 import util from "../assets/util";
 

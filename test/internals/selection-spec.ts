@@ -4,8 +4,8 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import sinon from "sinon";
 import {beforeEach, beforeAll, describe, expect, it} from "vitest";
+import sinon from "sinon";
 import {
 	select as d3Select,
 	selectAll as d3SelectAll
