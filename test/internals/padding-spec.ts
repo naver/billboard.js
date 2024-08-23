@@ -4,7 +4,6 @@
  */
 /* eslint-disable */
 import {beforeEach, beforeAll, describe, expect, it} from "vitest";
-import sinon from "sinon";
 import util from "../assets/util";
 import {$AXIS} from "../../src/config/classes";
 
