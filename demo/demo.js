@@ -19,71 +19,132 @@ var demos = {
 				}
 			}
 		},
-		AreaRangeChart: {
-			options: {
-				data: {
-					x: "x",
-					columns: [
-						["x", "2013-01-01", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05", "2013-01-06"],
-						["data1",
-							[150, 140, 110],
-							[155, 130, 115],
-							[160, 135, 120],
-							[135, 120, 110],
-							[180, 150, 130],
-							[199, 160, 125]
+		AreaRangeChart: [
+			{
+				options: {
+					title: {
+						text: "Area line range"
+					},
+					data: {
+						x: "x",
+						columns: [
+							["x", "2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05", "2024-01-06"],
+							["data1",
+								[150, 140, 110],
+								[155, 130, 115],
+								[160, 135, 120],
+								[135, 120, 110],
+								[180, 150, 130],
+								[199, 160, 125]
+							],
+							["data2", 130, 340, 200, 500, 250, 350]
+
 						],
-						["data2", 130, 340, 200, 500, 250, 350]
-
-					],
-					types: {
-						data1: "area-line-range"
-					}
-				},
-				axis: {
-					x: {
-
-						type: "timeseries",
-						tick: {
-							format: "%Y-%m-%d"
+						types: {
+							data1: "area-line-range"
 						}
-					}
+					},
+					axis: {
+						x: {
+
+							type: "timeseries",
+							tick: {
+								format: "%Y-%m-%d"
+							}
+						}
+					},
+
 				},
+				func: function(chart) {
+					chart.timer = [
+						setTimeout(function() {
+							chart.load({
+								columns: [
+									["data3", [220, 215, 205], [240, 225, 215], [260, 235, 225], [280, 245, 235], [270, 255, 225], [240, 225, 215]],
+								],
+								types: {
+									data3: "area-spline-range"
+								}
+							});
+						}, 1000),
 
+						setTimeout(function() {
+							chart.load({
+								columns: [
+									["data4",
+										{high: 155, low: 145, mid: 150},
+										{high: 200, mid: 190, low: 150},
+										{high: 230, mid: 215, low: 200},
+										{high: 210, mid: 200, low: 180},
+										{high: 220, mid: 210, low: 190},
+										{high: 200, mid: 180, low: 160}
+									]
+								],
+								types: {
+									data4: "area-spline-range"
+								}
+							});
+						}, 1500)
+					];
+				}
 			},
-			func: function(chart) {
-				chart.timer = [
-					setTimeout(function() {
-						chart.load({
-							columns: [
-								["data3", [220, 215, 205], [240, 225, 215], [260, 235, 225], [280, 245, 235], [270, 255, 225], [240, 225, 215]],
+			{
+				options: {
+					title: {
+						text: "Area spline range"
+					},
+					data: {
+						columns: [
+							["data1",
+								[150, 140, 110],
+								[155, 130, 115],
+								[160, 135, 120],
+								[135, 120, 110],
+								[180, 150, 130],
+								[199, 160, 125]
 							],
-							types: {
-								data3: "area-spline-range"
-							}
-						});
-					}, 1000),
-
-					setTimeout(function() {
-						chart.load({
-							columns: [
-								["data4",
-									{high: 155, low: 145, mid: 150},
-									{high: 200, mid: 190, low: 150},
-									{high: 230, mid: 215, low: 200},
-									{high: 210, mid: 200, low: 180},
-									{high: 220, mid: 210, low: 190},
-									{high: 200, mid: 180, low: 160}
-								]
+							["data2",
+								[250, 220, 210],
+								[255, 230, 195],
+								[260, 150, 100],
+								[235, 220, 210],
+								[280, 250, 200],
+								[299, 260, 230]
+							]
+						],
+						type: "area-spline-range"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Area step range"
+					},
+					data: {
+						columns: [
+							["data1",
+								[70, 40, 30],
+								[155, 130, 115],
+								[160, 135, 120],
+								[200, 120, 110],
+								[95, 50, 40],
+								[199, 160, 125]
 							],
-							types: {
-								data4: "area-spline-range"
-							}
-						});
-					}, 1500)
-				];
+							["data2",
+								[350, 220, 110],
+								[255, 230, 195],
+								[260, 250, 190],
+								[235, 220, 210],
+								[180, 150, 100],
+								[299, 260, 230]
+							]
+						],
+						type: "area-step-range"
+					}
+				}
 			}
-		},
+		],
 		BarChart: [
 			{
 				options: {
@@ -2033,7 +2094,7 @@ var demos = {
 				}
 			}
 		},
-XAxisTickInner: [
+		XAxisTickInner: [
 			{
 				options: {
 					data: {
@@ -3456,28 +3517,51 @@ d3.select(".chart_area")
 				}
 			}
 		},
-LegendFormat: {
-			description: "Stay hovering on each of legend items to see full data name text.",
-			options: {
-				data: {
-					columns: [
-						["SELECT idx, title, date, count from TEST_TABLE WHERE idx=5", 2, 3, 5],
-						["very long long data name needed to be", 1, 2, 2],
-					],
-					type: "line"
-				},
-				legend: {
-					format: function(id) {
-						if (id.length > 5) {
-							id = id.substr(0, 5) + "...";
-						}
-			
-						return id;
+		LegendFormat: [
+			{
+				description: "Stay hovering on each of legend items to see full data name text.",
+				options: {
+					data: {
+						columns: [
+							["SELECT idx, title, date, count from TEST_TABLE WHERE idx=5", 2, 3, 5],
+							["very long long data name needed to be", 1, 2, 2],
+						],
+						type: "line"
 					},
-					tooltip: true
+					legend: {
+						format: function(id) {
+							if (id.length > 5) {
+								id = id.substr(0, 5) + "...";
+							}
+				
+							return id;
+						},
+						tooltip: true
+					}
+				}
+			}, 
+			{
+				options: {
+					data: {
+						names: {
+							"data1": "Detailed Name",
+							"data2": "Name Detailed"
+						},
+						columns: [
+							["data1", 71.4],
+							["data2", 10],
+						],
+						type: "gauge"
+					},
+					legend: {
+						format: function(id, dataId) {
+						return id === "Name Detailed" ? dataId : id;
+    },
+						tooltip: true
+					}
 				}
 			}
-		},
+		],
 		LegendItemInteraction: [
 			{
 				description: "<b>Single click + AltKey(Win)/optionKey(Mac)</b><br>or <b>Double click</b> legend item to show/hide data series",
@@ -4230,7 +4314,7 @@ LegendFormat: {
 				}
 			}
 		],
-RadialGradientPoint: [			
+		RadialGradientPoint: [			
 			{
 				options: {
 					data: {
@@ -4342,7 +4426,7 @@ RadialGradientPoint: [
 				]
 			}
 		},
-RegionLabel: {
+		RegionLabel: {
 			options: {
 				data: {
 					columns: [
@@ -4568,7 +4652,7 @@ RegionLabel: {
 				}
 			}
 		},
-TooltipPosition: [
+		TooltipPosition: [
 			{
 				options: {
 					data: {
@@ -5096,24 +5180,49 @@ TooltipPosition: [
 				}
 			},
 		],
-		BarWidth: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 130, 100, 140, 200, 150, 50],
-						["data3", 130, 100, 140, 200, 150, 50]
-					],
-					type: "bar"
-				},
-				bar: {
-					width: {
-						ratio: 0.9,
-						max: 30
+		BarWidth: [
+			{
+				options: {
+					title: {
+						text: "set width in ratio with max limit"
+					},
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 130, 100, 140, 200, 150, 50],
+							["data3", 130, 100, 140, 200, 150, 50]
+						],
+						type: "bar"
+					},
+					bar: {
+						width: {
+							ratio: 0.9,
+							max: 30
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "set width in callback"
+					},
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 130, 100, 140, 200, 150, 50],
+							["data3", 130, 100, 140, 200, 150, 50]
+						],
+						type: "bar"
+					},
+					bar: {
+						width: function(width, targetsNum, maxDataCount) {
+						return width / (targetsNum * maxDataCount);
+						}
 					}
 				}
 			}
-		},
+		],
 		BarWidthVariant: {
 			options: {
 				data: {
@@ -5694,7 +5803,7 @@ setTimeout(function() {
 				]
 			}
 		],
-DonutRangeText: [{
+		DonutRangeText: [{
 			options: {
 				title: {
 					text: "Range text in 'absolute' value"
@@ -5901,7 +6010,7 @@ DonutRangeText: [{
 				}
 			}
 		},
-GaugeMinMax: [
+		GaugeMinMax: [
 			{
 				options: {
 					data: {
@@ -5961,7 +6070,7 @@ GaugeMinMax: [
 				}
 			}
 		},
-GaugeLabelRatio: [
+		GaugeLabelRatio: [
 			{
 				options: {
 					title: {
@@ -6113,7 +6222,7 @@ GaugeLabelRatio: [
 				}
 			},
 		],
-GaugeRangeText: [{
+		GaugeRangeText: [{
 			options: {
 				title: {
 					text: "Range text in 'absolute' value"
