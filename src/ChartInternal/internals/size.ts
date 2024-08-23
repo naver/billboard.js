@@ -48,7 +48,7 @@ export default {
 		while (v < 30 && parent && parent.tagName !== "BODY") {
 			try {
 				v = parent.getBoundingClientRect()[key];
-			} catch (e) {
+			} catch {
 				if (offsetName in parent) {
 					// In IE in certain cases getBoundingClientRect
 					// will cause an "unspecified error"

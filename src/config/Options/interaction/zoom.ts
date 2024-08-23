@@ -81,6 +81,6 @@ export default {
 	zoom_onzoomstart: <Function | undefined>undefined,
 	zoom_onzoomend: <Function | undefined>undefined,
 	zoom_resetButton: <{text: string} | boolean>true,
-	zoom_x_min: <Number | Date | undefined>undefined,
-	zoom_x_max: <Number | Date | undefined>undefined
+	zoom_x_min: <number | Date | undefined>undefined,
+	zoom_x_max: <number | Date | undefined>undefined
 };

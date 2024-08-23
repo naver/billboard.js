@@ -73,6 +73,8 @@ export default [
             "@typescript-eslint/ban-types": 0,
             "@typescript-eslint/no-explicit-any": 0,
             "@typescript-eslint/no-this-alias": 0,
+            "@typescript-eslint/no-unused-expressions": 0,
+            "@typescript-eslint/no-unsafe-function-type": 0,
             "@typescript-eslint/no-unused-vars": [
                 "error", {
                     vars: "all",

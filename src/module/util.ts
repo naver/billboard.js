@@ -275,7 +275,7 @@ function getPointer(event, element?: Element): number[] {
 
 	try {
 		pointer = d3Pointer(touches || event, element);
-	} catch (e) {}
+	} catch {}
 
 	return pointer.map(v => (isNaN(v) ? 0 : v));
 }
@@ -691,7 +691,7 @@ const emulateEvent = {
 			return (el: SVGElement | HTMLElement, eventType: string, params = getParams()) => {
 				el.dispatchEvent(new MouseEvent(eventType, params));
 			};
-		} catch (e) {
+		} catch {
 			// Polyfills DOM4 MouseEvent
 			return (el: SVGElement | HTMLElement, eventType: string, params = getParams()) => {
 				const mouseEvent = document.createEvent("MouseEvent");

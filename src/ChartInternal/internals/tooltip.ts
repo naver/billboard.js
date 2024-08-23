@@ -566,7 +566,7 @@ export default {
 							c.tooltip[
 								show && isNotSameIndex ? "show" : "hide"
 							]({index});
-						} catch (e) {}
+						} catch {}
 					}
 				});
 		}
