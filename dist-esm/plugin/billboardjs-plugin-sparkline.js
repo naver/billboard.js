@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.12.4-nightly-20240823004645
+ * @version 3.13.0-nightly-20240824004625
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -23,7 +23,7 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
-/* global Reflect, Promise, SuppressedError, Symbol */
+/* global Reflect, Promise, SuppressedError, Symbol, Iterator */
 
 var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf ||
@@ -318,7 +318,7 @@ function mergeObj(target) {
                 el.dispatchEvent(new MouseEvent(eventType, params));
             };
         }
-        catch (e) {
+        catch (_a) {
             // Polyfills DOM4 MouseEvent
             return function (el, eventType, params) {
                 if (params === void 0) { params = getParams(); }
@@ -443,7 +443,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.12.4-nightly-20240823004645";
+    Plugin.version = "3.13.0-nightly-20240824004625";
     return Plugin;
 }());
 
