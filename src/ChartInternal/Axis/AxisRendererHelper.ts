@@ -51,7 +51,6 @@ export default class AxisRendererHelper {
 						size.w = width;
 						size.h = height;
 					}
-				} catch (e) {
 				} finally {
 					el.text("");
 				}
@@ -173,7 +172,7 @@ export default class AxisRendererHelper {
 			// https://github.com/naver/billboard.js/issues/2140
 			try {
 				transitionSelection = selection.transition(config.transition);
-			} catch (e) {}
+			} catch {}
 		}
 
 		return transitionSelection;
