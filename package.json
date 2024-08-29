@@ -41,11 +41,13 @@
 		"loc": "cloc --by-file src",
 		"test": "vitest",
 		"coverage": "vitest run",
+		"coverage:ci": "cross-env NODE_ENV=CI npm run coverage",
 		"coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
 		"jsdoc": "node ./config/jsdoc.js",
 		"jsdoc:cmd": "jsdoc -c jsdoc.json",
 		"lint-staged": "lint-staged --config ./config/.lintstagedrc.json",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"print": ""
 	},
 	"sideEffects": [
 		"dist/**/*.css",

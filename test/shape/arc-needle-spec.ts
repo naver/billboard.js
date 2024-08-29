@@ -73,8 +73,6 @@ describe("SHAPE ARC: NEEDLE option", () => {
 			const {$el: {arcs, needle}} = chart.internal;
 			const rx = /M-5 20 A0 0 0 0 0 5 20 L2\.5 -168\.\d+ A1 1 0 0 0 -2\.5 -168\.\d+ L-5 20 Z/;
 
-util.print.arg(args)
-console.log(needle.attr("d"))
 			expect(rx.test(needle.attr("d"))).to.be.true;
 			expect(getDegree(needle.style("transform"))).to.equal(118.8);
 			expect(needle.style("fill")).to.equal("red");
