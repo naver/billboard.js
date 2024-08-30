@@ -46,8 +46,7 @@
 		"jsdoc": "node ./config/jsdoc.js",
 		"jsdoc:cmd": "jsdoc -c jsdoc.json",
 		"lint-staged": "lint-staged --config ./config/.lintstagedrc.json",
-		"prepare": "husky install",
-		"print": ""
+		"prepare": "husky install"
 	},
 	"sideEffects": [
 		"dist/**/*.css",
