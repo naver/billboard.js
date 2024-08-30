@@ -255,7 +255,7 @@ export default {
 				padding += 1;
 			}
 		}
-
+		// console.log(type, padding + (axisSize * axesLen) - gap)
 		return padding + (axisSize * axesLen) - gap;
 	},
 

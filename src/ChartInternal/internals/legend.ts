@@ -294,14 +294,15 @@ export default {
 		const $$ = this;
 		const {current, isLegendRight, legendItemHeight, legendStep} = $$.state;
 		const isFitPadding = $$.config.padding?.mode === "fit";
-
-		return $$.config.legend_show ?
+		const height = $$.config.legend_show ?
 			(
 				isLegendRight ? current.height : (
-					isFitPadding ? 10 : Math.max(20, legendItemHeight)
+					Math.max(isFitPadding ? 10 : 20, legendItemHeight)
 				) * (legendStep + 1)
 			) :
 			0;
+
+		return height;
 	},
 
 	/**
