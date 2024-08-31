@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20240829004644
+ * @version 3.13.0-nightly-20240831004643
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5674,7 +5674,8 @@ function getFormattedText(id, formatted = true) {
     const $$ = this;
     const { current, isLegendRight, legendItemHeight, legendStep } = $$.state;
     const isFitPadding = ((_a = $$.config.padding) == null ? void 0 : _a.mode) === "fit";
-    return $$.config.legend_show ? isLegendRight ? current.height : (isFitPadding ? 10 : Math.max(20, legendItemHeight)) * (legendStep + 1) : 0;
+    const height = $$.config.legend_show ? isLegendRight ? current.height : Math.max(isFitPadding ? 10 : 20, legendItemHeight) * (legendStep + 1) : 0;
+    return height;
   },
   /**
    * Get the opacity of the legend that is unfocused
@@ -21641,7 +21642,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.13.0-nightly-20240829004644",
+  version: "3.13.0-nightly-20240831004643",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

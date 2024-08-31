@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.13.0-nightly-20240829004644
+ * @version 3.13.0-nightly-20240831004643
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -6285,9 +6285,10 @@ var legend$1 = {
         var $$ = this;
         var _b = $$.state, current = _b.current, isLegendRight = _b.isLegendRight, legendItemHeight = _b.legendItemHeight, legendStep = _b.legendStep;
         var isFitPadding = ((_a = $$.config.padding) === null || _a === void 0 ? void 0 : _a.mode) === "fit";
-        return $$.config.legend_show ?
-            (isLegendRight ? current.height : (isFitPadding ? 10 : Math.max(20, legendItemHeight)) * (legendStep + 1)) :
+        var height = $$.config.legend_show ?
+            (isLegendRight ? current.height : (Math.max(isFitPadding ? 10 : 20, legendItemHeight)) * (legendStep + 1)) :
             0;
+        return height;
     },
     /**
      * Get the opacity of the legend that is unfocused
@@ -7443,6 +7444,7 @@ var size = {
                 padding += 1;
             }
         }
+        // console.log(type, padding + (axisSize * axesLen) - gap)
         return padding + (axisSize * axesLen) - gap;
     },
     getCurrentPadding: function (withXAxisTickTextOverflow) {
@@ -24387,7 +24389,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.13.0-nightly-20240829004644
+ * @version 3.13.0-nightly-20240831004643
  */
 var bb = {
     /**
@@ -24397,7 +24399,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.13.0-nightly-20240829004644",
+    version: "3.13.0-nightly-20240831004643",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
