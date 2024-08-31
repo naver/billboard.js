@@ -123,6 +123,9 @@ function sandbox(obj: string | HTMLDivElement, prop?): HTMLDivElement {
 	return document.body.appendChild(tmp);
 }
 
+// test should executed from 'coverage:ci' command
+const isCI = process.env.NODE_ENV === "CI";
+
 export default {
 	destroyAll,
 	doDrag,
@@ -131,6 +134,7 @@ export default {
 	getBBox,
 	hexToRgb,
 	hoverChart,
+	isCI,
 	parseNum,
 	parseSvgPath,
 	print,
