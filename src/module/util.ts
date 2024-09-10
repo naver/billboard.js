@@ -34,9 +34,11 @@ export {
 	getRange,
 	getRectSegList,
 	getScrollPosition,
+	getTransformCTM,
 	getTranslation,
 	getUnique,
 	hasValue,
+	hasViewBox,
 	isArray,
 	isBoolean,
 	isDefined,
@@ -268,7 +270,7 @@ function getPathBox(
  * @returns {Array} [x, y] Coordinates x, y array
  * @private
  */
-function getPointer(event, element?: Element): number[] {
+function getPointer(event, element?: SVGElement): number[] {
 	const touches = event &&
 		(event.touches || (event.sourceEvent && event.sourceEvent.touches))?.[0];
 	let pointer = [0, 0];
@@ -538,6 +540,23 @@ function getScrollPosition(node: HTMLElement) {
 }
 
 /**
+ * Get translation string from screen <--> svg point
+ * @param {SVGGraphicsElement} node graphics element
+ * @param {number} x target x point
+ * @param {number} y target y point
+ * @param {boolean} inverse inverse flag
+ * @returns {object}
+ */
+function getTransformCTM(node: SVGGraphicsElement, x = 0, y = 0, inverse = true): DOMPoint {
+	const point = new DOMPoint(x, y);
+	const screen = <DOMMatrix>node.getScreenCTM();
+
+	return point.matrixTransform(
+		inverse ? screen?.inverse() : screen
+	);
+}
+
+/**
  * Gets the SVGMatrix of an SVGGElement
  * @param {SVGElement} node Node element
  * @returns {SVGMatrix} matrix
@@ -785,6 +804,17 @@ function parseDate(date: Date | string | number | any): Date {
 	}
 
 	return parsedDate;
+}
+
+/**
+ * Check if svg element has viewBox attribute
+ * @param {d3Selection} svg Target svg selection
+ * @returns {boolean}
+ */
+function hasViewBox(svg: d3Selection): boolean {
+	const attr = svg.attr("viewBox");
+
+	return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
 }
 
 /**
