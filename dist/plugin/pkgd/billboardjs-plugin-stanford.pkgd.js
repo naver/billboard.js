@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20240904004639
+ * @version 3.13.0-nightly-20240911004643
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23696,6 +23696,13 @@ function getScrollPosition(node) {
     y: ((_e = (_d = win.pageYOffset) != null ? _d : win.scrollY) != null ? _e : 0) + ((_f = node.scrollTop) != null ? _f : 0)
   };
 }
+function getTransformCTM(node, x = 0, y = 0, inverse = true) {
+  const point = new DOMPoint(x, y);
+  const screen = node.getScreenCTM();
+  return point.matrixTransform(
+    inverse ? screen == null ? void 0 : screen.inverse() : screen
+  );
+}
 function getTranslation(node) {
   const transform = node ? node.transform : null;
   const baseVal = transform && transform.baseVal;
@@ -23843,6 +23850,10 @@ function parseDate(date) {
   }
   return parsedDate;
 }
+function hasViewBox(svg) {
+  const attr = svg.attr("viewBox");
+  return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
+}
 function isTabVisible() {
   var _a, _b;
   return ((_a = doc) == null ? void 0 : _a.hidden) === false || ((_b = doc) == null ? void 0 : _b.visibilityState) === "visible";
@@ -23955,7 +23966,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.13.0-nightly-20240904004639");
+__publicField(Plugin, "version", "3.13.0-nightly-20240911004643");
 
 ;// CONCATENATED MODULE: ./node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {

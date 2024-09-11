@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.13.0-nightly-20240904004639
+ * @version 3.13.0-nightly-20240911004643
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -2588,6 +2588,22 @@ function getScrollPosition(node) {
     };
 }
 /**
+ * Get translation string from screen <--> svg point
+ * @param {SVGGraphicsElement} node graphics element
+ * @param {number} x target x point
+ * @param {number} y target y point
+ * @param {boolean} inverse inverse flag
+ * @returns {object}
+ */
+function getTransformCTM(node, x, y, inverse) {
+    if (x === void 0) { x = 0; }
+    if (y === void 0) { y = 0; }
+    if (inverse === void 0) { inverse = true; }
+    var point = new DOMPoint(x, y);
+    var screen = node.getScreenCTM();
+    return point.matrixTransform(inverse ? screen === null || screen === void 0 ? void 0 : screen.inverse() : screen);
+}
+/**
  * Gets the SVGMatrix of an SVGGElement
  * @param {SVGElement} node Node element
  * @returns {SVGMatrix} matrix
@@ -2804,6 +2820,15 @@ function parseDate(date) {
             console.error("Failed to parse x '".concat(date, "' to Date object"));
     }
     return parsedDate;
+}
+/**
+ * Check if svg element has viewBox attribute
+ * @param {d3Selection} svg Target svg selection
+ * @returns {boolean}
+ */
+function hasViewBox(svg) {
+    var attr = svg.attr("viewBox");
+    return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
 }
 /**
  * Return if the current doc is visible or not
@@ -4494,9 +4519,15 @@ var data$1 = {
             var e = inputType === "touch" && event.changedTouches ?
                 event.changedTouches[0] :
                 event;
-            index = findIndex(coords, isRotated ?
+            var point = isRotated ?
                 e.clientY + scrollPos.y - rect.top :
-                e.clientX + scrollPos.x - rect.left, 0, coords.length - 1, isRotated);
+                e.clientX + scrollPos.x - rect.left;
+            if (hasViewBox($el.svg)) {
+                var pos = [point, 0];
+                isRotated && pos.reverse();
+                point = getTransformCTM.apply(void 0, __spreadArray([$el.svg.node()], pos, false))[isRotated ? "y" : "x"];
+            }
+            index = findIndex(coords, point, 0, coords.length - 1, isRotated);
         }
         return index;
     },
@@ -5108,7 +5139,7 @@ var interaction = {
     dispatchEvent: function (type, index, mouse) {
         var _a, _b;
         var $$ = this;
-        var config = $$.config, _c = $$.state, eventReceiver = _c.eventReceiver, hasAxis = _c.hasAxis, hasFunnel = _c.hasFunnel, hasRadar = _c.hasRadar, hasTreemap = _c.hasTreemap, _d = $$.$el, eventRect = _d.eventRect, funnel = _d.funnel, radar = _d.radar, treemap = _d.treemap;
+        var config = $$.config, _c = $$.state, eventReceiver = _c.eventReceiver, hasAxis = _c.hasAxis, hasFunnel = _c.hasFunnel, hasRadar = _c.hasRadar, hasTreemap = _c.hasTreemap, _d = $$.$el, eventRect = _d.eventRect, funnel = _d.funnel, radar = _d.radar, svg = _d.svg, treemap = _d.treemap;
         var element = (_b = (((hasFunnel || hasTreemap) && eventReceiver.rect) ||
             (hasRadar && radar.axes.select(".".concat($AXIS.axis, "-").concat(index, " text"))) || (eventRect || ((_a = $$.getArcElementByIdOrIndex) === null || _a === void 0 ? void 0 : _a.call($$, index))))) === null || _b === void 0 ? void 0 : _b.node();
         if (element) {
@@ -5131,6 +5162,11 @@ var interaction = {
             var x = left + (mouse ? mouse[0] : 0) + (isMultipleX || isRotated ? 0 : (width / 2));
             // value 4, is to adjust coordinate value set from: scale.ts - updateScales(): $$.getResettedPadding(1)
             var y = top_1 + (mouse ? mouse[1] : 0) + (isRotated ? 4 : 0);
+            if (hasViewBox(svg)) {
+                var ctm = getTransformCTM($$.$el.svg.node(), x, y, false);
+                x = ctm.x;
+                y = ctm.y;
+            }
             var params = {
                 screenX: x,
                 screenY: y,
@@ -8514,7 +8550,7 @@ var tooltip$1 = {
     setTooltipPosition: function (dataToShow, eventTarget) {
         var _a, _b;
         var $$ = this;
-        var config = $$.config, scale = $$.scale, state = $$.state, _c = $$.$el, eventRect = _c.eventRect, tooltip = _c.tooltip;
+        var config = $$.config, scale = $$.scale, state = $$.state, _c = $$.$el, eventRect = _c.eventRect, tooltip = _c.tooltip, svg = _c.svg;
         var bindto = config.tooltip_contents.bindto;
         var isRotated = config.axis_rotated;
         var datum = tooltip === null || tooltip === void 0 ? void 0 : tooltip.datum();
@@ -8544,7 +8580,9 @@ var tooltip$1 = {
             }
             var _e = datum.width, width = _e === void 0 ? 0 : _e, _f = datum.height, height = _f === void 0 ? 0 : _f;
             // Get tooltip position
-            var pos_1 = (_b = (_a = config.tooltip_position) === null || _a === void 0 ? void 0 : _a.bind($$.api)(data, width, height, eventRect === null || eventRect === void 0 ? void 0 : eventRect.node(), currPos)) !== null && _b !== void 0 ? _b : $$.getTooltipPosition.bind($$)(width, height, currPos);
+            var pos_1 = (_b = (_a = config.tooltip_position) === null || _a === void 0 ? void 0 : _a.bind($$.api)(data, width, height, eventRect === null || eventRect === void 0 ? void 0 : eventRect.node(), currPos)) !== null && _b !== void 0 ? _b : (hasViewBox(svg) ?
+                $$.getTooltipPositionViewBox.bind($$)(width, height, currPos) :
+                $$.getTooltipPosition.bind($$)(width, height, currPos));
             ["top", "left"].forEach(function (v) {
                 var value = pos_1[v];
                 tooltip.style(v, "".concat(value, "px"));
@@ -8554,6 +8592,40 @@ var tooltip$1 = {
                 }
             });
         }
+    },
+    getTooltipPositionViewBox: function (tWidth, tHeight, currPos) {
+        var _a, _b;
+        var $$ = this;
+        var _c = $$.$el, eventRect = _c.eventRect, main = _c.main, config = $$.config, state = $$.state;
+        var isRotated = config.axis_rotated;
+        var hasArcType = $$.hasArcType(undefined, ["radar"]) || state.hasFunnel ||
+            state.hasTreemap;
+        var target = (_b = (_a = (state.hasRadar ? main : eventRect)) === null || _a === void 0 ? void 0 : _a.node()) !== null && _b !== void 0 ? _b : state.event.target;
+        var size = 38; // getTransformCTM($el.svg.node(), 10, 0, false).x;
+        var x = currPos.x, y = currPos.y;
+        if (state.hasAxis) {
+            x = isRotated ? x : currPos.xAxis;
+            y = isRotated ? currPos.xAxis : y;
+        }
+        // currPos는 SVG 좌표계 기준으로 전달됨
+        var ctm = getTransformCTM(target, x, y, false);
+        var top = ctm.y;
+        var left = ctm.x + size;
+        if (hasArcType) {
+            top += tHeight;
+            left -= size; // (tWidth / 2);
+        }
+        var rect = (hasArcType ? main.node() : target).getBoundingClientRect();
+        if (left + tWidth > rect.right) {
+            left = rect.right - tWidth - size;
+        }
+        if (top + tHeight > rect.bottom) {
+            top -= tHeight + size;
+        }
+        return {
+            top: top,
+            left: left
+        };
     },
     /**
      * Returns the position of the tooltip
@@ -24389,7 +24461,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.13.0-nightly-20240904004639
+ * @version 3.13.0-nightly-20240911004643
  */
 var bb = {
     /**
@@ -24399,7 +24471,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.13.0-nightly-20240904004639",
+    version: "3.13.0-nightly-20240911004643",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

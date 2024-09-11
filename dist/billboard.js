@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20240904004639
+ * @version 3.13.0-nightly-20240911004643
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2497,6 +2497,13 @@ function getScrollPosition(node) {
     y: ((_e = (_d = win.pageYOffset) != null ? _d : win.scrollY) != null ? _e : 0) + ((_f = node.scrollTop) != null ? _f : 0)
   };
 }
+function getTransformCTM(node, x = 0, y = 0, inverse = true) {
+  const point = new DOMPoint(x, y);
+  const screen = node.getScreenCTM();
+  return point.matrixTransform(
+    inverse ? screen == null ? void 0 : screen.inverse() : screen
+  );
+}
 function getTranslation(node) {
   const transform = node ? node.transform : null;
   const baseVal = transform && transform.baseVal;
@@ -2643,6 +2650,10 @@ function parseDate(date) {
     console && console.error && console.error(`Failed to parse x '${date}' to Date object`);
   }
   return parsedDate;
+}
+function hasViewBox(svg) {
+  const attr = svg.attr("viewBox");
+  return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
 }
 function isTabVisible() {
   var _a, _b;
@@ -4101,7 +4112,11 @@ function getDataKeyForJson(keysParam, config) {
    */
   getDataIndexFromEvent(event) {
     const $$ = this;
-    const { $el, config, state: { hasRadar, inputType, eventReceiver: { coords, rect } } } = $$;
+    const {
+      $el,
+      config,
+      state: { hasRadar, inputType, eventReceiver: { coords, rect } }
+    } = $$;
     let index;
     if (hasRadar) {
       let target = event.target;
@@ -4114,9 +4129,15 @@ function getDataKeyForJson(keysParam, config) {
       const isRotated = config.axis_rotated;
       const scrollPos = getScrollPosition($el.chart.node());
       const e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event;
+      let point = isRotated ? e.clientY + scrollPos.y - rect.top : e.clientX + scrollPos.x - rect.left;
+      if (hasViewBox($el.svg)) {
+        const pos = [point, 0];
+        isRotated && pos.reverse();
+        point = getTransformCTM($el.svg.node(), ...pos)[isRotated ? "y" : "x"];
+      }
       index = findIndex(
         coords,
-        isRotated ? e.clientY + scrollPos.y - rect.top : e.clientX + scrollPos.x - rect.left,
+        point,
         0,
         coords.length - 1,
         isRotated
@@ -4648,7 +4669,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
         hasRadar,
         hasTreemap
       },
-      $el: { eventRect, funnel, radar, treemap }
+      $el: { eventRect, funnel, radar, svg, treemap }
     } = $$;
     let element = (_b = (hasFunnel || hasTreemap) && eventReceiver.rect || hasRadar && radar.axes.select(`.${$AXIS.axis}-${index} text`) || (eventRect || ((_a = $$.getArcElementByIdOrIndex) == null ? void 0 : _a.call($$, index)))) == null ? void 0 : _b.node();
     if (element) {
@@ -4667,8 +4688,13 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
           top = 0;
         }
       }
-      const x = left + (mouse ? mouse[0] : 0) + (isMultipleX || isRotated ? 0 : width / 2);
-      const y = top + (mouse ? mouse[1] : 0) + (isRotated ? 4 : 0);
+      let x = left + (mouse ? mouse[0] : 0) + (isMultipleX || isRotated ? 0 : width / 2);
+      let y = top + (mouse ? mouse[1] : 0) + (isRotated ? 4 : 0);
+      if (hasViewBox(svg)) {
+        const ctm = getTransformCTM($$.$el.svg.node(), x, y, false);
+        x = ctm.x;
+        y = ctm.y;
+      }
       const params = {
         screenX: x,
         screenY: y,
@@ -7536,7 +7562,7 @@ function getTextXPos(pos = "left", width) {
   setTooltipPosition(dataToShow, eventTarget) {
     var _a, _b;
     const $$ = this;
-    const { config, scale, state, $el: { eventRect, tooltip } } = $$;
+    const { config, scale, state, $el: { eventRect, tooltip, svg } } = $$;
     const { bindto } = config.tooltip_contents;
     const isRotated = config.axis_rotated;
     const datum = tooltip == null ? void 0 : tooltip.datum();
@@ -7565,7 +7591,7 @@ function getTextXPos(pos = "left", width) {
         height,
         eventRect == null ? void 0 : eventRect.node(),
         currPos
-      )) != null ? _b : $$.getTooltipPosition.bind($$)(width, height, currPos);
+      )) != null ? _b : hasViewBox(svg) ? $$.getTooltipPositionViewBox.bind($$)(width, height, currPos) : $$.getTooltipPosition.bind($$)(width, height, currPos);
       ["top", "left"].forEach((v) => {
         const value = pos[v];
         tooltip.style(v, `${value}px`);
@@ -7574,6 +7600,38 @@ function getTextXPos(pos = "left", width) {
         }
       });
     }
+  },
+  getTooltipPositionViewBox(tWidth, tHeight, currPos) {
+    var _a, _b;
+    const $$ = this;
+    const { $el: { eventRect, main }, config, state } = $$;
+    const isRotated = config.axis_rotated;
+    const hasArcType = $$.hasArcType(void 0, ["radar"]) || state.hasFunnel || state.hasTreemap;
+    const target = (_b = (_a = state.hasRadar ? main : eventRect) == null ? void 0 : _a.node()) != null ? _b : state.event.target;
+    const size = 38;
+    let { x, y } = currPos;
+    if (state.hasAxis) {
+      x = isRotated ? x : currPos.xAxis;
+      y = isRotated ? currPos.xAxis : y;
+    }
+    const ctm = getTransformCTM(target, x, y, false);
+    let top = ctm.y;
+    let left = ctm.x + size;
+    if (hasArcType) {
+      top += tHeight;
+      left -= size;
+    }
+    const rect = (hasArcType ? main.node() : target).getBoundingClientRect();
+    if (left + tWidth > rect.right) {
+      left = rect.right - tWidth - size;
+    }
+    if (top + tHeight > rect.bottom) {
+      top -= tHeight + size;
+    }
+    return {
+      top,
+      left
+    };
   },
   /**
    * Returns the position of the tooltip
@@ -21642,7 +21700,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.13.0-nightly-20240904004639",
+  version: "3.13.0-nightly-20240911004643",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
