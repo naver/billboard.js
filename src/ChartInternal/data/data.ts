@@ -8,8 +8,10 @@ import {KEY} from "../../module/Cache";
 import {
 	findIndex,
 	getScrollPosition,
+	getTransformCTM,
 	getUnique,
 	hasValue,
+	hasViewBox,
 	isArray,
 	isBoolean,
 	isDefined,
@@ -701,7 +703,11 @@ export default {
 	 */
 	getDataIndexFromEvent(event): number {
 		const $$ = this;
-		const {$el, config, state: {hasRadar, inputType, eventReceiver: {coords, rect}}} = $$;
+		const {
+			$el,
+			config,
+			state: {hasRadar, inputType, eventReceiver: {coords, rect}}
+		} = $$;
 		let index;
 
 		if (hasRadar) {
@@ -724,11 +730,19 @@ export default {
 				event.changedTouches[0] :
 				event;
 
+			let point = isRotated ?
+				e.clientY + scrollPos.y - rect.top :
+				e.clientX + scrollPos.x - rect.left;
+
+			if (hasViewBox($el.svg)) {
+				const pos = [point, 0];
+				isRotated && pos.reverse();
+				point = getTransformCTM($el.svg.node(), ...pos)[isRotated ? "y" : "x"];
+			}
+
 			index = findIndex(
 				coords,
-				isRotated ?
-					e.clientY + scrollPos.y - rect.top :
-					e.clientX + scrollPos.x - rect.left,
+				point,
 				0,
 				coords.length - 1,
 				isRotated
