@@ -530,7 +530,7 @@ describe("ZOOM", function() {
 	});
 
 
-	describe("zoom type drag", () => {
+	describe("zoom type drag #1", () => {
 		const spy = sinon.spy();
 		let clickedData;
 
@@ -713,6 +713,88 @@ describe("ZOOM", function() {
 			});
 		}));
 	});
+
+	describe("zoom type drag #2: with data loading", () => {
+		const spy = sinon.spy();
+		let clickedData;
+
+		beforeAll(() => {
+			args = {
+				size: {
+					width: 300,
+					height: 250
+				},
+				data: {
+					x: "x",
+					columns: [
+					  ["x", "2013-01-01", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05", "2013-01-06"],
+					  ["data1", 30, 200, 100, 400, 150, 250],
+					  ["data2", 130, 340, 200, 500, 250, 350]
+					],
+					type: "line"
+				},
+				zoom: {
+					enabled: true,
+					type: "drag",
+					rescale: true
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d"
+						}
+					}
+				}
+			};
+		});
+
+		it("should unzoom with new loaded domain.", () => {
+			let domain;
+
+			// 1) zoom in
+			chart.zoom([
+				"2013-01-01", "2013-01-02"
+			]);
+
+			// 2) unzoom & load new data
+			chart.unzoom();
+			chart.load({
+				columns: [
+				  [
+					"x",
+					"2013-01-01",
+					"2013-01-02",
+					"2013-01-03",
+					"2013-01-04",
+					"2013-01-05",
+					"2013-01-06",
+					"2013-01-07",
+					"2013-01-08",
+					"2013-01-09",
+					"2013-01-10"
+				  ],
+				  ["data1", 30, 200, 100, 400, 150, 250, 200, 200, 200, 200],
+				  ["data2", 130, 340, 200, 500, 250, 350, 300, 300, 300, 300]
+				],
+				done() {
+					domain = this.internal.scale.x.domain();
+				}
+			  });
+
+			// 3) zoom in again
+			chart.zoom([
+				"2013-01-01", "2013-01-02"
+			]);
+
+			// 4) unzoom
+			chart.unzoom();
+
+			// expect to reset with new domain
+			expect(chart.internal.scale.x.domain()).to.be.deep.equal(domain);
+		});
+	});
+	
 
 	describe("zoom on regions", () => {
 		beforeAll(() => {

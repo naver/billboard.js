@@ -102,6 +102,10 @@ export default {
 			}
 
 			$$.updateCurrentZoomTransform(zoomState.x, zoomState.currentDomain);
+
+			// https://github.com/naver/billboard.js/issues/3878
+		} else if (org.xScale) {
+			org.xScale.domain(org.xDomain);
 		}
 
 		// Update current state chart type and elements list after redraw

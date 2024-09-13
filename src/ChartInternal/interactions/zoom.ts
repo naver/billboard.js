@@ -381,7 +381,7 @@ export default {
 						.attr("height", isRotated ? 0 : state.height);
 				}
 
-				start = getPointer(event, this)[prop.index];
+				start = getPointer(event, <SVGElement>this)[prop.index];
 				end = start;
 
 				zoomRect
@@ -391,7 +391,7 @@ export default {
 				$$.onZoomStart(event);
 			})
 			.on("drag", function(event) {
-				end = getPointer(event, this)[prop.index];
+				end = getPointer(event, <SVGElement>this)[prop.index];
 
 				zoomRect
 					.attr(prop.axis, Math.min(start, end))
