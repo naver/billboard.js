@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.13.0-nightly-20240912004637
+ * @version 3.13.0-nightly-20240914004634
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -4925,6 +4925,10 @@ var dataLoad = {
                 org.xScale = zoomState.x.domain(org.xDomain);
             }
             $$.updateCurrentZoomTransform(zoomState.x, zoomState.currentDomain);
+            // https://github.com/naver/billboard.js/issues/3878
+        }
+        else if (org.xScale) {
+            org.xScale.domain(org.xDomain);
         }
         // Update current state chart type and elements list after redraw
         $$.updateTypesElements();
@@ -24461,7 +24465,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.13.0-nightly-20240912004637
+ * @version 3.13.0-nightly-20240914004634
  */
 var bb = {
     /**
@@ -24471,7 +24475,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.13.0-nightly-20240912004637",
+    version: "3.13.0-nightly-20240914004634",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
