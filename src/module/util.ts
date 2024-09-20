@@ -37,6 +37,7 @@ export {
 	getTransformCTM,
 	getTranslation,
 	getUnique,
+	hasStyle,
 	hasValue,
 	hasViewBox,
 	isArray,
@@ -815,6 +816,28 @@ function hasViewBox(svg: d3Selection): boolean {
 	const attr = svg.attr("viewBox");
 
 	return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
+}
+
+/**
+ * Determine if given node has the specified style
+ * @param {d3Selection|SVGElement} node Target node
+ * @param {object} condition Conditional style props object
+ * @param {boolean} all If true, all condition should be matched
+ * @returns {boolean}
+ */
+function hasStyle(node, condition: {[key: string]: string}, all = false): boolean {
+	const isD3Node = !!node.node;
+	let has = false;
+
+	for (const [key, value] of Object.entries(condition)) {
+		has = isD3Node ? node.style(key) === value : node.style[key] === value;
+
+		if (all === false && has) {
+			break;
+		}
+	}
+
+	return has;
 }
 
 /**

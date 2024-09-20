@@ -35,6 +35,7 @@ export const {
 	getTranslation,
 	getTransformCTM,
 	getUnique,
+	hasStyle,
 	hasValue,
 	hasViewBox,
 	isArray,
