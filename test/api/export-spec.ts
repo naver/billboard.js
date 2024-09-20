@@ -201,9 +201,9 @@ describe("API export", () => {
 
 			// pattern for local: preserveFontStyle=true
 			[
-				"byuVSgeSACZuGnZIBBJFgAQwUbjZWVoQIAFMi6UoZ1gEhoeHzxORj7",
-				"gEMwIYvjgilxAsgoYFymZLtEoI4ACaBlzpB5Aqh4u1HAwik2LwOTAFo2",
-				"n3KPP7RFhvxMH97ZLyZpsgzMpjX2Qk8O3IUePj1WqYqk0kYkwz"
+				"i2iAoIcLvwVDzzAQUBmuodjmOmu+NeryqrOrq4jsyozKyLzy99vftNVcb343ou",
+				"JXSOKRvoLXeaeBnwyQ3q5TJIDtEMpaehdeQBLArBlL9P1Ni",
+				"iDzpkxgBoCd9qkExwC4O8qSCPVk3lyWshNuFqQAdJNm6rb+GVkH2CdOcenYIgj5Cy"
 			],
 			
 			// pattern for webdriverio
