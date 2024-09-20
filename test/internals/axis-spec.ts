@@ -2281,6 +2281,45 @@ describe("AXIS", function() {
 				expect(axis.selectAll(".tick line").size()).to.be.equal(0);
 			});
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+					  ["data1", 90, 100, 140, 200, 100]
+					],
+					type: "bar",
+				},
+				axis: {
+					x: {
+						tick: {
+							show: false,
+							text: {
+								show: false
+							}
+						}
+					},
+					y: {
+						tick: {
+							show: false,
+							text: {
+								show: false
+							}
+						}
+					}
+				}
+			};
+		});
+
+		it("should show tick without error", () => {
+			expect(
+				chart.config("axis.y.tick.show", true, true)
+			).to.not.throw;
+
+			expect(
+				chart.internal.$el.axis.y.selectAll(".tick").size() > 0
+			).to.be.true;
+		});
 	});
 
 	describe("axis text on 'binary floating point'", () => {

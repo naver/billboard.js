@@ -40,8 +40,9 @@ export default class AxisRendererHelper {
 			w: 5.5,
 			h: 11.5
 		};
+		const text = node?.select("text");
 
-		!node.empty() && node.select("text")
+		!text.empty() && text
 			.text("0")
 			.call(el => {
 				try {
