@@ -34,17 +34,17 @@ export default class AxisRendererHelper {
 	 * @returns {{w: number, h: number}}
 	 * @private
 	 */
-	static getSizeFor1Char(node?) {
+	static getSizeFor1Char(node: d3Selection): {w: number, h: number} {
 		// default size for one character
 		const size = {
 			w: 5.5,
 			h: 11.5
 		};
-		const text = node?.select("text");
+		const text = node.select("text");
 
 		!text.empty() && text
 			.text("0")
-			.call(el => {
+			.call((el: d3Selection) => {
 				try {
 					const {width, height} = el.node().getBBox();
 
