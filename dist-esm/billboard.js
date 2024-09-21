@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.13.0-nightly-20240914004634
+ * @version 3.13.0-nightly-20240921004638
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -859,7 +859,10 @@ var main = {
      * @memberof Options
      * @type {object}
      * @property {object} [render] render object
-     * @property {boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
+     * @property {boolean} [render.lazy=true] Make to not render at initialization.
+     * - **NOTE**:
+     *   - Enabled by default when bind element's visibility is hidden.
+     *   - When set to `false`, will initialize the chart regardless the bind element's visibility state, but in this case chart can't be guaranteed to be rendered properly.
      * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
      * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
      * @example
@@ -2831,6 +2834,26 @@ function hasViewBox(svg) {
     return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
 }
 /**
+ * Determine if given node has the specified style
+ * @param {d3Selection|SVGElement} node Target node
+ * @param {object} condition Conditional style props object
+ * @param {boolean} all If true, all condition should be matched
+ * @returns {boolean}
+ */
+function hasStyle(node, condition, all) {
+    if (all === void 0) { all = false; }
+    var isD3Node = !!node.node;
+    var has = false;
+    for (var _i = 0, _a = Object.entries(condition); _i < _a.length; _i++) {
+        var _b = _a[_i], key = _b[0], value = _b[1];
+        has = isD3Node ? node.style(key) === value : node.style[key] === value;
+        if (all === false && has) {
+            break;
+        }
+    }
+    return has;
+}
+/**
  * Return if the current doc is visible or not
  * @returns {boolean}
  * @private
@@ -3379,24 +3402,25 @@ function checkModuleImport(ctx) {
         }
     }
     type &&
-        logError("Please, make sure if %c".concat(camelize(type)), "module has been imported and specified correctly.");
+        logError("Please, make sure if %c".concat(camelize(type)), "module has been imported and specified correctly.", "https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality");
 }
 /**
  * Log error and throw error
  * @param {string} head Message header
  * @param {string} tail Message tail
+ * @param {string} info Info message
  * @private
  */
-function logError(head, tail) {
+function logError(head, tail, info) {
     var _a;
     var prefix = "[billboard.js]";
-    var info = "https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality";
     var hasConsole = (_a = win.console) === null || _a === void 0 ? void 0 : _a.error;
     if (hasConsole) {
-        console.error("\u274C ".concat(prefix, " ").concat(head), "background:red;color:white;display:block;font-size:15px", tail);
+        var tailMsg = ["background:red;color:white;display:block;font-size:15px", tail] ;
+        console.error.apply(console, __spreadArray(["\u274C ".concat(prefix, " ").concat(head), "background:red;color:white;display:block;font-size:15px"], tailMsg, false));
         console.info("%cℹ️", "font-size:15px", info);
     }
-    throw Error("".concat(prefix, " ").concat(head.replace(/\%c([a-z-]+)/i, "'$1' "), " ").concat(tail));
+    throw Error("".concat(prefix, " ").concat(head.replace(/\%c([a-z-]+)/i, "'$1' "), " ").concat(tail ));
 }
 
 var setTimeout$1 = win.setTimeout, clearTimeout$1 = win.clearTimeout;
@@ -9824,10 +9848,8 @@ var ChartInternal = /** @class */ (function () {
     ChartInternal.prototype.initToRender = function (forced) {
         var $$ = this;
         var config = $$.config, state = $$.state, chart = $$.$el.chart;
-        var isHidden = function () {
-            return chart.style("display") === "none" || chart.style("visibility") === "hidden";
-        };
-        var isLazy = config.render.lazy || isHidden();
+        var isHidden = function () { return hasStyle(chart, { display: "none", visibility: "hidden" }); };
+        var isLazy = config.render.lazy === false ? false : config.render.lazy || isHidden();
         var MutationObserver = win.MutationObserver;
         if (isLazy && MutationObserver && config.render.observe !== false && !forced) {
             new MutationObserver(function (mutation, observer) {
@@ -11713,6 +11735,7 @@ var Chart = /** @class */ (function () {
     function Chart(options) {
         this.plugins = [];
         var $$ = new ChartInternal(this);
+        // let hook = () => {};
         this.internal = $$;
         // bind to namespaced APIs
         (function bindThis(fn, target, argThis) {
@@ -11721,6 +11744,10 @@ var Chart = /** @class */ (function () {
                 var isChild = target !== argThis;
                 var isNotNil = notEmpty(fn[key]);
                 var hasChild = isNotNil && Object.keys(fn[key]).length > 0;
+                // const hookFn = function(...params) {
+                // 	hook();
+                // 	return fn[key].bind(argThis)(...params);
+                // }
                 if (isFunc && ((!isChild && hasChild) || isChild)) {
                     target[key] = fn[key].bind(argThis);
                 }
@@ -11736,6 +11763,11 @@ var Chart = /** @class */ (function () {
         loadConfig.call($$, options);
         $$.beforeInit();
         $$.init();
+        // if ($$.config.render.lazy !== false && hasStyle($$.$el.chart, {"display": "none", "visibility": "hidden"})) {
+        // 	hook = () => {
+        // 		logError(`The call of APIs won't work. Please, make sure if chart element is %cvisible.`);
+        // 	};
+        // }
     }
     return Chart;
 }());
@@ -12677,7 +12709,8 @@ var AxisRendererHelper = /** @class */ (function () {
             w: 5.5,
             h: 11.5
         };
-        !node.empty() && node.select("text")
+        var text = node.select("text");
+        !text.empty() && text
             .text("0")
             .call(function (el) {
             try {
@@ -24465,7 +24498,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.13.0-nightly-20240914004634
+ * @version 3.13.0-nightly-20240921004638
  */
 var bb = {
     /**
@@ -24475,7 +24508,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.13.0-nightly-20240914004634",
+    version: "3.13.0-nightly-20240921004638",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

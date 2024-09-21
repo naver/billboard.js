@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20240914004634
+ * @version 3.13.0-nightly-20240921004638
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.10
@@ -21771,7 +21771,10 @@ const $ZOOM = {
    * @memberof Options
    * @type {object}
    * @property {object} [render] render object
-   * @property {boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
+   * @property {boolean} [render.lazy=true] Make to not render at initialization.
+   * - **NOTE**:
+   *   - Enabled by default when bind element's visibility is hidden.
+   *   - When set to `false`, will initialize the chart regardless the bind element's visibility state, but in this case chart can't be guaranteed to be rendered properly.
    * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
    * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
    * @example
@@ -25612,6 +25615,17 @@ function hasViewBox(svg) {
   const attr = svg.attr("viewBox");
   return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
 }
+function hasStyle(node, condition, all = false) {
+  const isD3Node = !!node.node;
+  let has = false;
+  for (const [key, value] of Object.entries(condition)) {
+    has = isD3Node ? node.style(key) === value : node.style[key] === value;
+    if (all === false && has) {
+      break;
+    }
+  }
+  return has;
+}
 function isTabVisible() {
   var _a, _b;
   return ((_a = browser_doc) == null ? void 0 : _a.hidden) === false || ((_b = browser_doc) == null ? void 0 : _b.visibilityState) === "visible";
@@ -26141,23 +26155,24 @@ function checkModuleImport(ctx) {
   }
   type && logError(
     `Please, make sure if %c${camelize(type)}`,
-    "module has been imported and specified correctly."
+    "module has been imported and specified correctly.",
+    "https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality"
   );
 }
-function logError(head, tail) {
+function logError(head, tail, info) {
   var _a;
   const prefix = "[billboard.js]";
-  const info = "https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality";
   const hasConsole = (_a = win.console) == null ? void 0 : _a.error;
   if (hasConsole) {
+    const tailMsg = tail ? ["background:red;color:white;display:block;font-size:15px", tail] : [];
     console.error(
       `\u274C ${prefix} ${head}`,
       "background:red;color:white;display:block;font-size:15px",
-      tail
+      ...tailMsg
     );
-    console.info("%c\u2139\uFE0F", "font-size:15px", info);
+    info && console.info("%c\u2139\uFE0F", "font-size:15px", info);
   }
-  throw Error(`${prefix} ${head.replace(/\%c([a-z-]+)/i, "'$1' ")} ${tail}`);
+  throw Error(`${prefix} ${head.replace(/\%c([a-z-]+)/i, "'$1' ")} ${tail != null ? tail : ""}`);
 }
 
 ;// CONCATENATED MODULE: ./src/module/generator.ts
@@ -34023,8 +34038,8 @@ class ChartInternal {
   initToRender(forced) {
     const $$ = this;
     const { config, state, $el: { chart } } = $$;
-    const isHidden = () => chart.style("display") === "none" || chart.style("visibility") === "hidden";
-    const isLazy = config.render.lazy || isHidden();
+    const isHidden = () => hasStyle(chart, { display: "none", visibility: "hidden" });
+    const isLazy = config.render.lazy === false ? false : config.render.lazy || isHidden();
     const MutationObserver = win.MutationObserver;
     if (isLazy && MutationObserver && config.render.observe !== false && !forced) {
       new MutationObserver((mutation, observer) => {
@@ -38525,7 +38540,8 @@ class AxisRendererHelper {
       w: 5.5,
       h: 11.5
     };
-    !node.empty() && node.select("text").text("0").call((el) => {
+    const text = node.select("text");
+    !text.empty() && text.text("0").call((el) => {
       try {
         const { width, height } = el.node().getBBox();
         if (width && height) {
@@ -48432,7 +48448,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.13.0-nightly-20240914004634",
+  version: "3.13.0-nightly-20240921004638",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
