@@ -25,6 +25,7 @@ import {
 	extend,
 	getOption,
 	getRandom,
+	hasStyle,
 	isFunction,
 	isObject,
 	isString,
@@ -253,10 +254,9 @@ export default class ChartInternal {
 	initToRender(forced?: boolean): void {
 		const $$ = <any>this;
 		const {config, state, $el: {chart}} = $$;
-		const isHidden = () =>
-			chart.style("display") === "none" || chart.style("visibility") === "hidden";
+		const isHidden = () => hasStyle(chart, {display: "none", visibility: "hidden"});
 
-		const isLazy = config.render.lazy || isHidden();
+		const isLazy = config.render.lazy === false ? false : config.render.lazy || isHidden();
 		const MutationObserver = window.MutationObserver;
 
 		if (isLazy && MutationObserver && config.render.observe !== false && !forced) {

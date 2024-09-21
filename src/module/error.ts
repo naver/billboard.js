@@ -34,26 +34,30 @@ function checkModuleImport(ctx) {
 
 	type &&
 		logError(`Please, make sure if %c${camelize(type)}`,
-			"module has been imported and specified correctly.");
+			"module has been imported and specified correctly.",
+			"https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality");
 }
 
 /**
  * Log error and throw error
  * @param {string} head Message header
  * @param {string} tail Message tail
+ * @param {string} info Info message
  * @private
  */
-function logError(head, tail) {
+function logError(head, tail?: string, info?: string) {
 	const prefix = "[billboard.js]";
-	const info =
-		"https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality";
 	const hasConsole = window.console?.error;
 
 	if (hasConsole) {
+		const tailMsg = tail ?
+			["background:red;color:white;display:block;font-size:15px", tail] :
+			[];
+
 		console.error(`❌ ${prefix} ${head}`,
-			"background:red;color:white;display:block;font-size:15px", tail);
-		console.info("%cℹ️", "font-size:15px", info);
+			"background:red;color:white;display:block;font-size:15px", ...tailMsg);
+		info && console.info("%cℹ️", "font-size:15px", info);
 	}
 
-	throw Error(`${prefix} ${head.replace(/\%c([a-z-]+)/i, "'$1' ")} ${tail}`);
+	throw Error(`${prefix} ${head.replace(/\%c([a-z-]+)/i, "'$1' ")} ${tail ?? ""}`);
 }

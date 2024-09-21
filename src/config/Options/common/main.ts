@@ -350,7 +350,10 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} [render] render object
-	 * @property {boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
+	 * @property {boolean} [render.lazy=true] Make to not render at initialization.
+	 * - **NOTE**:
+	 *   - Enabled by default when bind element's visibility is hidden.
+	 *   - When set to `false`, will initialize the chart regardless the bind element's visibility state, but in this case chart can't be guaranteed to be rendered properly.
 	 * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
 	 * @example

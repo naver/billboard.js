@@ -110,6 +110,7 @@ export default class Chart {
 
 	constructor(options) {
 		const $$ = new ChartInternal(this);
+		// let hook = () => {};
 
 		this.internal = $$;
 
@@ -120,6 +121,10 @@ export default class Chart {
 				const isChild = target !== argThis;
 				const isNotNil = notEmpty(fn[key]);
 				const hasChild = isNotNil && Object.keys(fn[key]).length > 0;
+				// const hookFn = function(...params) {
+				// 	hook();
+				// 	return fn[key].bind(argThis)(...params);
+				// }
 
 				if (isFunc && ((!isChild && hasChild) || isChild)) {
 					target[key] = fn[key].bind(argThis);
@@ -137,6 +142,12 @@ export default class Chart {
 
 		$$.beforeInit();
 		$$.init();
+
+		// if ($$.config.render.lazy !== false && hasStyle($$.$el.chart, {"display": "none", "visibility": "hidden"})) {
+		// 	hook = () => {
+		// 		logError(`The call of APIs won't work. Please, make sure if chart element is %cvisible.`);
+		// 	};
+		// }
 	}
 }
 
