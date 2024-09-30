@@ -331,13 +331,17 @@ export default {
 
 	bindRadarEvent(): void {
 		const $$ = this;
-		const {state, $el: {radar, svg}} = $$;
+		const {config, state, $el: {radar, svg}} = $$;
 		const focusOnly = $$.isPointFocusOnly();
 		const {inputType, transiting} = state;
 		const isMouse = inputType === "mouse";
 
 		const hide = event => {
 			state.event = event;
+
+			if (!config.interaction_onout) {
+				return;
+			}
 
 			// const index = getIndex(event);
 

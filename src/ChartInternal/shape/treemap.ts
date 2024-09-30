@@ -147,8 +147,10 @@ export default {
 				.on(isTouch ? "touchend" : "mouseout", event => {
 					const data = getTarget(event);
 
-					$$.hideTooltip();
-					$$.setOverOut(false, data);
+					if (config.interaction_onout) {
+						$$.hideTooltip();
+						$$.setOverOut(false, data);
+					}
 				});
 		}
 	},

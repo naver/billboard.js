@@ -1454,4 +1454,31 @@ describe("INTERACTION", () => {
 			expect(+point.attr("r")).to.be.above(r);
 		});
 	});
+
+	describe("interaction.onover", () => {
+		const spy = sinon.spy();
+
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 0, 0, 0],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					onout: spy
+			 	},
+			  	interaction: {
+					onout: false
+			  	}
+			}
+		});
+
+		it("should maintain 'selected' state", () => {
+			util.hoverChart(chart, "mousemove", {clientX: 250, clientY: 311});
+			util.hoverChart(chart, "mouseout", {clientX: -100, clientY: -100});
+
+			expect(chart.$.tooltip.style("display")).to.be.equal("block");
+			expect(spy.called).to.be.false;
+		});
+	});
 });
