@@ -388,7 +388,7 @@ export default {
 				return $$.isWithinShape(this, d);
 			});
 
-		if (shapeAtIndex.empty() && !isTooltipGrouped) {
+		if (shapeAtIndex.empty() && !isTooltipGrouped && config.interaction_onout) {
 			$$.hideGridFocus?.();
 			$$.hideTooltip();
 
@@ -591,7 +591,10 @@ export default {
 					state.event = event;
 
 					// chart is destroyed
-					if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1) {
+					if (
+						!config || $$.hasArcType() || eventReceiver.currentIdx === -1 ||
+						!config.interaction_onout
+					) {
 						return;
 					}
 
@@ -637,7 +640,7 @@ export default {
 	 */
 	generateEventRectsForMultipleXs(eventRectEnter): void {
 		const $$ = this;
-		const {state} = $$;
+		const {config, state} = $$;
 
 		eventRectEnter
 			.on("click", function(event) {
@@ -656,7 +659,7 @@ export default {
 					state.event = event;
 
 					// chart is destroyed
-					if (!$$.config || $$.hasArcType()) {
+					if (!$$.config || $$.hasArcType() || !config.interaction_onout) {
 						return;
 					}
 

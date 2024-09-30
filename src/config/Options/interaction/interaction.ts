@@ -18,6 +18,8 @@ export default {
 	 * @property {boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
 	 * @property {boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
 	 * @property {boolean|number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
+	 * @property {boolean} [interaction.onout=true] Enable or disable "onout" event.<br>
+	 * 		When is disabled, defocus(hiding tooltip, focused gridline, etc.) event won't work.
 	 * @see [Demo: touch.preventDefault](https://naver.github.io/billboard.js/demo/#Interaction.PreventScrollOnTouch)
 	 * @example
 	 * interaction: {
@@ -35,11 +37,15 @@ export default {
 	 *            // or threshold pixel value (pixel moved from touchstart to touchmove)
 	 *            preventDefault: 5
 	 *        }
-	 *    }
+	 *    },
+	 *
+	 *    // disable "onout" event
+	 *    onout: false
 	 * }
 	 */
 	interaction_enabled: true,
 	interaction_brighten: true,
 	interaction_inputType_mouse: true,
-	interaction_inputType_touch: <boolean | {preventDefault?: boolean | number}>{}
+	interaction_inputType_touch: <boolean | {preventDefault?: boolean | number}>{},
+	interaction_onout: true
 };

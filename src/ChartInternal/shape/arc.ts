@@ -1124,7 +1124,7 @@ export default {
 					$$.setOverOut(true, arcData);
 				})
 				.on("mouseout", (event, d) => {
-					if (state.transiting) { // skip while transiting
+					if (state.transiting || !config.interaction_onout) { // skip while transiting
 						return;
 					}
 
