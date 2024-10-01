@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.13.0-nightly-20240924004652
+ * @version 3.13.0-nightly-20241001004701
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -2103,6 +2103,8 @@ var interaction$1 = {
      * @property {boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
      * @property {boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
      * @property {boolean|number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
+     * @property {boolean} [interaction.onout=true] Enable or disable "onout" event.<br>
+     * 		When is disabled, defocus(hiding tooltip, focused gridline, etc.) event won't work.
      * @see [Demo: touch.preventDefault](https://naver.github.io/billboard.js/demo/#Interaction.PreventScrollOnTouch)
      * @example
      * interaction: {
@@ -2120,13 +2122,17 @@ var interaction$1 = {
      *            // or threshold pixel value (pixel moved from touchstart to touchmove)
      *            preventDefault: 5
      *        }
-     *    }
+     *    },
+     *
+     *    // disable "onout" event
+     *    onout: false
      * }
      */
     interaction_enabled: true,
     interaction_brighten: true,
     interaction_inputType_mouse: true,
-    interaction_inputType_touch: {}
+    interaction_inputType_touch: {},
+    interaction_onout: true
 };
 
 /**
@@ -14440,7 +14446,7 @@ var eventrect = {
             .filter(function (d) {
             return $$.isWithinShape(this, d);
         });
-        if (shapeAtIndex.empty() && !isTooltipGrouped) {
+        if (shapeAtIndex.empty() && !isTooltipGrouped && config.interaction_onout) {
             (_b = $$.hideGridFocus) === null || _b === void 0 ? void 0 : _b.call($$);
             $$.hideTooltip();
             !isSelectionGrouped && $$.setExpand(index);
@@ -14595,7 +14601,8 @@ var eventrect = {
                 .on("mouseout", function (event) {
                 state.event = event;
                 // chart is destroyed
-                if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1) {
+                if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1 ||
+                    !config.interaction_onout) {
                     return;
                 }
                 $$.hideAxisGridFocus();
@@ -14632,7 +14639,7 @@ var eventrect = {
      */
     generateEventRectsForMultipleXs: function (eventRectEnter) {
         var $$ = this;
-        var state = $$.state;
+        var config = $$.config, state = $$.state;
         eventRectEnter
             .on("click", function (event) {
             state.event = event;
@@ -14648,7 +14655,7 @@ var eventrect = {
                 .on("mouseout", function (event) {
                 state.event = event;
                 // chart is destroyed
-                if (!$$.config || $$.hasArcType()) {
+                if (!$$.config || $$.hasArcType() || !config.interaction_onout) {
                     return;
                 }
                 $$.unselectRect();
@@ -18607,7 +18614,7 @@ var shapeArc = {
                 $$.setOverOut(true, arcData);
             })
                 .on("mouseout", function (event, d) {
-                if (state.transiting) { // skip while transiting
+                if (state.transiting || !config.interaction_onout) { // skip while transiting
                     return;
                 }
                 state.event = event;
@@ -19551,8 +19558,10 @@ var shapeFunnel = {
             })
                 .on(isTouch ? "touchend" : "mouseout", function (event) {
                 var data = getTarget(event);
-                $$.hideTooltip();
-                $$.setOverOut(false, data);
+                if (config.interaction_onout) {
+                    $$.hideTooltip();
+                    $$.setOverOut(false, data);
+                }
             });
         }
     },
@@ -21042,12 +21051,15 @@ var shapeRadar = {
     },
     bindRadarEvent: function () {
         var $$ = this;
-        var state = $$.state, _a = $$.$el, radar = _a.radar, svg = _a.svg;
+        var config = $$.config, state = $$.state, _a = $$.$el, radar = _a.radar, svg = _a.svg;
         var focusOnly = $$.isPointFocusOnly();
         var inputType = state.inputType, transiting = state.transiting;
         var isMouse = inputType === "mouse";
         var hide = function (event) {
             state.event = event;
+            if (!config.interaction_onout) {
+                return;
+            }
             // const index = getIndex(event);
             var index = $$.getDataIndexFromEvent(event);
             var noIndex = isUndefined(index);
@@ -21216,8 +21228,10 @@ var shapeTreemap = {
             })
                 .on(isTouch ? "touchend" : "mouseout", function (event) {
                 var data = getTarget(event);
-                $$.hideTooltip();
-                $$.setOverOut(false, data);
+                if (config.interaction_onout) {
+                    $$.hideTooltip();
+                    $$.setOverOut(false, data);
+                }
             });
         }
     },
@@ -24498,7 +24512,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.13.0-nightly-20240924004652
+ * @version 3.13.0-nightly-20241001004701
  */
 var bb = {
     /**
@@ -24508,7 +24522,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.13.0-nightly-20240924004652",
+    version: "3.13.0-nightly-20241001004701",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

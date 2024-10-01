@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20240924004652
+ * @version 3.13.0-nightly-20241001004701
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.10
@@ -19377,7 +19377,7 @@ __webpack_require__.d(resolver_shape_namespaceObject, {
   treemap: function() { return resolver_shape_treemap; }
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selector.js
+;// ./node_modules/d3-selection/src/selector.js
 function none() {
 }
 /* harmony default export */ function selector(selector) {
@@ -19386,7 +19386,7 @@ function none() {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/select.js
+;// ./node_modules/d3-selection/src/selection/select.js
 
 
 /* harmony default export */ function selection_select(select) {
@@ -19402,12 +19402,12 @@ function none() {
   return new Selection(subgroups, this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/array.js
+;// ./node_modules/d3-selection/src/array.js
 function array(x) {
   return x == null ? [] : Array.isArray(x) ? x : Array.from(x);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selectorAll.js
+;// ./node_modules/d3-selection/src/selectorAll.js
 function empty() {
   return [];
 }
@@ -19417,7 +19417,7 @@ function empty() {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/selectAll.js
+;// ./node_modules/d3-selection/src/selection/selectAll.js
 
 
 
@@ -19440,7 +19440,7 @@ function arrayAll(select) {
   return new Selection(subgroups, parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/matcher.js
+;// ./node_modules/d3-selection/src/matcher.js
 /* harmony default export */ function matcher(selector) {
   return function() {
     return this.matches(selector);
@@ -19452,7 +19452,7 @@ function childMatcher(selector) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/selectChild.js
+;// ./node_modules/d3-selection/src/selection/selectChild.js
 
 var find = Array.prototype.find;
 function childFind(match) {
@@ -19467,7 +19467,7 @@ function childFirst() {
   return this.select(match == null ? childFirst : childFind(typeof match === "function" ? match : childMatcher(match)));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/selectChildren.js
+;// ./node_modules/d3-selection/src/selection/selectChildren.js
 
 var filter = Array.prototype.filter;
 function children() {
@@ -19482,7 +19482,7 @@ function childrenFilter(match) {
   return this.selectAll(match == null ? children : childrenFilter(typeof match === "function" ? match : childMatcher(match)));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/filter.js
+;// ./node_modules/d3-selection/src/selection/filter.js
 
 
 /* harmony default export */ function selection_filter(match) {
@@ -19497,12 +19497,12 @@ function childrenFilter(match) {
   return new Selection(subgroups, this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/sparse.js
+;// ./node_modules/d3-selection/src/selection/sparse.js
 /* harmony default export */ function sparse(update) {
   return new Array(update.length);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/enter.js
+;// ./node_modules/d3-selection/src/selection/enter.js
 
 
 /* harmony default export */ function enter() {
@@ -19531,14 +19531,14 @@ EnterNode.prototype = {
   }
 };
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/constant.js
+;// ./node_modules/d3-selection/src/constant.js
 /* harmony default export */ function constant(x) {
   return function() {
     return x;
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/data.js
+;// ./node_modules/d3-selection/src/selection/data.js
 
 
 
@@ -19613,14 +19613,14 @@ function arraylike(data) {
   return typeof data === "object" && "length" in data ? data : Array.from(data);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/exit.js
+;// ./node_modules/d3-selection/src/selection/exit.js
 
 
 /* harmony default export */ function exit() {
   return new Selection(this._exit || this._groups.map(sparse), this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/join.js
+;// ./node_modules/d3-selection/src/selection/join.js
 /* harmony default export */ function join(onenter, onupdate, onexit) {
   var enter = this.enter(), update = this, exit = this.exit();
   if (typeof onenter === "function") {
@@ -19638,7 +19638,7 @@ function arraylike(data) {
   return enter && update ? enter.merge(update).order() : update;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/merge.js
+;// ./node_modules/d3-selection/src/selection/merge.js
 
 /* harmony default export */ function merge(context) {
   var selection = context.selection ? context.selection() : context;
@@ -19655,7 +19655,7 @@ function arraylike(data) {
   return new Selection(merges, this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/order.js
+;// ./node_modules/d3-selection/src/selection/order.js
 /* harmony default export */ function order() {
   for (var groups = this._groups, j = -1, m = groups.length; ++j < m; ) {
     for (var group = groups[j], i = group.length - 1, next = group[i], node; --i >= 0; ) {
@@ -19668,7 +19668,7 @@ function arraylike(data) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/sort.js
+;// ./node_modules/d3-selection/src/selection/sort.js
 
 /* harmony default export */ function sort(compare) {
   if (!compare) compare = ascending;
@@ -19689,7 +19689,7 @@ function ascending(a, b) {
   return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/call.js
+;// ./node_modules/d3-selection/src/selection/call.js
 /* harmony default export */ function call() {
   var callback = arguments[0];
   arguments[0] = this;
@@ -19697,12 +19697,12 @@ function ascending(a, b) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/nodes.js
+;// ./node_modules/d3-selection/src/selection/nodes.js
 /* harmony default export */ function nodes() {
   return Array.from(this);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/node.js
+;// ./node_modules/d3-selection/src/selection/node.js
 /* harmony default export */ function node() {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length; i < n; ++i) {
@@ -19713,19 +19713,19 @@ function ascending(a, b) {
   return null;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/size.js
+;// ./node_modules/d3-selection/src/selection/size.js
 /* harmony default export */ function size() {
   let size = 0;
   for (const node of this) ++size;
   return size;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/empty.js
+;// ./node_modules/d3-selection/src/selection/empty.js
 /* harmony default export */ function selection_empty() {
   return !this.node();
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/each.js
+;// ./node_modules/d3-selection/src/selection/each.js
 /* harmony default export */ function each(callback) {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
@@ -19735,7 +19735,7 @@ function ascending(a, b) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/namespaces.js
+;// ./node_modules/d3-selection/src/namespaces.js
 var xhtml = "http://www.w3.org/1999/xhtml";
 /* harmony default export */ var namespaces = ({
   svg: "http://www.w3.org/2000/svg",
@@ -19745,7 +19745,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
   xmlns: "http://www.w3.org/2000/xmlns/"
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/namespace.js
+;// ./node_modules/d3-selection/src/namespace.js
 
 /* harmony default export */ function namespace(name) {
   var prefix = name += "", i = prefix.indexOf(":");
@@ -19753,7 +19753,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
   return namespaces.hasOwnProperty(prefix) ? { space: namespaces[prefix], local: name } : name;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/attr.js
+;// ./node_modules/d3-selection/src/selection/attr.js
 
 function attrRemove(name) {
   return function() {
@@ -19798,12 +19798,12 @@ function attrFunctionNS(fullname, value) {
   return this.each((value == null ? fullname.local ? attrRemoveNS : attrRemove : typeof value === "function" ? fullname.local ? attrFunctionNS : attrFunction : fullname.local ? attrConstantNS : attrConstant)(fullname, value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/window.js
+;// ./node_modules/d3-selection/src/window.js
 /* harmony default export */ function src_window(node) {
   return node.ownerDocument && node.ownerDocument.defaultView || node.document && node || node.defaultView;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/style.js
+;// ./node_modules/d3-selection/src/selection/style.js
 
 function styleRemove(name) {
   return function() {
@@ -19829,7 +19829,7 @@ function styleValue(node, name) {
   return node.style.getPropertyValue(name) || src_window(node).getComputedStyle(node, null).getPropertyValue(name);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/property.js
+;// ./node_modules/d3-selection/src/selection/property.js
 function propertyRemove(name) {
   return function() {
     delete this[name];
@@ -19851,7 +19851,7 @@ function propertyFunction(name, value) {
   return arguments.length > 1 ? this.each((value == null ? propertyRemove : typeof value === "function" ? propertyFunction : propertyConstant)(name, value)) : this.node()[name];
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/classed.js
+;// ./node_modules/d3-selection/src/selection/classed.js
 function classArray(string) {
   return string.trim().split(/^|\s+/);
 }
@@ -19914,7 +19914,7 @@ function classedFunction(names, value) {
   return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/text.js
+;// ./node_modules/d3-selection/src/selection/text.js
 function textRemove() {
   this.textContent = "";
 }
@@ -19933,7 +19933,7 @@ function textFunction(value) {
   return arguments.length ? this.each(value == null ? textRemove : (typeof value === "function" ? textFunction : textConstant)(value)) : this.node().textContent;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/html.js
+;// ./node_modules/d3-selection/src/selection/html.js
 function htmlRemove() {
   this.innerHTML = "";
 }
@@ -19952,7 +19952,7 @@ function htmlFunction(value) {
   return arguments.length ? this.each(value == null ? htmlRemove : (typeof value === "function" ? htmlFunction : htmlConstant)(value)) : this.node().innerHTML;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/raise.js
+;// ./node_modules/d3-selection/src/selection/raise.js
 function raise() {
   if (this.nextSibling) this.parentNode.appendChild(this);
 }
@@ -19960,7 +19960,7 @@ function raise() {
   return this.each(raise);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/lower.js
+;// ./node_modules/d3-selection/src/selection/lower.js
 function lower() {
   if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
 }
@@ -19968,7 +19968,7 @@ function lower() {
   return this.each(lower);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/creator.js
+;// ./node_modules/d3-selection/src/creator.js
 
 
 function creatorInherit(name) {
@@ -19987,7 +19987,7 @@ function creatorFixed(fullname) {
   return (fullname.local ? creatorFixed : creatorInherit)(fullname);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/append.js
+;// ./node_modules/d3-selection/src/selection/append.js
 
 /* harmony default export */ function append(name) {
   var create = typeof name === "function" ? name : creator(name);
@@ -19996,7 +19996,7 @@ function creatorFixed(fullname) {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/insert.js
+;// ./node_modules/d3-selection/src/selection/insert.js
 
 
 function constantNull() {
@@ -20009,7 +20009,7 @@ function constantNull() {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/remove.js
+;// ./node_modules/d3-selection/src/selection/remove.js
 function remove() {
   var parent = this.parentNode;
   if (parent) parent.removeChild(this);
@@ -20018,7 +20018,7 @@ function remove() {
   return this.each(remove);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/clone.js
+;// ./node_modules/d3-selection/src/selection/clone.js
 function selection_cloneShallow() {
   var clone = this.cloneNode(false), parent = this.parentNode;
   return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
@@ -20031,12 +20031,12 @@ function selection_cloneDeep() {
   return this.select(deep ? selection_cloneDeep : selection_cloneShallow);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/datum.js
+;// ./node_modules/d3-selection/src/selection/datum.js
 /* harmony default export */ function selection_datum(value) {
   return arguments.length ? this.property("__data__", value) : this.node().__data__;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/on.js
+;// ./node_modules/d3-selection/src/selection/on.js
 function contextListener(listener) {
   return function(event) {
     listener.call(this, event, this.__data__);
@@ -20099,7 +20099,7 @@ function onAdd(typename, value, options) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/dispatch.js
+;// ./node_modules/d3-selection/src/selection/dispatch.js
 
 function dispatchEvent(node, type, params) {
   var window = src_window(node), event = window.CustomEvent;
@@ -20126,7 +20126,7 @@ function dispatchFunction(type, params) {
   return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/iterator.js
+;// ./node_modules/d3-selection/src/selection/iterator.js
 /* harmony default export */ function* iterator() {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
@@ -20135,7 +20135,7 @@ function dispatchFunction(type, params) {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/index.js
+;// ./node_modules/d3-selection/src/selection/index.js
 
 
 
@@ -20221,13 +20221,13 @@ Selection.prototype = selection.prototype = {
 };
 /* harmony default export */ var src_selection = (selection);
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/select.js
+;// ./node_modules/d3-selection/src/select.js
 
 /* harmony default export */ function src_select(selector) {
   return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/interval.js
+;// ./node_modules/d3-time/src/interval.js
 const t0 = /* @__PURE__ */ new Date(), t1 = /* @__PURE__ */ new Date();
 function timeInterval(floori, offseti, count, field) {
   function interval(date) {
@@ -20287,7 +20287,7 @@ function timeInterval(floori, offseti, count, field) {
   return interval;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/duration.js
+;// ./node_modules/d3-time/src/duration.js
 const durationSecond = 1e3;
 const durationMinute = durationSecond * 60;
 const durationHour = durationMinute * 60;
@@ -20296,7 +20296,7 @@ const durationWeek = durationDay * 7;
 const durationMonth = durationDay * 30;
 const durationYear = durationDay * 365;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/week.js
+;// ./node_modules/d3-time/src/week.js
 
 
 function timeWeekday(i) {
@@ -20348,7 +20348,7 @@ const utcThursdays = utcThursday.range;
 const utcFridays = utcFriday.range;
 const utcSaturdays = utcSaturday.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/day.js
+;// ./node_modules/d3-time/src/day.js
 
 
 const timeDay = timeInterval(
@@ -20379,7 +20379,7 @@ const unixDay = timeInterval((date) => {
 });
 const unixDays = unixDay.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/year.js
+;// ./node_modules/d3-time/src/year.js
 
 const timeYear = timeInterval((date) => {
   date.setMonth(0, 1);
@@ -20422,7 +20422,7 @@ utcYear.every = (k) => {
 };
 const utcYears = utcYear.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time-format/src/locale.js
+;// ./node_modules/d3-time-format/src/locale.js
 
 function localDate(d) {
   if (0 <= d.y && d.y < 100) {
@@ -20961,7 +20961,7 @@ function formatUnixTimestampSeconds(d) {
   return Math.floor(+d / 1e3);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-time-format/src/defaultLocale.js
+;// ./node_modules/d3-time-format/src/defaultLocale.js
 
 var locale;
 var timeFormat;
@@ -20987,7 +20987,7 @@ function defaultLocale(definition) {
   return locale;
 }
 
-;// CONCATENATED MODULE: ./src/config/classes.ts
+;// ./src/config/classes.ts
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
@@ -21168,7 +21168,7 @@ const $ZOOM = {
 };
 /* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
-;// CONCATENATED MODULE: ./src/config/Options/common/boost.ts
+;// ./src/config/Options/common/boost.ts
 /* harmony default export */ var boost = ({
   /**
    * Set boost options
@@ -21194,7 +21194,7 @@ const $ZOOM = {
   boost_useWorker: false
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/common/color.ts
+;// ./src/config/Options/common/color.ts
 /* harmony default export */ var color = ({
   /**
    * Set color of the data values
@@ -21276,7 +21276,7 @@ const $ZOOM = {
   color_onover: void 0
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/common/legend.ts
+;// ./src/config/Options/common/legend.ts
 /* harmony default export */ var legend = ({
   /**
    * Legend options
@@ -21445,7 +21445,7 @@ const $ZOOM = {
   legend_usePoint: false
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/common/main.ts
+;// ./src/config/Options/common/main.ts
 /* harmony default export */ var main = ({
   /**
    * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.<br>
@@ -21842,7 +21842,7 @@ const $ZOOM = {
   regions: []
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/common/title.ts
+;// ./src/config/Options/common/title.ts
 /* harmony default export */ var title = ({
   /**
    * Set title options
@@ -21883,7 +21883,7 @@ const $ZOOM = {
   title_position: "center"
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/common/tooltip.ts
+;// ./src/config/Options/common/tooltip.ts
 /* harmony default export */ var tooltip = ({
   /**
    * Tooltip options
@@ -22131,7 +22131,7 @@ const $ZOOM = {
   tooltip_order: null
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/data/data.ts
+;// ./src/config/Options/data/data.ts
 /* harmony default export */ var data_data = ({
   /**
    * Specify the key of x values in the data.<br><br>
@@ -22988,7 +22988,7 @@ const $ZOOM = {
   data_empty_label_text: ""
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/interaction/interaction.ts
+;// ./src/config/Options/interaction/interaction.ts
 /* harmony default export */ var interaction = ({
   /**
    * Interaction options
@@ -23002,6 +23002,8 @@ const $ZOOM = {
    * @property {boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
    * @property {boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
    * @property {boolean|number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
+   * @property {boolean} [interaction.onout=true] Enable or disable "onout" event.<br>
+   * 		When is disabled, defocus(hiding tooltip, focused gridline, etc.) event won't work.
    * @see [Demo: touch.preventDefault](https://naver.github.io/billboard.js/demo/#Interaction.PreventScrollOnTouch)
    * @example
    * interaction: {
@@ -23019,16 +23021,20 @@ const $ZOOM = {
    *            // or threshold pixel value (pixel moved from touchstart to touchmove)
    *            preventDefault: 5
    *        }
-   *    }
+   *    },
+   *
+   *    // disable "onout" event
+   *    onout: false
    * }
    */
   interaction_enabled: true,
   interaction_brighten: true,
   interaction_inputType_mouse: true,
-  interaction_inputType_touch: {}
+  interaction_inputType_touch: {},
+  interaction_onout: true
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-dispatch/src/dispatch.js
+;// ./node_modules/d3-dispatch/src/dispatch.js
 var noop = { value: () => {
 } };
 function dispatch_dispatch() {
@@ -23098,7 +23104,7 @@ function set(type, name, callback) {
 }
 /* harmony default export */ var src_dispatch = (dispatch_dispatch);
 
-;// CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
+;// ./node_modules/d3-drag/src/noevent.js
 const nonpassive = { passive: false };
 const nonpassivecapture = { capture: true, passive: false };
 function nopropagation(event) {
@@ -23109,7 +23115,7 @@ function nopropagation(event) {
   event.stopImmediatePropagation();
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-drag/src/nodrag.js
+;// ./node_modules/d3-drag/src/nodrag.js
 
 
 /* harmony default export */ function nodrag(view) {
@@ -23137,7 +23143,7 @@ function yesdrag(view, noclick) {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-color/src/define.js
+;// ./node_modules/d3-color/src/define.js
 /* harmony default export */ function src_define(constructor, factory, prototype) {
   constructor.prototype = factory.prototype = prototype;
   prototype.constructor = constructor;
@@ -23148,7 +23154,7 @@ function extend(parent, definition) {
   return prototype;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-color/src/color.js
+;// ./node_modules/d3-color/src/color.js
 
 function Color() {
 }
@@ -23477,7 +23483,7 @@ function hsl2rgb(h, m1, m2) {
   return (h < 60 ? m1 + (m2 - m1) * h / 60 : h < 180 ? m2 : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60 : m1) * 255;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basis.js
+;// ./node_modules/d3-interpolate/src/basis.js
 function basis(t1, v0, v1, v2, v3) {
   var t2 = t1 * t1, t3 = t2 * t1;
   return ((1 - 3 * t1 + 3 * t2 - t3) * v0 + (4 - 6 * t2 + 3 * t3) * v1 + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2 + t3 * v3) / 6;
@@ -23490,7 +23496,7 @@ function basis(t1, v0, v1, v2, v3) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basisClosed.js
+;// ./node_modules/d3-interpolate/src/basisClosed.js
 
 /* harmony default export */ function basisClosed(values) {
   var n = values.length;
@@ -23500,10 +23506,10 @@ function basis(t1, v0, v1, v2, v3) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/constant.js
+;// ./node_modules/d3-interpolate/src/constant.js
 /* harmony default export */ var src_constant = ((x) => () => x);
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/color.js
+;// ./node_modules/d3-interpolate/src/color.js
 
 function linear(a, d) {
   return function(t) {
@@ -23529,7 +23535,7 @@ function nogamma(a, b) {
   return d ? linear(a, d) : src_constant(isNaN(a) ? b : a);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/rgb.js
+;// ./node_modules/d3-interpolate/src/rgb.js
 
 
 
@@ -23573,7 +23579,7 @@ function rgbSpline(spline) {
 var rgbBasis = rgbSpline(src_basis);
 var rgbBasisClosed = rgbSpline(basisClosed);
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/numberArray.js
+;// ./node_modules/d3-interpolate/src/numberArray.js
 /* harmony default export */ function numberArray(a, b) {
   if (!b) b = [];
   var n = a ? Math.min(b.length, a.length) : 0, c = b.slice(), i;
@@ -23586,7 +23592,7 @@ function isNumberArray(x) {
   return ArrayBuffer.isView(x) && !(x instanceof DataView);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/array.js
+;// ./node_modules/d3-interpolate/src/array.js
 
 
 /* harmony default export */ function src_array(a, b) {
@@ -23602,7 +23608,7 @@ function genericArray(a, b) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/date.js
+;// ./node_modules/d3-interpolate/src/date.js
 /* harmony default export */ function date(a, b) {
   var d = /* @__PURE__ */ new Date();
   return a = +a, b = +b, function(t) {
@@ -23610,14 +23616,14 @@ function genericArray(a, b) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/number.js
+;// ./node_modules/d3-interpolate/src/number.js
 /* harmony default export */ function number(a, b) {
   return a = +a, b = +b, function(t) {
     return a * (1 - t) + b * t;
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/object.js
+;// ./node_modules/d3-interpolate/src/object.js
 
 /* harmony default export */ function object(a, b) {
   var i = {}, c = {}, k;
@@ -23636,7 +23642,7 @@ function genericArray(a, b) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/string.js
+;// ./node_modules/d3-interpolate/src/string.js
 
 var reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g, reB = new RegExp(reA.source, "g");
 function zero(b) {
@@ -23678,7 +23684,7 @@ function one(b) {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/value.js
+;// ./node_modules/d3-interpolate/src/value.js
 
 
 
@@ -23693,14 +23699,14 @@ function one(b) {
   return b == null || t === "boolean" ? src_constant(b) : (t === "number" ? number : t === "string" ? (c = color_color(b)) ? (b = c, rgb) : string : b instanceof color_color ? rgb : b instanceof Date ? date : isNumberArray(b) ? numberArray : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object : number)(a, b);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/sourceEvent.js
+;// ./node_modules/d3-selection/src/sourceEvent.js
 /* harmony default export */ function sourceEvent(event) {
   let sourceEvent;
   while (sourceEvent = event.sourceEvent) event = sourceEvent;
   return event;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/pointer.js
+;// ./node_modules/d3-selection/src/pointer.js
 
 /* harmony default export */ function src_pointer(event, node) {
   event = sourceEvent(event);
@@ -23721,7 +23727,7 @@ function one(b) {
   return [event.pageX, event.pageY];
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-timer/src/timer.js
+;// ./node_modules/d3-timer/src/timer.js
 var timer_frame = 0, timeout = 0, interval = 0, pokeDelay = 1e3, taskHead, taskTail, clockLast = 0, clockNow = 0, clockSkew = 0, clock = typeof performance === "object" && performance.now ? performance : Date, setFrame = typeof window === "object" && window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : function(f) {
   setTimeout(f, 17);
 };
@@ -23813,7 +23819,7 @@ function sleep(time) {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-timer/src/timeout.js
+;// ./node_modules/d3-timer/src/timeout.js
 
 /* harmony default export */ function src_timeout(callback, delay, time) {
   var t = new Timer();
@@ -23825,7 +23831,7 @@ function sleep(time) {
   return t;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/schedule.js
+;// ./node_modules/d3-transition/src/transition/schedule.js
 
 
 var emptyOn = src_dispatch("start", "end", "cancel", "interrupt");
@@ -23938,7 +23944,7 @@ function create(node, id, self) {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/interrupt.js
+;// ./node_modules/d3-transition/src/interrupt.js
 
 /* harmony default export */ function interrupt(node, name) {
   var schedules = node.__transition, schedule, active, empty = true, i;
@@ -23958,7 +23964,7 @@ function create(node, id, self) {
   if (empty) delete node.__transition;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/interrupt.js
+;// ./node_modules/d3-transition/src/selection/interrupt.js
 
 /* harmony default export */ function selection_interrupt(name) {
   return this.each(function() {
@@ -23966,7 +23972,7 @@ function create(node, id, self) {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/decompose.js
+;// ./node_modules/d3-interpolate/src/transform/decompose.js
 var degrees = 180 / Math.PI;
 var identity = {
   translateX: 0,
@@ -23992,7 +23998,7 @@ var identity = {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/parse.js
+;// ./node_modules/d3-interpolate/src/transform/parse.js
 
 var svgNode;
 function parseCss(value) {
@@ -24008,7 +24014,7 @@ function parseSvg(value) {
   return decompose(value.a, value.b, value.c, value.d, value.e, value.f);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/index.js
+;// ./node_modules/d3-interpolate/src/transform/index.js
 
 
 function interpolateTransform(parse, pxComma, pxParen, degParen) {
@@ -24065,7 +24071,7 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
 var interpolateTransformCss = interpolateTransform(parseCss, "px, ", "px)", "deg)");
 var interpolateTransformSvg = interpolateTransform(parseSvg, ", ", ")", ")");
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/tween.js
+;// ./node_modules/d3-transition/src/transition/tween.js
 
 function tweenRemove(id, name) {
   var tween0, tween1;
@@ -24127,7 +24133,7 @@ function tweenValue(transition, name, value) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/interpolate.js
+;// ./node_modules/d3-transition/src/transition/interpolate.js
 
 
 /* harmony default export */ function interpolate(a, b) {
@@ -24135,7 +24141,7 @@ function tweenValue(transition, name, value) {
   return (typeof b === "number" ? number : b instanceof color_color ? rgb : (c = color_color(b)) ? (b = c, rgb) : string)(a, b);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attr.js
+;// ./node_modules/d3-transition/src/transition/attr.js
 
 
 
@@ -24189,7 +24195,7 @@ function attr_attrFunctionNS(fullname, interpolate2, value) {
   return this.attrTween(name, typeof value === "function" ? (fullname.local ? attr_attrFunctionNS : attr_attrFunction)(fullname, i, tweenValue(this, "attr." + name, value)) : value == null ? (fullname.local ? attr_attrRemoveNS : attr_attrRemove)(fullname) : (fullname.local ? attr_attrConstantNS : attr_attrConstant)(fullname, i, value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attrTween.js
+;// ./node_modules/d3-transition/src/transition/attrTween.js
 
 function attrInterpolate(name, i) {
   return function(t) {
@@ -24230,7 +24236,7 @@ function attrTween(name, value) {
   return this.tween(key, (fullname.local ? attrTweenNS : attrTween)(fullname, value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/delay.js
+;// ./node_modules/d3-transition/src/transition/delay.js
 
 function delayFunction(id, value) {
   return function() {
@@ -24247,7 +24253,7 @@ function delayConstant(id, value) {
   return arguments.length ? this.each((typeof value === "function" ? delayFunction : delayConstant)(id, value)) : schedule_get(this.node(), id).delay;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/duration.js
+;// ./node_modules/d3-transition/src/transition/duration.js
 
 function durationFunction(id, value) {
   return function() {
@@ -24264,7 +24270,7 @@ function durationConstant(id, value) {
   return arguments.length ? this.each((typeof value === "function" ? durationFunction : durationConstant)(id, value)) : schedule_get(this.node(), id).duration;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/ease.js
+;// ./node_modules/d3-transition/src/transition/ease.js
 
 function easeConstant(id, value) {
   if (typeof value !== "function") throw new Error();
@@ -24277,7 +24283,7 @@ function easeConstant(id, value) {
   return arguments.length ? this.each(easeConstant(id, value)) : schedule_get(this.node(), id).ease;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/easeVarying.js
+;// ./node_modules/d3-transition/src/transition/easeVarying.js
 
 function easeVarying(id, value) {
   return function() {
@@ -24291,7 +24297,7 @@ function easeVarying(id, value) {
   return this.each(easeVarying(this._id, value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/filter.js
+;// ./node_modules/d3-transition/src/transition/filter.js
 
 
 /* harmony default export */ function transition_filter(match) {
@@ -24306,7 +24312,7 @@ function easeVarying(id, value) {
   return new Transition(subgroups, this._parents, this._name, this._id);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/merge.js
+;// ./node_modules/d3-transition/src/transition/merge.js
 
 /* harmony default export */ function transition_merge(transition) {
   if (transition._id !== this._id) throw new Error();
@@ -24323,7 +24329,7 @@ function easeVarying(id, value) {
   return new Transition(merges, this._parents, this._name, this._id);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/on.js
+;// ./node_modules/d3-transition/src/transition/on.js
 
 function start(name) {
   return (name + "").trim().split(/^|\s+/).every(function(t) {
@@ -24345,7 +24351,7 @@ function onFunction(id, name, listener) {
   return arguments.length < 2 ? schedule_get(this.node(), id).on.on(name) : this.each(onFunction(id, name, listener));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/remove.js
+;// ./node_modules/d3-transition/src/transition/remove.js
 function removeFunction(id) {
   return function() {
     var parent = this.parentNode;
@@ -24357,7 +24363,7 @@ function removeFunction(id) {
   return this.on("end.remove", removeFunction(this._id));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/select.js
+;// ./node_modules/d3-transition/src/transition/select.js
 
 
 
@@ -24376,7 +24382,7 @@ function removeFunction(id) {
   return new Transition(subgroups, this._parents, name, id);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selectAll.js
+;// ./node_modules/d3-transition/src/transition/selectAll.js
 
 
 
@@ -24399,14 +24405,14 @@ function removeFunction(id) {
   return new Transition(subgroups, parents, name, id);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selection.js
+;// ./node_modules/d3-transition/src/transition/selection.js
 
 var selection_Selection = src_selection.prototype.constructor;
 /* harmony default export */ function transition_selection() {
   return new selection_Selection(this._groups, this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/style.js
+;// ./node_modules/d3-transition/src/transition/style.js
 
 
 
@@ -24452,7 +24458,7 @@ function styleMaybeRemove(id, name) {
   return value == null ? this.styleTween(name, styleNull(name, i)).on("end.style." + name, style_styleRemove(name)) : typeof value === "function" ? this.styleTween(name, style_styleFunction(name, i, tweenValue(this, "style." + name, value))).each(styleMaybeRemove(this._id, name)) : this.styleTween(name, style_styleConstant(name, i, value), priority).on("end.style." + name, null);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/styleTween.js
+;// ./node_modules/d3-transition/src/transition/styleTween.js
 function styleInterpolate(name, i, priority) {
   return function(t) {
     this.style.setProperty(name, i.call(this, t), priority);
@@ -24476,7 +24482,7 @@ function styleTween(name, value, priority) {
   return this.tween(key, styleTween(name, value, priority == null ? "" : priority));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/text.js
+;// ./node_modules/d3-transition/src/transition/text.js
 
 function text_textConstant(value) {
   return function() {
@@ -24493,7 +24499,7 @@ function text_textFunction(value) {
   return this.tween("text", typeof value === "function" ? text_textFunction(tweenValue(this, "text", value)) : text_textConstant(value == null ? "" : value + ""));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/textTween.js
+;// ./node_modules/d3-transition/src/transition/textTween.js
 function textInterpolate(i) {
   return function(t) {
     this.textContent = i.call(this, t);
@@ -24517,7 +24523,7 @@ function textTween(value) {
   return this.tween(key, textTween(value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/transition.js
+;// ./node_modules/d3-transition/src/transition/transition.js
 
 
 /* harmony default export */ function transition() {
@@ -24538,7 +24544,7 @@ function textTween(value) {
   return new Transition(groups, this._parents, name, id1);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/end.js
+;// ./node_modules/d3-transition/src/transition/end.js
 
 /* harmony default export */ function end() {
   var on0, on1, that = this, id = that._id, size = that.size();
@@ -24560,7 +24566,7 @@ function textTween(value) {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/index.js
+;// ./node_modules/d3-transition/src/transition/index.js
 
 
 
@@ -24629,7 +24635,7 @@ Transition.prototype = transition_transition.prototype = {
   [Symbol.iterator]: selection_prototype[Symbol.iterator]
 };
 
-;// CONCATENATED MODULE: ./node_modules/d3-ease/src/cubic.js
+;// ./node_modules/d3-ease/src/cubic.js
 function cubicIn(t) {
   return t * t * t;
 }
@@ -24640,7 +24646,7 @@ function cubicInOut(t) {
   return ((t *= 2) <= 1 ? t * t * t : (t -= 2) * t * t + 2) / 2;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/transition.js
+;// ./node_modules/d3-transition/src/selection/transition.js
 
 
 
@@ -24678,23 +24684,23 @@ function inherit(node, id) {
   return new Transition(groups, this._parents, name, id);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/index.js
+;// ./node_modules/d3-transition/src/selection/index.js
 
 
 
 src_selection.prototype.interrupt = selection_interrupt;
 src_selection.prototype.transition = selection_transition;
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/index.js
+;// ./node_modules/d3-transition/src/index.js
 
 
 
 
 
-;// CONCATENATED MODULE: ./node_modules/d3-brush/src/constant.js
+;// ./node_modules/d3-brush/src/constant.js
 /* harmony default export */ var d3_brush_src_constant = ((x) => () => x);
 
-;// CONCATENATED MODULE: ./node_modules/d3-brush/src/event.js
+;// ./node_modules/d3-brush/src/event.js
 function BrushEvent(type, {
   sourceEvent,
   target,
@@ -24712,7 +24718,7 @@ function BrushEvent(type, {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-brush/src/noevent.js
+;// ./node_modules/d3-brush/src/noevent.js
 function noevent_nopropagation(event) {
   event.stopImmediatePropagation();
 }
@@ -24721,7 +24727,7 @@ function noevent_nopropagation(event) {
   event.stopImmediatePropagation();
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-brush/src/brush.js
+;// ./node_modules/d3-brush/src/brush.js
 
 
 
@@ -25209,10 +25215,10 @@ function brush_brush(dim) {
   return brush2;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-brush/src/index.js
+;// ./node_modules/d3-brush/src/index.js
 
 
-;// CONCATENATED MODULE: ./src/module/browser.ts
+;// ./src/module/browser.ts
 function getGlobal() {
   return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
 }
@@ -25238,7 +25244,7 @@ const [
 ] = getFallback(win);
 
 
-;// CONCATENATED MODULE: ./src/module/util.ts
+;// ./src/module/util.ts
 var util_defProp = Object.defineProperty;
 var util_getOwnPropSymbols = Object.getOwnPropertySymbols;
 var util_hasOwnProp = Object.prototype.hasOwnProperty;
@@ -25658,7 +25664,7 @@ function runUntil(fn, conditionFn) {
   }
 }
 
-;// CONCATENATED MODULE: ./src/config/Options/Options.ts
+;// ./src/config/Options/Options.ts
 var Options_defProp = Object.defineProperty;
 var Options_getOwnPropSymbols = Object.getOwnPropertySymbols;
 var Options_hasOwnProp = Object.prototype.hasOwnProperty;
@@ -25707,7 +25713,7 @@ __publicField(_Options, "data", {});
 let Options = _Options;
 
 
-;// CONCATENATED MODULE: ./src/config/Store/Element.ts
+;// ./src/config/Store/Element.ts
 class Element {
   constructor() {
     const element = {
@@ -25783,7 +25789,7 @@ class Element {
   }
 }
 
-;// CONCATENATED MODULE: ./src/config/Store/State.ts
+;// ./src/config/Store/State.ts
 class State {
   constructor() {
     return {
@@ -25935,7 +25941,7 @@ class State {
   }
 }
 
-;// CONCATENATED MODULE: ./src/config/Store/Store.ts
+;// ./src/config/Store/Store.ts
 
 
 const Store_classes = {
@@ -25953,7 +25959,7 @@ class Store {
   }
 }
 
-;// CONCATENATED MODULE: ./src/module/Cache.ts
+;// ./src/module/Cache.ts
 var Cache_defProp = Object.defineProperty;
 var Cache_defNormalProp = (obj, key, value) => key in obj ? Cache_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var Cache_publicField = (obj, key, value) => Cache_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -26044,7 +26050,7 @@ class Cache {
   }
 }
 
-;// CONCATENATED MODULE: ./src/config/const.ts
+;// ./src/config/const.ts
 const TYPE = {
   AREA: "area",
   AREA_LINE_RANGE: "area-line-range",
@@ -26133,7 +26139,7 @@ const TYPE_BY_CATEGORY = {
   ]
 };
 
-;// CONCATENATED MODULE: ./src/module/error.ts
+;// ./src/module/error.ts
 
 
 
@@ -26175,7 +26181,7 @@ function logError(head, tail, info) {
   throw Error(`${prefix} ${head.replace(/\%c([a-z-]+)/i, "'$1' ")} ${tail != null ? tail : ""}`);
 }
 
-;// CONCATENATED MODULE: ./src/module/generator.ts
+;// ./src/module/generator.ts
 
 
 const { setTimeout: generator_setTimeout, clearTimeout: generator_clearTimeout } = win;
@@ -26237,7 +26243,7 @@ function generateWait() {
   return f;
 }
 
-;// CONCATENATED MODULE: ./src/module/worker.ts
+;// ./src/module/worker.ts
 
 const blob = {};
 function getObjectURL(fn, depsFn) {
@@ -26284,7 +26290,7 @@ function runWorker(useWorker = true, fn, callback, depsFn) {
   return runFn;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-dsv/src/dsv.js
+;// ./node_modules/d3-dsv/src/dsv.js
 var EOL = {}, EOF = {}, QUOTE = 34, NEWLINE = 10, RETURN = 13;
 function objectConverter(columns) {
   return new Function("d", "return {" + columns.map(function(name, i) {
@@ -26400,7 +26406,7 @@ function formatDate(date) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-dsv/src/csv.js
+;// ./node_modules/d3-dsv/src/csv.js
 
 var csv = dsv(",");
 var csvParse = csv.parse;
@@ -26411,7 +26417,7 @@ var csvFormatRows = csv.formatRows;
 var csvFormatRow = csv.formatRow;
 var csvFormatValue = csv.formatValue;
 
-;// CONCATENATED MODULE: ./node_modules/d3-dsv/src/tsv.js
+;// ./node_modules/d3-dsv/src/tsv.js
 
 var tsv = dsv("	");
 var tsvParse = tsv.parse;
@@ -26422,7 +26428,7 @@ var tsvFormatRows = tsv.formatRows;
 var tsvFormatRow = tsv.formatRow;
 var tsvFormatValue = tsv.formatValue;
 
-;// CONCATENATED MODULE: ./src/ChartInternal/data/convert.helper.ts
+;// ./src/ChartInternal/data/convert.helper.ts
 
 
 function columns(columns2) {
@@ -26555,7 +26561,7 @@ function convert_helper_tsv(tsv2) {
   }, tsv2);
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/data/convert.ts
+;// ./src/ChartInternal/data/convert.ts
 
 
 
@@ -26709,7 +26715,7 @@ function getDataKeyForJson(keysParam, config) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/data/data.ts
+;// ./src/ChartInternal/data/data.ts
 
 
 
@@ -27520,7 +27526,7 @@ function getDataKeyForJson(keysParam, config) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/data/load.ts
+;// ./src/ChartInternal/data/load.ts
 
 
 function callDone(fn, resizeAfter = false) {
@@ -27641,10 +27647,10 @@ function callDone(fn, resizeAfter = false) {
   }
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-drag/src/constant.js
+;// ./node_modules/d3-drag/src/constant.js
 /* harmony default export */ var d3_drag_src_constant = ((x) => () => x);
 
-;// CONCATENATED MODULE: ./node_modules/d3-drag/src/event.js
+;// ./node_modules/d3-drag/src/event.js
 function DragEvent(type, {
   sourceEvent,
   subject,
@@ -27676,7 +27682,7 @@ DragEvent.prototype.on = function() {
   return value === this._ ? this : value;
 };
 
-;// CONCATENATED MODULE: ./node_modules/d3-drag/src/drag.js
+;// ./node_modules/d3-drag/src/drag.js
 
 
 
@@ -27826,7 +27832,7 @@ function drag_defaultTouchable() {
   return drag;
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/interactions/interaction.ts
+;// ./src/ChartInternal/interactions/interaction.ts
 
 
 
@@ -28058,7 +28064,7 @@ function drag_defaultTouchable() {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/category.ts
+;// ./src/ChartInternal/internals/category.ts
 /* harmony default export */ var category = ({
   /**
    * Category Name
@@ -28073,7 +28079,7 @@ function drag_defaultTouchable() {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/class.ts
+;// ./src/ChartInternal/internals/class.ts
 
 /* harmony default export */ var internals_class = ({
   generateClass(prefix, targetId) {
@@ -28158,7 +28164,7 @@ function drag_defaultTouchable() {
   }
 });
 
-;// CONCATENATED MODULE: ./node_modules/internmap/src/index.js
+;// ./node_modules/internmap/src/index.js
 class InternMap extends Map {
   constructor(entries, key = keyof) {
     super();
@@ -28216,7 +28222,7 @@ function keyof(value) {
   return value !== null && typeof value === "object" ? value.valueOf() : value;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/init.js
+;// ./node_modules/d3-scale/src/init.js
 function initRange(domain, range) {
   switch (arguments.length) {
     case 0:
@@ -28249,7 +28255,7 @@ function initInterpolator(domain, interpolator) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/ordinal.js
+;// ./node_modules/d3-scale/src/ordinal.js
 
 
 const implicit = Symbol("implicit");
@@ -28285,7 +28291,7 @@ function ordinal() {
   return scale;
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/color.ts
+;// ./src/ChartInternal/internals/color.ts
 
 
 
@@ -28498,7 +28504,7 @@ const schemeCategory10 = [
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/domain.ts
+;// ./src/ChartInternal/internals/domain.ts
 
 
 /* harmony default export */ var domain = ({
@@ -28849,7 +28855,7 @@ const schemeCategory10 = [
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/format.ts
+;// ./src/ChartInternal/internals/format.ts
 
 function getFormat($$, typeValue, v) {
   const { config } = $$;
@@ -28914,7 +28920,7 @@ function getFormat($$, typeValue, v) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/legend.ts
+;// ./src/ChartInternal/internals/legend.ts
 
 
 
@@ -29556,7 +29562,7 @@ function getFormattedText(id, formatted = true) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/redraw.ts
+;// ./src/ChartInternal/internals/redraw.ts
 
 
 
@@ -29721,7 +29727,7 @@ function getFormattedText(id, formatted = true) {
   }
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/ticks.js
+;// ./node_modules/d3-array/src/ticks.js
 const e10 = Math.sqrt(50), e5 = Math.sqrt(10), e2 = Math.sqrt(2);
 function tickSpec(start, stop, count) {
   const step = (stop - start) / Math.max(0, count), power = Math.floor(Math.log10(step)), error = step / Math.pow(10, power), factor = error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1;
@@ -29769,17 +29775,17 @@ function tickStep(start, stop, count) {
   return (reverse ? -1 : 1) * (inc < 0 ? 1 / -inc : inc);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/ascending.js
+;// ./node_modules/d3-array/src/ascending.js
 function ascending_ascending(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/descending.js
+;// ./node_modules/d3-array/src/descending.js
 function descending(a, b) {
   return a == null || b == null ? NaN : b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/bisector.js
+;// ./node_modules/d3-array/src/bisector.js
 
 
 function bisector(f) {
@@ -29825,7 +29831,7 @@ function bisector_zero() {
   return 0;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/number.js
+;// ./node_modules/d3-array/src/number.js
 function number_number(x) {
   return x === null ? NaN : +x;
 }
@@ -29846,7 +29852,7 @@ function* numbers(values, valueof) {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/bisect.js
+;// ./node_modules/d3-array/src/bisect.js
 
 
 
@@ -29856,26 +29862,26 @@ const bisectLeft = ascendingBisect.left;
 const bisectCenter = bisector(number_number).center;
 /* harmony default export */ var bisect = (bisectRight);
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/round.js
+;// ./node_modules/d3-interpolate/src/round.js
 /* harmony default export */ function round(a, b) {
   return a = +a, b = +b, function(t) {
     return Math.round(a * (1 - t) + b * t);
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/constant.js
+;// ./node_modules/d3-scale/src/constant.js
 function constants(x) {
   return function() {
     return x;
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/number.js
+;// ./node_modules/d3-scale/src/number.js
 function src_number_number(x) {
   return +x;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/continuous.js
+;// ./node_modules/d3-scale/src/continuous.js
 
 
 
@@ -29964,7 +29970,7 @@ function continuous() {
   return transformer()(continuous_identity, continuous_identity);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatSpecifier.js
+;// ./node_modules/d3-format/src/formatSpecifier.js
 var re = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
 function formatSpecifier(specifier) {
   if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
@@ -29999,7 +30005,7 @@ FormatSpecifier.prototype.toString = function() {
   return this.fill + this.align + this.sign + this.symbol + (this.zero ? "0" : "") + (this.width === void 0 ? "" : Math.max(1, this.width | 0)) + (this.comma ? "," : "") + (this.precision === void 0 ? "" : "." + Math.max(0, this.precision | 0)) + (this.trim ? "~" : "") + this.type;
 };
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatDecimal.js
+;// ./node_modules/d3-format/src/formatDecimal.js
 /* harmony default export */ function formatDecimal(x) {
   return Math.abs(x = Math.round(x)) >= 1e21 ? x.toLocaleString("en").replace(/,/g, "") : x.toString(10);
 }
@@ -30012,19 +30018,19 @@ function formatDecimalParts(x, p) {
   ];
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/exponent.js
+;// ./node_modules/d3-format/src/exponent.js
 
 /* harmony default export */ function exponent(x) {
   return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionPrefix.js
+;// ./node_modules/d3-format/src/precisionPrefix.js
 
 /* harmony default export */ function precisionPrefix(step, value) {
   return Math.max(0, Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3 - exponent(Math.abs(step)));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatGroup.js
+;// ./node_modules/d3-format/src/formatGroup.js
 /* harmony default export */ function formatGroup(grouping, thousands) {
   return function(value, width) {
     var i = value.length, t = [], j = 0, g = grouping[0], length = 0;
@@ -30038,7 +30044,7 @@ function formatDecimalParts(x, p) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatNumerals.js
+;// ./node_modules/d3-format/src/formatNumerals.js
 /* harmony default export */ function formatNumerals(numerals) {
   return function(value) {
     return value.replace(/[0-9]/g, function(i) {
@@ -30047,7 +30053,7 @@ function formatDecimalParts(x, p) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTrim.js
+;// ./node_modules/d3-format/src/formatTrim.js
 /* harmony default export */ function formatTrim(s) {
   out: for (var n = s.length, i = 1, i0 = -1, i1; i < n; ++i) {
     switch (s[i]) {
@@ -30067,7 +30073,7 @@ function formatDecimalParts(x, p) {
   return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatPrefixAuto.js
+;// ./node_modules/d3-format/src/formatPrefixAuto.js
 
 var prefixExponent;
 /* harmony default export */ function formatPrefixAuto(x, p) {
@@ -30077,7 +30083,7 @@ var prefixExponent;
   return i === n ? coefficient : i > n ? coefficient + new Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + new Array(1 - i).join("0") + formatDecimalParts(x, Math.max(0, p + i - 1))[0];
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatRounded.js
+;// ./node_modules/d3-format/src/formatRounded.js
 
 /* harmony default export */ function formatRounded(x, p) {
   var d = formatDecimalParts(x, p);
@@ -30086,7 +30092,7 @@ var prefixExponent;
   return exponent < 0 ? "0." + new Array(-exponent).join("0") + coefficient : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1) : coefficient + new Array(exponent - coefficient.length + 2).join("0");
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTypes.js
+;// ./node_modules/d3-format/src/formatTypes.js
 
 
 
@@ -30106,12 +30112,12 @@ var prefixExponent;
   "x": (x) => Math.round(x).toString(16)
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/identity.js
+;// ./node_modules/d3-format/src/identity.js
 /* harmony default export */ function src_identity(x) {
   return x;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/locale.js
+;// ./node_modules/d3-format/src/locale.js
 
 
 
@@ -30192,7 +30198,7 @@ var map = Array.prototype.map, prefixes = ["y", "z", "a", "f", "p", "n", "\xB5",
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/defaultLocale.js
+;// ./node_modules/d3-format/src/defaultLocale.js
 
 var defaultLocale_locale;
 var defaultLocale_format;
@@ -30209,20 +30215,20 @@ function defaultLocale_defaultLocale(definition) {
   return defaultLocale_locale;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionRound.js
+;// ./node_modules/d3-format/src/precisionRound.js
 
 /* harmony default export */ function precisionRound(step, max) {
   step = Math.abs(step), max = Math.abs(max) - step;
   return Math.max(0, exponent(max) - exponent(step)) + 1;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionFixed.js
+;// ./node_modules/d3-format/src/precisionFixed.js
 
 /* harmony default export */ function precisionFixed(step) {
   return Math.max(0, -exponent(Math.abs(step)));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/tickFormat.js
+;// ./node_modules/d3-scale/src/tickFormat.js
 
 
 function tickFormat(start, stop, count, specifier) {
@@ -30251,7 +30257,7 @@ function tickFormat(start, stop, count, specifier) {
   return defaultLocale_format(specifier);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/linear.js
+;// ./node_modules/d3-scale/src/linear.js
 
 
 
@@ -30310,7 +30316,7 @@ function linear_linear() {
   return linearish(scale);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/symlog.js
+;// ./node_modules/d3-scale/src/symlog.js
 
 
 
@@ -30339,7 +30345,7 @@ function symlog() {
   return initRange.apply(scale, arguments);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/nice.js
+;// ./node_modules/d3-scale/src/nice.js
 function nice(domain, interval) {
   domain = domain.slice();
   var i0 = 0, i1 = domain.length - 1, x0 = domain[i0], x1 = domain[i1], t;
@@ -30352,7 +30358,7 @@ function nice(domain, interval) {
   return domain;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/log.js
+;// ./node_modules/d3-scale/src/log.js
 
 
 
@@ -30470,7 +30476,7 @@ function log() {
   return scale;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/millisecond.js
+;// ./node_modules/d3-time/src/millisecond.js
 
 const millisecond = timeInterval(() => {
 }, (date, step) => {
@@ -30492,7 +30498,7 @@ millisecond.every = (k) => {
 };
 const milliseconds = millisecond.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/second.js
+;// ./node_modules/d3-time/src/second.js
 
 
 const second = timeInterval((date) => {
@@ -30506,7 +30512,7 @@ const second = timeInterval((date) => {
 });
 const seconds = second.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/minute.js
+;// ./node_modules/d3-time/src/minute.js
 
 
 const timeMinute = timeInterval((date) => {
@@ -30530,7 +30536,7 @@ const utcMinute = timeInterval((date) => {
 });
 const utcMinutes = utcMinute.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/hour.js
+;// ./node_modules/d3-time/src/hour.js
 
 
 const timeHour = timeInterval((date) => {
@@ -30554,7 +30560,7 @@ const utcHour = timeInterval((date) => {
 });
 const utcHours = utcHour.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/month.js
+;// ./node_modules/d3-time/src/month.js
 
 const timeMonth = timeInterval((date) => {
   date.setDate(1);
@@ -30579,7 +30585,7 @@ const utcMonth = timeInterval((date) => {
 });
 const utcMonths = utcMonth.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/ticks.js
+;// ./node_modules/d3-time/src/ticks.js
 
 
 
@@ -30632,7 +30638,7 @@ const [utcTicks, utcTickInterval] = ticker(utcYear, utcMonth, utcSunday, unixDay
 const [timeTicks, timeTickInterval] = ticker(timeYear, timeMonth, timeSunday, timeDay, timeHour, timeMinute);
 
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/time.js
+;// ./node_modules/d3-scale/src/time.js
 
 
 
@@ -30677,7 +30683,7 @@ function time() {
   return initRange.apply(calendar(timeTicks, timeTickInterval, timeYear, timeMonth, timeSunday, timeDay, timeHour, timeMinute, second, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/utcTime.js
+;// ./node_modules/d3-scale/src/utcTime.js
 
 
 
@@ -30686,7 +30692,7 @@ function utcTime() {
   return initRange.apply(calendar(utcTicks, utcTickInterval, utcYear, utcMonth, utcSunday, utcDay, utcHour, utcMinute, second, utcFormat).domain([Date.UTC(2e3, 0, 1), Date.UTC(2e3, 0, 2)]), arguments);
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/scale.ts
+;// ./src/ChartInternal/internals/scale.ts
 
 
 function getScale(type = "linear", min, max) {
@@ -30896,7 +30902,7 @@ function getScale(type = "linear", min, max) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/size.ts
+;// ./src/ChartInternal/internals/size.ts
 
 
 
@@ -31189,7 +31195,7 @@ function getScale(type = "linear", min, max) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/style.ts
+;// ./src/ChartInternal/internals/style.ts
 
 
 /* harmony default export */ var internals_style = ({
@@ -31231,14 +31237,14 @@ function getScale(type = "linear", min, max) {
   }
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selectAll.js
+;// ./node_modules/d3-selection/src/selectAll.js
 
 
 /* harmony default export */ function src_selectAll(selector) {
   return typeof selector === "string" ? new Selection([document.querySelectorAll(selector)], [document.documentElement]) : new Selection([array(selector)], root);
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/text.ts
+;// ./src/ChartInternal/internals/text.ts
 
 
 
@@ -31698,7 +31704,7 @@ function getTextPos(d, type) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/title.ts
+;// ./src/ChartInternal/internals/title.ts
 
 
 function getTextXPos(pos = "left", width) {
@@ -31752,7 +31758,7 @@ function getTextXPos(pos = "left", width) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/tooltip.ts
+;// ./src/ChartInternal/internals/tooltip.ts
 
 
 
@@ -32234,7 +32240,7 @@ function getTextXPos(pos = "left", width) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/transform.ts
+;// ./src/ChartInternal/internals/transform.ts
 
 
 /* harmony default export */ var transform = ({
@@ -32307,7 +32313,7 @@ function getTextXPos(pos = "left", width) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/type.ts
+;// ./src/ChartInternal/internals/type.ts
 
 
 /* harmony default export */ var internals_type = ({
@@ -32533,7 +32539,7 @@ function getTextXPos(pos = "left", width) {
   }
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/basis.js
+;// ./node_modules/d3-shape/src/curve/basis.js
 function point(that, x, y) {
   that._context.bezierCurveTo(
     (2 * that._x0 + that._x1) / 3,
@@ -32594,11 +32600,11 @@ Basis.prototype = {
   return new Basis(context);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/noop.js
+;// ./node_modules/d3-shape/src/noop.js
 /* harmony default export */ function src_noop() {
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/basisClosed.js
+;// ./node_modules/d3-shape/src/curve/basisClosed.js
 
 
 function BasisClosed(context) {
@@ -32660,7 +32666,7 @@ BasisClosed.prototype = {
   return new BasisClosed(context);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/basisOpen.js
+;// ./node_modules/d3-shape/src/curve/basisOpen.js
 
 function BasisOpen(context) {
   this._context = context;
@@ -32708,7 +32714,7 @@ BasisOpen.prototype = {
   return new BasisOpen(context);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/bundle.js
+;// ./node_modules/d3-shape/src/curve/bundle.js
 
 function Bundle(context, beta) {
   this._basis = new Basis(context);
@@ -32750,7 +32756,7 @@ Bundle.prototype = {
   return bundle;
 })(0.85));
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/cardinal.js
+;// ./node_modules/d3-shape/src/curve/cardinal.js
 function cardinal_point(that, x, y) {
   that._context.bezierCurveTo(
     that._x1 + that._k * (that._x2 - that._x0),
@@ -32819,7 +32825,7 @@ Cardinal.prototype = {
   return cardinal;
 })(0));
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/cardinalClosed.js
+;// ./node_modules/d3-shape/src/curve/cardinalClosed.js
 
 
 function CardinalClosed(context, tension) {
@@ -32886,7 +32892,7 @@ CardinalClosed.prototype = {
   return cardinal;
 })(0));
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/cardinalOpen.js
+;// ./node_modules/d3-shape/src/curve/cardinalOpen.js
 
 function CardinalOpen(context, tension) {
   this._context = context;
@@ -32940,7 +32946,7 @@ CardinalOpen.prototype = {
   return cardinal;
 })(0));
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/math.js
+;// ./node_modules/d3-shape/src/math.js
 const math_abs = Math.abs;
 const atan2 = Math.atan2;
 const cos = Math.cos;
@@ -32959,7 +32965,7 @@ function asin(x) {
   return x >= 1 ? halfPi : x <= -1 ? -halfPi : Math.asin(x);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/catmullRom.js
+;// ./node_modules/d3-shape/src/curve/catmullRom.js
 
 
 function catmullRom_point(that, x, y) {
@@ -33039,7 +33045,7 @@ CatmullRom.prototype = {
   return catmullRom;
 })(0.5));
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/catmullRomClosed.js
+;// ./node_modules/d3-shape/src/curve/catmullRomClosed.js
 
 
 
@@ -33113,7 +33119,7 @@ CatmullRomClosed.prototype = {
   return catmullRom;
 })(0.5));
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/catmullRomOpen.js
+;// ./node_modules/d3-shape/src/curve/catmullRomOpen.js
 
 
 function CatmullRomOpen(context, alpha) {
@@ -33174,7 +33180,7 @@ CatmullRomOpen.prototype = {
   return catmullRom;
 })(0.5));
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/monotone.js
+;// ./node_modules/d3-shape/src/curve/monotone.js
 function sign(x) {
   return x < 0 ? -1 : 1;
 }
@@ -33271,7 +33277,7 @@ function monotoneY(context) {
   return new MonotoneY(context);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/natural.js
+;// ./node_modules/d3-shape/src/curve/natural.js
 function Natural(context) {
   this._context = context;
 }
@@ -33324,7 +33330,7 @@ function controlPoints(x) {
   return new Natural(context);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/linearClosed.js
+;// ./node_modules/d3-shape/src/curve/linearClosed.js
 
 function LinearClosed(context) {
   this._context = context;
@@ -33348,7 +33354,7 @@ LinearClosed.prototype = {
   return new LinearClosed(context);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/linear.js
+;// ./node_modules/d3-shape/src/curve/linear.js
 function Linear(context) {
   this._context = context;
 }
@@ -33385,7 +33391,7 @@ Linear.prototype = {
   return new Linear(context);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/step.js
+;// ./node_modules/d3-shape/src/curve/step.js
 function Step(context, t) {
   this._context = context;
   this._t = t;
@@ -33440,7 +33446,7 @@ function stepAfter(context) {
   return new Step(context, 1);
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/shape.ts
+;// ./src/ChartInternal/shape/shape.ts
 
 
 
@@ -33865,7 +33871,7 @@ function getGroupedDataPointsFn(d) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/ChartInternal.ts
+;// ./src/ChartInternal/ChartInternal.ts
 var ChartInternal_defProp = Object.defineProperty;
 var ChartInternal_defNormalProp = (obj, key, value) => key in obj ? ChartInternal_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var ChartInternal_publicField = (obj, key, value) => ChartInternal_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -34458,7 +34464,7 @@ util_extend(ChartInternal.prototype, [
   internals_type
 ]);
 
-;// CONCATENATED MODULE: ./src/config/config.ts
+;// ./src/config/config.ts
 
 function loadConfig(config) {
   const thisConfig = this.config;
@@ -34488,7 +34494,7 @@ function loadConfig(config) {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Chart/api/chart.ts
+;// ./src/Chart/api/chart.ts
 
 
 /* harmony default export */ var chart = ({
@@ -34651,7 +34657,7 @@ function loadConfig(config) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/color.ts
+;// ./src/Chart/api/color.ts
 /* harmony default export */ var api_color = ({
   /**
    * Get the color
@@ -34668,7 +34674,7 @@ function loadConfig(config) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/data.ts
+;// ./src/Chart/api/data.ts
 
 const api_data_data = function(targetIds) {
   const { targets } = this.internal.data;
@@ -34823,7 +34829,7 @@ util_extend(api_data_data, {
 });
 /* harmony default export */ var api_data = ({ data: api_data_data });
 
-;// CONCATENATED MODULE: ./src/Chart/api/export.ts
+;// ./src/Chart/api/export.ts
 
 
 
@@ -35019,7 +35025,7 @@ function renderText(ctx, glyph) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/focus.ts
+;// ./src/Chart/api/focus.ts
 
 
 /* harmony default export */ var api_focus = ({
@@ -35126,7 +35132,7 @@ function renderText(ctx, glyph) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/legend.ts
+;// ./src/Chart/api/legend.ts
 const legend_legend = {
   /**
    * Show legend for each target.
@@ -35180,7 +35186,7 @@ const legend_legend = {
 };
 /* harmony default export */ var api_legend = ({ legend: legend_legend });
 
-;// CONCATENATED MODULE: ./src/Chart/api/load.ts
+;// ./src/Chart/api/load.ts
 
 
 
@@ -35393,7 +35399,7 @@ const legend_legend = {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/show.ts
+;// ./src/Chart/api/show.ts
 
 function showHide(show, targetIdsValue, options) {
   const $$ = this.internal;
@@ -35496,7 +35502,7 @@ function showHide(show, targetIdsValue, options) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/tooltip.ts
+;// ./src/Chart/api/tooltip.ts
 
 
 const tooltip_tooltip = {
@@ -35619,7 +35625,7 @@ const tooltip_tooltip = {
 };
 /* harmony default export */ var api_tooltip = ({ tooltip: tooltip_tooltip });
 
-;// CONCATENATED MODULE: ./src/Chart/Chart.ts
+;// ./src/Chart/Chart.ts
 var Chart_defProp = Object.defineProperty;
 var Chart_defNormalProp = (obj, key, value) => key in obj ? Chart_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var Chart_publicField = (obj, key, value) => Chart_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -35674,7 +35680,7 @@ util_extend(Chart.prototype, [
   api_tooltip
 ]);
 
-;// CONCATENATED MODULE: ./src/Chart/api/selection.ts
+;// ./src/Chart/api/selection.ts
 
 
 
@@ -35785,7 +35791,7 @@ function setSelection(isSelection = false, ids, indices, resetOther) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/subchart.ts
+;// ./src/Chart/api/subchart.ts
 
 
 const subchart = function(domainValue) {
@@ -35914,7 +35920,7 @@ util_extend(subchart, {
   subchart
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/zoom.js
+;// ./node_modules/d3-interpolate/src/zoom.js
 var epsilon2 = 1e-12;
 function cosh(x) {
   return ((x = Math.exp(x)) + 1 / x) / 2;
@@ -35959,10 +35965,10 @@ function tanh(x) {
   return zoom;
 })(Math.SQRT2, 2, 4));
 
-;// CONCATENATED MODULE: ./node_modules/d3-zoom/src/constant.js
+;// ./node_modules/d3-zoom/src/constant.js
 /* harmony default export */ var d3_zoom_src_constant = ((x) => () => x);
 
-;// CONCATENATED MODULE: ./node_modules/d3-zoom/src/event.js
+;// ./node_modules/d3-zoom/src/event.js
 function ZoomEvent(type, {
   sourceEvent,
   target,
@@ -35978,7 +35984,7 @@ function ZoomEvent(type, {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-zoom/src/transform.js
+;// ./node_modules/d3-zoom/src/transform.js
 function Transform(k, x, y) {
   this.k = k;
   this.x = x;
@@ -36027,7 +36033,7 @@ function transform_transform(node) {
   return node.__zoom;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-zoom/src/noevent.js
+;// ./node_modules/d3-zoom/src/noevent.js
 function src_noevent_nopropagation(event) {
   event.stopImmediatePropagation();
 }
@@ -36036,7 +36042,7 @@ function src_noevent_nopropagation(event) {
   event.stopImmediatePropagation();
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-zoom/src/zoom.js
+;// ./node_modules/d3-zoom/src/zoom.js
 
 
 
@@ -36360,11 +36366,11 @@ function defaultConstrain(transform, extent, translateExtent) {
   return zoom;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-zoom/src/index.js
+;// ./node_modules/d3-zoom/src/index.js
 
 
 
-;// CONCATENATED MODULE: ./src/Chart/api/zoom.ts
+;// ./src/Chart/api/zoom.ts
 
 
 const zoom = function(domainValue) {
@@ -36531,7 +36537,7 @@ util_extend(zoom, {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/interactions/subchart.ts
+;// ./src/ChartInternal/interactions/subchart.ts
 
 
 
@@ -36798,7 +36804,7 @@ util_extend(zoom, {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/interactions/zoom.ts
+;// ./src/ChartInternal/interactions/zoom.ts
 
 
 
@@ -37091,7 +37097,7 @@ util_extend(zoom, {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/interactions/drag.ts
+;// ./src/ChartInternal/interactions/drag.ts
 
 
 
@@ -37177,7 +37183,7 @@ util_extend(zoom, {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/selection.ts
+;// ./src/ChartInternal/internals/selection.ts
 var selection_defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
 var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
@@ -37336,7 +37342,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   }
 }));
 
-;// CONCATENATED MODULE: ./src/config/Options/data/selection.ts
+;// ./src/config/Options/data/selection.ts
 /* harmony default export */ var data_selection = ({
   /**
    * Set data selection enabled<br><br>
@@ -37463,7 +37469,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   }
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/interaction/subchart.ts
+;// ./src/config/Options/interaction/subchart.ts
 /* harmony default export */ var interaction_subchart = ({
   /**
    * Set subchart options.
@@ -37531,7 +37537,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   }
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/interaction/zoom.ts
+;// ./src/config/Options/interaction/zoom.ts
 /* harmony default export */ var interaction_zoom = ({
   /**
    * Set zoom options
@@ -37612,7 +37618,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   zoom_x_max: void 0
 });
 
-;// CONCATENATED MODULE: ./src/config/resolver/interaction.ts
+;// ./src/config/resolver/interaction.ts
 
 
 
@@ -37646,7 +37652,7 @@ let zoomModule = () => {
   return (zoomModule = () => true)();
 };
 
-;// CONCATENATED MODULE: ./src/Chart/api/axis.ts
+;// ./src/Chart/api/axis.ts
 
 function setMinMax($$, type, value) {
   const { config } = $$;
@@ -37853,7 +37859,7 @@ const axis = {
 };
 /* harmony default export */ var api_axis = ({ axis });
 
-;// CONCATENATED MODULE: ./src/Chart/api/category.ts
+;// ./src/Chart/api/category.ts
 
 /* harmony default export */ var api_category = ({
   /**
@@ -37901,7 +37907,7 @@ const axis = {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/flow.ts
+;// ./src/Chart/api/flow.ts
 
 /* harmony default export */ var flow = ({
   /**
@@ -38074,7 +38080,7 @@ const axis = {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/grid.ts
+;// ./src/Chart/api/grid.ts
 
 function grid(grids, axisId) {
   const $$ = this.internal;
@@ -38207,7 +38213,7 @@ util_extend(ygrids, {
 });
 /* harmony default export */ var api_grid = ({ xgrids, ygrids });
 
-;// CONCATENATED MODULE: ./src/Chart/api/group.ts
+;// ./src/Chart/api/group.ts
 
 /* harmony default export */ var group = ({
   /**
@@ -38235,7 +38241,7 @@ util_extend(ygrids, {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/regions.ts
+;// ./src/Chart/api/regions.ts
 
 
 function regionsFn(regions2, isAdd = false) {
@@ -38341,7 +38347,7 @@ util_extend(regions, {
 });
 /* harmony default export */ var api_regions = ({ regions });
 
-;// CONCATENATED MODULE: ./src/Chart/api/x.ts
+;// ./src/Chart/api/x.ts
 
 /* harmony default export */ var x = ({
   /**
@@ -38405,12 +38411,12 @@ util_extend(regions, {
   }
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-axis/src/identity.js
+;// ./node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {
   return x;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-axis/src/axis.js
+;// ./node_modules/d3-axis/src/axis.js
 
 var axis_top = 1, right = 2, bottom = 3, left = 4, axis_epsilon = 1e-6;
 function translateX(x) {
@@ -38508,7 +38514,7 @@ function axisLeft(scale) {
   return axis_axis(left, scale);
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRendererHelper.ts
+;// ./src/ChartInternal/Axis/AxisRendererHelper.ts
 var AxisRendererHelper_defProp = Object.defineProperty;
 var AxisRendererHelper_defNormalProp = (obj, key, value) => key in obj ? AxisRendererHelper_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var AxisRendererHelper_publicField = (obj, key, value) => AxisRendererHelper_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -38632,7 +38638,7 @@ class AxisRendererHelper {
   }
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRenderer.ts
+;// ./src/ChartInternal/Axis/AxisRenderer.ts
 var AxisRenderer_defProp = Object.defineProperty;
 var AxisRenderer_defNormalProp = (obj, key, value) => key in obj ? AxisRenderer_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var AxisRenderer_publicField = (obj, key, value) => AxisRenderer_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -39002,7 +39008,7 @@ class AxisRenderer {
   }
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/Axis/Axis.ts
+;// ./src/ChartInternal/Axis/Axis.ts
 var Axis_defProp = Object.defineProperty;
 var Axis_defNormalProp = (obj, key, value) => key in obj ? Axis_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var Axis_publicField = (obj, key, value) => Axis_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -39784,7 +39790,7 @@ class Axis_Axis {
   }
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/interactions/eventrect.ts
+;// ./src/ChartInternal/interactions/eventrect.ts
 
 
 /* harmony default export */ var eventrect = ({
@@ -40050,7 +40056,7 @@ class Axis_Axis {
     const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`).classed($COMMON.EXPANDED, true).style("cursor", isSelectable ? "pointer" : null).filter(function(d) {
       return $$.isWithinShape(this, d);
     });
-    if (shapeAtIndex.empty() && !isTooltipGrouped) {
+    if (shapeAtIndex.empty() && !isTooltipGrouped && config.interaction_onout) {
       (_b = $$.hideGridFocus) == null ? void 0 : _b.call($$);
       $$.hideTooltip();
       !isSelectionGrouped && $$.setExpand(index);
@@ -40183,7 +40189,7 @@ class Axis_Axis {
         $$.setOverOut(index !== -1, index);
       }).on("mouseout", (event) => {
         state.event = event;
-        if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1) {
+        if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1 || !config.interaction_onout) {
           return;
         }
         $$.hideAxisGridFocus();
@@ -40218,7 +40224,7 @@ class Axis_Axis {
    */
   generateEventRectsForMultipleXs(eventRectEnter) {
     const $$ = this;
-    const { state } = $$;
+    const { config, state } = $$;
     eventRectEnter.on("click", function(event) {
       state.event = event;
       $$.clickHandlerForMultipleXS.bind(this)($$);
@@ -40229,7 +40235,7 @@ class Axis_Axis {
         $$.selectRectForMultipleXs(this);
       }).on("mouseout", (event) => {
         state.event = event;
-        if (!$$.config || $$.hasArcType()) {
+        if (!$$.config || $$.hasArcType() || !config.interaction_onout) {
           return;
         }
         $$.unselectRect();
@@ -40261,10 +40267,10 @@ class Axis_Axis {
   }
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-ease/src/linear.js
+;// ./node_modules/d3-ease/src/linear.js
 const src_linear_linear = (t) => +t;
 
-;// CONCATENATED MODULE: ./src/ChartInternal/interactions/flow.ts
+;// ./src/ChartInternal/interactions/flow.ts
 
 
 
@@ -40445,7 +40451,7 @@ const src_linear_linear = (t) => +t;
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/clip.ts
+;// ./src/ChartInternal/internals/clip.ts
 /* harmony default export */ var clip = ({
   initClip() {
     const $$ = this;
@@ -40539,7 +40545,7 @@ const src_linear_linear = (t) => +t;
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/grid.ts
+;// ./src/ChartInternal/internals/grid.ts
 
 
 
@@ -40884,7 +40890,7 @@ function smoothLines(el, type) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/region.ts
+;// ./src/ChartInternal/internals/region.ts
 
 
 
@@ -41003,7 +41009,7 @@ function smoothLines(el, type) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/size.axis.ts
+;// ./src/ChartInternal/internals/size.axis.ts
 
 /* harmony default export */ var size_axis = ({
   /**
@@ -41119,7 +41125,7 @@ function smoothLines(el, type) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/axis/x.ts
+;// ./src/config/Options/axis/x.ts
 /* harmony default export */ var axis_x = ({
   /**
    * Set clip-path attribute for x axis element
@@ -41831,7 +41837,7 @@ function smoothLines(el, type) {
   axis_x_axes: []
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/axis/y.ts
+;// ./src/config/Options/axis/y.ts
 /* harmony default export */ var y = ({
   /**
    * Set clip-path attribute for y axis element
@@ -42313,7 +42319,7 @@ function smoothLines(el, type) {
   axis_y_axes: []
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/axis/y2.ts
+;// ./src/config/Options/axis/y2.ts
 /* harmony default export */ var y2 = ({
   /**
    * Show or hide y2 axis.
@@ -42757,7 +42763,7 @@ function smoothLines(el, type) {
   axis_y2_axes: []
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/axis/axis.ts
+;// ./src/config/Options/axis/axis.ts
 var axis_defProp = Object.defineProperty;
 var axis_getOwnPropSymbols = Object.getOwnPropertySymbols;
 var axis_hasOwnProp = Object.prototype.hasOwnProperty;
@@ -42825,7 +42831,7 @@ var axis_spreadValues = (a, b) => {
   axis_tooltip: false
 }, axis_x), y), y2));
 
-;// CONCATENATED MODULE: ./src/config/Options/common/grid.ts
+;// ./src/config/Options/common/grid.ts
 /* harmony default export */ var common_grid = ({
   /**
    * Set related options
@@ -42898,7 +42904,7 @@ var axis_spreadValues = (a, b) => {
   grid_lines_front: true
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/data/axis.ts
+;// ./src/config/Options/data/axis.ts
 /* harmony default export */ var data_axis = ({
   /**
    * Specify the keys of the x values for each data.<br><br>
@@ -43043,7 +43049,7 @@ var axis_spreadValues = (a, b) => {
   data_stack_normalize: false
 });
 
-;// CONCATENATED MODULE: ./src/config/resolver/axis.ts
+;// ./src/config/resolver/axis.ts
 
 
 
@@ -43085,30 +43091,30 @@ const options = {
   optGrid: common_grid
 };
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/array.js
+;// ./node_modules/d3-shape/src/array.js
 var slice = Array.prototype.slice;
 /* harmony default export */ function d3_shape_src_array(x) {
   return typeof x === "object" && "length" in x ? x : Array.from(x);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/constant.js
+;// ./node_modules/d3-shape/src/constant.js
 /* harmony default export */ function d3_shape_src_constant(x) {
   return function constant() {
     return x;
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/descending.js
+;// ./node_modules/d3-shape/src/descending.js
 /* harmony default export */ function src_descending(a, b) {
   return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/identity.js
+;// ./node_modules/d3-shape/src/identity.js
 /* harmony default export */ function d3_shape_src_identity(d) {
   return d;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/pie.js
+;// ./node_modules/d3-shape/src/pie.js
 
 
 
@@ -43162,7 +43168,7 @@ var slice = Array.prototype.slice;
   return pie;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-path/src/path.js
+;// ./node_modules/d3-path/src/path.js
 var __pow = Math.pow;
 const path_pi = Math.PI, path_tau = 2 * path_pi, path_epsilon = 1e-6, tauEpsilon = path_tau - path_epsilon;
 function path_append(strings) {
@@ -43257,7 +43263,7 @@ function pathRound(digits = 3) {
   return new Path(+digits);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/path.js
+;// ./node_modules/d3-shape/src/path.js
 
 function withPath(shape) {
   let digits = 3;
@@ -43275,7 +43281,7 @@ function withPath(shape) {
   return () => new Path(digits);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/arc.js
+;// ./node_modules/d3-shape/src/arc.js
 
 
 
@@ -43407,7 +43413,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
   return arc;
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/arc.ts
+;// ./src/ChartInternal/shape/arc.ts
 var arc_defProp = Object.defineProperty;
 var arc_defProps = Object.defineProperties;
 var arc_getOwnPropDescs = Object.getOwnPropertyDescriptors;
@@ -44176,7 +44182,7 @@ function getAttrTweenFn(fn) {
         selectArc(this, arcData, id);
         $$.setOverOut(true, arcData);
       }).on("mouseout", (event, d) => {
-        if (state.transiting) {
+        if (state.transiting || !config.interaction_onout) {
           return;
         }
         state.event = event;
@@ -44251,7 +44257,7 @@ function getAttrTweenFn(fn) {
   }
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/point.js
+;// ./node_modules/d3-shape/src/point.js
 function point_x(p) {
   return p[0];
 }
@@ -44259,7 +44265,7 @@ function point_y(p) {
   return p[1];
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/line.js
+;// ./node_modules/d3-shape/src/line.js
 
 
 
@@ -44299,7 +44305,7 @@ function point_y(p) {
   return line;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/area.js
+;// ./node_modules/d3-shape/src/area.js
 
 
 
@@ -44379,7 +44385,7 @@ function point_y(p) {
   return area;
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/area.ts
+;// ./src/ChartInternal/shape/area.ts
 
 
 
@@ -44512,7 +44518,7 @@ function point_y(p) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/bar.ts
+;// ./src/ChartInternal/shape/bar.ts
 
 
 /* harmony default export */ var bar = ({
@@ -44710,7 +44716,7 @@ function point_y(p) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/bubble.ts
+;// ./src/ChartInternal/shape/bubble.ts
 
 
 /* harmony default export */ var bubble = ({
@@ -44772,7 +44778,7 @@ function point_y(p) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/candlestick.ts
+;// ./src/ChartInternal/shape/candlestick.ts
 var candlestick_defProp = Object.defineProperty;
 var candlestick_getOwnPropSymbols = Object.getOwnPropertySymbols;
 var candlestick_hasOwnProp = Object.prototype.hasOwnProperty;
@@ -44968,7 +44974,7 @@ var candlestick_spreadValues = (a, b) => {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/funnel.ts
+;// ./src/ChartInternal/shape/funnel.ts
 var funnel_defProp = Object.defineProperty;
 var funnel_getOwnPropSymbols = Object.getOwnPropertySymbols;
 var funnel_hasOwnProp = Object.prototype.hasOwnProperty;
@@ -45140,8 +45146,10 @@ function updateRatio(data) {
         }
       }).on(isTouch ? "touchend" : "mouseout", (event) => {
         const data = getTarget(event);
-        $$.hideTooltip();
-        $$.setOverOut(false, data);
+        if (config.interaction_onout) {
+          $$.hideTooltip();
+          $$.setOverOut(false, data);
+        }
       });
     }
   },
@@ -45214,7 +45222,7 @@ function updateRatio(data) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/gauge.ts
+;// ./src/ChartInternal/shape/gauge.ts
 
 
 
@@ -45292,7 +45300,7 @@ function updateRatio(data) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/line.ts
+;// ./src/ChartInternal/shape/line.ts
 
 
 
@@ -45595,7 +45603,7 @@ function getRegions(d, _regions, isTimeSeries) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/point.ts
+;// ./src/ChartInternal/shape/point.ts
 
 
 
@@ -45983,7 +45991,7 @@ const getTransitionName = () => getRandom();
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/point.common.ts
+;// ./src/ChartInternal/shape/point.common.ts
 
 
 
@@ -46080,7 +46088,7 @@ function insertPointInfoDefs(point, id) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/polar.ts
+;// ./src/ChartInternal/shape/polar.ts
 
 
 function getDataMax($$) {
@@ -46163,7 +46171,7 @@ function getDataMax($$) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/radar.ts
+;// ./src/ChartInternal/shape/radar.ts
 
 
 
@@ -46365,12 +46373,15 @@ const cacheKeyTextWidth = KEY.radarTextWidth;
   },
   bindRadarEvent() {
     const $$ = this;
-    const { state, $el: { radar, svg } } = $$;
+    const { config, state, $el: { radar, svg } } = $$;
     const focusOnly = $$.isPointFocusOnly();
     const { inputType, transiting } = state;
     const isMouse = inputType === "mouse";
     const hide = (event) => {
       state.event = event;
+      if (!config.interaction_onout) {
+        return;
+      }
       const index = $$.getDataIndexFromEvent(event);
       const noIndex = isUndefined(index);
       if (isMouse || noIndex) {
@@ -46426,7 +46437,7 @@ const cacheKeyTextWidth = KEY.radarTextWidth;
   }
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/count.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/count.js
 function count(node) {
   var sum = 0, children = node.children, i = children && children.length;
   if (!i) sum = 1;
@@ -46437,7 +46448,7 @@ function count(node) {
   return this.eachAfter(count);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/each.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/each.js
 /* harmony default export */ function hierarchy_each(callback, that) {
   let index = -1;
   for (const node of this) {
@@ -46446,7 +46457,7 @@ function count(node) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/eachBefore.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/eachBefore.js
 /* harmony default export */ function eachBefore(callback, that) {
   var node = this, nodes = [node], children, i, index = -1;
   while (node = nodes.pop()) {
@@ -46460,7 +46471,7 @@ function count(node) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/eachAfter.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/eachAfter.js
 /* harmony default export */ function eachAfter(callback, that) {
   var node = this, nodes = [node], next = [], children, i, n, index = -1;
   while (node = nodes.pop()) {
@@ -46477,7 +46488,7 @@ function count(node) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/find.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/find.js
 /* harmony default export */ function hierarchy_find(callback, that) {
   let index = -1;
   for (const node of this) {
@@ -46487,7 +46498,7 @@ function count(node) {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/sum.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/sum.js
 /* harmony default export */ function sum(value) {
   return this.eachAfter(function(node) {
     var sum = +value(node.data) || 0, children = node.children, i = children && children.length;
@@ -46496,7 +46507,7 @@ function count(node) {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/sort.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/sort.js
 /* harmony default export */ function hierarchy_sort(compare) {
   return this.eachBefore(function(node) {
     if (node.children) {
@@ -46505,7 +46516,7 @@ function count(node) {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/path.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/path.js
 /* harmony default export */ function hierarchy_path(end) {
   var start = this, ancestor = leastCommonAncestor(start, end), nodes = [start];
   while (start !== ancestor) {
@@ -46532,7 +46543,7 @@ function leastCommonAncestor(a, b) {
   return c;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/ancestors.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/ancestors.js
 /* harmony default export */ function ancestors() {
   var node = this, nodes = [node];
   while (node = node.parent) {
@@ -46541,12 +46552,12 @@ function leastCommonAncestor(a, b) {
   return nodes;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/descendants.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/descendants.js
 /* harmony default export */ function descendants() {
   return Array.from(this);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/leaves.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/leaves.js
 /* harmony default export */ function leaves() {
   var leaves = [];
   this.eachBefore(function(node) {
@@ -46557,7 +46568,7 @@ function leastCommonAncestor(a, b) {
   return leaves;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/links.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/links.js
 /* harmony default export */ function links() {
   var root = this, links = [];
   root.each(function(node) {
@@ -46568,7 +46579,7 @@ function leastCommonAncestor(a, b) {
   return links;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/iterator.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/iterator.js
 /* harmony default export */ function* hierarchy_iterator() {
   var node = this, current, next = [node], children, i, n;
   do {
@@ -46584,7 +46595,7 @@ function leastCommonAncestor(a, b) {
   } while (next.length);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/index.js
+;// ./node_modules/d3-hierarchy/src/hierarchy/index.js
 
 
 
@@ -46660,7 +46671,7 @@ Node.prototype = hierarchy.prototype = {
   [Symbol.iterator]: hierarchy_iterator
 };
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/round.js
+;// ./node_modules/d3-hierarchy/src/treemap/round.js
 /* harmony default export */ function treemap_round(node) {
   node.x0 = Math.round(node.x0);
   node.y0 = Math.round(node.y0);
@@ -46668,7 +46679,7 @@ Node.prototype = hierarchy.prototype = {
   node.y1 = Math.round(node.y1);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/dice.js
+;// ./node_modules/d3-hierarchy/src/treemap/dice.js
 /* harmony default export */ function dice(parent, x0, y0, x1, y1) {
   var nodes = parent.children, node, i = -1, n = nodes.length, k = parent.value && (x1 - x0) / parent.value;
   while (++i < n) {
@@ -46677,7 +46688,7 @@ Node.prototype = hierarchy.prototype = {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/slice.js
+;// ./node_modules/d3-hierarchy/src/treemap/slice.js
 /* harmony default export */ function treemap_slice(parent, x0, y0, x1, y1) {
   var nodes = parent.children, node, i = -1, n = nodes.length, k = parent.value && (y1 - y0) / parent.value;
   while (++i < n) {
@@ -46686,7 +46697,7 @@ Node.prototype = hierarchy.prototype = {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/squarify.js
+;// ./node_modules/d3-hierarchy/src/treemap/squarify.js
 
 
 var phi = (1 + Math.sqrt(5)) / 2;
@@ -46730,7 +46741,7 @@ function squarifyRatio(ratio, parent, x0, y0, x1, y1) {
   return squarify;
 })(phi));
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/accessors.js
+;// ./node_modules/d3-hierarchy/src/accessors.js
 function optional(f) {
   return f == null ? null : required(f);
 }
@@ -46739,7 +46750,7 @@ function required(f) {
   return f;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/constant.js
+;// ./node_modules/d3-hierarchy/src/constant.js
 function constantZero() {
   return 0;
 }
@@ -46749,7 +46760,7 @@ function constantZero() {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/index.js
+;// ./node_modules/d3-hierarchy/src/treemap/index.js
 
 
 
@@ -46817,7 +46828,7 @@ function constantZero() {
   return treemap;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/binary.js
+;// ./node_modules/d3-hierarchy/src/treemap/binary.js
 /* harmony default export */ function binary(parent, x0, y0, x1, y1) {
   var nodes = parent.children, i, n = nodes.length, sum, sums = new Array(n + 1);
   for (sums[0] = sum = i = 0; i < n; ++i) {
@@ -46851,14 +46862,14 @@ function constantZero() {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/sliceDice.js
+;// ./node_modules/d3-hierarchy/src/treemap/sliceDice.js
 
 
 /* harmony default export */ function sliceDice(parent, x0, y0, x1, y1) {
   (parent.depth & 1 ? treemap_slice : dice)(parent, x0, y0, x1, y1);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/resquarify.js
+;// ./node_modules/d3-hierarchy/src/treemap/resquarify.js
 
 
 
@@ -46884,7 +46895,7 @@ function constantZero() {
   return resquarify;
 })(phi));
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/treemap.ts
+;// ./src/ChartInternal/shape/treemap.ts
 
 
 
@@ -46962,8 +46973,10 @@ function getHierachyData(data) {
         }
       }).on(isTouch ? "touchend" : "mouseout", (event) => {
         const data = getTarget(event);
-        $$.hideTooltip();
-        $$.setOverOut(false, data);
+        if (config.interaction_onout) {
+          $$.hideTooltip();
+          $$.setOverOut(false, data);
+        }
       });
     }
   },
@@ -47092,7 +47105,7 @@ ${percentValue}%`;
   }
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/common/point.ts
+;// ./src/config/Options/common/point.ts
 /* harmony default export */ var common_point = ({
   /**
    * Set point options
@@ -47248,7 +47261,7 @@ ${percentValue}%`;
   point_type: "circle"
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/area.ts
+;// ./src/config/Options/shape/area.ts
 /* harmony default export */ var Options_shape_area = ({
   /**
    * Set area options
@@ -47314,7 +47327,7 @@ ${percentValue}%`;
   area_zerobased: true
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/bar.ts
+;// ./src/config/Options/shape/bar.ts
 /* harmony default export */ var shape_bar = ({
   /**
    * Set bar options
@@ -47457,7 +47470,7 @@ ${percentValue}%`;
   bar_zerobased: true
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/bubble.ts
+;// ./src/config/Options/shape/bubble.ts
 /* harmony default export */ var shape_bubble = ({
   /**
    * Set bubble options
@@ -47486,7 +47499,7 @@ ${percentValue}%`;
   bubble_zerobased: false
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/candlestick.ts
+;// ./src/config/Options/shape/candlestick.ts
 /* harmony default export */ var shape_candlestick = ({
   /**
    * Set candlestick options
@@ -47541,7 +47554,7 @@ ${percentValue}%`;
   candlestick_color_down: "red"
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/line.ts
+;// ./src/config/Options/shape/line.ts
 /* harmony default export */ var shape_line = ({
   /**
    * Set line options
@@ -47593,7 +47606,7 @@ ${percentValue}%`;
   line_point: true
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/scatter.ts
+;// ./src/config/Options/shape/scatter.ts
 /* harmony default export */ var scatter = ({
   /**
    * Set scatter options
@@ -47623,7 +47636,7 @@ ${percentValue}%`;
   scatter_zerobased: false
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/spline.ts
+;// ./src/config/Options/shape/spline.ts
 /* harmony default export */ var spline = ({
   /**
    * Set spline options
@@ -47663,7 +47676,7 @@ ${percentValue}%`;
   spline_interpolation_type: "cardinal"
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/arc.ts
+;// ./src/config/Options/shape/arc.ts
 /* harmony default export */ var shape_arc = ({
   /**
    * Set arc options
@@ -47807,7 +47820,7 @@ ${percentValue}%`;
   arc_rangeText_position: void 0
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/donut.ts
+;// ./src/config/Options/shape/donut.ts
 /* harmony default export */ var donut = ({
   /**
    * Set donut options
@@ -47888,7 +47901,7 @@ ${percentValue}%`;
   donut_startingAngle: 0
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/funnel.ts
+;// ./src/config/Options/shape/funnel.ts
 /* harmony default export */ var shape_funnel = ({
   /**
    * Set funnel options
@@ -47921,7 +47934,7 @@ ${percentValue}%`;
   funnel_neck_height: 0
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/gauge.ts
+;// ./src/config/Options/shape/gauge.ts
 /* harmony default export */ var shape_gauge = ({
   /**
    * Set gauge options
@@ -48065,7 +48078,7 @@ ${percentValue}%`;
   gauge_expand_duration: 50
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/pie.ts
+;// ./src/config/Options/shape/pie.ts
 /* harmony default export */ var shape_pie = ({
   /**
    * Set pie options
@@ -48159,7 +48172,7 @@ ${percentValue}%`;
   pie_startingAngle: 0
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/polar.ts
+;// ./src/config/Options/shape/polar.ts
 /* harmony default export */ var shape_polar = ({
   /**
    * Set polar options
@@ -48235,7 +48248,7 @@ ${percentValue}%`;
   polar_startingAngle: 0
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/radar.ts
+;// ./src/config/Options/shape/radar.ts
 /* harmony default export */ var shape_radar = ({
   /**
    * Set radar options
@@ -48305,7 +48318,7 @@ ${percentValue}%`;
   radar_direction_clockwise: false
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/treemap.ts
+;// ./src/config/Options/shape/treemap.ts
 /* harmony default export */ var Options_shape_treemap = ({
   /**
    * Set treemap options
@@ -48353,7 +48366,7 @@ ${percentValue}%`;
   treemap_label_show: true
 });
 
-;// CONCATENATED MODULE: ./src/config/resolver/shape.ts
+;// ./src/config/resolver/shape.ts
 
 
 
@@ -48436,7 +48449,7 @@ let shape_scatter = () => (extendAxis(
 let resolver_shape_funnel = () => (extendArc([funnel], [shape_funnel]), (resolver_shape_funnel = () => TYPE.FUNNEL)());
 let resolver_shape_treemap = () => (extendAxis([shape_treemap], [Options_shape_treemap]), (resolver_shape_treemap = () => TYPE.TREEMAP)());
 
-;// CONCATENATED MODULE: ./src/core.ts
+;// ./src/core.ts
 
 
 let defaults = {};
@@ -48448,7 +48461,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.13.0-nightly-20240924004652",
+  version: "3.13.0-nightly-20241001004701",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -48578,7 +48591,7 @@ const bb = {
 };
 
 
-;// CONCATENATED MODULE: ./src/index.ts
+;// ./src/index.ts
 
 
 Object.keys(resolver_shape_namespaceObject).forEach((v) => resolver_shape_namespaceObject[v]());

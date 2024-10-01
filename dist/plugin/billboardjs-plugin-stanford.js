@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20240924004652
+ * @version 3.13.0-nightly-20241001004701
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -113,6 +113,8 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+!function() {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
@@ -125,7 +127,7 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
 var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(6);
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
 var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(7);
-;// CONCATENATED MODULE: ./src/config/classes.ts
+;// ./src/config/classes.ts
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
@@ -310,7 +312,7 @@ const $ZOOM = {
 var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
-;// CONCATENATED MODULE: ./src/module/browser.ts
+;// ./src/module/browser.ts
 function getGlobal() {
   return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
 }
@@ -336,7 +338,7 @@ const [
 ] = getFallback(win);
 
 
-;// CONCATENATED MODULE: ./src/module/util.ts
+;// ./src/module/util.ts
 var util_defProp = Object.defineProperty;
 var util_getOwnPropSymbols = Object.getOwnPropertySymbols;
 var util_hasOwnProp = Object.prototype.hasOwnProperty;
@@ -756,7 +758,7 @@ function runUntil(fn, conditionFn) {
   }
 }
 
-;// CONCATENATED MODULE: ./src/config/config.ts
+;// ./src/config/config.ts
 
 function loadConfig(config) {
   const thisConfig = this.config;
@@ -786,7 +788,7 @@ function loadConfig(config) {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
+;// ./src/Plugin/Plugin.ts
 var Plugin_defProp = Object.defineProperty;
 var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -836,13 +838,13 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.13.0-nightly-20240924004652");
+__publicField(Plugin, "version", "3.13.0-nightly-20241001004701");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);
 // EXTERNAL MODULE: external {"commonjs":"d3-format","commonjs2":"d3-format","amd":"d3-format","root":"d3"}
 var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __webpack_require__(9);
-;// CONCATENATED MODULE: ./src/Plugin/stanford/classes.ts
+;// ./src/Plugin/stanford/classes.ts
 /* harmony default export */ var stanford_classes = ({
   colorScale: "bb-colorscale",
   stanfordElements: "bb-stanford-elements",
@@ -852,7 +854,7 @@ var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __w
   stanfordRegions: "bb-stanford-regions"
 });
 
-;// CONCATENATED MODULE: ./src/Plugin/stanford/ColorScale.ts
+;// ./src/Plugin/stanford/ColorScale.ts
 var ColorScale_defProp = Object.defineProperty;
 var ColorScale_defNormalProp = (obj, key, value) => key in obj ? ColorScale_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var ColorScale_publicField = (obj, key, value) => ColorScale_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -910,7 +912,7 @@ class ColorScale {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/stanford/util.ts
+;// ./src/Plugin/stanford/util.ts
 
 function pointInRegion(point, region) {
   const x = point.x;
@@ -970,7 +972,7 @@ function getCentroid(points) {
 }
 
 
-;// CONCATENATED MODULE: ./src/Plugin/stanford/Elements.ts
+;// ./src/Plugin/stanford/Elements.ts
 var Elements_defProp = Object.defineProperty;
 var Elements_defNormalProp = (obj, key, value) => key in obj ? Elements_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var Elements_publicField = (obj, key, value) => Elements_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -1058,7 +1060,7 @@ class Elements {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
+;// ./src/Plugin/stanford/Options.ts
 class Options {
   constructor() {
     return {
@@ -1192,7 +1194,7 @@ class Options {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/stanford/index.ts
+;// ./src/Plugin/stanford/index.ts
 var stanford_defProp = Object.defineProperty;
 var stanford_defNormalProp = (obj, key, value) => key in obj ? stanford_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var stanford_publicField = (obj, key, value) => stanford_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -1323,6 +1325,7 @@ class Stanford extends Plugin {
   }
 }
 
+}();
 __webpack_exports__ = __webpack_exports__["default"];
 /******/ 	return __webpack_exports__;
 /******/ })()

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20240924004652
+ * @version 3.13.0-nightly-20241001004701
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -82,6 +82,8 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__3__;
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+!function() {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
@@ -92,7 +94,7 @@ __webpack_require__.d(__webpack_exports__, {
 var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
-;// CONCATENATED MODULE: ./src/module/browser.ts
+;// ./src/module/browser.ts
 function getGlobal() {
   return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
 }
@@ -118,7 +120,7 @@ const [
 ] = getFallback(win);
 
 
-;// CONCATENATED MODULE: ./src/module/util.ts
+;// ./src/module/util.ts
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
@@ -538,7 +540,7 @@ function runUntil(fn, conditionFn) {
   }
 }
 
-;// CONCATENATED MODULE: ./src/config/config.ts
+;// ./src/config/config.ts
 
 function loadConfig(config) {
   const thisConfig = this.config;
@@ -568,7 +570,7 @@ function loadConfig(config) {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
+;// ./src/Plugin/Plugin.ts
 var Plugin_defProp = Object.defineProperty;
 var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -618,9 +620,9 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.13.0-nightly-20240924004652");
+__publicField(Plugin, "version", "3.13.0-nightly-20241001004701");
 
-;// CONCATENATED MODULE: ./src/Plugin/tableview/const.ts
+;// ./src/Plugin/tableview/const.ts
 
 const defaultStyle = {
   id: "__tableview-style__",
@@ -660,7 +662,7 @@ const tpl = {
   tbody: `<td>{=value}</td>`
 };
 
-;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
+;// ./src/Plugin/tableview/Options.ts
 class Options {
   constructor() {
     return {
@@ -759,7 +761,7 @@ class Options {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/tableview/index.ts
+;// ./src/Plugin/tableview/index.ts
 var tableview_defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
 var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
@@ -871,6 +873,7 @@ class TableView extends Plugin {
   }
 }
 
+}();
 __webpack_exports__ = __webpack_exports__["default"];
 /******/ 	return __webpack_exports__;
 /******/ })()

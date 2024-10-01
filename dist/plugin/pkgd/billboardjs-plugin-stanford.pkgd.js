@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20240924004652
+ * @version 3.13.0-nightly-20241001004701
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -19326,7 +19326,7 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ Stanford; }
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-color/src/define.js
+;// ./node_modules/d3-color/src/define.js
 /* harmony default export */ function src_define(constructor, factory, prototype) {
   constructor.prototype = factory.prototype = prototype;
   prototype.constructor = constructor;
@@ -19337,7 +19337,7 @@ function extend(parent, definition) {
   return prototype;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-color/src/color.js
+;// ./node_modules/d3-color/src/color.js
 
 function Color() {
 }
@@ -19666,10 +19666,10 @@ function hsl2rgb(h, m1, m2) {
   return (h < 60 ? m1 + (m2 - m1) * h / 60 : h < 180 ? m2 : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60 : m1) * 255;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/constant.js
+;// ./node_modules/d3-interpolate/src/constant.js
 /* harmony default export */ var constant = ((x) => () => x);
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/color.js
+;// ./node_modules/d3-interpolate/src/color.js
 
 function linear(a, d) {
   return function(t) {
@@ -19695,7 +19695,7 @@ function nogamma(a, b) {
   return d ? linear(a, d) : constant(isNaN(a) ? b : a);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/hsl.js
+;// ./node_modules/d3-interpolate/src/hsl.js
 
 
 function hsl_hsl(hue2) {
@@ -19713,7 +19713,7 @@ function hsl_hsl(hue2) {
 /* harmony default export */ var src_hsl = (hsl_hsl(hue));
 var hslLong = hsl_hsl(nogamma);
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basis.js
+;// ./node_modules/d3-interpolate/src/basis.js
 function basis(t1, v0, v1, v2, v3) {
   var t2 = t1 * t1, t3 = t2 * t1;
   return ((1 - 3 * t1 + 3 * t2 - t3) * v0 + (4 - 6 * t2 + 3 * t3) * v1 + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2 + t3 * v3) / 6;
@@ -19726,7 +19726,7 @@ function basis(t1, v0, v1, v2, v3) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basisClosed.js
+;// ./node_modules/d3-interpolate/src/basisClosed.js
 
 /* harmony default export */ function basisClosed(values) {
   var n = values.length;
@@ -19736,7 +19736,7 @@ function basis(t1, v0, v1, v2, v3) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/rgb.js
+;// ./node_modules/d3-interpolate/src/rgb.js
 
 
 
@@ -19780,7 +19780,7 @@ function rgbSpline(spline) {
 var rgbBasis = rgbSpline(src_basis);
 var rgbBasisClosed = rgbSpline(basisClosed);
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/numberArray.js
+;// ./node_modules/d3-interpolate/src/numberArray.js
 /* harmony default export */ function numberArray(a, b) {
   if (!b) b = [];
   var n = a ? Math.min(b.length, a.length) : 0, c = b.slice(), i;
@@ -19793,7 +19793,7 @@ function isNumberArray(x) {
   return ArrayBuffer.isView(x) && !(x instanceof DataView);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/array.js
+;// ./node_modules/d3-interpolate/src/array.js
 
 
 /* harmony default export */ function array(a, b) {
@@ -19809,7 +19809,7 @@ function genericArray(a, b) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/date.js
+;// ./node_modules/d3-interpolate/src/date.js
 /* harmony default export */ function date(a, b) {
   var d = /* @__PURE__ */ new Date();
   return a = +a, b = +b, function(t) {
@@ -19817,14 +19817,14 @@ function genericArray(a, b) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/number.js
+;// ./node_modules/d3-interpolate/src/number.js
 /* harmony default export */ function number(a, b) {
   return a = +a, b = +b, function(t) {
     return a * (1 - t) + b * t;
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/object.js
+;// ./node_modules/d3-interpolate/src/object.js
 
 /* harmony default export */ function object(a, b) {
   var i = {}, c = {}, k;
@@ -19843,7 +19843,7 @@ function genericArray(a, b) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/string.js
+;// ./node_modules/d3-interpolate/src/string.js
 
 var reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g, reB = new RegExp(reA.source, "g");
 function zero(b) {
@@ -19885,7 +19885,7 @@ function one(b) {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/value.js
+;// ./node_modules/d3-interpolate/src/value.js
 
 
 
@@ -19900,24 +19900,24 @@ function one(b) {
   return b == null || t === "boolean" ? constant(b) : (t === "number" ? number : t === "string" ? (c = color(b)) ? (b = c, rgb) : string : b instanceof color ? rgb : b instanceof Date ? date : isNumberArray(b) ? numberArray : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object : number)(a, b);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/round.js
+;// ./node_modules/d3-interpolate/src/round.js
 /* harmony default export */ function round(a, b) {
   return a = +a, b = +b, function(t) {
     return Math.round(a * (1 - t) + b * t);
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/ascending.js
+;// ./node_modules/d3-array/src/ascending.js
 function ascending(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/descending.js
+;// ./node_modules/d3-array/src/descending.js
 function descending(a, b) {
   return a == null || b == null ? NaN : b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/bisector.js
+;// ./node_modules/d3-array/src/bisector.js
 
 
 function bisector(f) {
@@ -19963,7 +19963,7 @@ function bisector_zero() {
   return 0;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/number.js
+;// ./node_modules/d3-array/src/number.js
 function number_number(x) {
   return x === null ? NaN : +x;
 }
@@ -19984,7 +19984,7 @@ function* numbers(values, valueof) {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/bisect.js
+;// ./node_modules/d3-array/src/bisect.js
 
 
 
@@ -19994,19 +19994,19 @@ const bisectLeft = ascendingBisect.left;
 const bisectCenter = bisector(number_number).center;
 /* harmony default export */ var bisect = (bisectRight);
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/constant.js
+;// ./node_modules/d3-scale/src/constant.js
 function constants(x) {
   return function() {
     return x;
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/number.js
+;// ./node_modules/d3-scale/src/number.js
 function src_number_number(x) {
   return +x;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/continuous.js
+;// ./node_modules/d3-scale/src/continuous.js
 
 
 
@@ -20095,7 +20095,7 @@ function continuous() {
   return transformer()(identity, identity);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/init.js
+;// ./node_modules/d3-scale/src/init.js
 function initRange(domain, range) {
   switch (arguments.length) {
     case 0:
@@ -20128,7 +20128,7 @@ function initInterpolator(domain, interpolator) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/ticks.js
+;// ./node_modules/d3-array/src/ticks.js
 const e10 = Math.sqrt(50), e5 = Math.sqrt(10), e2 = Math.sqrt(2);
 function tickSpec(start, stop, count) {
   const step = (stop - start) / Math.max(0, count), power = Math.floor(Math.log10(step)), error = step / Math.pow(10, power), factor = error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1;
@@ -20176,7 +20176,7 @@ function tickStep(start, stop, count) {
   return (reverse ? -1 : 1) * (inc < 0 ? 1 / -inc : inc);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatSpecifier.js
+;// ./node_modules/d3-format/src/formatSpecifier.js
 var re = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
 function formatSpecifier(specifier) {
   if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
@@ -20211,7 +20211,7 @@ FormatSpecifier.prototype.toString = function() {
   return this.fill + this.align + this.sign + this.symbol + (this.zero ? "0" : "") + (this.width === void 0 ? "" : Math.max(1, this.width | 0)) + (this.comma ? "," : "") + (this.precision === void 0 ? "" : "." + Math.max(0, this.precision | 0)) + (this.trim ? "~" : "") + this.type;
 };
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatDecimal.js
+;// ./node_modules/d3-format/src/formatDecimal.js
 /* harmony default export */ function formatDecimal(x) {
   return Math.abs(x = Math.round(x)) >= 1e21 ? x.toLocaleString("en").replace(/,/g, "") : x.toString(10);
 }
@@ -20224,19 +20224,19 @@ function formatDecimalParts(x, p) {
   ];
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/exponent.js
+;// ./node_modules/d3-format/src/exponent.js
 
 /* harmony default export */ function exponent(x) {
   return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionPrefix.js
+;// ./node_modules/d3-format/src/precisionPrefix.js
 
 /* harmony default export */ function precisionPrefix(step, value) {
   return Math.max(0, Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3 - exponent(Math.abs(step)));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatGroup.js
+;// ./node_modules/d3-format/src/formatGroup.js
 /* harmony default export */ function formatGroup(grouping, thousands) {
   return function(value, width) {
     var i = value.length, t = [], j = 0, g = grouping[0], length = 0;
@@ -20250,7 +20250,7 @@ function formatDecimalParts(x, p) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatNumerals.js
+;// ./node_modules/d3-format/src/formatNumerals.js
 /* harmony default export */ function formatNumerals(numerals) {
   return function(value) {
     return value.replace(/[0-9]/g, function(i) {
@@ -20259,7 +20259,7 @@ function formatDecimalParts(x, p) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTrim.js
+;// ./node_modules/d3-format/src/formatTrim.js
 /* harmony default export */ function formatTrim(s) {
   out: for (var n = s.length, i = 1, i0 = -1, i1; i < n; ++i) {
     switch (s[i]) {
@@ -20279,7 +20279,7 @@ function formatDecimalParts(x, p) {
   return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatPrefixAuto.js
+;// ./node_modules/d3-format/src/formatPrefixAuto.js
 
 var prefixExponent;
 /* harmony default export */ function formatPrefixAuto(x, p) {
@@ -20289,7 +20289,7 @@ var prefixExponent;
   return i === n ? coefficient : i > n ? coefficient + new Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + new Array(1 - i).join("0") + formatDecimalParts(x, Math.max(0, p + i - 1))[0];
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatRounded.js
+;// ./node_modules/d3-format/src/formatRounded.js
 
 /* harmony default export */ function formatRounded(x, p) {
   var d = formatDecimalParts(x, p);
@@ -20298,7 +20298,7 @@ var prefixExponent;
   return exponent < 0 ? "0." + new Array(-exponent).join("0") + coefficient : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1) : coefficient + new Array(exponent - coefficient.length + 2).join("0");
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTypes.js
+;// ./node_modules/d3-format/src/formatTypes.js
 
 
 
@@ -20318,12 +20318,12 @@ var prefixExponent;
   "x": (x) => Math.round(x).toString(16)
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/identity.js
+;// ./node_modules/d3-format/src/identity.js
 /* harmony default export */ function src_identity(x) {
   return x;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/locale.js
+;// ./node_modules/d3-format/src/locale.js
 
 
 
@@ -20404,7 +20404,7 @@ var map = Array.prototype.map, prefixes = ["y", "z", "a", "f", "p", "n", "\xB5",
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/defaultLocale.js
+;// ./node_modules/d3-format/src/defaultLocale.js
 
 var defaultLocale_locale;
 var format;
@@ -20421,20 +20421,20 @@ function defaultLocale(definition) {
   return defaultLocale_locale;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionRound.js
+;// ./node_modules/d3-format/src/precisionRound.js
 
 /* harmony default export */ function precisionRound(step, max) {
   step = Math.abs(step), max = Math.abs(max) - step;
   return Math.max(0, exponent(max) - exponent(step)) + 1;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionFixed.js
+;// ./node_modules/d3-format/src/precisionFixed.js
 
 /* harmony default export */ function precisionFixed(step) {
   return Math.max(0, -exponent(Math.abs(step)));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/tickFormat.js
+;// ./node_modules/d3-scale/src/tickFormat.js
 
 
 function tickFormat(start, stop, count, specifier) {
@@ -20463,7 +20463,7 @@ function tickFormat(start, stop, count, specifier) {
   return format(specifier);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/linear.js
+;// ./node_modules/d3-scale/src/linear.js
 
 
 
@@ -20522,7 +20522,7 @@ function linear_linear() {
   return linearish(scale);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/nice.js
+;// ./node_modules/d3-scale/src/nice.js
 function nice(domain, interval) {
   domain = domain.slice();
   var i0 = 0, i1 = domain.length - 1, x0 = domain[i0], x1 = domain[i1], t;
@@ -20535,7 +20535,7 @@ function nice(domain, interval) {
   return domain;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/log.js
+;// ./node_modules/d3-scale/src/log.js
 
 
 
@@ -20653,7 +20653,7 @@ function log() {
   return scale;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/symlog.js
+;// ./node_modules/d3-scale/src/symlog.js
 
 
 
@@ -20682,7 +20682,7 @@ function symlog() {
   return initRange.apply(scale, arguments);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/pow.js
+;// ./node_modules/d3-scale/src/pow.js
 
 
 
@@ -20719,7 +20719,7 @@ function sqrt() {
   return pow.apply(null, arguments).exponent(0.5);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/sequential.js
+;// ./node_modules/d3-scale/src/sequential.js
 
 
 
@@ -20792,7 +20792,7 @@ function sequentialSqrt() {
   return sequentialPow.apply(null, arguments).exponent(0.5);
 }
 
-;// CONCATENATED MODULE: ./src/config/classes.ts
+;// ./src/config/classes.ts
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
@@ -20973,7 +20973,7 @@ const $ZOOM = {
 };
 /* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
-;// CONCATENATED MODULE: ./node_modules/d3-dispatch/src/dispatch.js
+;// ./node_modules/d3-dispatch/src/dispatch.js
 var noop = { value: () => {
 } };
 function dispatch() {
@@ -21043,7 +21043,7 @@ function set(type, name, callback) {
 }
 /* harmony default export */ var src_dispatch = (dispatch);
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selector.js
+;// ./node_modules/d3-selection/src/selector.js
 function none() {
 }
 /* harmony default export */ function selector(selector) {
@@ -21052,7 +21052,7 @@ function none() {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/select.js
+;// ./node_modules/d3-selection/src/selection/select.js
 
 
 /* harmony default export */ function selection_select(select) {
@@ -21068,12 +21068,12 @@ function none() {
   return new Selection(subgroups, this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/array.js
+;// ./node_modules/d3-selection/src/array.js
 function array_array(x) {
   return x == null ? [] : Array.isArray(x) ? x : Array.from(x);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selectorAll.js
+;// ./node_modules/d3-selection/src/selectorAll.js
 function empty() {
   return [];
 }
@@ -21083,7 +21083,7 @@ function empty() {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/selectAll.js
+;// ./node_modules/d3-selection/src/selection/selectAll.js
 
 
 
@@ -21106,7 +21106,7 @@ function arrayAll(select) {
   return new Selection(subgroups, parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/matcher.js
+;// ./node_modules/d3-selection/src/matcher.js
 /* harmony default export */ function matcher(selector) {
   return function() {
     return this.matches(selector);
@@ -21118,7 +21118,7 @@ function childMatcher(selector) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/selectChild.js
+;// ./node_modules/d3-selection/src/selection/selectChild.js
 
 var find = Array.prototype.find;
 function childFind(match) {
@@ -21133,7 +21133,7 @@ function childFirst() {
   return this.select(match == null ? childFirst : childFind(typeof match === "function" ? match : childMatcher(match)));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/selectChildren.js
+;// ./node_modules/d3-selection/src/selection/selectChildren.js
 
 var filter = Array.prototype.filter;
 function children() {
@@ -21148,7 +21148,7 @@ function childrenFilter(match) {
   return this.selectAll(match == null ? children : childrenFilter(typeof match === "function" ? match : childMatcher(match)));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/filter.js
+;// ./node_modules/d3-selection/src/selection/filter.js
 
 
 /* harmony default export */ function selection_filter(match) {
@@ -21163,12 +21163,12 @@ function childrenFilter(match) {
   return new Selection(subgroups, this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/sparse.js
+;// ./node_modules/d3-selection/src/selection/sparse.js
 /* harmony default export */ function sparse(update) {
   return new Array(update.length);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/enter.js
+;// ./node_modules/d3-selection/src/selection/enter.js
 
 
 /* harmony default export */ function enter() {
@@ -21197,14 +21197,14 @@ EnterNode.prototype = {
   }
 };
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/constant.js
+;// ./node_modules/d3-selection/src/constant.js
 /* harmony default export */ function src_constant(x) {
   return function() {
     return x;
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/data.js
+;// ./node_modules/d3-selection/src/selection/data.js
 
 
 
@@ -21279,14 +21279,14 @@ function arraylike(data) {
   return typeof data === "object" && "length" in data ? data : Array.from(data);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/exit.js
+;// ./node_modules/d3-selection/src/selection/exit.js
 
 
 /* harmony default export */ function exit() {
   return new Selection(this._exit || this._groups.map(sparse), this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/join.js
+;// ./node_modules/d3-selection/src/selection/join.js
 /* harmony default export */ function join(onenter, onupdate, onexit) {
   var enter = this.enter(), update = this, exit = this.exit();
   if (typeof onenter === "function") {
@@ -21304,7 +21304,7 @@ function arraylike(data) {
   return enter && update ? enter.merge(update).order() : update;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/merge.js
+;// ./node_modules/d3-selection/src/selection/merge.js
 
 /* harmony default export */ function merge(context) {
   var selection = context.selection ? context.selection() : context;
@@ -21321,7 +21321,7 @@ function arraylike(data) {
   return new Selection(merges, this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/order.js
+;// ./node_modules/d3-selection/src/selection/order.js
 /* harmony default export */ function order() {
   for (var groups = this._groups, j = -1, m = groups.length; ++j < m; ) {
     for (var group = groups[j], i = group.length - 1, next = group[i], node; --i >= 0; ) {
@@ -21334,7 +21334,7 @@ function arraylike(data) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/sort.js
+;// ./node_modules/d3-selection/src/selection/sort.js
 
 /* harmony default export */ function sort(compare) {
   if (!compare) compare = sort_ascending;
@@ -21355,7 +21355,7 @@ function sort_ascending(a, b) {
   return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/call.js
+;// ./node_modules/d3-selection/src/selection/call.js
 /* harmony default export */ function call() {
   var callback = arguments[0];
   arguments[0] = this;
@@ -21363,12 +21363,12 @@ function sort_ascending(a, b) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/nodes.js
+;// ./node_modules/d3-selection/src/selection/nodes.js
 /* harmony default export */ function nodes() {
   return Array.from(this);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/node.js
+;// ./node_modules/d3-selection/src/selection/node.js
 /* harmony default export */ function node() {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length; i < n; ++i) {
@@ -21379,19 +21379,19 @@ function sort_ascending(a, b) {
   return null;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/size.js
+;// ./node_modules/d3-selection/src/selection/size.js
 /* harmony default export */ function size() {
   let size = 0;
   for (const node of this) ++size;
   return size;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/empty.js
+;// ./node_modules/d3-selection/src/selection/empty.js
 /* harmony default export */ function selection_empty() {
   return !this.node();
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/each.js
+;// ./node_modules/d3-selection/src/selection/each.js
 /* harmony default export */ function each(callback) {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
@@ -21401,7 +21401,7 @@ function sort_ascending(a, b) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/namespaces.js
+;// ./node_modules/d3-selection/src/namespaces.js
 var xhtml = "http://www.w3.org/1999/xhtml";
 /* harmony default export */ var namespaces = ({
   svg: "http://www.w3.org/2000/svg",
@@ -21411,7 +21411,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
   xmlns: "http://www.w3.org/2000/xmlns/"
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/namespace.js
+;// ./node_modules/d3-selection/src/namespace.js
 
 /* harmony default export */ function namespace(name) {
   var prefix = name += "", i = prefix.indexOf(":");
@@ -21419,7 +21419,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
   return namespaces.hasOwnProperty(prefix) ? { space: namespaces[prefix], local: name } : name;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/attr.js
+;// ./node_modules/d3-selection/src/selection/attr.js
 
 function attrRemove(name) {
   return function() {
@@ -21464,12 +21464,12 @@ function attrFunctionNS(fullname, value) {
   return this.each((value == null ? fullname.local ? attrRemoveNS : attrRemove : typeof value === "function" ? fullname.local ? attrFunctionNS : attrFunction : fullname.local ? attrConstantNS : attrConstant)(fullname, value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/window.js
+;// ./node_modules/d3-selection/src/window.js
 /* harmony default export */ function src_window(node) {
   return node.ownerDocument && node.ownerDocument.defaultView || node.document && node || node.defaultView;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/style.js
+;// ./node_modules/d3-selection/src/selection/style.js
 
 function styleRemove(name) {
   return function() {
@@ -21495,7 +21495,7 @@ function styleValue(node, name) {
   return node.style.getPropertyValue(name) || src_window(node).getComputedStyle(node, null).getPropertyValue(name);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/property.js
+;// ./node_modules/d3-selection/src/selection/property.js
 function propertyRemove(name) {
   return function() {
     delete this[name];
@@ -21517,7 +21517,7 @@ function propertyFunction(name, value) {
   return arguments.length > 1 ? this.each((value == null ? propertyRemove : typeof value === "function" ? propertyFunction : propertyConstant)(name, value)) : this.node()[name];
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/classed.js
+;// ./node_modules/d3-selection/src/selection/classed.js
 function classArray(string) {
   return string.trim().split(/^|\s+/);
 }
@@ -21580,7 +21580,7 @@ function classedFunction(names, value) {
   return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/text.js
+;// ./node_modules/d3-selection/src/selection/text.js
 function textRemove() {
   this.textContent = "";
 }
@@ -21599,7 +21599,7 @@ function textFunction(value) {
   return arguments.length ? this.each(value == null ? textRemove : (typeof value === "function" ? textFunction : textConstant)(value)) : this.node().textContent;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/html.js
+;// ./node_modules/d3-selection/src/selection/html.js
 function htmlRemove() {
   this.innerHTML = "";
 }
@@ -21618,7 +21618,7 @@ function htmlFunction(value) {
   return arguments.length ? this.each(value == null ? htmlRemove : (typeof value === "function" ? htmlFunction : htmlConstant)(value)) : this.node().innerHTML;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/raise.js
+;// ./node_modules/d3-selection/src/selection/raise.js
 function raise() {
   if (this.nextSibling) this.parentNode.appendChild(this);
 }
@@ -21626,7 +21626,7 @@ function raise() {
   return this.each(raise);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/lower.js
+;// ./node_modules/d3-selection/src/selection/lower.js
 function lower() {
   if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
 }
@@ -21634,7 +21634,7 @@ function lower() {
   return this.each(lower);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/creator.js
+;// ./node_modules/d3-selection/src/creator.js
 
 
 function creatorInherit(name) {
@@ -21653,7 +21653,7 @@ function creatorFixed(fullname) {
   return (fullname.local ? creatorFixed : creatorInherit)(fullname);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/append.js
+;// ./node_modules/d3-selection/src/selection/append.js
 
 /* harmony default export */ function append(name) {
   var create = typeof name === "function" ? name : creator(name);
@@ -21662,7 +21662,7 @@ function creatorFixed(fullname) {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/insert.js
+;// ./node_modules/d3-selection/src/selection/insert.js
 
 
 function constantNull() {
@@ -21675,7 +21675,7 @@ function constantNull() {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/remove.js
+;// ./node_modules/d3-selection/src/selection/remove.js
 function remove() {
   var parent = this.parentNode;
   if (parent) parent.removeChild(this);
@@ -21684,7 +21684,7 @@ function remove() {
   return this.each(remove);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/clone.js
+;// ./node_modules/d3-selection/src/selection/clone.js
 function selection_cloneShallow() {
   var clone = this.cloneNode(false), parent = this.parentNode;
   return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
@@ -21697,12 +21697,12 @@ function selection_cloneDeep() {
   return this.select(deep ? selection_cloneDeep : selection_cloneShallow);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/datum.js
+;// ./node_modules/d3-selection/src/selection/datum.js
 /* harmony default export */ function selection_datum(value) {
   return arguments.length ? this.property("__data__", value) : this.node().__data__;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/on.js
+;// ./node_modules/d3-selection/src/selection/on.js
 function contextListener(listener) {
   return function(event) {
     listener.call(this, event, this.__data__);
@@ -21765,7 +21765,7 @@ function onAdd(typename, value, options) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/dispatch.js
+;// ./node_modules/d3-selection/src/selection/dispatch.js
 
 function dispatchEvent(node, type, params) {
   var window = src_window(node), event = window.CustomEvent;
@@ -21792,7 +21792,7 @@ function dispatchFunction(type, params) {
   return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/iterator.js
+;// ./node_modules/d3-selection/src/selection/iterator.js
 /* harmony default export */ function* iterator() {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
@@ -21801,7 +21801,7 @@ function dispatchFunction(type, params) {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/index.js
+;// ./node_modules/d3-selection/src/selection/index.js
 
 
 
@@ -21887,13 +21887,13 @@ Selection.prototype = selection.prototype = {
 };
 /* harmony default export */ var src_selection = (selection);
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/select.js
+;// ./node_modules/d3-selection/src/select.js
 
 /* harmony default export */ function src_select(selector) {
   return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
+;// ./node_modules/d3-drag/src/noevent.js
 const nonpassive = { passive: false };
 const nonpassivecapture = { capture: true, passive: false };
 function nopropagation(event) {
@@ -21904,7 +21904,7 @@ function nopropagation(event) {
   event.stopImmediatePropagation();
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-drag/src/nodrag.js
+;// ./node_modules/d3-drag/src/nodrag.js
 
 
 /* harmony default export */ function nodrag(view) {
@@ -21932,14 +21932,14 @@ function yesdrag(view, noclick) {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/sourceEvent.js
+;// ./node_modules/d3-selection/src/sourceEvent.js
 /* harmony default export */ function sourceEvent(event) {
   let sourceEvent;
   while (sourceEvent = event.sourceEvent) event = sourceEvent;
   return event;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/pointer.js
+;// ./node_modules/d3-selection/src/pointer.js
 
 /* harmony default export */ function src_pointer(event, node) {
   event = sourceEvent(event);
@@ -21960,7 +21960,7 @@ function yesdrag(view, noclick) {
   return [event.pageX, event.pageY];
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-timer/src/timer.js
+;// ./node_modules/d3-timer/src/timer.js
 var timer_frame = 0, timeout = 0, interval = 0, pokeDelay = 1e3, taskHead, taskTail, clockLast = 0, clockNow = 0, clockSkew = 0, clock = typeof performance === "object" && performance.now ? performance : Date, setFrame = typeof window === "object" && window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : function(f) {
   setTimeout(f, 17);
 };
@@ -22052,7 +22052,7 @@ function sleep(time) {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-timer/src/timeout.js
+;// ./node_modules/d3-timer/src/timeout.js
 
 /* harmony default export */ function src_timeout(callback, delay, time) {
   var t = new Timer();
@@ -22064,7 +22064,7 @@ function sleep(time) {
   return t;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/schedule.js
+;// ./node_modules/d3-transition/src/transition/schedule.js
 
 
 var emptyOn = src_dispatch("start", "end", "cancel", "interrupt");
@@ -22177,7 +22177,7 @@ function create(node, id, self) {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/interrupt.js
+;// ./node_modules/d3-transition/src/interrupt.js
 
 /* harmony default export */ function interrupt(node, name) {
   var schedules = node.__transition, schedule, active, empty = true, i;
@@ -22197,7 +22197,7 @@ function create(node, id, self) {
   if (empty) delete node.__transition;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/interrupt.js
+;// ./node_modules/d3-transition/src/selection/interrupt.js
 
 /* harmony default export */ function selection_interrupt(name) {
   return this.each(function() {
@@ -22205,7 +22205,7 @@ function create(node, id, self) {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/decompose.js
+;// ./node_modules/d3-interpolate/src/transform/decompose.js
 var degrees = 180 / Math.PI;
 var decompose_identity = {
   translateX: 0,
@@ -22231,7 +22231,7 @@ var decompose_identity = {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/parse.js
+;// ./node_modules/d3-interpolate/src/transform/parse.js
 
 var svgNode;
 function parseCss(value) {
@@ -22247,7 +22247,7 @@ function parseSvg(value) {
   return decompose(value.a, value.b, value.c, value.d, value.e, value.f);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/index.js
+;// ./node_modules/d3-interpolate/src/transform/index.js
 
 
 function interpolateTransform(parse, pxComma, pxParen, degParen) {
@@ -22304,7 +22304,7 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
 var interpolateTransformCss = interpolateTransform(parseCss, "px, ", "px)", "deg)");
 var interpolateTransformSvg = interpolateTransform(parseSvg, ", ", ")", ")");
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/tween.js
+;// ./node_modules/d3-transition/src/transition/tween.js
 
 function tweenRemove(id, name) {
   var tween0, tween1;
@@ -22366,7 +22366,7 @@ function tweenValue(transition, name, value) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/interpolate.js
+;// ./node_modules/d3-transition/src/transition/interpolate.js
 
 
 /* harmony default export */ function interpolate(a, b) {
@@ -22374,7 +22374,7 @@ function tweenValue(transition, name, value) {
   return (typeof b === "number" ? number : b instanceof color ? rgb : (c = color(b)) ? (b = c, rgb) : string)(a, b);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attr.js
+;// ./node_modules/d3-transition/src/transition/attr.js
 
 
 
@@ -22428,7 +22428,7 @@ function attr_attrFunctionNS(fullname, interpolate2, value) {
   return this.attrTween(name, typeof value === "function" ? (fullname.local ? attr_attrFunctionNS : attr_attrFunction)(fullname, i, tweenValue(this, "attr." + name, value)) : value == null ? (fullname.local ? attr_attrRemoveNS : attr_attrRemove)(fullname) : (fullname.local ? attr_attrConstantNS : attr_attrConstant)(fullname, i, value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attrTween.js
+;// ./node_modules/d3-transition/src/transition/attrTween.js
 
 function attrInterpolate(name, i) {
   return function(t) {
@@ -22469,7 +22469,7 @@ function attrTween(name, value) {
   return this.tween(key, (fullname.local ? attrTweenNS : attrTween)(fullname, value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/delay.js
+;// ./node_modules/d3-transition/src/transition/delay.js
 
 function delayFunction(id, value) {
   return function() {
@@ -22486,7 +22486,7 @@ function delayConstant(id, value) {
   return arguments.length ? this.each((typeof value === "function" ? delayFunction : delayConstant)(id, value)) : schedule_get(this.node(), id).delay;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/duration.js
+;// ./node_modules/d3-transition/src/transition/duration.js
 
 function durationFunction(id, value) {
   return function() {
@@ -22503,7 +22503,7 @@ function durationConstant(id, value) {
   return arguments.length ? this.each((typeof value === "function" ? durationFunction : durationConstant)(id, value)) : schedule_get(this.node(), id).duration;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/ease.js
+;// ./node_modules/d3-transition/src/transition/ease.js
 
 function easeConstant(id, value) {
   if (typeof value !== "function") throw new Error();
@@ -22516,7 +22516,7 @@ function easeConstant(id, value) {
   return arguments.length ? this.each(easeConstant(id, value)) : schedule_get(this.node(), id).ease;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/easeVarying.js
+;// ./node_modules/d3-transition/src/transition/easeVarying.js
 
 function easeVarying(id, value) {
   return function() {
@@ -22530,7 +22530,7 @@ function easeVarying(id, value) {
   return this.each(easeVarying(this._id, value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/filter.js
+;// ./node_modules/d3-transition/src/transition/filter.js
 
 
 /* harmony default export */ function transition_filter(match) {
@@ -22545,7 +22545,7 @@ function easeVarying(id, value) {
   return new Transition(subgroups, this._parents, this._name, this._id);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/merge.js
+;// ./node_modules/d3-transition/src/transition/merge.js
 
 /* harmony default export */ function transition_merge(transition) {
   if (transition._id !== this._id) throw new Error();
@@ -22562,7 +22562,7 @@ function easeVarying(id, value) {
   return new Transition(merges, this._parents, this._name, this._id);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/on.js
+;// ./node_modules/d3-transition/src/transition/on.js
 
 function start(name) {
   return (name + "").trim().split(/^|\s+/).every(function(t) {
@@ -22584,7 +22584,7 @@ function onFunction(id, name, listener) {
   return arguments.length < 2 ? schedule_get(this.node(), id).on.on(name) : this.each(onFunction(id, name, listener));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/remove.js
+;// ./node_modules/d3-transition/src/transition/remove.js
 function removeFunction(id) {
   return function() {
     var parent = this.parentNode;
@@ -22596,7 +22596,7 @@ function removeFunction(id) {
   return this.on("end.remove", removeFunction(this._id));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/select.js
+;// ./node_modules/d3-transition/src/transition/select.js
 
 
 
@@ -22615,7 +22615,7 @@ function removeFunction(id) {
   return new Transition(subgroups, this._parents, name, id);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selectAll.js
+;// ./node_modules/d3-transition/src/transition/selectAll.js
 
 
 
@@ -22638,14 +22638,14 @@ function removeFunction(id) {
   return new Transition(subgroups, parents, name, id);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selection.js
+;// ./node_modules/d3-transition/src/transition/selection.js
 
 var selection_Selection = src_selection.prototype.constructor;
 /* harmony default export */ function transition_selection() {
   return new selection_Selection(this._groups, this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/style.js
+;// ./node_modules/d3-transition/src/transition/style.js
 
 
 
@@ -22691,7 +22691,7 @@ function styleMaybeRemove(id, name) {
   return value == null ? this.styleTween(name, styleNull(name, i)).on("end.style." + name, style_styleRemove(name)) : typeof value === "function" ? this.styleTween(name, style_styleFunction(name, i, tweenValue(this, "style." + name, value))).each(styleMaybeRemove(this._id, name)) : this.styleTween(name, style_styleConstant(name, i, value), priority).on("end.style." + name, null);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/styleTween.js
+;// ./node_modules/d3-transition/src/transition/styleTween.js
 function styleInterpolate(name, i, priority) {
   return function(t) {
     this.style.setProperty(name, i.call(this, t), priority);
@@ -22715,7 +22715,7 @@ function styleTween(name, value, priority) {
   return this.tween(key, styleTween(name, value, priority == null ? "" : priority));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/text.js
+;// ./node_modules/d3-transition/src/transition/text.js
 
 function text_textConstant(value) {
   return function() {
@@ -22732,7 +22732,7 @@ function text_textFunction(value) {
   return this.tween("text", typeof value === "function" ? text_textFunction(tweenValue(this, "text", value)) : text_textConstant(value == null ? "" : value + ""));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/textTween.js
+;// ./node_modules/d3-transition/src/transition/textTween.js
 function textInterpolate(i) {
   return function(t) {
     this.textContent = i.call(this, t);
@@ -22756,7 +22756,7 @@ function textTween(value) {
   return this.tween(key, textTween(value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/transition.js
+;// ./node_modules/d3-transition/src/transition/transition.js
 
 
 /* harmony default export */ function transition() {
@@ -22777,7 +22777,7 @@ function textTween(value) {
   return new Transition(groups, this._parents, name, id1);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/end.js
+;// ./node_modules/d3-transition/src/transition/end.js
 
 /* harmony default export */ function end() {
   var on0, on1, that = this, id = that._id, size = that.size();
@@ -22799,7 +22799,7 @@ function textTween(value) {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/index.js
+;// ./node_modules/d3-transition/src/transition/index.js
 
 
 
@@ -22868,7 +22868,7 @@ Transition.prototype = transition_transition.prototype = {
   [Symbol.iterator]: selection_prototype[Symbol.iterator]
 };
 
-;// CONCATENATED MODULE: ./node_modules/d3-ease/src/cubic.js
+;// ./node_modules/d3-ease/src/cubic.js
 function cubicIn(t) {
   return t * t * t;
 }
@@ -22879,7 +22879,7 @@ function cubicInOut(t) {
   return ((t *= 2) <= 1 ? t * t * t : (t -= 2) * t * t + 2) / 2;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/transition.js
+;// ./node_modules/d3-transition/src/selection/transition.js
 
 
 
@@ -22917,23 +22917,23 @@ function inherit(node, id) {
   return new Transition(groups, this._parents, name, id);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/index.js
+;// ./node_modules/d3-transition/src/selection/index.js
 
 
 
 src_selection.prototype.interrupt = selection_interrupt;
 src_selection.prototype.transition = selection_transition;
 
-;// CONCATENATED MODULE: ./node_modules/d3-transition/src/index.js
+;// ./node_modules/d3-transition/src/index.js
 
 
 
 
 
-;// CONCATENATED MODULE: ./node_modules/d3-brush/src/constant.js
+;// ./node_modules/d3-brush/src/constant.js
 /* harmony default export */ var d3_brush_src_constant = ((x) => () => x);
 
-;// CONCATENATED MODULE: ./node_modules/d3-brush/src/event.js
+;// ./node_modules/d3-brush/src/event.js
 function BrushEvent(type, {
   sourceEvent,
   target,
@@ -22951,7 +22951,7 @@ function BrushEvent(type, {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-brush/src/noevent.js
+;// ./node_modules/d3-brush/src/noevent.js
 function noevent_nopropagation(event) {
   event.stopImmediatePropagation();
 }
@@ -22960,7 +22960,7 @@ function noevent_nopropagation(event) {
   event.stopImmediatePropagation();
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-brush/src/brush.js
+;// ./node_modules/d3-brush/src/brush.js
 
 
 
@@ -23448,10 +23448,10 @@ function brush_brush(dim) {
   return brush2;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-brush/src/index.js
+;// ./node_modules/d3-brush/src/index.js
 
 
-;// CONCATENATED MODULE: ./src/module/browser.ts
+;// ./src/module/browser.ts
 function getGlobal() {
   return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
 }
@@ -23477,7 +23477,7 @@ const [
 ] = getFallback(win);
 
 
-;// CONCATENATED MODULE: ./src/module/util.ts
+;// ./src/module/util.ts
 var util_defProp = Object.defineProperty;
 var util_getOwnPropSymbols = Object.getOwnPropertySymbols;
 var util_hasOwnProp = Object.prototype.hasOwnProperty;
@@ -23897,7 +23897,7 @@ function runUntil(fn, conditionFn) {
   }
 }
 
-;// CONCATENATED MODULE: ./src/config/config.ts
+;// ./src/config/config.ts
 
 function loadConfig(config) {
   const thisConfig = this.config;
@@ -23927,7 +23927,7 @@ function loadConfig(config) {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
+;// ./src/Plugin/Plugin.ts
 var Plugin_defProp = Object.defineProperty;
 var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -23977,14 +23977,14 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.13.0-nightly-20240924004652");
+__publicField(Plugin, "version", "3.13.0-nightly-20241001004701");
 
-;// CONCATENATED MODULE: ./node_modules/d3-axis/src/identity.js
+;// ./node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {
   return x;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-axis/src/axis.js
+;// ./node_modules/d3-axis/src/axis.js
 
 var axis_top = 1, right = 2, bottom = 3, left = 4, epsilon = 1e-6;
 function translateX(x) {
@@ -24082,7 +24082,7 @@ function axisLeft(scale) {
   return axis(left, scale);
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/stanford/classes.ts
+;// ./src/Plugin/stanford/classes.ts
 /* harmony default export */ var stanford_classes = ({
   colorScale: "bb-colorscale",
   stanfordElements: "bb-stanford-elements",
@@ -24092,7 +24092,7 @@ function axisLeft(scale) {
   stanfordRegions: "bb-stanford-regions"
 });
 
-;// CONCATENATED MODULE: ./src/Plugin/stanford/ColorScale.ts
+;// ./src/Plugin/stanford/ColorScale.ts
 var ColorScale_defProp = Object.defineProperty;
 var ColorScale_defNormalProp = (obj, key, value) => key in obj ? ColorScale_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var ColorScale_publicField = (obj, key, value) => ColorScale_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -24150,7 +24150,7 @@ class ColorScale {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/stanford/util.ts
+;// ./src/Plugin/stanford/util.ts
 
 function pointInRegion(point, region) {
   const x = point.x;
@@ -24210,7 +24210,7 @@ function getCentroid(points) {
 }
 
 
-;// CONCATENATED MODULE: ./src/Plugin/stanford/Elements.ts
+;// ./src/Plugin/stanford/Elements.ts
 var Elements_defProp = Object.defineProperty;
 var Elements_defNormalProp = (obj, key, value) => key in obj ? Elements_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var Elements_publicField = (obj, key, value) => Elements_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -24298,7 +24298,7 @@ class Elements {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
+;// ./src/Plugin/stanford/Options.ts
 class Options {
   constructor() {
     return {
@@ -24432,7 +24432,7 @@ class Options {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/stanford/index.ts
+;// ./src/Plugin/stanford/index.ts
 var stanford_defProp = Object.defineProperty;
 var stanford_defNormalProp = (obj, key, value) => key in obj ? stanford_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var stanford_publicField = (obj, key, value) => stanford_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20240924004652
+ * @version 3.13.0-nightly-20241001004701
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -212,7 +212,7 @@ __webpack_require__.d(resolver_shape_namespaceObject, {
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(2);
 // EXTERNAL MODULE: external {"commonjs":"d3-time-format","commonjs2":"d3-time-format","amd":"d3-time-format","root":"d3"}
 var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_ = __webpack_require__(3);
-;// CONCATENATED MODULE: ./src/config/classes.ts
+;// ./src/config/classes.ts
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
@@ -393,7 +393,7 @@ const $ZOOM = {
 };
 /* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
-;// CONCATENATED MODULE: ./src/config/Options/common/boost.ts
+;// ./src/config/Options/common/boost.ts
 /* harmony default export */ var boost = ({
   /**
    * Set boost options
@@ -419,7 +419,7 @@ const $ZOOM = {
   boost_useWorker: false
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/common/color.ts
+;// ./src/config/Options/common/color.ts
 /* harmony default export */ var color = ({
   /**
    * Set color of the data values
@@ -501,7 +501,7 @@ const $ZOOM = {
   color_onover: void 0
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/common/legend.ts
+;// ./src/config/Options/common/legend.ts
 /* harmony default export */ var legend = ({
   /**
    * Legend options
@@ -670,7 +670,7 @@ const $ZOOM = {
   legend_usePoint: false
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/common/main.ts
+;// ./src/config/Options/common/main.ts
 /* harmony default export */ var main = ({
   /**
    * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.<br>
@@ -1067,7 +1067,7 @@ const $ZOOM = {
   regions: []
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/common/title.ts
+;// ./src/config/Options/common/title.ts
 /* harmony default export */ var title = ({
   /**
    * Set title options
@@ -1108,7 +1108,7 @@ const $ZOOM = {
   title_position: "center"
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/common/tooltip.ts
+;// ./src/config/Options/common/tooltip.ts
 /* harmony default export */ var tooltip = ({
   /**
    * Tooltip options
@@ -1356,7 +1356,7 @@ const $ZOOM = {
   tooltip_order: null
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/data/data.ts
+;// ./src/config/Options/data/data.ts
 /* harmony default export */ var data = ({
   /**
    * Specify the key of x values in the data.<br><br>
@@ -2213,7 +2213,7 @@ const $ZOOM = {
   data_empty_label_text: ""
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/interaction/interaction.ts
+;// ./src/config/Options/interaction/interaction.ts
 /* harmony default export */ var interaction = ({
   /**
    * Interaction options
@@ -2227,6 +2227,8 @@ const $ZOOM = {
    * @property {boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
    * @property {boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
    * @property {boolean|number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
+   * @property {boolean} [interaction.onout=true] Enable or disable "onout" event.<br>
+   * 		When is disabled, defocus(hiding tooltip, focused gridline, etc.) event won't work.
    * @see [Demo: touch.preventDefault](https://naver.github.io/billboard.js/demo/#Interaction.PreventScrollOnTouch)
    * @example
    * interaction: {
@@ -2244,18 +2246,22 @@ const $ZOOM = {
    *            // or threshold pixel value (pixel moved from touchstart to touchmove)
    *            preventDefault: 5
    *        }
-   *    }
+   *    },
+   *
+   *    // disable "onout" event
+   *    onout: false
    * }
    */
   interaction_enabled: true,
   interaction_brighten: true,
   interaction_inputType_mouse: true,
-  interaction_inputType_touch: {}
+  interaction_inputType_touch: {},
+  interaction_onout: true
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
 var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(4);
-;// CONCATENATED MODULE: ./src/module/browser.ts
+;// ./src/module/browser.ts
 function getGlobal() {
   return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
 }
@@ -2281,7 +2287,7 @@ const [
 ] = getFallback(win);
 
 
-;// CONCATENATED MODULE: ./src/module/util.ts
+;// ./src/module/util.ts
 var util_defProp = Object.defineProperty;
 var util_getOwnPropSymbols = Object.getOwnPropertySymbols;
 var util_hasOwnProp = Object.prototype.hasOwnProperty;
@@ -2701,7 +2707,7 @@ function runUntil(fn, conditionFn) {
   }
 }
 
-;// CONCATENATED MODULE: ./src/config/Options/Options.ts
+;// ./src/config/Options/Options.ts
 var Options_defProp = Object.defineProperty;
 var Options_getOwnPropSymbols = Object.getOwnPropertySymbols;
 var Options_hasOwnProp = Object.prototype.hasOwnProperty;
@@ -2750,7 +2756,7 @@ __publicField(_Options, "data", {});
 let Options = _Options;
 
 
-;// CONCATENATED MODULE: ./src/config/Store/Element.ts
+;// ./src/config/Store/Element.ts
 class Element {
   constructor() {
     const element = {
@@ -2826,7 +2832,7 @@ class Element {
   }
 }
 
-;// CONCATENATED MODULE: ./src/config/Store/State.ts
+;// ./src/config/Store/State.ts
 class State {
   constructor() {
     return {
@@ -2978,7 +2984,7 @@ class State {
   }
 }
 
-;// CONCATENATED MODULE: ./src/config/Store/Store.ts
+;// ./src/config/Store/Store.ts
 
 
 const Store_classes = {
@@ -2996,7 +3002,7 @@ class Store {
   }
 }
 
-;// CONCATENATED MODULE: ./src/module/Cache.ts
+;// ./src/module/Cache.ts
 var Cache_defProp = Object.defineProperty;
 var Cache_defNormalProp = (obj, key, value) => key in obj ? Cache_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var Cache_publicField = (obj, key, value) => Cache_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -3087,7 +3093,7 @@ class Cache {
   }
 }
 
-;// CONCATENATED MODULE: ./src/config/const.ts
+;// ./src/config/const.ts
 const TYPE = {
   AREA: "area",
   AREA_LINE_RANGE: "area-line-range",
@@ -3176,7 +3182,7 @@ const TYPE_BY_CATEGORY = {
   ]
 };
 
-;// CONCATENATED MODULE: ./src/module/error.ts
+;// ./src/module/error.ts
 
 
 
@@ -3218,7 +3224,7 @@ function logError(head, tail, info) {
   throw Error(`${prefix} ${head.replace(/\%c([a-z-]+)/i, "'$1' ")} ${tail != null ? tail : ""}`);
 }
 
-;// CONCATENATED MODULE: ./src/module/generator.ts
+;// ./src/module/generator.ts
 
 
 const { setTimeout: generator_setTimeout, clearTimeout: generator_clearTimeout } = win;
@@ -3280,7 +3286,7 @@ function generateWait() {
   return f;
 }
 
-;// CONCATENATED MODULE: ./src/module/worker.ts
+;// ./src/module/worker.ts
 
 const blob = {};
 function getObjectURL(fn, depsFn) {
@@ -3329,7 +3335,7 @@ function runWorker(useWorker = true, fn, callback, depsFn) {
 
 // EXTERNAL MODULE: external {"commonjs":"d3-dsv","commonjs2":"d3-dsv","amd":"d3-dsv","root":"d3"}
 var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(5);
-;// CONCATENATED MODULE: ./src/ChartInternal/data/convert.helper.ts
+;// ./src/ChartInternal/data/convert.helper.ts
 
 
 function columns(columns2) {
@@ -3462,7 +3468,7 @@ function tsv(tsv2) {
   }, tsv2);
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/data/convert.ts
+;// ./src/ChartInternal/data/convert.ts
 
 
 
@@ -3616,7 +3622,7 @@ function getDataKeyForJson(keysParam, config) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/data/data.ts
+;// ./src/ChartInternal/data/data.ts
 
 
 
@@ -4427,7 +4433,7 @@ function getDataKeyForJson(keysParam, config) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/data/load.ts
+;// ./src/ChartInternal/data/load.ts
 
 
 function callDone(fn, resizeAfter = false) {
@@ -4550,7 +4556,7 @@ function callDone(fn, resizeAfter = false) {
 
 // EXTERNAL MODULE: external {"commonjs":"d3-drag","commonjs2":"d3-drag","amd":"d3-drag","root":"d3"}
 var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(6);
-;// CONCATENATED MODULE: ./src/ChartInternal/interactions/interaction.ts
+;// ./src/ChartInternal/interactions/interaction.ts
 
 
 
@@ -4782,7 +4788,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/category.ts
+;// ./src/ChartInternal/internals/category.ts
 /* harmony default export */ var category = ({
   /**
    * Category Name
@@ -4797,7 +4803,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/class.ts
+;// ./src/ChartInternal/internals/class.ts
 
 /* harmony default export */ var internals_class = ({
   generateClass(prefix, targetId) {
@@ -4884,7 +4890,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
 
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
 var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(7);
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/color.ts
+;// ./src/ChartInternal/internals/color.ts
 
 
 
@@ -5097,7 +5103,7 @@ const schemeCategory10 = [
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/domain.ts
+;// ./src/ChartInternal/internals/domain.ts
 
 
 /* harmony default export */ var domain = ({
@@ -5448,7 +5454,7 @@ const schemeCategory10 = [
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/format.ts
+;// ./src/ChartInternal/internals/format.ts
 
 function getFormat($$, typeValue, v) {
   const { config } = $$;
@@ -5513,7 +5519,7 @@ function getFormat($$, typeValue, v) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/legend.ts
+;// ./src/ChartInternal/internals/legend.ts
 
 
 
@@ -6157,7 +6163,7 @@ function getFormattedText(id, formatted = true) {
 
 // EXTERNAL MODULE: external {"commonjs":"d3-transition","commonjs2":"d3-transition","amd":"d3-transition","root":"d3"}
 var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_ = __webpack_require__(8);
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/redraw.ts
+;// ./src/ChartInternal/internals/redraw.ts
 
 
 
@@ -6322,7 +6328,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/scale.ts
+;// ./src/ChartInternal/internals/scale.ts
 
 
 function getScale(type = "linear", min, max) {
@@ -6532,7 +6538,7 @@ function getScale(type = "linear", min, max) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/size.ts
+;// ./src/ChartInternal/internals/size.ts
 
 
 
@@ -6825,7 +6831,7 @@ function getScale(type = "linear", min, max) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/style.ts
+;// ./src/ChartInternal/internals/style.ts
 
 
 /* harmony default export */ var style = ({
@@ -6867,7 +6873,7 @@ function getScale(type = "linear", min, max) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/text.ts
+;// ./src/ChartInternal/internals/text.ts
 
 
 
@@ -7327,7 +7333,7 @@ function getTextPos(d, type) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/title.ts
+;// ./src/ChartInternal/internals/title.ts
 
 
 function getTextXPos(pos = "left", width) {
@@ -7381,7 +7387,7 @@ function getTextXPos(pos = "left", width) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/tooltip.ts
+;// ./src/ChartInternal/internals/tooltip.ts
 
 
 
@@ -7863,7 +7869,7 @@ function getTextXPos(pos = "left", width) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/transform.ts
+;// ./src/ChartInternal/internals/transform.ts
 
 
 /* harmony default export */ var transform = ({
@@ -7936,7 +7942,7 @@ function getTextXPos(pos = "left", width) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/type.ts
+;// ./src/ChartInternal/internals/type.ts
 
 
 /* harmony default export */ var type = ({
@@ -8164,7 +8170,7 @@ function getTextXPos(pos = "left", width) {
 
 // EXTERNAL MODULE: external {"commonjs":"d3-shape","commonjs2":"d3-shape","amd":"d3-shape","root":"d3"}
 var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webpack_require__(9);
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/shape.ts
+;// ./src/ChartInternal/shape/shape.ts
 
 
 
@@ -8589,7 +8595,7 @@ function getGroupedDataPointsFn(d) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/ChartInternal.ts
+;// ./src/ChartInternal/ChartInternal.ts
 var ChartInternal_defProp = Object.defineProperty;
 var ChartInternal_defNormalProp = (obj, key, value) => key in obj ? ChartInternal_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var ChartInternal_publicField = (obj, key, value) => ChartInternal_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -9182,7 +9188,7 @@ extend(ChartInternal.prototype, [
   type
 ]);
 
-;// CONCATENATED MODULE: ./src/config/config.ts
+;// ./src/config/config.ts
 
 function loadConfig(config) {
   const thisConfig = this.config;
@@ -9212,7 +9218,7 @@ function loadConfig(config) {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Chart/api/chart.ts
+;// ./src/Chart/api/chart.ts
 
 
 /* harmony default export */ var chart = ({
@@ -9375,7 +9381,7 @@ function loadConfig(config) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/color.ts
+;// ./src/Chart/api/color.ts
 /* harmony default export */ var api_color = ({
   /**
    * Get the color
@@ -9392,7 +9398,7 @@ function loadConfig(config) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/data.ts
+;// ./src/Chart/api/data.ts
 
 const api_data_data = function(targetIds) {
   const { targets } = this.internal.data;
@@ -9547,7 +9553,7 @@ extend(api_data_data, {
 });
 /* harmony default export */ var api_data = ({ data: api_data_data });
 
-;// CONCATENATED MODULE: ./src/Chart/api/export.ts
+;// ./src/Chart/api/export.ts
 
 
 
@@ -9743,7 +9749,7 @@ function renderText(ctx, glyph) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/focus.ts
+;// ./src/Chart/api/focus.ts
 
 
 /* harmony default export */ var api_focus = ({
@@ -9850,7 +9856,7 @@ function renderText(ctx, glyph) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/legend.ts
+;// ./src/Chart/api/legend.ts
 const legend_legend = {
   /**
    * Show legend for each target.
@@ -9904,7 +9910,7 @@ const legend_legend = {
 };
 /* harmony default export */ var api_legend = ({ legend: legend_legend });
 
-;// CONCATENATED MODULE: ./src/Chart/api/load.ts
+;// ./src/Chart/api/load.ts
 
 
 
@@ -10117,7 +10123,7 @@ const legend_legend = {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/show.ts
+;// ./src/Chart/api/show.ts
 
 function showHide(show, targetIdsValue, options) {
   const $$ = this.internal;
@@ -10220,7 +10226,7 @@ function showHide(show, targetIdsValue, options) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/tooltip.ts
+;// ./src/Chart/api/tooltip.ts
 
 
 const tooltip_tooltip = {
@@ -10343,7 +10349,7 @@ const tooltip_tooltip = {
 };
 /* harmony default export */ var api_tooltip = ({ tooltip: tooltip_tooltip });
 
-;// CONCATENATED MODULE: ./src/Chart/Chart.ts
+;// ./src/Chart/Chart.ts
 var Chart_defProp = Object.defineProperty;
 var Chart_defNormalProp = (obj, key, value) => key in obj ? Chart_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var Chart_publicField = (obj, key, value) => Chart_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -10398,7 +10404,7 @@ extend(Chart.prototype, [
   api_tooltip
 ]);
 
-;// CONCATENATED MODULE: ./src/Chart/api/selection.ts
+;// ./src/Chart/api/selection.ts
 
 
 
@@ -10509,7 +10515,7 @@ function setSelection(isSelection = false, ids, indices, resetOther) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/subchart.ts
+;// ./src/Chart/api/subchart.ts
 
 
 const subchart = function(domainValue) {
@@ -10640,7 +10646,7 @@ extend(subchart, {
 
 // EXTERNAL MODULE: external {"commonjs":"d3-zoom","commonjs2":"d3-zoom","amd":"d3-zoom","root":"d3"}
 var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(10);
-;// CONCATENATED MODULE: ./src/Chart/api/zoom.ts
+;// ./src/Chart/api/zoom.ts
 
 
 const zoom = function(domainValue) {
@@ -10807,7 +10813,7 @@ extend(zoom, {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/interactions/subchart.ts
+;// ./src/ChartInternal/interactions/subchart.ts
 
 
 
@@ -11074,7 +11080,7 @@ extend(zoom, {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/interactions/zoom.ts
+;// ./src/ChartInternal/interactions/zoom.ts
 
 
 
@@ -11367,7 +11373,7 @@ extend(zoom, {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/interactions/drag.ts
+;// ./src/ChartInternal/interactions/drag.ts
 
 
 
@@ -11453,7 +11459,7 @@ extend(zoom, {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/selection.ts
+;// ./src/ChartInternal/internals/selection.ts
 var selection_defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
 var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
@@ -11612,7 +11618,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   }
 }));
 
-;// CONCATENATED MODULE: ./src/config/Options/data/selection.ts
+;// ./src/config/Options/data/selection.ts
 /* harmony default export */ var data_selection = ({
   /**
    * Set data selection enabled<br><br>
@@ -11739,7 +11745,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   }
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/interaction/subchart.ts
+;// ./src/config/Options/interaction/subchart.ts
 /* harmony default export */ var interaction_subchart = ({
   /**
    * Set subchart options.
@@ -11807,7 +11813,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   }
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/interaction/zoom.ts
+;// ./src/config/Options/interaction/zoom.ts
 /* harmony default export */ var interaction_zoom = ({
   /**
    * Set zoom options
@@ -11888,7 +11894,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   zoom_x_max: void 0
 });
 
-;// CONCATENATED MODULE: ./src/config/resolver/interaction.ts
+;// ./src/config/resolver/interaction.ts
 
 
 
@@ -11922,7 +11928,7 @@ let zoomModule = () => {
   return (zoomModule = () => true)();
 };
 
-;// CONCATENATED MODULE: ./src/Chart/api/axis.ts
+;// ./src/Chart/api/axis.ts
 
 function setMinMax($$, type, value) {
   const { config } = $$;
@@ -12129,7 +12135,7 @@ const axis = {
 };
 /* harmony default export */ var api_axis = ({ axis });
 
-;// CONCATENATED MODULE: ./src/Chart/api/category.ts
+;// ./src/Chart/api/category.ts
 
 /* harmony default export */ var api_category = ({
   /**
@@ -12177,7 +12183,7 @@ const axis = {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/flow.ts
+;// ./src/Chart/api/flow.ts
 
 /* harmony default export */ var flow = ({
   /**
@@ -12350,7 +12356,7 @@ const axis = {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/grid.ts
+;// ./src/Chart/api/grid.ts
 
 function grid(grids, axisId) {
   const $$ = this.internal;
@@ -12483,7 +12489,7 @@ extend(ygrids, {
 });
 /* harmony default export */ var api_grid = ({ xgrids, ygrids });
 
-;// CONCATENATED MODULE: ./src/Chart/api/group.ts
+;// ./src/Chart/api/group.ts
 
 /* harmony default export */ var group = ({
   /**
@@ -12511,7 +12517,7 @@ extend(ygrids, {
   }
 });
 
-;// CONCATENATED MODULE: ./src/Chart/api/regions.ts
+;// ./src/Chart/api/regions.ts
 
 
 function regionsFn(regions2, isAdd = false) {
@@ -12617,7 +12623,7 @@ extend(regions, {
 });
 /* harmony default export */ var api_regions = ({ regions });
 
-;// CONCATENATED MODULE: ./src/Chart/api/x.ts
+;// ./src/Chart/api/x.ts
 
 /* harmony default export */ var x = ({
   /**
@@ -12683,7 +12689,7 @@ extend(regions, {
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(11);
-;// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRendererHelper.ts
+;// ./src/ChartInternal/Axis/AxisRendererHelper.ts
 var AxisRendererHelper_defProp = Object.defineProperty;
 var AxisRendererHelper_defNormalProp = (obj, key, value) => key in obj ? AxisRendererHelper_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var AxisRendererHelper_publicField = (obj, key, value) => AxisRendererHelper_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -12807,7 +12813,7 @@ class AxisRendererHelper {
   }
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRenderer.ts
+;// ./src/ChartInternal/Axis/AxisRenderer.ts
 var AxisRenderer_defProp = Object.defineProperty;
 var AxisRenderer_defNormalProp = (obj, key, value) => key in obj ? AxisRenderer_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var AxisRenderer_publicField = (obj, key, value) => AxisRenderer_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -13177,7 +13183,7 @@ class AxisRenderer {
   }
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/Axis/Axis.ts
+;// ./src/ChartInternal/Axis/Axis.ts
 var Axis_defProp = Object.defineProperty;
 var Axis_defNormalProp = (obj, key, value) => key in obj ? Axis_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var Axis_publicField = (obj, key, value) => Axis_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -13959,7 +13965,7 @@ class Axis_Axis {
   }
 }
 
-;// CONCATENATED MODULE: ./src/ChartInternal/interactions/eventrect.ts
+;// ./src/ChartInternal/interactions/eventrect.ts
 
 
 /* harmony default export */ var eventrect = ({
@@ -14225,7 +14231,7 @@ class Axis_Axis {
     const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`).classed($COMMON.EXPANDED, true).style("cursor", isSelectable ? "pointer" : null).filter(function(d) {
       return $$.isWithinShape(this, d);
     });
-    if (shapeAtIndex.empty() && !isTooltipGrouped) {
+    if (shapeAtIndex.empty() && !isTooltipGrouped && config.interaction_onout) {
       (_b = $$.hideGridFocus) == null ? void 0 : _b.call($$);
       $$.hideTooltip();
       !isSelectionGrouped && $$.setExpand(index);
@@ -14358,7 +14364,7 @@ class Axis_Axis {
         $$.setOverOut(index !== -1, index);
       }).on("mouseout", (event) => {
         state.event = event;
-        if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1) {
+        if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1 || !config.interaction_onout) {
           return;
         }
         $$.hideAxisGridFocus();
@@ -14393,7 +14399,7 @@ class Axis_Axis {
    */
   generateEventRectsForMultipleXs(eventRectEnter) {
     const $$ = this;
-    const { state } = $$;
+    const { config, state } = $$;
     eventRectEnter.on("click", function(event) {
       state.event = event;
       $$.clickHandlerForMultipleXS.bind(this)($$);
@@ -14404,7 +14410,7 @@ class Axis_Axis {
         $$.selectRectForMultipleXs(this);
       }).on("mouseout", (event) => {
         state.event = event;
-        if (!$$.config || $$.hasArcType()) {
+        if (!$$.config || $$.hasArcType() || !config.interaction_onout) {
           return;
         }
         $$.unselectRect();
@@ -14438,7 +14444,7 @@ class Axis_Axis {
 
 // EXTERNAL MODULE: external {"commonjs":"d3-ease","commonjs2":"d3-ease","amd":"d3-ease","root":"d3"}
 var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(12);
-;// CONCATENATED MODULE: ./src/ChartInternal/interactions/flow.ts
+;// ./src/ChartInternal/interactions/flow.ts
 
 
 
@@ -14619,7 +14625,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/clip.ts
+;// ./src/ChartInternal/internals/clip.ts
 /* harmony default export */ var clip = ({
   initClip() {
     const $$ = this;
@@ -14713,7 +14719,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/grid.ts
+;// ./src/ChartInternal/internals/grid.ts
 
 
 
@@ -15058,7 +15064,7 @@ function smoothLines(el, type) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/region.ts
+;// ./src/ChartInternal/internals/region.ts
 
 
 
@@ -15177,7 +15183,7 @@ function smoothLines(el, type) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/size.axis.ts
+;// ./src/ChartInternal/internals/size.axis.ts
 
 /* harmony default export */ var size_axis = ({
   /**
@@ -15293,7 +15299,7 @@ function smoothLines(el, type) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/axis/x.ts
+;// ./src/config/Options/axis/x.ts
 /* harmony default export */ var axis_x = ({
   /**
    * Set clip-path attribute for x axis element
@@ -16005,7 +16011,7 @@ function smoothLines(el, type) {
   axis_x_axes: []
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/axis/y.ts
+;// ./src/config/Options/axis/y.ts
 /* harmony default export */ var y = ({
   /**
    * Set clip-path attribute for y axis element
@@ -16487,7 +16493,7 @@ function smoothLines(el, type) {
   axis_y_axes: []
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/axis/y2.ts
+;// ./src/config/Options/axis/y2.ts
 /* harmony default export */ var y2 = ({
   /**
    * Show or hide y2 axis.
@@ -16931,7 +16937,7 @@ function smoothLines(el, type) {
   axis_y2_axes: []
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/axis/axis.ts
+;// ./src/config/Options/axis/axis.ts
 var axis_defProp = Object.defineProperty;
 var axis_getOwnPropSymbols = Object.getOwnPropertySymbols;
 var axis_hasOwnProp = Object.prototype.hasOwnProperty;
@@ -16999,7 +17005,7 @@ var axis_spreadValues = (a, b) => {
   axis_tooltip: false
 }, axis_x), y), y2));
 
-;// CONCATENATED MODULE: ./src/config/Options/common/grid.ts
+;// ./src/config/Options/common/grid.ts
 /* harmony default export */ var common_grid = ({
   /**
    * Set related options
@@ -17072,7 +17078,7 @@ var axis_spreadValues = (a, b) => {
   grid_lines_front: true
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/data/axis.ts
+;// ./src/config/Options/data/axis.ts
 /* harmony default export */ var data_axis = ({
   /**
    * Specify the keys of the x values for each data.<br><br>
@@ -17217,7 +17223,7 @@ var axis_spreadValues = (a, b) => {
   data_stack_normalize: false
 });
 
-;// CONCATENATED MODULE: ./src/config/resolver/axis.ts
+;// ./src/config/resolver/axis.ts
 
 
 
@@ -17261,7 +17267,7 @@ const options = {
 
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
 var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(13);
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/arc.ts
+;// ./src/ChartInternal/shape/arc.ts
 var arc_defProp = Object.defineProperty;
 var arc_defProps = Object.defineProperties;
 var arc_getOwnPropDescs = Object.getOwnPropertyDescriptors;
@@ -18030,7 +18036,7 @@ function getAttrTweenFn(fn) {
         selectArc(this, arcData, id);
         $$.setOverOut(true, arcData);
       }).on("mouseout", (event, d) => {
-        if (state.transiting) {
+        if (state.transiting || !config.interaction_onout) {
           return;
         }
         state.event = event;
@@ -18105,7 +18111,7 @@ function getAttrTweenFn(fn) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/area.ts
+;// ./src/ChartInternal/shape/area.ts
 
 
 
@@ -18238,7 +18244,7 @@ function getAttrTweenFn(fn) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/bar.ts
+;// ./src/ChartInternal/shape/bar.ts
 
 
 /* harmony default export */ var bar = ({
@@ -18436,7 +18442,7 @@ function getAttrTweenFn(fn) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/bubble.ts
+;// ./src/ChartInternal/shape/bubble.ts
 
 
 /* harmony default export */ var bubble = ({
@@ -18498,7 +18504,7 @@ function getAttrTweenFn(fn) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/candlestick.ts
+;// ./src/ChartInternal/shape/candlestick.ts
 var candlestick_defProp = Object.defineProperty;
 var candlestick_getOwnPropSymbols = Object.getOwnPropertySymbols;
 var candlestick_hasOwnProp = Object.prototype.hasOwnProperty;
@@ -18694,7 +18700,7 @@ var candlestick_spreadValues = (a, b) => {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/funnel.ts
+;// ./src/ChartInternal/shape/funnel.ts
 var funnel_defProp = Object.defineProperty;
 var funnel_getOwnPropSymbols = Object.getOwnPropertySymbols;
 var funnel_hasOwnProp = Object.prototype.hasOwnProperty;
@@ -18866,8 +18872,10 @@ function updateRatio(data) {
         }
       }).on(isTouch ? "touchend" : "mouseout", (event) => {
         const data = getTarget(event);
-        $$.hideTooltip();
-        $$.setOverOut(false, data);
+        if (config.interaction_onout) {
+          $$.hideTooltip();
+          $$.setOverOut(false, data);
+        }
       });
     }
   },
@@ -18940,7 +18948,7 @@ function updateRatio(data) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/gauge.ts
+;// ./src/ChartInternal/shape/gauge.ts
 
 
 
@@ -19018,7 +19026,7 @@ function updateRatio(data) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/line.ts
+;// ./src/ChartInternal/shape/line.ts
 
 
 
@@ -19321,7 +19329,7 @@ function getRegions(d, _regions, isTimeSeries) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/point.ts
+;// ./src/ChartInternal/shape/point.ts
 
 
 
@@ -19709,7 +19717,7 @@ const getTransitionName = () => getRandom();
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/point.common.ts
+;// ./src/ChartInternal/shape/point.common.ts
 
 
 
@@ -19806,7 +19814,7 @@ function insertPointInfoDefs(point, id) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/polar.ts
+;// ./src/ChartInternal/shape/polar.ts
 
 
 function getDataMax($$) {
@@ -19889,7 +19897,7 @@ function getDataMax($$) {
   }
 });
 
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/radar.ts
+;// ./src/ChartInternal/shape/radar.ts
 
 
 
@@ -20091,12 +20099,15 @@ const cacheKeyTextWidth = KEY.radarTextWidth;
   },
   bindRadarEvent() {
     const $$ = this;
-    const { state, $el: { radar, svg } } = $$;
+    const { config, state, $el: { radar, svg } } = $$;
     const focusOnly = $$.isPointFocusOnly();
     const { inputType, transiting } = state;
     const isMouse = inputType === "mouse";
     const hide = (event) => {
       state.event = event;
+      if (!config.interaction_onout) {
+        return;
+      }
       const index = $$.getDataIndexFromEvent(event);
       const noIndex = isUndefined(index);
       if (isMouse || noIndex) {
@@ -20154,7 +20165,7 @@ const cacheKeyTextWidth = KEY.radarTextWidth;
 
 // EXTERNAL MODULE: external {"commonjs":"d3-hierarchy","commonjs2":"d3-hierarchy","amd":"d3-hierarchy","root":"d3"}
 var external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_ = __webpack_require__(14);
-;// CONCATENATED MODULE: ./src/ChartInternal/shape/treemap.ts
+;// ./src/ChartInternal/shape/treemap.ts
 
 
 
@@ -20232,8 +20243,10 @@ function getHierachyData(data) {
         }
       }).on(isTouch ? "touchend" : "mouseout", (event) => {
         const data = getTarget(event);
-        $$.hideTooltip();
-        $$.setOverOut(false, data);
+        if (config.interaction_onout) {
+          $$.hideTooltip();
+          $$.setOverOut(false, data);
+        }
       });
     }
   },
@@ -20362,7 +20375,7 @@ ${percentValue}%`;
   }
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/common/point.ts
+;// ./src/config/Options/common/point.ts
 /* harmony default export */ var common_point = ({
   /**
    * Set point options
@@ -20518,7 +20531,7 @@ ${percentValue}%`;
   point_type: "circle"
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/area.ts
+;// ./src/config/Options/shape/area.ts
 /* harmony default export */ var Options_shape_area = ({
   /**
    * Set area options
@@ -20584,7 +20597,7 @@ ${percentValue}%`;
   area_zerobased: true
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/bar.ts
+;// ./src/config/Options/shape/bar.ts
 /* harmony default export */ var shape_bar = ({
   /**
    * Set bar options
@@ -20727,7 +20740,7 @@ ${percentValue}%`;
   bar_zerobased: true
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/bubble.ts
+;// ./src/config/Options/shape/bubble.ts
 /* harmony default export */ var shape_bubble = ({
   /**
    * Set bubble options
@@ -20756,7 +20769,7 @@ ${percentValue}%`;
   bubble_zerobased: false
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/candlestick.ts
+;// ./src/config/Options/shape/candlestick.ts
 /* harmony default export */ var shape_candlestick = ({
   /**
    * Set candlestick options
@@ -20811,7 +20824,7 @@ ${percentValue}%`;
   candlestick_color_down: "red"
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/line.ts
+;// ./src/config/Options/shape/line.ts
 /* harmony default export */ var shape_line = ({
   /**
    * Set line options
@@ -20863,7 +20876,7 @@ ${percentValue}%`;
   line_point: true
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/scatter.ts
+;// ./src/config/Options/shape/scatter.ts
 /* harmony default export */ var scatter = ({
   /**
    * Set scatter options
@@ -20893,7 +20906,7 @@ ${percentValue}%`;
   scatter_zerobased: false
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/spline.ts
+;// ./src/config/Options/shape/spline.ts
 /* harmony default export */ var spline = ({
   /**
    * Set spline options
@@ -20933,7 +20946,7 @@ ${percentValue}%`;
   spline_interpolation_type: "cardinal"
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/arc.ts
+;// ./src/config/Options/shape/arc.ts
 /* harmony default export */ var shape_arc = ({
   /**
    * Set arc options
@@ -21077,7 +21090,7 @@ ${percentValue}%`;
   arc_rangeText_position: void 0
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/donut.ts
+;// ./src/config/Options/shape/donut.ts
 /* harmony default export */ var donut = ({
   /**
    * Set donut options
@@ -21158,7 +21171,7 @@ ${percentValue}%`;
   donut_startingAngle: 0
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/funnel.ts
+;// ./src/config/Options/shape/funnel.ts
 /* harmony default export */ var shape_funnel = ({
   /**
    * Set funnel options
@@ -21191,7 +21204,7 @@ ${percentValue}%`;
   funnel_neck_height: 0
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/gauge.ts
+;// ./src/config/Options/shape/gauge.ts
 /* harmony default export */ var shape_gauge = ({
   /**
    * Set gauge options
@@ -21335,7 +21348,7 @@ ${percentValue}%`;
   gauge_expand_duration: 50
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/pie.ts
+;// ./src/config/Options/shape/pie.ts
 /* harmony default export */ var pie = ({
   /**
    * Set pie options
@@ -21429,7 +21442,7 @@ ${percentValue}%`;
   pie_startingAngle: 0
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/polar.ts
+;// ./src/config/Options/shape/polar.ts
 /* harmony default export */ var shape_polar = ({
   /**
    * Set polar options
@@ -21505,7 +21518,7 @@ ${percentValue}%`;
   polar_startingAngle: 0
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/radar.ts
+;// ./src/config/Options/shape/radar.ts
 /* harmony default export */ var shape_radar = ({
   /**
    * Set radar options
@@ -21575,7 +21588,7 @@ ${percentValue}%`;
   radar_direction_clockwise: false
 });
 
-;// CONCATENATED MODULE: ./src/config/Options/shape/treemap.ts
+;// ./src/config/Options/shape/treemap.ts
 /* harmony default export */ var shape_treemap = ({
   /**
    * Set treemap options
@@ -21623,7 +21636,7 @@ ${percentValue}%`;
   treemap_label_show: true
 });
 
-;// CONCATENATED MODULE: ./src/config/resolver/shape.ts
+;// ./src/config/resolver/shape.ts
 
 
 
@@ -21706,7 +21719,7 @@ let shape_scatter = () => (extendAxis(
 let resolver_shape_funnel = () => (extendArc([funnel], [shape_funnel]), (resolver_shape_funnel = () => TYPE.FUNNEL)());
 let resolver_shape_treemap = () => (extendAxis([treemap], [shape_treemap]), (resolver_shape_treemap = () => TYPE.TREEMAP)());
 
-;// CONCATENATED MODULE: ./src/core.ts
+;// ./src/core.ts
 
 
 let defaults = {};
@@ -21718,7 +21731,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.13.0-nightly-20240924004652",
+  version: "3.13.0-nightly-20241001004701",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -21848,7 +21861,7 @@ const bb = {
 };
 
 
-;// CONCATENATED MODULE: ./src/index.ts
+;// ./src/index.ts
 
 
 Object.keys(resolver_shape_namespaceObject).forEach((v) => resolver_shape_namespaceObject[v]());

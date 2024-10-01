@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20240924004652
+ * @version 3.13.0-nightly-20241001004701
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -75,6 +75,8 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+!function() {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
@@ -83,7 +85,7 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
-;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
+;// ./src/Plugin/Plugin.ts
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -133,9 +135,9 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.13.0-nightly-20240924004652");
+__publicField(Plugin, "version", "3.13.0-nightly-20241001004701");
 
-;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
+;// ./src/Plugin/bubblecompare/index.ts
 var bubblecompare_defProp = Object.defineProperty;
 var bubblecompare_defNormalProp = (obj, key, value) => key in obj ? bubblecompare_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var bubblecompare_publicField = (obj, key, value) => bubblecompare_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -195,6 +197,7 @@ bubblecompare_publicField(_BubbleCompare, "version", `0.0.1`);
 let BubbleCompare = _BubbleCompare;
 
 
+}();
 __webpack_exports__ = __webpack_exports__["default"];
 /******/ 	return __webpack_exports__;
 /******/ })()

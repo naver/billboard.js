@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20240924004652
+ * @version 3.13.0-nightly-20241001004701
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -19324,7 +19324,7 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ BubbleCompare; }
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selector.js
+;// ./node_modules/d3-selection/src/selector.js
 function none() {
 }
 /* harmony default export */ function selector(selector) {
@@ -19333,7 +19333,7 @@ function none() {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/select.js
+;// ./node_modules/d3-selection/src/selection/select.js
 
 
 /* harmony default export */ function selection_select(select) {
@@ -19349,12 +19349,12 @@ function none() {
   return new Selection(subgroups, this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/array.js
+;// ./node_modules/d3-selection/src/array.js
 function array(x) {
   return x == null ? [] : Array.isArray(x) ? x : Array.from(x);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selectorAll.js
+;// ./node_modules/d3-selection/src/selectorAll.js
 function empty() {
   return [];
 }
@@ -19364,7 +19364,7 @@ function empty() {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/selectAll.js
+;// ./node_modules/d3-selection/src/selection/selectAll.js
 
 
 
@@ -19387,7 +19387,7 @@ function arrayAll(select) {
   return new Selection(subgroups, parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/matcher.js
+;// ./node_modules/d3-selection/src/matcher.js
 /* harmony default export */ function matcher(selector) {
   return function() {
     return this.matches(selector);
@@ -19399,7 +19399,7 @@ function childMatcher(selector) {
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/selectChild.js
+;// ./node_modules/d3-selection/src/selection/selectChild.js
 
 var find = Array.prototype.find;
 function childFind(match) {
@@ -19414,7 +19414,7 @@ function childFirst() {
   return this.select(match == null ? childFirst : childFind(typeof match === "function" ? match : childMatcher(match)));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/selectChildren.js
+;// ./node_modules/d3-selection/src/selection/selectChildren.js
 
 var filter = Array.prototype.filter;
 function children() {
@@ -19429,7 +19429,7 @@ function childrenFilter(match) {
   return this.selectAll(match == null ? children : childrenFilter(typeof match === "function" ? match : childMatcher(match)));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/filter.js
+;// ./node_modules/d3-selection/src/selection/filter.js
 
 
 /* harmony default export */ function selection_filter(match) {
@@ -19444,12 +19444,12 @@ function childrenFilter(match) {
   return new Selection(subgroups, this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/sparse.js
+;// ./node_modules/d3-selection/src/selection/sparse.js
 /* harmony default export */ function sparse(update) {
   return new Array(update.length);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/enter.js
+;// ./node_modules/d3-selection/src/selection/enter.js
 
 
 /* harmony default export */ function enter() {
@@ -19478,14 +19478,14 @@ EnterNode.prototype = {
   }
 };
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/constant.js
+;// ./node_modules/d3-selection/src/constant.js
 /* harmony default export */ function constant(x) {
   return function() {
     return x;
   };
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/data.js
+;// ./node_modules/d3-selection/src/selection/data.js
 
 
 
@@ -19560,14 +19560,14 @@ function arraylike(data) {
   return typeof data === "object" && "length" in data ? data : Array.from(data);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/exit.js
+;// ./node_modules/d3-selection/src/selection/exit.js
 
 
 /* harmony default export */ function exit() {
   return new Selection(this._exit || this._groups.map(sparse), this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/join.js
+;// ./node_modules/d3-selection/src/selection/join.js
 /* harmony default export */ function join(onenter, onupdate, onexit) {
   var enter = this.enter(), update = this, exit = this.exit();
   if (typeof onenter === "function") {
@@ -19585,7 +19585,7 @@ function arraylike(data) {
   return enter && update ? enter.merge(update).order() : update;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/merge.js
+;// ./node_modules/d3-selection/src/selection/merge.js
 
 /* harmony default export */ function merge(context) {
   var selection = context.selection ? context.selection() : context;
@@ -19602,7 +19602,7 @@ function arraylike(data) {
   return new Selection(merges, this._parents);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/order.js
+;// ./node_modules/d3-selection/src/selection/order.js
 /* harmony default export */ function order() {
   for (var groups = this._groups, j = -1, m = groups.length; ++j < m; ) {
     for (var group = groups[j], i = group.length - 1, next = group[i], node; --i >= 0; ) {
@@ -19615,7 +19615,7 @@ function arraylike(data) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/sort.js
+;// ./node_modules/d3-selection/src/selection/sort.js
 
 /* harmony default export */ function sort(compare) {
   if (!compare) compare = ascending;
@@ -19636,7 +19636,7 @@ function ascending(a, b) {
   return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/call.js
+;// ./node_modules/d3-selection/src/selection/call.js
 /* harmony default export */ function call() {
   var callback = arguments[0];
   arguments[0] = this;
@@ -19644,12 +19644,12 @@ function ascending(a, b) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/nodes.js
+;// ./node_modules/d3-selection/src/selection/nodes.js
 /* harmony default export */ function nodes() {
   return Array.from(this);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/node.js
+;// ./node_modules/d3-selection/src/selection/node.js
 /* harmony default export */ function node() {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length; i < n; ++i) {
@@ -19660,19 +19660,19 @@ function ascending(a, b) {
   return null;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/size.js
+;// ./node_modules/d3-selection/src/selection/size.js
 /* harmony default export */ function size() {
   let size = 0;
   for (const node of this) ++size;
   return size;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/empty.js
+;// ./node_modules/d3-selection/src/selection/empty.js
 /* harmony default export */ function selection_empty() {
   return !this.node();
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/each.js
+;// ./node_modules/d3-selection/src/selection/each.js
 /* harmony default export */ function each(callback) {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
@@ -19682,7 +19682,7 @@ function ascending(a, b) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/namespaces.js
+;// ./node_modules/d3-selection/src/namespaces.js
 var xhtml = "http://www.w3.org/1999/xhtml";
 /* harmony default export */ var namespaces = ({
   svg: "http://www.w3.org/2000/svg",
@@ -19692,7 +19692,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
   xmlns: "http://www.w3.org/2000/xmlns/"
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/namespace.js
+;// ./node_modules/d3-selection/src/namespace.js
 
 /* harmony default export */ function namespace(name) {
   var prefix = name += "", i = prefix.indexOf(":");
@@ -19700,7 +19700,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
   return namespaces.hasOwnProperty(prefix) ? { space: namespaces[prefix], local: name } : name;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/attr.js
+;// ./node_modules/d3-selection/src/selection/attr.js
 
 function attrRemove(name) {
   return function() {
@@ -19745,12 +19745,12 @@ function attrFunctionNS(fullname, value) {
   return this.each((value == null ? fullname.local ? attrRemoveNS : attrRemove : typeof value === "function" ? fullname.local ? attrFunctionNS : attrFunction : fullname.local ? attrConstantNS : attrConstant)(fullname, value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/window.js
+;// ./node_modules/d3-selection/src/window.js
 /* harmony default export */ function src_window(node) {
   return node.ownerDocument && node.ownerDocument.defaultView || node.document && node || node.defaultView;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/style.js
+;// ./node_modules/d3-selection/src/selection/style.js
 
 function styleRemove(name) {
   return function() {
@@ -19776,7 +19776,7 @@ function styleValue(node, name) {
   return node.style.getPropertyValue(name) || src_window(node).getComputedStyle(node, null).getPropertyValue(name);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/property.js
+;// ./node_modules/d3-selection/src/selection/property.js
 function propertyRemove(name) {
   return function() {
     delete this[name];
@@ -19798,7 +19798,7 @@ function propertyFunction(name, value) {
   return arguments.length > 1 ? this.each((value == null ? propertyRemove : typeof value === "function" ? propertyFunction : propertyConstant)(name, value)) : this.node()[name];
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/classed.js
+;// ./node_modules/d3-selection/src/selection/classed.js
 function classArray(string) {
   return string.trim().split(/^|\s+/);
 }
@@ -19861,7 +19861,7 @@ function classedFunction(names, value) {
   return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/text.js
+;// ./node_modules/d3-selection/src/selection/text.js
 function textRemove() {
   this.textContent = "";
 }
@@ -19880,7 +19880,7 @@ function textFunction(value) {
   return arguments.length ? this.each(value == null ? textRemove : (typeof value === "function" ? textFunction : textConstant)(value)) : this.node().textContent;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/html.js
+;// ./node_modules/d3-selection/src/selection/html.js
 function htmlRemove() {
   this.innerHTML = "";
 }
@@ -19899,7 +19899,7 @@ function htmlFunction(value) {
   return arguments.length ? this.each(value == null ? htmlRemove : (typeof value === "function" ? htmlFunction : htmlConstant)(value)) : this.node().innerHTML;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/raise.js
+;// ./node_modules/d3-selection/src/selection/raise.js
 function raise() {
   if (this.nextSibling) this.parentNode.appendChild(this);
 }
@@ -19907,7 +19907,7 @@ function raise() {
   return this.each(raise);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/lower.js
+;// ./node_modules/d3-selection/src/selection/lower.js
 function lower() {
   if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
 }
@@ -19915,7 +19915,7 @@ function lower() {
   return this.each(lower);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/creator.js
+;// ./node_modules/d3-selection/src/creator.js
 
 
 function creatorInherit(name) {
@@ -19934,7 +19934,7 @@ function creatorFixed(fullname) {
   return (fullname.local ? creatorFixed : creatorInherit)(fullname);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/append.js
+;// ./node_modules/d3-selection/src/selection/append.js
 
 /* harmony default export */ function append(name) {
   var create = typeof name === "function" ? name : creator(name);
@@ -19943,7 +19943,7 @@ function creatorFixed(fullname) {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/insert.js
+;// ./node_modules/d3-selection/src/selection/insert.js
 
 
 function constantNull() {
@@ -19956,7 +19956,7 @@ function constantNull() {
   });
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/remove.js
+;// ./node_modules/d3-selection/src/selection/remove.js
 function remove() {
   var parent = this.parentNode;
   if (parent) parent.removeChild(this);
@@ -19965,7 +19965,7 @@ function remove() {
   return this.each(remove);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/clone.js
+;// ./node_modules/d3-selection/src/selection/clone.js
 function selection_cloneShallow() {
   var clone = this.cloneNode(false), parent = this.parentNode;
   return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
@@ -19978,12 +19978,12 @@ function selection_cloneDeep() {
   return this.select(deep ? selection_cloneDeep : selection_cloneShallow);
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/datum.js
+;// ./node_modules/d3-selection/src/selection/datum.js
 /* harmony default export */ function selection_datum(value) {
   return arguments.length ? this.property("__data__", value) : this.node().__data__;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/on.js
+;// ./node_modules/d3-selection/src/selection/on.js
 function contextListener(listener) {
   return function(event) {
     listener.call(this, event, this.__data__);
@@ -20046,7 +20046,7 @@ function onAdd(typename, value, options) {
   return this;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/dispatch.js
+;// ./node_modules/d3-selection/src/selection/dispatch.js
 
 function dispatchEvent(node, type, params) {
   var window = src_window(node), event = window.CustomEvent;
@@ -20073,7 +20073,7 @@ function dispatchFunction(type, params) {
   return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/iterator.js
+;// ./node_modules/d3-selection/src/selection/iterator.js
 /* harmony default export */ function* iterator() {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
@@ -20082,7 +20082,7 @@ function dispatchFunction(type, params) {
   }
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/index.js
+;// ./node_modules/d3-selection/src/selection/index.js
 
 
 
@@ -20168,13 +20168,13 @@ Selection.prototype = selection.prototype = {
 };
 /* harmony default export */ var src_selection = (selection);
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/select.js
+;// ./node_modules/d3-selection/src/select.js
 
 /* harmony default export */ function src_select(selector) {
   return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
+;// ./src/Plugin/Plugin.ts
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -20224,9 +20224,9 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.13.0-nightly-20240924004652");
+__publicField(Plugin, "version", "3.13.0-nightly-20241001004701");
 
-;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
+;// ./src/Plugin/bubblecompare/index.ts
 var bubblecompare_defProp = Object.defineProperty;
 var bubblecompare_defNormalProp = (obj, key, value) => key in obj ? bubblecompare_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var bubblecompare_publicField = (obj, key, value) => bubblecompare_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
