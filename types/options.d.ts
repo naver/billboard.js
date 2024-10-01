@@ -245,7 +245,13 @@ export interface ChartOptions {
 				 */
 				preventDefault?: boolean | number;
 			};
-		}
+		},
+
+		/**
+		 * Enable or disable "onout" event.
+	 	 * When is disabled, defocus(hiding tooltip, focused gridline, etc.) event won't work.
+		 */
+		onout?: boolean;
 	};
 
 	transition?: {
