@@ -6,6 +6,13 @@ import {Chart} from "./chart";
  */
 export interface Axis {
 	/**
+	 * Setup the way to evaluate tick text size.
+	 * - **NOTE:**
+	 *   - Setting `false` or custom evaluator, highly recommended to memoize evaluated text dimension value to not degrade performance.
+	 */
+	evalTextSize?: boolean | ((text: SVGTextElement) => {w: number, h: number});
+
+	/**
 	 * Switch x and y axis position.
 	 */
 	rotated?: boolean;

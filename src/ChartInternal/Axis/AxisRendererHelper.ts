@@ -30,17 +30,17 @@ export default class AxisRendererHelper {
 
 	/**
 	 * Compute a character dimension
-	 * @param {d3.selection} node <g class=tick> node
+	 * @param {d3.selection} text SVG text selection
+	 * @param {boolean} memoize memoize the calculated size
 	 * @returns {{w: number, h: number}}
 	 * @private
 	 */
-	static getSizeFor1Char(node: d3Selection): {w: number, h: number} {
+	static getSizeFor1Char(text: d3Selection, memoize = true): {w: number, h: number} {
 		// default size for one character
 		const size = {
 			w: 5.5,
 			h: 11.5
 		};
-		const text = node.select("text");
 
 		!text.empty() && text
 			.text("0")
@@ -57,7 +57,9 @@ export default class AxisRendererHelper {
 				}
 			});
 
-		this.getSizeFor1Char = () => size;
+		if (memoize) {
+			this.getSizeFor1Char = () => size;
+		}
 
 		return size;
 	}
