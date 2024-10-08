@@ -592,6 +592,7 @@ export default {
 				);
 
 				d3Select(this).selectAll("path")
+					// @ts-ignore
 					.transition()
 					.duration(expandDuration)
 					.attrTween("d", getAttrTweenFn($$.svgArcExpanded.bind($$)))
