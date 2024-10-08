@@ -2,6 +2,17 @@ import {resolve} from "node:path";
 import {defineConfig} from "vitest/config";
 
 export default defineConfig({
+    optimizeDeps: {
+        include: ["@vitest/coverage-istanbul"]
+    },
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: "modern-compiler",
+                silenceDeprecations: ["legacy-js-api"]
+            }        
+        }
+    },
     test: {
         testTimeout: 3_000,
         hookTimeout: 5_000,
