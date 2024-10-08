@@ -42,7 +42,7 @@ describe("API axis", function() {
 				},
 				onrendered: function() {
 					main = this.internal.$el.main;
-					resolve();
+					resolve(1);
 				}
 			});
 		});

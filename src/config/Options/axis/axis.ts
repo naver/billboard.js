@@ -11,6 +11,36 @@ import y2 from "./y2";
  */
 export default {
 	/**
+	 * Setup the way to evaluate tick text size.
+	 * - **NOTE:**
+	 *   - Setting `false` or custom evaluator, highly recommended to memoize evaluated text dimension value to not degrade performance.
+	 * @name axis․evalTextSize
+	 * @memberof Options
+	 * @type {boolean|Function}
+	 * @default true
+	 * @example
+	 * axis: {
+	 *   // will evaluate getting text size every time.
+	 *   evalTextSize: false.
+	 *
+	 *   // set a custom evaluator
+	 *   evalTextSize: function(textElement) {
+	 *     // set some character to be evaluated
+	 *     text.textContent = "0";
+	 *
+	 *     // get the size
+	 *      const box = text.getBBox();
+	 *
+	 *     // clear text
+	 *     text.textContent = "";
+	 *
+	 *     return { w: 7, h: 12};
+	 *   }
+	 * }
+	 */
+	axis_evalTextSize: <boolean | ((text: SVGTextElement) => {w: number, h: number})>true,
+
+	/**
 	 * Switch x and y axis position.
 	 * @name axis․rotated
 	 * @memberof Options
