@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20241001004701
+ * @version 3.13.0-nightly-20241008004641
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -12712,16 +12712,16 @@ class AxisRendererHelper {
   }
   /**
    * Compute a character dimension
-   * @param {d3.selection} node <g class=tick> node
+   * @param {d3.selection} text SVG text selection
+   * @param {boolean} memoize memoize the calculated size
    * @returns {{w: number, h: number}}
    * @private
    */
-  static getSizeFor1Char(node) {
+  static getSizeFor1Char(text, memoize = true) {
     const size = {
       w: 5.5,
       h: 11.5
     };
-    const text = node.select("text");
     !text.empty() && text.text("0").call((el) => {
       try {
         const { width, height } = el.node().getBBox();
@@ -12733,7 +12733,9 @@ class AxisRendererHelper {
         el.text("");
       }
     });
-    this.getSizeFor1Char = () => size;
+    if (memoize) {
+      this.getSizeFor1Char = () => size;
+    }
     return size;
   }
   /**
@@ -12875,6 +12877,7 @@ class AxisRenderer {
       tick: axisShow ? params.config[`${prefix}_tick_show`] : false,
       text: axisShow ? params.config[`${prefix}_tick_text_show`] : false
     };
+    const evalTextSize = params.config.axis_evalTextSize;
     let $g;
     g.each(function() {
       const g2 = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
@@ -12897,9 +12900,10 @@ class AxisRenderer {
         tick = tickEnter.merge(tick);
         tickShow.tick && tickEnter.append("line");
         tickShow.text && tickEnter.append("text");
-        const sizeFor1Char = AxisRendererHelper.getSizeFor1Char(tick);
+        const tickText = tick.select("text");
+        const sizeFor1Char = isFunction(evalTextSize) ? evalTextSize.bind(ctx.params.owner.api)(tickText.node()) : AxisRendererHelper.getSizeFor1Char(tickText, evalTextSize);
         const counts = [];
-        let tspan = tick.select("text").selectAll("tspan").data((d, index) => {
+        let tspan = tickText.selectAll("tspan").data((d, index) => {
           const split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helper.textFormatted(d)) ? helper.textFormatted(d).concat() : [helper.textFormatted(d)];
           counts[index] = split.length;
           return split.map((splitted) => ({ index, splitted }));
@@ -16958,6 +16962,35 @@ var axis_spreadValues = (a, b) => {
 
 
 /* harmony default export */ var axis_axis = (axis_spreadValues(axis_spreadValues(axis_spreadValues({
+  /**
+   * Setup the way to evaluate tick text size.
+   * - **NOTE:**
+   *   - Setting `false` or custom evaluator, highly recommended to memoize evaluated text dimension value to not degrade performance.
+   * @name axis․evalTextSize
+   * @memberof Options
+   * @type {boolean|Function}
+   * @default true
+   * @example
+   * axis: {
+   *   // will evaluate getting text size every time.
+   *   evalTextSize: false.
+   *
+   *   // set a custom evaluator
+   *   evalTextSize: function(textElement) {
+   *     // set some character to be evaluated
+   *     text.textContent = "0";
+   *
+   *     // get the size
+   *      const box = text.getBBox();
+   *
+   *     // clear text
+   *     text.textContent = "";
+   *
+   *     return { w: 7, h: 12};
+   *   }
+   * }
+   */
+  axis_evalTextSize: true,
   /**
    * Switch x and y axis position.
    * @name axis․rotated
@@ -21731,7 +21764,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.13.0-nightly-20241001004701",
+  version: "3.13.0-nightly-20241008004641",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

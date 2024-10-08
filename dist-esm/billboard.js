@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.13.0-nightly-20241001004701
+ * @version 3.13.0-nightly-20241008004641
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -12705,17 +12705,18 @@ var AxisRendererHelper = /** @class */ (function () {
     }
     /**
      * Compute a character dimension
-     * @param {d3.selection} node <g class=tick> node
+     * @param {d3.selection} text SVG text selection
+     * @param {boolean} memoize memoize the calculated size
      * @returns {{w: number, h: number}}
      * @private
      */
-    AxisRendererHelper.getSizeFor1Char = function (node) {
+    AxisRendererHelper.getSizeFor1Char = function (text, memoize) {
+        if (memoize === void 0) { memoize = true; }
         // default size for one character
         var size = {
             w: 5.5,
             h: 11.5
         };
-        var text = node.select("text");
         !text.empty() && text
             .text("0")
             .call(function (el) {
@@ -12730,7 +12731,9 @@ var AxisRendererHelper = /** @class */ (function () {
                 el.text("");
             }
         });
-        this.getSizeFor1Char = function () { return size; };
+        if (memoize) {
+            this.getSizeFor1Char = function () { return size; };
+        }
         return size;
     };
     /**
@@ -12890,6 +12893,7 @@ var AxisRenderer = /** @class */ (function () {
             tick: axisShow ? params.config["".concat(prefix, "_tick_show")] : false,
             text: axisShow ? params.config["".concat(prefix, "_tick_text_show")] : false
         };
+        var evalTextSize = params.config.axis_evalTextSize;
         var $g;
         g.each(function () {
             var g = select(this);
@@ -12930,9 +12934,12 @@ var AxisRenderer = /** @class */ (function () {
                 tick = tickEnter.merge(tick);
                 tickShow.tick && tickEnter.append("line");
                 tickShow.text && tickEnter.append("text");
-                var sizeFor1Char_1 = AxisRendererHelper.getSizeFor1Char(tick);
+                var tickText = tick.select("text");
+                var sizeFor1Char_1 = isFunction(evalTextSize) ?
+                    evalTextSize.bind(ctx.params.owner.api)(tickText.node()) :
+                    AxisRendererHelper.getSizeFor1Char(tickText, evalTextSize);
                 var counts_1 = [];
-                var tspan = tick.select("text")
+                var tspan = tickText
                     .selectAll("tspan")
                     .data(function (d, index) {
                     var split = params.tickMultiline ?
@@ -17409,6 +17416,35 @@ var y2 = {
  * y Axis  config options
  */
 var optAxis = __assign(__assign(__assign({ 
+    /**
+     * Setup the way to evaluate tick text size.
+     * - **NOTE:**
+     *   - Setting `false` or custom evaluator, highly recommended to memoize evaluated text dimension value to not degrade performance.
+     * @name axis․evalTextSize
+     * @memberof Options
+     * @type {boolean|Function}
+     * @default true
+     * @example
+     * axis: {
+     *   // will evaluate getting text size every time.
+     *   evalTextSize: false.
+     *
+     *   // set a custom evaluator
+     *   evalTextSize: function(textElement) {
+     *     // set some character to be evaluated
+     *     text.textContent = "0";
+     *
+     *     // get the size
+     *      const box = text.getBBox();
+     *
+     *     // clear text
+     *     text.textContent = "";
+     *
+     *     return { w: 7, h: 12};
+     *   }
+     * }
+     */
+    axis_evalTextSize: true, 
     /**
      * Switch x and y axis position.
      * @name axis․rotated
@@ -24512,7 +24548,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.13.0-nightly-20241001004701
+ * @version 3.13.0-nightly-20241008004641
  */
 var bb = {
     /**
@@ -24522,7 +24558,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.13.0-nightly-20241001004701",
+    version: "3.13.0-nightly-20241008004641",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
