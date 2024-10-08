@@ -132,11 +132,16 @@ export default {
 
 	updateSvgSize(): void {
 		const $$ = this;
-		const {state: {clip, current, hasAxis, width, height}, $el: {svg}} = $$;
+		const {config, state: {clip, current, hasAxis, width, height}, $el: {svg}} = $$;
 
-		svg
-			.attr("width", current.width)
-			.attr("height", current.height);
+		if (config.resize_auto === "viewBox") {
+			svg
+				.attr("viewBox", `0 0 ${current.width} ${current.height}`);
+		} else {
+			svg
+				.attr("width", current.width)
+				.attr("height", current.height);
+		}
 
 		if (hasAxis) {
 			const brush = svg.select(`.${$SUBCHART.brush} .overlay`);
