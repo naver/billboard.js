@@ -303,6 +303,24 @@ describe("Interface & initialization", () => {
 
 			expect(chart.$.chart.node().getBoundingClientRect().height).to.be.equal(height);
 		});
+
+		it("check if viewBox attribute set", () => {
+			chart = util.generate({
+				resize: {
+					auto: "viewBox"
+				},
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 120, 100, 200],
+					],
+					type: "bar"
+				}
+			});
+
+			const {svg} = chart.$;
+
+			expect(svg.attr("viewBox")).to.be.equal("0 0 640 480");
+		});
 	});
 
 	describe("set defaults options", () => {

@@ -10,7 +10,7 @@ import {
 	utcFormat as d3UtcFormat,
 	utcParse as d3UtcParse
 } from "d3-time-format";
-import type {d3Selection} from "../../types/types";
+import type {d3Selection, d3Transition} from "../../types/types";
 import {$CIRCLE, $COMMON, $TEXT} from "../config/classes";
 import Options from "../config/Options/Options";
 import Store from "../config/Store/Store";
@@ -139,7 +139,8 @@ export default class ChartInternal {
 	 * @returns {d3Selection}
 	 * @private
 	 */
-	$T(selection: SVGElement | d3Selection, force?: boolean, name?: string): d3Selection {
+	$T(selection: SVGElement | d3Selection | d3Transition, force?: boolean,
+		name?: string): d3Selection {
 		const {config, state} = this;
 		const duration = config.transition_duration;
 		const subchart = config.subchart_show;
@@ -162,6 +163,7 @@ export default class ChartInternal {
 				state.rendered &&
 				!subchart;
 
+			// @ts-ignore
 			t = (transit ? t.transition(name).duration(duration) : t) as d3Selection;
 		}
 
@@ -791,7 +793,7 @@ export default class ChartInternal {
 
 		list.push(() => callFn(config.onresize, $$.api));
 
-		if (config.resize_auto) {
+		if (config.resize_auto === true) {
 			list.push(() => {
 				state.resizing = true;
 

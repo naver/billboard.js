@@ -116,10 +116,12 @@ var billboardDemo = {
 		Object.keys(demos).forEach(function(key) {
 			html.push("<li><h4>" + key + "</h4>");
 
-			Object.keys(demos[key]).sort().forEach(function (v, i) {
-				i === 0 && html.push("<ul>");
-				html.push("<li><a href='#"+ [key, v].join(".") + "'>" + v + "</a></li>");
-			});
+			Object.keys(demos[key])
+				.sort(Intl.Collator().compare)
+				.forEach(function (v, i) {
+					i === 0 && html.push("<ul>");
+					html.push("<li><a href='#"+ [key, v].join(".") + "'>" + v + "</a></li>");
+				});
 
 			html.push("</ul></li>");
 		});
