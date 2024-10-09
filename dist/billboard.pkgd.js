@@ -5,11 +5,11 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20241008004641
+ * @version 3.13.0-nightly-20241009004659
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
- * - @types/d3-selection ^3.0.10
- * - @types/d3-transition ^3.0.8
+ * - @types/d3-selection ^3.0.11
+ * - @types/d3-transition ^3.0.9
  * - d3-axis ^3.0.0
  * - d3-brush ^3.0.0
  * - d3-drag ^3.0.0
@@ -21595,24 +21595,32 @@ const $ZOOM = {
    * @memberof Options
    * @type {object}
    * @property {object} [resize] resize object
-   * @property {boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
+   * @property {boolean|string} [resize.auto=true] Set chart resize automatically on viewport changes.
+   * - **NOTE:** Available options
+   *   - true: Enables automatic resize.
+   *   - false: Disables automatic resize.
+   *   - "viewBox": Enables automatic resize, and size will be fixed based on the viewbox.
    * @property {boolean|number} [resize.timer=true] Set resize timer option.
-   * - **NOTE:**
+   * - **NOTE:** Available options
    *   - The resize function will be called using:
    *     - true: `setTimeout()`
    *     - false: `requestIdleCallback()`
-   *   - Given number(delay in ms) value, resize function will be triggered using `setTimer()` with given delay.
+   *   - Given number(delay in ms) value, resize function will be triggered using `setTimeout()` with given delay.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeViewBox)
    * @example
    *  resize: {
    *      auto: false,
    *
-   *      // set resize function will be triggered using `setTimer()`
+   *      // set resize based on viewBox value
+   *      auto: "viewBox",
+   *
+   *      // set resize function will be triggered using `setTimeout()`
    *      timer: true,
    *
    *      // set resize function will be triggered using `requestIdleCallback()`
    *      timer: false,
    *
-   *      // set resize function will be triggered using `setTimer()` with a delay of `100ms`.
+   *      // set resize function will be triggered using `setTimeout()` with a delay of `100ms`.
    *      timer: 100
    *  }
    */
@@ -30997,8 +31005,12 @@ function getScale(type = "linear", min, max) {
   },
   updateSvgSize() {
     const $$ = this;
-    const { state: { clip, current, hasAxis, width, height }, $el: { svg } } = $$;
-    svg.attr("width", current.width).attr("height", current.height);
+    const { config, state: { clip, current, hasAxis, width, height }, $el: { svg } } = $$;
+    if (config.resize_auto === "viewBox") {
+      svg.attr("viewBox", `0 0 ${current.width} ${current.height}`);
+    } else {
+      svg.attr("width", current.width).attr("height", current.height);
+    }
     if (hasAxis) {
       const brush = svg.select(`.${$SUBCHART.brush} .overlay`);
       const brushSize = { width: 0, height: 0 };
@@ -34406,7 +34418,7 @@ class ChartInternal {
     const resizeFunction = generateResize(config.resize_timer);
     const list = [];
     list.push(() => callFn(config.onresize, $$.api));
-    if (config.resize_auto) {
+    if (config.resize_auto === true) {
       list.push(() => {
         state.resizing = true;
         if (config.legend_show) {
@@ -48494,7 +48506,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.13.0-nightly-20241008004641",
+  version: "3.13.0-nightly-20241009004659",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

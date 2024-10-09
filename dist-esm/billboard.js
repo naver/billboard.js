@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.13.0-nightly-20241008004641
+ * @version 3.13.0-nightly-20241009004659
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -683,24 +683,32 @@ var main = {
      * @memberof Options
      * @type {object}
      * @property {object} [resize] resize object
-     * @property {boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
+     * @property {boolean|string} [resize.auto=true] Set chart resize automatically on viewport changes.
+     * - **NOTE:** Available options
+     *   - true: Enables automatic resize.
+     *   - false: Disables automatic resize.
+     *   - "viewBox": Enables automatic resize, and size will be fixed based on the viewbox.
      * @property {boolean|number} [resize.timer=true] Set resize timer option.
-     * - **NOTE:**
+     * - **NOTE:** Available options
      *   - The resize function will be called using:
      *     - true: `setTimeout()`
      *     - false: `requestIdleCallback()`
-     *   - Given number(delay in ms) value, resize function will be triggered using `setTimer()` with given delay.
+     *   - Given number(delay in ms) value, resize function will be triggered using `setTimeout()` with given delay.
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeViewBox)
      * @example
      *  resize: {
      *      auto: false,
      *
-     *      // set resize function will be triggered using `setTimer()`
+     *      // set resize based on viewBox value
+     *      auto: "viewBox",
+     *
+     *      // set resize function will be triggered using `setTimeout()`
      *      timer: true,
      *
      *      // set resize function will be triggered using `requestIdleCallback()`
      *      timer: false,
      *
-     *      // set resize function will be triggered using `setTimer()` with a delay of `100ms`.
+     *      // set resize function will be triggered using `setTimeout()` with a delay of `100ms`.
      *      timer: 100
      *  }
      */
@@ -7412,10 +7420,16 @@ var size = {
     },
     updateSvgSize: function () {
         var $$ = this;
-        var _a = $$.state, clip = _a.clip, current = _a.current, hasAxis = _a.hasAxis, width = _a.width, height = _a.height, svg = $$.$el.svg;
-        svg
-            .attr("width", current.width)
-            .attr("height", current.height);
+        var config = $$.config, _a = $$.state, clip = _a.clip, current = _a.current, hasAxis = _a.hasAxis, width = _a.width, height = _a.height, svg = $$.$el.svg;
+        if (config.resize_auto === "viewBox") {
+            svg
+                .attr("viewBox", "0 0 ".concat(current.width, " ").concat(current.height));
+        }
+        else {
+            svg
+                .attr("width", current.width)
+                .attr("height", current.height);
+        }
         if (hasAxis) {
             var brush = svg.select(".".concat($SUBCHART.brush, " .overlay"));
             var brushSize = { width: 0, height: 0 };
@@ -9784,6 +9798,7 @@ var ChartInternal = /** @class */ (function () {
                 !state.resizing &&
                 state.rendered &&
                 !subchart;
+            // @ts-ignore
             t = (transit ? t.transition(name).duration(duration) : t);
         }
         return t;
@@ -10271,7 +10286,7 @@ var ChartInternal = /** @class */ (function () {
         var resizeFunction = generateResize(config.resize_timer);
         var list = [];
         list.push(function () { return callFn(config.onresize, $$.api); });
-        if (config.resize_auto) {
+        if (config.resize_auto === true) {
             list.push(function () {
                 state.resizing = true;
                 // https://github.com/naver/billboard.js/issues/2650
@@ -18208,6 +18223,7 @@ var shapeArc = {
             var expandDuration = $$.getExpandConfig(d.data.id, "duration");
             var svgArcExpandedSub = $$.getSvgArcExpanded($$.getExpandConfig(d.data.id, "rate"));
             select(this).selectAll("path")
+                // @ts-ignore
                 .transition()
                 .duration(expandDuration)
                 .attrTween("d", getAttrTweenFn($$.svgArcExpanded.bind($$)))
@@ -24548,7 +24564,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.13.0-nightly-20241008004641
+ * @version 3.13.0-nightly-20241009004659
  */
 var bb = {
     /**
@@ -24558,7 +24574,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.13.0-nightly-20241008004641",
+    version: "3.13.0-nightly-20241009004659",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
