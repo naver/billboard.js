@@ -61,4 +61,4 @@ export interface IDataIndice {
 	__max__: number;
 }
 
-export type TIndices = {} | {[key: string]: IDataIndice};
+export type TIndices = object | {[key: string]: IDataIndice};

@@ -338,7 +338,8 @@ export default {
 		// https://bugs.webkit.org/show_bug.cgi?id=226683#c3
 		// https://stackoverflow.com/questions/67836886/wheel-event-is-not-fired-on-a-svg-group-element-in-safari
 		if (
-			window.GestureEvent && /^((?!chrome|android|mobile).)*safari/i.test(navigator.userAgent)
+			window.GestureEvent &&
+			/^((?!chrome|android|mobile).)*safari/i.test(window.navigator?.userAgent)
 		) {
 			svg.on("wheel", () => {});
 		}
@@ -380,7 +381,7 @@ export default {
 						.attr("height", isRotated ? 0 : state.height);
 				}
 
-				start = getPointer(event, this)[prop.index];
+				start = getPointer(event, <SVGElement>this)[prop.index];
 				end = start;
 
 				zoomRect
@@ -390,7 +391,7 @@ export default {
 				$$.onZoomStart(event);
 			})
 			.on("drag", function(event) {
-				end = getPointer(event, this)[prop.index];
+				end = getPointer(event, <SVGElement>this)[prop.index];
 
 				zoomRect
 					.attr(prop.axis, Math.min(start, end))

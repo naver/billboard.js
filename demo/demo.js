@@ -5691,7 +5691,41 @@ d3.select(".chart_area")
 				},
 				clipPath: false
 			}
-		}
+		},
+		resizeViewBox: [
+			{
+				options: {
+					data: {
+						columns: [
+							["sample", 70, 200, 120, 400, 300, 250]
+						],
+						type: "bar"
+					},
+					resize: {
+						auto: "viewBox"
+					}
+				}
+			},
+			{
+				options: {
+					size: {
+						width: 480,
+						height: 240
+					},
+					data: {
+						columns: [
+							["data1", 70],
+							["data2", 170],
+							["data3", 120]
+						],
+						type: "pie"
+					},
+					resize: {
+						auto: "viewBox"
+					}
+				}
+			}
+		]
 	},
 	DonutChartOptions: {
 		DonutCornerRadius: {

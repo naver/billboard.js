@@ -4,6 +4,7 @@
  */
 import {TYPE, TYPE_BY_CATEGORY} from "../../config/const";
 import {isArray, isNumber, isString} from "../../module/util";
+import type {IData} from "../data/IData";
 
 export default {
 	/**
@@ -137,7 +138,7 @@ export default {
 	 * @returns {boolean}
 	 * @private
 	 */
-	hasArcType(targets, exclude): boolean {
+	hasArcType(targets?: IData, exclude?: string[]): boolean {
 		return this.hasTypeOf("Arc", targets, exclude);
 	},
 

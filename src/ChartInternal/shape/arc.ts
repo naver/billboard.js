@@ -592,6 +592,7 @@ export default {
 				);
 
 				d3Select(this).selectAll("path")
+					// @ts-ignore
 					.transition()
 					.duration(expandDuration)
 					.attrTween("d", getAttrTweenFn($$.svgArcExpanded.bind($$)))
@@ -1124,7 +1125,7 @@ export default {
 					$$.setOverOut(true, arcData);
 				})
 				.on("mouseout", (event, d) => {
-					if (state.transiting) { // skip while transiting
+					if (state.transiting || !config.interaction_onout) { // skip while transiting
 						return;
 					}
 

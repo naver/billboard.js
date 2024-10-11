@@ -5,6 +5,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
+import sinon from "sinon";
 import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
 import {timeMinute as d3TimeMinute} from "d3-time";
@@ -2281,6 +2282,45 @@ describe("AXIS", function() {
 				expect(axis.selectAll(".tick line").size()).to.be.equal(0);
 			});
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+					  ["data1", 90, 100, 140, 200, 100]
+					],
+					type: "bar",
+				},
+				axis: {
+					x: {
+						tick: {
+							show: false,
+							text: {
+								show: false
+							}
+						}
+					},
+					y: {
+						tick: {
+							show: false,
+							text: {
+								show: false
+							}
+						}
+					}
+				}
+			};
+		});
+
+		it("should show tick without error", () => {
+			expect(
+				chart.config("axis.y.tick.show", true, true)
+			).to.not.throw;
+
+			expect(
+				chart.internal.$el.axis.y.selectAll(".tick").size() > 0
+			).to.be.true;
+		});
 	});
 
 	describe("axis text on 'binary floating point'", () => {
@@ -3615,5 +3655,71 @@ describe("AXIS", function() {
 				expect(args.axis.tooltip.backgroundColor[id]).to.be.equal(filter.select("feFlood").attr("flood-color"));
 			});
 		});
+	});
+
+	describe("axis.evalTextSize", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data2", 130, 100, 140, 200, 150]
+					]
+				},
+				axis: {
+					x: {
+						type: "category",
+						categories: [
+							"Some label with a very long text which will definitely be wrapped in an odd way", 
+							"Some label with a very long text which will definitely be wrapped in an odd way", 
+							"Some label with a very long text which will definitely be wrapped in an odd way",
+							"Some label with a very long text which will definitely be wrapped in an odd way",
+							"Some label with a very long text which will definitely be wrapped in an odd way"
+						]
+					},
+					evalTextSize: sinon.spy(function(text) {
+						return {
+							w: 5,
+							h: 5
+						}
+					})
+				}
+			};
+		});
+
+		it("check custom evaluator", () => {
+			const tick = chart.internal.$el.axis.x.select(".tick").node();
+			const {width, height} = tick.getBoundingClientRect();
+
+			expect(width).to.be.closeTo(116, 3);
+			expect(height).to.be.closeTo(35, 3);
+
+			expect(args.axis.evalTextSize.called).to.be.true;
+			expect(args.axis.evalTextSize.args[0][0].tagName === "text").to.be.true;
+		});
+
+		it("set options: axis.evalTextSize=false", () => {
+			args.axis.evalTextSize = false;
+		});
+
+		it("check dimension evaluation not memoized.", () => new Promise(done => {
+			const text = chart.internal.$el.axis.x.select(".tick text");
+
+			// when
+			text.style("font-size", "5px");  // change font size
+			chart.resize({width: 300});
+
+			setTimeout(() => {
+				const tick = chart.internal.$el.axis.x.select(".tick").node();
+				const {width, height} = tick.getBoundingClientRect();
+
+				expect(width < 41).to.be.true;
+				// expect(height < 60).to.be.true;
+
+				// reset font-size
+				text.style("font-size", null);
+
+				done(1);
+			}, 300);
+		}));
 	});
 });

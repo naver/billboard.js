@@ -8,6 +8,8 @@ import {document} from "../../module/browser";
 import {
 	callFn,
 	getPointer,
+	getTransformCTM,
+	hasViewBox,
 	isEmpty,
 	isFunction,
 	isObject,
@@ -294,7 +296,7 @@ export default {
 	 */
 	setTooltipPosition(dataToShow: IDataRow[], eventTarget: SVGElement): void {
 		const $$ = this;
-		const {config, scale, state, $el: {eventRect, tooltip}} = $$;
+		const {config, scale, state, $el: {eventRect, tooltip, svg}} = $$;
 		const {bindto} = config.tooltip_contents;
 		const isRotated = config.axis_rotated;
 		const datum = tooltip?.datum();
@@ -341,7 +343,11 @@ export default {
 				height,
 				eventRect?.node(),
 				currPos
-			) ?? $$.getTooltipPosition.bind($$)(width, height, currPos);
+			) ?? (
+				hasViewBox(svg) ?
+					$$.getTooltipPositionViewBox.bind($$)(width, height, currPos) :
+					$$.getTooltipPosition.bind($$)(width, height, currPos)
+			);
 
 			["top", "left"].forEach(v => {
 				const value = pos[v];
@@ -354,6 +360,51 @@ export default {
 				}
 			});
 		}
+	},
+
+	getTooltipPositionViewBox(tWidth: number, tHeight: number,
+		currPos: {[key: string]: number}): {top: number, left: number} {
+		const $$ = this;
+		const {$el: {eventRect, main}, config, state} = $$;
+
+		const isRotated = config.axis_rotated;
+		const hasArcType = $$.hasArcType(undefined, ["radar"]) || state.hasFunnel ||
+			state.hasTreemap;
+		const target = (state.hasRadar ? main : eventRect)?.node() ?? state.event.target;
+		const size = 38; // getTransformCTM($el.svg.node(), 10, 0, false).x;
+
+		let {x, y} = currPos;
+
+		if (state.hasAxis) {
+			x = isRotated ? x : currPos.xAxis;
+			y = isRotated ? currPos.xAxis : y;
+		}
+
+		// currPos는 SVG 좌표계 기준으로 전달됨
+		const ctm = getTransformCTM(target, x, y, false);
+
+		let top = ctm.y;
+		let left = ctm.x + size;
+
+		if (hasArcType) {
+			top += tHeight;
+			left -= size; // (tWidth / 2);
+		}
+
+		const rect = (hasArcType ? main.node() : target).getBoundingClientRect();
+
+		if (left + tWidth > rect.right) {
+			left = rect.right - tWidth - size;
+		}
+
+		if (top + tHeight > rect.bottom) {
+			top -= tHeight + size;
+		}
+
+		return {
+			top,
+			left
+		};
 	},
 
 	/**
@@ -375,6 +426,7 @@ export default {
 		const hasArcType = $$.hasArcType();
 		const svgLeft = $$.getSvgLeft(true);
 		let chartRight = svgLeft + current.width - $$.getCurrentPaddingByDirection("right");
+
 		const size = 20;
 		let {x, y} = currPos;
 
@@ -566,7 +618,7 @@ export default {
 							c.tooltip[
 								show && isNotSameIndex ? "show" : "hide"
 							]({index});
-						} catch (e) {}
+						} catch {}
 					}
 				});
 		}

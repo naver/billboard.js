@@ -4,7 +4,6 @@
  */
 /* eslint-disable */
 import {beforeEach, beforeAll, describe, expect, it} from "vitest";
-import sinon from "sinon";
 import util from "../assets/util";
 import {$AXIS} from "../../src/config/classes";
 
@@ -437,8 +436,10 @@ describe("PADDING", () => {
 		});
 
 		describe("non-rotated axis", () => {
+			const bottom = 37 - (util.isCI ? 1 : 0);
+
 			it("outer y axis with legend", () => {
-				deepEqual({top: 0, right: 2, bottom: 30, left: 40.59375});
+				deepEqual({top: 0, right: 2, bottom, left: 40.59375});
 			});
 
 			it("set options: y2.show=true", () => {
@@ -446,7 +447,7 @@ describe("PADDING", () => {
 			});
 
 			it("when y/y2 axes are displyed", () => {
-				deepEqual({top: 0, right: 40.59375, bottom: 30, left: 40.59375});
+				deepEqual({top: 0, right: 40.59375, bottom, left: 40.59375});
 			});
 
 			it("set options: axis.y.label", () => {
@@ -457,7 +458,7 @@ describe("PADDING", () => {
 			});
 
 			it("y axis with outer label text", () => {
-				deepEqual({top: 0, right: 40.59375, bottom: 30, left: 60.59375});
+				deepEqual({top: 0, right: 40.59375, bottom, left: 60.59375});
 			});
 
 			it("set options: axis.y2.label", () => {
@@ -468,7 +469,7 @@ describe("PADDING", () => {
 			});
 
 			it("y/y2 axes with outer label text", () => {
-				deepEqual({top: 0, right: 60.59375, bottom: 30, left: 60.59375});
+				deepEqual({top: 0, right: 60.59375, bottom, left: 60.59375});
 			});
 
 			it("set options: axis.y.inner=true", () => {
@@ -476,7 +477,7 @@ describe("PADDING", () => {
 			});
 
 			it("inner y axis with outer label text", () => {
-				deepEqual({top: 0, right: 60.59375, bottom: 30, left: 20});
+				deepEqual({top: 0, right: 60.59375, bottom, left: 20});
 			});
 
 			it("set options: axis.y2.inner=true", () => {
@@ -484,7 +485,7 @@ describe("PADDING", () => {
 			});
 
 			it("inner y2 axis with outer label text", () => {
-				deepEqual({top: 0, right: 22, bottom: 30, left: 20});
+				deepEqual({top: 0, right: 22, bottom, left: 20});
 			});
 
 			it("set options: axis.y.label = {}", () => {
@@ -492,7 +493,7 @@ describe("PADDING", () => {
 			});
 
 			it("inner y axis without outer label text", () => {
-				deepEqual({top: 0, right: 22, bottom: 30, left: 0});
+				deepEqual({top: 0, right: 22, bottom, left: 0});
 			});
 
 			it("set options: axis.y2.label = {}", () => {
@@ -500,7 +501,7 @@ describe("PADDING", () => {
 			});
 
 			it("inner y/y2 axes without outer label text", () => {
-				deepEqual({top: 0, right: 2, bottom: 30, left: 0});
+				deepEqual({top: 0, right: 2, bottom, left: 0});
 			});
 
 			it("set options: legend.show=false", () => {
@@ -547,7 +548,7 @@ describe("PADDING", () => {
 			});
 
 			it("when y is shown, y2 hidden and padding.right=0", () => {
-				deepEqual({top: 0, right: 2, bottom: 30, left: 28.359375});
+				deepEqual({top: 0, right: 2, bottom, left: 28.359375});
 			});
 
 			it("set options", () => {
@@ -663,6 +664,51 @@ describe("PADDING", () => {
 
 			it("y axis show and hidden y2 axis", () => {
 				deepEqual({top: 0, right: 2, bottom: 1, left: 16.125});
+			});
+		});
+
+		describe("pie", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["0:0", 97865], ["0:1", 54254], ["0:2", 331183], ["0:3", 82231], ["0:4", 20017], ["0:5", 56694], ["0:6", 14797], ["0:7", 44214], ["0:8", 54179], ["0:9", 136321], ["0:10", 1270], ["0:11", 707], ["0:12", 274], ["0:13", 5428], ["0:14", 5368], ["0:15", 187099]
+						],
+						names: {
+						  "0:0": "Protected dug well",
+						  "0:1": "Unprotected dug well",
+						  "0:2": "Borehole or tubewell",
+						  "0:3": "Protected spring",
+						  "0:4": "Unprotected spring",
+						  "0:5": "Rainwater",
+						  "0:6": "Surface water",
+						  "0:7": "Piped into dwelling",
+						  "0:8": "Piped into yard/plot",
+						  "0:9": "Piped into public tap / standpipe / basin",
+						  "0:10": "Bottled water",
+						  "0:11": "Tanker truck",
+						  "0:12": "Cart with small tank/drum",
+						  "0:13": "Other",
+						  "0:14": "Water kiosk",
+						  "0:15": "None"
+						},
+						type: "pie"
+					},
+					size: {
+						width: 680,
+						height: 460
+					},
+					padding: {
+						mode: "fit"
+					}
+				}
+			});
+
+			it("should legend stay inside of the container", () => {
+				const {current: {height}} = chart.internal.state;
+				const rect = chart.$.legend.node().getBoundingClientRect();
+
+				expect(rect.y + rect.height <= height);
 			});
 		});
 	});

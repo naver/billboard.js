@@ -160,8 +160,12 @@ export interface ChartOptions {
 	resize?: {
 		/**
 		 * Indicate if the chart should automatically get resized when the window gets resized.
+		 * - **NOTE:** Available options
+		 *   - true: Enables automatic resize.
+		 *   - false: Disables automatic resize.
+		 *   - "viewBox": Enables automatic resize, and size will be fixed based on the viewbox.
 		 */
-		auto?: boolean;
+		auto?: boolean | "viewBox";
 
 		/**
 		 * Set resize timer option.
@@ -245,7 +249,13 @@ export interface ChartOptions {
 				 */
 				preventDefault?: boolean | number;
 			};
-		}
+		},
+
+		/**
+		 * Enable or disable "onout" event.
+	 	 * When is disabled, defocus(hiding tooltip, focused gridline, etc.) event won't work.
+		 */
+		onout?: boolean;
 	};
 
 	transition?: {

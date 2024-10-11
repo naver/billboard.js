@@ -162,28 +162,36 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} [resize] resize object
-	 * @property {boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
+	 * @property {boolean|string} [resize.auto=true] Set chart resize automatically on viewport changes.
+	 * - **NOTE:** Available options
+	 *   - true: Enables automatic resize.
+	 *   - false: Disables automatic resize.
+	 *   - "viewBox": Enables automatic resize, and size will be fixed based on the viewbox.
 	 * @property {boolean|number} [resize.timer=true] Set resize timer option.
-	 * - **NOTE:**
+	 * - **NOTE:** Available options
 	 *   - The resize function will be called using:
 	 *     - true: `setTimeout()`
 	 *     - false: `requestIdleCallback()`
-	 *   - Given number(delay in ms) value, resize function will be triggered using `setTimer()` with given delay.
+	 *   - Given number(delay in ms) value, resize function will be triggered using `setTimeout()` with given delay.
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeViewBox)
 	 * @example
 	 *  resize: {
 	 *      auto: false,
 	 *
-	 *      // set resize function will be triggered using `setTimer()`
+	 *      // set resize based on viewBox value
+	 *      auto: "viewBox",
+	 *
+	 *      // set resize function will be triggered using `setTimeout()`
 	 *      timer: true,
 	 *
 	 *      // set resize function will be triggered using `requestIdleCallback()`
 	 *      timer: false,
 	 *
-	 *      // set resize function will be triggered using `setTimer()` with a delay of `100ms`.
+	 *      // set resize function will be triggered using `setTimeout()` with a delay of `100ms`.
 	 *      timer: 100
 	 *  }
 	 */
-	resize_auto: true,
+	resize_auto: <boolean | "viewBox">true,
 	resize_timer: true,
 
 	/**
@@ -350,7 +358,10 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} [render] render object
-	 * @property {boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
+	 * @property {boolean} [render.lazy=true] Make to not render at initialization.
+	 * - **NOTE**:
+	 *   - Enabled by default when bind element's visibility is hidden.
+	 *   - When set to `false`, will initialize the chart regardless the bind element's visibility state, but in this case chart can't be guaranteed to be rendered properly.
 	 * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
 	 * @example

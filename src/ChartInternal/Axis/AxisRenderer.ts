@@ -81,6 +81,7 @@ export default class AxisRenderer {
 			tick: axisShow ? params.config[`${prefix}_tick_show`] : false,
 			text: axisShow ? params.config[`${prefix}_tick_text_show`] : false
 		};
+		const evalTextSize = params.config.axis_evalTextSize;
 
 		let $g;
 
@@ -136,10 +137,13 @@ export default class AxisRenderer {
 				tickShow.tick && tickEnter.append("line");
 				tickShow.text && tickEnter.append("text");
 
-				const sizeFor1Char = Helper.getSizeFor1Char(tick);
+				const tickText = tick.select("text");
+				const sizeFor1Char = isFunction(evalTextSize) ?
+					evalTextSize.bind(ctx.params.owner.api)(tickText.node()) :
+					Helper.getSizeFor1Char(tickText, evalTextSize);
 				const counts: number[] = [];
 
-				let tspan: d3Selection = tick.select("text")
+				let tspan: d3Selection = tickText
 					.selectAll("tspan")
 					.data((d, index) => {
 						const split = params.tickMultiline ?

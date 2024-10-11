@@ -30,20 +30,21 @@ export default class AxisRendererHelper {
 
 	/**
 	 * Compute a character dimension
-	 * @param {d3.selection} node <g class=tick> node
+	 * @param {d3.selection} text SVG text selection
+	 * @param {boolean} memoize memoize the calculated size
 	 * @returns {{w: number, h: number}}
 	 * @private
 	 */
-	static getSizeFor1Char(node?) {
+	static getSizeFor1Char(text: d3Selection, memoize = true): {w: number, h: number} {
 		// default size for one character
 		const size = {
 			w: 5.5,
 			h: 11.5
 		};
 
-		!node.empty() && node.select("text")
+		!text.empty() && text
 			.text("0")
-			.call(el => {
+			.call((el: d3Selection) => {
 				try {
 					const {width, height} = el.node().getBBox();
 
@@ -51,13 +52,14 @@ export default class AxisRendererHelper {
 						size.w = width;
 						size.h = height;
 					}
-				} catch (e) {
 				} finally {
 					el.text("");
 				}
 			});
 
-		this.getSizeFor1Char = () => size;
+		if (memoize) {
+			this.getSizeFor1Char = () => size;
+		}
 
 		return size;
 	}
@@ -173,7 +175,7 @@ export default class AxisRendererHelper {
 			// https://github.com/naver/billboard.js/issues/2140
 			try {
 				transitionSelection = selection.transition(config.transition);
-			} catch (e) {}
+			} catch {}
 		}
 
 		return transitionSelection;

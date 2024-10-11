@@ -303,6 +303,24 @@ describe("Interface & initialization", () => {
 
 			expect(chart.$.chart.node().getBoundingClientRect().height).to.be.equal(height);
 		});
+
+		it("check if viewBox attribute set", () => {
+			chart = util.generate({
+				resize: {
+					auto: "viewBox"
+				},
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 120, 100, 200],
+					],
+					type: "bar"
+				}
+			});
+
+			const {svg} = chart.$;
+
+			expect(svg.attr("viewBox")).to.be.equal("0 0 640 480");
+		});
 	});
 
 	describe("set defaults options", () => {
@@ -518,7 +536,7 @@ describe("Interface & initialization", () => {
 		}));
 
 		it("check lazy rendering on callbacks", () => new Promise(done => {
-			const el: any = document.body.querySelector("#chart");
+			const el = <HTMLDivElement>document.body.querySelector("#chart");
 
 			// hide to lazy render
 			el.style.display = "none";
@@ -528,7 +546,9 @@ describe("Interface & initialization", () => {
 			expect(el.innerHTML).to.be.empty;
 
 			// onresize, resized shouldn't be called on resize
-			chart.resize({width: 500});
+			expect(
+				chart.resize({width: 500})
+			).to.throw;
 
 			for (let x in spy) {
 				expect(spy[x].called).to.be.false;
@@ -550,7 +570,7 @@ describe("Interface & initialization", () => {
 					expect(spy.resized.called).to.be.true;
 					
 					done(1);
-				}, 300);				
+				}, 300);	
 			}, 300);
 		}), 4000);
 
@@ -582,6 +602,30 @@ describe("Interface & initialization", () => {
 				done(1);
 			}, 300);
 		}));
+
+		it("should forcely linitialize even chart element visibility is hidden.", () =>{
+			const el = <HTMLDivElement>document.body.querySelector("#chart");
+
+			// hide to lazy render
+			el.style.display = "none";
+
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 0, 0, 0],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "line"
+				},
+				render: {
+					lazy: false
+				}
+			});
+
+			expect(chart.$.svg.node().innerHTML).to.be.not.empty;
+
+			el.style.display = "";
+		});
 	});
 
 	describe("check for background", () => {

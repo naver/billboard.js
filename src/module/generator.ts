@@ -80,7 +80,7 @@ export function generateWait() {
 
 				try {
 					t.transition();
-				} catch (e) {
+				} catch {
 					done++;
 				}
 			}
