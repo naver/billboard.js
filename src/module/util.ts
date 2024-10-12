@@ -858,6 +858,9 @@ function isTabVisible(): boolean {
  */
 function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | null {
 	const {DocumentTouch, matchMedia, navigator} = window;
+
+	// https://developer.mozilla.org/en-US/docs/Web/CSS/@media/pointer#coarse
+	const hasPointerCoarse = matchMedia?.("(pointer:coarse)").matches;
 	let hasTouch = false;
 
 	if (touch) {
@@ -873,7 +876,7 @@ function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | n
 			hasTouch = true;
 		} else {
 			// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
-			if (matchMedia?.("(pointer:coarse)").matches) {
+			if (hasPointerCoarse) {
 				hasTouch = true;
 			} else {
 				// Only as a last resort, fall back to user agent sniffing
@@ -885,11 +888,9 @@ function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | n
 		}
 	}
 
-	// Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
-	// https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
-	// Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
-	const hasMouse = mouse &&
-		(matchMedia?.("any-hover:hover").matches || matchMedia?.("any-pointer:fine").matches);
+	// For non-touch device, media feature condition is: '(pointer:coarse) = false' and '(pointer:fine) = true'
+	// https://github.com/naver/billboard.js/issues/3854#issuecomment-2404183158
+	const hasMouse = mouse && !hasPointerCoarse && matchMedia?.("(pointer:fine)").matches;
 
 	// fallback to 'mouse' if no input type is detected.
 	return (hasMouse && "mouse") || (hasTouch && "touch") || "mouse";
