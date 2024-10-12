@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.13.0-nightly-20241009004659
+ * @version 3.13.0-nightly-20241012004650
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -2884,6 +2884,8 @@ function isTabVisible() {
  */
 function convertInputType(mouse, touch) {
     var DocumentTouch = win.DocumentTouch, matchMedia = win.matchMedia, navigator = win.navigator;
+    // https://developer.mozilla.org/en-US/docs/Web/CSS/@media/pointer#coarse
+    var hasPointerCoarse = matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("(pointer:coarse)").matches;
     var hasTouch = false;
     if (touch) {
         // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
@@ -2897,7 +2899,7 @@ function convertInputType(mouse, touch) {
         }
         else {
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
-            if (matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("(pointer:coarse)").matches) {
+            if (hasPointerCoarse) {
                 hasTouch = true;
             }
             else {
@@ -2908,11 +2910,9 @@ function convertInputType(mouse, touch) {
             }
         }
     }
-    // Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
-    // https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
-    // Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
-    var hasMouse = mouse &&
-        ((matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("any-hover:hover").matches) || (matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("any-pointer:fine").matches));
+    // For non-touch device, media feature condition is: '(pointer:coarse) = false' and '(pointer:fine) = true'
+    // https://github.com/naver/billboard.js/issues/3854#issuecomment-2404183158
+    var hasMouse = mouse && !hasPointerCoarse && (matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("(pointer:fine)").matches);
     // fallback to 'mouse' if no input type is detected.
     return (hasMouse && "mouse") || (hasTouch && "touch") || "mouse";
 }
@@ -24564,7 +24564,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.13.0-nightly-20241009004659
+ * @version 3.13.0-nightly-20241012004650
  */
 var bb = {
     /**
@@ -24574,7 +24574,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.13.0-nightly-20241009004659",
+    version: "3.13.0-nightly-20241012004650",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

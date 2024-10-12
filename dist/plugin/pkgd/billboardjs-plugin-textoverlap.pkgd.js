@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20241009004659
+ * @version 3.13.0-nightly-20241012004650
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -26221,6 +26221,7 @@ function isTabVisible() {
 }
 function convertInputType(mouse, touch) {
   const { DocumentTouch, matchMedia, navigator } = win;
+  const hasPointerCoarse = matchMedia == null ? void 0 : matchMedia("(pointer:coarse)").matches;
   let hasTouch = false;
   if (touch) {
     if (navigator && "maxTouchPoints" in navigator) {
@@ -26228,7 +26229,7 @@ function convertInputType(mouse, touch) {
     } else if ("ontouchmove" in win || DocumentTouch && doc instanceof DocumentTouch) {
       hasTouch = true;
     } else {
-      if (matchMedia == null ? void 0 : matchMedia("(pointer:coarse)").matches) {
+      if (hasPointerCoarse) {
         hasTouch = true;
       } else {
         const UA = navigator.userAgent;
@@ -26236,7 +26237,7 @@ function convertInputType(mouse, touch) {
       }
     }
   }
-  const hasMouse = mouse && ((matchMedia == null ? void 0 : matchMedia("any-hover:hover").matches) || (matchMedia == null ? void 0 : matchMedia("any-pointer:fine").matches));
+  const hasMouse = mouse && !hasPointerCoarse && (matchMedia == null ? void 0 : matchMedia("(pointer:fine)").matches);
   return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
 }
 function runUntil(fn, conditionFn) {
@@ -26327,7 +26328,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.13.0-nightly-20241009004659");
+__publicField(Plugin, "version", "3.13.0-nightly-20241012004650");
 
 ;// ./src/Plugin/textoverlap/Options.ts
 class Options {
