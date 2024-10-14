@@ -632,4 +632,81 @@ describe("API zoom", function() {
 			expect($$.scale.zoom).to.be.null;		  	
 		});
 	});
+
+	describe("zoom extent", () => {
+		beforeAll(() => {
+			chart = util.generate({
+				data: {
+					json: [
+						{"date":"2023-09-30 00:00:00","ek_house":0},
+						{"date":"2023-10-14 00:00:00","ek_house":0},
+						{"date":"2023-10-21 00:00:00","ek_house":0},
+						{"date":"2023-10-28 00:00:00","ek_house":0},
+						{"date":"2023-11-04 00:00:00","ek_house":0},
+					],
+					keys: {
+						x: "date",
+						value: ["ek_house"],
+					},
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d"
+						},
+					},
+					y: {
+						show: false
+					}
+				},
+				zoom: {
+					enabled: true
+				}
+			});
+		});
+
+		it("shouldn't throw error for timeseries x axis, when is given out of range.", () => new Promise(done => {
+			chart.zoom([1697701666380, 1697702008724]);
+			
+			setTimeout(() => {
+				chart.$.circles.each(function() {
+					expect(this.getAttribute("cx") !== "NaN").to.be.true;
+				});
+
+				done(1);
+			}, 300);
+		}));
+
+		it("shouldn't throw error for indexed x axis, when is given out of range.", () => new Promise(done => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data2", 130, 100, 140, 200, 150, 50, 120, 100, 80, 90]
+					],
+				},
+				zoom: {
+					enabled: true
+				},
+				axis: {
+					y: {
+						show: false
+					}
+				}
+			});
+
+			chart.zoom([
+				4.908784864317814,
+				4.908812566017803
+			]);
+
+			setTimeout(() => {
+				chart.$.circles.each(function() {
+					expect(this.getAttribute("cx") !== "NaN").to.be.true;
+				});
+
+				done(1);
+			}, 300);
+		}));
+	});
 });

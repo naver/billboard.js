@@ -23,7 +23,9 @@ export default {
 		$$.scale.zoom = null;
 
 		$$.generateZoom();
-		$$.initZoomBehaviour();
+
+		$$.config.zoom_type === "drag" &&
+			$$.initZoomBehaviour();
 	},
 
 	/**
@@ -72,6 +74,7 @@ export default {
 			const ratio = diffDomain($$.scale.x.orgDomain()) / diffDomain($$.getZoomDomain());
 			const extent = this.orgScaleExtent();
 
+			// https://d3js.org/d3-zoom#zoom_scaleExtent
 			this.scaleExtent([extent[0] * ratio, extent[1] * ratio]);
 
 			return this;
@@ -95,6 +98,11 @@ export default {
 			const newScale = transform[
 				isRotated ? "rescaleY" : "rescaleX"
 			](org.xScale || scale.x);
+
+			// prevent drag zoom to be out of range
+			if (newScale.domain().some(v => /(Invalid Date|NaN)/.test(v.toString()))) {
+				return;
+			}
 
 			const domain = $$.trimXDomain(newScale.domain());
 			const rescale = config.zoom_rescale;
@@ -381,7 +389,7 @@ export default {
 						.attr("height", isRotated ? 0 : state.height);
 				}
 
-				start = getPointer(event, <SVGElement>this)[prop.index];
+				start = getPointer(event, this as SVGAElement)[prop.index];
 				end = start;
 
 				zoomRect
@@ -391,7 +399,7 @@ export default {
 				$$.onZoomStart(event);
 			})
 			.on("drag", function(event) {
-				end = getPointer(event, <SVGElement>this)[prop.index];
+				end = getPointer(event, this as SVGAElement)[prop.index];
 
 				zoomRect
 					.attr(prop.axis, Math.min(start, end))

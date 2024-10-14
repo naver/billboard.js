@@ -77,9 +77,11 @@ export default class AxisRendererHelper {
 			value => `translate(0,${value})`;
 
 		return (selection, scale) => {
-			selection.attr("transform", d => (
-				isValue(d) ? fn(Math.ceil(scale(d))) : null
-			));
+			selection.attr("transform", d => {
+				const x = scale(d);
+
+				return isValue(d) ? fn(Math.ceil(x)) : null;
+			});
 		};
 	}
 
