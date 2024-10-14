@@ -462,7 +462,10 @@ export default {
 				.on(interaction.dblclick ? "dblclick" : "click",
 					interaction || isFunction(config.legend_item_onclick) ?
 						function(event, id) {
-							if (!callFn(config.legend_item_onclick, api, id)) {
+							if (
+								!callFn(config.legend_item_onclick, api, id,
+									!state.hiddenTargetIds.includes(id))
+							) {
 								const {altKey, target, type} = event;
 
 								if (type === "dblclick" || altKey) {
@@ -493,7 +496,10 @@ export default {
 			!isTouch && item
 				.on("mouseout", interaction || isFunction(config.legend_item_onout) ?
 					function(event, id) {
-						if (!callFn(config.legend_item_onout, api, id)) {
+						if (
+							!callFn(config.legend_item_onout, api, id,
+								!state.hiddenTargetIds.includes(id))
+						) {
 							d3Select(this).classed($FOCUS.legendItemFocused, false);
 
 							if (hasGauge) {
@@ -506,7 +512,10 @@ export default {
 					null)
 				.on("mouseover", interaction || isFunction(config.legend_item_onover) ?
 					function(event, id) {
-						if (!callFn(config.legend_item_onover, api, id)) {
+						if (
+							!callFn(config.legend_item_onover, api, id,
+								!state.hiddenTargetIds.includes(id))
+						) {
 							d3Select(this).classed($FOCUS.legendItemFocused, true);
 
 							if (hasGauge) {
