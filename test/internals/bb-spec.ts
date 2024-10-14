@@ -536,7 +536,7 @@ describe("Interface & initialization", () => {
 		}));
 
 		it("check lazy rendering on callbacks", () => new Promise(done => {
-			const el = <HTMLDivElement>document.body.querySelector("#chart");
+			const el = document.body.querySelector("#chart") as HTMLDivElement;
 
 			// hide to lazy render
 			el.style.display = "none";
