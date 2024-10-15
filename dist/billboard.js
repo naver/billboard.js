@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20241012004650
+ * @version 3.13.0-nightly-20241015004702
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -615,9 +615,12 @@ const $ZOOM = {
    *          }
    *
    *          // when set below callback, will disable corresponding default interactions
-   *          onclick: function(id) { ... },
-   *          onover: function(id) { ... },
-   *          onout: function(id) { ... },
+   *          onclick: function(id, visible) {
+   *           	// toggle based on the data visibility
+   *           	this[visible ? "hide" : "show"](id);
+   *          },
+   *          onover: function(id, visible) { ... },
+   *          onout: function(id, visible) { ... },
    *
    *          // set tile's size
    *          tile: {
@@ -5855,7 +5858,12 @@ function getFormattedText(id, formatted = true) {
       item.on(
         interaction.dblclick ? "dblclick" : "click",
         interaction || isFunction(config.legend_item_onclick) ? function(event, id) {
-          if (!callFn(config.legend_item_onclick, api, id)) {
+          if (!callFn(
+            config.legend_item_onclick,
+            api,
+            id,
+            !state.hiddenTargetIds.includes(id)
+          )) {
             const { altKey, target, type } = event;
             if (type === "dblclick" || altKey) {
               if (state.hiddenTargetIds.length && target.parentNode.getAttribute("class").indexOf(
@@ -5875,7 +5883,12 @@ function getFormattedText(id, formatted = true) {
         } : null
       );
       !isTouch && item.on("mouseout", interaction || isFunction(config.legend_item_onout) ? function(event, id) {
-        if (!callFn(config.legend_item_onout, api, id)) {
+        if (!callFn(
+          config.legend_item_onout,
+          api,
+          id,
+          !state.hiddenTargetIds.includes(id)
+        )) {
           (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed($FOCUS.legendItemFocused, false);
           if (hasGauge) {
             $$.undoMarkOverlapped($$, `.${$GAUGE.gaugeValue}`);
@@ -5883,7 +5896,12 @@ function getFormattedText(id, formatted = true) {
           $$.api.revert();
         }
       } : null).on("mouseover", interaction || isFunction(config.legend_item_onover) ? function(event, id) {
-        if (!callFn(config.legend_item_onover, api, id)) {
+        if (!callFn(
+          config.legend_item_onover,
+          api,
+          id,
+          !state.hiddenTargetIds.includes(id)
+        )) {
           (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed($FOCUS.legendItemFocused, true);
           if (hasGauge) {
             $$.markOverlapped(id, $$, `.${$GAUGE.gaugeValue}`);
@@ -11108,7 +11126,7 @@ extend(zoom, {
     const $$ = this;
     $$.scale.zoom = null;
     $$.generateZoom();
-    $$.initZoomBehaviour();
+    $$.config.zoom_type === "drag" && $$.initZoomBehaviour();
   },
   /**
    * Bind zoom event
@@ -11149,6 +11167,9 @@ extend(zoom, {
       const isRotated = config.axis_rotated;
       (_a = org.xScale) == null ? void 0 : _a.range(scale.x.range());
       const newScale = transform[isRotated ? "rescaleY" : "rescaleX"](org.xScale || scale.x);
+      if (newScale.domain().some((v) => /(Invalid Date|NaN)/.test(v.toString()))) {
+        return;
+      }
       const domain = $$.trimXDomain(newScale.domain());
       const rescale = config.zoom_rescale;
       newScale.domain(domain, org.xDomain);
@@ -12761,7 +12782,10 @@ class AxisRendererHelper {
     const { config } = this;
     const fn = id === "x" ? (value) => `translate(${value + config.tickOffset},0)` : (value) => `translate(0,${value})`;
     return (selection, scale) => {
-      selection.attr("transform", (d) => isValue(d) ? fn(Math.ceil(scale(d))) : null);
+      selection.attr("transform", (d) => {
+        const x = scale(d);
+        return isValue(d) ? fn(Math.ceil(x)) : null;
+      });
     };
   }
   scaleExtent(domain) {
@@ -21777,7 +21801,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.13.0-nightly-20241012004650",
+  version: "3.13.0-nightly-20241015004702",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

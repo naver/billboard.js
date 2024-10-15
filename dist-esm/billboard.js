@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.13.0-nightly-20241012004650
+ * @version 3.13.0-nightly-20241015004702
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -476,9 +476,12 @@ var legend$2 = {
      *          }
      *
      *          // when set below callback, will disable corresponding default interactions
-     *          onclick: function(id) { ... },
-     *          onover: function(id) { ... },
-     *          onout: function(id) { ... },
+     *          onclick: function(id, visible) {
+     *           	// toggle based on the data visibility
+     *           	this[visible ? "hide" : "show"](id);
+     *          },
+     *          onover: function(id, visible) { ... },
+     *          onout: function(id, visible) { ... },
      *
      *          // set tile's size
      *          tile: {
@@ -6497,7 +6500,7 @@ var legend$1 = {
             item
                 .on(interaction.dblclick ? "dblclick" : "click", interaction || isFunction(config.legend_item_onclick) ?
                 function (event, id) {
-                    if (!callFn(config.legend_item_onclick, api, id)) {
+                    if (!callFn(config.legend_item_onclick, api, id, !state.hiddenTargetIds.includes(id))) {
                         var altKey = event.altKey, target = event.target, type = event.type;
                         if (type === "dblclick" || altKey) {
                             // when focused legend is clicked(with altKey or double clicked), reset all hiding.
@@ -6522,7 +6525,7 @@ var legend$1 = {
             !isTouch && item
                 .on("mouseout", interaction || isFunction(config.legend_item_onout) ?
                 function (event, id) {
-                    if (!callFn(config.legend_item_onout, api, id)) {
+                    if (!callFn(config.legend_item_onout, api, id, !state.hiddenTargetIds.includes(id))) {
                         select(this).classed($FOCUS.legendItemFocused, false);
                         if (hasGauge) {
                             $$.undoMarkOverlapped($$, ".".concat($GAUGE.gaugeValue));
@@ -6533,7 +6536,7 @@ var legend$1 = {
                 null)
                 .on("mouseover", interaction || isFunction(config.legend_item_onover) ?
                 function (event, id) {
-                    if (!callFn(config.legend_item_onover, api, id)) {
+                    if (!callFn(config.legend_item_onover, api, id, !state.hiddenTargetIds.includes(id))) {
                         select(this).classed($FOCUS.legendItemFocused, true);
                         if (hasGauge) {
                             $$.markOverlapped(id, $$, ".".concat($GAUGE.gaugeValue));
@@ -12763,7 +12766,10 @@ var AxisRendererHelper = /** @class */ (function () {
             function (value) { return "translate(".concat(value + config.tickOffset, ",0)"); } :
             function (value) { return "translate(0,".concat(value, ")"); };
         return function (selection, scale) {
-            selection.attr("transform", function (d) { return (isValue(d) ? fn(Math.ceil(scale(d))) : null); });
+            selection.attr("transform", function (d) {
+                var x = scale(d);
+                return isValue(d) ? fn(Math.ceil(x)) : null;
+            });
         };
     };
     AxisRendererHelper.prototype.scaleExtent = function (domain) {
@@ -23647,7 +23653,8 @@ var zoom = {
         var $$ = this;
         $$.scale.zoom = null;
         $$.generateZoom();
-        $$.initZoomBehaviour();
+        $$.config.zoom_type === "drag" &&
+            $$.initZoomBehaviour();
     },
     /**
      * Bind zoom event
@@ -23690,6 +23697,7 @@ var zoom = {
         zoom.updateScaleExtent = function () {
             var ratio = diffDomain($$.scale.x.orgDomain()) / diffDomain($$.getZoomDomain());
             var extent = this.orgScaleExtent();
+            // https://d3js.org/d3-zoom#zoom_scaleExtent
             this.scaleExtent([extent[0] * ratio, extent[1] * ratio]);
             return this;
         };
@@ -23707,6 +23715,10 @@ var zoom = {
             (_a = org.xScale) === null || _a === void 0 ? void 0 : _a.range(scale.x.range());
             // rescale from the original scale
             var newScale = transform[isRotated ? "rescaleY" : "rescaleX"](org.xScale || scale.x);
+            // prevent drag zoom to be out of range
+            if (newScale.domain().some(function (v) { return /(Invalid Date|NaN)/.test(v.toString()); })) {
+                return;
+            }
             var domain = $$.trimXDomain(newScale.domain());
             var rescale = config.zoom_rescale;
             newScale.domain(domain, org.xDomain);
@@ -24564,7 +24576,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.13.0-nightly-20241012004650
+ * @version 3.13.0-nightly-20241015004702
  */
 var bb = {
     /**
@@ -24574,7 +24586,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.13.0-nightly-20241012004650",
+    version: "3.13.0-nightly-20241015004702",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
