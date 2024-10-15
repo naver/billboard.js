@@ -118,9 +118,12 @@ export default {
 	 *          }
 	 *
 	 *          // when set below callback, will disable corresponding default interactions
-	 *          onclick: function(id) { ... },
-	 *          onover: function(id) { ... },
-	 *          onout: function(id) { ... },
+	 *          onclick: function(id, visible) {
+	 *           	// toggle based on the data visibility
+	 *           	this[visible ? "hide" : "show"](id);
+	 *          },
+	 *          onover: function(id, visible) { ... },
+	 *          onout: function(id, visible) { ... },
 	 *
 	 *          // set tile's size
 	 *          tile: {

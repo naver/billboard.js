@@ -815,7 +815,7 @@ describe("LEGEND", () => {
 		});
 
 		it("set options: legend.item.onclick", () => {
-			args.legend.item.onclick = () => {};
+			args.legend.item.onclick = sinon.spy(() => {});
 		});
 
 		it("should only 'click' event lister bound", () => {
@@ -826,14 +826,24 @@ describe("LEGEND", () => {
 
 				expect(item.on("mouseover mouseout")).to.be.undefined;
 				expect(item.on("click")).to.not.be.undefined;
-
 				expect(item.style("cursor")).to.be.equal("pointer");
+
+				id === "data1" && chart.hide(id);
+
+				fireEvent(item.node(), "click", {
+					clientX: 2,
+					clientY: 2
+				}, chart);
 			});
+
+			// given visible state argguments?
+			expect(args.legend.item.onclick.args)
+				.to.be.deep.equal(chart.data().map(({id}) => [id, id === "data1" ? false : true]));
 		});
 
 		it("set options: legend.item.onover", () => {
 			delete args.legend.item.onclick;
-			args.legend.item.onover = () => {};
+			args.legend.item.onover = sinon.spy(() => {});
 		});
 
 		it("should only 'mouseover' event lister bound", () => {
@@ -844,14 +854,24 @@ describe("LEGEND", () => {
 
 				expect(item.on("click mouseout")).to.be.undefined;
 				expect(item.on("mouseover")).to.not.be.undefined;
-
 				expect(item.style("cursor")).to.be.equal("pointer");
+
+				id === "data2" && chart.hide(id);
+
+				fireEvent(item.node(), "mouseover", {
+					clientX: 2,
+					clientY: 2
+				}, chart);
 			});
+
+			// given visible state argguments?
+			expect(args.legend.item.onover.args)
+				.to.be.deep.equal(chart.data().map(({id}) => [id, id === "data2" ? false : true]));
 		});
 
 		it("set options: legend.item.onout", () => {
 			delete args.legend.item.onover;
-			args.legend.item.onout = () => {};
+			args.legend.item.onout = sinon.spy(() => {});
 		});
 
 		it("should only 'mouseout' event lister bound", () => {
@@ -862,9 +882,19 @@ describe("LEGEND", () => {
 
 				expect(item.on("click mouseover")).to.be.undefined;
 				expect(item.on("mouseout")).to.not.be.undefined;
-
 				expect(item.style("cursor")).to.be.equal("pointer");
+
+				id === "data1" && chart.hide(id);
+
+				fireEvent(item.node(), "mouseout", {
+					clientX: 2,
+					clientY: 2
+				}, chart);
 			});
+
+			// given visible state argguments?
+			expect(args.legend.item.onout.args)
+				.to.be.deep.equal(chart.data().map(({id}) => [id, id === "data1" ? false : true]));
 		});
 
 		it("set options: legend.item.interaction.dblclik=true", () => {
