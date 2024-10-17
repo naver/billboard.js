@@ -1,3 +1,16 @@
+# [3.14.0-next.2](https://github.com/naver/billboard.js/compare/3.14.0-next.1...3.14.0-next.2) (2024-10-17)
+
+
+### Bug Fixes
+
+* **point:** fix sensitivity error when blank area is clicked ([0060786](https://github.com/naver/billboard.js/commit/00607861a96826b2e1c9fec37159065680ff278e)), closes [#3900](https://github.com/naver/billboard.js/issues/3900)
+* **zoom:** Prevent error for out of range ([6f69e97](https://github.com/naver/billboard.js/commit/6f69e970bd31fdd9d353854c54437c2a9c95e269)), closes [#3895](https://github.com/naver/billboard.js/issues/3895)
+
+
+### Features
+
+* **legend:** Pass visibility state to legend item's event callback ([ba71911](https://github.com/naver/billboard.js/commit/ba71911b7c4b47b95f0b1e2bf8f12138d5b31cb1)), closes [#3897](https://github.com/naver/billboard.js/issues/3897)
+
 # [3.14.0-next.1](https://github.com/naver/billboard.js/compare/3.13.0...3.14.0-next.1) (2024-10-11)
 
 
