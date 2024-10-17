@@ -517,19 +517,19 @@ export interface LegendOptions {
 		 *    - When set, default `click` interaction will be disabled.
 		 *    - When `interaction.dblclick=true` is set, will be called on double click.
 		 */
-		onclick?(this: Chart, id: string): void;
+		onclick?(this: Chart, id: string, visible: boolean): void;
 
 		/**
 		 * Set mouseover event handler to the legend item.
 		 *  - **NOTE:** When set, default `mouseover` interaction will be disabled.
 		 */
-		onover?(this: Chart, id: string): void;
+		onover?(this: Chart, id: string, visible: boolean): void;
 
 		/**
 		 * Set mouseout event handler to the legend item.
 		 *  - **NOTE:** When set, default `mouseout` interaction will be disabled.
 		 */
-		onout?(this: Chart, id: string): void;
+		onout?(this: Chart, id: string, visible: boolean): void;
 	};
 
 	/**
