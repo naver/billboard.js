@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.13.0-nightly-20241017004646
+ * @version 3.13.0-nightly-20241018004645
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -14693,15 +14693,14 @@ var eventrect = {
     clickHandlerForMultipleXS: function (ctx) {
         var $$ = ctx;
         var config = $$.config, state = $$.state;
+        var pointSensitivity = config.point_sensitivity;
         var targetsToShow = $$.filterTargetsToShow($$.data.targets);
         if ($$.hasArcType(targetsToShow)) {
             return;
         }
         var mouse = getPointer(state.event, this);
         var closest = $$.findClosestFromTargets(targetsToShow, mouse);
-        var sensitivity = config.point_sensitivity === "radius" ?
-            closest.r :
-            config.point_sensitivity;
+        var sensitivity = pointSensitivity === "radius" ? closest === null || closest === void 0 ? void 0 : closest.r : (isFunction(pointSensitivity) ? closest && pointSensitivity(closest) : pointSensitivity);
         if (!closest) {
             return;
         }
@@ -24576,7 +24575,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.13.0-nightly-20241017004646
+ * @version 3.13.0-nightly-20241018004645
  */
 var bb = {
     /**
@@ -24586,7 +24585,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.13.0-nightly-20241017004646",
+    version: "3.13.0-nightly-20241018004645",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

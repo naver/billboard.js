@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20241017004646
+ * @version 3.13.0-nightly-20241018004645
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -14461,13 +14461,14 @@ class Axis_Axis {
   clickHandlerForMultipleXS(ctx) {
     const $$ = ctx;
     const { config, state } = $$;
+    const pointSensitivity = config.point_sensitivity;
     const targetsToShow = $$.filterTargetsToShow($$.data.targets);
     if ($$.hasArcType(targetsToShow)) {
       return;
     }
     const mouse = getPointer(state.event, this);
     const closest = $$.findClosestFromTargets(targetsToShow, mouse);
-    const sensitivity = config.point_sensitivity === "radius" ? closest.r : config.point_sensitivity;
+    const sensitivity = pointSensitivity === "radius" ? closest == null ? void 0 : closest.r : isFunction(pointSensitivity) ? closest && pointSensitivity(closest) : pointSensitivity;
     if (!closest) {
       return;
     }
@@ -21801,7 +21802,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.13.0-nightly-20241017004646",
+  version: "3.13.0-nightly-20241018004645",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
