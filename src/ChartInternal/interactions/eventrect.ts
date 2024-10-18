@@ -671,6 +671,7 @@ export default {
 	clickHandlerForMultipleXS(ctx): void {
 		const $$ = ctx;
 		const {config, state} = $$;
+		const pointSensitivity = config.point_sensitivity;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
 		if ($$.hasArcType(targetsToShow)) {
@@ -679,9 +680,9 @@ export default {
 
 		const mouse = getPointer(state.event, this);
 		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
-		const sensitivity = config.point_sensitivity === "radius" ?
-			closest.r :
-			config.point_sensitivity;
+		const sensitivity = pointSensitivity === "radius" ? closest?.r : (
+			isFunction(pointSensitivity) ? closest && pointSensitivity(closest) : pointSensitivity
+		);
 
 		if (!closest) {
 			return;

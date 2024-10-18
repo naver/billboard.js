@@ -388,6 +388,49 @@ describe("SHAPE POINT", () => {
 				done(1);
 			});
 		}));
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 450],
+					],
+					type: "bubble",
+					onclick: sinon.spy()
+				},
+				point: {
+					sensitivity: "radius"
+				}
+			}
+		});
+
+		it("shouldn't throw error when blank(non shape) area is clicked.", () => {
+            const {eventRect} = chart.internal.$el;
+
+			expect(
+				fireEvent(eventRect.node(), "click", {
+					clientX: 100,
+					clientY: 100
+				}, chart)
+			).to.not.throw;
+		});
+
+		it("set options: poinst.sensitivity=function(){}", () => {
+			args.point.sensitivity = ({r}) => r
+		});
+		
+		it("should data.onclick callback called.", () => {
+			const {circles} = chart.$;
+			const {$el: {eventRect}} = chart.internal;
+			const rect = circles.node().getBoundingClientRect();
+
+			fireEvent(eventRect.node(), "click", {
+				clientX: rect.left + 3,
+				clientY: rect.top + 3
+			}, chart);
+
+			expect(args.data.onclick.called).to.be.true;
+		});
 	});
 
 	describe("point.focus.only", () => {
