@@ -50,6 +50,10 @@ export interface IArcData {
 	value: number | null;
 }
 
+export interface IBarData extends IDataRow {
+	clipPath?: string | null;
+}
+
 export interface IGridData {
 	axis?: string;
 	text: string;

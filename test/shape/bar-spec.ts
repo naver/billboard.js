@@ -667,8 +667,8 @@ describe("SHAPE BAR", () => {
 
 		it("check the bar radius", () => {
 			const path = [
-				"M228.91666666666669,331.55555555555554V380.5833333333333 a10,10 1 0 0 10,10H233.91666666666669 a10,10 1 0 0 10,-10V331.55555555555554z",
-				"M246.91666666666669,331.55555555555554V223.5 a10,10 0 0 1 10,-10H251.91666666666669 a10,10 0 0 1 10,10V331.55555555555554z"
+				"M228.91666666666669,331.55555555555554V380.5833333333333 a10 10 1 0 0 10,10H233.91666666666669 a10 10 1 0 0 10,-10V331.55555555555554z",
+				"M246.91666666666669,331.55555555555554V223.5 a10 10 0 0 1 10,-10H251.91666666666669 a10 10 0 0 1 10,10V331.55555555555554z"
 			];
 
 			checkRadius(path);
@@ -680,8 +680,8 @@ describe("SHAPE BAR", () => {
 
 		it("check the rotated axis bar radius", () => {
 			checkRadius([
-				"M131.11111111111111,161.16666666666669H59.166666666666664 a10,10 1 0 0 -10,10V166.16666666666669 a10,10 1 0 0 10,10H131.11111111111111z",
-				"M131.11111111111111,179.16666666666669H285 a10,10 0 0 1 10,10V184.16666666666669 a10,10 0 0 1 -10,10H131.11111111111111z"
+				"M131.11111111111111,161.16666666666669H59.166666666666664 a10 10 1 0 0 -10,10V166.16666666666669 a10 10 1 0 0 10,10H131.11111111111111z",
+				"M131.11111111111111,179.16666666666669H285 a10 10 0 0 1 10,10V184.16666666666669 a10 10 0 0 1 -10,10H131.11111111111111z"
 			]);
 		});
 
@@ -692,8 +692,8 @@ describe("SHAPE BAR", () => {
 
 		it("check the axis bar radius in ratio", () => {
 			const path = [
-				"M228.91666666666669,331.55555555555554V383.0833333333333 a7.5,7.5 1 0 0 7.5,7.5H236.41666666666669 a7.5,7.5 1 0 0 7.5,-7.5V331.55555555555554z",
-				"M246.91666666666669,331.55555555555554V221 a7.5,7.5 0 0 1 7.5,-7.5H254.41666666666669 a7.5,7.5 0 0 1 7.5,7.5V331.55555555555554z"
+				"M228.91666666666669,331.55555555555554V383.0833333333333 a7.5 7.5 1 0 0 7.5,7.5H236.41666666666669 a7.5 7.5 1 0 0 7.5,-7.5V331.55555555555554z",
+				"M246.91666666666669,331.55555555555554V221 a7.5 7.5 0 0 1 7.5,-7.5H254.41666666666669 a7.5 7.5 0 0 1 7.5,7.5V331.55555555555554z"
 			];
 
 			checkRadius(path);
@@ -959,7 +959,7 @@ describe("SHAPE BAR", () => {
 			];
 
 			chart.$.bar.bars.each(function(d) {
-				const hasRadius = !/a0,0/.test(this.getAttribute("d"));
+				const hasRadius = !/a0 0/.test(this.getAttribute("d"));
 
 				if (hasRadius) {
 					const found = expected[d.index].some(v => v.id === d.id && v.value === d.value);
@@ -1028,8 +1028,8 @@ describe("SHAPE BAR", () => {
 
 		it("radius should be rendered correclty on rotated axis", () => {
 			const expected = [
-				'M295,85.80000000000001H477.23333333333323 a63.599999999999994,63.599999999999994 0 0 1 63.599999999999994,63.599999999999994V149.4 a63.599999999999994,63.599999999999994 0 0 1 -63.599999999999994,63.599999999999994H295z',
-				'M295,213H112.76666666666665 a63.599999999999994,63.599999999999994 1 0 0 -63.599999999999994,63.599999999999994V276.6 a63.599999999999994,63.599999999999994 1 0 0 63.599999999999994,63.599999999999994H295z'
+				'M295,85.80000000000001H477.23333333333323 a63.599999999999994 63.599999999999994 0 0 1 63.599999999999994,63.599999999999994V149.4 a63.599999999999994 63.599999999999994 0 0 1 -63.599999999999994,63.599999999999994H295z',
+				'M295,213H112.76666666666665 a63.599999999999994 63.599999999999994 1 0 0 -63.599999999999994,63.599999999999994V276.6 a63.599999999999994 63.599999999999994 1 0 0 63.599999999999994,63.599999999999994H295z'
 			];
 
 			chart.$.bar.bars.each(function() {
@@ -1045,12 +1045,110 @@ describe("SHAPE BAR", () => {
 
 		it("radius should be rendered correclty on rotated & inverted axis", () => {
 			const expected = [
-				'M295,85.80000000000001H112.76666666666668 a63.599999999999994,63.599999999999994 1 0 0 -63.599999999999994,63.599999999999994V149.4 a63.599999999999994,63.599999999999994 1 0 0 63.599999999999994,63.599999999999994H295z',
-				'M295,213H477.23333333333323 a63.599999999999994,63.599999999999994 0 0 1 63.599999999999994,63.599999999999994V276.6 a63.599999999999994,63.599999999999994 0 0 1 -63.599999999999994,63.599999999999994H295z'
+				'M295,85.80000000000001H112.76666666666668 a63.599999999999994 63.599999999999994 1 0 0 -63.599999999999994,63.599999999999994V149.4 a63.599999999999994 63.599999999999994 1 0 0 63.599999999999994,63.599999999999994H295z',
+				'M295,213H477.23333333333323 a63.599999999999994 63.599999999999994 0 0 1 63.599999999999994,63.599999999999994V276.6 a63.599999999999994 63.599999999999994 0 0 1 -63.599999999999994,63.599999999999994H295z'
 			];
 
 			chart.$.bar.bars.each(function() {
 				expect(this.getAttribute("d")).to.be.equal(expected.shift());
+			});
+		});
+	});
+
+	describe("bar radius surpassing condition", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					type: "bar",
+					columns:[
+						["data", -10289158423, -204482173, 3075954443]
+					]
+				},
+				axis: {
+					y: {
+						"min":-50000000000,
+						"max":50000000000,
+						"tick":{
+							"show":false,
+							"outer":false,
+							"text":{
+								"position":{
+									"x":-20
+								}
+							},
+							"stepSize": 25000000000
+						},"padding":0
+					}
+				},
+				bar: {
+					radius: 2,
+					width: 10,
+					padding: 2
+				}
+			};
+		});
+
+		it("should negative value set clip-path", () => {
+			chart.$.bar.bars.each(function(d, i) {
+				if (i === 1) {
+					const d = this.getAttribute("d");					
+					const value = [d.match(/,([^V]*)/)[1], d.match(/V([^\s]*)/)[1]].reduce((a, c) => +a - +c);
+
+					expect(+this.style.clipPath.match(/\(([^px]*)/)[1]).to.be.closeTo(value, 1);
+				} else {
+					expect(this.style.clipPath).to.be.equal("");
+				}
+			});
+		});
+
+		it("set options: set positive data value", () => {
+			args.data.columns[0][2] = 204482173;
+		});
+
+		it("should positive value set clip-path", () => {
+			chart.$.bar.bars.each(function(d, i) {
+				if (i === 1) {
+					const d = this.getAttribute("d");					
+					const value = [d.match(/,([^V]*)/)[1], d.match(/V([^\s]*)/)[1]].reduce((a, c) => +c - +a);
+
+					expect(+this.style.clipPath.match(/\s([^px]*)px\)$/)[1]).to.be.closeTo(value, 1);
+				} else {
+					expect(this.style.clipPath).to.be.equal("");
+				}
+			});
+		});
+
+		it("set options: axis.rotated=true", () => {
+			args.axis.rotated = true;
+		});
+
+		it("should positive value set clip-path for rotated axis", () => {
+			chart.$.bar.bars.each(function(d, i) {
+				if (i === 1) {
+					const d = this.getAttribute("d");					
+					const value = [d.match(/M([^,]*)/)[1], d.match(/H([^\s]*)/)[1]].reduce((a, c) => +a - +c);
+
+					expect(+this.style.clipPath.match(/\s([^px]*)px\)$/)[1]).to.be.closeTo(value, 1);
+				} else {
+					expect(this.style.clipPath).to.be.equal("");
+				}
+			});
+		});
+
+		it("set options: set negative data value", () => {
+			args.data.columns[0][2] = -204482173;
+		});
+
+		it("should negative value set clip-path for rotated axis", () => {
+			chart.$.bar.bars.each(function(d, i) {
+				if (i === 1) {
+					const d = this.getAttribute("d");					
+					const value = [d.match(/M([^,]*)/)[1], d.match(/H([^\s]*)/)[1]].reduce((a, c) => +c - +a);
+
+					expect(+this.style.clipPath.match(/px\s([^px]*)/)[1]).to.be.closeTo(value, 1);
+				} else {
+					expect(this.style.clipPath).to.be.equal("");
+				}
 			});
 		});
 	});
