@@ -1,3 +1,10 @@
+# [3.14.0-next.3](https://github.com/naver/billboard.js/compare/3.14.0-next.2...3.14.0-next.3) (2024-10-22)
+
+
+### Bug Fixes
+
+* **bar:** fix representation of radius for small data ([91b5dca](https://github.com/naver/billboard.js/commit/91b5dca91a86779b0c808e3498d85dcb93ab5f0e)), closes [#3903](https://github.com/naver/billboard.js/issues/3903)
+
 # [3.14.0-next.2](https://github.com/naver/billboard.js/compare/3.14.0-next.1...3.14.0-next.2) (2024-10-17)
 
 
