@@ -230,7 +230,9 @@ export default {
 					}
 				}
 
-				d.clipPath = `inset(${clipPath})`;
+				if (clipPath) {
+					d.clipPath = `inset(${clipPath})`;
+				}
 			}
 
 			// path string data shouldn't be containing new line chars

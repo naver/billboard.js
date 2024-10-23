@@ -1149,6 +1149,54 @@ describe("SHAPE BAR", () => {
 				}
 			});
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", -80],
+						["data2", 80],
+						["data3", -120]
+					],
+					type: "bar",
+					groups: [
+						[
+							"data1",
+							"data2"
+						]
+					],
+					order: "desc"
+				},
+				bar: {
+					radius: {
+						ratio: 0.5
+					}
+				},
+				transition: {
+					duration: 0
+				}
+			};
+		});
+
+		it("clip-path style should be updated", () => {
+			// when
+			chart.hide("data3");
+			
+			chart.$.bar.bars.each(function(d) {
+				if (d.id !== "data3") {
+					expect(this.style.clipPath.length > 0).to.be.true;
+				} else {
+					expect(this.style.clipPath).to.be.equal("");
+				}					
+			});
+
+			// when
+			chart.show("data3");
+
+			chart.$.bar.bars.each(function(d) {
+				expect(this.style.clipPath).to.be.equal("");
+			});
+		})
 	});
 
 	describe("bar linear gradient", () => {
