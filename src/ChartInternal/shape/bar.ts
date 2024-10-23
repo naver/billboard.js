@@ -5,7 +5,7 @@
 import type {DataRow} from "../../../types/types";
 import {$BAR, $COMMON} from "../../config/classes";
 import {getRandom, isNumber} from "../../module/util";
-import type {IDataRow} from "../data/IData";
+import type {IBarData} from "../data/IData";
 import type {IOffset} from "./shape";
 
 type BarTypeDataRow = DataRow<number | number[]>;
@@ -106,7 +106,7 @@ export default {
 	 * @returns {string} Color string
 	 * @private
 	 */
-	updateBarColor(d: IDataRow): string {
+	updateBarColor(d: IBarData): string {
 		const $$ = this;
 		const fn = $$.getStylePropValue($$.color);
 
@@ -129,6 +129,7 @@ export default {
 			$$.$T(bar, withTransition, getRandom())
 				.attr("d", d => (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d))
 				.style("fill", $$.updateBarColor.bind($$))
+				.style("clip-path", d => d.clipPath)
 				.style("opacity", null)
 		];
 	},
@@ -153,7 +154,7 @@ export default {
 	 * @returns {Function}
 	 * @private
 	 */
-	generateDrawBar(barIndices, isSub?: boolean): (d: IDataRow, i: number) => string {
+	generateDrawBar(barIndices, isSub?: boolean): (d: IBarData, i: number) => string {
 		const $$ = this;
 		const {config} = $$;
 		const getPoints = $$.generateGetBarPoints(barIndices, isSub);
@@ -166,7 +167,7 @@ export default {
 			isNumber(barRadiusRatio) ? w => w * barRadiusRatio : null
 		);
 
-		return (d: IDataRow, i: number) => {
+		return (d: IBarData, i: number) => {
 			// 4 points that make a bar
 			const points = getPoints(d, i);
 
@@ -179,10 +180,16 @@ export default {
 			const isNegative = (!isInverted && isUnderZero) || (isInverted && !isUnderZero);
 
 			const pathRadius = ["", ""];
-			let radius = 0;
-
 			const isGrouped = $$.isGrouped(d.id);
 			const isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
+			const init = [
+				points[0][indexX],
+				points[0][indexY]
+			];
+			let radius = 0;
+
+			// initialize as null to not set attribute if isn't needed
+			d.clipPath = null;
 
 			if (getRadius) {
 				const index = isRotated ? indexY : indexX;
@@ -190,7 +197,7 @@ export default {
 
 				radius = !isGrouped || isRadiusData ? getRadius(barW) : 0;
 
-				const arc = `a${radius},${radius} ${isNegative ? `1 0 0` : `0 0 1`} `;
+				const arc = `a${radius} ${radius} ${isNegative ? `1 0 0` : `0 0 1`} `;
 
 				pathRadius[+!isRotated] = `${arc}${radius},${radius}`;
 				pathRadius[+isRotated] = `${arc}${
@@ -200,15 +207,41 @@ export default {
 				isNegative && pathRadius.reverse();
 			}
 
+			const pos = isRotated ?
+				points[1][indexX] + (isNegative ? radius : -radius) :
+				points[1][indexY] + (isNegative ? -radius : radius);
+
+			// Apply clip-path in case of radius angle surpass the bar shape
+			// https://github.com/naver/billboard.js/issues/3903
+			if (radius) {
+				let clipPath = "";
+
+				if (isRotated) {
+					if (isNegative && init[0] < pos) {
+						clipPath = `0 ${pos - init[0]}px 0 0`;
+					} else if (!isNegative && init[0] > pos) {
+						clipPath = `0 0 0 ${init[0] - pos}px`;
+					}
+				} else {
+					if (isNegative && init[1] > pos) {
+						clipPath = `${init[1] - pos}px 0 0 0`;
+					} else if (!isNegative && init[1] < pos) {
+						clipPath = `0 0 ${pos - init[1]}px 0`;
+					}
+				}
+
+				d.clipPath = `inset(${clipPath})`;
+			}
+
 			// path string data shouldn't be containing new line chars
 			// https://github.com/naver/billboard.js/issues/530
 			const path = isRotated ?
-				`H${points[1][indexX] + (isNegative ? radius : -radius)} ${pathRadius[0]}V${
-					points[2][indexY] - radius
-				} ${pathRadius[1]}H${points[3][indexX]}` :
-				`V${points[1][indexY] + (isNegative ? -radius : radius)} ${pathRadius[0]}H${
-					points[2][indexX] - radius
-				} ${pathRadius[1]}V${points[3][indexY]}`;
+				`H${pos} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${
+					points[3][indexX]
+				}` :
+				`V${pos} ${pathRadius[0]}H${points[2][indexX] - radius} ${pathRadius[1]}V${
+					points[3][indexY]
+				}`;
 
 			return `M${points[0][indexX]},${points[0][indexY]}${path}z`;
 		};
@@ -219,7 +252,7 @@ export default {
 	 * @param {object} d Data row
 	 * @returns {boolean}
 	 */
-	isStackingRadiusData(d: IDataRow): boolean {
+	isStackingRadiusData(d: IBarData): boolean {
 		const $$ = this;
 		const {$el, config, data, state} = $$;
 		const {id, index, value} = d;
@@ -264,7 +297,7 @@ export default {
 	 * @private
 	 */
 	generateGetBarPoints(barIndices,
-		isSub?: boolean): (d: IDataRow, i: number) => [number, number][] {
+		isSub?: boolean): (d: IBarData, i: number) => [number, number][] {
 		const $$ = this;
 		const {config} = $$;
 		const axis = isSub ? $$.axis.subX : $$.axis.x;
@@ -275,7 +308,7 @@ export default {
 		const barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);
 		const yScale = $$.getYScaleById.bind($$);
 
-		return (d: IDataRow, i: number) => {
+		return (d: IBarData, i: number) => {
 			const {id} = d;
 			const y0 = yScale.call($$, id, isSub)($$.getShapeYMin(id));
 			const offset = barOffset(d, i) || y0; // offset is for stacked bar chart
