@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.13.0-nightly-20241018004645
+ * @version 3.13.0-nightly-20241023004644
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -19015,6 +19015,7 @@ var shapeBar = {
             $$.$T(bar, withTransition, getRandom())
                 .attr("d", function (d) { return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d); })
                 .style("fill", $$.updateBarColor.bind($$))
+                .style("clip-path", function (d) { return d.clipPath; })
                 .style("opacity", null)
         ];
     },
@@ -19057,23 +19058,54 @@ var shapeBar = {
             var isInverted = config["axis_".concat($$.axis.getId(d.id), "_inverted")];
             var isNegative = (!isInverted && isUnderZero) || (isInverted && !isUnderZero);
             var pathRadius = ["", ""];
-            var radius = 0;
             var isGrouped = $$.isGrouped(d.id);
             var isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
+            var init = [
+                points[0][indexX],
+                points[0][indexY]
+            ];
+            var radius = 0;
+            // initialize as null to not set attribute if isn't needed
+            d.clipPath = null;
             if (getRadius) {
                 var index = isRotated ? indexY : indexX;
                 var barW = points[2][index] - points[0][index];
                 radius = !isGrouped || isRadiusData ? getRadius(barW) : 0;
-                var arc = "a".concat(radius, ",").concat(radius, " ").concat(isNegative ? "1 0 0" : "0 0 1", " ");
+                var arc = "a".concat(radius, " ").concat(radius, " ").concat(isNegative ? "1 0 0" : "0 0 1", " ");
                 pathRadius[+!isRotated] = "".concat(arc).concat(radius, ",").concat(radius);
                 pathRadius[+isRotated] = "".concat(arc).concat([-radius, radius][isRotated ? "sort" : "reverse"]());
                 isNegative && pathRadius.reverse();
             }
+            var pos = isRotated ?
+                points[1][indexX] + (isNegative ? radius : -radius) :
+                points[1][indexY] + (isNegative ? -radius : radius);
+            // Apply clip-path in case of radius angle surpass the bar shape
+            // https://github.com/naver/billboard.js/issues/3903
+            if (radius) {
+                var clipPath = "";
+                if (isRotated) {
+                    if (isNegative && init[0] < pos) {
+                        clipPath = "0 ".concat(pos - init[0], "px 0 0");
+                    }
+                    else if (!isNegative && init[0] > pos) {
+                        clipPath = "0 0 0 ".concat(init[0] - pos, "px");
+                    }
+                }
+                else {
+                    if (isNegative && init[1] > pos) {
+                        clipPath = "".concat(init[1] - pos, "px 0 0 0");
+                    }
+                    else if (!isNegative && init[1] < pos) {
+                        clipPath = "0 0 ".concat(pos - init[1], "px 0");
+                    }
+                }
+                d.clipPath = "inset(".concat(clipPath, ")");
+            }
             // path string data shouldn't be containing new line chars
             // https://github.com/naver/billboard.js/issues/530
             var path = isRotated ?
-                "H".concat(points[1][indexX] + (isNegative ? radius : -radius), " ").concat(pathRadius[0], "V").concat(points[2][indexY] - radius, " ").concat(pathRadius[1], "H").concat(points[3][indexX]) :
-                "V".concat(points[1][indexY] + (isNegative ? -radius : radius), " ").concat(pathRadius[0], "H").concat(points[2][indexX] - radius, " ").concat(pathRadius[1], "V").concat(points[3][indexY]);
+                "H".concat(pos, " ").concat(pathRadius[0], "V").concat(points[2][indexY] - radius, " ").concat(pathRadius[1], "H").concat(points[3][indexX]) :
+                "V".concat(pos, " ").concat(pathRadius[0], "H").concat(points[2][indexX] - radius, " ").concat(pathRadius[1], "V").concat(points[3][indexY]);
             return "M".concat(points[0][indexX], ",").concat(points[0][indexY]).concat(path, "z");
         };
     },
@@ -24575,7 +24607,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.13.0-nightly-20241018004645
+ * @version 3.13.0-nightly-20241023004644
  */
 var bb = {
     /**
@@ -24585,7 +24617,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.13.0-nightly-20241018004645",
+    version: "3.13.0-nightly-20241023004644",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

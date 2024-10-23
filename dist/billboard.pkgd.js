@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20241018004645
+ * @version 3.13.0-nightly-20241023004644
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -44665,7 +44665,7 @@ function point_y(p) {
     const $$ = this;
     const { bar } = isSub ? $$.$el.subchart : $$.$el;
     return [
-      $$.$T(bar, withTransition, getRandom()).attr("d", (d) => (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d)).style("fill", $$.updateBarColor.bind($$)).style("opacity", null)
+      $$.$T(bar, withTransition, getRandom()).attr("d", (d) => (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d)).style("fill", $$.updateBarColor.bind($$)).style("clip-path", (d) => d.clipPath).style("opacity", null)
     ];
   },
   /**
@@ -44704,19 +44704,42 @@ function point_y(p) {
       const isInverted = config[`axis_${$$.axis.getId(d.id)}_inverted`];
       const isNegative = !isInverted && isUnderZero || isInverted && !isUnderZero;
       const pathRadius = ["", ""];
-      let radius = 0;
       const isGrouped = $$.isGrouped(d.id);
       const isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
+      const init = [
+        points[0][indexX],
+        points[0][indexY]
+      ];
+      let radius = 0;
+      d.clipPath = null;
       if (getRadius) {
         const index = isRotated ? indexY : indexX;
         const barW = points[2][index] - points[0][index];
         radius = !isGrouped || isRadiusData ? getRadius(barW) : 0;
-        const arc = `a${radius},${radius} ${isNegative ? `1 0 0` : `0 0 1`} `;
+        const arc = `a${radius} ${radius} ${isNegative ? `1 0 0` : `0 0 1`} `;
         pathRadius[+!isRotated] = `${arc}${radius},${radius}`;
         pathRadius[+isRotated] = `${arc}${[-radius, radius][isRotated ? "sort" : "reverse"]()}`;
         isNegative && pathRadius.reverse();
       }
-      const path = isRotated ? `H${points[1][indexX] + (isNegative ? radius : -radius)} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${points[3][indexX]}` : `V${points[1][indexY] + (isNegative ? -radius : radius)} ${pathRadius[0]}H${points[2][indexX] - radius} ${pathRadius[1]}V${points[3][indexY]}`;
+      const pos = isRotated ? points[1][indexX] + (isNegative ? radius : -radius) : points[1][indexY] + (isNegative ? -radius : radius);
+      if (radius) {
+        let clipPath = "";
+        if (isRotated) {
+          if (isNegative && init[0] < pos) {
+            clipPath = `0 ${pos - init[0]}px 0 0`;
+          } else if (!isNegative && init[0] > pos) {
+            clipPath = `0 0 0 ${init[0] - pos}px`;
+          }
+        } else {
+          if (isNegative && init[1] > pos) {
+            clipPath = `${init[1] - pos}px 0 0 0`;
+          } else if (!isNegative && init[1] < pos) {
+            clipPath = `0 0 ${pos - init[1]}px 0`;
+          }
+        }
+        d.clipPath = `inset(${clipPath})`;
+      }
+      const path = isRotated ? `H${pos} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${points[3][indexX]}` : `V${pos} ${pathRadius[0]}H${points[2][indexX] - radius} ${pathRadius[1]}V${points[3][indexY]}`;
       return `M${points[0][indexX]},${points[0][indexY]}${path}z`;
     };
   },
@@ -48532,7 +48555,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.13.0-nightly-20241018004645",
+  version: "3.13.0-nightly-20241023004644",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
