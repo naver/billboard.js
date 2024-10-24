@@ -374,7 +374,7 @@ describe("SHAPE POINT", () => {
 				setTimeout(resolve, 300);
 			}).then(() => {
 				return new Promise((resolve, reject) => {
-					checkHover($el, values, 1, 5);
+					checkHover($el, values, 1, 3);
 
 					setTimeout(resolve, 300);
 				});

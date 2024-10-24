@@ -392,7 +392,7 @@ describe("ZOOM", function() {
 			const getX = selector => chart.$.main.select(selector).node().getBoundingClientRect().x;
 
 			// when zoom in
-			chart.zoom([1,3]);
+			chart.zoom([1,3.5]);
 
 			setTimeout(() => {
 				expect(

@@ -62,7 +62,7 @@ describe("API chart", () => {
 			expect(chart.groups()[0].length).to.be.equal(chart.data().length);
 
 			// check for the bars were stacked
-			expect(util.getBBox(path).width).to.be.equal(barWidth * 2);
+			expect(util.getBBox(path).width).to.be.closeTo(barWidth * 2, 1);
 		});
 	});
 

@@ -125,8 +125,10 @@ function sandbox(obj: string | HTMLDivElement, prop?): HTMLDivElement {
 
 // test should executed from 'coverage:ci' command
 const isCI = process.env.NODE_ENV === "CI";
+const ceil = v => Math.ceil(v);
 
 export default {
+	ceil,
 	destroyAll,
 	doDrag,
 	fireEvent,

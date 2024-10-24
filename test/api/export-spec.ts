@@ -201,15 +201,15 @@ describe("API export", () => {
 
 			// pattern for local: preserveFontStyle=true
 			[
-				"i2iAoIcLvwVDzzAQUBmuodjmOmu+NeryqrOrq4jsyozKyLzy99vftNVcb343ou",
-				"JXSOKRvoLXeaeBnwyQ3q5TJIDtEMpaehdeQBLArBlL9P1Ni",
-				"iDzpkxgBoCd9qkExwC4O8qSCPVk3lyWshNuFqQAdJNm6rb+GVkH2CdOcenYIgj5Cy"
+				"UwUQECoIlWYZu6qgABsKvys3LDFCAAGmYQNocKRKQAATAiIVlMehQgAKbHluxJ",
+				"bAOgeAH1QlUcTZOjJOFPV7zN3zDlq/tQUvMb1kYAjNcQLZROAGxBtNTf0oIXkACY",
+				"CZAACZAACZAABSCfARIgARIgARIgARLIMQIUgDkWcHaXBEiABEiABEiABCgA"
 			],
 			
 			// pattern for webdriverio
 			[
 				"nSetJ0vvOG1XcoZ8BQEeD3w9CCB6BGIkmCiAIze",
-				"BhTIwMPCQiOxewt4m8Xj8HxSAQVGnnXoQ0J7YGzDD",
+				"5Ku10DhdnT36vaRow3ZSgXoFLMsSYJMwL9XnRanBgYGBojufZVlvBCChjpwQMZJcsj",
 				"ANwDC7nf6iqhRcXno2cQP2wnXM4qpFnSLACzpHlfYysmAV1jezaWxGgmFrai6bp9Y6Ryp2AaM"
 			],
 
@@ -229,9 +229,9 @@ describe("API export", () => {
 
 			// pattern for CI: preserveFontStyle=true
 			[
-				"Y2qtWP1Xg3AYmsmlBQxSAnANJJZDP5y8H8Jkp4isBWDubzS4fbcPjIamzgX",
-				"Y9JUCsM6Jy+ZOENCezn8CehhUI917sy0C0BI05itQPV9yQz9yAiidIIEEE6AA",
-				"aWV7xEDDrkhf0fgX/bLgG8I6wWjMTYt7S5hUPATMJ8LVBquISlXg0MLWYtfrmGzn"
+				"MMcesnMiKAsgzhwTak0AtArgzgC+WwHEfALtR6FRltwPYGMDxAHYHYAA8B",
+				"2HTkHLCWAg4nrEehzQNDS997GQgCNORiBbCPDmWN4MpEACVRGoFYBrKz35t",
+				"gFcBOMOf8rUAftrP9AcCOMkvvxfA8hxSvQJglx51zgZwRQUAMMg5PQTg21nm"
 			]
 		];
 

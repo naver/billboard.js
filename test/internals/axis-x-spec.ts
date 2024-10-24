@@ -216,7 +216,7 @@ describe("X AXIS", function() {
 				
 				const {zoom} = chart.internal.scale;
 
-				expect(lines.attr("d")).to.be.equal("M1794,390.583L1196,227.858L597,323.579L-1,36.417L-599,275.718");
+				expect(lines.attr("d")).to.be.equal("M1797,390.583L1198,227.858L599,323.579L0,36.417L-599,275.718");
 
 				expect(zoom(2) - zoom(3)).to.be.closeTo(600, 5);
 

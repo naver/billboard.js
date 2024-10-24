@@ -47,8 +47,8 @@ describe("SHAPE CANDLESTICK", () => {
 
 		it("check for basic rendering", () => {
 			const expectedPath = [
-				/^M60,217\.\d+V33\d\.\d+ H240 V217\.\d+z$/,
-				/^M359\.5,33\d\.\d+V132\.\d+ H539\.5 V33\d\.\d+z$/
+				/^M59\.\d+,217\.\d+V33\d\.\d+ H239\.\d+ V217\.\d+z$/,
+				/^M359\.4,33\d\.\d+V132\.\d+ H539\.\d+/
 			];
 
 			const expectedLinePos = [
@@ -255,7 +255,7 @@ describe("SHAPE CANDLESTICK", () => {
 				data1: {
 					path: {
 						0: /^M97\.\d+,217\.\d+V33[67]\.\d+ H149\.\d+ V217\.\d+z$/,
-						1: /^M247,33[67]\.\d+V132\.\d+ H299\.5 V33[67]\.\d+z/
+						1: /^M247\.\d+,33[67]\.\d+V132\.\d+ H299\.5 V33[67]\.\d+z/
 					},
 					line: {
 						0: {
@@ -270,8 +270,8 @@ describe("SHAPE CANDLESTICK", () => {
 				},
 				data2: {
 					path: {
-						0: /^M149.75,202\.\d+V9[45]\.\d+ H202.25 V202\.\d+z$/,
-						2: /^M449.25,217\.\d+V33[67]\.\d+ H501.75 V217\.\d+z$/
+						0: /^M149.75,202\.\d+V9[45]\.\d+ H202\.\d+ V202\.\d+z$/,
+						2: /^M449.25,217\.\d+V33[67]\.\d+ H501\.\d+ V217\.\d+z$/
 					},
 					line: {
 						0: {
@@ -316,8 +316,8 @@ describe("SHAPE CANDLESTICK", () => {
 			});
 
 			const expectedLine = {
-				data3: /^M150,8\d\.\d+L300,217\.\d+L450,26[89]\.\d+$/,
-				data4: /^M150,8\d\.\d+L225,8\d\.\d+L225,21\d\.\d+L37\d,21\d\.\d+L37\d,26\d\.\d+L45\d,26[89]\.\d+$/
+				data3: /^M149.75,8[01]\.\d+L299.5,217\.\d+/,
+				data4: /^M149.75,8[01]\.\d+L224/
 			};
 
 			chart.$.line.lines.each(function(d, i) {

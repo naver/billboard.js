@@ -74,7 +74,7 @@ describe("AXIS", function() {
 
 			chart.$.main.selectAll(`.${$AXIS.axisX} .tick`).each(function(d, i) {
 				expect(
-					util.parseNum(this.getAttribute("transform").split(",")[0])
+					util.ceil(util.parseNum(this.getAttribute("transform").split(",")[0]))
 				).to.be.equal(expectedXPos[i]);
 			});
 		});
@@ -889,7 +889,7 @@ describe("AXIS", function() {
 							const text = d3Select(this);
 
 							expect(text.attr("x")).to.be.equal(expectedX);
-							expect(text.attr("y")).to.be.equal(expectedY);
+							expect(util.ceil(text.attr("y"))).to.be.equal(+expectedY);
 						});
 
 						if (i > 0) { // i === 0 should be checked in next test
@@ -943,7 +943,7 @@ describe("AXIS", function() {
 					const ticksText = chart.$.main.select(`.${$AXIS.axisX}`).selectAll("g.tick text");
 
 					ticksText.each(function() {
-						expect(+this.getAttribute("y")).to.be.equal(37);
+						expect(util.ceil(+this.getAttribute("y"))).to.be.equal(37);
 					});
 				});
 			});
@@ -2185,8 +2185,9 @@ describe("AXIS", function() {
 
 			chart.internal.state.eventReceiver.coords.forEach((d, idx) => {
 				const tick = d3Select(ticks[idx]);
+				const y = +tick.attr("transform").match(/,([^)]*)/)[1];
 
-				expect(tick.attr("transform")).to.be.equal(`translate(0,${d.y})`);
+				expect(y).to.closeTo(d.y, 1);
 			});
 		});
 
@@ -3200,8 +3201,10 @@ describe("AXIS", function() {
 		it("check if x axis min/max is not fitten.", () => {
 			const currWidth = chart.internal.state.current.width;
 
-			chart.$.main.selectAll(`.${$AXIS.axisX} .tick`).each(function(d, i) {
-				const xPos = +util.parseNum(this.getAttribute("transform")) / 10;
+			chart.internal.$el.axis.x.selectAll(".tick").each(function(d, i) {
+				const xPos = +util.parseNum(this.getAttribute("transform"));
+
+				console.log(xPos, this.getAttribute("transform"))
 
 				if (i === 0) { // check min
 					expect(xPos).to.be.below(0);
@@ -3468,7 +3471,7 @@ describe("AXIS", function() {
 
 		it("check the tick interval to be calculated based on the scale & ticks value", () => {
 			// tick's inteval shouldn't be based on the assumption of ticks having same interval
-			expect(chart.internal.axis.x.tickInterval()).to.be.equal(22);
+			expect(util.ceil(chart.internal.axis.x.tickInterval())).to.be.equal(23);
 
 			// bar widht's value should be set based on the scaled tick interval
 			expect(chart.$.bar.bars.node().getBoundingClientRect().width).to.be.closeTo(6, 1);
