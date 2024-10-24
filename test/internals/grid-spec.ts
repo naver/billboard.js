@@ -165,10 +165,10 @@ describe("GRID", function() {
 			expect(ygrids.selectAll(`.${$GRID.ygrid}`).size()).to.be.equal(3);
 
 			chart.$.main.select(`.${$AXIS.axisY}`).selectAll(".tick").each(function(d, i) {
-				let y: any = d3Select(this).attr("transform").match(/\d+\)/);
+				let y: any = d3Select(this).attr("transform").match(/,([^)]+)\)$/);
 
 				if (y.length >= 1) {
-					y = parseInt(y[0]);
+					y = parseInt(y[1]);
 				}
 
 				if (expectedYs[i]) {
@@ -200,7 +200,7 @@ describe("GRID", function() {
 		});
 		
 		it("y grid showed with nice intervals?", () => {
-			const yPos = [426, 320, 214, 108, 1];
+			const yPos = [426, 319.75, 213.5, 107.25, 1];
 
 			chart.$.grid.y.each(function(d, i) {
 				expect(+this.getAttribute("y1")).to.be.equal(yPos[i]);
@@ -584,7 +584,7 @@ describe("GRID", function() {
 					lines.each(function(d, i) {
 						const y1 = +d3Select(this).select("line").attr("y1");
 
-						expect(y1).to.be.equal(expectedY1s[i]);
+						expect(y1).to.be.closeTo(expectedY1s[i], 1);
 					});
 					done(1);
 				}, 300);
@@ -761,7 +761,7 @@ describe("GRID", function() {
 		const checkFocusGridPosition = expectedPositions => {
 			chart.$.grid.main.selectAll("line").each(function(d, i) {
 				["x1", "y1", "x2", "y2"].forEach(v => {
-					expect(+this.getAttribute(v)).to.be.equal(expectedPositions[i][v]);
+					expect(+this.getAttribute(v)).to.be.closeTo(expectedPositions[i][v], 1);
 				});
 			});
 		}

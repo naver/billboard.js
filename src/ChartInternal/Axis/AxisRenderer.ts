@@ -93,7 +93,7 @@ export default class AxisRenderer {
 			$g = g;
 			this.__chart__ = scale1;
 
-			config.tickOffset = params.isCategory ? Math.ceil((scale1(1) - scale1(0)) / 2) : 0;
+			config.tickOffset = params.isCategory ? (scale1(1) - scale1(0)) / 2 : 0;
 
 			// update selection - data join
 			const path = g.selectAll(".domain").data([0]);
@@ -407,12 +407,10 @@ export default class AxisRenderer {
 			tickWidth = isLeftRight ? 95 : (
 				params.isCategory ?
 					(
-						Math.ceil(
-							params.isInverted ?
-								scale(ticks[0]) - scale(ticks[1]) :
-								scale(ticks[1]) - scale(ticks[0])
-						) - 12
-					) :
+						params.isInverted ?
+							scale(ticks[0]) - scale(ticks[1]) :
+							scale(ticks[1]) - scale(ticks[0])
+					) - 12 :
 					110
 			);
 		}

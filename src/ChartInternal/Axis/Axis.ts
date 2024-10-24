@@ -779,7 +779,7 @@ class Axis {
 					$$.getXDomainMax($$.data.targets) + 1 + right
 				]);
 
-			tickOffset = Math.ceil((scale(1) - scale(0)) / 2);
+			tickOffset = (scale(1) - scale(0)) / 2;
 		}
 
 		return maxOverflow + tickOffset;

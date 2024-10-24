@@ -11,7 +11,7 @@ import {$AXIS} from "../../src/config/classes";
 describe("API axis", function() {
 	let chart;
 	let main;
-	const rx = /translate\((\d+),.*/;
+	const rx = /translate\(([^,]*),.*/;
 
 	beforeAll(() => {
 		return new Promise(resolve => {
@@ -115,7 +115,7 @@ describe("API axis", function() {
 
 			setTimeout(() => {
 				let tspan;
-
+				
 				// check for x max value
 				expect(xTickValue).to.be.below(+xAxisTick.getAttribute("transform").replace(rx, "$1"));
 

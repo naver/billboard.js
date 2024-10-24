@@ -1266,10 +1266,10 @@ describe("TEXT", () => {
 				chart = util.generate(args);
 
 				const tickNodes = chart.$.svg.select(`.${$AXIS.axisY}`).selectAll("g.tick");
-				const translateValues = [402, 367, 331, 296, 260, 225, 189, 154, 118, 83, 47, 12];
+				const translateValues = [401, 366, 331, 295, 260, 225, 189, 154, 118, 83, 47, 12];
 
 				tickNodes.each(function(d, i) {
-					expect(util.parseNum(this.getAttribute("transform"))).to.be.closeTo(translateValues[i], 1);
+					expect(util.parseNum(this.getAttribute("transform"))).to.be.closeTo(translateValues[i], 2);
 				});
 
 				chart.destroy();

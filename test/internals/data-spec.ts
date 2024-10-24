@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
+import {beforeEach, beforeAll, afterEach, afterAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import sinon from "sinon";
 import util from "../assets/util";
@@ -89,7 +89,7 @@ describe("DATA", () => {
 		});
 
 		it("should draw correctly", () => {
-			const expectedCx = {443: [98, 296, 492], 995: [98, 296, 492]};
+			const expectedCx = {443: [98, 294.5, 490], 995: [98, 294.5, 490]};
 			const expectedCy = {443: [194, 351, 36], 995: [391, 0, 351]};
 			const main = chart.$.main;
 
@@ -150,7 +150,7 @@ describe("DATA", () => {
 
 		it("should draw nested JSON correctly", () => {
 			const main = chart.$.main;
-			const expectedCx = [98, 296, 492];
+			const expectedCx = [98, 294.5, 490];
 			const expectedCy = {
 				443: [181, 326, 36],
 				995: [362, 0, 326],
@@ -623,7 +623,7 @@ describe("DATA", () => {
 		});
 
 		it("line path should rendered correctly.", () => {
-			expect(chart.$.line.lines.attr("d")).to.be.equal("M594,390.583L6,36.417L300,390.583");
+			expect(chart.$.line.lines.attr("d")).to.be.equal("M593.127,390.583L5.873,36.417L299.5,390.583");
 		});
 
 		it("check for tooltip show", () => {

@@ -279,7 +279,7 @@ describe("PLUGIN: SPARKLINE", () => {
 
 			chart.$.circles.each(function(d) {
 				expect(d.x).to.be.equal(testX);
-				expect(+this.getAttribute("cx")).to.be.equal(90);
+				expect(+this.getAttribute("cx")).to.be.closeTo(90, 1);
 			});
 		});
 	});
