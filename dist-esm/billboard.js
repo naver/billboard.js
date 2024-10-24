@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.13.0-nightly-20241023004644
+ * @version 3.13.0-nightly-20241024004654
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -19099,7 +19099,9 @@ var shapeBar = {
                         clipPath = "0 0 ".concat(pos - init[1], "px 0");
                     }
                 }
-                d.clipPath = "inset(".concat(clipPath, ")");
+                if (clipPath) {
+                    d.clipPath = "inset(".concat(clipPath, ")");
+                }
             }
             // path string data shouldn't be containing new line chars
             // https://github.com/naver/billboard.js/issues/530
@@ -24607,7 +24609,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.13.0-nightly-20241023004644
+ * @version 3.13.0-nightly-20241024004654
  */
 var bb = {
     /**
@@ -24617,7 +24619,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.13.0-nightly-20241023004644",
+    version: "3.13.0-nightly-20241024004654",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

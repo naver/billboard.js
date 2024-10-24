@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20241023004644
+ * @version 3.13.0-nightly-20241024004654
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -18463,7 +18463,9 @@ function getAttrTweenFn(fn) {
             clipPath = `0 0 ${pos - init[1]}px 0`;
           }
         }
-        d.clipPath = `inset(${clipPath})`;
+        if (clipPath) {
+          d.clipPath = `inset(${clipPath})`;
+        }
       }
       const path = isRotated ? `H${pos} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${points[3][indexX]}` : `V${pos} ${pathRadius[0]}H${points[2][indexX] - radius} ${pathRadius[1]}V${points[3][indexY]}`;
       return `M${points[0][indexX]},${points[0][indexY]}${path}z`;
@@ -21825,7 +21827,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.13.0-nightly-20241023004644",
+  version: "3.13.0-nightly-20241024004654",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
