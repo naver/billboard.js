@@ -1,3 +1,10 @@
+# [3.14.0-next.4](https://github.com/naver/billboard.js/compare/3.14.0-next.3...3.14.0-next.4) (2024-10-24)
+
+
+### Bug Fixes
+
+* **scale:** Fix non-shape's element positioned accurately ([216141b](https://github.com/naver/billboard.js/commit/216141bd6a415752fbb31ba3016188b20401f5b0)), closes [#3907](https://github.com/naver/billboard.js/issues/3907)
+
 # [3.14.0-next.3](https://github.com/naver/billboard.js/compare/3.14.0-next.2...3.14.0-next.3) (2024-10-22)
 
 
