@@ -146,7 +146,7 @@ describe("SHAPE BUBBLE", () => {
 			chart = util.generate(args);
 
 			const tickNodes = chart.$.svg.select(`.${$AXIS.axisY}`).selectAll("g.tick");
-			const translateValues = [390, 345, 300, 255, 209, 164, 119, 74, 29];
+			const translateValues = [389, 344, 299, 254, 209, 164, 119, 74, 29];
 
 			tickNodes.each(function(d, i) {
 				expect(util.parseNum(this.getAttribute("transform"))).to.be.closeTo(translateValues[i], 1);

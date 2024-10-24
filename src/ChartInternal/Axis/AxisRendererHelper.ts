@@ -80,7 +80,7 @@ export default class AxisRendererHelper {
 			selection.attr("transform", d => {
 				const x = scale(d);
 
-				return isValue(d) ? fn(Math.ceil(x)) : null;
+				return isValue(d) ? fn(x) : null;
 			});
 		};
 	}

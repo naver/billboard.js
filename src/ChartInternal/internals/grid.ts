@@ -45,7 +45,7 @@ function smoothLines(el, type: string): void {
 			const g = d3Select(this);
 
 			["x1", "x2", "y1", "y2"]
-				.forEach(v => g.attr(v, Math.ceil(+g.attr(v))));
+				.forEach(v => g.attr(v, +g.attr(v)));
 		});
 	}
 }
@@ -138,7 +138,7 @@ export default {
 		const $$ = this;
 		const {axis, config, scale, state, $el: {grid, main}} = $$;
 		const isRotated = config.axis_rotated;
-		const pos = d => Math.ceil(scale.y(d));
+		const pos = d => scale.y(d);
 		const gridValues = axis.y.getGeneratedTicks(config.grid_y_ticks) ||
 			$$.scale.y.ticks(config.grid_y_ticks);
 

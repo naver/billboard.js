@@ -242,7 +242,7 @@ describe("API regions", function() {
 			
 			const rect = chart.internal.$el.region.list.select("rect").node().getBoundingClientRect();
 
-			expect(rect.width).to.be.equal(300);
+			expect(rect.width).to.be.equal(299.5);
 			expect(rect.height).to.be.equal(426);
 		});
 	});

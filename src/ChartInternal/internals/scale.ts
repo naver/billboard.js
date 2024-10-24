@@ -103,14 +103,11 @@ export default {
 		/**
 		 * Get scaled value
 		 * @param {object} d Data object
-		 * @param {boolean} raw Get the raw value
 		 * @returns {number}
 		 * @private
 		 */
-		const scale = function(d: IDataRow, raw?: boolean): number {
-			const v = scaleValue(d) + offset();
-
-			return raw ? v : Math.ceil(v);
+		const scale = function(d: IDataRow): number {
+			return scaleValue(d) + offset();
 		};
 
 		// copy original scale methods
@@ -258,7 +255,7 @@ export default {
 			value = config.axis_x_categories.indexOf(value);
 		}
 
-		return Math.ceil(fn(value));
+		return fn(value);
 	},
 
 	yv(d: IGridData): number {
@@ -266,7 +263,7 @@ export default {
 		const {scale: {y, y2}} = $$;
 		const yScale = d.axis && d.axis === "y2" ? y2 : y;
 
-		return Math.ceil(yScale($$.getBaseValue(d)));
+		return yScale($$.getBaseValue(d));
 	},
 
 	subxx(d: IDataRow): number | null {
