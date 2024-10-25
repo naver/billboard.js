@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.13.0-nightly-20241024004654
+ * @version 3.13.0-nightly-20241025004704
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -6427,9 +6427,8 @@ function getScale(type = "linear", min, max) {
     const $$ = this;
     const offset = offsetValue || (() => $$.axis.x.tickOffset());
     const isInverted = $$.config.axis_x_inverted;
-    const scale = function(d, raw) {
-      const v = scaleValue(d) + offset();
-      return raw ? v : Math.ceil(v);
+    const scale = function(d) {
+      return scaleValue(d) + offset();
     };
     for (const key in scaleValue) {
       scale[key] = scaleValue[key];
@@ -6552,13 +6551,13 @@ function getScale(type = "linear", min, max) {
     } else if (axis.isCategorized() && isString(value)) {
       value = config.axis_x_categories.indexOf(value);
     }
-    return Math.ceil(fn(value));
+    return fn(value);
   },
   yv(d) {
     const $$ = this;
     const { scale: { y, y2 } } = $$;
     const yScale = d.axis && d.axis === "y2" ? y2 : y;
-    return Math.ceil(yScale($$.getBaseValue(d)));
+    return yScale($$.getBaseValue(d));
   },
   subxx(d) {
     return d ? this.scale.subX(d.x) : null;
@@ -12784,7 +12783,7 @@ class AxisRendererHelper {
     return (selection, scale) => {
       selection.attr("transform", (d) => {
         const x = scale(d);
-        return isValue(d) ? fn(Math.ceil(x)) : null;
+        return isValue(d) ? fn(x) : null;
       });
     };
   }
@@ -12922,7 +12921,7 @@ class AxisRenderer {
       let scale1 = helper.copyScale();
       $g = g2;
       this.__chart__ = scale1;
-      config.tickOffset = params.isCategory ? Math.ceil((scale1(1) - scale1(0)) / 2) : 0;
+      config.tickOffset = params.isCategory ? (scale1(1) - scale1(0)) / 2 : 0;
       const path = g2.selectAll(".domain").data([0]);
       path.enter().append("path").attr("class", "domain").merge(path).attr("d", () => {
         const outerTickSized = config.outerTickSize * sign;
@@ -13097,9 +13096,7 @@ class AxisRenderer {
     }
     let tickWidth = params.tickWidth;
     if (!tickWidth || tickWidth <= 0) {
-      tickWidth = isLeftRight ? 95 : params.isCategory ? Math.ceil(
-        params.isInverted ? scale(ticks[0]) - scale(ticks[1]) : scale(ticks[1]) - scale(ticks[0])
-      ) - 12 : 110;
+      tickWidth = isLeftRight ? 95 : params.isCategory ? (params.isInverted ? scale(ticks[0]) - scale(ticks[1]) : scale(ticks[1]) - scale(ticks[0])) - 12 : 110;
     }
     function split(splitted2, text) {
       let subtext;
@@ -13775,7 +13772,7 @@ class Axis_Axis {
         left * -1,
         $$.getXDomainMax($$.data.targets) + 1 + right
       ]);
-      tickOffset = Math.ceil((scale(1) - scale(0)) / 2);
+      tickOffset = (scale(1) - scale(0)) / 2;
     }
     return maxOverflow + tickOffset;
   }
@@ -14782,7 +14779,7 @@ function smoothLines(el, type) {
   if (type === "grid") {
     el.each(function() {
       const g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
-      ["x1", "x2", "y1", "y2"].forEach((v) => g.attr(v, Math.ceil(+g.attr(v))));
+      ["x1", "x2", "y1", "y2"].forEach((v) => g.attr(v, +g.attr(v)));
     });
   }
 }
@@ -14843,7 +14840,7 @@ function smoothLines(el, type) {
     const $$ = this;
     const { axis, config, scale, state, $el: { grid, main } } = $$;
     const isRotated = config.axis_rotated;
-    const pos = (d) => Math.ceil(scale.y(d));
+    const pos = (d) => scale.y(d);
     const gridValues = axis.y.getGeneratedTicks(config.grid_y_ticks) || $$.scale.y.ticks(config.grid_y_ticks);
     grid.y = main.select(`.${$GRID.ygrids}`).selectAll(`.${$GRID.ygrid}`).data(gridValues);
     grid.y.exit().remove();
@@ -21827,7 +21824,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.13.0-nightly-20241024004654",
+  version: "3.13.0-nightly-20241025004704",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

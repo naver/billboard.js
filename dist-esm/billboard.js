@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.13.0-nightly-20241024004654
+ * @version 3.13.0-nightly-20241025004704
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -7193,13 +7193,11 @@ var scale = {
         /**
          * Get scaled value
          * @param {object} d Data object
-         * @param {boolean} raw Get the raw value
          * @returns {number}
          * @private
          */
-        var scale = function (d, raw) {
-            var v = scaleValue(d) + offset();
-            return raw ? v : Math.ceil(v);
+        var scale = function (d) {
+            return scaleValue(d) + offset();
         };
         // copy original scale methods
         for (var key in scaleValue) {
@@ -7307,13 +7305,13 @@ var scale = {
         else if (axis.isCategorized() && isString(value)) {
             value = config.axis_x_categories.indexOf(value);
         }
-        return Math.ceil(fn(value));
+        return fn(value);
     },
     yv: function (d) {
         var $$ = this;
         var _a = $$.scale, y = _a.y, y2 = _a.y2;
         var yScale = d.axis && d.axis === "y2" ? y2 : y;
-        return Math.ceil(yScale($$.getBaseValue(d)));
+        return yScale($$.getBaseValue(d));
     },
     subxx: function (d) {
         return d ? this.scale.subX(d.x) : null;
@@ -12768,7 +12766,7 @@ var AxisRendererHelper = /** @class */ (function () {
         return function (selection, scale) {
             selection.attr("transform", function (d) {
                 var x = scale(d);
-                return isValue(d) ? fn(Math.ceil(x)) : null;
+                return isValue(d) ? fn(x) : null;
             });
         };
     };
@@ -12922,7 +12920,7 @@ var AxisRenderer = /** @class */ (function () {
             var scale1 = helper.copyScale();
             $g = g;
             this.__chart__ = scale1;
-            config.tickOffset = params.isCategory ? Math.ceil((scale1(1) - scale1(0)) / 2) : 0;
+            config.tickOffset = params.isCategory ? (scale1(1) - scale1(0)) / 2 : 0;
             // update selection - data join
             var path = g.selectAll(".domain").data([0]);
             // enter + update selection
@@ -13171,9 +13169,9 @@ var AxisRenderer = /** @class */ (function () {
         var tickWidth = params.tickWidth;
         if (!tickWidth || tickWidth <= 0) {
             tickWidth = isLeftRight ? 95 : (params.isCategory ?
-                (Math.ceil(params.isInverted ?
+                (params.isInverted ?
                     scale(ticks[0]) - scale(ticks[1]) :
-                    scale(ticks[1]) - scale(ticks[0])) - 12) :
+                    scale(ticks[1]) - scale(ticks[0])) - 12 :
                 110);
         }
         // split given text by tick width size
@@ -13907,7 +13905,7 @@ var Axis = /** @class */ (function () {
                 left * -1,
                 $$.getXDomainMax($$.data.targets) + 1 + right
             ]);
-            tickOffset = Math.ceil((scale(1) - scale(0)) / 2);
+            tickOffset = (scale(1) - scale(0)) / 2;
         }
         return maxOverflow + tickOffset;
     };
@@ -15085,7 +15083,7 @@ function smoothLines(el, type) {
         el.each(function () {
             var g = select(this);
             ["x1", "x2", "y1", "y2"]
-                .forEach(function (v) { return g.attr(v, Math.ceil(+g.attr(v))); });
+                .forEach(function (v) { return g.attr(v, +g.attr(v)); });
         });
     }
 }
@@ -15158,7 +15156,7 @@ var grid = {
         var $$ = this;
         var axis = $$.axis, config = $$.config, scale = $$.scale, state = $$.state, _a = $$.$el, grid = _a.grid, main = _a.main;
         var isRotated = config.axis_rotated;
-        var pos = function (d) { return Math.ceil(scale.y(d)); };
+        var pos = function (d) { return scale.y(d); };
         var gridValues = axis.y.getGeneratedTicks(config.grid_y_ticks) ||
             $$.scale.y.ticks(config.grid_y_ticks);
         grid.y = main.select(".".concat($GRID.ygrids))
@@ -24609,7 +24607,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.13.0-nightly-20241024004654
+ * @version 3.13.0-nightly-20241025004704
  */
 var bb = {
     /**
@@ -24619,7 +24617,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.13.0-nightly-20241024004654",
+    version: "3.13.0-nightly-20241025004704",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
