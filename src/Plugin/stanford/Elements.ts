@@ -163,7 +163,7 @@ export default class Elements {
 			value = config.axis_x_categories.indexOf(d.value);
 		}
 
-		return Math.ceil($$.scale.x(value));
+		return $$.scale.x(value);
 	}
 
 	yvCustom(d, xyValue): number {
@@ -171,6 +171,6 @@ export default class Elements {
 		const yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y;
 		const value = xyValue ? d[xyValue] : $$.getBaseValue(d);
 
-		return Math.ceil(yScale(value));
+		return yScale(value);
 	}
 }

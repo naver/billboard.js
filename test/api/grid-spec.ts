@@ -50,7 +50,7 @@ describe("API grid", function() {
 				grids.each(function (d, i) {
 					const y = +d3Select(this).select("line").attr("y1");
 					const text = d3Select(this).select("text").text();
-					const expectedY = Math.round(chart.internal.scale.y(expectedGrids[i].value));
+					const expectedY = chart.internal.scale.y(expectedGrids[i].value);
 					const expectedText = expectedGrids[i].text;
 
 					expect(y).to.be.equal(expectedY);
@@ -98,7 +98,7 @@ describe("API grid", function() {
 					grids.each(function(d, i) {
 						const x = +d3Select(this).select("line").attr("x1");
 						const text = d3Select(this).select("text").text();
-						const expectedX = Math.round(chart.internal.scale.x(expectedGrids[i].value));
+						const expectedX = chart.internal.scale.x(expectedGrids[i].value);
 						const expectedText = expectedGrids[i].text;
 
 						expect(x).to.be.equal(expectedX);
@@ -229,7 +229,7 @@ describe("API grid", function() {
 			
 			const line = chart.internal.$el.gridLines.x.select("line");
 
-			expect(+line.attr("x1")).to.be.equal(298);
+			expect(+line.attr("x1")).to.be.equal(299.5);
 			expect(+line.attr("y2")).to.be.equal(426);
 		});
 	});

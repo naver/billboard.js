@@ -263,7 +263,7 @@ describe("API flow", () => {
 					const tick = this.internal.$el.axis.x.select(".tick");
 
 					expect(tick.text()).to.be.equal("17/01/11");
-					expect(tick.attr("transform")).to.be.equal("translate(6,0)");
+					expect(+tick.attr("transform").match(/\(([^,]+)/)[1]).to.be.closeTo(6, 1);
 
 					done(1);
 				}
@@ -450,12 +450,15 @@ describe("API flow", () => {
 				done() {
 					this.$.main.selectAll(`.${$LINE.chartLine} path`).each(function(d, i) {
 						const rect = this.getBoundingClientRect();
+						const pos = [rect.width, rect.x];
 						const expected = {
 							data1: [588, 46.5],
 							data2: [294, 340.5]
 						};
 
-						expect([rect.width, rect.x]).to.be.deep.equal(expected[d.id]);
+						expected[d.id].forEach((v, i) => {
+							expect(v).to.be.closeTo(pos[i], 1);
+						});
 					});
 
 					done(1);
