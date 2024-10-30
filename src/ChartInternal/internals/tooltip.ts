@@ -657,14 +657,13 @@ export default {
 						$$.setExpand(idx, null, true);
 					}
 				}
-
-				// for Arc & Treemap
-			} else {
+			} else { // for Arc & Treemap
 				const {clientX, clientY} = event;
 
 				setTimeout(() => {
-					let target = document.elementFromPoint(clientX, clientY);
-					const data = d3Select(target).datum() as IArcData;
+					let target = [clientX, clientY].every(Number.isFinite) &&
+						document.elementFromPoint(clientX, clientY);
+					const data = target && d3Select(target).datum() as IArcData;
 
 					if (data) {
 						const d = $$.hasArcType() ?
