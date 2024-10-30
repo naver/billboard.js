@@ -663,17 +663,21 @@ export default {
 				const {clientX, clientY} = event;
 
 				setTimeout(() => {
-					let target = document.elementFromPoint(clientX, clientY);
-					const data = d3Select(target).datum() as IArcData;
+					try {
+						let target = document.elementFromPoint(clientX, clientY);
+						const data = d3Select(target).datum() as IArcData;
 
-					if (data) {
-						const d = $$.hasArcType() ?
-							$$.convertToArcData($$.updateAngle(data)) :
-							data?.data;
+						if (data) {
+							const d = $$.hasArcType() ?
+								$$.convertToArcData($$.updateAngle(data)) :
+								data?.data;
 
-						hasTreemap && (target = svg.node());
-						d && $$.showTooltip([d], target);
-					} else {
+							hasTreemap && (target = svg.node());
+							d && $$.showTooltip([d], target);
+						} else {
+							$$.api.tooltip.hide();
+						}
+					} catch {
 						$$.api.tooltip.hide();
 					}
 				}, config.transition_duration);
