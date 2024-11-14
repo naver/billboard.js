@@ -277,7 +277,7 @@ describe("SHAPE POINT", () => {
 				tooltip: {
 					grouped: false
 				}
-			};
+			}; 
 		});
 
 		it("default sensitivity", () => {
@@ -431,8 +431,46 @@ describe("SHAPE POINT", () => {
 
 			expect(args.data.onclick.called).to.be.true;
 		});
-	});
 
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+					  ["data1", 450],
+					],
+					onclick: sinon.spy(function() {
+						console.log("3333333")
+					}),
+					type: "line"
+				},
+				point: {
+					sensitivity: function(r) {
+					  return 10;
+					},
+					r: 10,
+					focus: {
+						expand: {
+							r: 10
+						}
+					}
+				},
+			};
+		});
+
+		it("should data.onclick callback called.", () => {
+			const {circles} = chart.$;
+			const {$el: {eventRect}} = chart.internal;
+			const rect = circles.node().getBoundingClientRect();
+
+			fireEvent(eventRect.node(), "click", {
+				clientX: 300,
+				clientY: 40
+			}, chart); 
+  
+			expect(args.data.onclick.called).to.be.true;
+		});
+	}); 
+ 
 	describe("point.focus.only", () => {
 		beforeAll(() => {
 			args = {
