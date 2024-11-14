@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.0-nightly-20241026004657
+ * @version 3.14.0-nightly-20241114004647
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -157,12 +157,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__14__;
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other entry modules.
 !function() {
 // extracted by mini-css-extract-plugin
 
 }();
-// This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other entry modules.
 !function() {
 // ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
@@ -21824,7 +21824,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.0-nightly-20241026004657",
+  version: "3.14.0-nightly-20241114004647",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

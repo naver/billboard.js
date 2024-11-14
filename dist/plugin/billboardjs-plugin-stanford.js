@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.0-nightly-20241026004657
+ * @version 3.14.0-nightly-20241114004647
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -113,7 +113,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 !function() {
 
 // EXPORTS
@@ -839,7 +839,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.14.0-nightly-20241026004657");
+__publicField(Plugin, "version", "3.14.0-nightly-20241114004647");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);
