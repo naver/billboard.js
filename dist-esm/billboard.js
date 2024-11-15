@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.0-nightly-20241114004647
+ * @version 3.14.0-nightly-20241115004709
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -20514,9 +20514,10 @@ var shapePoint = {
         var mouse = getPointer(state.event, node);
         var element = select(node);
         var prefix = this.isCirclePoint(node) ? "c" : "";
-        var sensitivity = config.point_sensitivity === "radius" ?
+        var pointSensitivity = config.point_sensitivity;
+        pointSensitivity = pointSensitivity === "radius" ?
             node.getAttribute("r") :
-            config.point_sensitivity;
+            (isFunction(pointSensitivity) ? node && pointSensitivity(node) : pointSensitivity);
         var cx = +element.attr("".concat(prefix, "x"));
         var cy = +element.attr("".concat(prefix, "y"));
         // if node don't have cx/y or x/y attribute value
@@ -20525,7 +20526,7 @@ var shapePoint = {
             cx = x;
             cy = y;
         }
-        return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < (r || sensitivity);
+        return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < (r || pointSensitivity);
     },
     /**
      * Get data point sensitivity radius
@@ -24607,7 +24608,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.0-nightly-20241114004647
+ * @version 3.14.0-nightly-20241115004709
  */
 var bb = {
     /**
@@ -24617,7 +24618,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.0-nightly-20241114004647",
+    version: "3.14.0-nightly-20241115004709",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

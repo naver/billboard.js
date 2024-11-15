@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.0-nightly-20241114004647
+ * @version 3.14.0-nightly-20241115004709
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -46596,7 +46596,8 @@ const getTransitionName = () => getRandom();
     const mouse = getPointer(state.event, node);
     const element = src_select(node);
     const prefix = this.isCirclePoint(node) ? "c" : "";
-    const sensitivity = config.point_sensitivity === "radius" ? node.getAttribute("r") : config.point_sensitivity;
+    let pointSensitivity = config.point_sensitivity;
+    pointSensitivity = pointSensitivity === "radius" ? node.getAttribute("r") : isFunction(pointSensitivity) ? node && pointSensitivity(node) : pointSensitivity;
     let cx = +element.attr(`${prefix}x`);
     let cy = +element.attr(`${prefix}y`);
     if (!(cx || cy) && node.nodeType === 1) {
@@ -46606,7 +46607,7 @@ const getTransitionName = () => getRandom();
     }
     return Math.sqrt(
       Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)
-    ) < (r || sensitivity);
+    ) < (r || pointSensitivity);
   },
   /**
    * Get data point sensitivity radius
@@ -49194,7 +49195,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.0-nightly-20241114004647",
+  version: "3.14.0-nightly-20241115004709",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
