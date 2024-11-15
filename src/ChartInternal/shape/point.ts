@@ -378,9 +378,12 @@ export default {
 		const mouse = getPointer(state.event, node);
 		const element = d3Select(node);
 		const prefix = this.isCirclePoint(node) ? "c" : "";
-		const sensitivity = config.point_sensitivity === "radius" ?
+		let pointSensitivity = config.point_sensitivity;
+
+		pointSensitivity = pointSensitivity === "radius" ?
 			node.getAttribute("r") :
-			config.point_sensitivity;
+			(isFunction(pointSensitivity) ? node && pointSensitivity(node) : pointSensitivity);
+
 		let cx = +element.attr(`${prefix}x`);
 		let cy = +element.attr(`${prefix}y`);
 
@@ -394,7 +397,7 @@ export default {
 
 		return Math.sqrt(
 			Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)
-		) < (r || sensitivity);
+		) < (r || pointSensitivity);
 	},
 
 	/**
