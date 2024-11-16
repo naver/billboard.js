@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.0-nightly-20241115004709
+ * @version 3.14.0-nightly-20241116004713
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -56,16 +56,6 @@ var __assign = function() {
     };
     return __assign.apply(this, arguments);
 };
-
-function __spreadArray(to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-}
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -270,50 +260,6 @@ var isEmpty = function (o) { return (isUndefined(o) || o === null ||
     (isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0) ||
     (isNumber(o) && isNaN(o))); };
 /**
- * Check if is array
- * @param {Array} arr Data to be checked
- * @returns {boolean}
- * @private
- */
-var isArray = function (arr) { return Array.isArray(arr); };
-/**
- * Check if is object
- * @param {object} obj Data to be checked
- * @returns {boolean}
- * @private
- */
-var isObject = function (obj) { return obj && !(obj === null || obj === void 0 ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj); };
-/**
- * Merge object returning new object
- * @param {object} target Target object
- * @param {object} objectN Source object
- * @returns {object} merged target object
- * @private
- */
-function mergeObj(target) {
-    var objectN = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        objectN[_i - 1] = arguments[_i];
-    }
-    if (!objectN.length || (objectN.length === 1 && !objectN[0])) {
-        return target;
-    }
-    var source = objectN.shift();
-    if (isObject(target) && isObject(source)) {
-        Object.keys(source).forEach(function (key) {
-            var value = source[key];
-            if (isObject(value)) {
-                !target[key] && (target[key] = {});
-                target[key] = mergeObj(target[key], value);
-            }
-            else {
-                target[key] = isArray(value) ? value.concat() : value;
-            }
-        });
-    }
-    return mergeObj.apply(void 0, __spreadArray([target], objectN, false));
-}
-/**
  * Get range
  * @param {number} start Start number
  * @param {number} end End number
@@ -359,26 +305,7 @@ var getRange = function (start, end, step) {
                 el.dispatchEvent(mouseEvent);
             };
         }
-    })(),
-    touch: function (el, eventType, params) {
-        var touchObj = new Touch(mergeObj({
-            identifier: Date.now(),
-            target: el,
-            radiusX: 2.5,
-            radiusY: 2.5,
-            rotationAngle: 10,
-            force: 0.5
-        }, params));
-        el.dispatchEvent(new TouchEvent(eventType, {
-            cancelable: true,
-            bubbles: true,
-            shiftKey: true,
-            touches: [touchObj],
-            targetTouches: [],
-            changedTouches: [touchObj]
-        }));
-    }
-});
+    })()});
 /**
  * Get parsed date value
  * (It must be called in 'ChartInternal' context)
@@ -501,7 +428,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.14.0-nightly-20241115004709";
+    Plugin.version = "3.14.0-nightly-20241116004713";
     return Plugin;
 }());
 

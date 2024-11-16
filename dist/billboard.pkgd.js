@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.0-nightly-20241115004709
+ * @version 3.14.0-nightly-20241116004713
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -32895,8 +32895,8 @@ function getTextXPos(pos = "left", width) {
       } else {
         const { clientX, clientY } = event;
         setTimeout(() => {
-          let target = browser_doc.elementFromPoint(clientX, clientY);
-          const data = src_select(target).datum();
+          let target = [clientX, clientY].every(Number.isFinite) && browser_doc.elementFromPoint(clientX, clientY);
+          const data = target && src_select(target).datum();
           if (data) {
             const d = $$.hasArcType() ? $$.convertToArcData($$.updateAngle(data)) : data == null ? void 0 : data.data;
             hasTreemap && (target = svg.node());
@@ -40923,14 +40923,13 @@ class Axis_Axis {
   clickHandlerForMultipleXS(ctx) {
     const $$ = ctx;
     const { config, state } = $$;
-    const pointSensitivity = config.point_sensitivity;
     const targetsToShow = $$.filterTargetsToShow($$.data.targets);
     if ($$.hasArcType(targetsToShow)) {
       return;
     }
     const mouse = getPointer(state.event, this);
     const closest = $$.findClosestFromTargets(targetsToShow, mouse);
-    const sensitivity = pointSensitivity === "radius" ? closest == null ? void 0 : closest.r : isFunction(pointSensitivity) ? closest && pointSensitivity(closest) : pointSensitivity;
+    const sensitivity = $$.getPointSensitivity(closest);
     if (!closest) {
       return;
     }
@@ -46592,12 +46591,11 @@ const getTransitionName = () => getRandom();
     return $$.config.point_focus_only && !$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
   },
   isWithinCircle(node, r) {
-    const { config, state } = this;
+    const { state } = this;
     const mouse = getPointer(state.event, node);
     const element = src_select(node);
     const prefix = this.isCirclePoint(node) ? "c" : "";
-    let pointSensitivity = config.point_sensitivity;
-    pointSensitivity = pointSensitivity === "radius" ? node.getAttribute("r") : isFunction(pointSensitivity) ? node && pointSensitivity(node) : pointSensitivity;
+    const pointSensitivity = this.getPointSensitivity(node);
     let cx = +element.attr(`${prefix}x`);
     let cy = +element.attr(`${prefix}y`);
     if (!(cx || cy) && node.nodeType === 1) {
@@ -46617,7 +46615,9 @@ const getTransitionName = () => getRandom();
   getPointSensitivity(d) {
     const $$ = this;
     let sensitivity = $$.config.point_sensitivity;
-    if (isFunction(sensitivity)) {
+    if (!d) {
+      return sensitivity;
+    } else if (isFunction(sensitivity)) {
       sensitivity = sensitivity.call($$.api, d);
     } else if (sensitivity === "radius") {
       sensitivity = d.r;
@@ -49195,7 +49195,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.0-nightly-20241115004709",
+  version: "3.14.0-nightly-20241116004713",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

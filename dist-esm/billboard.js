@@ -5,20 +5,20 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.0-nightly-20241115004709
+ * @version 3.14.0-nightly-20241116004713
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { brushSelection, brushY, brushX } from 'd3-brush';
-import { csvParseRows, csvParse, tsvParseRows, tsvParse } from 'd3-dsv';
+import { tsvParse, tsvParseRows, csvParse, csvParseRows } from 'd3-dsv';
 import { drag as drag$1 } from 'd3-drag';
-import { scaleOrdinal, scaleLinear, scaleSymlog, scaleLog, scaleTime, scaleUtc } from 'd3-scale';
+import { scaleOrdinal, scaleLinear, scaleUtc, scaleTime, scaleLog, scaleSymlog } from 'd3-scale';
 import { transition } from 'd3-transition';
-import { curveBasis, curveBasisClosed, curveBasisOpen, curveBundle, curveCardinal, curveCardinalClosed, curveCardinalOpen, curveCatmullRom, curveCatmullRomClosed, curveCatmullRomOpen, curveMonotoneX, curveMonotoneY, curveNatural, curveLinearClosed, curveLinear, curveStep, curveStepAfter, curveStepBefore, pie as pie$1, arc, area as area$1, line as line$1 } from 'd3-shape';
+import { curveStepBefore, curveStepAfter, curveStep, curveLinear, curveLinearClosed, curveNatural, curveMonotoneY, curveMonotoneX, curveCatmullRomOpen, curveCatmullRomClosed, curveCatmullRom, curveCardinalOpen, curveCardinalClosed, curveCardinal, curveBundle, curveBasisOpen, curveBasisClosed, curveBasis, arc, pie as pie$1, area as area$1, line as line$1 } from 'd3-shape';
 import { axisLeft, axisBottom, axisTop, axisRight } from 'd3-axis';
 import { easeLinear } from 'd3-ease';
 import { interpolate } from 'd3-interpolate';
-import { treemap as treemap$1, treemapBinary, treemapDice, treemapSlice, treemapSliceDice, treemapSquarify, treemapResquarify, hierarchy } from 'd3-hierarchy';
+import { hierarchy, treemapResquarify, treemapSquarify, treemapSliceDice, treemapSlice, treemapDice, treemapBinary, treemap as treemap$1 } from 'd3-hierarchy';
 import { zoomIdentity, zoomTransform, zoom as zoom$2 } from 'd3-zoom';
 
 /******************************************************************************
@@ -8887,13 +8887,13 @@ var tooltip$1 = {
                         $$.setExpand(idx, null, true);
                     }
                 }
-                // for Arc & Treemap
             }
-            else {
+            else { // for Arc & Treemap
                 var clientX_1 = event.clientX, clientY_1 = event.clientY;
                 setTimeout(function () {
-                    var target = doc.elementFromPoint(clientX_1, clientY_1);
-                    var data = select(target).datum();
+                    var target = [clientX_1, clientY_1].every(Number.isFinite) &&
+                        doc.elementFromPoint(clientX_1, clientY_1);
+                    var data = target && select(target).datum();
                     if (data) {
                         var d = $$.hasArcType() ?
                             $$.convertToArcData($$.updateAngle(data)) :
@@ -14691,14 +14691,13 @@ var eventrect = {
     clickHandlerForMultipleXS: function (ctx) {
         var $$ = ctx;
         var config = $$.config, state = $$.state;
-        var pointSensitivity = config.point_sensitivity;
         var targetsToShow = $$.filterTargetsToShow($$.data.targets);
         if ($$.hasArcType(targetsToShow)) {
             return;
         }
         var mouse = getPointer(state.event, this);
         var closest = $$.findClosestFromTargets(targetsToShow, mouse);
-        var sensitivity = pointSensitivity === "radius" ? closest === null || closest === void 0 ? void 0 : closest.r : (isFunction(pointSensitivity) ? closest && pointSensitivity(closest) : pointSensitivity);
+        var sensitivity = $$.getPointSensitivity(closest);
         if (!closest) {
             return;
         }
@@ -20510,19 +20509,16 @@ var shapePoint = {
             !$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
     },
     isWithinCircle: function (node, r) {
-        var _a = this, config = _a.config, state = _a.state;
+        var state = this.state;
         var mouse = getPointer(state.event, node);
         var element = select(node);
         var prefix = this.isCirclePoint(node) ? "c" : "";
-        var pointSensitivity = config.point_sensitivity;
-        pointSensitivity = pointSensitivity === "radius" ?
-            node.getAttribute("r") :
-            (isFunction(pointSensitivity) ? node && pointSensitivity(node) : pointSensitivity);
+        var pointSensitivity = this.getPointSensitivity(node);
         var cx = +element.attr("".concat(prefix, "x"));
         var cy = +element.attr("".concat(prefix, "y"));
         // if node don't have cx/y or x/y attribute value
         if (!(cx || cy) && node.nodeType === 1) {
-            var _b = getBoundingRect(node), x = _b.x, y = _b.y;
+            var _a = getBoundingRect(node), x = _a.x, y = _a.y;
             cx = x;
             cy = y;
         }
@@ -20536,7 +20532,10 @@ var shapePoint = {
     getPointSensitivity: function (d) {
         var $$ = this;
         var sensitivity = $$.config.point_sensitivity;
-        if (isFunction(sensitivity)) {
+        if (!d) {
+            return sensitivity;
+        }
+        else if (isFunction(sensitivity)) {
             sensitivity = sensitivity.call($$.api, d);
         }
         else if (sensitivity === "radius") {
@@ -24608,7 +24607,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.0-nightly-20241115004709
+ * @version 3.14.0-nightly-20241116004713
  */
 var bb = {
     /**
@@ -24618,7 +24617,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.0-nightly-20241115004709",
+    version: "3.14.0-nightly-20241116004713",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
