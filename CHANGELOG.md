@@ -1,3 +1,11 @@
+## [3.14.1](https://github.com/naver/billboard.js/compare/3.14.0...3.14.1) (2024-11-18)
+
+
+### Bug Fixes
+
+* **point:** fix data.onclick working with sensitivity function ([587d71e](https://github.com/naver/billboard.js/commit/587d71e9b413d5abd2265a3fb13c3c09914fca80)), closes [#3912](https://github.com/naver/billboard.js/issues/3912)
+* **tooltip:** Hide tooltip on redraw when unexpected error ([3540640](https://github.com/naver/billboard.js/commit/35406406962c89bac0503800771d96ba2f47f56d)), closes [#3909](https://github.com/naver/billboard.js/issues/3909) [#3910](https://github.com/naver/billboard.js/issues/3910)
+
 # [3.14.0](https://github.com/naver/billboard.js/compare/3.13.0...3.14.0) (2024-10-25)
 
 
