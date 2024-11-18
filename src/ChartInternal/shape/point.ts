@@ -378,7 +378,7 @@ export default {
 		const mouse = getPointer(state.event, node);
 		const element = d3Select(node);
 		const prefix = this.isCirclePoint(node) ? "c" : "";
-		const pointSensitivity = this.getPointSensitivity(node);
+		const pointSensitivity = this.getPointSensitivity(element?.datum());
 
 		let cx = +element.attr(`${prefix}x`);
 		let cy = +element.attr(`${prefix}y`);

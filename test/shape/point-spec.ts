@@ -416,7 +416,7 @@ describe("SHAPE POINT", () => {
 		});
 
 		it("set options: poinst.sensitivity=function(){}", () => {
-			args.point.sensitivity = ({r}) => r
+			args.point.sensitivity = sinon.spy(({r}) => r);
 		});
 		
 		it("should data.onclick callback called.", () => {
@@ -429,7 +429,10 @@ describe("SHAPE POINT", () => {
 				clientY: rect.top + 3
 			}, chart);
 
+			const spy = args.point.sensitivity.args[0][0];
+
 			expect(args.data.onclick.called).to.be.true;
+			expect(spy.r > 0).to.be.true;
 		});
 
 		it("set options", () => {
@@ -444,9 +447,9 @@ describe("SHAPE POINT", () => {
 					type: "line"
 				},
 				point: {
-					sensitivity: function(r) {
-					  return 10;
-					},
+					sensitivity: sinon.spy(function(r) {
+						return 10;
+					}),
 					r: 10,
 					focus: {
 						expand: {
@@ -466,8 +469,11 @@ describe("SHAPE POINT", () => {
 				clientX: 300,
 				clientY: 40
 			}, chart); 
+
+			const spy = args.point.sensitivity.args[0][0];
   
 			expect(args.data.onclick.called).to.be.true;
+			expect(spy.r > 0).to.be.true;
 		});
 	}); 
  
