@@ -730,14 +730,15 @@ export default {
 				event.changedTouches[0] :
 				event;
 
-			let point = isRotated ?
-				e.clientY + scrollPos.y - rect.top :
-				e.clientX + scrollPos.x - rect.left;
+			let point = isRotated ? e.clientY + scrollPos.y : e.clientX + scrollPos.x;
 
 			if (hasViewBox($el.svg)) {
 				const pos = [point, 0];
+
 				isRotated && pos.reverse();
 				point = getTransformCTM($el.svg.node(), ...pos)[isRotated ? "y" : "x"];
+			} else {
+				point -= isRotated ? rect.top : rect.left;
 			}
 
 			index = findIndex(
