@@ -551,10 +551,18 @@ function getScrollPosition(node: HTMLElement) {
 function getTransformCTM(node: SVGGraphicsElement, x = 0, y = 0, inverse = true): DOMPoint {
 	const point = new DOMPoint(x, y);
 	const screen = <DOMMatrix>node.getScreenCTM();
-
-	return point.matrixTransform(
+	const res = point.matrixTransform(
 		inverse ? screen?.inverse() : screen
 	);
+
+	if (inverse === false) {
+		const rect = node.getBoundingClientRect();
+
+		res.x -= rect.x;
+		res.y -= rect.y;
+	}
+
+	return res;
 }
 
 /**

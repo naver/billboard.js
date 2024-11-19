@@ -362,16 +362,21 @@ export default {
 		}
 	},
 
+	/**
+	 * Get tooltip position when svg has vieBox attribute
+	 * @param {number} tWidth Tooltip width value
+	 * @param {number} tHeight Tooltip height value
+	 * @param {object} currPos Current event position value from SVG coordinate
+	 * @returns {object} top, left value
+	 */
 	getTooltipPositionViewBox(tWidth: number, tHeight: number,
 		currPos: {[key: string]: number}): {top: number, left: number} {
 		const $$ = this;
-		const {$el: {eventRect, main}, config, state} = $$;
+		const {$el: {eventRect, svg}, config, state} = $$;
 
 		const isRotated = config.axis_rotated;
-		const hasArcType = $$.hasArcType(undefined, ["radar"]) || state.hasFunnel ||
-			state.hasTreemap;
-		const target = (state.hasRadar ? main : eventRect)?.node() ?? state.event.target;
-		const size = 38; // getTransformCTM($el.svg.node(), 10, 0, false).x;
+		const hasArcType = $$.hasArcType() || state.hasFunnel || state.hasTreemap;
+		const target = (hasArcType ? svg : eventRect)?.node() ?? state.event.target;
 
 		let {x, y} = currPos;
 
@@ -380,25 +385,30 @@ export default {
 			y = isRotated ? currPos.xAxis : y;
 		}
 
-		// currPos는 SVG 좌표계 기준으로 전달됨
+		// currPos value based on SVG coordinate
 		const ctm = getTransformCTM(target, x, y, false);
+		const rect = target.getBoundingClientRect();
+		const size = getTransformCTM(target, 20, 0, false).x;
 
 		let top = ctm.y;
-		let left = ctm.x + size;
+		let left = ctm.x + (tWidth / 2) + size;
 
 		if (hasArcType) {
-			top += tHeight;
-			left -= size; // (tWidth / 2);
+			if (state.hasFunnel || state.hasTreemap || state.hasRadar) {
+				left -= (tWidth / 2) + size;
+				top += tHeight;
+			} else {
+				top += rect.height / 2;
+				left += (rect.width / 2) - (tWidth - size);
+			}
 		}
 
-		const rect = (hasArcType ? main.node() : target).getBoundingClientRect();
-
-		if (left + tWidth > rect.right) {
-			left = rect.right - tWidth - size;
+		if (left + tWidth > rect.width) {
+			left = rect.width - tWidth - size;
 		}
 
-		if (top + tHeight > rect.bottom) {
-			top -= tHeight + size;
+		if (top + tHeight > rect.height) {
+			top -= tHeight * 2;
 		}
 
 		return {
