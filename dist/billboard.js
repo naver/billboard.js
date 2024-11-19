@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.0-nightly-20241116004713
+ * @version 3.14.1-nightly-20241119004706
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -19681,7 +19681,7 @@ const getTransitionName = () => getRandom();
     const mouse = getPointer(state.event, node);
     const element = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(node);
     const prefix = this.isCirclePoint(node) ? "c" : "";
-    const pointSensitivity = this.getPointSensitivity(node);
+    const pointSensitivity = this.getPointSensitivity(element == null ? void 0 : element.datum());
     let cx = +element.attr(`${prefix}x`);
     let cy = +element.attr(`${prefix}y`);
     if (!(cx || cy) && node.nodeType === 1) {
@@ -21825,7 +21825,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.0-nightly-20241116004713",
+  version: "3.14.1-nightly-20241119004706",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

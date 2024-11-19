@@ -5,20 +5,20 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.0-nightly-20241116004713
+ * @version 3.14.1-nightly-20241119004706
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { brushSelection, brushY, brushX } from 'd3-brush';
-import { tsvParse, tsvParseRows, csvParse, csvParseRows } from 'd3-dsv';
+import { csvParseRows, csvParse, tsvParseRows, tsvParse } from 'd3-dsv';
 import { drag as drag$1 } from 'd3-drag';
-import { scaleOrdinal, scaleLinear, scaleUtc, scaleTime, scaleLog, scaleSymlog } from 'd3-scale';
+import { scaleOrdinal, scaleLinear, scaleSymlog, scaleLog, scaleTime, scaleUtc } from 'd3-scale';
 import { transition } from 'd3-transition';
-import { curveStepBefore, curveStepAfter, curveStep, curveLinear, curveLinearClosed, curveNatural, curveMonotoneY, curveMonotoneX, curveCatmullRomOpen, curveCatmullRomClosed, curveCatmullRom, curveCardinalOpen, curveCardinalClosed, curveCardinal, curveBundle, curveBasisOpen, curveBasisClosed, curveBasis, arc, pie as pie$1, area as area$1, line as line$1 } from 'd3-shape';
+import { curveBasis, curveBasisClosed, curveBasisOpen, curveBundle, curveCardinal, curveCardinalClosed, curveCardinalOpen, curveCatmullRom, curveCatmullRomClosed, curveCatmullRomOpen, curveMonotoneX, curveMonotoneY, curveNatural, curveLinearClosed, curveLinear, curveStep, curveStepAfter, curveStepBefore, pie as pie$1, arc, area as area$1, line as line$1 } from 'd3-shape';
 import { axisLeft, axisBottom, axisTop, axisRight } from 'd3-axis';
 import { easeLinear } from 'd3-ease';
 import { interpolate } from 'd3-interpolate';
-import { hierarchy, treemapResquarify, treemapSquarify, treemapSliceDice, treemapSlice, treemapDice, treemapBinary, treemap as treemap$1 } from 'd3-hierarchy';
+import { treemap as treemap$1, treemapBinary, treemapDice, treemapSlice, treemapSliceDice, treemapSquarify, treemapResquarify, hierarchy } from 'd3-hierarchy';
 import { zoomIdentity, zoomTransform, zoom as zoom$2 } from 'd3-zoom';
 
 /******************************************************************************
@@ -20513,7 +20513,7 @@ var shapePoint = {
         var mouse = getPointer(state.event, node);
         var element = select(node);
         var prefix = this.isCirclePoint(node) ? "c" : "";
-        var pointSensitivity = this.getPointSensitivity(node);
+        var pointSensitivity = this.getPointSensitivity(element === null || element === void 0 ? void 0 : element.datum());
         var cx = +element.attr("".concat(prefix, "x"));
         var cy = +element.attr("".concat(prefix, "y"));
         // if node don't have cx/y or x/y attribute value
@@ -24607,7 +24607,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.0-nightly-20241116004713
+ * @version 3.14.1-nightly-20241119004706
  */
 var bb = {
     /**
@@ -24617,7 +24617,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.0-nightly-20241116004713",
+    version: "3.14.1-nightly-20241119004706",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

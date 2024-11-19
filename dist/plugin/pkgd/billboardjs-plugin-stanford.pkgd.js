@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.0-nightly-20241116004713
+ * @version 3.14.1-nightly-20241119004706
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -24618,7 +24618,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.14.0-nightly-20241116004713");
+__publicField(Plugin, "version", "3.14.1-nightly-20241119004706");
 
 ;// ./node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {
