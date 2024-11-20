@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.1-nightly-20241119004706
+ * @version 3.14.1-nightly-20241120004710
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -2621,7 +2621,13 @@ function getTransformCTM(node, x, y, inverse) {
     if (inverse === void 0) { inverse = true; }
     var point = new DOMPoint(x, y);
     var screen = node.getScreenCTM();
-    return point.matrixTransform(inverse ? screen === null || screen === void 0 ? void 0 : screen.inverse() : screen);
+    var res = point.matrixTransform(inverse ? screen === null || screen === void 0 ? void 0 : screen.inverse() : screen);
+    if (inverse === false) {
+        var rect = node.getBoundingClientRect();
+        res.x -= rect.x;
+        res.y -= rect.y;
+    }
+    return res;
 }
 /**
  * Gets the SVGMatrix of an SVGGElement
@@ -4560,13 +4566,14 @@ var data$1 = {
             var e = inputType === "touch" && event.changedTouches ?
                 event.changedTouches[0] :
                 event;
-            var point = isRotated ?
-                e.clientY + scrollPos.y - rect.top :
-                e.clientX + scrollPos.x - rect.left;
+            var point = isRotated ? e.clientY + scrollPos.y : e.clientX + scrollPos.x;
             if (hasViewBox($el.svg)) {
                 var pos = [point, 0];
                 isRotated && pos.reverse();
                 point = getTransformCTM.apply(void 0, __spreadArray([$el.svg.node()], pos, false))[isRotated ? "y" : "x"];
+            }
+            else {
+                point -= isRotated ? rect.top : rect.left;
             }
             index = findIndex(coords, point, 0, coords.length - 1, isRotated);
         }
@@ -8642,34 +8649,46 @@ var tooltip$1 = {
             });
         }
     },
+    /**
+     * Get tooltip position when svg has vieBox attribute
+     * @param {number} tWidth Tooltip width value
+     * @param {number} tHeight Tooltip height value
+     * @param {object} currPos Current event position value from SVG coordinate
+     * @returns {object} top, left value
+     */
     getTooltipPositionViewBox: function (tWidth, tHeight, currPos) {
         var _a, _b;
         var $$ = this;
-        var _c = $$.$el, eventRect = _c.eventRect, main = _c.main, config = $$.config, state = $$.state;
+        var _c = $$.$el, eventRect = _c.eventRect, svg = _c.svg, config = $$.config, state = $$.state;
         var isRotated = config.axis_rotated;
-        var hasArcType = $$.hasArcType(undefined, ["radar"]) || state.hasFunnel ||
-            state.hasTreemap;
-        var target = (_b = (_a = (state.hasRadar ? main : eventRect)) === null || _a === void 0 ? void 0 : _a.node()) !== null && _b !== void 0 ? _b : state.event.target;
-        var size = 38; // getTransformCTM($el.svg.node(), 10, 0, false).x;
+        var hasArcType = $$.hasArcType() || state.hasFunnel || state.hasTreemap;
+        var target = (_b = (_a = (hasArcType ? svg : eventRect)) === null || _a === void 0 ? void 0 : _a.node()) !== null && _b !== void 0 ? _b : state.event.target;
         var x = currPos.x, y = currPos.y;
         if (state.hasAxis) {
             x = isRotated ? x : currPos.xAxis;
             y = isRotated ? currPos.xAxis : y;
         }
-        // currPos는 SVG 좌표계 기준으로 전달됨
+        // currPos value based on SVG coordinate
         var ctm = getTransformCTM(target, x, y, false);
+        var rect = target.getBoundingClientRect();
+        var size = getTransformCTM(target, 20, 0, false).x;
         var top = ctm.y;
-        var left = ctm.x + size;
+        var left = ctm.x + (tWidth / 2) + size;
         if (hasArcType) {
-            top += tHeight;
-            left -= size; // (tWidth / 2);
+            if (state.hasFunnel || state.hasTreemap || state.hasRadar) {
+                left -= (tWidth / 2) + size;
+                top += tHeight;
+            }
+            else {
+                top += rect.height / 2;
+                left += (rect.width / 2) - (tWidth - size);
+            }
         }
-        var rect = (hasArcType ? main.node() : target).getBoundingClientRect();
-        if (left + tWidth > rect.right) {
-            left = rect.right - tWidth - size;
+        if (left + tWidth > rect.width) {
+            left = rect.width - tWidth - size;
         }
-        if (top + tHeight > rect.bottom) {
-            top -= tHeight + size;
+        if (top + tHeight > rect.height) {
+            top -= tHeight * 2;
         }
         return {
             top: top,
@@ -24607,7 +24626,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.1-nightly-20241119004706
+ * @version 3.14.1-nightly-20241120004710
  */
 var bb = {
     /**
@@ -24617,7 +24636,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.1-nightly-20241119004706",
+    version: "3.14.1-nightly-20241120004710",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

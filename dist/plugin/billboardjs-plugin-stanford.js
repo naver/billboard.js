@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.1-nightly-20241119004706
+ * @version 3.14.1-nightly-20241120004710
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -560,9 +560,15 @@ function getScrollPosition(node) {
 function getTransformCTM(node, x = 0, y = 0, inverse = true) {
   const point = new DOMPoint(x, y);
   const screen = node.getScreenCTM();
-  return point.matrixTransform(
+  const res = point.matrixTransform(
     inverse ? screen == null ? void 0 : screen.inverse() : screen
   );
+  if (inverse === false) {
+    const rect = node.getBoundingClientRect();
+    res.x -= rect.x;
+    res.y -= rect.y;
+  }
+  return res;
 }
 function getTranslation(node) {
   const transform = node ? node.transform : null;
@@ -839,7 +845,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.14.1-nightly-20241119004706");
+__publicField(Plugin, "version", "3.14.1-nightly-20241120004710");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);

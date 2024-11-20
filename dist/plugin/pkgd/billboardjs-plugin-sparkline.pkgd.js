@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.1-nightly-20241119004706
+ * @version 3.14.1-nightly-20241120004710
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23428,9 +23428,15 @@ function getScrollPosition(node) {
 function getTransformCTM(node, x = 0, y = 0, inverse = true) {
   const point = new DOMPoint(x, y);
   const screen = node.getScreenCTM();
-  return point.matrixTransform(
+  const res = point.matrixTransform(
     inverse ? screen == null ? void 0 : screen.inverse() : screen
   );
+  if (inverse === false) {
+    const rect = node.getBoundingClientRect();
+    res.x -= rect.x;
+    res.y -= rect.y;
+  }
+  return res;
 }
 function getTranslation(node) {
   const transform = node ? node.transform : null;
@@ -23707,7 +23713,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.14.1-nightly-20241119004706");
+__publicField(Plugin, "version", "3.14.1-nightly-20241120004710");
 
 ;// ./src/Plugin/sparkline/Options.ts
 class Options {

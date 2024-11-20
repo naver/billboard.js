@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.1-nightly-20241119004706
+ * @version 3.14.1-nightly-20241120004710
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2520,9 +2520,15 @@ function getScrollPosition(node) {
 function getTransformCTM(node, x = 0, y = 0, inverse = true) {
   const point = new DOMPoint(x, y);
   const screen = node.getScreenCTM();
-  return point.matrixTransform(
+  const res = point.matrixTransform(
     inverse ? screen == null ? void 0 : screen.inverse() : screen
   );
+  if (inverse === false) {
+    const rect = node.getBoundingClientRect();
+    res.x -= rect.x;
+    res.y -= rect.y;
+  }
+  return res;
 }
 function getTranslation(node) {
   const transform = node ? node.transform : null;
@@ -4162,11 +4168,13 @@ function getDataKeyForJson(keysParam, config) {
       const isRotated = config.axis_rotated;
       const scrollPos = getScrollPosition($el.chart.node());
       const e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event;
-      let point = isRotated ? e.clientY + scrollPos.y - rect.top : e.clientX + scrollPos.x - rect.left;
+      let point = isRotated ? e.clientY + scrollPos.y : e.clientX + scrollPos.x;
       if (hasViewBox($el.svg)) {
         const pos = [point, 0];
         isRotated && pos.reverse();
         point = getTransformCTM($el.svg.node(), ...pos)[isRotated ? "y" : "x"];
+      } else {
+        point -= isRotated ? rect.top : rect.left;
       }
       index = findIndex(
         coords,
@@ -7654,32 +7662,44 @@ function getTextXPos(pos = "left", width) {
       });
     }
   },
+  /**
+   * Get tooltip position when svg has vieBox attribute
+   * @param {number} tWidth Tooltip width value
+   * @param {number} tHeight Tooltip height value
+   * @param {object} currPos Current event position value from SVG coordinate
+   * @returns {object} top, left value
+   */
   getTooltipPositionViewBox(tWidth, tHeight, currPos) {
     var _a, _b;
     const $$ = this;
-    const { $el: { eventRect, main }, config, state } = $$;
+    const { $el: { eventRect, svg }, config, state } = $$;
     const isRotated = config.axis_rotated;
-    const hasArcType = $$.hasArcType(void 0, ["radar"]) || state.hasFunnel || state.hasTreemap;
-    const target = (_b = (_a = state.hasRadar ? main : eventRect) == null ? void 0 : _a.node()) != null ? _b : state.event.target;
-    const size = 38;
+    const hasArcType = $$.hasArcType() || state.hasFunnel || state.hasTreemap;
+    const target = (_b = (_a = hasArcType ? svg : eventRect) == null ? void 0 : _a.node()) != null ? _b : state.event.target;
     let { x, y } = currPos;
     if (state.hasAxis) {
       x = isRotated ? x : currPos.xAxis;
       y = isRotated ? currPos.xAxis : y;
     }
     const ctm = getTransformCTM(target, x, y, false);
+    const rect = target.getBoundingClientRect();
+    const size = getTransformCTM(target, 20, 0, false).x;
     let top = ctm.y;
-    let left = ctm.x + size;
+    let left = ctm.x + tWidth / 2 + size;
     if (hasArcType) {
-      top += tHeight;
-      left -= size;
+      if (state.hasFunnel || state.hasTreemap || state.hasRadar) {
+        left -= tWidth / 2 + size;
+        top += tHeight;
+      } else {
+        top += rect.height / 2;
+        left += rect.width / 2 - (tWidth - size);
+      }
     }
-    const rect = (hasArcType ? main.node() : target).getBoundingClientRect();
-    if (left + tWidth > rect.right) {
-      left = rect.right - tWidth - size;
+    if (left + tWidth > rect.width) {
+      left = rect.width - tWidth - size;
     }
-    if (top + tHeight > rect.bottom) {
-      top -= tHeight + size;
+    if (top + tHeight > rect.height) {
+      top -= tHeight * 2;
     }
     return {
       top,
@@ -21825,7 +21845,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.1-nightly-20241119004706",
+  version: "3.14.1-nightly-20241120004710",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
