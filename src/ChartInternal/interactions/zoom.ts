@@ -367,6 +367,7 @@ export default {
 		let start = 0;
 		let end = 0;
 		let zoomRect;
+		let extent;
 
 		const prop = {
 			axis: isRotated ? "y" : "x",
@@ -377,6 +378,9 @@ export default {
 		$$.zoomBehaviour = d3Drag()
 			.clickDistance(4)
 			.on("start", function(event) {
+				// get extent at first zooming, when is zoomed do not consider
+				extent = $$.scale.zoom ? null : $$.axis.getExtent();
+
 				state.event = event;
 				$$.setDragStatus(true);
 				$$.unselectRect();
@@ -390,6 +394,15 @@ export default {
 				}
 
 				start = getPointer(event, this as SVGAElement)[prop.index];
+
+				if (extent) {
+					if (start < extent[0]) {
+						start = extent[0];
+					} else if (start > extent[1]) {
+						start = extent[1];
+					}
+				}
+
 				end = start;
 
 				zoomRect
@@ -400,6 +413,14 @@ export default {
 			})
 			.on("drag", function(event) {
 				end = getPointer(event, this as SVGAElement)[prop.index];
+
+				if (extent) {
+					if (end > extent[1]) {
+						end = extent[1];
+					} else if (end < extent[0]) {
+						end = extent[0];
+					}
+				}
 
 				zoomRect
 					.attr(prop.axis, Math.min(start, end))

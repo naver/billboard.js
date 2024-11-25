@@ -106,6 +106,29 @@ class Axis {
 		return type;
 	}
 
+	/**
+	 * Get extent value
+	 * @returns {Array} default extent
+	 * @private
+	 */
+	public getExtent(): number[] {
+		const $$ = this.owner;
+		const {config, scale} = $$;
+		let extent = config.axis_x_extent;
+
+		if (extent) {
+			if (isFunction(extent)) {
+				extent = extent.bind($$.api)($$.getXDomain($$.data.targets), scale.subX);
+			} else if (this.isTimeSeries() && extent.every(isNaN)) {
+				const fn = parseDate.bind($$);
+
+				extent = extent.map(v => scale.subX(fn(v)));
+			}
+		}
+
+		return extent;
+	}
+
 	init() {
 		const $$ = this.owner;
 		const {config, $el: {main, axis}, state: {clip}} = $$;
