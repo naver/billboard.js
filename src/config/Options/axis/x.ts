@@ -635,7 +635,8 @@ export default {
 	axis_x_height: <number | undefined>undefined,
 
 	/**
-	 * Set default extent for subchart and zoom. This can be an array or function that returns an array.
+	 * Set extent for subchart and zoom(drag only). This can be an array or function that returns an array.
+	 * - **NOTE:** Specifying value, will limit the zoom scope selection within.
 	 * @name axis․x․extent
 	 * @memberof Options
 	 * @type {Array|Function}
