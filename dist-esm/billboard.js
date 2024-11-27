@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.1-nightly-20241120004710
+ * @version 3.14.2-nightly-20241127004701
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -13396,6 +13396,26 @@ var Axis = /** @class */ (function () {
         }
         return type;
     };
+    /**
+     * Get extent value
+     * @returns {Array} default extent
+     * @private
+     */
+    Axis.prototype.getExtent = function () {
+        var $$ = this.owner;
+        var config = $$.config, scale = $$.scale;
+        var extent = config.axis_x_extent;
+        if (extent) {
+            if (isFunction(extent)) {
+                extent = extent.bind($$.api)($$.getXDomain($$.data.targets), scale.subX);
+            }
+            else if (this.isTimeSeries() && extent.every(isNaN)) {
+                var fn_1 = parseDate.bind($$);
+                extent = extent.map(function (v) { return scale.subX(fn_1(v)); });
+            }
+        }
+        return extent;
+    };
     Axis.prototype.init = function () {
         var _this = this;
         var $$ = this.owner;
@@ -13577,8 +13597,8 @@ var Axis = /** @class */ (function () {
             .scale((isX && $$.scale.zoom) || scale)
             .orient(orient);
         if (isX && this.isTimeSeries() && tickValues && !isFunction(tickValues)) {
-            var fn_1 = parseDate.bind($$);
-            tickValues = tickValues.map(function (v) { return fn_1(v); });
+            var fn_2 = parseDate.bind($$);
+            tickValues = tickValues.map(function (v) { return fn_2(v); });
         }
         else if (!isX && this.isTimeSeriesY()) {
             // https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
@@ -16400,7 +16420,8 @@ var x = {
      */
     axis_x_height: undefined,
     /**
-     * Set default extent for subchart and zoom. This can be an array or function that returns an array.
+     * Set extent for subchart and zoom(drag only). This can be an array or function that returns an array.
+     * - **NOTE:** Specifying value, will limit the zoom scope selection within.
      * @name axis․x․extent
      * @memberof Options
      * @type {Array|Function}
@@ -23440,7 +23461,7 @@ var subchart = {
         // set the brush extent
         $$.brush.scale = function (scale) {
             var h = config.subchart_size_height;
-            var extent = $$.getExtent();
+            var extent = $$.axis.getExtent();
             if (!extent && scale.range) {
                 extent = [[0, 0], [scale.range()[1], h]];
             }
@@ -23667,26 +23688,6 @@ var subchart = {
             $T(subchart.main.select(".".concat(CLASS.axisX)), withTransition);
         subchart.main.attr("transform", $$.getTranslate("context"));
         subXAxis.attr("transform", $$.getTranslate("subX"));
-    },
-    /**
-     * Get extent value
-     * @returns {Array} default extent
-     * @private
-     */
-    getExtent: function () {
-        var $$ = this;
-        var config = $$.config, scale = $$.scale;
-        var extent = config.axis_x_extent;
-        if (extent) {
-            if (isFunction(extent)) {
-                extent = extent.bind($$.api)($$.getXDomain($$.data.targets), scale.subX);
-            }
-            else if ($$.axis.isTimeSeries() && extent.every(isNaN)) {
-                var fn_1 = parseDate.bind($$);
-                extent = extent.map(function (v) { return scale.subX(fn_1(v)); });
-            }
-        }
-        return extent;
     }
 };
 
@@ -23967,6 +23968,7 @@ var zoom = {
         var start = 0;
         var end = 0;
         var zoomRect;
+        var extent;
         var prop = {
             axis: isRotated ? "y" : "x",
             attr: isRotated ? "height" : "width",
@@ -23975,6 +23977,8 @@ var zoom = {
         $$.zoomBehaviour = drag$1()
             .clickDistance(4)
             .on("start", function (event) {
+            // get extent at first zooming, when is zoomed do not consider
+            extent = $$.scale.zoom ? null : $$.axis.getExtent();
             state.event = event;
             $$.setDragStatus(true);
             $$.unselectRect();
@@ -23986,6 +23990,14 @@ var zoom = {
                     .attr("height", isRotated ? 0 : state.height);
             }
             start = getPointer(event, this)[prop.index];
+            if (extent) {
+                if (start < extent[0]) {
+                    start = extent[0];
+                }
+                else if (start > extent[1]) {
+                    start = extent[1];
+                }
+            }
             end = start;
             zoomRect
                 .attr(prop.axis, start)
@@ -23994,6 +24006,14 @@ var zoom = {
         })
             .on("drag", function (event) {
             end = getPointer(event, this)[prop.index];
+            if (extent) {
+                if (end > extent[1]) {
+                    end = extent[1];
+                }
+                else if (end < extent[0]) {
+                    end = extent[0];
+                }
+            }
             zoomRect
                 .attr(prop.axis, Math.min(start, end))
                 .attr(prop.attr, Math.abs(end - start));
@@ -24626,7 +24646,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.1-nightly-20241120004710
+ * @version 3.14.2-nightly-20241127004701
  */
 var bb = {
     /**
@@ -24636,7 +24656,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.1-nightly-20241120004710",
+    version: "3.14.2-nightly-20241127004701",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

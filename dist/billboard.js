@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.1-nightly-20241120004710
+ * @version 3.14.2-nightly-20241127004701
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -10927,7 +10927,7 @@ extend(zoom, {
     };
     $$.brush.scale = function(scale2) {
       const h = config.subchart_size_height;
-      let extent = $$.getExtent();
+      let extent = $$.axis.getExtent();
       if (!extent && scale2.range) {
         extent = [[0, 0], [scale2.range()[1], h]];
       } else if (isArray(extent)) {
@@ -11108,25 +11108,6 @@ extend(zoom, {
     const subXAxis = (transitions == null ? void 0 : transitions.axisSubX) ? transitions.axisSubX : $T(subchart.main.select(`.${classes.axisX}`), withTransition);
     subchart.main.attr("transform", $$.getTranslate("context"));
     subXAxis.attr("transform", $$.getTranslate("subX"));
-  },
-  /**
-   * Get extent value
-   * @returns {Array} default extent
-   * @private
-   */
-  getExtent() {
-    const $$ = this;
-    const { config, scale } = $$;
-    let extent = config.axis_x_extent;
-    if (extent) {
-      if (isFunction(extent)) {
-        extent = extent.bind($$.api)($$.getXDomain($$.data.targets), scale.subX);
-      } else if ($$.axis.isTimeSeries() && extent.every(isNaN)) {
-        const fn = parseDate.bind($$);
-        extent = extent.map((v) => scale.subX(fn(v)));
-      }
-    }
-    return extent;
   }
 });
 
@@ -11368,12 +11349,14 @@ extend(zoom, {
     let start = 0;
     let end = 0;
     let zoomRect;
+    let extent;
     const prop = {
       axis: isRotated ? "y" : "x",
       attr: isRotated ? "height" : "width",
       index: isRotated ? 1 : 0
     };
     $$.zoomBehaviour = (0,external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_.drag)().clickDistance(4).on("start", function(event) {
+      extent = $$.scale.zoom ? null : $$.axis.getExtent();
       state.event = event;
       $$.setDragStatus(true);
       $$.unselectRect();
@@ -11381,11 +11364,25 @@ extend(zoom, {
         zoomRect = $$.$el.main.append("rect").attr("clip-path", state.clip.path).attr("class", $ZOOM.zoomBrush).attr("width", isRotated ? state.width : 0).attr("height", isRotated ? 0 : state.height);
       }
       start = getPointer(event, this)[prop.index];
+      if (extent) {
+        if (start < extent[0]) {
+          start = extent[0];
+        } else if (start > extent[1]) {
+          start = extent[1];
+        }
+      }
       end = start;
       zoomRect.attr(prop.axis, start).attr(prop.attr, 0);
       $$.onZoomStart(event);
     }).on("drag", function(event) {
       end = getPointer(event, this)[prop.index];
+      if (extent) {
+        if (end > extent[1]) {
+          end = extent[1];
+        } else if (end < extent[0]) {
+          end = extent[0];
+        }
+      }
       zoomRect.attr(prop.axis, Math.min(start, end)).attr(prop.attr, Math.abs(end - start));
     }).on("end", (event) => {
       const scale = $$.scale.zoom || $$.scale.x;
@@ -13310,6 +13307,25 @@ class Axis_Axis {
       type = "log";
     }
     return type;
+  }
+  /**
+   * Get extent value
+   * @returns {Array} default extent
+   * @private
+   */
+  getExtent() {
+    const $$ = this.owner;
+    const { config, scale } = $$;
+    let extent = config.axis_x_extent;
+    if (extent) {
+      if (isFunction(extent)) {
+        extent = extent.bind($$.api)($$.getXDomain($$.data.targets), scale.subX);
+      } else if (this.isTimeSeries() && extent.every(isNaN)) {
+        const fn = parseDate.bind($$);
+        extent = extent.map((v) => scale.subX(fn(v)));
+      }
+    }
+    return extent;
   }
   init() {
     const $$ = this.owner;
@@ -15959,7 +15975,8 @@ function smoothLines(el, type) {
    */
   axis_x_height: void 0,
   /**
-   * Set default extent for subchart and zoom. This can be an array or function that returns an array.
+   * Set extent for subchart and zoom(drag only). This can be an array or function that returns an array.
+   * - **NOTE:** Specifying value, will limit the zoom scope selection within.
    * @name axis․x․extent
    * @memberof Options
    * @type {Array|Function}
@@ -21845,7 +21862,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.1-nightly-20241120004710",
+  version: "3.14.2-nightly-20241127004701",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
