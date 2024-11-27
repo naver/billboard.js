@@ -5,7 +5,7 @@
 import {brushSelection as d3BrushSelection, brushX as d3BrushX, brushY as d3BrushY} from "d3-brush";
 import {select as d3Select} from "d3-selection";
 import CLASS from "../../config/classes";
-import {brushEmpty, capitalize, isArray, isFunction, parseDate} from "../../module/util";
+import {brushEmpty, capitalize, isArray} from "../../module/util";
 
 export default {
 	/**
@@ -92,7 +92,7 @@ export default {
 		// set the brush extent
 		$$.brush.scale = function(scale) {
 			const h = config.subchart_size_height;
-			let extent = $$.getExtent();
+			let extent = $$.axis.getExtent();
 
 			if (!extent && scale.range) {
 				extent = [[0, 0], [scale.range()[1], h]];
@@ -373,28 +373,5 @@ export default {
 
 		subchart.main.attr("transform", $$.getTranslate("context"));
 		subXAxis.attr("transform", $$.getTranslate("subX"));
-	},
-
-	/**
-	 * Get extent value
-	 * @returns {Array} default extent
-	 * @private
-	 */
-	getExtent(): number[] {
-		const $$ = this;
-		const {config, scale} = $$;
-		let extent = config.axis_x_extent;
-
-		if (extent) {
-			if (isFunction(extent)) {
-				extent = extent.bind($$.api)($$.getXDomain($$.data.targets), scale.subX);
-			} else if ($$.axis.isTimeSeries() && extent.every(isNaN)) {
-				const fn = parseDate.bind($$);
-
-				extent = extent.map(v => scale.subX(fn(v)));
-			}
-		}
-
-		return extent;
 	}
 };

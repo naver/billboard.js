@@ -1,3 +1,11 @@
+## [3.14.2](https://github.com/naver/billboard.js/compare/3.14.1...3.14.2) (2024-11-26)
+
+
+### Bug Fixes
+
+* **axis:** Fix x axis extent to work ([4d73834](https://github.com/naver/billboard.js/commit/4d738348ee5c189274d277ce07bd31d626de303d)), closes [#3768](https://github.com/naver/billboard.js/issues/3768)
+* **tooltip:** Fix tooltip position on viewBox resizing ([582feb4](https://github.com/naver/billboard.js/commit/582feb46500a2eaf337a83f225dcebcc4d9317e9)), closes [#3917](https://github.com/naver/billboard.js/issues/3917)
+
 ## [3.14.1](https://github.com/naver/billboard.js/compare/3.14.0...3.14.1) (2024-11-18)
 
 
