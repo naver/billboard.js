@@ -261,7 +261,7 @@ describe("API show", () => {
 					}
 				},
 				transition: {
-					duration: 10
+					duration: 0
 				}
 			};
 		});
