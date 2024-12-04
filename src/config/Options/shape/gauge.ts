@@ -27,8 +27,9 @@ export default {
 	 * @property {number} [gauge.expand.rate=0.98] Set expand rate.
 	 * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
 	 * @property {boolean} [gauge.enforceMinMax=false] Enforce to given min/max value.
-	 * - When `gauge.min=50` and given value is `30`, gauge will render as empty value.
-	 * - When `gauge.max=100` and given value is `120`, gauge will render till 100, not surpassing max value.
+	 * **Note:** Only works for single data series.
+	 * 	- When `gauge.min=50` and given value is `30`, gauge will render as empty value.
+	 * 	- When `gauge.max=100` and given value is `120`, gauge will render till 100, not surpassing max value.
 	 * @property {number} [gauge.min=0] Set min value of the gauge.
 	 * @property {number} [gauge.max=100] Set max value of the gauge.
 	 * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
