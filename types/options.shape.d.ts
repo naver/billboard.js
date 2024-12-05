@@ -440,8 +440,9 @@ export interface GaugeOptions {
 
 	/**
 	 * Enforce to given min/max value.
-	 * - When `gauge.min=50` and given value is `30`, gauge will render as empty value.
-	 * - When `gauge.max=100` and given value is `120`, gauge will render till 100, not surpassing max value.
+	 * **Note:** Only works for single data series.
+	 * 	- When `gauge.min=50` and given value is `30`, gauge will render as empty value.
+	 * 	- When `gauge.max=100` and given value is `120`, gauge will render till 100, not surpassing max value.
 	 */
 	enforceMinMax?: boolean;
 
