@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.2-nightly-20241204004702
+ * @version 3.14.2-nightly-20241205004707
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -22423,8 +22423,9 @@ var optGauge = {
      * @property {number} [gauge.expand.rate=0.98] Set expand rate.
      * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
      * @property {boolean} [gauge.enforceMinMax=false] Enforce to given min/max value.
-     * - When `gauge.min=50` and given value is `30`, gauge will render as empty value.
-     * - When `gauge.max=100` and given value is `120`, gauge will render till 100, not surpassing max value.
+     * - **Note:** Only works for single data series.
+     * 	- When `gauge.min=50` and given value is `30`, gauge will render as empty value.
+     * 	- When `gauge.max=100` and given value is `120`, gauge will render till 100, not surpassing max value.
      * @property {number} [gauge.min=0] Set min value of the gauge.
      * @property {number} [gauge.max=100] Set max value of the gauge.
      * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
@@ -24646,7 +24647,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.2-nightly-20241204004702
+ * @version 3.14.2-nightly-20241205004707
  */
 var bb = {
     /**
@@ -24656,7 +24657,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.2-nightly-20241204004702",
+    version: "3.14.2-nightly-20241205004707",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
