@@ -226,7 +226,7 @@ export default {
 			let y = top + (mouse ? mouse[1] : 0) + (isRotated ? 4 : 0);
 
 			if (hasViewBox(svg)) {
-				const ctm = getTransformCTM($$.$el.svg.node(), x, y, false);
+				const ctm = getTransformCTM($$.$el.eventRect.node(), x, y, false);
 
 				x = ctm.x;
 				y = ctm.y;
