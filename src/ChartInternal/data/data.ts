@@ -736,7 +736,7 @@ export default {
 				const pos = [point, 0];
 
 				isRotated && pos.reverse();
-				point = getTransformCTM($el.svg.node(), ...pos)[isRotated ? "y" : "x"];
+				point = getTransformCTM($el.eventRect.node(), ...pos)[isRotated ? "y" : "x"];
 			} else {
 				point -= isRotated ? rect.top : rect.left;
 			}
