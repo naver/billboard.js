@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.2-nightly-20241218004658
+ * @version 3.14.2-nightly-20250104004645
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -4570,7 +4570,7 @@ var data$1 = {
             if (hasViewBox($el.svg)) {
                 var pos = [point, 0];
                 isRotated && pos.reverse();
-                point = getTransformCTM.apply(void 0, __spreadArray([$el.svg.node()], pos, false))[isRotated ? "y" : "x"];
+                point = getTransformCTM.apply(void 0, __spreadArray([$el.eventRect.node()], pos, false))[isRotated ? "y" : "x"];
             }
             else {
                 point -= isRotated ? rect.top : rect.left;
@@ -5215,7 +5215,7 @@ var interaction = {
             // value 4, is to adjust coordinate value set from: scale.ts - updateScales(): $$.getResettedPadding(1)
             var y = top_1 + (mouse ? mouse[1] : 0) + (isRotated ? 4 : 0);
             if (hasViewBox(svg)) {
-                var ctm = getTransformCTM($$.$el.svg.node(), x, y, false);
+                var ctm = getTransformCTM($$.$el.eventRect.node(), x, y, false);
                 x = ctm.x;
                 y = ctm.y;
             }
@@ -7030,7 +7030,7 @@ var redraw = {
             state.redrawing = false;
             callFn(config.onrendered, $$.api);
         };
-        if (afterRedraw) {
+        {
             // Only use transition when current tab is visible.
             if (withTransition && redrawList.length) {
                 // Wait for end of transitions for callback
@@ -24647,7 +24647,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.2-nightly-20241218004658
+ * @version 3.14.2-nightly-20250104004645
  */
 var bb = {
     /**
@@ -24657,7 +24657,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.2-nightly-20241218004658",
+    version: "3.14.2-nightly-20250104004645",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

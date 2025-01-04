@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.2-nightly-20241218004658
+ * @version 3.14.2-nightly-20250104004645
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -27905,7 +27905,7 @@ function getDataKeyForJson(keysParam, config) {
       if (hasViewBox($el.svg)) {
         const pos = [point, 0];
         isRotated && pos.reverse();
-        point = getTransformCTM($el.svg.node(), ...pos)[isRotated ? "y" : "x"];
+        point = getTransformCTM($el.eventRect.node(), ...pos)[isRotated ? "y" : "x"];
       } else {
         point -= isRotated ? rect.top : rect.left;
       }
@@ -28650,7 +28650,7 @@ function drag_defaultTouchable() {
       let x = left + (mouse ? mouse[0] : 0) + (isMultipleX || isRotated ? 0 : width / 2);
       let y = top + (mouse ? mouse[1] : 0) + (isRotated ? 4 : 0);
       if (hasViewBox(svg)) {
-        const ctm = getTransformCTM($$.$el.svg.node(), x, y, false);
+        const ctm = getTransformCTM($$.$el.eventRect.node(), x, y, false);
         x = ctm.x;
         y = ctm.y;
       }
@@ -49233,7 +49233,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.2-nightly-20241218004658",
+  version: "3.14.2-nightly-20250104004645",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
