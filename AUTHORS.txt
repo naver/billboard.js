@@ -1,5 +1,5 @@
 billboard.js authors ordered by first contribution.
-
+ADRIANA VENTER ADRIANASAMUSIC@GMAIL.COM / ADRIANADJ
 Jae Sung Park <alberto.park@gmail.com>
 Son Chan Uk <sculove@gmail.com>
 Kim Joo Hwee <kjhwee91@gmail.com>
