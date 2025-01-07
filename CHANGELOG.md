@@ -1,3 +1,10 @@
+## [3.14.3](https://github.com/naver/billboard.js/compare/3.14.2...3.14.3) (2025-01-07)
+
+
+### Bug Fixes
+
+* **tooltip:** Fix tooltip interaction on viewBox ([9deee8f](https://github.com/naver/billboard.js/commit/9deee8fa7a52f57c31a623969e7139eced41d3a3)), closes [#3925](https://github.com/naver/billboard.js/issues/3925)
+
 ## [3.14.2](https://github.com/naver/billboard.js/compare/3.14.1...3.14.2) (2024-11-26)
 
 
