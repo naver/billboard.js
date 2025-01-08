@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.2-nightly-20250104004645
+ * @version 3.14.3-nightly-20250108004653
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -251,7 +251,7 @@ function getGlobal() {
         Function("return this")();
 }
 var win = getGlobal();
-var doc = win === null || win === void 0 ? void 0 : win.document;
+var doc = win === null || win === undefined ? undefined : win.document;
 
 var isDefined = function (v) { return typeof v !== "undefined"; };
 var isObjectType = function (v) { return typeof v === "object"; };
@@ -268,7 +268,7 @@ var isArray = function (arr) { return Array.isArray(arr); };
  * @returns {boolean}
  * @private
  */
-var isObject = function (obj) { return obj && !(obj === null || obj === void 0 ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj); };
+var isObject = function (obj) { return obj && !(obj === null || obj === undefined ? undefined : obj.nodeType) && isObjectType(obj) && !isArray(obj); };
 /**
  * Merge object returning new object
  * @param {object} target Target object
@@ -297,7 +297,7 @@ function mergeObj(target) {
             }
         });
     }
-    return mergeObj.apply(void 0, __spreadArray([target], objectN, false));
+    return mergeObj.apply(undefined, __spreadArray([target], objectN, false));
 }
 // emulate event
 ({
@@ -314,14 +314,14 @@ function mergeObj(target) {
             // eslint-disable-next-line no-new
             new MouseEvent("t");
             return function (el, eventType, params) {
-                if (params === void 0) { params = getParams(); }
+                if (params === undefined) { params = getParams(); }
                 el.dispatchEvent(new MouseEvent(eventType, params));
             };
         }
         catch (_a) {
             // Polyfills DOM4 MouseEvent
             return function (el, eventType, params) {
-                if (params === void 0) { params = getParams(); }
+                if (params === undefined) { params = getParams(); }
                 var mouseEvent = doc.createEvent("MouseEvent");
                 // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
                 mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
@@ -409,7 +409,7 @@ var Plugin = /** @class */ (function () {
      * @private
      */
     function Plugin(options) {
-        if (options === void 0) { options = {}; }
+        if (options === undefined) { options = {}; }
         this.options = options;
     }
     /**
@@ -443,7 +443,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.14.2-nightly-20250104004645";
+    Plugin.version = "3.14.3-nightly-20250108004653";
     return Plugin;
 }());
 
@@ -610,7 +610,7 @@ var Sparkline = /** @class */ (function (_super) {
             .style("width", "0")
             .style("height", "0")
             .style("pointer-events", "none");
-        ((_a = $el.tooltip) === null || _a === void 0 ? void 0 : _a.node()) && document.body.appendChild($el.tooltip.node());
+        ((_a = $el.tooltip) === null || _a === undefined ? undefined : _a.node()) && document.body.appendChild($el.tooltip.node());
     };
     Sparkline.prototype.$afterInit = function () {
         var $$ = this.$$;
@@ -626,7 +626,7 @@ var Sparkline = /** @class */ (function (_super) {
      */
     Sparkline.prototype.bindEvents = function (bind) {
         var _this = this;
-        if (bind === void 0) { bind = true; }
+        if (bind === undefined) { bind = true; }
         var config = this.$$.config;
         if (config.interaction_enabled && config.tooltip_show) {
             var method_1 = "".concat(bind ? "add" : "remove", "EventListener");
@@ -648,14 +648,14 @@ var Sparkline = /** @class */ (function (_super) {
         var _a, _b, _c, _d;
         var $$ = this.$$;
         var index = $$.getDataIndexFromEvent(e);
-        var data = (_a = $$.api.data(e.target.__id)) === null || _a === void 0 ? void 0 : _a[0];
-        var d = (_b = data === null || data === void 0 ? void 0 : data.values) === null || _b === void 0 ? void 0 : _b[index];
+        var data = (_a = $$.api.data(e.target.__id)) === null || _a === undefined ? undefined : _a[0];
+        var d = (_b = data === null || data === undefined ? undefined : data.values) === null || _b === undefined ? undefined : _b[index];
         if (d && !d.name) {
             d.name = d.id;
         }
         $$.state.event = e;
-        if (((_c = $$.isPointFocusOnly) === null || _c === void 0 ? void 0 : _c.call($$)) && d) {
-            (_d = $$.showCircleFocus) === null || _d === void 0 ? void 0 : _d.call($$, [d]);
+        if (((_c = $$.isPointFocusOnly) === null || _c === undefined ? undefined : _c.call($$)) && d) {
+            (_d = $$.showCircleFocus) === null || _d === undefined ? undefined : _d.call($$, [d]);
         }
         $$.setExpand(index, data.id, true);
         $$.showTooltip([d], e.target);
@@ -672,7 +672,7 @@ var Sparkline = /** @class */ (function (_super) {
         var $el = $$.$el;
         var el = this.element;
         var data = $$.api.data();
-        var svgWrapper = (_a = $el.chart.html().match(/<svg[^>]*>/)) === null || _a === void 0 ? void 0 : _a[0];
+        var svgWrapper = (_a = $el.chart.html().match(/<svg[^>]*>/)) === null || _a === undefined ? undefined : _a[0];
         // append sparkline holder if is less than the data length
         if (el.length < data.length) {
             var chart = $el.chart.node();

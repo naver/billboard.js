@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.2-nightly-20250104004645
+ * @version 3.14.3-nightly-20250108004653
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -66,7 +66,7 @@ var Plugin = /** @class */ (function () {
      * @private
      */
     function Plugin(options) {
-        if (options === void 0) { options = {}; }
+        if (options === undefined) { options = {}; }
         this.options = options;
     }
     /**
@@ -100,7 +100,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.14.2-nightly-20250104004645";
+    Plugin.version = "3.14.3-nightly-20250108004653";
     return Plugin;
 }());
 
@@ -159,7 +159,7 @@ var BubbleCompare = /** @class */ (function (_super) {
     };
     BubbleCompare.prototype.pointExpandedR = function (d) {
         var baseR = this.getBubbleR(d);
-        var _a = this.options.expandScale, expandScale = _a === void 0 ? 1 : _a;
+        var _a = this.options.expandScale, expandScale = _a === undefined ? 1 : _a;
         BubbleCompare.raiseFocusedBubbleLayer(d);
         this.changeCursorPoint();
         return baseR * expandScale;

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.2-nightly-20250104004645
+ * @version 3.14.3-nightly-20250108004653
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -2174,10 +2174,10 @@ function getGlobal() {
  * @private
  */
 function getFallback(w) {
-    var hasRAF = typeof (w === null || w === void 0 ? void 0 : w.requestAnimationFrame) === "function" &&
-        typeof (w === null || w === void 0 ? void 0 : w.cancelAnimationFrame) === "function";
-    var hasRIC = typeof (w === null || w === void 0 ? void 0 : w.requestIdleCallback) === "function" &&
-        typeof (w === null || w === void 0 ? void 0 : w.cancelIdleCallback) === "function";
+    var hasRAF = typeof (w === null || w === undefined ? undefined : w.requestAnimationFrame) === "function" &&
+        typeof (w === null || w === undefined ? undefined : w.cancelAnimationFrame) === "function";
+    var hasRIC = typeof (w === null || w === undefined ? undefined : w.requestIdleCallback) === "function" &&
+        typeof (w === null || w === undefined ? undefined : w.cancelIdleCallback) === "function";
     var request = function (cb) { return setTimeout(cb, 1); };
     var cancel = function (id) { return clearTimeout(id); };
     return [
@@ -2188,7 +2188,7 @@ function getFallback(w) {
     ];
 }
 var win = getGlobal();
-var doc = win === null || win === void 0 ? void 0 : win.document;
+var doc = win === null || win === undefined ? undefined : win.document;
 var _a = getFallback(win), requestAnimationFrame = _a[0], requestIdleCallback = _a[2];
 
 var isValue = function (v) { return v || v === 0; };
@@ -2220,7 +2220,7 @@ var isArray = function (arr) { return Array.isArray(arr); };
  * @returns {boolean}
  * @private
  */
-var isObject = function (obj) { return obj && !(obj === null || obj === void 0 ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj); };
+var isObject = function (obj) { return obj && !(obj === null || obj === undefined ? undefined : obj.nodeType) && isObjectType(obj) && !isArray(obj); };
 /**
  * Get specified key value from object
  * If default value is given, will return if given key value not found
@@ -2308,8 +2308,8 @@ function sanitize(str) {
  * @private
  */
 function setTextValue(node, text, dy, toMiddle) {
-    if (dy === void 0) { dy = [-1, 1]; }
-    if (toMiddle === void 0) { toMiddle = false; }
+    if (dy === undefined) { dy = [-1, 1]; }
+    if (toMiddle === undefined) { toMiddle = false; }
     if (!node || !isString(text)) {
         return;
     }
@@ -2382,7 +2382,7 @@ function getPathBox(path) {
 function getPointer(event, element) {
     var _a;
     var touches = event &&
-        ((_a = (event.touches || (event.sourceEvent && event.sourceEvent.touches))) === null || _a === void 0 ? void 0 : _a[0]);
+        ((_a = (event.touches || (event.sourceEvent && event.sourceEvent.touches))) === null || _a === undefined ? undefined : _a[0]);
     var pointer$1 = [0, 0];
     try {
         pointer$1 = pointer(touches || event, element);
@@ -2431,9 +2431,9 @@ function getBoundingRect(node) {
  * @private
  */
 function getRandom(asStr, min, max) {
-    if (asStr === void 0) { asStr = true; }
-    if (min === void 0) { min = 0; }
-    if (max === void 0) { max = 10000; }
+    if (asStr === undefined) { asStr = true; }
+    if (min === undefined) { min = 0; }
+    if (max === undefined) { max = 10000; }
     var crpt = win.crypto || win.msCrypto;
     var rand = crpt ?
         min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) :
@@ -2455,7 +2455,7 @@ function findIndex(arr, v, start, end, isRotated) {
         return -1;
     }
     var mid = Math.floor((start + end) / 2);
-    var _a = arr[mid], x = _a.x, _b = _a.w, w = _b === void 0 ? 0 : _b;
+    var _a = arr[mid], x = _a.x, _b = _a.w, w = _b === undefined ? 0 : _b;
     if (isRotated) {
         x = arr[mid].y;
         w = arr[mid].h;
@@ -2515,7 +2515,7 @@ function deepClone() {
  * @private
  */
 function extend(target, source) {
-    if (target === void 0) { target = {}; }
+    if (target === undefined) { target = {}; }
     if (isArray(source)) {
         source.forEach(function (v) { return extend(target, v); });
     }
@@ -2543,7 +2543,7 @@ var capitalize = function (str) { return str.charAt(0).toUpperCase() + str.slice
  * @private
  */
 function camelize(str, separator) {
-    if (separator === void 0) { separator = "-"; }
+    if (separator === undefined) { separator = "-"; }
     return str.split(separator)
         .map(function (v, i) { return (i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()); })
         .join("");
@@ -2564,7 +2564,7 @@ var toArray = function (v) { return [].slice.call(v); };
  * @private
  */
 function addCssRules(style, selector, prop) {
-    var _a = style.rootSelector, rootSelector = _a === void 0 ? "" : _a, sheet = style.sheet;
+    var _a = style.rootSelector, rootSelector = _a === undefined ? "" : _a, sheet = style.sheet;
     var getSelector = function (s) {
         return s
             .replace(/\s?(bb-)/g, ".$1")
@@ -2589,7 +2589,7 @@ function getCssRules(styleSheets) {
             }
         }
         catch (e) {
-            (_a = win.console) === null || _a === void 0 ? void 0 : _a.warn("Error while reading rules from ".concat(sheet.href, ": ").concat(e.toString()));
+            (_a = win.console) === null || _a === undefined ? undefined : _a.warn("Error while reading rules from ".concat(sheet.href, ": ").concat(e.toString()));
         }
     });
     return rules;
@@ -2603,8 +2603,8 @@ function getCssRules(styleSheets) {
 function getScrollPosition(node) {
     var _a, _b, _c, _d, _e, _f;
     return {
-        x: ((_b = (_a = win.pageXOffset) !== null && _a !== void 0 ? _a : win.scrollX) !== null && _b !== void 0 ? _b : 0) + ((_c = node.scrollLeft) !== null && _c !== void 0 ? _c : 0),
-        y: ((_e = (_d = win.pageYOffset) !== null && _d !== void 0 ? _d : win.scrollY) !== null && _e !== void 0 ? _e : 0) + ((_f = node.scrollTop) !== null && _f !== void 0 ? _f : 0)
+        x: ((_b = (_a = win.pageXOffset) !== null && _a !== undefined ? _a : win.scrollX) !== null && _b !== undefined ? _b : 0) + ((_c = node.scrollLeft) !== null && _c !== undefined ? _c : 0),
+        y: ((_e = (_d = win.pageYOffset) !== null && _d !== undefined ? _d : win.scrollY) !== null && _e !== undefined ? _e : 0) + ((_f = node.scrollTop) !== null && _f !== undefined ? _f : 0)
     };
 }
 /**
@@ -2616,12 +2616,12 @@ function getScrollPosition(node) {
  * @returns {object}
  */
 function getTransformCTM(node, x, y, inverse) {
-    if (x === void 0) { x = 0; }
-    if (y === void 0) { y = 0; }
-    if (inverse === void 0) { inverse = true; }
+    if (x === undefined) { x = 0; }
+    if (y === undefined) { y = 0; }
+    if (inverse === undefined) { inverse = true; }
     var point = new DOMPoint(x, y);
     var screen = node.getScreenCTM();
-    var res = point.matrixTransform(inverse ? screen === null || screen === void 0 ? void 0 : screen.inverse() : screen);
+    var res = point.matrixTransform(inverse ? screen === null || screen === undefined ? undefined : screen.inverse() : screen);
     if (inverse === false) {
         var rect = node.getBoundingClientRect();
         res.x -= rect.x;
@@ -2691,7 +2691,7 @@ function mergeObj(target) {
             }
         });
     }
-    return mergeObj.apply(void 0, __spreadArray([target], objectN, false));
+    return mergeObj.apply(undefined, __spreadArray([target], objectN, false));
 }
 /**
  * Sort value
@@ -2701,7 +2701,7 @@ function mergeObj(target) {
  * @private
  */
 function sortValue(data, isAsc) {
-    if (isAsc === void 0) { isAsc = true; }
+    if (isAsc === undefined) { isAsc = true; }
     var fn;
     if (data[0] instanceof Date) {
         fn = isAsc ? function (a, b) { return a - b; } : function (a, b) { return b - a; };
@@ -2747,7 +2747,7 @@ function getMinMax$1(type, data) {
  * @private
  */
 var getRange = function (start, end, step) {
-    if (step === void 0) { step = 1; }
+    if (step === undefined) { step = 1; }
     var res = [];
     var n = Math.max(0, Math.ceil((end - start) / step)) | 0;
     for (var i = start; i < n; i++) {
@@ -2777,7 +2777,7 @@ var emulateEvent = {
         catch (_a) {
             // Polyfills DOM4 MouseEvent
             return function (el, eventType, params) {
-                if (params === void 0) { params = getParams(); }
+                if (params === undefined) { params = getParams(); }
                 var mouseEvent = doc.createEvent("MouseEvent");
                 // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
                 mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
@@ -2836,7 +2836,7 @@ function parseDate(date) {
         var _b = this, config = _b.config, format = _b.format;
         // if fails to parse, try by new Date()
         // https://github.com/naver/billboard.js/issues/1714
-        parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) !== null && _a !== void 0 ? _a : new Date(date);
+        parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) !== null && _a !== undefined ? _a : new Date(date);
     }
     else if (isNumber(date) && !isNaN(date)) {
         parsedDate = new Date(+date);
@@ -2864,7 +2864,7 @@ function hasViewBox(svg) {
  * @returns {boolean}
  */
 function hasStyle(node, condition, all) {
-    if (all === void 0) { all = false; }
+    if (all === undefined) { all = false; }
     var isD3Node = !!node.node;
     var has = false;
     for (var _i = 0, _a = Object.entries(condition); _i < _a.length; _i++) {
@@ -2882,7 +2882,7 @@ function hasStyle(node, condition, all) {
  * @private
  */
 function isTabVisible() {
-    return (doc === null || doc === void 0 ? void 0 : doc.hidden) === false || (doc === null || doc === void 0 ? void 0 : doc.visibilityState) === "visible";
+    return (doc === null || doc === undefined ? undefined : doc.hidden) === false || (doc === null || doc === undefined ? undefined : doc.visibilityState) === "visible";
 }
 /**
  * Get the current input type
@@ -2894,7 +2894,7 @@ function isTabVisible() {
 function convertInputType(mouse, touch) {
     var DocumentTouch = win.DocumentTouch, matchMedia = win.matchMedia, navigator = win.navigator;
     // https://developer.mozilla.org/en-US/docs/Web/CSS/@media/pointer#coarse
-    var hasPointerCoarse = matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("(pointer:coarse)").matches;
+    var hasPointerCoarse = matchMedia === null || matchMedia === undefined ? undefined : matchMedia("(pointer:coarse)").matches;
     var hasTouch = false;
     if (touch) {
         // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
@@ -2921,7 +2921,7 @@ function convertInputType(mouse, touch) {
     }
     // For non-touch device, media feature condition is: '(pointer:coarse) = false' and '(pointer:fine) = true'
     // https://github.com/naver/billboard.js/issues/3854#issuecomment-2404183158
-    var hasMouse = mouse && !hasPointerCoarse && (matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("(pointer:fine)").matches);
+    var hasMouse = mouse && !hasPointerCoarse && (matchMedia === null || matchMedia === undefined ? undefined : matchMedia("(pointer:fine)").matches);
     // fallback to 'mouse' if no input type is detected.
     return (hasMouse && "mouse") || (hasTouch && "touch") || "mouse";
 }
@@ -3231,7 +3231,7 @@ var Cache = /** @class */ (function () {
      * @private
      */
     Cache.prototype.add = function (key, value, isDataType) {
-        if (isDataType === void 0) { isDataType = false; }
+        if (isDataType === undefined) { isDataType = false; }
         this.cache[key] = isDataType ? this.cloneTarget(value) : value;
         return this.cache[key];
     };
@@ -3253,11 +3253,11 @@ var Cache = /** @class */ (function () {
      * @private
      */
     Cache.prototype.get = function (key, isDataType) {
-        if (isDataType === void 0) { isDataType = false; }
+        if (isDataType === undefined) { isDataType = false; }
         // when is isDataType, key should be string array
         if (isDataType && Array.isArray(key)) {
             var targets = [];
-            for (var i = 0, id = void 0; (id = key[i]); i++) {
+            for (var i = 0, id = undefined; (id = key[i]); i++) {
                 if (id in this.cache) {
                     targets.push(this.cloneTarget(this.cache[id]));
                 }
@@ -3437,7 +3437,7 @@ function checkModuleImport(ctx) {
 function logError(head, tail, info) {
     var _a;
     var prefix = "[billboard.js]";
-    var hasConsole = (_a = win.console) === null || _a === void 0 ? void 0 : _a.error;
+    var hasConsole = (_a = win.console) === null || _a === undefined ? undefined : _a.error;
     if (hasConsole) {
         var tailMsg = ["background:red;color:white;display:block;font-size:15px", tail] ;
         console.error.apply(console, __spreadArray(["\u274C ".concat(prefix, " ").concat(head), "background:red;color:white;display:block;font-size:15px"], tailMsg, false));
@@ -3497,8 +3497,8 @@ function generateWait() {
         function loop() {
             var _a;
             var done = 0;
-            for (var i = 0, t = void 0; (t = transitionsToWait[i]); i++) {
-                if (t === true || ((_a = t.empty) === null || _a === void 0 ? void 0 : _a.call(t))) {
+            for (var i = 0, t = undefined; (t = transitionsToWait[i]); i++) {
+                if (t === true || ((_a = t.empty) === null || _a === undefined ? undefined : _a.call(t))) {
                     done++;
                     continue;
                 }
@@ -3517,7 +3517,7 @@ function generateWait() {
             return done === transitionsToWait.length;
         }
         runUntil(function () {
-            callback === null || callback === void 0 ? void 0 : callback();
+            callback === null || callback === undefined ? undefined : callback();
         }, loop);
     };
     f.add = function (t) {
@@ -3546,7 +3546,7 @@ function getObjectURL(fn, depsFn) {
     if (!(key in blob)) {
         // Web Worker body
         blob[key] = new win.Blob([
-            "".concat((_a = depsFn === null || depsFn === void 0 ? void 0 : depsFn.map(String).join(";")) !== null && _a !== void 0 ? _a : "", "\n\n\t\t\tself.onmessage=function({data}) {\n\t\t\t\tconst result = (").concat(fnString, ").apply(null, data);\n\t\t\t\tself.postMessage(result);\n\t\t\t};")
+            "".concat((_a = depsFn === null || depsFn === undefined ? undefined : depsFn.map(String).join(";")) !== null && _a !== undefined ? _a : "", "\n\n\t\t\tself.onmessage=function({data}) {\n\t\t\t\tconst result = (").concat(fnString, ").apply(null, data);\n\t\t\t\tself.postMessage(result);\n\t\t\t};")
         ], {
             type: "text/javascript"
         });
@@ -3592,13 +3592,13 @@ function getWorker(src) {
  * @private
  */
 function runWorker(useWorker, fn, callback, depsFn) {
-    if (useWorker === void 0) { useWorker = true; }
+    if (useWorker === undefined) { useWorker = true; }
     var runFn = function () {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        var res = fn.apply(void 0, args);
+        var res = fn.apply(undefined, args);
         callback(res);
     };
     if (win.Worker && useWorker) {
@@ -3730,7 +3730,7 @@ function json(json, keysParam) {
         Object.keys(json).forEach(function (key) {
             var _a;
             var tmp = json[key].concat();
-            (_a = tmp.unshift) === null || _a === void 0 ? void 0 : _a.call(tmp, key);
+            (_a = tmp.unshift) === null || _a === undefined ? undefined : _a.call(tmp, key);
             newRows.push(tmp);
         });
         data = columns(newRows);
@@ -3748,7 +3748,7 @@ function json(json, keysParam) {
  * @private
  */
 function url(url, mimeType, headers, keys, done) {
-    if (mimeType === void 0) { mimeType = "csv"; }
+    if (mimeType === undefined) { mimeType = "csv"; }
     var req = new XMLHttpRequest();
     var converter = { csv: csv, tsv: tsv, json: json };
     req.open("GET", url);
@@ -3816,8 +3816,8 @@ function tsv(tsv) {
  * @private
  */
 function getDataKeyForJson(keysParam, config) {
-    var keys = keysParam || (config === null || config === void 0 ? void 0 : config.data_keys);
-    if (keys === null || keys === void 0 ? void 0 : keys.x) {
+    var keys = keysParam || (config === null || config === undefined ? undefined : config.data_keys);
+    if (keys === null || keys === undefined ? undefined : keys.x) {
         config.data_x = keys.x;
     }
     return keys;
@@ -3975,7 +3975,7 @@ var dataConvert = {
             // indexing each value
             t.values.forEach(function (v, i) { return (v.index = i); });
             // this needs to be sorted because its index and value.index is identical
-            (_a = $$.data.xs[t.id]) === null || _a === void 0 ? void 0 : _a.sort(function (v1, v2) { return v1 - v2; });
+            (_a = $$.data.xs[t.id]) === null || _a === undefined ? undefined : _a.sort(function (v1, v2) { return v1 - v2; });
         });
         // cache information about values
         state.hasNegativeValue = $$.hasNegativeValueInTargets(targets);
@@ -4102,7 +4102,7 @@ var data$1 = {
      * @private
      */
     getAllValuesOnIndex: function (index, filterNull) {
-        if (filterNull === void 0) { filterNull = false; }
+        if (filterNull === undefined) { filterNull = false; }
         var $$ = this;
         var value = $$.filterTargetsToShow($$.data.targets)
             .map(function (t) { return $$.addName($$.getValueOnIndex(t.values, index)); });
@@ -4133,12 +4133,12 @@ var data$1 = {
     generateTargetX: function (rawX, id, index) {
         var $$ = this;
         var axis = $$.axis;
-        var x = (axis === null || axis === void 0 ? void 0 : axis.isCategorized()) ? index : (rawX || index);
-        if (axis === null || axis === void 0 ? void 0 : axis.isTimeSeries()) {
+        var x = (axis === null || axis === undefined ? undefined : axis.isCategorized()) ? index : (rawX || index);
+        if (axis === null || axis === undefined ? undefined : axis.isTimeSeries()) {
             var fn = parseDate.bind($$);
             x = rawX ? fn(rawX) : fn($$.getXValue(id, index));
         }
-        else if ((axis === null || axis === void 0 ? void 0 : axis.isCustomX()) && !(axis === null || axis === void 0 ? void 0 : axis.isCategorized())) {
+        else if ((axis === null || axis === undefined ? undefined : axis.isCustomX()) && !(axis === null || axis === undefined ? undefined : axis.isCategorized())) {
             x = isValue(rawX) ? +rawX : $$.getXValue(id, index);
         }
         return x;
@@ -4330,7 +4330,7 @@ var data$1 = {
     },
     hasTarget: function (targets, id) {
         var ids = this.mapToIds(targets);
-        for (var i = 0, val = void 0; (val = ids[i]); i++) {
+        for (var i = 0, val = undefined; (val = ids[i]); i++) {
             if (val === id) {
                 return true;
             }
@@ -4351,9 +4351,9 @@ var data$1 = {
         var $$ = this;
         var axis = $$.axis;
         var xs = [];
-        if (targets === null || targets === void 0 ? void 0 : targets.length) {
+        if (targets === null || targets === undefined ? undefined : targets.length) {
             xs = getUnique(mergeArray(targets.map(function (t) { return t.values.map(function (v) { return +v.x; }); })));
-            xs = (axis === null || axis === void 0 ? void 0 : axis.isTimeSeries()) ? xs.map(function (x) { return new Date(+x); }) : xs.map(Number);
+            xs = (axis === null || axis === undefined ? undefined : axis.isTimeSeries()) ? xs.map(function (x) { return new Date(+x); }) : xs.map(Number);
         }
         return sortValue(xs);
     },
@@ -4486,7 +4486,7 @@ var data$1 = {
      * @private
      */
     getSortCompareFn: function (isReversed) {
-        if (isReversed === void 0) { isReversed = false; }
+        if (isReversed === undefined) { isReversed = false; }
         var $$ = this;
         var config = $$.config;
         var order = config.data_order;
@@ -4570,7 +4570,7 @@ var data$1 = {
             if (hasViewBox($el.svg)) {
                 var pos = [point, 0];
                 isRotated && pos.reverse();
-                point = getTransformCTM.apply(void 0, __spreadArray([$el.eventRect.node()], pos, false))[isRotated ? "y" : "x"];
+                point = getTransformCTM.apply(undefined, __spreadArray([$el.eventRect.node()], pos, false))[isRotated ? "y" : "x"];
             }
             else {
                 point -= isRotated ? rect.top : rect.left;
@@ -4731,9 +4731,9 @@ var data$1 = {
         return current;
     },
     getRangedData: function (d, key, type) {
-        if (key === void 0) { key = ""; }
-        if (type === void 0) { type = "areaRange"; }
-        var value = d === null || d === void 0 ? void 0 : d.value;
+        if (key === undefined) { key = ""; }
+        if (type === undefined) { type = "areaRange"; }
+        var value = d === null || d === undefined ? undefined : d.value;
         if (isArray(value)) {
             if (type === "bar") {
                 return value.reduce(function (a, c) { return c - a; });
@@ -4777,7 +4777,7 @@ var data$1 = {
      * @private
      */
     getRatio: function (type, d, asPercent) {
-        if (asPercent === void 0) { asPercent = false; }
+        if (asPercent === undefined) { asPercent = false; }
         var $$ = this;
         var config = $$.config, state = $$.state;
         var api = $$.api;
@@ -4883,7 +4883,7 @@ var data$1 = {
     getDataById: function (id) {
         var _a;
         var d = this.cache.get(id) || this.api.data(id);
-        return (_a = d === null || d === void 0 ? void 0 : d[0]) !== null && _a !== void 0 ? _a : d;
+        return (_a = d === null || d === undefined ? undefined : d[0]) !== null && _a !== undefined ? _a : d;
     }
 };
 
@@ -4898,11 +4898,11 @@ var data$1 = {
  * @private
  */
 function callDone(fn, resizeAfter) {
-    if (resizeAfter === void 0) { resizeAfter = false; }
+    if (resizeAfter === undefined) { resizeAfter = false; }
     var $$ = this;
     var api = $$.api;
     resizeAfter && $$.api.flush(true);
-    fn === null || fn === void 0 ? void 0 : fn.call(api);
+    fn === null || fn === undefined ? undefined : fn.call(api);
 }
 var dataLoad = {
     load: function (rawTargets, args) {
@@ -4924,7 +4924,7 @@ var dataLoad = {
             if (args.type || args.types) {
                 targets.forEach(function (t) {
                     var _a;
-                    var type = ((_a = args.types) === null || _a === void 0 ? void 0 : _a[t.id]) || args.type;
+                    var type = ((_a = args.types) === null || _a === undefined ? undefined : _a[t.id]) || args.type;
                     $$.setTargetType(t.id, type);
                 });
             }
@@ -5000,7 +5000,7 @@ var dataLoad = {
         var _a;
         var $$ = this;
         var state = $$.state, $el = $$.$el, $T = $$.$T;
-        var hasLegendDefsPoint = !!((_a = $$.hasLegendDefsPoint) === null || _a === void 0 ? void 0 : _a.call($$));
+        var hasLegendDefsPoint = !!((_a = $$.hasLegendDefsPoint) === null || _a === undefined ? undefined : _a.call($$));
         var done = customDoneCb;
         var targetIds = rawTargetIds;
         // reset internally cached data
@@ -5032,7 +5032,7 @@ var dataLoad = {
             // Remove target
             $$.data.targets = $$.data.targets.filter(function (t) { return t.id !== id; });
             // Remove custom point def element
-            hasLegendDefsPoint && ((_a = $el.defs) === null || _a === void 0 ? void 0 : _a.select("#".concat($$.getDefsPointId(suffixId))).remove());
+            hasLegendDefsPoint && ((_a = $el.defs) === null || _a === undefined ? undefined : _a.select("#".concat($$.getDefsPointId(suffixId))).remove());
         });
         // since treemap uses different data types, it needs to be transformed
         state.hasFunnel && $$.updateFunnel($$.data.targets);
@@ -5072,7 +5072,7 @@ var interaction = {
      * @private
      */
     expandBarTypeShapes: function (expand, i, id, reset) {
-        if (expand === void 0) { expand = true; }
+        if (expand === undefined) { expand = true; }
         var $$ = this;
         ["bar", "candlestick"]
             .filter(function (v) { return $$.$el[v]; })
@@ -5193,7 +5193,7 @@ var interaction = {
         var $$ = this;
         var config = $$.config, _c = $$.state, eventReceiver = _c.eventReceiver, hasAxis = _c.hasAxis, hasFunnel = _c.hasFunnel, hasRadar = _c.hasRadar, hasTreemap = _c.hasTreemap, _d = $$.$el, eventRect = _d.eventRect, funnel = _d.funnel, radar = _d.radar, svg = _d.svg, treemap = _d.treemap;
         var element = (_b = (((hasFunnel || hasTreemap) && eventReceiver.rect) ||
-            (hasRadar && radar.axes.select(".".concat($AXIS.axis, "-").concat(index, " text"))) || (eventRect || ((_a = $$.getArcElementByIdOrIndex) === null || _a === void 0 ? void 0 : _a.call($$, index))))) === null || _b === void 0 ? void 0 : _b.node();
+            (hasRadar && radar.axes.select(".".concat($AXIS.axis, "-").concat(index, " text"))) || (eventRect || ((_a = $$.getArcElementByIdOrIndex) === null || _a === undefined ? undefined : _a.call($$, index))))) === null || _b === undefined ? undefined : _b.node();
         if (element) {
             var isMultipleX = $$.isMultipleX();
             var isRotated = config.axis_rotated;
@@ -5228,7 +5228,7 @@ var interaction = {
             };
             // for funnel and treemap event bound to <g> node
             if (hasFunnel || hasTreemap) {
-                element = (funnel !== null && funnel !== void 0 ? funnel : treemap).node();
+                element = (funnel !== null && funnel !== undefined ? funnel : treemap).node();
             }
             emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](element, type, params);
         }
@@ -5243,8 +5243,8 @@ var interaction = {
     unbindZoomEvent: function () {
         var $$ = this;
         var _a = $$.$el, eventRect = _a.eventRect, zoomResetBtn = _a.zoomResetBtn;
-        eventRect === null || eventRect === void 0 ? void 0 : eventRect.on(".zoom wheel.zoom .drag", null);
-        zoomResetBtn === null || zoomResetBtn === void 0 ? void 0 : zoomResetBtn.on("click", null).style("display", "none");
+        eventRect === null || eventRect === undefined ? undefined : eventRect.on(".zoom wheel.zoom .drag", null);
+        zoomResetBtn === null || zoomResetBtn === undefined ? undefined : zoomResetBtn.on("click", null).style("display", "none");
     },
     /**
      * Unbind all attached events
@@ -5276,14 +5276,14 @@ var interaction = {
         [
             svg,
             eventRect,
-            region === null || region === void 0 ? void 0 : region.list,
-            brush === null || brush === void 0 ? void 0 : brush.getSelection(),
-            arcs === null || arcs === void 0 ? void 0 : arcs.selectAll("path"),
-            legend === null || legend === void 0 ? void 0 : legend.selectAll("g"),
+            region === null || region === undefined ? undefined : region.list,
+            brush === null || brush === undefined ? undefined : brush.getSelection(),
+            arcs === null || arcs === undefined ? undefined : arcs.selectAll("path"),
+            legend === null || legend === undefined ? undefined : legend.selectAll("g"),
             treemap
         ]
-            .forEach(function (v) { return v === null || v === void 0 ? void 0 : v.on(list, null); });
-        (_a = $$.unbindZoomEvent) === null || _a === void 0 ? void 0 : _a.call($$);
+            .forEach(function (v) { return v === null || v === undefined ? undefined : v.on(list, null); });
+        (_a = $$.unbindZoomEvent) === null || _a === undefined ? undefined : _a.call($$);
     }
 };
 
@@ -5301,7 +5301,7 @@ var category = {
     categoryName: function (i) {
         var _a;
         var axis_x_categories = this.config.axis_x_categories;
-        return (_a = axis_x_categories === null || axis_x_categories === void 0 ? void 0 : axis_x_categories[i]) !== null && _a !== void 0 ? _a : i;
+        return (_a = axis_x_categories === null || axis_x_categories === undefined ? undefined : axis_x_categories[i]) !== null && _a !== undefined ? _a : i;
     }
 };
 
@@ -5347,7 +5347,7 @@ var classModule = {
         var ids = [];
         return function (d) {
             var _a;
-            var id = d.id || ((_a = d.data) === null || _a === void 0 ? void 0 : _a.id) || d;
+            var id = d.id || ((_a = d.data) === null || _a === undefined ? undefined : _a.id) || d;
             if (ids.indexOf(id) < 0) {
                 ids.push(id);
             }
@@ -5381,8 +5381,8 @@ var classModule = {
             .replace(/[\x00-\x20\x7F-\xA0\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-"); // eslint-disable-line no-control-regex
     },
     selectorTarget: function (id, prefix, postfix) {
-        if (prefix === void 0) { prefix = ""; }
-        if (postfix === void 0) { postfix = ""; }
+        if (prefix === undefined) { prefix = ""; }
+        if (postfix === undefined) { postfix = ""; }
         var target = this.getTargetSelectorSuffix(id);
         // select target & circle
         return "".concat(prefix, ".").concat(CLASS.target + target, " ").concat(postfix, ", ").concat(prefix, ".").concat(CLASS.circles + target, " ").concat(postfix);
@@ -5397,7 +5397,7 @@ var classModule = {
     },
     selectorLegends: function (ids) {
         var _this = this;
-        return (ids === null || ids === void 0 ? void 0 : ids.length) ? ids.map(function (id) { return _this.selectorLegend(id); }) : null;
+        return (ids === null || ids === undefined ? undefined : ids.length) ? ids.map(function (id) { return _this.selectorLegend(id); }) : null;
     }
 };
 
@@ -5494,7 +5494,7 @@ var color = {
         return function (d) {
             var _a;
             var id = d.id ||
-                ((_a = d.data) === null || _a === void 0 ? void 0 : _a.id) ||
+                ((_a = d.data) === null || _a === undefined ? undefined : _a.id) ||
                 d;
             var isLine = $$.isTypeOf(id, ["line", "spline", "step"]) || !config.data_types[id];
             var color;
@@ -5551,7 +5551,7 @@ var color = {
      * @private
      */
     generateTextBGColorFilter: function (color, attr) {
-        if (attr === void 0) { attr = {
+        if (attr === undefined) { attr = {
             x: 0,
             y: 0,
             width: 1,
@@ -5608,7 +5608,7 @@ var color = {
                     stops: []
                 };
                 if (radialGradient) {
-                    var _a = radialGradient.cx, cx = _a === void 0 ? 0.3 : _a, _b = radialGradient.cy, cy = _b === void 0 ? 0.3 : _b, _c = radialGradient.r, r = _c === void 0 ? 0.7 : _c, _d = radialGradient.stops, stops = _d === void 0 ? [[0.1, color_1, 0], [0.9, color_1, 1]] : _d;
+                    var _a = radialGradient.cx, cx = _a === undefined ? 0.3 : _a, _b = radialGradient.cy, cy = _b === undefined ? 0.3 : _b, _c = radialGradient.r, r = _c === undefined ? 0.7 : _c, _d = radialGradient.stops, stops = _d === undefined ? [[0.1, color_1, 0], [0.9, color_1, 1]] : _d;
                     gradient_1.stops = stops;
                     gradient_1.defs = defs.append("radialGradient")
                         .attr("id", "".concat(id))
@@ -5618,7 +5618,7 @@ var color = {
                 }
                 else {
                     var isRotated = config.axis_rotated;
-                    var _e = config["".concat(supportedType, "_linearGradient")], _f = _e.x, x = _f === void 0 ? isRotated ? [1, 0] : [0, 0] : _f, _g = _e.y, y = _g === void 0 ? isRotated ? [0, 0] : [0, 1] : _g, _h = _e.stops, stops = _h === void 0 ? [[0, color_1, 1], [1, color_1, 0]] : _h;
+                    var _e = config["".concat(supportedType, "_linearGradient")], _f = _e.x, x = _f === undefined ? isRotated ? [1, 0] : [0, 0] : _f, _g = _e.y, y = _g === undefined ? isRotated ? [0, 0] : [0, 1] : _g, _h = _e.stops, stops = _h === undefined ? [[0, color_1, 1], [1, color_1, 0]] : _h;
                     gradient_1.stops = stops;
                     gradient_1.defs = defs.append("linearGradient")
                         .attr("id", "".concat(id))
@@ -5730,7 +5730,7 @@ var domain = {
         if ($$.isStackNormalized()) {
             return [0, 100];
         }
-        var isLog = (scale === null || scale === void 0 ? void 0 : scale[axisId]) && scale[axisId].type === "log";
+        var isLog = (scale === null || scale === undefined ? undefined : scale[axisId]) && scale[axisId].type === "log";
         var targetsByAxisId = targets.filter(function (t) { return axis.getId(t.id) === axisId; });
         var yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
         if (yTargets.length === 0) { // use domain of the other axis if target of axisId is none
@@ -5830,7 +5830,7 @@ var domain = {
         var configValue = $$.config["axis_x_".concat(type)];
         var dataValue = getMinMax$1(type, targets.map(function (t) { return getMinMax$1(type, t.values.map(function (v) { return v.x; })); }));
         var value = isObject(configValue) ? configValue.value : configValue;
-        value = isDefined(value) && ((_a = $$.axis) === null || _a === void 0 ? void 0 : _a.isTimeSeries()) ? parseDate.bind(this)(value) : value;
+        value = isDefined(value) && ((_a = $$.axis) === null || _a === undefined ? undefined : _a.isTimeSeries()) ? parseDate.bind(this)(value) : value;
         if (isObject(configValue) && configValue.fit && ((type === "min" && value < dataValue) || (type === "max" && value > dataValue))) {
             value = undefined;
         }
@@ -5863,7 +5863,7 @@ var domain = {
         }
         var _a = isNumber(padding) ?
             { left: padding, right: padding } :
-            padding, _b = _a.left, left = _b === void 0 ? defaultValue : _b, _c = _a.right, right = _c === void 0 ? defaultValue : _c;
+            padding, _b = _a.left, left = _b === undefined ? defaultValue : _b, _c = _a.right, right = _c === undefined ? defaultValue : _c;
         // when the unit is pixel, convert pixels to axis scale value
         if (padding.unit === "px") {
             var domainLength = Math.abs(diff + (diff * 0.2));
@@ -5894,7 +5894,7 @@ var domain = {
             $$.getXDomainMinMax(targets, "min"),
             $$.getXDomainMinMax(targets, "max")
         ];
-        var _a = domain[0], min = _a === void 0 ? 0 : _a, _b = domain[1], max = _b === void 0 ? 0 : _b;
+        var _a = domain[0], min = _a === undefined ? 0 : _a, _b = domain[1], max = _b === undefined ? 0 : _b;
         if (x.type !== "log") {
             var isCategorized = axis.isCategorized();
             var isTimeSeries = axis.isTimeSeries();
@@ -5934,7 +5934,7 @@ var domain = {
             org.xDomain = x.domain();
             // zoomEnabled && $$.zoom.updateScaleExtent();
             subX.domain(x.domain());
-            (_a = $$.brush) === null || _a === void 0 ? void 0 : _a.scale(subX);
+            (_a = $$.brush) === null || _a === undefined ? undefined : _a.scale(subX);
         }
         if (withUpdateXDomain) {
             var domainValue = domain || (!$$.brush || brushEmpty($$)) ?
@@ -5979,8 +5979,8 @@ var domain = {
      * @private
      */
     getZoomDomain: function (type, getCurrent) {
-        if (type === void 0) { type = "zoom"; }
-        if (getCurrent === void 0) { getCurrent = false; }
+        if (type === undefined) { type = "zoom"; }
+        if (getCurrent === undefined) { getCurrent = false; }
         var $$ = this;
         var config = $$.config, scale = $$.scale, org = $$.org;
         var _a = getCurrent && scale[type] ? scale[type].domain() : org.xDomain, min = _a[0], max = _a[1];
@@ -6044,7 +6044,7 @@ var domain = {
      * @private
      */
     withinRange: function (domain, current, range) {
-        if (current === void 0) { current = [0, 0]; }
+        if (current === undefined) { current = [0, 0]; }
         var $$ = this;
         var isInverted = $$.config.axis_x_inverted;
         var _a = range, min = _a[0], max = _a[1];
@@ -6164,9 +6164,9 @@ function getLegendColor(id) {
  */
 function getFormattedText(id, formatted) {
     var _a;
-    if (formatted === void 0) { formatted = true; }
+    if (formatted === undefined) { formatted = true; }
     var config = this.config;
-    var text = (_a = config.data_names[id]) !== null && _a !== void 0 ? _a : id;
+    var text = (_a = config.data_names[id]) !== null && _a !== undefined ? _a : id;
     if (formatted && isFunction(config.legend_format)) {
         text = config.legend_format(text, id !== text ? id : undefined);
     }
@@ -6221,7 +6221,7 @@ var legend$1 = {
             $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions);
         }
         // toggle legend state
-        (_a = $el.legend) === null || _a === void 0 ? void 0 : _a.selectAll(".".concat($LEGEND.legendItem)).classed($LEGEND.legendItemHidden, function (id) {
+        (_a = $el.legend) === null || _a === undefined ? undefined : _a.selectAll(".".concat($LEGEND.legendItem)).classed($LEGEND.legendItemHidden, function (id) {
             var hide = !$$.isTargetToShow(id);
             if (hide) {
                 this.style.opacity = null;
@@ -6372,7 +6372,7 @@ var legend$1 = {
         var _a;
         var $$ = this;
         var _b = $$.state, current = _b.current, isLegendRight = _b.isLegendRight, legendItemHeight = _b.legendItemHeight, legendStep = _b.legendStep;
-        var isFitPadding = ((_a = $$.config.padding) === null || _a === void 0 ? void 0 : _a.mode) === "fit";
+        var isFitPadding = ((_a = $$.config.padding) === null || _a === undefined ? undefined : _a.mode) === "fit";
         var height = $$.config.legend_show ?
             (isLegendRight ? current.height : (Math.max(isFitPadding ? 10 : 20, legendItemHeight)) * (legendStep + 1)) :
             0;
@@ -6916,7 +6916,7 @@ var legend$1 = {
 var redraw = {
     redraw: function (options) {
         var _a, _b, _c, _d;
-        if (options === void 0) { options = {}; }
+        if (options === undefined) { options = {}; }
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el;
         var main = $el.main, treemap = $el.treemap;
@@ -6927,7 +6927,7 @@ var redraw = {
         var duration = wth.Transition ? config.transition_duration : 0;
         var durationForExit = wth.TransitionForExit ? duration : 0;
         var durationForAxis = wth.TransitionForAxis ? duration : 0;
-        var transitions = (_a = $$.axis) === null || _a === void 0 ? void 0 : _a.generateTransitions(durationForAxis);
+        var transitions = (_a = $$.axis) === null || _a === undefined ? undefined : _a.generateTransitions(durationForAxis);
         $$.updateSizes(initializing);
         // update legend and transform each g
         if (wth.Legend && config.legend_show) {
@@ -6967,7 +6967,7 @@ var redraw = {
             // event rects will redrawn when flow called
             if (config.interaction_enabled && !flow && wth.EventRect) {
                 $$.redrawEventRect();
-                (_b = $$.bindZoomEvent) === null || _b === void 0 ? void 0 : _b.call($$);
+                (_b = $$.bindZoomEvent) === null || _b === undefined ? undefined : _b.call($$);
             }
         }
         else {
@@ -6985,13 +6985,13 @@ var redraw = {
         if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
             $$.updateCircle();
         }
-        else if ((_c = $$.hasLegendDefsPoint) === null || _c === void 0 ? void 0 : _c.call($$)) {
+        else if ((_c = $$.hasLegendDefsPoint) === null || _c === undefined ? undefined : _c.call($$)) {
             $$.data.targets.forEach($$.point("create", this));
         }
         // text
         $$.hasDataLabel() && !$$.hasArcType(null, ["radar"]) && $$.updateText();
         // title
-        (_d = $$.redrawTitle) === null || _d === void 0 ? void 0 : _d.call($$);
+        (_d = $$.redrawTitle) === null || _d === undefined ? undefined : _d.call($$);
         initializing && $$.updateTypesElements();
         $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
         $$.updateTooltipOnRedraw();
@@ -7087,7 +7087,7 @@ var redraw = {
         return list;
     },
     updateAndRedraw: function (options) {
-        if (options === void 0) { options = {}; }
+        if (options === undefined) { options = {}; }
         var $$ = this;
         var config = $$.config, state = $$.state;
         var transitions;
@@ -7129,7 +7129,7 @@ var redraw = {
  * @private
  */
 function getScale(type, min, max) {
-    if (type === void 0) { type = "linear"; }
+    if (type === undefined) { type = "linear"; }
     var scale = ({
         linear: scaleLinear,
         log: scaleSymlog,
@@ -7139,7 +7139,7 @@ function getScale(type, min, max) {
     })[type]();
     scale.type = type;
     /_?log/.test(type) && scale.clamp(true);
-    return scale.range([min !== null && min !== void 0 ? min : 0, max !== null && max !== void 0 ? max : 1]);
+    return scale.range([min !== null && min !== undefined ? min : 0, max !== null && max !== undefined ? max : 1]);
 }
 var scale = {
     /**
@@ -7181,8 +7181,8 @@ var scale = {
      */
     getYScaleById: function (id, isSub) {
         var _a;
-        if (isSub === void 0) { isSub = false; }
-        var isY2 = ((_a = this.axis) === null || _a === void 0 ? void 0 : _a.getId(id)) === "y2";
+        if (isSub === undefined) { isSub = false; }
+        var isY2 = ((_a = this.axis) === null || _a === undefined ? undefined : _a.getId(id)) === "y2";
         var key = isSub ? (isY2 ? "subY2" : "subY") : (isY2 ? "y2" : "y");
         return this.scale[key];
     },
@@ -7234,7 +7234,7 @@ var scale = {
      */
     updateScales: function (isInit, updateXDomain) {
         var _a, _b;
-        if (updateXDomain === void 0) { updateXDomain = true; }
+        if (updateXDomain === undefined) { updateXDomain = true; }
         var $$ = this;
         var axis = $$.axis, config = $$.config, format = $$.format, org = $$.org, scale = $$.scale, _c = $$.state, current = _c.current, width = _c.width, height = _c.height, width2 = _c.width2, height2 = _c.height2, hasAxis = _c.hasAxis, hasTreemap = _c.hasTreemap;
         if (hasAxis) {
@@ -7255,12 +7255,12 @@ var scale = {
             };
             // update scales
             // x Axis
-            var xDomain = updateXDomain && ((_a = scale.x) === null || _a === void 0 ? void 0 : _a.orgDomain());
+            var xDomain = updateXDomain && ((_a = scale.x) === null || _a === undefined ? undefined : _a.orgDomain());
             var xSubDomain = updateXDomain && org.xDomain;
             scale.x = $$.getXScale(min.x, max.x, xDomain, function () { return axis.x.tickOffset(); });
             scale.subX = $$.getXScale(min.x, max.x, xSubDomain, function (d) {
                 var _a;
-                return (d % 1 ? 0 : ((_a = axis.subX) !== null && _a !== void 0 ? _a : axis.x).tickOffset());
+                return (d % 1 ? 0 : ((_a = axis.subX) !== null && _a !== undefined ? _a : axis.x).tickOffset());
             });
             format.xAxisTick = axis.getXAxisTickFormat();
             format.subXAxisTick = axis.getXAxisTickFormat(true);
@@ -7286,7 +7286,7 @@ var scale = {
         }
         else {
             // update for arc
-            (_b = $$.updateArc) === null || _b === void 0 ? void 0 : _b.call($$);
+            (_b = $$.updateArc) === null || _b === undefined ? undefined : _b.call($$);
         }
     },
     /**
@@ -7401,7 +7401,7 @@ var size = {
         var labelWidth = 0;
         // if axis label position set to inner, exclude from the value
         if (hasAxis && (isString(leftLabel) || isString(leftLabel.text) ||
-            /^inner-/.test(leftLabel === null || leftLabel === void 0 ? void 0 : leftLabel.position))) {
+            /^inner-/.test(leftLabel === null || leftLabel === undefined ? undefined : leftLabel.position))) {
             var label = $el.main.select(".".concat(leftAxisClass, "-label"));
             if (!label.empty()) {
                 labelWidth = label.node().getBoundingClientRect().left;
@@ -7419,7 +7419,7 @@ var size = {
         var $$ = this;
         var config = $$.config, hasAxis = $$.state.hasAxis, $el = $$.$el;
         if (hasAxis && !withoutAxis && $$.axis.x && config.axis_rotated) {
-            (_a = $$.axis.subX) === null || _a === void 0 ? void 0 : _a.create($el.axis.subX);
+            (_a = $$.axis.subX) === null || _a === undefined ? undefined : _a.create($el.axis.subX);
         }
         // pass 'withoutAxis' param to not animate at the init rendering
         $$.updateScales(withoutAxis);
@@ -7471,12 +7471,12 @@ var size = {
      */
     getCurrentPaddingByDirection: function (type, withoutRecompute, withXAxisTickTextOverflow) {
         var _a;
-        if (withoutRecompute === void 0) { withoutRecompute = false; }
-        if (withXAxisTickTextOverflow === void 0) { withXAxisTickTextOverflow = false; }
+        if (withoutRecompute === undefined) { withoutRecompute = false; }
+        if (withXAxisTickTextOverflow === undefined) { withXAxisTickTextOverflow = false; }
         var $$ = this;
         var config = $$.config, $el = $$.$el, hasAxis = $$.state.hasAxis;
         var isRotated = config.axis_rotated;
-        var isFitPadding = ((_a = config.padding) === null || _a === void 0 ? void 0 : _a.mode) === "fit";
+        var isFitPadding = ((_a = config.padding) === null || _a === undefined ? undefined : _a.mode) === "fit";
         var paddingOption = isNumber(config["padding_".concat(type)]) ?
             config["padding_".concat(type)] :
             undefined;
@@ -7504,7 +7504,7 @@ var size = {
         }
         var padding = hasAxis && isLeftRight && (isAxisInner || (isUndefined(paddingOption) && !isAxisShow)) ?
             0 :
-            (isFitPadding ? (isAxisShow ? axisSize : 0) + (paddingOption !== null && paddingOption !== void 0 ? paddingOption : 0) : (isUndefined(paddingOption) ? axisSize : paddingOption));
+            (isFitPadding ? (isAxisShow ? axisSize : 0) + (paddingOption !== null && paddingOption !== undefined ? paddingOption : 0) : (isUndefined(paddingOption) ? axisSize : paddingOption));
         if (isLeftRight && hasAxis) {
             if (axisId && (isFitPadding || isAxisInner) && config["axis_".concat(axisId, "_label")].text) {
                 padding += $$.axis.getAxisLabelPosition(axisId).isOuter ? defaultPadding : 0;
@@ -7540,7 +7540,7 @@ var size = {
         return padding + (axisSize * axesLen) - gap;
     },
     getCurrentPadding: function (withXAxisTickTextOverflow) {
-        if (withXAxisTickTextOverflow === void 0) { withXAxisTickTextOverflow = false; }
+        if (withXAxisTickTextOverflow === undefined) { withXAxisTickTextOverflow = false; }
         var $$ = this;
         var _a = ["top", "bottom", "left", "right"]
             .map(function (v) { return $$.getCurrentPaddingByDirection(v, null, withXAxisTickTextOverflow); }), top = _a[0], bottom = _a[1], left = _a[2], right = _a[3];
@@ -7584,7 +7584,7 @@ var size = {
         var config = $$.config, state = $$.state, legend = $$.$el.legend;
         var isRotated = config.axis_rotated;
         var isNonAxis = $$.hasArcType() || state.hasFunnel || state.hasTreemap;
-        var isFitPadding = ((_a = config.padding) === null || _a === void 0 ? void 0 : _a.mode) === "fit";
+        var isFitPadding = ((_a = config.padding) === null || _a === undefined ? undefined : _a.mode) === "fit";
         !isInit && $$.setContainerSize();
         var currLegend = {
             width: legend ? $$.getLegendWidth() : 0,
@@ -7648,7 +7648,7 @@ var size = {
             bottom: 0,
             left: 0
         };
-        (_b = $$.updateSizeForLegend) === null || _b === void 0 ? void 0 : _b.call($$, currLegend);
+        (_b = $$.updateSizeForLegend) === null || _b === undefined ? undefined : _b.call($$, currLegend);
         state.width = state.current.width - state.margin.left - state.margin.right;
         state.height = state.current.height - state.margin.top - state.margin.bottom;
         if (state.width < 0) {
@@ -7673,10 +7673,10 @@ var size = {
         if ($$.hasArcType()) {
             var hasGauge = $$.hasType("gauge");
             var isLegendRight = config.legend_show && state.isLegendRight;
-            var textWidth = (_c = (state.hasRadar && $$.cache.get(KEY.radarTextWidth))) !== null && _c !== void 0 ? _c : 0;
+            var textWidth = (_c = (state.hasRadar && $$.cache.get(KEY.radarTextWidth))) !== null && _c !== undefined ? _c : 0;
             state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0) - textWidth;
             state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
-            if ((_d = config.arc_rangeText_values) === null || _d === void 0 ? void 0 : _d.length) {
+            if ((_d = config.arc_rangeText_values) === null || _d === undefined ? undefined : _d.length) {
                 if (hasGauge) {
                     state.arcWidth -= 25;
                     state.arcHeight -= 10;
@@ -7690,7 +7690,7 @@ var size = {
             if (hasGauge && !config.gauge_fullCircle) {
                 state.arcHeight += state.height - $$.getPaddingBottomForGauge();
             }
-            (_e = $$.updateRadius) === null || _e === void 0 ? void 0 : _e.call($$);
+            (_e = $$.updateRadius) === null || _e === undefined ? undefined : _e.call($$);
         }
         if (state.isLegendRight && isNonAxis) {
             state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
@@ -7714,7 +7714,7 @@ var style = {
         return config.boost_useCssRule ?
             function (selection) {
                 selection.each(function (d) {
-                    var res = propsFn && (propsFn === null || propsFn === void 0 ? void 0 : propsFn.call($$, d));
+                    var res = propsFn && (propsFn === null || propsFn === undefined ? undefined : propsFn.call($$, d));
                     var shapeSelector = "".concat(withShape ? ".".concat($SHAPE.shapes + $$.getTargetSelectorSuffix(d.id)) : "").concat(selector);
                     (selector in cssRule) && style.sheet.deleteRule(cssRule[shapeSelector]);
                     $$.state.cssRule[shapeSelector] = addCssRules(style, shapeSelector, props.filter(Boolean).map(function (v) { return (isString(res) && v.indexOf(":") === -1 ? "".concat(v, ": ").concat(res) : (v || "")); }));
@@ -7771,7 +7771,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
     var $$ = this;
     var value = d.value;
     var isCandlestickType = $$.isCandlestickType(d);
-    var isNegative = (isNumber(value) && value < 0) || (isCandlestickType && !((_a = $$.getCandlestickData(d)) === null || _a === void 0 ? void 0 : _a._isUp));
+    var isNegative = (isNumber(value) && value < 0) || (isCandlestickType && !((_a = $$.getCandlestickData(d)) === null || _a === undefined ? undefined : _a._isUp));
     var x = pos.x, y = pos.y;
     var gap = 4;
     var doubleGap = gap * 2;
@@ -7820,7 +7820,7 @@ function getTextPos(d, type) {
     var id = d.id, index = d.index, value = d.value;
     return (_a = (isFunction(position) ?
         position.bind(this.api)(type, value, id, index, this.$el.text) :
-        (id in position ? position[id] : position)[type])) !== null && _a !== void 0 ? _a : 0;
+        (id in position ? position[id] : position)[type])) !== null && _a !== undefined ? _a : 0;
 }
 var text = {
     opacityForText: function (d) {
@@ -7880,12 +7880,12 @@ var text = {
             .merge(text)
             .attr("class", classText)
             .attr("text-anchor", function (d) {
-            var isInverted = config["axis_".concat(axis === null || axis === void 0 ? void 0 : axis.getId(d.id), "_inverted")];
+            var isInverted = config["axis_".concat(axis === null || axis === undefined ? undefined : axis.getId(d.id), "_inverted")];
             // when value is negative or
             var isEndAnchor = isInverted ? d.value > 0 : d.value < 0;
             if ($$.isCandlestickType(d)) {
                 var data = $$.getCandlestickData(d);
-                isEndAnchor = !(data === null || data === void 0 ? void 0 : data._isUp);
+                isEndAnchor = !(data === null || data === undefined ? undefined : data._isUp);
             }
             else if ($$.isTreemapType(d)) {
                 return labelsCentered ? "middle" : "start";
@@ -7937,7 +7937,7 @@ var text = {
         }
         if ($$.isCandlestickType(d) && !isFunction(labelColors)) {
             var value = $$.getCandlestickData(d);
-            if (!(value === null || value === void 0 ? void 0 : value._isUp)) {
+            if (!(value === null || value === undefined ? undefined : value._isUp)) {
                 var downColor = config.candlestick_color_down;
                 color = isObject(downColor) ? downColor[d.id] : downColor;
             }
@@ -7990,7 +7990,7 @@ var text = {
             .each(function (d, i) {
             // do not apply transition for newly added text elements
             var node = $T(hasTreemap && this.childElementCount ? this.parentNode : this, !!(withTransition && this.getAttribute("x")), t);
-            var isInverted = config["axis_".concat(axis === null || axis === void 0 ? void 0 : axis.getId(d.id), "_inverted")];
+            var isInverted = config["axis_".concat(axis === null || axis === undefined ? undefined : axis.getId(d.id), "_inverted")];
             var pos = {
                 x: getX.bind(this)(d, i),
                 y: getY.bind(this)(d, i)
@@ -8128,7 +8128,7 @@ var text = {
         var xPos = points ? points[0][0] : 0;
         if ($$.isCandlestickType(d)) {
             if (isRotated) {
-                xPos = ((_a = $$.getCandlestickData(d)) === null || _a === void 0 ? void 0 : _a._isUp) ? points[2][2] + 4 : points[2][1] - 4;
+                xPos = ((_a = $$.getCandlestickData(d)) === null || _a === undefined ? undefined : _a._isUp) ? points[2][2] + 4 : points[2][1] - 4;
             }
             else {
                 xPos += (points[1][0] - xPos) / 2;
@@ -8174,7 +8174,7 @@ var text = {
         var $$ = this;
         var axis = $$.axis, config = $$.config, state = $$.state;
         var isRotated = config.axis_rotated;
-        var isInverted = config["axis_".concat(axis === null || axis === void 0 ? void 0 : axis.getId(d.id), "_inverted")];
+        var isInverted = config["axis_".concat(axis === null || axis === undefined ? undefined : axis.getId(d.id), "_inverted")];
         var isBarType = $$.isBarType(d);
         var isFunnelType = $$.isFunnelType(d);
         var isTreemapType = $$.isTreemapType(d);
@@ -8286,7 +8286,7 @@ var text = {
      * @private
      */
     meetsLabelThreshold: function (ratio, type) {
-        if (ratio === void 0) { ratio = 0; }
+        if (ratio === undefined) { ratio = 0; }
         var $$ = this;
         var config = $$.config;
         var threshold = config["".concat(type, "_label_threshold")] || 0;
@@ -8306,7 +8306,7 @@ var text = {
  * @private
  */
 function getTextXPos(pos, width) {
-    if (pos === void 0) { pos = "left"; }
+    if (pos === undefined) { pos = "left"; }
     var isNum = isNumber(width);
     var position;
     if (pos.indexOf("center") > -1) {
@@ -8397,7 +8397,7 @@ var tooltip$1 = {
         // Show tooltip if needed
         if (config.tooltip_init_show) {
             var isArc = !(hasAxis || hasRadar);
-            if (((_b = $$.axis) === null || _b === void 0 ? void 0 : _b.isTimeSeries()) && isString(config.tooltip_init_x)) {
+            if (((_b = $$.axis) === null || _b === undefined ? undefined : _b.isTimeSeries()) && isString(config.tooltip_init_x)) {
                 config.tooltip_init_x = parseDate.call($$, config.tooltip_init_x);
             }
             $$.api.tooltip.show({
@@ -8407,7 +8407,7 @@ var tooltip$1 = {
             });
             var position = config.tooltip_init_position;
             if (!config.tooltip_contents.bindto && !isEmpty(position)) {
-                var _d = position.top, top_1 = _d === void 0 ? 0 : _d, _e = position.left, left = _e === void 0 ? 50 : _e;
+                var _d = position.top, top_1 = _d === undefined ? 0 : _d, _e = position.left, left = _e === undefined ? 50 : _e;
                 $el.tooltip.style("top", isString(top_1) ? top_1 : "".concat(top_1, "px"))
                     .style("left", isString(left) ? left : "".concat(left, "px"))
                     .style("display", null);
@@ -8427,7 +8427,7 @@ var tooltip$1 = {
         }
         var $$ = this;
         var api = $$.api, config = $$.config;
-        return isFunction(config.tooltip_contents) ? config.tooltip_contents.bind(api).apply(void 0, args) : $$.getTooltipContent.apply($$, args);
+        return isFunction(config.tooltip_contents) ? config.tooltip_contents.bind(api).apply(undefined, args) : $$.getTooltipContent.apply($$, args);
     },
     /**
      * Returns the tooltip content(HTML string)
@@ -8453,14 +8453,14 @@ var tooltip$1 = {
             for (var _i = 0; _i < arguments.length; _i++) {
                 arg[_i] = arguments[_i];
             }
-            return sanitize((titleFn || defaultTitleFormat).apply(void 0, arg));
+            return sanitize((titleFn || defaultTitleFormat).apply(undefined, arg));
         };
         var nameFormat = function () {
             var arg = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 arg[_i] = arguments[_i];
             }
-            return sanitize((nameFn || (function (name) { return name; })).apply(void 0, arg));
+            return sanitize((nameFn || (function (name) { return name; })).apply(undefined, arg));
         };
         var valueFormat = function () {
             var arg = [];
@@ -8470,7 +8470,7 @@ var tooltip$1 = {
             var fn = valueFn || (state.hasTreemap || $$.isStackNormalized() ?
                 function (v, ratio) { return "".concat((ratio * 100).toFixed(2), "%"); } :
                 defaultValueFormat);
-            return sanitize(fn.apply(void 0, arg));
+            return sanitize(fn.apply(undefined, arg));
         };
         var order = config.tooltip_order;
         var getRowValue = function (row) { return ($$.axis && $$.isBubbleZType(row) ?
@@ -8535,16 +8535,16 @@ var tooltip$1 = {
             param = [row.ratio, row.id, row.index];
             if ($$.isAreaRangeType(row)) {
                 var _c = ["high", "low"].map(function (v) {
-                    return valueFormat.apply(void 0, __spreadArray([$$.getRangedData(row, v)], param, false));
+                    return valueFormat.apply(undefined, __spreadArray([$$.getRangedData(row, v)], param, false));
                 }), high = _c[0], low = _c[1];
-                var mid = valueFormat.apply(void 0, __spreadArray([getRowValue(row)], param, false));
+                var mid = valueFormat.apply(undefined, __spreadArray([getRowValue(row)], param, false));
                 value = "<b>Mid:</b> ".concat(mid, " <b>High:</b> ").concat(high, " <b>Low:</b> ").concat(low);
             }
             else if ($$.isCandlestickType(row)) {
                 var _d = ["open", "high", "low", "close", "volume"]
                     .map(function (v) {
                     var value = $$.getRangedData(row, v, "candlestick");
-                    return value ? valueFormat.apply(void 0, __spreadArray([$$.getRangedData(row, v, "candlestick")], param, false)) :
+                    return value ? valueFormat.apply(undefined, __spreadArray([$$.getRangedData(row, v, "candlestick")], param, false)) :
                         undefined;
                 }), open_1 = _d[0], high = _d[1], low = _d[2], close_1 = _d[3], volume = _d[4];
                 value =
@@ -8555,14 +8555,14 @@ var tooltip$1 = {
                 value = "".concat(valueFormat(rangeValue, undefined, id, index));
             }
             else {
-                value = valueFormat.apply(void 0, __spreadArray([getRowValue(row)], param, false));
+                value = valueFormat.apply(undefined, __spreadArray([getRowValue(row)], param, false));
             }
             if (value !== undefined) {
                 // Skip elements when their name is set to null
                 if (row.name === null) {
                     return "continue";
                 }
-                var name_1 = nameFormat.apply(void 0, __spreadArray([(_a = row.name) !== null && _a !== void 0 ? _a : row.id], param, false));
+                var name_1 = nameFormat.apply(undefined, __spreadArray([(_a = row.name) !== null && _a !== undefined ? _a : row.id], param, false));
                 var color_1 = getBgColor(row);
                 var contentValue_1 = {
                     CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
@@ -8609,17 +8609,17 @@ var tooltip$1 = {
         var config = $$.config, scale = $$.scale, state = $$.state, _c = $$.$el, eventRect = _c.eventRect, tooltip = _c.tooltip, svg = _c.svg;
         var bindto = config.tooltip_contents.bindto;
         var isRotated = config.axis_rotated;
-        var datum = tooltip === null || tooltip === void 0 ? void 0 : tooltip.datum();
+        var datum = tooltip === null || tooltip === undefined ? undefined : tooltip.datum();
         if (!bindto && datum) {
-            var data = dataToShow !== null && dataToShow !== void 0 ? dataToShow : JSON.parse(datum.current);
-            var _d = getPointer(state.event, eventTarget !== null && eventTarget !== void 0 ? eventTarget : eventRect === null || eventRect === void 0 ? void 0 : eventRect.node()), x = _d[0], y = _d[1]; // get mouse event position
+            var data = dataToShow !== null && dataToShow !== undefined ? dataToShow : JSON.parse(datum.current);
+            var _d = getPointer(state.event, eventTarget !== null && eventTarget !== undefined ? eventTarget : eventRect === null || eventRect === undefined ? undefined : eventRect.node()), x = _d[0], y = _d[1]; // get mouse event position
             var currPos = { x: x, y: y };
             if (state.hasAxis && scale.x && datum && "x" in datum) {
                 var getYPos = function (value, id, axisId) {
                     var _a;
-                    if (value === void 0) { value = 0; }
-                    if (axisId === void 0) { axisId = "y"; }
-                    var scaleFn = scale[id ? (_a = $$.axis) === null || _a === void 0 ? void 0 : _a.getId(id) : axisId];
+                    if (value === undefined) { value = 0; }
+                    if (axisId === undefined) { axisId = "y"; }
+                    var scaleFn = scale[id ? (_a = $$.axis) === null || _a === undefined ? undefined : _a.getId(id) : axisId];
                     return scaleFn ?
                         scaleFn(value) + (isRotated ? state.margin.left : state.margin.top) :
                         0;
@@ -8634,9 +8634,9 @@ var tooltip$1 = {
                     currPos.yAxis = getYPos;
                 }
             }
-            var _e = datum.width, width = _e === void 0 ? 0 : _e, _f = datum.height, height = _f === void 0 ? 0 : _f;
+            var _e = datum.width, width = _e === undefined ? 0 : _e, _f = datum.height, height = _f === undefined ? 0 : _f;
             // Get tooltip position
-            var pos_1 = (_b = (_a = config.tooltip_position) === null || _a === void 0 ? void 0 : _a.bind($$.api)(data, width, height, eventRect === null || eventRect === void 0 ? void 0 : eventRect.node(), currPos)) !== null && _b !== void 0 ? _b : (hasViewBox(svg) ?
+            var pos_1 = (_b = (_a = config.tooltip_position) === null || _a === undefined ? undefined : _a.bind($$.api)(data, width, height, eventRect === null || eventRect === undefined ? undefined : eventRect.node(), currPos)) !== null && _b !== undefined ? _b : (hasViewBox(svg) ?
                 $$.getTooltipPositionViewBox.bind($$)(width, height, currPos) :
                 $$.getTooltipPosition.bind($$)(width, height, currPos));
             ["top", "left"].forEach(function (v) {
@@ -8662,7 +8662,7 @@ var tooltip$1 = {
         var _c = $$.$el, eventRect = _c.eventRect, svg = _c.svg, config = $$.config, state = $$.state;
         var isRotated = config.axis_rotated;
         var hasArcType = $$.hasArcType() || state.hasFunnel || state.hasTreemap;
-        var target = (_b = (_a = (hasArcType ? svg : eventRect)) === null || _a === void 0 ? void 0 : _a.node()) !== null && _b !== void 0 ? _b : state.event.target;
+        var target = (_b = (_a = (hasArcType ? svg : eventRect)) === null || _a === undefined ? undefined : _a.node()) !== null && _b !== undefined ? _b : state.event.target;
         var x = currPos.x, y = currPos.y;
         if (state.hasAxis) {
             x = isRotated ? x : currPos.xAxis;
@@ -8723,8 +8723,8 @@ var tooltip$1 = {
         else if (hasArcType) {
             var notTouch = inputType !== "touch";
             if (notTouch) {
-                var titlePadding = (_b = (_a = $$.getTitlePadding) === null || _a === void 0 ? void 0 : _a.call($$)) !== null && _b !== void 0 ? _b : 0;
-                if (titlePadding && hasGauge && ((_c = config.arc_rangeText_values) === null || _c === void 0 ? void 0 : _c.length)) {
+                var titlePadding = (_b = (_a = $$.getTitlePadding) === null || _a === undefined ? undefined : _a.call($$)) !== null && _b !== undefined ? _b : 0;
+                if (titlePadding && hasGauge && ((_c = config.arc_rangeText_values) === null || _c === undefined ? undefined : _c.length)) {
                     titlePadding += 10;
                 }
                 x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
@@ -8836,7 +8836,7 @@ var tooltip$1 = {
         var $$ = this;
         var api = $$.api, config = $$.config, tooltip = $$.$el.tooltip;
         if (tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
-            var selectedData = JSON.parse((_a = tooltip.datum().current) !== null && _a !== void 0 ? _a : {});
+            var selectedData = JSON.parse((_a = tooltip.datum().current) !== null && _a !== undefined ? _a : {});
             callFn(config.tooltip_onhide, api, selectedData);
             // hide tooltip
             tooltip
@@ -8857,7 +8857,7 @@ var tooltip$1 = {
         var charts = $$.charts, config = $$.config, event = $$.state.event;
         // Prevent propagation among instances if isn't instantiated from the user's event
         // https://github.com/naver/billboard.js/issues/1979
-        if ((event === null || event === void 0 ? void 0 : event.isTrusted) && config.tooltip_linked && charts.length > 1) {
+        if ((event === null || event === undefined ? undefined : event.isTrusted) && config.tooltip_linked && charts.length > 1) {
             var linkedName_1 = config.tooltip_linked_name;
             charts
                 .filter(function (c) { return c !== $$.api; })
@@ -8868,7 +8868,7 @@ var tooltip$1 = {
                 var isInDom = doc.body.contains($el.chart.node());
                 if (isLinked && linkedName_1 === name && isInDom) {
                     var data = $el.tooltip.data()[0];
-                    var isNotSameIndex = index !== (data === null || data === void 0 ? void 0 : data.index);
+                    var isNotSameIndex = index !== (data === null || data === undefined ? undefined : data.index);
                     try {
                         c.tooltip[show && isNotSameIndex ? "show" : "hide"]({ index: index });
                     }
@@ -8889,15 +8889,15 @@ var tooltip$1 = {
         var $$ = this;
         var config = $$.config, _b = $$.$el, eventRect = _b.eventRect, svg = _b.svg, tooltip = _b.tooltip, _c = $$.state, event = _c.event, hasAxis = _c.hasAxis, hasRadar = _c.hasRadar, hasTreemap = _c.hasTreemap;
         // Update tooltip, when tooltip is in shown state
-        if ((tooltip === null || tooltip === void 0 ? void 0 : tooltip.style("display")) === "block" && event) {
-            var rect = context !== null && context !== void 0 ? context : (_a = (hasRadar ? svg : eventRect)) === null || _a === void 0 ? void 0 : _a.node();
+        if ((tooltip === null || tooltip === undefined ? undefined : tooltip.style("display")) === "block" && event) {
+            var rect = context !== null && context !== undefined ? context : (_a = (hasRadar ? svg : eventRect)) === null || _a === undefined ? undefined : _a.node();
             // for Axis based & Radar
             if (hasAxis || hasRadar) {
                 if ($$.isMultipleX()) {
                     $$.selectRectForMultipleXs(rect, false);
                 }
                 else {
-                    var idx = index !== null && index !== void 0 ? index : $$.getDataIndexFromEvent(event);
+                    var idx = index !== null && index !== undefined ? index : $$.getDataIndexFromEvent(event);
                     if (index === -1) {
                         $$.api.tooltip.hide();
                     }
@@ -8916,7 +8916,7 @@ var tooltip$1 = {
                     if (data) {
                         var d = $$.hasArcType() ?
                             $$.convertToArcData($$.updateAngle(data)) :
-                            data === null || data === void 0 ? void 0 : data.data;
+                            data === null || data === undefined ? undefined : data.data;
                         hasTreemap && (target = svg.node());
                         d && $$.showTooltip([d], target);
                     }
@@ -8936,7 +8936,7 @@ var tooltip$1 = {
 var transform = {
     getTranslate: function (target, index) {
         var _a;
-        if (index === void 0) { index = 0; }
+        if (index === undefined) { index = 0; }
         var $$ = this;
         var config = $$.config, state = $$.state;
         var isRotated = config.axis_rotated;
@@ -8977,7 +8977,7 @@ var transform = {
         else if (target === "arc") {
             x = state.arcWidth / 2;
             y = state.arcHeight / 2;
-            if ((_a = config.arc_rangeText_values) === null || _a === void 0 ? void 0 : _a.length) {
+            if ((_a = config.arc_rangeText_values) === null || _a === undefined ? undefined : _a.length) {
                 y += 5 + ($$.hasType("gauge") && config.title_text ? 10 : 0);
             }
         }
@@ -8995,13 +8995,13 @@ var transform = {
     transformMain: function (withTransition, transitions) {
         var $$ = this;
         var main = $$.$el.main, $T = $$.$T;
-        var xAxis = (transitions === null || transitions === void 0 ? void 0 : transitions.axisX) ?
+        var xAxis = (transitions === null || transitions === undefined ? undefined : transitions.axisX) ?
             transitions.axisX :
             $T(main.select(".".concat($AXIS.axisX)), withTransition);
-        var yAxis = (transitions === null || transitions === void 0 ? void 0 : transitions.axisY) ?
+        var yAxis = (transitions === null || transitions === undefined ? undefined : transitions.axisY) ?
             transitions.axisY :
             $T(main.select(".".concat($AXIS.axisY)), withTransition);
-        var y2Axis = (transitions === null || transitions === void 0 ? void 0 : transitions.axisY2) ?
+        var y2Axis = (transitions === null || transitions === undefined ? undefined : transitions.axisY2) ?
             transitions.axisY2 :
             $T(main.select(".".concat($AXIS.axisY2)), withTransition);
         $T(main, withTransition)
@@ -9078,16 +9078,16 @@ var typeInternals = {
      */
     hasType: function (type, targetsValue, checkFromData) {
         var _a;
-        if (checkFromData === void 0) { checkFromData = false; }
+        if (checkFromData === undefined) { checkFromData = false; }
         var $$ = this;
         var config = $$.config, current = $$.state.current;
         var types = config.data_types;
         var targets = targetsValue || $$.data.targets;
         var has = false;
-        if (!checkFromData && ((_a = current.types) === null || _a === void 0 ? void 0 : _a.indexOf(type)) > -1) {
+        if (!checkFromData && ((_a = current.types) === null || _a === undefined ? undefined : _a.indexOf(type)) > -1) {
             has = true;
         }
-        else if (targets === null || targets === void 0 ? void 0 : targets.length) {
+        else if (targets === null || targets === undefined ? undefined : targets.length) {
             targets.forEach(function (target) {
                 var t = types[target.id];
                 if (t === type || (!t && type === "line")) {
@@ -9117,7 +9117,7 @@ var typeInternals = {
      */
     hasTypeOf: function (type, targets, exclude) {
         var _this = this;
-        if (exclude === void 0) { exclude = []; }
+        if (exclude === undefined) { exclude = []; }
         if (type in TYPE_BY_CATEGORY) {
             return !TYPE_BY_CATEGORY[type]
                 .filter(function (v) { return exclude.indexOf(v) === -1; })
@@ -9135,7 +9135,7 @@ var typeInternals = {
     isTypeOf: function (d, type) {
         var _a;
         var id = isString(d) ? d : d.id;
-        var dataType = this.config && (((_a = this.config.data_types) === null || _a === void 0 ? void 0 : _a[id]) || this.config.data_type);
+        var dataType = this.config && (((_a = this.config.data_types) === null || _a === undefined ? undefined : _a[id]) || this.config.data_type);
         return isArray(type) ? type.indexOf(dataType) >= 0 : dataType === type;
     },
     hasPointType: function () {
@@ -9217,7 +9217,7 @@ var typeInternals = {
         var config = this.config;
         var pattern = config.point_pattern;
         var isCircle = false;
-        if ((node === null || node === void 0 ? void 0 : node.tagName) === "circle") {
+        if ((node === null || node === undefined ? undefined : node.tagName) === "circle") {
             isCircle = true;
         }
         else {
@@ -9319,8 +9319,8 @@ var shape = {
             }
         });
         if (!$$.hasArcType() || hasRadar || hasTreemap) {
-            var cx = void 0;
-            var cy = void 0;
+            var cx = undefined;
+            var cy = undefined;
             // generate circle x/y functions depending on updated params
             if (!hasTreemap) {
                 cx = hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX);
@@ -9367,18 +9367,18 @@ var shape = {
             var _a;
             var xKey = d.id in xs ? xs[d.id] : "";
             var ind = xKey ? indices[xKey] : indices;
-            for (var j = 0, groups = void 0; (groups = config.data_groups[j]); j++) {
+            for (var j = 0, groups = undefined; (groups = config.data_groups[j]); j++) {
                 if (groups.indexOf(d.id) < 0) {
                     continue;
                 }
-                for (var k = 0, key = void 0; (key = groups[k]); k++) {
+                for (var k = 0, key = undefined; (key = groups[k]); k++) {
                     if (key in ind) {
                         ind[d.id] = ind[key];
                         break;
                     }
                     // for same grouped data, add other data to same indices
                     if (d.id !== key && xKey) {
-                        ind[key] = (_a = ind[d.id]) !== null && _a !== void 0 ? _a : i[xKey];
+                        ind[key] = (_a = ind[d.id]) !== null && _a !== undefined ? _a : i[xKey];
                     }
                 }
             }
@@ -9570,7 +9570,7 @@ var shape = {
                     if (!row || Number(row.x) !== dataXAsNumber) {
                         row = rowValueMapByXValue[dataXAsNumber];
                     }
-                    if ((row === null || row === void 0 ? void 0 : row.value) * value >= 0 && isNumber(rValue)) {
+                    if ((row === null || row === undefined ? undefined : row.value) * value >= 0 && isNumber(rValue)) {
                         var addOffset = value === 0 ?
                             ((groupsZeroAs === "positive" &&
                                 rValue > 0) ||
@@ -9606,12 +9606,12 @@ var shape = {
         var $$ = this;
         var config = $$.config, org = $$.org, scale = $$.scale, state = $$.state;
         var maxDataCount = $$.getMaxDataCount();
-        var isGrouped = type === "bar" && ((_a = config.data_groups) === null || _a === void 0 ? void 0 : _a.length);
+        var isGrouped = type === "bar" && ((_a = config.data_groups) === null || _a === undefined ? undefined : _a.length);
         var configName = "".concat(type, "_width");
-        var k = ((_c = (_b = $$.getZoomTransform) === null || _b === void 0 ? void 0 : _b.call($$)) !== null && _c !== void 0 ? _c : { k: 1 }).k;
+        var k = ((_c = (_b = $$.getZoomTransform) === null || _b === undefined ? undefined : _b.call($$)) !== null && _c !== undefined ? _c : { k: 1 }).k;
         var xMinMax = [
-            (_d = config.axis_x_min) !== null && _d !== void 0 ? _d : org.xDomain[0],
-            (_e = config.axis_x_max) !== null && _e !== void 0 ? _e : org.xDomain[1]
+            (_d = config.axis_x_min) !== null && _d !== undefined ? _d : org.xDomain[0],
+            (_e = config.axis_x_max) !== null && _e !== undefined ? _e : org.xDomain[1]
         ].map($$.axis.isTimeSeries() ? parseDate.bind($$) : Number);
         var tickInterval = axis.tickInterval(maxDataCount);
         if (scale.zoom && !$$.axis.isCategorized() && k > 1) {
@@ -9678,7 +9678,7 @@ var shape = {
         if (!$$.isTargetToShow(d.id)) {
             isWithin = false;
         }
-        else if ((_a = $$.hasValidPointType) === null || _a === void 0 ? void 0 : _a.call($$, that.nodeName)) {
+        else if ((_a = $$.hasValidPointType) === null || _a === undefined ? undefined : _a.call($$, that.nodeName)) {
             isWithin = $$.isStepType(d) ?
                 $$.isWithinStep(that, $$.getYScaleById(d.id)($$.getBaseValue(d))) :
                 $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0);
@@ -9925,7 +9925,7 @@ var ChartInternal = /** @class */ (function () {
             config.axis_y2_show = false;
             config.subchart_show = false;
         }
-        if ($$.hasPointType() || ((_a = $$.hasLegendDefsPoint) === null || _a === void 0 ? void 0 : _a.call($$))) {
+        if ($$.hasPointType() || ((_a = $$.hasLegendDefsPoint) === null || _a === undefined ? undefined : _a.call($$))) {
             $$.point = $$.generatePoint();
         }
         if (state.hasAxis) {
@@ -10016,15 +10016,15 @@ var ChartInternal = /** @class */ (function () {
             var isTouch = state.inputType === "touch";
             var onclick_1 = config.onclick, onover = config.onover, onout = config.onout;
             $el.svg
-                .on("click", (onclick_1 === null || onclick_1 === void 0 ? void 0 : onclick_1.bind($$.api)) || null)
-                .on(isTouch ? "touchstart" : "mouseenter", (onover === null || onover === void 0 ? void 0 : onover.bind($$.api)) || null)
-                .on(isTouch ? "touchend" : "mouseleave", (onout === null || onout === void 0 ? void 0 : onout.bind($$.api)) || null);
+                .on("click", (onclick_1 === null || onclick_1 === undefined ? undefined : onclick_1.bind($$.api)) || null)
+                .on(isTouch ? "touchstart" : "mouseenter", (onover === null || onover === undefined ? undefined : onover.bind($$.api)) || null)
+                .on(isTouch ? "touchend" : "mouseleave", (onout === null || onout === undefined ? undefined : onout.bind($$.api)) || null);
         }
         config.svg_classname && $el.svg.attr("class", config.svg_classname);
         // Define defs
         var hasColorPatterns = isFunction(config.color_tiles) && $$.patterns;
         if (hasAxis || hasColorPatterns || hasPolar || hasTreemap ||
-            labelsBGColor || ((_a = $$.hasLegendDefsPoint) === null || _a === void 0 ? void 0 : _a.call($$))) {
+            labelsBGColor || ((_a = $$.hasLegendDefsPoint) === null || _a === undefined ? undefined : _a.call($$))) {
             $el.defs = $el.svg.append("defs");
             if (hasAxis) {
                 ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
@@ -10073,11 +10073,11 @@ var ChartInternal = /** @class */ (function () {
         $$.initChartElements();
         if (hasAxis) {
             // Cover whole with rects for events
-            hasInteraction && ((_b = $$.initEventRect) === null || _b === void 0 ? void 0 : _b.call($$));
+            hasInteraction && ((_b = $$.initEventRect) === null || _b === undefined ? undefined : _b.call($$));
             // Grids
             $$.initGrid();
             // Add Axis here, when clipPath is 'true'
-            config.clipPath && ((_c = $$.axis) === null || _c === void 0 ? void 0 : _c.init());
+            config.clipPath && ((_c = $$.axis) === null || _c === undefined ? undefined : _c.init());
         }
         // Set targets
         $$.updateTargets($$.data.targets);
@@ -10245,7 +10245,7 @@ var ChartInternal = /** @class */ (function () {
         // Point types
         var hasPointType = $$.hasType("bubble") || $$.hasType("scatter");
         if (hasPointType) {
-            (_a = $$.updateTargetForCircle) === null || _a === void 0 ? void 0 : _a.call($$);
+            (_a = $$.updateTargetForCircle) === null || _a === undefined ? undefined : _a.call($$);
         }
         // Fade-in each chart
         $$.filterTargetsToShowAtInit(hasPointType);
@@ -10256,7 +10256,7 @@ var ChartInternal = /** @class */ (function () {
      * @private
      */
     ChartInternal.prototype.filterTargetsToShowAtInit = function (hasPointType) {
-        if (hasPointType === void 0) { hasPointType = false; }
+        if (hasPointType === undefined) { hasPointType = false; }
         var $$ = this;
         var svg = $$.$el.svg, $T = $$.$T;
         var selector = ".".concat($COMMON.target);
@@ -10459,15 +10459,15 @@ var apiChart = {
         if (state.rendered) {
             // reset possible zoom scale when is called from resize event
             if (state.resizing) { // arguments[1] is given when is called from resize
-                (_a = $$.brush) === null || _a === void 0 ? void 0 : _a.updateResize();
+                (_a = $$.brush) === null || _a === undefined ? undefined : _a.updateResize();
             }
             else {
                 // re-update config info
-                (_b = $$.axis) === null || _b === void 0 ? void 0 : _b.setOrient();
+                (_b = $$.axis) === null || _b === undefined ? undefined : _b.setOrient();
             }
             // hide possible reset zoom button
             // https://github.com/naver/billboard.js/issues/2201
-            zoomResetBtn === null || zoomResetBtn === void 0 ? void 0 : zoomResetBtn.style("display", "none");
+            zoomResetBtn === null || zoomResetBtn === undefined ? undefined : zoomResetBtn.style("display", "none");
             $$.scale.zoom = null;
             soft ?
                 $$.redraw({
@@ -10572,7 +10572,7 @@ var apiChart = {
     config: function (name, value, redraw) {
         var $$ = this.internal;
         var config = $$.config, state = $$.state;
-        var key = name === null || name === void 0 ? void 0 : name.replace(/\./g, "_");
+        var key = name === null || name === undefined ? undefined : name.replace(/\./g, "_");
         var res;
         if (name && key in config) {
             if (isDefined(value)) {
@@ -10673,7 +10673,7 @@ extend(data, {
      * // --> [10, 20, 30, 40]
      */
     values: function (targetIds, flat) {
-        if (flat === void 0) { flat = true; }
+        if (flat === undefined) { flat = true; }
         var values = null;
         if (targetIds) {
             var targets = this.data(targetIds);
@@ -10796,7 +10796,7 @@ var apiData = { data: data };
  */
 var b64EncodeUnicode = function (str) {
     var _a;
-    return (_a = win.btoa) === null || _a === void 0 ? void 0 : _a.call(win, encodeURIComponent(str)
+    return (_a = win.btoa) === null || _a === undefined ? undefined : _a.call(win, encodeURIComponent(str)
         .replace(/%([0-9A-F]{2})/g, function (match, p) { return String.fromCharCode(Number("0x".concat(p))); }));
 };
 /**
@@ -10831,7 +10831,7 @@ function nodeToSvgDataUrl(node, option, orgSize) {
     var styleXml = serializer.serializeToString(style);
     // foreignObject not supported in IE11 and below
     // https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
-    var dataStr = "<svg xmlns=\"".concat(namespaces.svg, "\" width=\"").concat(width, "\" height=\"").concat(height, "\" \n\t\tviewBox=\"0 0 ").concat(orgSize.width, " ").concat(orgSize.height, "\" \n\t\tpreserveAspectRatio=\"").concat((option === null || option === void 0 ? void 0 : option.preserveAspectRatio) === false ? "none" : "xMinYMid meet", "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t").concat(styleXml, "\n\t\t\t\t").concat(nodeXml.replace(/(url\()[^#]+/g, "$1"), "\n\t\t\t</foreignObject></svg>");
+    var dataStr = "<svg xmlns=\"".concat(namespaces.svg, "\" width=\"").concat(width, "\" height=\"").concat(height, "\" \n\t\tviewBox=\"0 0 ").concat(orgSize.width, " ").concat(orgSize.height, "\" \n\t\tpreserveAspectRatio=\"").concat((option === null || option === undefined ? undefined : option.preserveAspectRatio) === false ? "none" : "xMinYMid meet", "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t").concat(styleXml, "\n\t\t\t\t").concat(nodeXml.replace(/(url\()[^#]+/g, "$1"), "\n\t\t\t</foreignObject></svg>");
     return "data:image/svg+xml;base64,".concat(b64EncodeUnicode(dataStr));
 }
 /**
@@ -11448,7 +11448,7 @@ function showHide(show, targetIdsValue, options) {
         // https://github.com/naver/billboard.js/issues/1758
         if (!show && hiddenIds.length === 0) {
             targets.style("display", "none");
-            callFn((_a = $$.config) === null || _a === void 0 ? void 0 : _a.data_onhidden, _this, targetIds);
+            callFn((_a = $$.config) === null || _a === undefined ? undefined : _a.data_onhidden, _this, targetIds);
         }
         targets.style("opacity", opacity);
     });
@@ -11481,7 +11481,7 @@ var apiShow = {
      * chart.show(["data1", "data3"]);
      */
     show: function (targetIdsValue, options) {
-        if (options === void 0) { options = {}; }
+        if (options === undefined) { options = {}; }
         showHide.call(this, true, targetIdsValue, options);
     },
     /**
@@ -11504,7 +11504,7 @@ var apiShow = {
      * chart.hide(["data1", "data3"]);
      */
     hide: function (targetIdsValue, options) {
-        if (options === void 0) { options = {}; }
+        if (options === undefined) { options = {}; }
         showHide.call(this, false, targetIdsValue, options);
     },
     /**
@@ -11528,7 +11528,7 @@ var apiShow = {
      */
     toggle: function (targetIds, options) {
         var _this = this;
-        if (options === void 0) { options = {}; }
+        if (options === undefined) { options = {}; }
         var $$ = this.internal;
         var targets = { show: [], hide: [] };
         // sort show & hide target ids
@@ -11624,7 +11624,7 @@ var tooltip = {
         // determine focus data
         if (args.data) {
             var data = args.data;
-            var y = (_a = $$.getYScaleById(data.id)) === null || _a === void 0 ? void 0 : _a(data.value);
+            var y = (_a = $$.getYScaleById(data.id)) === null || _a === undefined ? undefined : _a(data.value);
             if ((hasFunnel || hasTreemap) && data.id) {
                 var selector = $$.selectorTarget(data.id, undefined, ".".concat($SHAPE.shape));
                 eventReceiver.rect = $el.main.select(selector);
@@ -11637,8 +11637,8 @@ var tooltip = {
                 if (!config.tooltip_grouped) {
                     mouse = [0, y];
                 }
-                index = (_b = data.index) !== null && _b !== void 0 ? _b : ($$.hasArcType() && data.id ?
-                    (_c = $$.getArcElementByIdOrIndex(data.id)) === null || _c === void 0 ? void 0 : _c.datum().index :
+                index = (_b = data.index) !== null && _b !== undefined ? _b : ($$.hasArcType() && data.id ?
+                    (_c = $$.getArcElementByIdOrIndex(data.id)) === null || _c === undefined ? undefined : _c.datum().index :
                     $$.getIndexByX(data.x));
             }
         }
@@ -11662,7 +11662,7 @@ var tooltip = {
         var _a, _b, _c;
         var $$ = this.internal;
         var inputType = $$.state.inputType, tooltip = $$.$el.tooltip;
-        var data = tooltip === null || tooltip === void 0 ? void 0 : tooltip.datum();
+        var data = tooltip === null || tooltip === undefined ? undefined : tooltip.datum();
         if (data) {
             var index_1 = JSON.parse(data.current)[0].index;
             // make to finalize, possible pending event flow set from '.tooltip.show()' call
@@ -11673,9 +11673,9 @@ var tooltip = {
         // reset last touch point index
         inputType === "touch" && $$.callOverOutForTouch();
         $$.hideTooltip(true);
-        (_a = $$.hideGridFocus) === null || _a === void 0 ? void 0 : _a.call($$);
-        (_b = $$.unexpandCircles) === null || _b === void 0 ? void 0 : _b.call($$);
-        (_c = $$.expandBarTypeShapes) === null || _c === void 0 ? void 0 : _c.call($$, false);
+        (_a = $$.hideGridFocus) === null || _a === undefined ? undefined : _a.call($$);
+        (_b = $$.unexpandCircles) === null || _b === undefined ? undefined : _b.call($$);
+        (_c = $$.expandBarTypeShapes) === null || _c === undefined ? undefined : _c.call($$, false);
     }
 };
 var apiTooltip = { tooltip: tooltip };
@@ -12528,7 +12528,7 @@ var apiGroup = {
  * @private
  */
 function regionsFn(regions, isAdd) {
-    if (isAdd === void 0) { isAdd = false; }
+    if (isAdd === undefined) { isAdd = false; }
     var $$ = this.internal;
     var config = $$.config;
     var withTransition = config.transition_duration && isTabVisible();
@@ -12746,7 +12746,7 @@ var AxisRendererHelper = /** @class */ (function () {
      * @private
      */
     AxisRendererHelper.getSizeFor1Char = function (text, memoize) {
-        if (memoize === void 0) { memoize = true; }
+        if (memoize === undefined) { memoize = true; }
         // default size for one character
         var size = {
             w: 5.5,
@@ -12874,7 +12874,7 @@ var AxisRendererHelper = /** @class */ (function () {
 
 var AxisRenderer = /** @class */ (function () {
     function AxisRenderer(params) {
-        if (params === void 0) { params = {}; }
+        if (params === undefined) { params = {}; }
         var config = {
             innerTickSize: 6,
             outerTickSize: params.outerTick ? 6 : 0,
@@ -13060,7 +13060,7 @@ var AxisRenderer = /** @class */ (function () {
      */
     AxisRenderer.prototype.getGeneratedTicks = function (count) {
         var _a;
-        var len = ((_a = this.generatedTicks) === null || _a === void 0 ? void 0 : _a.length) - 1;
+        var len = ((_a = this.generatedTicks) === null || _a === undefined ? undefined : _a.length) - 1;
         var res = this.generatedTicks;
         if (len > count) {
             var interval_1 = Math.round((len / count) + 0.1);
@@ -13274,7 +13274,7 @@ var AxisRenderer = /** @class */ (function () {
             interval = tickOffset * 2;
         }
         else {
-            var scale_1 = (_a = this.params.owner.scale.zoom) !== null && _a !== void 0 ? _a : this.helper.scale;
+            var scale_1 = (_a = this.params.owner.scale.zoom) !== null && _a !== undefined ? _a : this.helper.scale;
             var length_1 = this.g.select("path.domain")
                 .node()
                 .getTotalLength() - outerTickSize * 2;
@@ -13375,18 +13375,18 @@ var Axis = /** @class */ (function () {
         return !this.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
     };
     Axis.prototype.isTimeSeries = function (id) {
-        if (id === void 0) { id = "x"; }
+        if (id === undefined) { id = "x"; }
         return this.owner.config["axis_".concat(id, "_type")] === "timeseries";
     };
     Axis.prototype.isLog = function (id) {
-        if (id === void 0) { id = "x"; }
+        if (id === undefined) { id = "x"; }
         return this.owner.config["axis_".concat(id, "_type")] === "log";
     };
     Axis.prototype.isTimeSeriesY = function () {
         return this.isTimeSeries("y");
     };
     Axis.prototype.getAxisType = function (id) {
-        if (id === void 0) { id = "x"; }
+        if (id === undefined) { id = "x"; }
         var type = "linear";
         if (this.isTimeSeries(id)) {
             type = this.owner.config.axis_x_localtime ? "time" : "utc";
@@ -13638,7 +13638,7 @@ var Axis = /** @class */ (function () {
         }
         else if (this.x) {
             this.x.tickValues(values);
-            (_a = this.subX) === null || _a === void 0 ? void 0 : _a.tickValues(values);
+            (_a = this.subX) === null || _a === undefined ? undefined : _a.tickValues(values);
         }
         return values;
     };
@@ -14001,7 +14001,7 @@ var Axis = /** @class */ (function () {
                 var start = values[0];
                 var end = values[values.length - 1];
                 var interval = (end - start) / (count + 1);
-                var tickValue = void 0;
+                var tickValue = undefined;
                 // re-construct unique values
                 tickValues = [start];
                 for (var i = 0; i < count; i++) {
@@ -14069,7 +14069,7 @@ var Axis = /** @class */ (function () {
         }
         else if (this.x) {
             this.x.tickValues([]);
-            (_a = this.subX) === null || _a === void 0 ? void 0 : _a.tickValues([]);
+            (_a = this.subX) === null || _a === undefined ? undefined : _a.tickValues([]);
         }
         if (config.zoom_rescale && !flow) {
             xDomainForZoom = scale.x.orgDomain();
@@ -14098,8 +14098,8 @@ var Axis = /** @class */ (function () {
         }
         // Update sub domain
         if (wth.Y) {
-            (_b = scale.subY) === null || _b === void 0 ? void 0 : _b.domain($$.getYDomain(targetsToShow, "y"));
-            (_c = scale.subY2) === null || _c === void 0 ? void 0 : _c.domain($$.getYDomain(targetsToShow, "y2"));
+            (_b = scale.subY) === null || _b === undefined ? undefined : _b.domain($$.getYDomain(targetsToShow, "y"));
+            (_c = scale.subY2) === null || _c === undefined ? undefined : _c.domain($$.getYDomain(targetsToShow, "y2"));
         }
     };
     /**
@@ -14161,7 +14161,7 @@ var Axis = /** @class */ (function () {
         var _a;
         var $$ = this.owner;
         var _b = $$.config, isRotated = _b.axis_rotated, axis_tooltip = _b.axis_tooltip, _c = $$.$el, axis = _c.axis, axisTooltip = _c.axisTooltip;
-        var bgColor = (_a = axis_tooltip.backgroundColor) !== null && _a !== void 0 ? _a : "black";
+        var bgColor = (_a = axis_tooltip.backgroundColor) !== null && _a !== undefined ? _a : "black";
         $$.generateTextBGColorFilter(bgColor, {
             x: -0.15,
             y: -0.2,
@@ -14170,16 +14170,16 @@ var Axis = /** @class */ (function () {
         });
         ["x", "y", "y2"].forEach(function (v) {
             var _a, _b, _c;
-            axisTooltip[v] = (_a = axis[v]) === null || _a === void 0 ? void 0 : _a.append("text").classed($AXIS["axis".concat(v.toUpperCase(), "Tooltip")], true).attr("filter", $$.updateTextBGColor({ id: v }, bgColor));
+            axisTooltip[v] = (_a = axis[v]) === null || _a === undefined ? undefined : _a.append("text").classed($AXIS["axis".concat(v.toUpperCase(), "Tooltip")], true).attr("filter", $$.updateTextBGColor({ id: v }, bgColor));
             if (isRotated) {
                 var pos = v === "x" ? "x" : "y";
                 var val = v === "y" ? "1.15em" : (v === "x" ? "-0.3em" : "-0.4em");
-                (_b = axisTooltip[v]) === null || _b === void 0 ? void 0 : _b.attr(pos, val).attr("d".concat(v === "x" ? "y" : "x"), v === "x" ? "0.4em" : "-1.3em").style("text-anchor", v === "x" ? "end" : null);
+                (_b = axisTooltip[v]) === null || _b === undefined ? undefined : _b.attr(pos, val).attr("d".concat(v === "x" ? "y" : "x"), v === "x" ? "0.4em" : "-1.3em").style("text-anchor", v === "x" ? "end" : null);
             }
             else {
                 var pos = v === "x" ? "y" : "x";
                 var val = v === "x" ? "1.15em" : "".concat(v === "y" ? "-" : "", "0.4em");
-                (_c = axisTooltip[v]) === null || _c === void 0 ? void 0 : _c.attr(pos, val).attr("d".concat(v === "x" ? "x" : "y"), v === "x" ? "-1em" : "0.3em").style("text-anchor", v === "y" ? "end" : null);
+                (_c = axisTooltip[v]) === null || _c === undefined ? undefined : _c.attr(pos, val).attr("d".concat(v === "x" ? "x" : "y"), v === "x" ? "-1em" : "0.3em").style("text-anchor", v === "y" ? "end" : null);
             }
         });
     };
@@ -14247,7 +14247,7 @@ var eventrect = {
             // update data's index value to be alinged with the x Axis
             $$.updateDataIndexByX(xAxisTickValues);
             $$.updateXs(xAxisTickValues);
-            (_a = $$.updatePointClass) === null || _a === void 0 ? void 0 : _a.call($$, true);
+            (_a = $$.updatePointClass) === null || _a === undefined ? undefined : _a.call($$, true);
             state.eventReceiver.data = xAxisTickValues;
         }
         $$.updateEventRectData();
@@ -14341,7 +14341,7 @@ var eventrect = {
      * @private
      */
     updateEventRect: function (eventRect, force) {
-        if (force === void 0) { force = false; }
+        if (force === undefined) { force = false; }
         var $$ = this;
         var state = $$.state, $el = $$.$el;
         var eventReceiver = state.eventReceiver, width = state.width, height = state.height, rendered = state.rendered, resizing = state.resizing;
@@ -14377,10 +14377,10 @@ var eventrect = {
         var $$ = this;
         var isRebindCall = isBoolean(target);
         var eventRect = isRebindCall ? $$.$el.eventRect : target;
-        var unbindEvent = isRebindCall ? target !== (eventRect === null || eventRect === void 0 ? void 0 : eventRect.datum().multipleX) : false;
+        var unbindEvent = isRebindCall ? target !== (eventRect === null || eventRect === undefined ? undefined : eventRect.datum().multipleX) : false;
         if (eventRect) {
             // release previous event listeners
-            unbindEvent && (eventRect === null || eventRect === void 0 ? void 0 : eventRect.on("mouseover mousemove mouseout click", null));
+            unbindEvent && (eventRect === null || eventRect === undefined ? undefined : eventRect.on("mouseover mousemove mouseout click", null));
             $$.isMultipleX() ?
                 $$.generateEventRectsForMultipleXs(eventRect) :
                 $$.generateEventRectsForSingleX(eventRect);
@@ -14410,7 +14410,7 @@ var eventrect = {
         }
         else {
             var rectW_1;
-            var rectX = void 0;
+            var rectX = undefined;
             if ($$.axis.isCategorized()) {
                 rectW_1 = $$.getEventRectWidth();
                 rectX = function (d) { return xScale(d.x) - (rectW_1 / 2); };
@@ -14440,7 +14440,7 @@ var eventrect = {
                     else {
                         Object.keys(x).forEach(function (key, i) {
                             var _a;
-                            x[key] = (_a = x[key]) !== null && _a !== void 0 ? _a : xDomain[i];
+                            x[key] = (_a = x[key]) !== null && _a !== undefined ? _a : xDomain[i];
                         });
                         val = Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
                     }
@@ -14497,7 +14497,7 @@ var eventrect = {
         var selectedData = $$.getAllValuesOnIndex(index);
         if (isTooltipGrouped) {
             $$.showTooltip(selectedData, context);
-            (_a = $$.showGridFocus) === null || _a === void 0 ? void 0 : _a.call($$, selectedData);
+            (_a = $$.showGridFocus) === null || _a === undefined ? undefined : _a.call($$, selectedData);
             if (!isSelectionEnabled || isSelectionGrouped) {
                 return;
             }
@@ -14512,7 +14512,7 @@ var eventrect = {
             return $$.isWithinShape(this, d);
         });
         if (shapeAtIndex.empty() && !isTooltipGrouped && config.interaction_onout) {
-            (_b = $$.hideGridFocus) === null || _b === void 0 ? void 0 : _b.call($$);
+            (_b = $$.hideGridFocus) === null || _b === undefined ? undefined : _b.call($$);
             $$.hideTooltip();
             !isSelectionGrouped && $$.setExpand(index);
         }
@@ -14521,13 +14521,13 @@ var eventrect = {
             var _a, _b;
             var d = selected.data();
             if (isSelectionEnabled &&
-                (isSelectionGrouped || (isSelectable === null || isSelectable === void 0 ? void 0 : isSelectable.bind($$.api)(d)))) {
+                (isSelectionGrouped || (isSelectable === null || isSelectable === undefined ? undefined : isSelectable.bind($$.api)(d)))) {
                 context.style.cursor = "pointer";
             }
             if (!isTooltipGrouped) {
                 $$.showTooltip(d, context);
-                (_a = $$.showGridFocus) === null || _a === void 0 ? void 0 : _a.call($$, d);
-                (_b = $$.unexpandCircles) === null || _b === void 0 ? void 0 : _b.call($$);
+                (_a = $$.showGridFocus) === null || _a === undefined ? undefined : _a.call($$, d);
+                (_b = $$.unexpandCircles) === null || _b === undefined ? undefined : _b.call($$);
                 selected.each(function (d) { return $$.setExpand(index, d.id); });
             }
         });
@@ -14539,7 +14539,7 @@ var eventrect = {
      * @private
      */
     selectRectForMultipleXs: function (context, triggerEvent) {
-        if (triggerEvent === void 0) { triggerEvent = true; }
+        if (triggerEvent === undefined) { triggerEvent = true; }
         var $$ = this;
         var config = $$.config, state = $$.state;
         var targetsToShow = $$.filterTargetsToShow($$.data.targets);
@@ -14623,7 +14623,7 @@ var eventrect = {
                 state.event = event;
                 $$.updateEventRect();
                 Object.values($$.$el.axisTooltip)
-                    .forEach(function (v) { return v === null || v === void 0 ? void 0 : v.style("display", null); });
+                    .forEach(function (v) { return v === null || v === undefined ? undefined : v.style("display", null); });
             })
                 .on("mousemove", function (event) {
                 var d = getData_1(event);
@@ -14691,7 +14691,7 @@ var eventrect = {
             .each(function (d2) {
             var _a;
             if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
-                (_a = $$.toggleShape) === null || _a === void 0 ? void 0 : _a.call($$, this, d2, index);
+                (_a = $$.toggleShape) === null || _a === undefined ? undefined : _a.call($$, this, d2, index);
                 config.data_onclick.bind($$.api)(d2, this);
             }
         });
@@ -14747,7 +14747,7 @@ var eventrect = {
                 .each(function () {
                 var _a;
                 if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
-                    (_a = $$.toggleShape) === null || _a === void 0 ? void 0 : _a.call($$, this, closest, closest.index);
+                    (_a = $$.toggleShape) === null || _a === undefined ? undefined : _a.call($$, this, closest, closest.index);
                     config.data_onclick.bind($$.api)(closest, this);
                 }
             });
@@ -14800,7 +14800,7 @@ var flow = {
                 if (node && name.length > 1) {
                     node = node[name[1]];
                 }
-                if (node === null || node === void 0 ? void 0 : node.size()) {
+                if (node === null || node === undefined ? undefined : node.size()) {
                     elements[v] = node;
                 }
             });
@@ -14817,7 +14817,7 @@ var flow = {
     setFlowList: function (elements, args) {
         var $$ = this;
         var flow = args.flow, targets = args.targets;
-        var _a = flow.duration, duration = _a === void 0 ? args.duration : _a, flowIndex = flow.index, flowLength = flow.length, orgDataCount = flow.orgDataCount;
+        var _a = flow.duration, duration = _a === undefined ? args.duration : _a, flowIndex = flow.index, flowLength = flow.length, orgDataCount = flow.orgDataCount;
         var transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength);
         var wait = generateWait();
         var n;
@@ -14856,7 +14856,7 @@ var flow = {
         var isRotated = config.axis_rotated;
         var flow = args.flow, shape = args.shape, xv = args.xv;
         var _a = shape.pos, cx = _a.cx, cy = _a.cy, xForText = _a.xForText, yForText = _a.yForText;
-        var _b = flow.done, done = _b === void 0 ? function () { } : _b, flowLength = flow.length;
+        var _b = flow.done, done = _b === undefined ? function () { } : _b, flowLength = flow.length;
         // Remove flowed elements
         if (flowLength) {
             ["circle", "text", "shape", "eventRect"].forEach(function (v) {
@@ -14951,13 +14951,13 @@ var flow = {
                 }
             }
         }
-        else if (orgDataCount === 1 || (flowStart === null || flowStart === void 0 ? void 0 : flowStart.x) === (flowEnd === null || flowEnd === void 0 ? void 0 : flowEnd.x)) {
+        else if (orgDataCount === 1 || (flowStart === null || flowStart === undefined ? undefined : flowStart.x) === (flowEnd === null || flowEnd === undefined ? undefined : flowEnd.x)) {
             translateX = x(orgDomain[0]) - x(domain[0]);
         }
         else {
             translateX = $$.axis.isTimeSeries() ?
                 x(orgDomain[0]) - x(domain[0]) :
-                x((flowStart === null || flowStart === void 0 ? void 0 : flowStart.x) || 0) - x(flowEnd.x);
+                x((flowStart === null || flowStart === undefined ? undefined : flowStart.x) || 0) - x(flowEnd.x);
         }
         var scaleX = diffDomain(orgDomain) / diffDomain(domain);
         return "translate(".concat(translateX, ",0) scale(").concat(scaleX, ",1)");
@@ -15263,7 +15263,7 @@ var grid = {
             .attr("dy", -5))
             .text(function (d) {
             var _a;
-            return (_a = d.text) !== null && _a !== void 0 ? _a : this.remove();
+            return (_a = d.text) !== null && _a !== undefined ? _a : this.remove();
         });
         gridLines[type] = lines;
     },
@@ -15337,19 +15337,19 @@ var grid = {
         var config = $$.config, format = $$.format, _c = $$.state, event = _c.event, width = _c.width, height = _c.height;
         var isRotated = config.axis_rotated;
         // get mouse event position
-        var _d = getPointer(event, (_a = $$.$el.eventRect) === null || _a === void 0 ? void 0 : _a.node()), x = _d[0], y = _d[1];
+        var _d = getPointer(event, (_a = $$.$el.eventRect) === null || _a === undefined ? undefined : _a.node()), x = _d[0], y = _d[1];
         var pos = { x: x, y: y };
         for (var _i = 0, _e = Object.entries($$.$el.axisTooltip); _i < _e.length; _i++) {
             var _f = _e[_i], axis = _f[0], node = _f[1];
             var attr = (axis === "x" && !isRotated) || (axis !== "x" && isRotated) ? "x" : "y";
             var value = pos[attr];
-            var scaleText = (_b = $$.scale[axis]) === null || _b === void 0 ? void 0 : _b.invert(value);
+            var scaleText = (_b = $$.scale[axis]) === null || _b === undefined ? undefined : _b.invert(value);
             if (scaleText) {
                 scaleText = axis === "x" && $$.axis.isTimeSeries() ?
                     format.xAxisTick(scaleText) :
-                    scaleText === null || scaleText === void 0 ? void 0 : scaleText.toFixed(2);
+                    scaleText === null || scaleText === undefined ? undefined : scaleText.toFixed(2);
                 // set position & its text value based on position
-                node === null || node === void 0 ? void 0 : node.attr(attr, value).text(scaleText);
+                node === null || node === undefined ? undefined : node.attr(attr, value).text(scaleText);
             }
         }
         $$.$el.main.selectAll("line.bb-axis-tooltip-x, line.bb-axis-tooltip-y").style("visibility", null)
@@ -15375,7 +15375,7 @@ var grid = {
         var $$ = this;
         $$.$el.main.selectAll("line.bb-axis-tooltip-x, line.bb-axis-tooltip-y").style("visibility", "hidden");
         Object.values($$.$el.axisTooltip)
-            .forEach(function (v) { return v === null || v === void 0 ? void 0 : v.style("display", "none"); });
+            .forEach(function (v) { return v === null || v === undefined ? undefined : v.style("display", "none"); });
     },
     /**
      * Show grid focus line
@@ -15443,7 +15443,7 @@ var grid = {
                 .forEach(function (v, i) { return el.attr(v, xy[i]); });
         });
         smoothLines(focusEl);
-        (_a = $$.showCircleFocus) === null || _a === void 0 ? void 0 : _a.call($$, data);
+        (_a = $$.showCircleFocus) === null || _a === undefined ? undefined : _a.call($$, data);
     },
     hideGridFocus: function () {
         var _a;
@@ -15452,7 +15452,7 @@ var grid = {
         if (inputType === "mouse" || !resizing) {
             main.selectAll("line.".concat($FOCUS.xgridFocus, ", line.").concat($FOCUS.ygridFocus))
                 .style("visibility", "hidden");
-            (_a = $$.hideCircleFocus) === null || _a === void 0 ? void 0 : _a.call($$);
+            (_a = $$.hideCircleFocus) === null || _a === undefined ? undefined : _a.call($$);
         }
     },
     updateGridFocus: function () {
@@ -15462,7 +15462,7 @@ var grid = {
         var xgridFocus = grid.main.select("line.".concat($FOCUS.xgridFocus));
         if (inputType === "touch") {
             if (xgridFocus.empty()) {
-                resizing && ((_a = $$.showCircleFocus) === null || _a === void 0 ? void 0 : _a.call($$));
+                resizing && ((_a = $$.showCircleFocus) === null || _a === undefined ? undefined : _a.call($$));
             }
             else {
                 $$.showGridFocus();
@@ -15572,7 +15572,7 @@ var region = {
         region.list.each(function (d) {
             var _a;
             var g = select(this);
-            if (g.select("text").empty() && ((_a = d.label) === null || _a === void 0 ? void 0 : _a.text)) {
+            if (g.select("text").empty() && ((_a = d.label) === null || _a === undefined ? undefined : _a.text)) {
                 select(this).append("text")
                     .style("opacity", "0");
             }
@@ -15591,13 +15591,13 @@ var region = {
         label = $T(label, withTransition)
             .attr("transform", function (d) {
             var _a;
-            var _b = (_a = d.label) !== null && _a !== void 0 ? _a : {}, _c = _b.x, x = _c === void 0 ? 0 : _c, _d = _b.y, y = _d === void 0 ? 0 : _d, _e = _b.rotated, rotated = _e === void 0 ? false : _e;
+            var _b = (_a = d.label) !== null && _a !== undefined ? _a : {}, _c = _b.x, x = _c === undefined ? 0 : _c, _d = _b.y, y = _d === undefined ? 0 : _d, _e = _b.rotated, rotated = _e === undefined ? false : _e;
             return "translate(".concat($$.regionX.bind($$)(d) + x, ", ").concat($$.regionY.bind($$)(d) + y, ")").concat(rotated ? " rotate(-90)" : "");
         })
-            .attr("text-anchor", function (d) { var _a; return (((_a = d.label) === null || _a === void 0 ? void 0 : _a.rotated) ? "end" : null); })
+            .attr("text-anchor", function (d) { var _a; return (((_a = d.label) === null || _a === undefined ? undefined : _a.rotated) ? "end" : null); })
             .attr("dy", "1em")
-            .style("fill", function (d) { var _a, _b; return (_b = (_a = d.label) === null || _a === void 0 ? void 0 : _a.color) !== null && _b !== void 0 ? _b : null; })
-            .text(function (d) { var _a; return (_a = d.label) === null || _a === void 0 ? void 0 : _a.text; });
+            .style("fill", function (d) { var _a, _b; return (_b = (_a = d.label) === null || _a === undefined ? undefined : _a.color) !== null && _b !== undefined ? _b : null; })
+            .text(function (d) { var _a; return (_a = d.label) === null || _a === undefined ? undefined : _a.text; });
         return [
             regions
                 .style("fill-opacity", function (d) { return (isValue(d.opacity) ? d.opacity : null); })
@@ -15692,10 +15692,10 @@ var sizeAxis = {
         var _a, _b;
         var $$ = this;
         if ($$.axis) {
-            var position = (_a = $$.axis) === null || _a === void 0 ? void 0 : _a.getLabelPositionById(id);
+            var position = (_a = $$.axis) === null || _a === undefined ? undefined : _a.getLabelPositionById(id);
             var width = $$.axis.getMaxTickSize(id, withoutRecompute).width;
             var gap = width === 0 ? 0.5 : 0;
-            return width + (((_b = $$.config.padding) === null || _b === void 0 ? void 0 : _b.mode) === "fit" ?
+            return width + (((_b = $$.config.padding) === null || _b === undefined ? undefined : _b.mode) === "fit" ?
                 position.isInner ? (10 + gap) : 10 :
                 position.isInner ?
                     (20 + gap) :
@@ -15711,11 +15711,11 @@ var sizeAxis = {
         var config = $$.config, state = $$.state;
         var rotatedPadding = state.rotatedPadding, isLegendRight = state.isLegendRight, isLegendInset = state.isLegendInset;
         var isRotated = config.axis_rotated;
-        var isFitPadding = ((_a = config.padding) === null || _a === void 0 ? void 0 : _a.mode) === "fit";
+        var isFitPadding = ((_a = config.padding) === null || _a === undefined ? undefined : _a.mode) === "fit";
         var isInner = config["axis_".concat(id, "_inner")];
         var hasLabelText = config["axis_".concat(id, "_label")].text;
         var defaultHeight = 13;
-        var h = ((_b = config.padding) === null || _b === void 0 ? void 0 : _b.mode) === "fit" ?
+        var h = ((_b = config.padding) === null || _b === undefined ? undefined : _b.mode) === "fit" ?
             (isInner && !hasLabelText ? (id === "y" ? 1 : 0) : 20) :
             30;
         if (id === "x" && !config.axis_x_show) {
@@ -17808,7 +17808,7 @@ var options = {
  * @private
  */
 function getRadiusFn(expandRate) {
-    if (expandRate === void 0) { expandRate = 0; }
+    if (expandRate === undefined) { expandRate = 0; }
     var $$ = this;
     var config = $$.config, state = $$.state;
     var hasMultiArcGauge = $$.hasMultiArcGauge();
@@ -17866,7 +17866,7 @@ function getRadiusFn(expandRate) {
          * @private
          */
         corner: function (d, outerRadius) {
-            var _a = config.arc_cornerRadius_ratio, ratio = _a === void 0 ? 0 : _a, _b = config.arc_cornerRadius, cornerRadius = _b === void 0 ? 0 : _b;
+            var _a = config.arc_cornerRadius_ratio, ratio = _a === undefined ? 0 : _a, _b = config.arc_cornerRadius, cornerRadius = _b === undefined ? 0 : _b;
             var id = d.data.id, value = d.value;
             var corner = 0;
             if (ratio) {
@@ -17890,7 +17890,7 @@ function getRadiusFn(expandRate) {
 function getAttrTweenFn(fn) {
     return function (d) {
         var getAngleKeyValue = function (_a) {
-            var _b = _a.startAngle, startAngle = _b === void 0 ? 0 : _b, _c = _a.endAngle, endAngle = _c === void 0 ? 0 : _c, _d = _a.padAngle, padAngle = _d === void 0 ? 0 : _d;
+            var _b = _a.startAngle, startAngle = _b === undefined ? 0 : _b, _c = _a.endAngle, endAngle = _c === undefined ? 0 : _c, _d = _a.padAngle, padAngle = _d === undefined ? 0 : _d;
             return ({
                 startAngle: startAngle,
                 endAngle: endAngle,
@@ -17921,7 +17921,7 @@ var shapeArc = {
             .startAngle(startingAngle)
             .endAngle(startingAngle + (2 * Math.PI))
             .padAngle(padAngle)
-            .value(function (d) { var _a, _b; return (_b = (_a = d.values) === null || _a === void 0 ? void 0 : _a.reduce(function (a, b) { return a + b.value; }, 0)) !== null && _b !== void 0 ? _b : d; })
+            .value(function (d) { var _a, _b; return (_b = (_a = d.values) === null || _a === undefined ? undefined : _a.reduce(function (a, b) { return a + b.value; }, 0)) !== null && _b !== undefined ? _b : d; })
             .sort($$.getSortCompareFn.bind($$)(true));
     },
     updateRadius: function () {
@@ -17954,7 +17954,7 @@ var shapeArc = {
      */
     getRadius: function (d) {
         var $$ = this;
-        var data = d === null || d === void 0 ? void 0 : d.data;
+        var data = d === null || d === undefined ? undefined : d.data;
         var _a = $$.state, innerRadius = _a.innerRadius, outerRadius = _a.outerRadius;
         if (!isNumber(innerRadius) && data) {
             innerRadius = innerRadius[data.id] || 0;
@@ -18014,7 +18014,7 @@ var shapeArc = {
      */
     updateAngle: function (dValue, forRange) {
         var _a;
-        if (forRange === void 0) { forRange = false; }
+        if (forRange === undefined) { forRange = false; }
         var $$ = this;
         var config = $$.config, state = $$.state;
         var hasGauge = forRange && $$.hasType("gauge");
@@ -18044,7 +18044,7 @@ var shapeArc = {
             pie($$.filterTargetsToShow())
                 .forEach(function (t, i) {
                 var _a;
-                if (!found && t.data.id === ((_a = d.data) === null || _a === void 0 ? void 0 : _a.id)) {
+                if (!found && t.data.id === ((_a = d.data) === null || _a === undefined ? undefined : _a.id)) {
                     found = true;
                     d = t;
                     d.index = i;
@@ -18061,7 +18061,7 @@ var shapeArc = {
             var gMin = config.gauge_min, gMax = config.gauge_max;
             var max = forRange && !hasGauge ? $$.getTotalDataSum(state.rendered) : gMax;
             var gTic = radius / (max - gMin);
-            var value = (_a = d.value) !== null && _a !== void 0 ? _a : 0;
+            var value = (_a = d.value) !== null && _a !== undefined ? _a : 0;
             var gValue = value < gMin ? 0 : value < max ? value - gMin : (max - gMin);
             d.startAngle = gStart;
             d.endAngle = gStart + gTic * gValue;
@@ -18078,7 +18078,7 @@ var shapeArc = {
             var _a;
             var path = "M 0 0";
             if (d.value || d.data) {
-                var data = withoutUpdate ? d : (_a = $$.updateAngle(d)) !== null && _a !== void 0 ? _a : null;
+                var data = withoutUpdate ? d : (_a = $$.updateAngle(d)) !== null && _a !== undefined ? _a : null;
                 if (data) {
                     path = arc$1.cornerRadius(corner(data, outer(data)))(data);
                 }
@@ -18096,7 +18096,7 @@ var shapeArc = {
      * @private
      */
     getSvgArcExpanded: function (rate) {
-        if (rate === void 0) { rate = 1; }
+        if (rate === undefined) { rate = 1; }
         var $$ = this;
         var _a = getRadiusFn.call($$, rate), inner = _a.inner, outer = _a.outer, corner = _a.corner;
         var arc$1 = arc()
@@ -18125,7 +18125,7 @@ var shapeArc = {
         var format = config.arc_rangeText_format;
         var fixed = $$.hasType("gauge") && config.arc_rangeText_fixed;
         var values = config.arc_rangeText_values;
-        if (values === null || values === void 0 ? void 0 : values.length) {
+        if (values === null || values === undefined ? undefined : values.length) {
             var isPercent_1 = config.arc_rangeText_unit === "%";
             var totalSum_1 = $$.getTotalDataSum(state.rendered);
             if (isPercent_1) {
@@ -18161,7 +18161,7 @@ var shapeArc = {
      */
     transformForArcLabel: function (d, forRange) {
         var _a, _b, _c;
-        if (forRange === void 0) { forRange = false; }
+        if (forRange === undefined) { forRange = false; }
         var $$ = this;
         var config = $$.config, radiusExpanded = $$.state.radiusExpanded;
         var updated = $$.updateAngle(d, forRange);
@@ -18178,8 +18178,8 @@ var shapeArc = {
                     var pos = isFunction(rangeTextPosition) ?
                         rangeTextPosition(rangeValues[d.index]) :
                         rangeTextPosition;
-                    x += (_a = pos === null || pos === void 0 ? void 0 : pos.x) !== null && _a !== void 0 ? _a : 0;
-                    y += (_b = pos === null || pos === void 0 ? void 0 : pos.y) !== null && _b !== void 0 ? _b : 0;
+                    x += (_a = pos === null || pos === undefined ? undefined : pos.x) !== null && _a !== undefined ? _a : 0;
+                    y += (_b = pos === null || pos === undefined ? undefined : pos.y) !== null && _b !== undefined ? _b : 0;
                 }
                 translate = "translate(".concat(x, ",").concat(y, ")");
             }
@@ -18193,7 +18193,7 @@ var shapeArc = {
                 var h = Math.sqrt(x * x + y * y);
                 var ratio = (_c = ["donut", "gauge", "pie", "polar"]
                     .filter($$.hasType.bind($$))
-                    .map(function (v) { return config["".concat(v, "_label_ratio")]; })) === null || _c === void 0 ? void 0 : _c[0];
+                    .map(function (v) { return config["".concat(v, "_label_ratio")]; })) === null || _c === undefined ? undefined : _c[0];
                 if (ratio) {
                     ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, h) : ratio;
                 }
@@ -18230,7 +18230,7 @@ var shapeArc = {
                 var node = select(this);
                 var updated = $$.updateAngle(d);
                 var ratio = $$.getRatio("arc", updated);
-                var isUnderThreshold = $$.meetsLabelThreshold(ratio, (_a = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))) === null || _a === void 0 ? void 0 : _a[0]);
+                var isUnderThreshold = $$.meetsLabelThreshold(ratio, (_a = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))) === null || _a === undefined ? undefined : _a[0]);
                 if (isUnderThreshold) {
                     var value = (updated || d).value;
                     var text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, d.data.id).toString();
@@ -18446,7 +18446,7 @@ var shapeArc = {
             .append("path")
             .attr("class", $$.getClass("arc", true))
             .style("fill", function (d) { return $$.color(d.data); })
-            .style("cursor", function (d) { var _a; return (((_a = isSelectable === null || isSelectable === void 0 ? void 0 : isSelectable.bind) === null || _a === void 0 ? void 0 : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null); })
+            .style("cursor", function (d) { var _a; return (((_a = isSelectable === null || isSelectable === undefined ? undefined : isSelectable.bind) === null || _a === undefined ? undefined : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null); })
             .style("opacity", "0")
             .each(function (d) {
             if ($$.isGaugeType(d.data)) {
@@ -18558,7 +18558,7 @@ var shapeArc = {
              * @private
              */
             $el.needle.updateHelper = function (v, updateConfig) {
-                if (updateConfig === void 0) { updateConfig = false; }
+                if (updateConfig === undefined) { updateConfig = false; }
                 if ($el.needle.style("display") !== "none") {
                     $$.$T($el.needle)
                         .style("transform", "rotate(".concat($$.getNeedleAngle(v), "deg)"))
@@ -18689,7 +18689,7 @@ var shapeArc = {
             var arcData;
             if (updated) {
                 arcData = $$.convertToArcData(updated);
-                (_a = $$.toggleShape) === null || _a === void 0 ? void 0 : _a.call($$, this, arcData, i);
+                (_a = $$.toggleShape) === null || _a === undefined ? undefined : _a.call($$, this, arcData, i);
                 config.data_onclick.bind($$.api)(arcData, this);
             }
         });
@@ -18703,7 +18703,7 @@ var shapeArc = {
                 state.event = event;
                 var updated = $$.updateAngle(d);
                 var arcData = updated ? $$.convertToArcData(updated) : null;
-                var id = (arcData === null || arcData === void 0 ? void 0 : arcData.id) || undefined;
+                var id = (arcData === null || arcData === undefined ? undefined : arcData.id) || undefined;
                 selectArc(this, arcData, id);
                 $$.setOverOut(true, arcData);
             })
@@ -18728,7 +18728,7 @@ var shapeArc = {
         if (isTouch && $$.hasArcType() && !$$.radars) {
             var getEventArc_1 = function (event) {
                 var _a, _b;
-                var _c = (_b = (_a = event.changedTouches) === null || _a === void 0 ? void 0 : _a[0]) !== null && _b !== void 0 ? _b : { clientX: 0, clientY: 0 }, clientX = _c.clientX, clientY = _c.clientY;
+                var _c = (_b = (_a = event.changedTouches) === null || _a === undefined ? undefined : _a[0]) !== null && _b !== undefined ? _b : { clientX: 0, clientY: 0 }, clientX = _c.clientX, clientY = _c.clientY;
                 var eventArc = select(doc.elementFromPoint(clientX, clientY));
                 return eventArc;
             };
@@ -18740,9 +18740,9 @@ var shapeArc = {
                 state.event = event;
                 var eventArc = getEventArc_1(event);
                 var datum = eventArc.datum();
-                var updated = ((datum === null || datum === void 0 ? void 0 : datum.data) && datum.data.id) ? $$.updateAngle(datum) : null;
+                var updated = ((datum === null || datum === undefined ? undefined : datum.data) && datum.data.id) ? $$.updateAngle(datum) : null;
                 var arcData = updated ? $$.convertToArcData(updated) : null;
-                var id = (arcData === null || arcData === void 0 ? void 0 : arcData.id) || undefined;
+                var id = (arcData === null || arcData === undefined ? undefined : arcData.id) || undefined;
                 $$.callOverOutForTouch(arcData);
                 isUndefined(id) ? unselectArc() : selectArc(this, arcData, id);
             });
@@ -18775,7 +18775,7 @@ var shapeArc = {
         if (hasGauge) {
             var isFullCircle = config.gauge_fullCircle;
             isFullCircle &&
-                (text === null || text === void 0 ? void 0 : text.attr("dy", "".concat(hasMultiArcGauge ? 0 : Math.round(state.radius / 14))));
+                (text === null || text === undefined ? undefined : text.attr("dy", "".concat(hasMultiArcGauge ? 0 : Math.round(state.radius / 14))));
             if (config.gauge_label_show) {
                 arcs.select(".".concat($GAUGE.chartArcsGaugeUnit))
                     .attr("dy", "".concat(isFullCircle ? 1.5 : 0.75, "em"))
@@ -18804,7 +18804,7 @@ var shapeArc = {
         var $$ = this;
         var arcs = $$.$el.arcs;
         var filterFn = isNumber(value) ? function (d) { return d.index === value; } : function (d) { return d.data.id === value; };
-        return arcs === null || arcs === void 0 ? void 0 : arcs.selectAll(".".concat($COMMON.target, " path")).filter(filterFn);
+        return arcs === null || arcs === undefined ? undefined : arcs.selectAll(".".concat($COMMON.target, " path")).filter(filterFn);
     }
 };
 
@@ -18837,7 +18837,7 @@ var shapeArea = {
      * @private
      */
     updateArea: function (withTransition, isSub) {
-        if (isSub === void 0) { isSub = false; }
+        if (isSub === undefined) { isSub = false; }
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el, $T = $$.$T;
         var $root = isSub ? $el.subchart : $el;
@@ -18868,7 +18868,7 @@ var shapeArea = {
      * @returns {Array}
      */
     redrawArea: function (drawFn, withTransition, isSub) {
-        if (isSub === void 0) { isSub = false; }
+        if (isSub === undefined) { isSub = false; }
         var $$ = this;
         var area = (isSub ? this.$el.subchart : this.$el).area;
         var orgAreaOpacity = $$.state.orgAreaOpacity;
@@ -18994,7 +18994,7 @@ var shapeBar = {
         // Bars for each data
         mainBarEnter.append("g")
             .attr("class", classBars)
-            .style("cursor", function (d) { var _a; return (((_a = isSelectable === null || isSelectable === void 0 ? void 0 : isSelectable.bind) === null || _a === void 0 ? void 0 : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null); })
+            .style("cursor", function (d) { var _a; return (((_a = isSelectable === null || isSelectable === undefined ? undefined : isSelectable.bind) === null || _a === undefined ? undefined : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null); })
             .call($$.setCssRule(true, " .".concat($BAR.bar), ["fill"], $$.color));
     },
     /**
@@ -19004,7 +19004,7 @@ var shapeBar = {
      * @private
      */
     updateBar: function (withTransition, isSub) {
-        if (isSub === void 0) { isSub = false; }
+        if (isSub === undefined) { isSub = false; }
         var $$ = this;
         var config = $$.config, $el = $$.$el, $T = $$.$T;
         var $root = isSub ? $el.subchart : $el;
@@ -19045,7 +19045,7 @@ var shapeBar = {
      * @private
      */
     redrawBar: function (drawFn, withTransition, isSub) {
-        if (isSub === void 0) { isSub = false; }
+        if (isSub === undefined) { isSub = false; }
         var $$ = this;
         var bar = (isSub ? $$.$el.subchart : $$.$el).bar;
         return [
@@ -19323,7 +19323,7 @@ var shapeCandlestick = {
      * @private
      */
     updateCandlestick: function (withTransition, isSub) {
-        if (isSub === void 0) { isSub = false; }
+        if (isSub === undefined) { isSub = false; }
         var $$ = this;
         var $el = $$.$el, $T = $$.$T;
         var $root = isSub ? $el.subchart : $el;
@@ -19360,7 +19360,7 @@ var shapeCandlestick = {
         return function (d, i, g) {
             var points = getPoints(d, i);
             var value = $$.getCandlestickData(d);
-            var isUp = value === null || value === void 0 ? void 0 : value._isUp;
+            var isUp = value === null || value === undefined ? undefined : value._isUp;
             // switch points if axis is rotated, not applicable for sub chart
             var indexX = +isRotated;
             var indexY = +!indexX;
@@ -19403,7 +19403,7 @@ var shapeCandlestick = {
      * @returns {Function}
      */
     generateGetCandlestickPoints: function (indices, isSub) {
-        if (isSub === void 0) { isSub = false; }
+        if (isSub === undefined) { isSub = false; }
         var $$ = this;
         var axis = isSub ? $$.axis.subX : $$.axis.x;
         var targetsNum = $$.getIndicesMax(indices) + 1;
@@ -19454,7 +19454,7 @@ var shapeCandlestick = {
      * @returns {Array}
      */
     redrawCandlestick: function (drawFn, withTransition, isSub) {
-        if (isSub === void 0) { isSub = false; }
+        if (isSub === undefined) { isSub = false; }
         var $$ = this;
         var $el = $$.$el, $T = $$.$T;
         var candlestick = (isSub ? $el.subchart : $el).candlestick;
@@ -19479,7 +19479,7 @@ var shapeCandlestick = {
         var value = _a.value;
         var d;
         if (isArray(value)) {
-            var open_1 = value[0], high = value[1], low = value[2], close_1 = value[3], _b = value[4], volume = _b === void 0 ? false : _b;
+            var open_1 = value[0], high = value[1], low = value[2], close_1 = value[3], _b = value[4], volume = _b === undefined ? false : _b;
             d = { open: open_1, high: high, low: low, close: close_1 };
             if (volume !== false) {
                 d.volume = volume;
@@ -19502,7 +19502,7 @@ var shapeCandlestick = {
  * @private
  */
 function getSize(checkNeck) {
-    if (checkNeck === void 0) { checkNeck = false; }
+    if (checkNeck === undefined) { checkNeck = false; }
     var $$ = this;
     var config = $$.config, _a = $$.state.current, width = _a.width, height = _a.height;
     var padding = $$.getCurrentPadding();
@@ -19583,7 +19583,7 @@ function getCoord(d) {
  * @private
  */
 function getClipPath(forBackground) {
-    if (forBackground === void 0) { forBackground = false; }
+    if (forBackground === undefined) { forBackground = false; }
     var $$ = this;
     var _a = getSize.call($$, true), width = _a.width, height = _a.height, top = _a.top, left = _a.left;
     var neck = getNecklSize.call($$, { width: width, height: height });
@@ -19666,7 +19666,7 @@ var shapeFunnel = {
         var funnel = $$.$el.funnel, config = $$.config, state = $$.state;
         var getTarget = function (event) {
             var _a;
-            var target = event.isTrusted ? event.target : (_a = state.eventReceiver.rect) === null || _a === void 0 ? void 0 : _a.node();
+            var target = event.isTrusted ? event.target : (_a = state.eventReceiver.rect) === null || _a === undefined ? undefined : _a.node();
             var data;
             if (/^path$/i.test(target.tagName)) {
                 state.event = event;
@@ -19750,12 +19750,12 @@ var shapeFunnel = {
         var _a = getSize.call($$), top = _a.top, left = _a.left, right = _a.right;
         var center = (left - right) / 2;
         var points = {};
-        var accumulatedHeight = top !== null && top !== void 0 ? top : 0;
+        var accumulatedHeight = top !== null && top !== undefined ? top : 0;
         targets.each(function (d, i) {
             var _a;
             points[d.id] = [
                 [center, accumulatedHeight],
-                [center, accumulatedHeight += ((_a = targets === null || targets === void 0 ? void 0 : targets[i]) !== null && _a !== void 0 ? _a : d).ratio]
+                [center, accumulatedHeight += ((_a = targets === null || targets === undefined ? undefined : targets[i]) !== null && _a !== undefined ? _a : d).ratio]
             ];
         });
         return function (d) { return points[d.id]; };
@@ -19788,8 +19788,8 @@ var shapeGauge = {
         var $$ = this;
         var config = $$.config, arcs = $$.$el.arcs;
         var appendText = function (className, value) {
-            if (className === void 0) { className = null; }
-            if (value === void 0) { value = ""; }
+            if (className === undefined) { className = null; }
+            if (value === undefined) { value = ""; }
             arcs.append("text")
                 .attr("class", className)
                 .style("text-anchor", "middle")
@@ -19895,7 +19895,7 @@ var shapeGauge = {
  * @private
  */
 function getStrokeDashArray(start, end, pattern, isLastX) {
-    if (isLastX === void 0) { isLastX = false; }
+    if (isLastX === undefined) { isLastX = false; }
     var dash = start ? [start, 0] : pattern;
     var _loop_1 = function (i) {
         pattern.forEach(function (v) {
@@ -19933,7 +19933,7 @@ function getRegions(d, _regions, isTimeSeries) {
     // Check start/end of regions
     if (isDefined(_regions)) {
         var getValue = function (v, def) { return (isUndefined(v) ? def : (isTimeSeries ? parseDate.call($$, v) : v)); };
-        for (var i = 0, reg = void 0; (reg = _regions[i]); i++) {
+        for (var i = 0, reg = undefined; (reg = _regions[i]); i++) {
             var start = getValue(reg.start, d[0].x);
             var end = getValue(reg.end, d[d.length - 1].x);
             var style = reg.style || { dasharray: dasharray };
@@ -19984,7 +19984,7 @@ var shapeLine = {
      * @private
      */
     updateLine: function (withTransition, isSub) {
-        if (isSub === void 0) { isSub = false; }
+        if (isSub === undefined) { isSub = false; }
         var $$ = this;
         var extraLineClasses = $$.format.extraLineClasses, $el = $$.$el, $T = $$.$T;
         var $root = isSub ? $el.subchart : $el;
@@ -20012,7 +20012,7 @@ var shapeLine = {
      * @private
      */
     redrawLine: function (drawFn, withTransition, isSub) {
-        if (isSub === void 0) { isSub = false; }
+        if (isSub === undefined) { isSub = false; }
         var $$ = this;
         var $el = $$.$el, $T = $$.$T;
         var line = (isSub ? $el.subchart : $el).line;
@@ -20175,7 +20175,7 @@ var shapeLine = {
             lastLength: 0
         };
         var isLastX = false;
-        for (var i = 0, data = void 0; (data = d[i]); i++) {
+        for (var i = 0, data = undefined; (data = d[i]); i++) {
             var prevData = d[i - 1];
             var hasPrevData = prevData && isValue(prevData.value);
             var style = $$.isWithinRegions(data.x, regions);
@@ -20188,7 +20188,7 @@ var shapeLine = {
                 path += "".concat(i && hasPrevData ? "L" : "M").concat(xValue(data), ",").concat(yValue(data));
             }
             else if (hasPrevData) {
-                style = ((style === null || style === void 0 ? void 0 : style.dasharray) || dasharray).split(" ").map(Number);
+                style = ((style === null || style === undefined ? undefined : style.dasharray) || dasharray).split(" ").map(Number);
                 // Draw with region // TODO: Fix for horizotal charts
                 xp = getScale(axisType.x, prevData.x, data.x);
                 yp = getScale(axisType.y, prevData.value, data.value);
@@ -20243,7 +20243,7 @@ var shapeLine = {
         return path;
     },
     isWithinRegions: function (withinX, withinRegions) {
-        for (var i = 0, reg = void 0; (reg = withinRegions[i]); i++) {
+        for (var i = 0, reg = undefined; (reg = withinRegions[i]); i++) {
             if (reg.start < withinX && withinX <= reg.end) {
                 return reg.style;
             }
@@ -20282,7 +20282,7 @@ var shapePoint = {
         var config = this.config;
         var opacity = config.point_opacity;
         if (isUndefined(opacity)) {
-            opacity = config.point_show && !((_a = this.isPointFocusOnly) === null || _a === void 0 ? void 0 : _a.call(this)) ? null : "0";
+            opacity = config.point_show && !((_a = this.isPointFocusOnly) === null || _a === undefined ? undefined : _a.call(this)) ? null : "0";
             opacity = isValue(this.getBaseValue(d)) ?
                 (this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity) :
                 "0";
@@ -20348,7 +20348,7 @@ var shapePoint = {
         });
     },
     updateCircle: function (isSub) {
-        if (isSub === void 0) { isSub = false; }
+        if (isSub === undefined) { isSub = false; }
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el;
         var focusOnly = $$.isPointFocusOnly();
@@ -20382,7 +20382,7 @@ var shapePoint = {
         return $$.config.point_radialGradient ? $$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
     },
     redrawCircle: function (cx, cy, withTransition, flow, isSub) {
-        if (isSub === void 0) { isSub = false; }
+        if (isSub === undefined) { isSub = false; }
         var $$ = this;
         var rendered = $$.state.rendered, $el = $$.$el, $T = $$.$T;
         var $root = isSub ? $el.subchart : $el;
@@ -20426,7 +20426,7 @@ var shapePoint = {
                 circle = circle
                     .filter(function (t) {
                     var _a;
-                    var data = (_a = d.filter) === null || _a === void 0 ? void 0 : _a.call(d, function (v) { return v.id === t.id; });
+                    var data = (_a = d.filter) === null || _a === undefined ? undefined : _a.call(d, function (v) { return v.id === t.id; });
                     return data.length ? select(this).datum(data[0]) : false;
                 });
             }
@@ -20461,7 +20461,7 @@ var shapePoint = {
         return this.xx(d);
     },
     updateCircleY: function (isSub) {
-        if (isSub === void 0) { isSub = false; }
+        if (isSub === undefined) { isSub = false; }
         var $$ = this;
         var getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), isSub);
         return function (d, i) {
@@ -20553,7 +20553,7 @@ var shapePoint = {
         var mouse = getPointer(state.event, node);
         var element = select(node);
         var prefix = this.isCirclePoint(node) ? "c" : "";
-        var pointSensitivity = this.getPointSensitivity(element === null || element === void 0 ? void 0 : element.datum());
+        var pointSensitivity = this.getPointSensitivity(element === null || element === undefined ? undefined : element.datum());
         var cx = +element.attr("".concat(prefix, "x"));
         var cy = +element.attr("".concat(prefix, "y"));
         // if node don't have cx/y or x/y attribute value
@@ -20743,7 +20743,7 @@ function insertPointInfoDefs(point, id) {
     clone.style.fill = "inherit";
     clone.style.stroke = "inherit";
     copyAttr(node, clone);
-    if ((_a = node.childNodes) === null || _a === void 0 ? void 0 : _a.length) {
+    if ((_a = node.childNodes) === null || _a === undefined ? undefined : _a.length) {
         var parent_1 = select(clone);
         if ("innerHTML" in clone) {
             parent_1.html(node.innerHTML);
@@ -20774,7 +20774,7 @@ var shapePointCommon = {
     hasLegendDefsPoint: function () {
         var _a;
         var config = this.config;
-        return config.legend_show && ((_a = config.point_pattern) === null || _a === void 0 ? void 0 : _a.length) && config.legend_usePoint;
+        return config.legend_show && ((_a = config.point_pattern) === null || _a === undefined ? undefined : _a.length) && config.legend_usePoint;
     },
     getDefsPointId: function (id) {
         var datetimeId = this.state.datetimeId;
@@ -20797,7 +20797,7 @@ var shapePointCommon = {
             }
             return function (d) {
                 var _a, _b, _c, _d;
-                var id = $$.getTargetSelectorSuffix(d.id || ((_a = d.data) === null || _a === void 0 ? void 0 : _a.id) || d);
+                var id = $$.getTargetSelectorSuffix(d.id || ((_a = d.data) === null || _a === undefined ? undefined : _a.id) || d);
                 var element = select(this);
                 ids.indexOf(id) < 0 && ids.push(id);
                 var point = pattern[ids.indexOf(id) % pattern.length];
@@ -20811,13 +20811,13 @@ var shapePointCommon = {
                         insertPointInfoDefs.bind($$)(point, pointId);
                     }
                     if (method === "create") {
-                        return (_b = $$.custom) === null || _b === void 0 ? void 0 : _b.create.bind(context).apply(void 0, __spreadArray([element, pointId], args, false));
+                        return (_b = $$.custom) === null || _b === undefined ? undefined : _b.create.bind(context).apply(undefined, __spreadArray([element, pointId], args, false));
                     }
                     else if (method === "update") {
-                        return (_c = $$.custom) === null || _c === void 0 ? void 0 : _c.update.bind(context).apply(void 0, __spreadArray([element], args, false));
+                        return (_c = $$.custom) === null || _c === undefined ? undefined : _c.update.bind(context).apply(undefined, __spreadArray([element], args, false));
                     }
                 }
-                return (_d = point[method]) === null || _d === void 0 ? void 0 : _d.bind(context).apply(void 0, __spreadArray([element], args, false));
+                return (_d = point[method]) === null || _d === undefined ? undefined : _d.bind(context).apply(undefined, __spreadArray([element], args, false));
             };
         };
     }
@@ -20870,7 +20870,7 @@ var shapePolar = {
     getPolarOuterRadius: function (d, outerRadius) {
         var _a;
         var dataMax = getDataMax(this);
-        return (((_a = d === null || d === void 0 ? void 0 : d.data.values[0].value) !== null && _a !== void 0 ? _a : 0) / dataMax) * outerRadius;
+        return (((_a = d === null || d === undefined ? undefined : d.data.values[0].value) !== null && _a !== undefined ? _a : 0) / dataMax) * outerRadius;
     },
     /**
      * Update polar based on given data array
@@ -21134,7 +21134,7 @@ var shapeRadar = {
         }
         // axis text
         if (config.radar_axis_text_show) {
-            var _b = config.radar_axis_text_position, _c = _b.x, x_1 = _c === void 0 ? 0 : _c, _d = _b.y, y_1 = _d === void 0 ? 0 : _d;
+            var _b = config.radar_axis_text_position, _c = _b.x, x_1 = _c === undefined ? 0 : _c, _d = _b.y, y_1 = _d === undefined ? 0 : _d;
             var textWidth = $$.cache.get(cacheKeyTextWidth) || 0;
             axis.select("text")
                 .style("text-anchor", "middle")
@@ -21337,13 +21337,13 @@ var shapeTreemap = {
         var $el = $$.$el, config = $$.config, state = $$.state;
         var getTarget = function (event) {
             var _a;
-            var target = event.isTrusted ? event.target : (_a = state.eventReceiver.rect) === null || _a === void 0 ? void 0 : _a.node();
+            var target = event.isTrusted ? event.target : (_a = state.eventReceiver.rect) === null || _a === undefined ? undefined : _a.node();
             var data;
             if (/^rect$/i.test(target.tagName)) {
                 state.event = event;
                 data = select(target).datum();
             }
-            return data === null || data === void 0 ? void 0 : data.data;
+            return data === null || data === undefined ? undefined : data.data;
         };
         if (config.interaction_enabled) {
             var isTouch = state.inputType === "touch";
@@ -21380,7 +21380,7 @@ var shapeTreemap = {
             sliceDice: treemapSliceDice,
             squarify: treemapSquarify,
             resquarify: treemapResquarify
-        }[(_a = config.treemap_tile) !== null && _a !== void 0 ? _a : "binary"]) !== null && _b !== void 0 ? _b : treemapBinary;
+        }[(_a = config.treemap_tile) !== null && _a !== undefined ? _a : "binary"]) !== null && _b !== undefined ? _b : treemapBinary;
         return function (node, x0, y0, x1, y1) {
             tile(node, 0, 0, width, height);
             for (var _i = 0, _a = node.children; _i < _a.length; _i++) {
@@ -21413,7 +21413,7 @@ var shapeTreemap = {
     updateTargetsForTreemap: function (targets) {
         var $$ = this;
         var treemap = $$.$el.treemap;
-        var treemapData = getHierachyData.call($$, $$.getTreemapData(targets !== null && targets !== void 0 ? targets : $$.data.targets));
+        var treemapData = getHierachyData.call($$, $$.getTreemapData(targets !== null && targets !== undefined ? targets : $$.data.targets));
         // using $el.treemap reference can alter data, so select treemap <g> again
         treemap.data(treemapData);
     },
@@ -22931,7 +22931,7 @@ var treemap = function () { return (extendAxis([shapeTreemap], [optTreemap]), (t
  * @private
  */
 function setSelection(isSelection, ids, indices, resetOther) {
-    if (isSelection === void 0) { isSelection = false; }
+    if (isSelection === undefined) { isSelection = false; }
     var $$ = this;
     var config = $$.config, main = $$.$el.main;
     var selectionGrouped = config.data_selection_grouped;
@@ -23082,7 +23082,7 @@ var subchart$1 = function (domainValue) {
             }
         }
         else {
-            domain = (_a = state.domain) !== null && _a !== void 0 ? _a : x.orgDomain();
+            domain = (_a = state.domain) !== null && _a !== undefined ? _a : x.orgDomain();
         }
     }
     return domain;
@@ -23126,10 +23126,10 @@ extend(subchart$1, {
             if ($$.data.targets.length !== $target.size()) {
                 $$.updateSizes();
                 $$.updateTargetsForSubchart($$.data.targets);
-                $target = (_a = subchart.main) === null || _a === void 0 ? void 0 : _a.selectAll(".".concat($COMMON.target));
+                $target = (_a = subchart.main) === null || _a === undefined ? undefined : _a.selectAll(".".concat($COMMON.target));
             }
-            $target === null || $target === void 0 ? void 0 : $target.style("opacity", null);
-            (_b = subchart.main) === null || _b === void 0 ? void 0 : _b.style("display", null);
+            $target === null || $target === undefined ? undefined : $target.style("opacity", null);
+            (_b = subchart.main) === null || _b === undefined ? undefined : _b.style("display", null);
             this.resize();
         }
     },
@@ -23145,7 +23145,7 @@ extend(subchart$1, {
     hide: function () {
         var $$ = this.internal;
         var main = $$.$el.subchart.main, config = $$.config;
-        if (config.subchart_show && (main === null || main === void 0 ? void 0 : main.style("display")) !== "none") {
+        if (config.subchart_show && (main === null || main === undefined ? undefined : main.style("display")) !== "none") {
             config.subchart_show = false;
             main.style("display", "none");
             this.resize();
@@ -23252,7 +23252,7 @@ var zoom$1 = function (domainValue) {
             domain = $$.zoom.getDomain();
         }
     }
-    return (_a = state.domain) !== null && _a !== void 0 ? _a : domain;
+    return (_a = state.domain) !== null && _a !== undefined ? _a : domain;
 };
 extend(zoom$1, {
     /**
@@ -23376,7 +23376,7 @@ var apiZoom = {
                 $$.brush.getSelection().call($$.brush.move, null) :
                 $$.zoom.updateTransformScale(zoomIdentity);
             $$.updateZoom(true);
-            zoomResetBtn === null || zoomResetBtn === void 0 ? void 0 : zoomResetBtn.style("display", "none");
+            zoomResetBtn === null || zoomResetBtn === undefined ? undefined : zoomResetBtn.style("display", "none");
             // reset transform
             if (zoomTransform(eventRect.node()) !== zoomIdentity) {
                 $$.zoom.transform(eventRect, zoomIdentity);
@@ -23418,7 +23418,7 @@ var subchart = {
                 // when brush selection updates happens on one edge, update only chainging edge and
                 // is only for adjustment of given domain range to be used to return current domain range.
                 type === "brush" && sourceEvent && state.domain &&
-                    (lastSelection === null || lastSelection === void 0 ? void 0 : lastSelection.forEach(function (v, i) {
+                    (lastSelection === null || lastSelection === undefined ? undefined : lastSelection.forEach(function (v, i) {
                         if (v !== selection[i]) {
                             state.domain[i] = scale.x.orgDomain()[i];
                         }
@@ -23429,7 +23429,7 @@ var subchart = {
                 lastDomain = scale.x.orgDomain();
             }
             // handle brush's handle position & visibility
-            if (target === null || target === void 0 ? void 0 : target.handle) {
+            if (target === null || target === undefined ? undefined : target.handle) {
                 if (selection === null) {
                     $$.brush.handle.attr("display", "none");
                 }
@@ -23455,7 +23455,7 @@ var subchart = {
             var _a;
             var extent = this.extent()();
             if (extent[1].filter(function (v) { return isNaN(v); }).length === 0) {
-                (_a = subchart.main) === null || _a === void 0 ? void 0 : _a.select(".".concat(CLASS.brush)).call(this);
+                (_a = subchart.main) === null || _a === undefined ? undefined : _a.select(".".concat(CLASS.brush)).call(this);
             }
             return this;
         };
@@ -23627,7 +23627,7 @@ var subchart = {
         // subchart
         if (config.subchart_show) {
             // reflect main chart to extent on subchart if zoomed
-            if (((_a = state.event) === null || _a === void 0 ? void 0 : _a.type) === "zoom") {
+            if (((_a = state.event) === null || _a === undefined ? undefined : _a.type) === "zoom") {
                 $$.brush.update();
             }
             // update subchart elements if needed
@@ -23662,7 +23662,7 @@ var subchart = {
      */
     redrawForBrush: function (callCallbck) {
         var _a;
-        if (callCallbck === void 0) { callCallbck = true; }
+        if (callCallbck === undefined) { callCallbck = true; }
         var $$ = this;
         var _b = $$.config, onBrush = _b.subchart_onbrush, withY = _b.zoom_rescale, scale = $$.scale, state = $$.state;
         $$.redraw({
@@ -23673,7 +23673,7 @@ var subchart = {
             withDimension: false
         });
         callCallbck && state.rendered &&
-            onBrush.bind($$.api)((_a = state.domain) !== null && _a !== void 0 ? _a : scale.x.orgDomain());
+            onBrush.bind($$.api)((_a = state.domain) !== null && _a !== undefined ? _a : scale.x.orgDomain());
     },
     /**
      * Transform context
@@ -23684,7 +23684,7 @@ var subchart = {
     transformContext: function (withTransition, transitions) {
         var $$ = this;
         var subchart = $$.$el.subchart, $T = $$.$T;
-        var subXAxis = (transitions === null || transitions === void 0 ? void 0 : transitions.axisSubX) ?
+        var subXAxis = (transitions === null || transitions === undefined ? undefined : transitions.axisSubX) ?
             transitions.axisSubX :
             $T(subchart.main.select(".".concat(CLASS.axisX)), withTransition);
         subchart.main.attr("transform", $$.getTranslate("context"));
@@ -23714,7 +23714,7 @@ var zoom = {
      * @private
      */
     bindZoomEvent: function (bind) {
-        if (bind === void 0) { bind = true; }
+        if (bind === undefined) { bind = true; }
         var $$ = this;
         var config = $$.config;
         var zoomEnabled = config.zoom_enabled;
@@ -23764,7 +23764,7 @@ var zoom = {
             var _a;
             var isRotated = config.axis_rotated;
             // in case of resize, update range of orgXScale
-            (_a = org.xScale) === null || _a === void 0 ? void 0 : _a.range(scale.x.range());
+            (_a = org.xScale) === null || _a === undefined ? undefined : _a.range(scale.x.range());
             // rescale from the original scale
             var newScale = transform[isRotated ? "rescaleY" : "rescaleX"](org.xScale || scale.x);
             // prevent drag zoom to be out of range
@@ -23837,19 +23837,19 @@ var zoom = {
         var $$ = this;
         var config = $$.config, scale = $$.scale, state = $$.state, org = $$.org;
         var sourceEvent = event.sourceEvent;
-        var isUnZoom = (event === null || event === void 0 ? void 0 : event.transform) === zoomIdentity;
+        var isUnZoom = (event === null || event === undefined ? undefined : event.transform) === zoomIdentity;
         if (!config.zoom_enabled ||
             $$.filterTargetsToShow($$.data.targets).length === 0 ||
-            (!scale.zoom && (sourceEvent === null || sourceEvent === void 0 ? void 0 : sourceEvent.type.indexOf("touch")) > -1 &&
-                (sourceEvent === null || sourceEvent === void 0 ? void 0 : sourceEvent.touches.length) === 1)) {
+            (!scale.zoom && (sourceEvent === null || sourceEvent === undefined ? undefined : sourceEvent.type.indexOf("touch")) > -1 &&
+                (sourceEvent === null || sourceEvent === undefined ? undefined : sourceEvent.touches.length) === 1)) {
             return;
         }
         if (event.sourceEvent) {
             state.zooming = true;
             state.domain = undefined;
         }
-        var isMousemove = (sourceEvent === null || sourceEvent === void 0 ? void 0 : sourceEvent.type) === "mousemove";
-        var isZoomOut = (sourceEvent === null || sourceEvent === void 0 ? void 0 : sourceEvent.wheelDelta) < 0;
+        var isMousemove = (sourceEvent === null || sourceEvent === undefined ? undefined : sourceEvent.type) === "mousemove";
+        var isZoomOut = (sourceEvent === null || sourceEvent === undefined ? undefined : sourceEvent.wheelDelta) < 0;
         var transform = event.transform;
         if (!isMousemove && isZoomOut && scale.x.domain().every(function (v, i) { return v !== org.xDomain[i]; })) {
             scale.x.domain(org.xDomain);
@@ -23869,7 +23869,7 @@ var zoom = {
         });
         $$.state.cancelClick = isMousemove;
         // do not call event cb when is .unzoom() is called
-        !isUnZoom && callFn(config.zoom_onzoom, $$.api, (_a = $$.state.domain) !== null && _a !== void 0 ? _a : $$.zoom.getDomain());
+        !isUnZoom && callFn(config.zoom_onzoom, $$.api, (_a = $$.state.domain) !== null && _a !== undefined ? _a : $$.zoom.getDomain());
     },
     /**
      * 'end' event listener
@@ -23881,11 +23881,11 @@ var zoom = {
         var $$ = this;
         var config = $$.config, state = $$.state;
         var startEvent = $$.zoom.startEvent;
-        var e = event === null || event === void 0 ? void 0 : event.sourceEvent;
-        var isUnZoom = (event === null || event === void 0 ? void 0 : event.transform) === zoomIdentity;
-        if ((startEvent === null || startEvent === void 0 ? void 0 : startEvent.type.indexOf("touch")) > -1) {
+        var e = event === null || event === undefined ? undefined : event.sourceEvent;
+        var isUnZoom = (event === null || event === undefined ? undefined : event.transform) === zoomIdentity;
+        if ((startEvent === null || startEvent === undefined ? undefined : startEvent.type.indexOf("touch")) > -1) {
             startEvent = startEvent.changedTouches[0];
-            e = (_a = e === null || e === void 0 ? void 0 : e.changedTouches) === null || _a === void 0 ? void 0 : _a[0];
+            e = (_a = e === null || e === undefined ? undefined : e.changedTouches) === null || _a === undefined ? undefined : _a[0];
         }
         // if click, do nothing. otherwise, click interaction will be canceled.
         if (config.zoom_type === "drag" && (e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY)) {
@@ -23895,7 +23895,7 @@ var zoom = {
         $$.redrawEventRect();
         $$.updateZoom();
         // do not call event cb when is .unzoom() is called
-        !isUnZoom && (e || state.dragging) && callFn(config.zoom_onzoomend, $$.api, (_b = $$.state.domain) !== null && _b !== void 0 ? _b : $$.zoom.getDomain());
+        !isUnZoom && (e || state.dragging) && callFn(config.zoom_onzoomend, $$.api, (_b = $$.state.domain) !== null && _b !== undefined ? _b : $$.zoom.getDomain());
     },
     /**
      * Update zoom
@@ -23953,10 +23953,10 @@ var zoom = {
         // https://bugs.webkit.org/show_bug.cgi?id=226683#c3
         // https://stackoverflow.com/questions/67836886/wheel-event-is-not-fired-on-a-svg-group-element-in-safari
         if (win.GestureEvent &&
-            /^((?!chrome|android|mobile).)*safari/i.test((_a = win.navigator) === null || _a === void 0 ? void 0 : _a.userAgent)) {
+            /^((?!chrome|android|mobile).)*safari/i.test((_a = win.navigator) === null || _a === undefined ? undefined : _a.userAgent)) {
             svg.on("wheel", function () { });
         }
-        eventRect === null || eventRect === void 0 ? void 0 : eventRect.call(behaviour).on("dblclick.zoom", null);
+        eventRect === null || eventRect === undefined ? undefined : eventRect.call(behaviour).on("dblclick.zoom", null);
     },
     /**
      * Initialize the drag behaviour used for zooming.
@@ -24063,7 +24063,7 @@ var zoom = {
     getZoomTransform: function () {
         var $$ = this;
         var eventRect = $$.$el.eventRect;
-        return (eventRect === null || eventRect === void 0 ? void 0 : eventRect.node()) ? zoomTransform(eventRect.node()) : { k: 1 };
+        return (eventRect === null || eventRect === undefined ? undefined : eventRect.node()) ? zoomTransform(eventRect.node()) : { k: 1 };
     }
 };
 
@@ -24107,7 +24107,7 @@ var drag = {
         // TODO: binary search when multiple xs
         main.selectAll(".".concat($SHAPE.shapes))
             .selectAll(".".concat($SHAPE.shape))
-            .filter(function (d) { return isSelectable === null || isSelectable === void 0 ? void 0 : isSelectable.bind($$.api)(d); })
+            .filter(function (d) { return isSelectable === null || isSelectable === undefined ? undefined : isSelectable.bind($$.api)(d); })
             .each(function (d, i) {
             var shape = select(this);
             var isSelected = shape.classed($SELECT.SELECTED);
@@ -24215,7 +24215,7 @@ var selection = __assign(__assign({}, drag), {
     unselectPoint: function (target, d, i) {
         var $$ = this;
         var config = $$.config, main = $$.$el.main, $T = $$.$T;
-        callFn(config.data_onunselected, $$.api, d, target === null || target === void 0 ? void 0 : target.node());
+        callFn(config.data_onunselected, $$.api, d, target === null || target === undefined ? undefined : target.node());
         // remove selected-circle from low layer g
         $T(main.select(".".concat($SELECT.selectedCircles).concat($$.getTargetSelectorSuffix(d.id)))
             .selectAll(".".concat($SELECT.selectedCircle, "-").concat(i)))
@@ -24303,7 +24303,7 @@ var selection = __assign(__assign({}, drag), {
             var toggle_1 = $$.getToggle(that, d).bind($$);
             var toggledShape_1;
             if (!config.data_selection_multiple) {
-                var focusOnly = (_a = $$.isPointFocusOnly) === null || _a === void 0 ? void 0 : _a.call($$);
+                var focusOnly = (_a = $$.isPointFocusOnly) === null || _a === undefined ? undefined : _a.call($$);
                 var selector = ".".concat(focusOnly ? $SELECT.selectedCircles : $SHAPE.shapes);
                 if (config.data_selection_grouped) {
                     selector += $$.getTargetSelectorSuffix(d.id);
@@ -24647,7 +24647,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.2-nightly-20250104004645
+ * @version 3.14.3-nightly-20250108004653
  */
 var bb = {
     /**
@@ -24657,7 +24657,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.2-nightly-20250104004645",
+    version: "3.14.3-nightly-20250108004653",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.2-nightly-20250104004645
+ * @version 3.14.3-nightly-20250108004653
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -257,7 +257,7 @@ function getGlobal() {
         Function("return this")();
 }
 var win = getGlobal();
-var doc = win === null || win === void 0 ? void 0 : win.document;
+var doc = win === null || win === undefined ? undefined : win.document;
 
 var isFunction = function (v) { return typeof v === "function"; };
 var isString = function (v) { return typeof v === "string"; };
@@ -282,7 +282,7 @@ var isArray = function (arr) { return Array.isArray(arr); };
  * @returns {boolean}
  * @private
  */
-var isObject = function (obj) { return obj && !(obj === null || obj === void 0 ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj); };
+var isObject = function (obj) { return obj && !(obj === null || obj === undefined ? undefined : obj.nodeType) && isObjectType(obj) && !isArray(obj); };
 /**
  * Merge object returning new object
  * @param {object} target Target object
@@ -311,7 +311,7 @@ function mergeObj(target) {
             }
         });
     }
-    return mergeObj.apply(void 0, __spreadArray([target], objectN, false));
+    return mergeObj.apply(undefined, __spreadArray([target], objectN, false));
 }
 /**
  * Get range
@@ -344,14 +344,14 @@ var getRange = function (start, end, step) {
             // eslint-disable-next-line no-new
             new MouseEvent("t");
             return function (el, eventType, params) {
-                if (params === void 0) { params = getParams(); }
+                if (params === undefined) { params = getParams(); }
                 el.dispatchEvent(new MouseEvent(eventType, params));
             };
         }
         catch (_a) {
             // Polyfills DOM4 MouseEvent
             return function (el, eventType, params) {
-                if (params === void 0) { params = getParams(); }
+                if (params === undefined) { params = getParams(); }
                 var mouseEvent = doc.createEvent("MouseEvent");
                 // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
                 mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
@@ -396,7 +396,7 @@ function parseDate(date) {
         var _b = this, config = _b.config, format = _b.format;
         // if fails to parse, try by new Date()
         // https://github.com/naver/billboard.js/issues/1714
-        parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) !== null && _a !== void 0 ? _a : new Date(date);
+        parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) !== null && _a !== undefined ? _a : new Date(date);
     }
     else if (isNumber(date) && !isNaN(date)) {
         parsedDate = new Date(+date);
@@ -467,7 +467,7 @@ var Plugin = /** @class */ (function () {
      * @private
      */
     function Plugin(options) {
-        if (options === void 0) { options = {}; }
+        if (options === undefined) { options = {}; }
         this.options = options;
     }
     /**
@@ -501,7 +501,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.14.2-nightly-20250104004645";
+    Plugin.version = "3.14.3-nightly-20250108004653";
     return Plugin;
 }());
 
@@ -819,7 +819,7 @@ var Elements = /** @class */ (function () {
             .style("opacity", null);
     };
     Elements.prototype.updateStanfordElements = function (duration) {
-        if (duration === void 0) { duration = 0; }
+        if (duration === undefined) { duration = 0; }
         this.updateStanfordLines(duration);
         this.updateStanfordRegions(duration);
     };
@@ -1113,8 +1113,8 @@ var Stanford = /** @class */ (function (_super) {
     };
     Stanford.prototype.$redraw = function (duration) {
         var _a, _b;
-        (_a = this.colorScale) === null || _a === void 0 ? void 0 : _a.drawColorScale();
-        (_b = this.elements) === null || _b === void 0 ? void 0 : _b.updateStanfordElements(duration);
+        (_a = this.colorScale) === null || _a === undefined ? undefined : _a.drawColorScale();
+        (_b = this.elements) === null || _b === undefined ? undefined : _b.updateStanfordElements(duration);
     };
     Stanford.prototype.getOptions = function () {
         return new Options();
@@ -1159,7 +1159,7 @@ var Stanford = /** @class */ (function (_super) {
                 var data_x = config.data_x;
                 var html = "<table class=\"".concat($TOOLTIP.tooltip, "\"><tbody>");
                 d.forEach(function (v) {
-                    var _a = v.id, id = _a === void 0 ? "" : _a, _b = v.value, value = _b === void 0 ? 0 : _b, _c = v.epochs, epochs = _c === void 0 ? 0 : _c, _d = v.x, x = _d === void 0 ? "" : _d;
+                    var _a = v.id, id = _a === undefined ? "" : _a, _b = v.value, value = _b === undefined ? 0 : _b, _c = v.epochs, epochs = _c === undefined ? 0 : _c, _d = v.x, x = _d === undefined ? "" : _d;
                     html += "<tr>\n\t\t\t\t\t\t\t<th>".concat(data_x || "", "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultTitleFormat(x), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>").concat(v.id, "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultValueFormat(value), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"").concat($TOOLTIP.tooltipName, "-").concat(id, "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:").concat(color(v), "\"></span>Epochs</td>\n\t\t\t\t\t\t\t<td class=\"value\">").concat(defaultValueFormat(epochs), "</td>\n\t\t\t\t\t\t</tr>");
                 });
                 return "".concat(html, "</tbody></table>");
