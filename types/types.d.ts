@@ -66,17 +66,3 @@ export interface DataRegionsType {
 		}
 	};
 }
-
-export interface RegionsType {
-	axis?: "x" | "y" | "y2";
-	start?: number;
-	end?: number;
-	class?: string;
-	label?: {
-		text: string;
-		x?: number;
-		y?: number;
-		color?: string;
-		rotated?: boolean;
-	};
-}
