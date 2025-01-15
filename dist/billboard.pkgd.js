@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.3-nightly-20250108004653
+ * @version 3.14.3-nightly-20250115004655
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -22526,17 +22526,31 @@ const $ZOOM = {
   render: {},
   /**
    * Show rectangles inside the chart.<br><br>
-   * This option accepts array including object that has axis, start, end and class.
-   * The keys start, end and class are optional.
-   * axis must be x, y or y2. start and end should be the value where regions start and end.
-   * If not specified, the edge values will be used.
-   * If timeseries x axis, date string, Date object and unixtime integer can be used.
-   * If class is set, the region element will have it as class.
+   * - **NOTE:**<br>
+   *   - axis must be x, y or y2. start and end should be the value where regions start and end.
+   *   - If not specified, the edge values will be used.
+   *   - If timeseries x axis, date string, Date object and unixtime integer can be used.
+   *   - If category x axis, category name can be used for start and end.
+   *   - If class is set, the region element will have it as class.
+   *
+   * This option accept array of object with below values:
+   * - `axis {string}`: 'x', 'y', or 'y2'
+   * - `[start] {number|Date|string}`: Start position of the region. If not set, the start will be the edge of the chart.
+   * - `[end] {number|Date|string}`: End position of the region. If not set, the end will be the edge of the chart.
+   * - `[class] {string}`: Class value to apply to the region.
+   * - `[label] {object}` Lable text option.
+   *   - `text {string}`: Text value.
+   *   - `x {number}`: x Position.
+   *   - `y {number}`: y Position.
+   *   - `color {string}`: Color string.
+   *   - `rotated (boolean)`: Whether rotate label or not.
    * @name regions
    * @memberof Options
    * @type {Array}
    * @default []
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Region.RegionLabel)
+   * @see [Demo: Regions](https://naver.github.io/billboard.js/demo/#Region.Region)
+   * @see [Demo: Regions Timeseries](https://naver.github.io/billboard.js/demo/#Region.RegionWithTimeseries)
+   * @see [Demo: Regions Label](https://naver.github.io/billboard.js/demo/#Region.RegionLabel)
    * @example
    *  regions: [
    *    {
@@ -39020,7 +39034,7 @@ util_extend(regions, {
    * @function regions․add
    * @instance
    * @memberof Chart
-   * @param {Array|object} regions New region will be added. The format of this argument is the same as regions and it's possible to give an Object if only one region will be added.
+   * @param {Array|object} regions New region will be added. The format of this argument is the same as [regions](./Options.html#.regions) and it's possible to give an Object if only one region will be added.
    * @returns {Array} regions
    * @example
    * // Add a new region
@@ -41725,62 +41739,59 @@ function smoothLines(el, type) {
       label.style("opacity", null)
     ];
   },
-  getRegionXY(type, d) {
-    const $$ = this;
-    const { config, scale } = $$;
-    const isRotated = config.axis_rotated;
-    const isX = type === "x";
-    let key = "start";
-    let currScale;
-    let pos = 0;
-    if (d.axis === "y" || d.axis === "y2") {
-      if (!isX) {
-        key = "end";
-      }
-      if ((isX ? isRotated : !isRotated) && key in d) {
-        currScale = scale[d.axis];
-        pos = currScale(d[key]);
-      }
-    } else if ((isX ? !isRotated : isRotated) && key in d) {
-      currScale = scale.zoom || scale.x;
-      pos = currScale($$.axis.isTimeSeries() ? parseDate.call($$, d[key]) : d[key]);
-    }
-    return pos;
-  },
   regionX(d) {
-    return this.getRegionXY("x", d);
+    return this.getRegionSize("x", d);
   },
   regionY(d) {
-    return this.getRegionXY("y", d);
-  },
-  getRegionSize(type, d) {
-    const $$ = this;
-    const { config, scale, state } = $$;
-    const isRotated = config.axis_rotated;
-    const isWidth = type === "width";
-    const start = $$[isWidth ? "regionX" : "regionY"](d);
-    let currScale;
-    let key = "end";
-    let end = state[type];
-    if (d.axis === "y" || d.axis === "y2") {
-      if (!isWidth) {
-        key = "start";
-      }
-      if ((isWidth ? isRotated : !isRotated) && key in d) {
-        currScale = scale[d.axis];
-        end = currScale(d[key]);
-      }
-    } else if ((isWidth ? !isRotated : isRotated) && key in d) {
-      currScale = scale.zoom || scale.x;
-      end = currScale($$.axis.isTimeSeries() ? parseDate.call($$, d[key]) : d[key]);
-    }
-    return end < start ? 0 : end - start;
+    return this.getRegionSize("y", d);
   },
   regionWidth(d) {
     return this.getRegionSize("width", d);
   },
   regionHeight(d) {
     return this.getRegionSize("height", d);
+  },
+  /**
+   * Get Region size according start/end position
+   * @param {string} type Type string
+   * @param {ojbect} d Data object
+   * @returns {number}
+   * @private
+   */
+  getRegionSize(type, d) {
+    const $$ = this;
+    const { config, scale, state } = $$;
+    const isRotated = config.axis_rotated;
+    const isAxisType = /(x|y|y2)/.test(type);
+    const isType = isAxisType ? type === "x" : type === "width";
+    const start = !isAxisType && $$[isType ? "regionX" : "regionY"](d);
+    let key = isAxisType ? "start" : "end";
+    let pos = isAxisType ? 0 : state[type];
+    let currScale;
+    if (d.axis === "y" || d.axis === "y2") {
+      if (!isAxisType && !isType) {
+        key = "start";
+      } else if (isAxisType && !isType) {
+        key = "end";
+      }
+      if ((isType ? isRotated : !isRotated) && key in d) {
+        currScale = scale[d.axis];
+      }
+    } else if ((isType ? !isRotated : isRotated) && key in d) {
+      currScale = scale.zoom || scale.x;
+    }
+    if (currScale) {
+      let offset = 0;
+      pos = d[key];
+      if ($$.axis.isTimeSeries(d.axis)) {
+        pos = parseDate.call($$, pos);
+      } else if (/(x|width)/.test(type) && $$.axis.isCategorized() && isNaN(pos)) {
+        pos = config.axis_x_categories.indexOf(pos);
+        offset = $$.axis.x.tickOffset() * (key === "start" ? -1 : 1);
+      }
+      pos = currScale(pos) + offset;
+    }
+    return isAxisType ? pos : pos < start ? 0 : pos - start;
   },
   isRegionOnX(d) {
     return !d.axis || d.axis === "x";
@@ -49297,7 +49308,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.3-nightly-20250108004653",
+  version: "3.14.3-nightly-20250115004655",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
