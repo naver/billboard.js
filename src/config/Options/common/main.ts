@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import type {RegionsType} from "../../../../types/types";
+import type {RegionOptions} from "../../../../types/options";
 
 /**
  * main config options
@@ -399,17 +399,31 @@ export default {
 
 	/**
 	 * Show rectangles inside the chart.<br><br>
-	 * This option accepts array including object that has axis, start, end and class.
-	 * The keys start, end and class are optional.
-	 * axis must be x, y or y2. start and end should be the value where regions start and end.
-	 * If not specified, the edge values will be used.
-	 * If timeseries x axis, date string, Date object and unixtime integer can be used.
-	 * If class is set, the region element will have it as class.
+	 * - **NOTE:**<br>
+	 *   - axis must be x, y or y2. start and end should be the value where regions start and end.
+	 *   - If not specified, the edge values will be used.
+	 *   - If timeseries x axis, date string, Date object and unixtime integer can be used.
+	 *   - If category x axis, category name can be used for start and end.
+	 *   - If class is set, the region element will have it as class.
+	 *
+	 * This option accept array of object with below values:
+	 * - `axis {string}`: 'x', 'y', or 'y2'
+	 * - `[start] {number|Date|string}`: Start position of the region. If not set, the start will be the edge of the chart.
+	 * - `[end] {number|Date|string}`: End position of the region. If not set, the end will be the edge of the chart.
+	 * - `[class] {string}`: Class value to apply to the region.
+	 * - `[label] {object}` Lable text option.
+	 *   - `text {string}`: Text value.
+	 *   - `x {number}`: x Position.
+	 *   - `y {number}`: y Position.
+	 *   - `color {string}`: Color string.
+	 *   - `rotated (boolean)`: Whether rotate label or not.
 	 * @name regions
 	 * @memberof Options
 	 * @type {Array}
 	 * @default []
-	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Region.RegionLabel)
+	 * @see [Demo: Regions](https://naver.github.io/billboard.js/demo/#Region.Region)
+	 * @see [Demo: Regions Timeseries](https://naver.github.io/billboard.js/demo/#Region.RegionWithTimeseries)
+	 * @see [Demo: Regions Label](https://naver.github.io/billboard.js/demo/#Region.RegionLabel)
 	 * @example
 	 *  regions: [
 	 *    {
@@ -427,5 +441,5 @@ export default {
 	 *    }
 	 *  ]
 	 */
-	regions: <RegionsType[]>[]
+	regions: <RegionOptions[]>[]
 };

@@ -36,7 +36,7 @@ function regionsFn(regions: RegionsParam, isAdd = false): RegionsParam {
  * @function regions
  * @instance
  * @memberof Chart
- * @param {Array} regions Regions will be replaced with this argument. The format of this argument is the same as regions.
+ * @param {Array} regions Regions will be replaced with this argument. The format of this argument is the same as [regions](./Options.html#.regions) option.
  * @returns {Array} regions
  * @example
  * // Show 2 regions
@@ -65,7 +65,7 @@ extend(regions, {
 	 * @function regions․add
 	 * @instance
 	 * @memberof Chart
-	 * @param {Array|object} regions New region will be added. The format of this argument is the same as regions and it's possible to give an Object if only one region will be added.
+	 * @param {Array|object} regions New region will be added. The format of this argument is the same as [regions](./Options.html#.regions) and it's possible to give an Object if only one region will be added.
 	 * @returns {Array} regions
 	 * @example
 	 * // Add a new region
