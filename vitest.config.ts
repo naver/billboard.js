@@ -43,17 +43,16 @@ export default defineConfig({
         browser: {
             enabled: true,
             provider: "playwright",
-            name: "chromium",
             headless: true,
             viewport: {
                 width: 800,
                 height: 600
             },
-            providerOptions: {
-                launch: {
-                  devtools: true
+            instances: [
+                {
+                    browser: "chromium"
                 }
-            },
+            ],
             screenshotFailures: false
         },
         alias: [
