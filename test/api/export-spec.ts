@@ -201,9 +201,9 @@ describe("API export", () => {
 
 			// pattern for local: preserveFontStyle=true
 			[
-				"UwUQECoIlWYZu6qgABsKvys3LDFCAAGmYQNocKRKQAATAiIVlMehQgAKbHluxJ",
-				"bAOgeAH1QlUcTZOjJOFPV7zN3zDlq/tQUvMb1kYAjNcQLZROAGxBtNTf0oIXkACY",
-				"CZAACZAACZAABSCfARIgARIgARIgARLIMQIUgDkWcHaXBEiABEiABEiABCgA"
+				"BvTQtGxT72vgDsOwkU2xaEizL1iU8C42iAvjQgANecBNNwSWbPoMwi",
+				"rbn4q78UGcAmAqZn0zhxdVQAsbSz4srQCoD9sUQD0hw8KgP7wQQHQ",
+				"79VQVUAVVAFVAFVIHQK6AAGPohoAKoAqqAKqAKqAKqQNgUUAAMm+PaX1VAFVAFVAFVQ"
 			],
 			
 			// pattern for webdriverio
@@ -267,7 +267,6 @@ describe("API export", () => {
 				chart.export({
 					preserveFontStyle: true
 				}, function(dataUrl) {
-					console.log(dataUrl);
 
 					expect(
 						expected.some(pttr => pttr.every(v => dataUrl.indexOf(v) >= 0))
