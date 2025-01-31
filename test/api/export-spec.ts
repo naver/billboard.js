@@ -267,6 +267,8 @@ describe("API export", () => {
 				chart.export({
 					preserveFontStyle: true
 				}, function(dataUrl) {
+					console.log(dataUrl);
+
 					expect(
 						expected.some(pttr => pttr.every(v => dataUrl.indexOf(v) >= 0))
 					).to.be.true;
