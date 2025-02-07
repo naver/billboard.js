@@ -5,20 +5,20 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.3-nightly-20250201004659
+ * @version 3.14.3-nightly-20250207004645
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { brushSelection, brushY, brushX } from 'd3-brush';
-import { csvParseRows, csvParse, tsvParseRows, tsvParse } from 'd3-dsv';
+import { csvParse, csvParseRows, tsvParse, tsvParseRows } from 'd3-dsv';
 import { drag as drag$1 } from 'd3-drag';
-import { scaleOrdinal, scaleLinear, scaleSymlog, scaleLog, scaleTime, scaleUtc } from 'd3-scale';
+import { scaleOrdinal, scaleLinear, scaleUtc, scaleTime, scaleLog, scaleSymlog } from 'd3-scale';
 import { transition } from 'd3-transition';
-import { curveBasis, curveBasisClosed, curveBasisOpen, curveBundle, curveCardinal, curveCardinalClosed, curveCardinalOpen, curveCatmullRom, curveCatmullRomClosed, curveCatmullRomOpen, curveMonotoneX, curveMonotoneY, curveNatural, curveLinearClosed, curveLinear, curveStep, curveStepAfter, curveStepBefore, pie as pie$1, arc, area as area$1, line as line$1 } from 'd3-shape';
+import { curveStepBefore, curveStepAfter, curveStep, curveLinear, curveLinearClosed, curveNatural, curveMonotoneY, curveMonotoneX, curveCatmullRomOpen, curveCatmullRomClosed, curveCatmullRom, curveCardinalOpen, curveCardinalClosed, curveCardinal, curveBundle, curveBasisOpen, curveBasisClosed, curveBasis, arc, pie as pie$1, area as area$1, line as line$1 } from 'd3-shape';
 import { axisLeft, axisBottom, axisTop, axisRight } from 'd3-axis';
 import { easeLinear } from 'd3-ease';
 import { interpolate } from 'd3-interpolate';
-import { treemap as treemap$1, treemapBinary, treemapDice, treemapSlice, treemapSliceDice, treemapSquarify, treemapResquarify, hierarchy } from 'd3-hierarchy';
+import { treemapResquarify, treemapSquarify, treemapSliceDice, treemapSlice, treemapDice, treemapBinary, treemap as treemap$1, hierarchy } from 'd3-hierarchy';
 import { zoomIdentity, zoomTransform, zoom as zoom$2 } from 'd3-zoom';
 
 /******************************************************************************
@@ -7044,7 +7044,7 @@ var redraw = {
             state.redrawing = false;
             callFn(config.onrendered, $$.api);
         };
-        {
+        if (afterRedraw) {
             // Only use transition when current tab is visible.
             if (withTransition && redrawList.length) {
                 // Wait for end of transitions for callback
@@ -24659,7 +24659,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.3-nightly-20250201004659
+ * @version 3.14.3-nightly-20250207004645
  */
 var bb = {
     /**
@@ -24669,7 +24669,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.3-nightly-20250201004659",
+    version: "3.14.3-nightly-20250207004645",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
