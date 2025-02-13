@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.3-nightly-20250207004645
+ * @version 3.14.3-nightly-20250213004646
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -73,7 +73,7 @@ function getGlobal() {
         Function("return this")();
 }
 var win = getGlobal();
-var doc = win === null || win === undefined ? undefined : win.document;
+var doc = win === null || win === void 0 ? void 0 : win.document;
 
 var isNumber = function (v) { return typeof v === "number"; };
 var isDefined = function (v) { return typeof v !== "undefined"; };
@@ -93,14 +93,14 @@ var isObjectType = function (v) { return typeof v === "object"; };
             // eslint-disable-next-line no-new
             new MouseEvent("t");
             return function (el, eventType, params) {
-                if (params === undefined) { params = getParams(); }
+                if (params === void 0) { params = getParams(); }
                 el.dispatchEvent(new MouseEvent(eventType, params));
             };
         }
         catch (_a) {
             // Polyfills DOM4 MouseEvent
             return function (el, eventType, params) {
-                if (params === undefined) { params = getParams(); }
+                if (params === void 0) { params = getParams(); }
                 var mouseEvent = doc.createEvent("MouseEvent");
                 // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
                 mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
@@ -183,7 +183,7 @@ var Plugin = /** @class */ (function () {
      * @private
      */
     function Plugin(options) {
-        if (options === undefined) { options = {}; }
+        if (options === void 0) { options = {}; }
         this.options = options;
     }
     /**
@@ -217,7 +217,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.14.3-nightly-20250207004645";
+    Plugin.version = "3.14.3-nightly-20250213004646";
     return Plugin;
 }());
 
@@ -476,11 +476,11 @@ var TableView = /** @class */ (function (_super) {
     };
     TableView.prototype.$willDestroy = function () {
         var _a, _b;
-        (_a = this.element.parentNode) === null || _a === undefined ? undefined : _a.removeChild(this.element);
+        (_a = this.element.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(this.element);
         // remove default css style when left one chart instance
         if (this.$$.charts.length === 1) {
             var s = document.getElementById(defaultStyle.id);
-            (_b = s === null || s === undefined ? undefined : s.parentNode) === null || _b === undefined ? undefined : _b.removeChild(s);
+            (_b = s === null || s === void 0 ? void 0 : s.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(s);
         }
     };
     return TableView;

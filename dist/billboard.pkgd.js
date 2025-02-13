@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.3-nightly-20250207004645
+ * @version 3.14.3-nightly-20250213004646
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -28525,6 +28525,7 @@ function drag_defaultTouchable() {
           break;
         case "end":
           delete gestures[identifier], --active;
+        // falls through
         case "drag":
           p = src_pointer(touch2 || event2, container2), n = active;
           break;
@@ -33336,6 +33337,7 @@ Basis.prototype = {
     switch (this._point) {
       case 3:
         point(this, this._x1, this._y1);
+      // falls through
       case 2:
         this._context.lineTo(this._x1, this._y1);
         break;
@@ -33356,6 +33358,7 @@ Basis.prototype = {
       case 2:
         this._point = 3;
         this._context.lineTo((5 * this._x0 + this._x1) / 6, (5 * this._y0 + this._y1) / 6);
+      // falls through
       default:
         point(this, x, y);
         break;
@@ -33470,6 +33473,7 @@ BasisOpen.prototype = {
         break;
       case 3:
         this._point = 4;
+      // falls through
       default:
         point(this, x, y);
         break;
@@ -33575,6 +33579,7 @@ Cardinal.prototype = {
         break;
       case 2:
         this._point = 3;
+      // falls through
       default:
         cardinal_point(this, x, y);
         break;
@@ -33696,6 +33701,7 @@ CardinalOpen.prototype = {
         break;
       case 3:
         this._point = 4;
+      // falls through
       default:
         cardinal_point(this, x, y);
         break;
@@ -33793,6 +33799,7 @@ CatmullRom.prototype = {
         break;
       case 2:
         this._point = 3;
+      // falls through
       default:
         catmullRom_point(this, x, y);
         break;
@@ -33928,6 +33935,7 @@ CatmullRomOpen.prototype = {
         break;
       case 3:
         this._point = 4;
+      // falls through
       default:
         catmullRom_point(this, x, y);
         break;
@@ -34149,6 +34157,7 @@ Linear.prototype = {
         break;
       case 1:
         this._point = 2;
+      // falls through
       default:
         this._context.lineTo(x, y);
         break;
@@ -34189,6 +34198,7 @@ Step.prototype = {
         break;
       case 1:
         this._point = 2;
+      // falls through
       default: {
         if (this._t <= 0) {
           this._context.lineTo(this._x, y);
@@ -49308,7 +49318,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.3-nightly-20250207004645",
+  version: "3.14.3-nightly-20250213004646",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

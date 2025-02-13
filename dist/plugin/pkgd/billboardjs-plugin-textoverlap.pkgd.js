@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.3-nightly-20250207004645
+ * @version 3.14.3-nightly-20250213004646
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23161,24 +23161,31 @@ class Voronoi {
         case 5:
           e0 = 4;
           continue;
+        // top-left
         case 4:
           e0 = 6, x = this.xmax, y = this.ymin;
           break;
+        // top
         case 6:
           e0 = 2;
           continue;
+        // top-right
         case 2:
           e0 = 10, x = this.xmax, y = this.ymax;
           break;
+        // right
         case 10:
           e0 = 8;
           continue;
+        // bottom-right
         case 8:
           e0 = 9, x = this.xmin, y = this.ymax;
           break;
+        // bottom
         case 9:
           e0 = 1;
           continue;
+        // bottom-left
         case 1:
           e0 = 5, x = this.xmin, y = this.ymin;
           break;
@@ -27038,7 +27045,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.14.3-nightly-20250207004645");
+__publicField(Plugin, "version", "3.14.3-nightly-20250213004646");
 
 ;// ./src/Plugin/textoverlap/Options.ts
 class Options {
