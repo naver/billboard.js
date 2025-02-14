@@ -3623,7 +3623,14 @@ describe("AXIS", function() {
 			chart.tooltip.show({x: 3});
 
 			["x", "y", "y2"].forEach(id => {
-				expect($el.axisTooltip[id].text()).to.be.equal(expected[id]);
+				const text = $el.axisTooltip[id];
+				const prev = text.node().previousElementSibling;
+
+				expect(text.text()).to.be.equal(expected[id]);
+
+				// text element should be placed at the last
+				expect(prev.tagName).to.be.equal("path");
+				expect(prev.getAttribute("class")).to.be.equal("domain");
 			});
 		});
 
@@ -3656,6 +3663,27 @@ describe("AXIS", function() {
 				
 				expect(filter.size());
 				expect(args.axis.tooltip.backgroundColor[id]).to.be.equal(filter.select("feFlood").attr("flood-color"));
+			});
+		});
+
+		it("set options: axis.tooltip.backgroundColor only x Axis", () => {
+			args.axis.tooltip = {
+				backgroundColor: {
+					x: "red"
+				}
+			};
+		});
+
+		it("should only generate specified axis element.", () => {
+			const {axisTooltip} = chart.internal.$el;
+			const {backgroundColor} = args.axis.tooltip;
+				
+			Object.keys(axisTooltip).forEach(id => {
+				if (backgroundColor[id]) {
+					expect(!axisTooltip[id].empty()).to.be.true;
+				} else {
+					expect(axisTooltip[id]).to.be.null;
+				}
 			});
 		});
 	});
