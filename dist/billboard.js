@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.3-nightly-20250213004646
+ * @version 3.14.3-nightly-20250215004647
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -13362,7 +13362,6 @@ class Axis_Axis {
       axis[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", () => this.textAnchorForAxisLabel(v));
       this.generateAxes(v);
     });
-    config.axis_tooltip && this.setAxisTooltip();
   }
   /**
    * Set axis orient according option value
@@ -13638,17 +13637,6 @@ class Axis_Axis {
     }
     return x;
   }
-  dxForAxisLabel(id) {
-    const $$ = this.owner;
-    const position = this.getAxisLabelPosition(id);
-    let dx = position.isBottom ? "0.5em" : "0";
-    if (this.isHorizontal($$, id !== "x")) {
-      dx = position.isLeft ? "0.5em" : position.isRight ? "-0.5em" : "0";
-    } else if (position.isTop) {
-      dx = "-0.5em";
-    }
-    return dx;
-  }
   textAnchorForAxisLabel(id) {
     const $$ = this.owner;
     const position = this.getAxisLabelPosition(id);
@@ -13659,6 +13647,17 @@ class Axis_Axis {
       anchor = "start";
     }
     return anchor;
+  }
+  dxForAxisLabel(id) {
+    const $$ = this.owner;
+    const position = this.getAxisLabelPosition(id);
+    let dx = position.isBottom ? "0.5em" : "0";
+    if (this.isHorizontal($$, id !== "x")) {
+      dx = position.isLeft ? "0.5em" : position.isRight ? "-0.5em" : "0";
+    } else if (position.isTop) {
+      dx = "-0.5em";
+    }
+    return dx;
   }
   dyForAxisLabel(id) {
     const $$ = this.owner;
@@ -13897,7 +13896,7 @@ class Axis_Axis {
   }
   redraw(transitions, isHidden, isInit) {
     const $$ = this.owner;
-    const { config, $el } = $$;
+    const { config, state, $el } = $$;
     const opacity = isHidden ? "0" : null;
     ["x", "y", "y2", "subX"].forEach((id) => {
       const axis = this[id];
@@ -13911,6 +13910,7 @@ class Axis_Axis {
       }
     });
     this.updateAxes();
+    !state.rendered && config.axis_tooltip && this.setAxisTooltip();
   }
   /**
    * Redraw axis
@@ -14039,15 +14039,17 @@ class Axis_Axis {
     );
     ["x", "y", "y2"].forEach((v) => {
       var _a2, _b, _c;
-      axisTooltip[v] = (_a2 = axis[v]) == null ? void 0 : _a2.append("text").classed($AXIS[`axis${v.toUpperCase()}Tooltip`], true).attr("filter", $$.updateTextBGColor({ id: v }, bgColor));
-      if (isRotated) {
-        const pos = v === "x" ? "x" : "y";
-        const val = v === "y" ? "1.15em" : v === "x" ? "-0.3em" : "-0.4em";
-        (_b = axisTooltip[v]) == null ? void 0 : _b.attr(pos, val).attr(`d${v === "x" ? "y" : "x"}`, v === "x" ? "0.4em" : "-1.3em").style("text-anchor", v === "x" ? "end" : null);
-      } else {
-        const pos = v === "x" ? "y" : "x";
-        const val = v === "x" ? "1.15em" : `${v === "y" ? "-" : ""}0.4em`;
-        (_c = axisTooltip[v]) == null ? void 0 : _c.attr(pos, val).attr(`d${v === "x" ? "x" : "y"}`, v === "x" ? "-1em" : "0.3em").style("text-anchor", v === "y" ? "end" : null);
+      if (isString(bgColor) || bgColor[v]) {
+        axisTooltip[v] = (_a2 = axis[v]) == null ? void 0 : _a2.append("text").classed($AXIS[`axis${v.toUpperCase()}Tooltip`], true).attr("filter", $$.updateTextBGColor({ id: v }, bgColor));
+        if (isRotated) {
+          const pos = v === "x" ? "x" : "y";
+          const val = v === "y" ? "1.15em" : v === "x" ? "-0.3em" : "-0.4em";
+          (_b = axisTooltip[v]) == null ? void 0 : _b.attr(pos, val).attr(`d${v === "x" ? "y" : "x"}`, v === "x" ? "0.4em" : "-1.3em").style("text-anchor", v === "x" ? "end" : null);
+        } else {
+          const pos = v === "x" ? "y" : "x";
+          const val = v === "x" ? "1.15em" : `${v === "y" ? "-" : ""}0.4em`;
+          (_c = axisTooltip[v]) == null ? void 0 : _c.attr(pos, val).attr(`d${v === "x" ? "x" : "y"}`, v === "x" ? "-1em" : "0.3em").style("text-anchor", v === "y" ? "end" : null);
+        }
       }
     });
   }
@@ -21874,7 +21876,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.3-nightly-20250213004646",
+  version: "3.14.3-nightly-20250215004647",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

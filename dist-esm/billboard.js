@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.3-nightly-20250213004646
+ * @version 3.14.3-nightly-20250215004647
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -13460,7 +13460,6 @@ var Axis = /** @class */ (function () {
                 .style("text-anchor", function () { return _this.textAnchorForAxisLabel(v); });
             _this.generateAxes(v);
         });
-        config.axis_tooltip && this.setAxisTooltip();
     };
     /**
      * Set axis orient according option value
@@ -13752,18 +13751,6 @@ var Axis = /** @class */ (function () {
         }
         return x;
     };
-    Axis.prototype.dxForAxisLabel = function (id) {
-        var $$ = this.owner;
-        var position = this.getAxisLabelPosition(id);
-        var dx = position.isBottom ? "0.5em" : "0";
-        if (this.isHorizontal($$, id !== "x")) {
-            dx = position.isLeft ? "0.5em" : (position.isRight ? "-0.5em" : "0");
-        }
-        else if (position.isTop) {
-            dx = "-0.5em";
-        }
-        return dx;
-    };
     Axis.prototype.textAnchorForAxisLabel = function (id) {
         var $$ = this.owner;
         var position = this.getAxisLabelPosition(id);
@@ -13775,6 +13762,18 @@ var Axis = /** @class */ (function () {
             anchor = "start";
         }
         return anchor;
+    };
+    Axis.prototype.dxForAxisLabel = function (id) {
+        var $$ = this.owner;
+        var position = this.getAxisLabelPosition(id);
+        var dx = position.isBottom ? "0.5em" : "0";
+        if (this.isHorizontal($$, id !== "x")) {
+            dx = position.isLeft ? "0.5em" : (position.isRight ? "-0.5em" : "0");
+        }
+        else if (position.isTop) {
+            dx = "-0.5em";
+        }
+        return dx;
     };
     Axis.prototype.dyForAxisLabel = function (id) {
         var $$ = this.owner;
@@ -14040,7 +14039,7 @@ var Axis = /** @class */ (function () {
     Axis.prototype.redraw = function (transitions, isHidden, isInit) {
         var _this = this;
         var $$ = this.owner;
-        var config = $$.config, $el = $$.$el;
+        var config = $$.config, state = $$.state, $el = $$.$el;
         var opacity = isHidden ? "0" : null;
         ["x", "y", "y2", "subX"].forEach(function (id) {
             var axis = _this[id];
@@ -14054,6 +14053,7 @@ var Axis = /** @class */ (function () {
             }
         });
         this.updateAxes();
+        !state.rendered && config.axis_tooltip && this.setAxisTooltip();
     };
     /**
      * Redraw axis
@@ -14184,16 +14184,18 @@ var Axis = /** @class */ (function () {
         });
         ["x", "y", "y2"].forEach(function (v) {
             var _a, _b, _c;
-            axisTooltip[v] = (_a = axis[v]) === null || _a === void 0 ? void 0 : _a.append("text").classed($AXIS["axis".concat(v.toUpperCase(), "Tooltip")], true).attr("filter", $$.updateTextBGColor({ id: v }, bgColor));
-            if (isRotated) {
-                var pos = v === "x" ? "x" : "y";
-                var val = v === "y" ? "1.15em" : (v === "x" ? "-0.3em" : "-0.4em");
-                (_b = axisTooltip[v]) === null || _b === void 0 ? void 0 : _b.attr(pos, val).attr("d".concat(v === "x" ? "y" : "x"), v === "x" ? "0.4em" : "-1.3em").style("text-anchor", v === "x" ? "end" : null);
-            }
-            else {
-                var pos = v === "x" ? "y" : "x";
-                var val = v === "x" ? "1.15em" : "".concat(v === "y" ? "-" : "", "0.4em");
-                (_c = axisTooltip[v]) === null || _c === void 0 ? void 0 : _c.attr(pos, val).attr("d".concat(v === "x" ? "x" : "y"), v === "x" ? "-1em" : "0.3em").style("text-anchor", v === "y" ? "end" : null);
+            if (isString(bgColor) || bgColor[v]) {
+                axisTooltip[v] = (_a = axis[v]) === null || _a === void 0 ? void 0 : _a.append("text").classed($AXIS["axis".concat(v.toUpperCase(), "Tooltip")], true).attr("filter", $$.updateTextBGColor({ id: v }, bgColor));
+                if (isRotated) {
+                    var pos = v === "x" ? "x" : "y";
+                    var val = v === "y" ? "1.15em" : (v === "x" ? "-0.3em" : "-0.4em");
+                    (_b = axisTooltip[v]) === null || _b === void 0 ? void 0 : _b.attr(pos, val).attr("d".concat(v === "x" ? "y" : "x"), v === "x" ? "0.4em" : "-1.3em").style("text-anchor", v === "x" ? "end" : null);
+                }
+                else {
+                    var pos = v === "x" ? "y" : "x";
+                    var val = v === "x" ? "1.15em" : "".concat(v === "y" ? "-" : "", "0.4em");
+                    (_c = axisTooltip[v]) === null || _c === void 0 ? void 0 : _c.attr(pos, val).attr("d".concat(v === "x" ? "x" : "y"), v === "x" ? "-1em" : "0.3em").style("text-anchor", v === "y" ? "end" : null);
+                }
             }
         });
     };
@@ -24659,7 +24661,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.3-nightly-20250213004646
+ * @version 3.14.3-nightly-20250215004647
  */
 var bb = {
     /**
@@ -24669,7 +24671,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.3-nightly-20250213004646",
+    version: "3.14.3-nightly-20250215004647",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
