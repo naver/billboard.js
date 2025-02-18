@@ -154,7 +154,7 @@ describe("API flow", () => {
 			interval = setInterval(function() {
 				const translateX = util.parseNum(
 					chart.internal.$el.axis.x.select(".tick")
-					.filter(":nth-child(2)")
+					.filter(":nth-child(1)")
 					.attr("transform")
 				);
 
