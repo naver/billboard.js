@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.3-nightly-20250215004647
+ * @version 3.14.3-nightly-20250219004716
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -13434,12 +13434,10 @@ var Axis = /** @class */ (function () {
         var _this = this;
         var $$ = this.owner;
         var config = $$.config, _a = $$.$el, main = _a.main, axis = _a.axis, clip = $$.state.clip;
-        var isRotated = config.axis_rotated;
         var target = ["x", "y"];
         config.axis_y2_show && target.push("y2");
         target.forEach(function (v) {
             var classAxis = _this.getAxisClassName(v);
-            var classLabel = $AXIS["axis".concat(v.toUpperCase(), "Label")];
             axis[v] = main.append("g")
                 .attr("class", classAxis)
                 .attr("clip-path", function () {
@@ -13454,10 +13452,6 @@ var Axis = /** @class */ (function () {
             })
                 .attr("transform", $$.getTranslate(v))
                 .style("visibility", config["axis_".concat(v, "_show")] ? null : "hidden");
-            axis[v].append("text")
-                .attr("class", classLabel)
-                .attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated])
-                .style("text-anchor", function () { return _this.textAnchorForAxisLabel(v); });
             _this.generateAxes(v);
         });
     };
@@ -13961,24 +13955,37 @@ var Axis = /** @class */ (function () {
         }
         return maxOverflow + tickOffset;
     };
+    /**
+     * Update axis label text
+     * @param {boolean} withTransition Weather update with transition
+     * @private
+     */
     Axis.prototype.updateLabels = function (withTransition) {
         var _this = this;
         var $$ = this.owner;
-        var main = $$.$el.main, $T = $$.$T;
-        var labels = {
-            x: main.select(".".concat($AXIS.axisX, " .").concat($AXIS.axisXLabel)),
-            y: main.select(".".concat($AXIS.axisY, " .").concat($AXIS.axisYLabel)),
-            y2: main.select(".".concat($AXIS.axisY2, " .").concat($AXIS.axisY2Label))
-        };
-        Object.keys(labels).filter(function (id) { return !labels[id].empty(); })
-            .forEach(function (v) {
-            var node = labels[v];
-            // @check $$.$T(node, withTransition)
-            $T(node, withTransition)
-                .attr("x", function () { return _this.xForAxisLabel(v); })
-                .attr("dx", function () { return _this.dxForAxisLabel(v); })
-                .attr("dy", function () { return _this.dyForAxisLabel(v); })
-                .text(function () { return _this.getLabelText(v); });
+        var config = $$.config, main = $$.$el.main, $T = $$.$T;
+        var isRotated = config.axis_rotated;
+        ["x", "y", "y2"].forEach(function (id) {
+            var text = _this.getLabelText(id);
+            var selector = "axis".concat(capitalize(id));
+            var classLabel = $AXIS["".concat(selector, "Label")];
+            if (text) {
+                var axisLabel = main.select("text.".concat(classLabel));
+                // generate eleement if not exists
+                if (axisLabel.empty()) {
+                    axisLabel = main.select("g.".concat($AXIS[selector]))
+                        .insert("text", ":first-child")
+                        .attr("class", classLabel)
+                        .attr("transform", ["rotate(-90)", null][id === "x" ? +!isRotated : +isRotated])
+                        .style("text-anchor", function () { return _this.textAnchorForAxisLabel(id); });
+                }
+                // @check $$.$T(node, withTransition)
+                $T(axisLabel, withTransition)
+                    .attr("x", function () { return _this.xForAxisLabel(id); })
+                    .attr("dx", function () { return _this.dxForAxisLabel(id); })
+                    .attr("dy", function () { return _this.dyForAxisLabel(id); })
+                    .text(text);
+            }
         });
     };
     /**
@@ -24661,7 +24668,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.3-nightly-20250215004647
+ * @version 3.14.3-nightly-20250219004716
  */
 var bb = {
     /**
@@ -24671,7 +24678,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.3-nightly-20250215004647",
+    version: "3.14.3-nightly-20250219004716",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

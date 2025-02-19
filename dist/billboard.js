@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.3-nightly-20250215004647
+ * @version 3.14.3-nightly-20250219004716
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -13344,12 +13344,10 @@ class Axis_Axis {
   init() {
     const $$ = this.owner;
     const { config, $el: { main, axis }, state: { clip } } = $$;
-    const isRotated = config.axis_rotated;
     const target = ["x", "y"];
     config.axis_y2_show && target.push("y2");
     target.forEach((v) => {
       const classAxis = this.getAxisClassName(v);
-      const classLabel = $AXIS[`axis${v.toUpperCase()}Label`];
       axis[v] = main.append("g").attr("class", classAxis).attr("clip-path", () => {
         let res = null;
         if (v === "x") {
@@ -13359,7 +13357,6 @@ class Axis_Axis {
         }
         return res;
       }).attr("transform", $$.getTranslate(v)).style("visibility", config[`axis_${v}_show`] ? null : "hidden");
-      axis[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", () => this.textAnchorForAxisLabel(v));
       this.generateAxes(v);
     });
   }
@@ -13825,17 +13822,26 @@ class Axis_Axis {
     }
     return maxOverflow + tickOffset;
   }
+  /**
+   * Update axis label text
+   * @param {boolean} withTransition Weather update with transition
+   * @private
+   */
   updateLabels(withTransition) {
     const $$ = this.owner;
-    const { $el: { main }, $T } = $$;
-    const labels = {
-      x: main.select(`.${$AXIS.axisX} .${$AXIS.axisXLabel}`),
-      y: main.select(`.${$AXIS.axisY} .${$AXIS.axisYLabel}`),
-      y2: main.select(`.${$AXIS.axisY2} .${$AXIS.axisY2Label}`)
-    };
-    Object.keys(labels).filter((id) => !labels[id].empty()).forEach((v) => {
-      const node = labels[v];
-      $T(node, withTransition).attr("x", () => this.xForAxisLabel(v)).attr("dx", () => this.dxForAxisLabel(v)).attr("dy", () => this.dyForAxisLabel(v)).text(() => this.getLabelText(v));
+    const { config, $el: { main }, $T } = $$;
+    const isRotated = config.axis_rotated;
+    ["x", "y", "y2"].forEach((id) => {
+      const text = this.getLabelText(id);
+      const selector = `axis${capitalize(id)}`;
+      const classLabel = $AXIS[`${selector}Label`];
+      if (text) {
+        let axisLabel = main.select(`text.${classLabel}`);
+        if (axisLabel.empty()) {
+          axisLabel = main.select(`g.${$AXIS[selector]}`).insert("text", ":first-child").attr("class", classLabel).attr("transform", ["rotate(-90)", null][id === "x" ? +!isRotated : +isRotated]).style("text-anchor", () => this.textAnchorForAxisLabel(id));
+        }
+        $T(axisLabel, withTransition).attr("x", () => this.xForAxisLabel(id)).attr("dx", () => this.dxForAxisLabel(id)).attr("dy", () => this.dyForAxisLabel(id)).text(text);
+      }
     });
   }
   /**
@@ -21876,7 +21882,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.3-nightly-20250215004647",
+  version: "3.14.3-nightly-20250219004716",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
