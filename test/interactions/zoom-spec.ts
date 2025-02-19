@@ -398,7 +398,7 @@ describe("ZOOM", function() {
 				expect(
 					getX(`.${$GRID.xgrids} line:nth-child(2)`)
 				).to.be.equal(
-					getX(`.${$AXIS.axisX} g.tick:nth-child(5) line`)
+					getX(`.${$AXIS.axisX} g.tick:nth-child(4) line`)
 				);
 
 				done(1);

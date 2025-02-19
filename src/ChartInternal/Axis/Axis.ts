@@ -132,14 +132,12 @@ class Axis {
 	init() {
 		const $$ = this.owner;
 		const {config, $el: {main, axis}, state: {clip}} = $$;
-		const isRotated = config.axis_rotated;
 		const target = ["x", "y"];
 
 		config.axis_y2_show && target.push("y2");
 
 		target.forEach(v => {
 			const classAxis = this.getAxisClassName(v);
-			const classLabel = $AXIS[`axis${v.toUpperCase()}Label`];
 
 			axis[v] = main.append("g")
 				.attr("class", classAxis)
@@ -156,13 +154,6 @@ class Axis {
 				})
 				.attr("transform", $$.getTranslate(v))
 				.style("visibility", config[`axis_${v}_show`] ? null : "hidden");
-
-			axis[v].append("text")
-				.attr("class", classLabel)
-				.attr("transform", ["rotate(-90)", null][
-					v === "x" ? +!isRotated : +isRotated
-				])
-				.style("text-anchor", () => this.textAnchorForAxisLabel(v));
 
 			this.generateAxes(v);
 		});
@@ -806,27 +797,43 @@ class Axis {
 		return maxOverflow + tickOffset;
 	}
 
+	/**
+	 * Update axis label text
+	 * @param {boolean} withTransition Weather update with transition
+	 * @private
+	 */
 	updateLabels(withTransition: boolean): void {
 		const $$ = this.owner;
-		const {$el: {main}, $T} = $$;
+		const {config, $el: {main}, $T} = $$;
+		const isRotated = config.axis_rotated;
 
-		const labels = {
-			x: main.select(`.${$AXIS.axisX} .${$AXIS.axisXLabel}`),
-			y: main.select(`.${$AXIS.axisY} .${$AXIS.axisYLabel}`),
-			y2: main.select(`.${$AXIS.axisY2} .${$AXIS.axisY2Label}`)
-		};
+		["x", "y", "y2"].forEach((id: AxisType) => {
+			const text = this.getLabelText(id);
+			const selector = `axis${capitalize(id)}`;
+			const classLabel = $AXIS[`${selector}Label`];
 
-		Object.keys(labels).filter(id => !labels[id].empty())
-			.forEach((v: AxisType) => {
-				const node = labels[v];
+			if (text) {
+				let axisLabel = main.select(`text.${classLabel}`);
+
+				// generate eleement if not exists
+				if (axisLabel.empty()) {
+					axisLabel = main.select(`g.${$AXIS[selector]}`)
+						.insert("text", ":first-child")
+						.attr("class", classLabel)
+						.attr("transform", ["rotate(-90)", null][
+							id === "x" ? +!isRotated : +isRotated
+						])
+						.style("text-anchor", () => this.textAnchorForAxisLabel(id));
+				}
 
 				// @check $$.$T(node, withTransition)
-				$T(node, withTransition)
-					.attr("x", () => this.xForAxisLabel(v))
-					.attr("dx", () => this.dxForAxisLabel(v))
-					.attr("dy", () => this.dyForAxisLabel(v))
-					.text(() => this.getLabelText(v));
-			});
+				$T(axisLabel, withTransition)
+					.attr("x", () => this.xForAxisLabel(id))
+					.attr("dx", () => this.dxForAxisLabel(id))
+					.attr("dy", () => this.dyForAxisLabel(id))
+					.text(text);
+			}
+		});
 	}
 
 	/**

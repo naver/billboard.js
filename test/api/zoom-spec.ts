@@ -373,7 +373,7 @@ describe("API zoom", function() {
 			setTimeout(() => {
 				const tick = chart.$.main.selectAll(`.${$AXIS.axisX} .tick`);
 
-				expect(+tick.filter(`:nth-child(${tick.size() + 1})`).attr("transform").match(/\d+/)[0]).to.be.below(500);
+				expect(+tick.filter(`:nth-child(${tick.size()})`).attr("transform").match(/\d+/)[0]).to.be.below(500);
 				done(1);
 			}, 300);
 		}));
@@ -399,7 +399,7 @@ describe("API zoom", function() {
 			setTimeout(() => {
 				const tick = main.selectAll(`.${$AXIS.axisX} .tick`);
 
-				expect(+tick.filter(`:nth-child(${tick.size() + 1})`).attr("transform").match(/\d+/)[0]).to.be.below(5);
+				expect(+tick.filter(`:nth-child(${tick.size()})`).attr("transform").match(/\d+/)[0]).to.be.below(5);
 				done(1);
 			}, 300);
 		}));
