@@ -197,7 +197,7 @@ export default {
 			(hasRadar && radar.axes.select(`.${$AXIS.axis}-${index} text`)) || (
 				eventRect || $$.getArcElementByIdOrIndex?.(index)
 			)
-		)?.node();
+		)?.node?.();
 
 		if (element) {
 			const isMultipleX = $$.isMultipleX();
