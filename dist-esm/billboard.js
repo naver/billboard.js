@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.3-nightly-20250219004716
+ * @version 3.14.3-nightly-20250220004657
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -5203,15 +5203,15 @@ var interaction = {
      * @param {Array} mouse x and y coordinate value
      */
     dispatchEvent: function (type, index, mouse) {
-        var _a, _b;
+        var _a, _b, _c;
         var $$ = this;
-        var config = $$.config, _c = $$.state, eventReceiver = _c.eventReceiver, hasAxis = _c.hasAxis, hasFunnel = _c.hasFunnel, hasRadar = _c.hasRadar, hasTreemap = _c.hasTreemap, _d = $$.$el, eventRect = _d.eventRect, funnel = _d.funnel, radar = _d.radar, svg = _d.svg, treemap = _d.treemap;
-        var element = (_b = (((hasFunnel || hasTreemap) && eventReceiver.rect) ||
-            (hasRadar && radar.axes.select(".".concat($AXIS.axis, "-").concat(index, " text"))) || (eventRect || ((_a = $$.getArcElementByIdOrIndex) === null || _a === void 0 ? void 0 : _a.call($$, index))))) === null || _b === void 0 ? void 0 : _b.node();
+        var config = $$.config, _d = $$.state, eventReceiver = _d.eventReceiver, hasAxis = _d.hasAxis, hasFunnel = _d.hasFunnel, hasRadar = _d.hasRadar, hasTreemap = _d.hasTreemap, _e = $$.$el, eventRect = _e.eventRect, funnel = _e.funnel, radar = _e.radar, svg = _e.svg, treemap = _e.treemap;
+        var element = (_c = (_b = (((hasFunnel || hasTreemap) && eventReceiver.rect) ||
+            (hasRadar && radar.axes.select(".".concat($AXIS.axis, "-").concat(index, " text"))) || (eventRect || ((_a = $$.getArcElementByIdOrIndex) === null || _a === void 0 ? void 0 : _a.call($$, index))))) === null || _b === void 0 ? void 0 : _b.node) === null || _c === void 0 ? void 0 : _c.call(_b);
         if (element) {
             var isMultipleX = $$.isMultipleX();
             var isRotated = config.axis_rotated;
-            var _e = element.getBoundingClientRect(), width = _e.width, left = _e.left, top_1 = _e.top;
+            var _f = element.getBoundingClientRect(), width = _f.width, left = _f.left, top_1 = _f.top;
             if (hasAxis && !hasRadar && !isMultipleX) {
                 var coords = eventReceiver.coords[index];
                 if (coords) {
@@ -24668,7 +24668,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.3-nightly-20250219004716
+ * @version 3.14.3-nightly-20250220004657
  */
 var bb = {
     /**
@@ -24678,7 +24678,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.3-nightly-20250219004716",
+    version: "3.14.3-nightly-20250220004657",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
