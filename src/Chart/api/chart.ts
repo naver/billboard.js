@@ -105,6 +105,7 @@ export default {
 
 		if (notEmpty($$)) {
 			$$.callPluginHook("$willDestroy");
+
 			$$.charts.splice($$.charts.indexOf(this), 1);
 
 			// detach events
@@ -114,6 +115,7 @@ export default {
 			svg.select("*").interrupt();
 			$$.resizeFunction.clear();
 
+			$$.resizeFunction.resizeObserver?.disconnect();
 			window.removeEventListener("resize", $$.resizeFunction);
 			chart.classed("bb", false)
 				.style("position", null)
