@@ -368,6 +368,10 @@ div.row {
     transform: translateY(-20px);
 }
 
+.chart_area:has(#resizeParent) {
+    border: solid 1px red;
+}
+
 /* Style For Region */
 #styleForRegion .bb-region-0 {fill:red;}
 #styleForRegion .bb-region.foo {fill:green;}

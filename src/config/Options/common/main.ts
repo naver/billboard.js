@@ -166,6 +166,7 @@ export default {
 	 * - **NOTE:** Available options
 	 *   - true: Enables automatic resize.
 	 *   - false: Disables automatic resize.
+	 *   - "parent": Enables automatic resize when the parent node is resized.
 	 *   - "viewBox": Enables automatic resize, and size will be fixed based on the viewbox.
 	 * @property {boolean|number} [resize.timer=true] Set resize timer option.
 	 * - **NOTE:** Available options
@@ -173,10 +174,14 @@ export default {
 	 *     - true: `setTimeout()`
 	 *     - false: `requestIdleCallback()`
 	 *   - Given number(delay in ms) value, resize function will be triggered using `setTimeout()` with given delay.
-	 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeViewBox)
+	 * @see [Demo: resize "parent"](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeParent)
+	 * @see [Demo: resize "viewBox"](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeViewBox)
 	 * @example
 	 *  resize: {
 	 *      auto: false,
+	 *
+	 *      // set resize based on parent node width value
+	 *      auto: "parent",
 	 *
 	 *      // set resize based on viewBox value
 	 *      auto: "viewBox",
@@ -191,7 +196,7 @@ export default {
 	 *      timer: 100
 	 *  }
 	 */
-	resize_auto: <boolean | "viewBox">true,
+	resize_auto: <boolean | "parent" | "viewBox">true,
 	resize_timer: true,
 
 	/**
