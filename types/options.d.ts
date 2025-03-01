@@ -163,9 +163,10 @@ export interface ChartOptions {
 		 * - **NOTE:** Available options
 		 *   - true: Enables automatic resize.
 		 *   - false: Disables automatic resize.
+		 *   - "parent": Enables automatic resize when the parent node is resized.
 		 *   - "viewBox": Enables automatic resize, and size will be fixed based on the viewbox.
 		 */
-		auto?: boolean | "viewBox";
+		auto?: boolean | "parent" | "viewBox";
 
 		/**
 		 * Set resize timer option.

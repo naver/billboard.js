@@ -5736,6 +5736,28 @@ d3.select(".chart_area")
 				clipPath: false
 			}
 		},
+		resizeParent: {
+			description: "Resize chart when parent node is resized.",
+			options: {
+				data: {
+					columns: [
+						["sample", 30, 200, 120, 400, 230, 250]
+					],
+					type: "line"
+				},
+				resize: {
+					auto: "parent",
+					timer: false
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						document.querySelector(".chart_area").style.width="300px";
+					}, 1000),
+				];
+			},
+		},
 		resizeViewBox: [
 			{
 				options: {
