@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.3-nightly-20250220004657
+ * @version 3.14.3-nightly-20250301004723
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -827,6 +827,7 @@ const $ZOOM = {
    * - **NOTE:** Available options
    *   - true: Enables automatic resize.
    *   - false: Disables automatic resize.
+   *   - "parent": Enables automatic resize when the parent node is resized.
    *   - "viewBox": Enables automatic resize, and size will be fixed based on the viewbox.
    * @property {boolean|number} [resize.timer=true] Set resize timer option.
    * - **NOTE:** Available options
@@ -834,10 +835,14 @@ const $ZOOM = {
    *     - true: `setTimeout()`
    *     - false: `requestIdleCallback()`
    *   - Given number(delay in ms) value, resize function will be triggered using `setTimeout()` with given delay.
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeViewBox)
+   * @see [Demo: resize "parent"](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeParent)
+   * @see [Demo: resize "viewBox"](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeViewBox)
    * @example
    *  resize: {
    *      auto: false,
+   *
+   *      // set resize based on parent node width value
+   *      auto: "parent",
    *
    *      // set resize based on viewBox value
    *      auto: "viewBox",
@@ -9190,11 +9195,11 @@ class ChartInternal {
   }
   bindResize() {
     const $$ = this;
-    const { config, state } = $$;
+    const { $el, config, state } = $$;
     const resizeFunction = generateResize(config.resize_timer);
     const list = [];
     list.push(() => callFn(config.onresize, $$.api));
-    if (config.resize_auto === true) {
+    if (/^(true|parent)$/.test(config.resize_auto)) {
       list.push(() => {
         state.resizing = true;
         if (config.legend_show) {
@@ -9210,7 +9215,11 @@ class ChartInternal {
     });
     list.forEach((v) => resizeFunction.add(v));
     $$.resizeFunction = resizeFunction;
-    win.addEventListener("resize", $$.resizeFunction = resizeFunction);
+    if (config.resize_auto === "parent") {
+      ($$.resizeFunction.resizeObserver = new ResizeObserver($$.resizeFunction.bind($$))).observe($el.chart.node().parentNode);
+    } else {
+      win.addEventListener("resize", $$.resizeFunction);
+    }
   }
   /**
    * Call plugin hook
@@ -9365,6 +9374,7 @@ function loadConfig(config) {
    * chart.destroy();
    */
   destroy() {
+    var _a;
     const $$ = this.internal;
     const { $el: { chart, style, svg } } = $$;
     if (notEmpty($$)) {
@@ -9373,6 +9383,7 @@ function loadConfig(config) {
       $$.unbindAllEvents();
       svg.select("*").interrupt();
       $$.resizeFunction.clear();
+      (_a = $$.resizeFunction.resizeObserver) == null ? void 0 : _a.disconnect();
       win.removeEventListener("resize", $$.resizeFunction);
       chart.classed("bb", false).style("position", null).selectChildren().remove();
       style && style.parentNode.removeChild(style);
@@ -21882,7 +21893,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.3-nightly-20250220004657",
+  version: "3.14.3-nightly-20250301004723",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.3-nightly-20250220004657
+ * @version 3.14.3-nightly-20250301004723
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -690,6 +690,7 @@ var main = {
      * - **NOTE:** Available options
      *   - true: Enables automatic resize.
      *   - false: Disables automatic resize.
+     *   - "parent": Enables automatic resize when the parent node is resized.
      *   - "viewBox": Enables automatic resize, and size will be fixed based on the viewbox.
      * @property {boolean|number} [resize.timer=true] Set resize timer option.
      * - **NOTE:** Available options
@@ -697,10 +698,14 @@ var main = {
      *     - true: `setTimeout()`
      *     - false: `requestIdleCallback()`
      *   - Given number(delay in ms) value, resize function will be triggered using `setTimeout()` with given delay.
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeViewBox)
+     * @see [Demo: resize "parent"](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeParent)
+     * @see [Demo: resize "viewBox"](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeViewBox)
      * @example
      *  resize: {
      *      auto: false,
+     *
+     *      // set resize based on parent node width value
+     *      auto: "parent",
      *
      *      // set resize based on viewBox value
      *      auto: "viewBox",
@@ -10316,11 +10321,11 @@ var ChartInternal = /** @class */ (function () {
     };
     ChartInternal.prototype.bindResize = function () {
         var $$ = this;
-        var config = $$.config, state = $$.state;
+        var $el = $$.$el, config = $$.config, state = $$.state;
         var resizeFunction = generateResize(config.resize_timer);
         var list = [];
         list.push(function () { return callFn(config.onresize, $$.api); });
-        if (config.resize_auto === true) {
+        if (/^(true|parent)$/.test(config.resize_auto)) {
             list.push(function () {
                 state.resizing = true;
                 // https://github.com/naver/billboard.js/issues/2650
@@ -10339,7 +10344,13 @@ var ChartInternal = /** @class */ (function () {
         list.forEach(function (v) { return resizeFunction.add(v); });
         $$.resizeFunction = resizeFunction;
         // attach resize event
-        win.addEventListener("resize", $$.resizeFunction = resizeFunction);
+        if (config.resize_auto === "parent") {
+            ($$.resizeFunction.resizeObserver = new ResizeObserver($$.resizeFunction.bind($$)))
+                .observe($el.chart.node().parentNode);
+        }
+        else {
+            win.addEventListener("resize", $$.resizeFunction);
+        }
     };
     /**
      * Call plugin hook
@@ -10516,8 +10527,9 @@ var apiChart = {
      */
     destroy: function () {
         var _this = this;
+        var _a;
         var $$ = this.internal;
-        var _a = $$.$el, chart = _a.chart, style = _a.style, svg = _a.svg;
+        var _b = $$.$el, chart = _b.chart, style = _b.style, svg = _b.svg;
         if (notEmpty($$)) {
             $$.callPluginHook("$willDestroy");
             $$.charts.splice($$.charts.indexOf(this), 1);
@@ -10526,6 +10538,7 @@ var apiChart = {
             // clear timers && pending transition
             svg.select("*").interrupt();
             $$.resizeFunction.clear();
+            (_a = $$.resizeFunction.resizeObserver) === null || _a === void 0 ? void 0 : _a.disconnect();
             win.removeEventListener("resize", $$.resizeFunction);
             chart.classed("bb", false)
                 .style("position", null)
@@ -24668,7 +24681,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.3-nightly-20250220004657
+ * @version 3.14.3-nightly-20250301004723
  */
 var bb = {
     /**
@@ -24678,7 +24691,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.3-nightly-20250220004657",
+    version: "3.14.3-nightly-20250301004723",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
