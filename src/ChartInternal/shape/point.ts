@@ -374,13 +374,12 @@ export default {
 	},
 
 	isWithinCircle(node: SVGElement, r?: number): boolean {
-		const {config, state} = this;
+		const {state} = this;
 		const mouse = getPointer(state.event, node);
 		const element = d3Select(node);
 		const prefix = this.isCirclePoint(node) ? "c" : "";
-		const sensitivity = config.point_sensitivity === "radius" ?
-			node.getAttribute("r") :
-			config.point_sensitivity;
+		const pointSensitivity = this.getPointSensitivity(element?.datum());
+
 		let cx = +element.attr(`${prefix}x`);
 		let cy = +element.attr(`${prefix}y`);
 
@@ -394,7 +393,7 @@ export default {
 
 		return Math.sqrt(
 			Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)
-		) < (r || sensitivity);
+		) < (r || pointSensitivity);
 	},
 
 	/**
@@ -406,7 +405,9 @@ export default {
 		const $$ = this;
 		let sensitivity = $$.config.point_sensitivity;
 
-		if (isFunction(sensitivity)) {
+		if (!d) {
+			return sensitivity;
+		} else if (isFunction(sensitivity)) {
 			sensitivity = sensitivity.call($$.api, d);
 		} else if (sensitivity === "radius") {
 			sensitivity = d.r;

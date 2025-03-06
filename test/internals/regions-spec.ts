@@ -305,4 +305,113 @@ describe("REGIONS", function() {
 			expect(hasOverflow).to.be.false;
 		});
 	});
+
+	describe("category type", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 100, 150, 130, 200, 220, 190]
+					],
+					axes: {
+						data2: "y2"
+					},
+					type: "line",
+					colors: {
+						data1: "#ff0000"
+					}
+				},
+				axis: {
+					x: {
+						type: "category",
+						categories: [
+							"cat1",
+							"cat2",
+							"cat3",
+							"cat4",
+							"cat5",
+							"cat6"
+					  ]
+					},
+					y2: {
+					  show: true
+					}
+				},
+				regions: [
+					{
+					  axis: "x",
+					  start: "cat1",
+					  end: "cat2",
+					  class: "regions_class1",
+					  label: {
+						text: "Regions 1",
+						color: "red"
+					  }
+					},
+					{
+					  axis: "x",
+					  start: "cat4",
+					  end: "cat4",
+					  class: "regions_class4",
+					  label: {
+						text: "Regions 4",
+						color: "blue"
+					  }
+					}
+				]
+			};
+		});
+
+		it("should render regions correctly", () => {
+			const {region: {list}} = chart.internal.$el;
+			const {x} = chart.internal.scale;
+			const expected = [
+				{start: -0.5, end: 1.5},
+				{start: 2.5, end: 3.5}
+			];
+
+			list.select("rect").each(function(d, i) {
+				const {start, end} = expected[i];
+				const xPos = +this.getAttribute("x");
+				const width = +this.getAttribute("width");
+
+				expect(x(start)).to.be.equal(xPos);
+				expect(x(end)).to.be.equal(xPos + width);
+			});
+		});
+
+		it("set options: regions", () => {
+			args.regions = [
+				{
+					axis: "x",
+					start: 1,
+					end: "cat3"
+				},
+				{
+					axis: "x",
+					start: "cat5",
+					end: 4.5
+				}
+			];
+		});
+
+		it("should render regions correctly", () => {
+			const {region: {list}} = chart.internal.$el;
+			const {x} = chart.internal.scale;
+			const expected = [
+				{start: 1, end: 2.5},
+				{start: 3.5, end: 4.5}
+			];
+
+			list.select("rect").each(function(d, i) {
+				const {start, end} = expected[i];
+				const xPos = +this.getAttribute("x");
+				const width = +this.getAttribute("width");
+
+				expect(x(start)).to.be.closeTo(xPos, 0.1);
+				expect(x(end)).to.be.closeTo(xPos + width, 0.1);
+			});
+		});
+	});
 });

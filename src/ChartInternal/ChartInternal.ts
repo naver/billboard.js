@@ -787,13 +787,13 @@ export default class ChartInternal {
 
 	bindResize(): void {
 		const $$ = <any>this;
-		const {config, state} = $$;
+		const {$el, config, state} = $$;
 		const resizeFunction = generateResize(config.resize_timer);
 		const list: Function[] = [];
 
 		list.push(() => callFn(config.onresize, $$.api));
 
-		if (config.resize_auto === true) {
+		if (/^(true|parent)$/.test(config.resize_auto)) {
 			list.push(() => {
 				state.resizing = true;
 
@@ -818,7 +818,12 @@ export default class ChartInternal {
 		$$.resizeFunction = resizeFunction;
 
 		// attach resize event
-		window.addEventListener("resize", $$.resizeFunction = resizeFunction);
+		if (config.resize_auto === "parent") {
+			($$.resizeFunction.resizeObserver = new ResizeObserver($$.resizeFunction.bind($$)))
+				.observe($el.chart.node().parentNode);
+		} else {
+			window.addEventListener("resize", $$.resizeFunction);
+		}
 	}
 
 	/**

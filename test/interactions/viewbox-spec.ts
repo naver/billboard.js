@@ -115,7 +115,7 @@ describe("viewBox", function() {
 		it("should show tooltip on viewBox scale", () => {
 			const {internal: {$el: {eventRect}}} = chart;
 
-			[100, 150, 200, 270, 350, 450].forEach(x => {
+			[70, 170, 270, 370, 430, 470].forEach(x => {
 				fireEvent(eventRect.node(), "mousemove", {
 					clientX: x,
 					clientY: 50
@@ -132,7 +132,7 @@ describe("viewBox", function() {
 		it("should show tooltip on viewBox scale: roated axis", () => {
 			const {internal: {$el: {eventRect}}} = chart;
 
-			[10, 50, 100, 150, 200, 250].forEach(y => {
+			[10, 50, 80, 100, 150, 200, 250].forEach(y => {
 				fireEvent(eventRect.node(), "mousemove", {
 					clientX: 50,
 					clientY: y
@@ -156,8 +156,8 @@ describe("viewBox", function() {
 					"value": "data1",
 				  },
 				  {
-					"left": 303.112,
-					"top": 117.552,
+					"left": 445.297,
+					"top": 213.328,
 					"value": "data2",
 				  }
 			];

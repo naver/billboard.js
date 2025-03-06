@@ -321,6 +321,41 @@ describe("Interface & initialization", () => {
 
 			expect(svg.attr("viewBox")).to.be.equal("0 0 640 480");
 		});
+
+		it("check 'parent' resize", () => {
+			let width = 300;
+
+			container.style.width = `${width}px`;
+			container.innerHTML = '<div id="chartResize"></div>';
+
+			const args = {
+				data: {
+					columns: [
+						["data1", 30]
+					]
+				},
+				transition: {
+					duration: 0
+				},
+				resize: {
+					auto: "parent"
+				},
+				bindto: "#chartResize"
+			};
+
+			const chart = util.generate(args);
+			
+			expect(+chart.$.svg.attr("width")).to.be.equal(width);
+
+			// when
+			container.style.width = `${width = 500}px`;
+
+			// should resize on parent element
+			setTimeout(() => {
+				expect(+chart.$.svg.attr("width")).to.be.equal(width);
+			}, 300);
+		});
+
 	});
 
 	describe("set defaults options", () => {

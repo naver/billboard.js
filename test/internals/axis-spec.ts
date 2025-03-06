@@ -288,7 +288,63 @@ describe("AXIS", function() {
 		});
 	});
 
-	describe("axis label", () => {
+	describe("axis label #1", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 170, 150, 250]
+					]
+				},
+				axis: {
+					y: {
+						label: "Y Axis Label"
+					},
+					y2: {
+						show: true
+					}
+				}
+			};
+		});
+
+		
+		it("sholudn't generate unnecessary axis label", () => {
+			let cnt = 0;
+
+			["x", "y", "y2"].forEach(id => {
+				const axisLabel = chart.internal.$el.axis[id].select("text:first-child");
+
+				if (!axisLabel.empty()) {
+					expect(id).to.be.equal("y");
+					cnt++;
+				}
+			});
+
+			expect(cnt).to.be.equal(1);
+		});
+
+		it("should generate axis label text node when api is called.", () => {
+			let cnt = 0;
+
+			// when
+			chart.axis.labels({
+				x: "New X Axis Label"
+			});
+
+			["x", "y", "y2"].forEach(id => {
+				const axisLabel = chart.internal.$el.axis[id].select("text:first-child");
+
+				if (!axisLabel.empty()) {
+					expect(/^(x|y)$/.test(id)).to.be.true;
+					cnt++;
+				}
+			});
+
+			expect(cnt).to.be.equal(2);
+		});
+	});
+
+	describe("axis label #2", () => {
 		beforeAll(() => {
 			args = {
 				data: {
@@ -2747,7 +2803,7 @@ describe("AXIS", function() {
 			const axisY = chart.$.main.select(`.${$AXIS.axisY}`);
 
 			expect(axisY.node().getBoundingClientRect().width).to.be.equal(
-				axisY.select(".tick:nth-child(12)").node().getBoundingClientRect().width
+				axisY.select(".tick:nth-child(11)").node().getBoundingClientRect().width
 			);
 		});
 
@@ -3269,7 +3325,7 @@ describe("AXIS", function() {
 			const {max} = internal.getMinMaxValue();
 
 			expect(internal.scale.y.domain()[1]).to.be.closeTo(max, 10);
-			expect(+internal.$el.axis.y.select(".tick:nth-child(10) tspan").text()).to.be.closeTo(max, 10);
+			expect(+internal.$el.axis.y.select(".tick:nth-child(9) tspan").text()).to.be.closeTo(max, 10);
 		});
 	});
 
@@ -3623,7 +3679,14 @@ describe("AXIS", function() {
 			chart.tooltip.show({x: 3});
 
 			["x", "y", "y2"].forEach(id => {
-				expect($el.axisTooltip[id].text()).to.be.equal(expected[id]);
+				const text = $el.axisTooltip[id];
+				const prev = text.node().previousElementSibling;
+
+				expect(text.text()).to.be.equal(expected[id]);
+
+				// text element should be placed at the last
+				expect(prev.tagName).to.be.equal("path");
+				expect(prev.getAttribute("class")).to.be.equal("domain");
 			});
 		});
 
@@ -3656,6 +3719,27 @@ describe("AXIS", function() {
 				
 				expect(filter.size());
 				expect(args.axis.tooltip.backgroundColor[id]).to.be.equal(filter.select("feFlood").attr("flood-color"));
+			});
+		});
+
+		it("set options: axis.tooltip.backgroundColor only x Axis", () => {
+			args.axis.tooltip = {
+				backgroundColor: {
+					x: "red"
+				}
+			};
+		});
+
+		it("should only generate specified axis element.", () => {
+			const {axisTooltip} = chart.internal.$el;
+			const {backgroundColor} = args.axis.tooltip;
+				
+			Object.keys(axisTooltip).forEach(id => {
+				if (backgroundColor[id]) {
+					expect(!axisTooltip[id].empty()).to.be.true;
+				} else {
+					expect(axisTooltip[id]).to.be.null;
+				}
 			});
 		});
 	});

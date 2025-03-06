@@ -277,7 +277,7 @@ describe("SHAPE POINT", () => {
 				tooltip: {
 					grouped: false
 				}
-			};
+			}; 
 		});
 
 		it("default sensitivity", () => {
@@ -416,7 +416,7 @@ describe("SHAPE POINT", () => {
 		});
 
 		it("set options: poinst.sensitivity=function(){}", () => {
-			args.point.sensitivity = ({r}) => r
+			args.point.sensitivity = sinon.spy(({r}) => r);
 		});
 		
 		it("should data.onclick callback called.", () => {
@@ -429,10 +429,54 @@ describe("SHAPE POINT", () => {
 				clientY: rect.top + 3
 			}, chart);
 
-			expect(args.data.onclick.called).to.be.true;
-		});
-	});
+			const spy = args.point.sensitivity.args[0][0];
 
+			expect(args.data.onclick.called).to.be.true;
+			expect(spy.r > 0).to.be.true;
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+					  ["data1", 450],
+					],
+					onclick: sinon.spy(function() {
+						console.log("3333333")
+					}),
+					type: "line"
+				},
+				point: {
+					sensitivity: sinon.spy(function(r) {
+						return 10;
+					}),
+					r: 10,
+					focus: {
+						expand: {
+							r: 10
+						}
+					}
+				},
+			};
+		});
+
+		it("should data.onclick callback called.", () => {
+			const {circles} = chart.$;
+			const {$el: {eventRect}} = chart.internal;
+			const rect = circles.node().getBoundingClientRect();
+
+			fireEvent(eventRect.node(), "click", {
+				clientX: 300,
+				clientY: 40
+			}, chart); 
+
+			const spy = args.point.sensitivity.args[0][0];
+  
+			expect(args.data.onclick.called).to.be.true;
+			expect(spy.r > 0).to.be.true;
+		});
+	}); 
+ 
 	describe("point.focus.only", () => {
 		beforeAll(() => {
 			args = {

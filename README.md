@@ -6,8 +6,8 @@
 [![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version] [![bb][badge-@billboard.js/react]][link-@billboard.js/react]<br> 
  [![semantic-release][badge-semantic-release]][link-semantic-release] ![React][badge-react]
 
-![CI Status][badge-ci-status] [![Coverage Status][badge-coverage]][link-coverage] [![Known Vulnerabilities][badge-snyk]][link-snyk] 
-[![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size]
+[![download][badge-download]][link-download] [![download][badge-download-weekly]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![jsDelivr][badge-jsDelivr-weekly]][link-jsDelivr]<br>
+![CI Status][badge-ci-status] [![Coverage Status][badge-coverage]][link-coverage] [![Known Vulnerabilities][badge-snyk]][link-snyk] [![gzip size][badge-gzip-size]][link-gzip-size]
 
 billboard.js is a re-usable, easy interface JavaScript chart library, based on [D3.js](https://d3js.org/).
 > The name "billboard" comes from the famous `billboard chart` which everybody knows.<br>
@@ -288,7 +288,9 @@ THE SOFTWARE.
 
 <!-- badges -->
 [badge-download]: https://img.shields.io/npm/dm/billboard.js.svg?style=flat
+[badge-download-weekly]: https://img.shields.io/npm/dw/billboard.js
 [badge-jsDelivr]: https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded
+[badge-jsDelivr-weekly]: https://img.shields.io/jsdelivr/npm/hw/billboard.js
 [badge-ci-status]: https://github.com/naver/billboard.js/workflows/CI/badge.svg
 [badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg?branch=master&v1
 [badge-snyk]: https://snyk.io/test/github/naver/billboard.js/badge.svg?targetFile=package.json
