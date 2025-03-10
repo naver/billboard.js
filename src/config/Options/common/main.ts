@@ -420,6 +420,7 @@ export default {
 	 *   - `text {string}`: Text value.
 	 *   - `x {number}`: x Position.
 	 *   - `y {number}`: y Position.
+	 *   - `center {string}`: Align label at the center. Allowed values are 'x', 'y', 'xy'.
 	 *   - `color {string}`: Color string.
 	 *   - `rotated (boolean)`: Whether rotate label or not.
 	 * @name regions
@@ -440,6 +441,7 @@ export default {
 	 *      	text: "Region Text",
 	 *      	x: 5,  // position relative of the initial x coordinate
 	 *      	y: 5,  // position relative of the initial y coordinate
+	 *      	center: "xy",  // center text label in both direction.
 	 *      	color: "red",  // color string
 	 *      	rotated: true  // make text to show in vertical or horizontal
 	 *      }
