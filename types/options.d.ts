@@ -425,6 +425,7 @@ export interface RegionOptions {
 		text?: string;
 		x?: number;
 		y?: number;
+		center?: "x" | "y" | "xy" | false;
 		color?: string;
 		rotated?: boolean;
 	}

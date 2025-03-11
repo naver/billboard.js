@@ -180,6 +180,100 @@ describe("REGIONS", function() {
 		}));
 	});
 
+	describe("regions label text alignment", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 100, 150, 130, 200, 220, 190]
+					],
+					axes: {
+						data2: "y2"
+					},
+						type: "line", // for ESM specify as: line()
+						colors: {
+						data1: "#ff0000"
+					}
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				},
+				regions: [
+					{
+						axis: "x",
+						start: 1,
+						end: 2,
+						class: "regions_class1",
+						label: {
+							text: "Regions 1",
+							color: "red",
+							center: "xy"
+						}
+					},
+					{
+						axis: "x",
+						start: 3,
+						end: 4,
+						class: "regions_class1",
+						label: {
+							text: "Regions 2",
+							color: "red",
+							center: "y"
+						}
+					},
+					{
+						axis: "y",
+						start: 100,
+						end: 300,
+						class: "regions_class2",
+						label: {
+							text: "Regions 3",
+							color: "blue",
+							center: "xy"
+						}
+					},
+					{
+						axis: "y2",
+						start: 200,
+						end: 220,
+						class: "regions_class3",
+						label: {
+							text: "Regions 4",
+							center: "x"
+						}
+					}
+				]
+			};
+		});
+
+		it("should align at the center", () => {
+			chart.internal.$el.region.list.each(function(d, i) {
+				const rect = this.querySelector("rect");
+				const text = this.querySelector("text");
+				const center = args.regions[i].label.center;
+
+				const w = +rect.getAttribute("width") / 2;
+				const h = +rect.getAttribute("height") / 2;
+				const {width, height} = text.getBoundingClientRect();
+				let x = rect.getAttribute("x");
+				let y = rect.getAttribute("y");
+
+				if (center.indexOf("x") > -1) {
+					x = +rect.getAttribute("x") + w - (width / 2);
+				}
+
+				if (center.indexOf("y") > -1) {
+					y = +rect.getAttribute("y") + h - (height / 2);
+				}
+
+				expect(`translate(${x}, ${y})`).to.be.equal(text.getAttribute("transform"));
+			});
+		});
+	});
+
 	describe("regions with dasharray", () => {
 		beforeAll(() => {
 			args = {
