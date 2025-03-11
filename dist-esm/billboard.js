@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.3-nightly-20250307004652
+ * @version 3.14.3-nightly-20250311004658
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -931,6 +931,7 @@ var main = {
      *   - `text {string}`: Text value.
      *   - `x {number}`: x Position.
      *   - `y {number}`: y Position.
+     *   - `center {string}`: Align label at the center. Allowed values are 'x', 'y', 'xy'.
      *   - `color {string}`: Color string.
      *   - `rotated (boolean)`: Whether rotate label or not.
      * @name regions
@@ -951,6 +952,7 @@ var main = {
      *      	text: "Region Text",
      *      	x: 5,  // position relative of the initial x coordinate
      *      	y: 5,  // position relative of the initial y coordinate
+     *      	center: "xy",  // center text label in both direction.
      *      	color: "red",  // color string
      *      	rotated: true  // make text to show in vertical or horizontal
      *      }
@@ -15617,23 +15619,36 @@ var region = {
     redrawRegion: function (withTransition) {
         var $$ = this;
         var region = $$.$el.region, $T = $$.$T;
+        var regionX = $$.regionX.bind($$);
+        var regionY = $$.regionY.bind($$);
         var regions = region.list.select("rect");
         var label = region.list.selectAll("text");
         regions = $T(regions, withTransition)
-            .attr("x", $$.regionX.bind($$))
-            .attr("y", $$.regionY.bind($$))
+            .attr("x", regionX)
+            .attr("y", regionY)
             .attr("width", $$.regionWidth.bind($$))
             .attr("height", $$.regionHeight.bind($$));
         label = $T(label, withTransition)
+            .text(function (d) { var _a; return (_a = d.label) === null || _a === void 0 ? void 0 : _a.text; })
             .attr("transform", function (d) {
+            var _this = this;
             var _a;
-            var _b = (_a = d.label) !== null && _a !== void 0 ? _a : {}, _c = _b.x, x = _c === void 0 ? 0 : _c, _d = _b.y, y = _d === void 0 ? 0 : _d, _e = _b.rotated, rotated = _e === void 0 ? false : _e;
-            return "translate(".concat($$.regionX.bind($$)(d) + x, ", ").concat($$.regionY.bind($$)(d) + y, ")").concat(rotated ? " rotate(-90)" : "");
+            var _b = (_a = d.label) !== null && _a !== void 0 ? _a : {}, _c = _b.x, x = _c === void 0 ? 0 : _c, _d = _b.y, y = _d === void 0 ? 0 : _d, _e = _b.center, center = _e === void 0 ? false : _e, _f = _b.rotated, rotated = _f === void 0 ? false : _f;
+            var rect = this.previousElementSibling;
+            var pos = { x: 0, y: 0 };
+            if (isString(center)) {
+                ["x", "y"].forEach(function (v) {
+                    var attr = v === "x" ? "width" : "height";
+                    if (center.indexOf(v) > -1) {
+                        pos[v] = (+rect.getAttribute(attr) - getBoundingRect(_this)[attr]) / 2;
+                    }
+                });
+            }
+            return "translate(".concat(regionX(d) + pos.x + x, ", ").concat(regionY(d) + pos.y + y, ")").concat(rotated ? " rotate(-90)" : "");
         })
             .attr("text-anchor", function (d) { var _a; return (((_a = d.label) === null || _a === void 0 ? void 0 : _a.rotated) ? "end" : null); })
             .attr("dy", "1em")
-            .style("fill", function (d) { var _a, _b; return (_b = (_a = d.label) === null || _a === void 0 ? void 0 : _a.color) !== null && _b !== void 0 ? _b : null; })
-            .text(function (d) { var _a; return (_a = d.label) === null || _a === void 0 ? void 0 : _a.text; });
+            .style("fill", function (d) { var _a, _b; return (_b = (_a = d.label) === null || _a === void 0 ? void 0 : _a.color) !== null && _b !== void 0 ? _b : null; });
         return [
             regions
                 .style("fill-opacity", function (d) { return (isValue(d.opacity) ? d.opacity : null); })
@@ -24681,7 +24696,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.3-nightly-20250307004652
+ * @version 3.14.3-nightly-20250311004658
  */
 var bb = {
     /**
@@ -24691,7 +24706,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.3-nightly-20250307004652",
+    version: "3.14.3-nightly-20250311004658",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

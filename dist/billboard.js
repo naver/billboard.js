@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.3-nightly-20250307004652
+ * @version 3.14.3-nightly-20250311004658
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1068,6 +1068,7 @@ const $ZOOM = {
    *   - `text {string}`: Text value.
    *   - `x {number}`: x Position.
    *   - `y {number}`: y Position.
+   *   - `center {string}`: Align label at the center. Allowed values are 'x', 'y', 'xy'.
    *   - `color {string}`: Color string.
    *   - `rotated (boolean)`: Whether rotate label or not.
    * @name regions
@@ -1088,6 +1089,7 @@ const $ZOOM = {
    *      	text: "Region Text",
    *      	x: 5,  // position relative of the initial x coordinate
    *      	y: 5,  // position relative of the initial y coordinate
+   *      	center: "xy",  // center text label in both direction.
    *      	color: "red",  // color string
    *      	rotated: true  // make text to show in vertical or horizontal
    *      }
@@ -15204,22 +15206,34 @@ function smoothLines(el, type) {
   redrawRegion(withTransition) {
     const $$ = this;
     const { $el: { region }, $T } = $$;
+    const regionX = $$.regionX.bind($$);
+    const regionY = $$.regionY.bind($$);
     let regions = region.list.select("rect");
     let label = region.list.selectAll("text");
-    regions = $T(regions, withTransition).attr("x", $$.regionX.bind($$)).attr("y", $$.regionY.bind($$)).attr("width", $$.regionWidth.bind($$)).attr("height", $$.regionHeight.bind($$));
-    label = $T(label, withTransition).attr("transform", (d) => {
+    regions = $T(regions, withTransition).attr("x", regionX).attr("y", regionY).attr("width", $$.regionWidth.bind($$)).attr("height", $$.regionHeight.bind($$));
+    label = $T(label, withTransition).text((d) => {
       var _a;
-      const { x = 0, y = 0, rotated = false } = (_a = d.label) != null ? _a : {};
-      return `translate(${$$.regionX.bind($$)(d) + x}, ${$$.regionY.bind($$)(d) + y})${rotated ? ` rotate(-90)` : ``}`;
+      return (_a = d.label) == null ? void 0 : _a.text;
+    }).attr("transform", function(d) {
+      var _a;
+      const { x = 0, y = 0, center = false, rotated = false } = (_a = d.label) != null ? _a : {};
+      const rect = this.previousElementSibling;
+      const pos = { x: 0, y: 0 };
+      if (isString(center)) {
+        ["x", "y"].forEach((v) => {
+          const attr = v === "x" ? "width" : "height";
+          if (center.indexOf(v) > -1) {
+            pos[v] = (+rect.getAttribute(attr) - getBoundingRect(this)[attr]) / 2;
+          }
+        });
+      }
+      return `translate(${regionX(d) + pos.x + x}, ${regionY(d) + pos.y + y})${rotated ? ` rotate(-90)` : ``}`;
     }).attr("text-anchor", (d) => {
       var _a;
       return ((_a = d.label) == null ? void 0 : _a.rotated) ? "end" : null;
     }).attr("dy", "1em").style("fill", (d) => {
       var _a, _b;
       return (_b = (_a = d.label) == null ? void 0 : _a.color) != null ? _b : null;
-    }).text((d) => {
-      var _a;
-      return (_a = d.label) == null ? void 0 : _a.text;
     });
     return [
       regions.style("fill-opacity", (d) => isValue(d.opacity) ? d.opacity : null).on("end", function() {
@@ -21893,7 +21907,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.3-nightly-20250307004652",
+  version: "3.14.3-nightly-20250311004658",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
