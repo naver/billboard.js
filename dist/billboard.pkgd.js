@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.14.3-nightly-20250311004658
+ * @version 3.14.3-nightly-20250313004653
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -41974,32 +41974,29 @@ function smoothLines(el, type) {
     const { $el: { region }, $T } = $$;
     const regionX = $$.regionX.bind($$);
     const regionY = $$.regionY.bind($$);
+    const attr = ["width", "height"];
     let regions = region.list.select("rect");
     let label = region.list.selectAll("text");
     regions = $T(regions, withTransition).attr("x", regionX).attr("y", regionY).attr("width", $$.regionWidth.bind($$)).attr("height", $$.regionHeight.bind($$));
     label = $T(label, withTransition).text((d) => {
       var _a;
       return (_a = d.label) == null ? void 0 : _a.text;
-    }).attr("transform", function(d) {
+    }).attr("transform", ({ label: label2 }) => label2.rotated ? ` rotate(-90)` : null).attr("transform", function(d) {
       var _a;
       const { x = 0, y = 0, center = false, rotated = false } = (_a = d.label) != null ? _a : {};
       const rect = this.previousElementSibling;
       const pos = { x: 0, y: 0 };
       if (isString(center)) {
-        ["x", "y"].forEach((v) => {
-          const attr = v === "x" ? "width" : "height";
+        ["x", "y"].forEach((v, i) => {
           if (center.indexOf(v) > -1) {
-            pos[v] = (+rect.getAttribute(attr) - getBoundingRect(this)[attr]) / 2;
+            pos[v] = (+rect.getAttribute(attr[i]) - getBoundingRect(this)[attr[i]]) / 2;
           }
         });
       }
       return `translate(${regionX(d) + pos.x + x}, ${regionY(d) + pos.y + y})${rotated ? ` rotate(-90)` : ``}`;
-    }).attr("text-anchor", (d) => {
+    }).attr("text-anchor", ({ label: label2 }) => (label2 == null ? void 0 : label2.rotated) ? "end" : null).attr("dy", "1em").style("fill", ({ label: label2 }) => {
       var _a;
-      return ((_a = d.label) == null ? void 0 : _a.rotated) ? "end" : null;
-    }).attr("dy", "1em").style("fill", (d) => {
-      var _a, _b;
-      return (_b = (_a = d.label) == null ? void 0 : _a.color) != null ? _b : null;
+      return (_a = label2 == null ? void 0 : label2.color) != null ? _a : null;
     });
     return [
       regions.style("fill-opacity", (d) => isValue(d.opacity) ? d.opacity : null).on("end", function() {
@@ -49577,7 +49574,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.14.3-nightly-20250311004658",
+  version: "3.14.3-nightly-20250313004653",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

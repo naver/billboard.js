@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.14.3-nightly-20250311004658
+ * @version 3.14.3-nightly-20250313004653
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -15621,6 +15621,7 @@ var region = {
         var region = $$.$el.region, $T = $$.$T;
         var regionX = $$.regionX.bind($$);
         var regionY = $$.regionY.bind($$);
+        var attr = ["width", "height"];
         var regions = region.list.select("rect");
         var label = region.list.selectAll("text");
         regions = $T(regions, withTransition)
@@ -15630,6 +15631,10 @@ var region = {
             .attr("height", $$.regionHeight.bind($$));
         label = $T(label, withTransition)
             .text(function (d) { var _a; return (_a = d.label) === null || _a === void 0 ? void 0 : _a.text; })
+            .attr("transform", function (_a) {
+            var label = _a.label;
+            return label.rotated ? " rotate(-90)" : null;
+        })
             .attr("transform", function (d) {
             var _this = this;
             var _a;
@@ -15637,18 +15642,25 @@ var region = {
             var rect = this.previousElementSibling;
             var pos = { x: 0, y: 0 };
             if (isString(center)) {
-                ["x", "y"].forEach(function (v) {
-                    var attr = v === "x" ? "width" : "height";
+                ["x", "y"].forEach(function (v, i) {
                     if (center.indexOf(v) > -1) {
-                        pos[v] = (+rect.getAttribute(attr) - getBoundingRect(_this)[attr]) / 2;
+                        pos[v] =
+                            (+rect.getAttribute(attr[i]) - getBoundingRect(_this)[attr[i]]) / 2;
                     }
                 });
             }
             return "translate(".concat(regionX(d) + pos.x + x, ", ").concat(regionY(d) + pos.y + y, ")").concat(rotated ? " rotate(-90)" : "");
         })
-            .attr("text-anchor", function (d) { var _a; return (((_a = d.label) === null || _a === void 0 ? void 0 : _a.rotated) ? "end" : null); })
+            .attr("text-anchor", function (_a) {
+            var label = _a.label;
+            return (label === null || label === void 0 ? void 0 : label.rotated) ? "end" : null;
+        })
             .attr("dy", "1em")
-            .style("fill", function (d) { var _a, _b; return (_b = (_a = d.label) === null || _a === void 0 ? void 0 : _a.color) !== null && _b !== void 0 ? _b : null; });
+            .style("fill", function (_a) {
+            var _b;
+            var label = _a.label;
+            return (_b = label === null || label === void 0 ? void 0 : label.color) !== null && _b !== void 0 ? _b : null;
+        });
         return [
             regions
                 .style("fill-opacity", function (d) { return (isValue(d.opacity) ? d.opacity : null); })
@@ -24696,7 +24708,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.14.3-nightly-20250311004658
+ * @version 3.14.3-nightly-20250313004653
  */
 var bb = {
     /**
@@ -24706,7 +24718,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.14.3-nightly-20250311004658",
+    version: "3.14.3-nightly-20250313004653",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
