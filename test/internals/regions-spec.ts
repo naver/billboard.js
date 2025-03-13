@@ -152,7 +152,6 @@ describe("REGIONS", function() {
 
 					d.class && expect(this.getAttribute("class").indexOf(d.class) > -1).to.be.true;
 					
-
 					if (d.label) {
 						const node = this.querySelector("text");
 						const {text, x = 0, y = 0, color, rotated} = d.label;
@@ -270,6 +269,44 @@ describe("REGIONS", function() {
 				}
 
 				expect(`translate(${x}, ${y})`).to.be.equal(text.getAttribute("transform"));
+			});
+		});
+
+		it("set options: regions.label.rotated=true", () => {
+			args.regions.forEach(v => {
+				v.label.rotated = true;
+			});
+		});
+
+		it("should align at the center w/rotated option", () => {
+			chart.internal.$el.region.list.each(function(d, i) {
+				const rect = this.querySelector("rect");
+				const text = this.querySelector("text");
+
+				//console.log(util.parseNum(text.getAttribute("transform").replace("rotate(-90)", "")));
+				const center = args.regions[i].label.center;
+
+				const w = +rect.getAttribute("width") / 2;
+				const h = +rect.getAttribute("height") / 2;
+				const {width, height} = text.getBoundingClientRect();
+				let x = +rect.getAttribute("x");
+				let y = +rect.getAttribute("y");
+
+				if (center.indexOf("x") > -1) {
+					x = +rect.getAttribute("x") + w - (width / 2);
+				}
+
+				if (center.indexOf("y") > -1) {
+					y = +rect.getAttribute("y") + h - (height / 2);
+				}
+
+				const translate = text.getAttribute("transform")
+					.replace("rotate(-90)", "")
+					.split(",")
+					.map(v => util.parseNum(v));
+				
+				expect(x).to.be.closeTo(translate[0], 1);
+				expect(y).to.be.closeTo(translate[1], 1);
 			});
 		});
 	});
