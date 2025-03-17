@@ -6,7 +6,7 @@ import {select as d3Select} from "d3-selection"; // selection
 import type {RegionOptions} from "../../../types/options";
 import type {AxisType} from "../../../types/types";
 import {$REGION} from "../../config/classes";
-import {isValue, parseDate} from "../../module/util";
+import {getBoundingRect, isString, isValue, parseDate} from "../../module/util";
 
 export default {
 	initRegion(): void {
@@ -64,27 +64,42 @@ export default {
 	redrawRegion(withTransition: boolean) {
 		const $$ = this;
 		const {$el: {region}, $T} = $$;
+		const regionX = $$.regionX.bind($$);
+		const regionY = $$.regionY.bind($$);
+		const attr = ["width", "height"];
 		let regions = region.list.select("rect");
 		let label = region.list.selectAll("text");
 
 		regions = $T(regions, withTransition)
-			.attr("x", $$.regionX.bind($$))
-			.attr("y", $$.regionY.bind($$))
+			.attr("x", regionX)
+			.attr("y", regionY)
 			.attr("width", $$.regionWidth.bind($$))
 			.attr("height", $$.regionHeight.bind($$));
 
 		label = $T(label, withTransition)
-			.attr("transform", d => {
-				const {x = 0, y = 0, rotated = false} = d.label ?? {};
+			.text(d => d.label?.text)
+			.attr("transform", ({label}) => label.rotated ? ` rotate(-90)` : null)
+			.attr("transform", function(d) {
+				const {x = 0, y = 0, center = false, rotated = false} = d.label ?? {};
+				const rect = this.previousElementSibling;
+				const pos = {x: 0, y: 0};
 
-				return `translate(${$$.regionX.bind($$)(d) + x}, ${$$.regionY.bind($$)(d) + y})${
+				if (isString(center)) {
+					["x", "y"].forEach((v, i) => {
+						if (center.indexOf(v) > -1) {
+							pos[v] =
+								(+rect.getAttribute(attr[i]) - getBoundingRect(this)[attr[i]]) / 2;
+						}
+					});
+				}
+
+				return `translate(${regionX(d) + pos.x + x}, ${regionY(d) + pos.y + y})${
 					rotated ? ` rotate(-90)` : ``
 				}`;
 			})
-			.attr("text-anchor", d => (d.label?.rotated ? "end" : null))
+			.attr("text-anchor", ({label}) => label?.rotated ? "end" : null)
 			.attr("dy", "1em")
-			.style("fill", d => d.label?.color ?? null)
-			.text(d => d.label?.text);
+			.style("fill", ({label}) => label?.color ?? null);
 
 		return [
 			regions
