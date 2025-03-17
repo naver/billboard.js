@@ -1,3 +1,10 @@
+# [3.15.0-next.2](https://github.com/naver/billboard.js/compare/3.15.0-next.1...3.15.0-next.2) (2025-03-17)
+
+
+### Features
+
+* **regions:** Intent to ship regions.label.center ([31722d9](https://github.com/naver/billboard.js/commit/31722d9d94f5c0aa45ee66d9e44fb25345ba012c)), closes [#3960](https://github.com/naver/billboard.js/issues/3960)
+
 # [3.15.0-next.1](https://github.com/naver/billboard.js/compare/3.14.3...3.15.0-next.1) (2025-03-06)
 
 
