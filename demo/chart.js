@@ -143,6 +143,8 @@ var billboardDemo = {
 			this.$wrapper.className = "";
 		}
 
+		document.querySelector(".chart_area").style.width = "";
+
 		type = type.replace("#", "").split(".");
 		this.$gridArea.classList.add("example-grid");
 
