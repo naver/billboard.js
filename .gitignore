@@ -6,6 +6,7 @@ package-lock.json
 /*.css
 /*.html
 /*.js
+/*.sh
 /.*
 /coverage
 /demo/work
