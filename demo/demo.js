@@ -4396,91 +4396,201 @@ d3.select(".chart_area")
 	},
 
 	Region: {
-		Region: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250, 400],
-						["data2", 830, 1200, 1100, 1400, 1150, 1250, 1500]
-					],
-					type: "line",
-					axes: {
-						data2: "y2"
-					}
-				},
-				axis: {
-					y2: {
-						show: true
-					}
-				},
-				regions: [
-					{axis: "x", end: 1, class: "regionX"},
-					{axis: "x", start: 2, end: 4, class: "regionX"},
-					{axis: "x", start: 5, class: "regionX"},
-					{axis: "y", end: 50, class: "regionY"},
-					{axis: "y", start: 80, end: 140, class: "regionY"},
-					{axis: "y", start: 400, class: "regionY"},
-					{axis: "y2", end: 900, class: "regionY2"},
-					{axis: "y2", start: 1150, end: 1250, class: "regionY2"},
-					{axis: "y2", start: 1300, class: "regionY2"}
-				]
+		Region: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250, 400],
+							["data2", 830, 1200, 1100, 1400, 1150, 1250, 1500]
+						],
+						type: "line",
+						axes: {
+							data2: "y2"
+						}
+					},
+					axis: {
+						y2: {
+							show: true
+						}
+					},
+					regions: [
+						{axis: "x", end: 1, class: "regionX"},
+						{axis: "x", start: 2, end: 4, class: "regionX"},
+						{axis: "x", start: 5, class: "regionX"},
+						{axis: "y", end: 50, class: "regionY"},
+						{axis: "y", start: 80, end: 140, class: "regionY"},
+						{axis: "y", start: 400, class: "regionY"},
+						{axis: "y2", end: 900, class: "regionY2"},
+						{axis: "y2", start: 1150, end: 1250, class: "regionY2"},
+						{axis: "y2", start: 1300, class: "regionY2"}
+					]
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 100, 150, 130, 200, 220, 190]
+						],
+						axes: {
+							data2: "y2"
+						},
+						type: "line",
+						colors: {
+							data1: "#ff0000"
+						}
+					},
+					axis: {
+						x: {
+							type: "category",
+							categories: [
+								"cat1",
+								"cat2",
+								"cat3",
+								"cat4",
+								"cat5",
+								"cat6"
+							]
+						}
+					},
+					regions: [
+						{
+							axis: "x",
+							start: "cat2",
+							end: "cat3"
+						},
+						{
+							axis: "x",
+							start: "cat5",
+							end: 5
+						}
+					]
+				}
 			}
-		},
-		RegionLabel: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 100, 150, 130, 200, 220, 190],
-					],
-					axes: {
-						data2: "y2",
-					},
-					type: "line",
-					colors: {
-						data1: "#ff0000"
-					}
-				},
-				axis: {
-					y2: {
-						show: true
-					}
-				},
-				regions: [
-					{
-						axis: "x",
-						start: 1,
-						end: 2,
-						class: "regions_class1",
-						label: {
-							text: "Regions 1",
-							color: "red"
+		],
+		RegionLabel: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 100, 150, 130, 200, 220, 190],
+						],
+						axes: {
+							data2: "y2",
+						},
+						type: "line",
+						colors: {
+							data1: "#ff0000"
 						}
 					},
-					{
-						axis: "y",
-						start: 100,
-						end: 300,
-						class: "regions_class2",
-						label: {
-							text: "Regions 2",
-							x: 50,
-							color: "blue"
+					axis: {
+						y2: {
+							show: true
 						}
 					},
-					{
-						axis: "y2",
-						start: 200,
-						end: 220,
-						class: "regions_class3",
-						label: {
-							text: "Regions 3",
-							y: 10
+					regions: [
+						{
+							axis: "x",
+							start: 1,
+							end: 2,
+							class: "regions_class1",
+							label: {
+								text: "Regions 1",
+								color: "red"
+							}
+						},
+						{
+							axis: "y",
+							start: 100,
+							end: 300,
+							class: "regions_class2",
+							label: {
+								text: "Regions 2",
+								x: 50,
+								color: "blue"
+							}
+						},
+						{
+							axis: "y2",
+							start: 200,
+							end: 220,
+							class: "regions_class3",
+							label: {
+								text: "Regions 3",
+								y: 10
+							}
 						}
-					}
-				]
+					]
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 100, 150, 130, 200, 220, 190]
+						],
+						axes: {
+							data2: "y2"
+						},
+						type: "line"
+					},
+					axis: {
+						y2: {
+							show: true
+						}
+					},
+					regions: [
+						{
+							axis: "x",
+							start: 1,
+							end: 2,
+							class: "regions_class1",
+							label: {
+								text: "Regions 1",
+								color: "red",
+								center: "xy"
+							}
+						},
+						{
+							axis: "x",
+							start: 3,
+							end: 4,
+							class: "regions_class1",
+							label: {
+								text: "Regions 2",
+								color: "red",
+								center: "y"
+							}
+						},
+						{
+							axis: "y",
+							start: 100,
+							end: 300,
+							class: "regions_class2",
+							label: {
+								text: "Regions 3",
+								color: "blue",
+								center: "xy"
+							}
+						},
+						{
+							axis: "y2",
+							start: 200,
+							end: 220,
+							class: "regions_class3",
+							label: {
+								text: "Regions 4",
+								center: "x"
+							}
+						}
+					]
+				}
 			}
-		},
+		],
 		RegionWithTimeseries: {
 			options: {
 				data: {
@@ -5691,6 +5801,28 @@ d3.select(".chart_area")
 				},
 				clipPath: false
 			}
+		},
+		resizeParent: {
+			description: "Resize chart when parent node is resized.",
+			options: {
+				data: {
+					columns: [
+						["sample", 30, 200, 120, 400, 230, 250]
+					],
+					type: "line"
+				},
+				resize: {
+					auto: "parent",
+					timer: false
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						document.querySelector(".chart_area").style.width="300px";
+					}, 1000),
+				];
+			},
 		},
 		resizeViewBox: [
 			{
