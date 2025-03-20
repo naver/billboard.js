@@ -1,3 +1,17 @@
+# [3.15.0](https://github.com/naver/billboard.js/compare/3.14.3...3.15.0) (2025-03-20)
+
+
+### Bug Fixes
+
+* **axis:** Fix axis tooltip visibility ([c1c39e7](https://github.com/naver/billboard.js/commit/c1c39e7ecb5f59f3c0948ee5965b687eb3a1a214)), closes [#3948](https://github.com/naver/billboard.js/issues/3948)
+
+
+### Features
+
+* **region:** Enhance regions accept category range ([904e35b](https://github.com/naver/billboard.js/commit/904e35b93f03dd16160376716df8a7149ecb1cf8)), closes [#3920](https://github.com/naver/billboard.js/issues/3920)
+* **regions:** Intent to ship regions.label.center ([31722d9](https://github.com/naver/billboard.js/commit/31722d9d94f5c0aa45ee66d9e44fb25345ba012c)), closes [#3960](https://github.com/naver/billboard.js/issues/3960)
+* **resize:** Container based auto resize ([#3956](https://github.com/naver/billboard.js/issues/3956)) ([fa3b751](https://github.com/naver/billboard.js/commit/fa3b7516276d96ffb8ca868ccda76c82e2c00ec7)), closes [#3955](https://github.com/naver/billboard.js/issues/3955)
+
 ## [3.14.3](https://github.com/naver/billboard.js/compare/3.14.2...3.14.3) (2025-01-07)
 
 
