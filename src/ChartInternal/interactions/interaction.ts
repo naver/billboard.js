@@ -71,7 +71,7 @@ export default {
 
 			config.color_onover && $$.setOverColor(isOver, d, isArcishData);
 
-			if (isArcishData && "id") {
+			if (isArcishData) {
 				const suffix = $$.getTargetSelectorSuffix((d as IArcDataRow).id);
 				const selector = hasFunnel || hasTreemap ?
 					`${$COMMON.target + suffix} .${$SHAPE.shape}` :
