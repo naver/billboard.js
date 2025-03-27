@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.0-nightly-20250321004703
+ * @version 3.15.0-nightly-20250327004712
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -5116,7 +5116,7 @@ var interaction = {
         if (isArcishData || d !== -1) {
             var callback_1 = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
             config.color_onover && $$.setOverColor(isOver, d, isArcishData);
-            if (isArcishData && "id") {
+            if (isArcishData) {
                 var suffix = $$.getTargetSelectorSuffix(d.id);
                 var selector = hasFunnel || hasTreemap ?
                     "".concat($COMMON.target + suffix, " .").concat($SHAPE.shape) :
@@ -24708,7 +24708,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.15.0-nightly-20250321004703
+ * @version 3.15.0-nightly-20250327004712
  */
 var bb = {
     /**
@@ -24718,7 +24718,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.15.0-nightly-20250321004703",
+    version: "3.15.0-nightly-20250327004712",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

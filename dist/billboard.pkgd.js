@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.0-nightly-20250321004703
+ * @version 3.15.0-nightly-20250327004712
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -28852,7 +28852,7 @@ function drag_defaultTouchable() {
     if (isArcishData || d !== -1) {
       const callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
       config.color_onover && $$.setOverColor(isOver, d, isArcishData);
-      if (isArcishData && "id") {
+      if (isArcishData) {
         const suffix = $$.getTargetSelectorSuffix(d.id);
         const selector = hasFunnel || hasTreemap ? `${$COMMON.target + suffix} .${$SHAPE.shape}` : $ARC.arc + suffix;
         callback(d, main.select(`.${selector}`).node());
@@ -49574,7 +49574,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.0-nightly-20250321004703",
+  version: "3.15.0-nightly-20250327004712",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
