@@ -1034,7 +1034,8 @@ class Axis {
 
 			if (axis && toCull) {
 				const tickNodes = axis.selectAll(".tick");
-				const tickValues = sortValue(tickNodes.data());
+				const tickValues = sortValue(tickNodes.data(),
+					!config[`${cullingOptionPrefix}_reverse`]);
 				const tickSize = tickValues.length;
 				const cullingMax = config[`${cullingOptionPrefix}_max`];
 				const lines = config[`${cullingOptionPrefix}_lines`];
