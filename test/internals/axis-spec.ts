@@ -3028,6 +3028,58 @@ describe("AXIS", function() {
 				done(1);
 			});
 		}));
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: 'periods',
+					type: "line",
+					columns: [
+						["periods", '1999', '2000', '2001', '2002', '2003','2004','2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015','2016'],
+						["data1", 0, 70, 200, 100, 170, 150, 350, 320, 200, 100, 170, 150, 250, 30, 200, 100, 170, 390],
+					]
+				},
+				axis: {
+					x: {
+						tick: {
+							outer: false,
+							culling: {
+								max: 6,
+								reverse: true
+							}
+						}
+					}
+				}
+			};
+		});
+
+		it("should reverse the x-axis tick text culling.", () => {
+			const tickText = chart.internal.$el.axis.x
+				.selectAll(".tick text")
+				.filter(function() {
+					return this.style.display !== "none";
+				})
+				.nodes().map(v => v.textContent);
+
+
+			expect(tickText).to.be.deep.equal(['2000', '2004', '2008', '2012', '2016']);
+		});
+
+		it("set options: axis.rotated=true", () => {
+			args.axis.rotated = true;
+		});
+
+		it("should x axis' tick text culling to be reversed on rotated axis.", () => {
+			const tickText = chart.internal.$el.axis.x
+				.selectAll(".tick text")
+				.filter(function() {
+					return this.style.display !== "none";
+				})
+				.nodes().map(v => v.textContent);
+
+
+			expect(tickText).to.be.deep.equal(['2000', '2004', '2008', '2012', '2016']);
+		});
 	});
 	
 	describe("Axes tick padding", () => {

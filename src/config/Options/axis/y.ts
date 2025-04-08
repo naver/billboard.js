@@ -247,6 +247,26 @@ export default {
 	axis_y_tick_culling_lines: true,
 
 	/**
+	 * Control culling start point to be reversed. If set to true, the culling will be started from the end to start.
+	 * - **NOTE:** This option is only available when `axis.y.tick.culling` is set to truthy value.
+	 * @name axis․y․tick․culling․reverse
+	 * @memberof Options
+	 * @type {boolean}
+	 * @default false
+	 * @example
+	 * axis: {
+	 *   y: {
+	 *     tick: {
+	 *       culling: {
+	 *           reverse: true,
+	 *       }
+	 *     }
+	 *   }
+	 * }
+	 */
+	axis_y_tick_culling_reverse: false,
+
+	/**
 	 * Show y axis outer tick.
 	 * @name axis․y․tick․outer
 	 * @memberof Options

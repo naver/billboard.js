@@ -2027,28 +2027,81 @@ var demos = {
 				}
 			}
 		},
-		XAxisTickCulling: {
-			options: {
-				data: {
-					columns: [
-						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250]
-					],
-					type: "line"
-				},
-				axis: {
-					x: {
-						type: "category",
-						tick: {
-							culling: {
-								max: 4 // the number of tick texts will be adjusted to less than this value
+		XAxisTickCulling: [
+			{
+				options: {
+					data: {
+						columns: [
+							["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250]
+						],
+						type: "line"
+					},
+					axis: {
+						x: {
+							type: "category",
+							tick: {
+								culling: {
+									max: 4 // the number of tick texts will be adjusted to less than this value
+								}
+								// for normal axis, default on
+								// for category axis, default off
 							}
-							// for normal axis, default on
-							// for category axis, default off
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Culling to start from the first tick",
+					},
+					data: {
+						x: 'periods',
+						type: "line",
+						columns: [
+							["periods", '1999', '2000', '2001', '2002', '2003','2004','2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015','2016'],
+							["data1", 0, 70, 200, 100, 170, 150, 350, 320, 200, 100, 170, 150, 250, 30, 200, 100, 170, 390],
+						]
+					},
+					axis: {
+						x: {
+							tick: {
+								outer: false,
+								culling: {
+									max: 6
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Culling to start from the last('reversed' way) tick",
+					},
+					data: {
+						x: 'periods',
+						type: "line",
+						columns: [
+							["periods", '1999', '2000', '2001', '2002', '2003','2004','2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015','2016'],
+							["data1", 0, 70, 200, 100, 170, 150, 350, 320, 200, 100, 170, 150, 250, 30, 200, 100, 170, 390],
+						]
+					},
+					axis: {
+						x: {
+							tick: {
+								outer: false,
+								culling: {
+									max: 6,
+									reverse: true
+								}
+							}
 						}
 					}
 				}
 			}
-		},
+		],
 		XAxisTickFitting: {
 			options: {
 				data: {
