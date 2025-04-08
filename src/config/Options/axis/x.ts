@@ -179,7 +179,7 @@ export default {
 	 * axis: {
 	 *   x: {
 	 *     tick: {
-	 *       culling: false
+	 *       culling: false,
 	 *     }
 	 *   }
 	 * }
@@ -223,6 +223,27 @@ export default {
 	 * }
 	 */
 	axis_x_tick_culling_lines: true,
+
+	/**
+	 * Control culling start point to be reversed. If set to true, the culling will be started from the end to start.
+	 * - **NOTE:** This option is only available when `axis.x.tick.culling` is set to truthy value.
+	 * @name axis․x․tick․culling․reverse
+	 * @memberof Options
+	 * @type {boolean}
+	 * @default false
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickCulling)
+	 * @example
+	 * axis: {
+	 *   x: {
+	 *     tick: {
+	 *       culling: {
+	 *           reverse: true,
+	 *       }
+	 *     }
+	 *   }
+	 * }
+	 */
+	axis_x_tick_culling_reverse: false,
 
 	/**
 	 * The number of x axis ticks to show.<br><br>
