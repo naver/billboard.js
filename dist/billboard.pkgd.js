@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.0-nightly-20250404004710
+ * @version 3.15.0-nightly-20250409004700
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -22563,7 +22563,7 @@ const $ZOOM = {
    *  }
    */
   resize_auto: true,
-  resize_timer: true,
+  resize_timer: false,
   /**
    * Set a callback to execute when the chart is clicked.
    * @name onclick
@@ -40775,7 +40775,10 @@ class Axis_Axis {
       const toCull = config[cullingOptionPrefix];
       if (axis && toCull) {
         const tickNodes = axis.selectAll(".tick");
-        const tickValues = sortValue(tickNodes.data());
+        const tickValues = sortValue(
+          tickNodes.data(),
+          !config[`${cullingOptionPrefix}_reverse`]
+        );
         const tickSize = tickValues.length;
         const cullingMax = config[`${cullingOptionPrefix}_max`];
         const lines = config[`${cullingOptionPrefix}_lines`];
@@ -42347,7 +42350,7 @@ function smoothLines(el, type) {
    * axis: {
    *   x: {
    *     tick: {
-   *       culling: false
+   *       culling: false,
    *     }
    *   }
    * }
@@ -42389,6 +42392,26 @@ function smoothLines(el, type) {
    * }
    */
   axis_x_tick_culling_lines: true,
+  /**
+   * Control culling start point to be reversed. If set to true, the culling will be started from the end to start.
+   * - **NOTE:** This option is only available when `axis.x.tick.culling` is set to truthy value.
+   * @name axis․x․tick․culling․reverse
+   * @memberof Options
+   * @type {boolean}
+   * @default false
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickCulling)
+   * @example
+   * axis: {
+   *   x: {
+   *     tick: {
+   *       culling: {
+   *           reverse: true,
+   *       }
+   *     }
+   *   }
+   * }
+   */
+  axis_x_tick_culling_reverse: false,
   /**
    * The number of x axis ticks to show.<br><br>
    * This option hides tick lines together with tick text. If this option is used on timeseries axis, the ticks position will be determined precisely and not nicely positioned (e.g. it will have rough second value).
@@ -43123,6 +43146,25 @@ function smoothLines(el, type) {
    */
   axis_y_tick_culling_lines: true,
   /**
+   * Control culling start point to be reversed. If set to true, the culling will be started from the end to start.
+   * - **NOTE:** This option is only available when `axis.y.tick.culling` is set to truthy value.
+   * @name axis․y․tick․culling․reverse
+   * @memberof Options
+   * @type {boolean}
+   * @default false
+   * @example
+   * axis: {
+   *   y: {
+   *     tick: {
+   *       culling: {
+   *           reverse: true,
+   *       }
+   *     }
+   *   }
+   * }
+   */
+  axis_y_tick_culling_reverse: false,
+  /**
    * Show y axis outer tick.
    * @name axis․y․tick․outer
    * @memberof Options
@@ -43591,6 +43633,25 @@ function smoothLines(el, type) {
    * }
    */
   axis_y2_tick_culling_lines: true,
+  /**
+   * Control culling start point to be reversed. If set to true, the culling will be started from the end to start.
+   * - **NOTE:** This option is only available when `axis.y2.tick.culling` is set to truthy value.
+   * @name axis․y2․tick․culling․reverse
+   * @memberof Options
+   * @type {boolean}
+   * @default false
+   * @example
+   * axis: {
+   *   y2: {
+   *     tick: {
+   *       culling: {
+   *           reverse: true,
+   *       }
+   *     }
+   *   }
+   * }
+   */
+  axis_y2_tick_culling_reverse: false,
   /**
    * Show or hide y2 axis outer tick.
    * @name axis․y2․tick․outer
@@ -49574,7 +49635,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.0-nightly-20250404004710",
+  version: "3.15.0-nightly-20250409004700",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

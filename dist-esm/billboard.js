@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.0-nightly-20250404004710
+ * @version 3.15.0-nightly-20250409004700
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -721,7 +721,7 @@ var main = {
      *  }
      */
     resize_auto: true,
-    resize_timer: true,
+    resize_timer: false,
     /**
      * Set a callback to execute when the chart is clicked.
      * @name onclick
@@ -14153,7 +14153,7 @@ var Axis = /** @class */ (function () {
             var toCull = config[cullingOptionPrefix];
             if (axis && toCull) {
                 var tickNodes = axis.selectAll(".tick");
-                var tickValues_1 = sortValue(tickNodes.data());
+                var tickValues_1 = sortValue(tickNodes.data(), !config["".concat(cullingOptionPrefix, "_reverse")]);
                 var tickSize = tickValues_1.length;
                 var cullingMax = config["".concat(cullingOptionPrefix, "_max")];
                 var lines_1 = config["".concat(cullingOptionPrefix, "_lines")];
@@ -16046,7 +16046,7 @@ var x = {
      * axis: {
      *   x: {
      *     tick: {
-     *       culling: false
+     *       culling: false,
      *     }
      *   }
      * }
@@ -16088,6 +16088,26 @@ var x = {
      * }
      */
     axis_x_tick_culling_lines: true,
+    /**
+     * Control culling start point to be reversed. If set to true, the culling will be started from the end to start.
+     * - **NOTE:** This option is only available when `axis.x.tick.culling` is set to truthy value.
+     * @name axis․x․tick․culling․reverse
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickCulling)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       culling: {
+     *           reverse: true,
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_culling_reverse: false,
     /**
      * The number of x axis ticks to show.<br><br>
      * This option hides tick lines together with tick text. If this option is used on timeseries axis, the ticks position will be determined precisely and not nicely positioned (e.g. it will have rough second value).
@@ -16828,6 +16848,25 @@ var y = {
      */
     axis_y_tick_culling_lines: true,
     /**
+     * Control culling start point to be reversed. If set to true, the culling will be started from the end to start.
+     * - **NOTE:** This option is only available when `axis.y.tick.culling` is set to truthy value.
+     * @name axis․y․tick․culling․reverse
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       culling: {
+     *           reverse: true,
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_culling_reverse: false,
+    /**
      * Show y axis outer tick.
      * @name axis․y․tick․outer
      * @memberof Options
@@ -17302,6 +17341,25 @@ var y2 = {
      * }
      */
     axis_y2_tick_culling_lines: true,
+    /**
+     * Control culling start point to be reversed. If set to true, the culling will be started from the end to start.
+     * - **NOTE:** This option is only available when `axis.y2.tick.culling` is set to truthy value.
+     * @name axis․y2․tick․culling․reverse
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       culling: {
+     *           reverse: true,
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_culling_reverse: false,
     /**
      * Show or hide y2 axis outer tick.
      * @name axis․y2․tick․outer
@@ -24708,7 +24766,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.15.0-nightly-20250404004710
+ * @version 3.15.0-nightly-20250409004700
  */
 var bb = {
     /**
@@ -24718,7 +24776,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.15.0-nightly-20250404004710",
+    version: "3.15.0-nightly-20250409004700",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
