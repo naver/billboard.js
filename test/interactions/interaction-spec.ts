@@ -214,7 +214,7 @@ describe("INTERACTION", () => {
 				});
 			});
 
-			describe.only("timeseries #5", () => {
+			describe("timeseries #5", () => {
 				beforeAll(() => {
 					args = {
 						data: {

@@ -2867,7 +2867,7 @@ describe("AXIS", function() {
 		})
 	});
 
-	describe.only("Axes tick culling", () => {
+	describe("Axes tick culling", () => {
 		beforeAll(() => {
 			args = {
 				data: {
