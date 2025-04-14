@@ -387,7 +387,7 @@ export default {
 
 		const areas = $$.$el.radar.shapes
 			.selectAll("polygon")
-			.data(targets);
+			.data($$.filterNullish(targets));
 
 		const areasEnter = areas.enter().append("g")
 			.attr("class", $$.getChartClass("Radar"));

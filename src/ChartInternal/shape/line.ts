@@ -103,7 +103,7 @@ export default {
 
 		const mainLineUpdate = main.select(`.${$LINE.chartLines}`)
 			.selectAll(`.${$LINE.chartLine}`)
-			.data(targets)
+			.data($$.filterNullish(targets))
 			.attr("class", d => classChartLine(d) + classFocus(d));
 
 		const mainLineEnter = mainLineUpdate.enter().append("g")
