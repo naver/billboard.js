@@ -666,6 +666,16 @@ export default {
 		return mergeArray(targets.map(t => t.values)).filter(v => v.x - x === 0);
 	},
 
+	filterNullish(data) {
+		const filter = v => isValue(v.value);
+
+		return data ?
+			data.filter(
+				v => "value" in v ? filter(v) : v.values.some(filter)
+			) :
+			data;
+	},
+
 	filterRemoveNull(data) {
 		return data.filter(d => isValue(this.getBaseValue(d)));
 	},

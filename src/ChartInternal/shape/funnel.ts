@@ -263,7 +263,7 @@ export default {
 
 		const mainFunnelUpdate = funnel
 			.selectAll(`.${$FUNNEL.chartFunnel}`)
-			.data(targets);
+			.data($$.filterNullish(targets));
 
 		mainFunnelUpdate.exit().remove();
 

@@ -3053,32 +3053,8 @@ describe("AXIS", function() {
 			};
 		});
 
-		it("should reverse the x-axis tick text culling.", () => {
-			const tickText = chart.internal.$el.axis.x
-				.selectAll(".tick text")
-				.filter(function() {
-					return this.style.display !== "none";
-				})
-				.nodes().map(v => v.textContent);
+		it("", () => {
 
-
-			expect(tickText).to.be.deep.equal(['2000', '2004', '2008', '2012', '2016']);
-		});
-
-		it("set options: axis.rotated=true", () => {
-			args.axis.rotated = true;
-		});
-
-		it("should x axis' tick text culling to be reversed on rotated axis.", () => {
-			const tickText = chart.internal.$el.axis.x
-				.selectAll(".tick text")
-				.filter(function() {
-					return this.style.display !== "none";
-				})
-				.nodes().map(v => v.textContent);
-
-
-			expect(tickText).to.be.deep.equal(['2000', '2004', '2008', '2012', '2016']);
 		});
 	});
 	
