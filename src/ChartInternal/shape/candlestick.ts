@@ -42,7 +42,7 @@ export default {
 
 		const mainUpdate = $$.$el.main.select(`.${$CANDLESTICK.chartCandlesticks}`)
 			.selectAll(`.${$CANDLESTICK.chartCandlestick}`)
-			.data(targets);
+			.data($$.filterNullish(targets));
 
 		mainUpdate.enter().append("g")
 			.attr("class", classChart)

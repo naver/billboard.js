@@ -47,12 +47,7 @@ export default {
 
 		const mainBarUpdate = $el.main.select(`.${$BAR.chartBars}`)
 			.selectAll(`.${$BAR.chartBar}`)
-			.data(
-				// remove
-				targets.filter(
-					v => v.values.some(d => (isNumber(d.value) || $$.isBarRangeType(d)))
-				)
-			)
+			.data($$.filterNullish(targets))
 			.attr("class", d => classChartBar(d) + classFocus(d));
 
 		const mainBarEnter = mainBarUpdate.enter().append("g")
@@ -106,7 +101,7 @@ export default {
 	 * @returns {string} Color string
 	 * @private
 	 */
-	updateBarColor(d: IBarData): string {
+	updateBarColor(d: IBarData): string | null {
 		const $$ = this;
 		const fn = $$.getStylePropValue($$.color);
 
