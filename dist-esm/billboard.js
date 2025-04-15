@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.0-nightly-20250409004700
+ * @version 3.15.0-nightly-20250415004916
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -4533,6 +4533,12 @@ var data$1 = {
     filterByX: function (targets, x) {
         return mergeArray(targets.map(function (t) { return t.values; })).filter(function (v) { return v.x - x === 0; });
     },
+    filterNullish: function (data) {
+        var filter = function (v) { return isValue(v.value); };
+        return data ?
+            data.filter(function (v) { return "value" in v ? filter(v) : v.values.some(filter); }) :
+            data;
+    },
     filterRemoveNull: function (data) {
         var _this = this;
         return data.filter(function (d) { return isValue(_this.getBaseValue(d)); });
@@ -7872,7 +7878,7 @@ var text = {
         var classFocus = $$.classFocus.bind($$);
         var mainTextUpdate = $$.$el.main.select(".".concat($TEXT.chartTexts))
             .selectAll(".".concat($TEXT.chartText))
-            .data(targets)
+            .data($$.filterNullish(targets))
             .attr("class", function (d) { return "".concat(classChartText(d)).concat(classFocus(d)).trim(); });
         var mainTextEnter = mainTextUpdate.enter().append("g")
             .style("opacity", "0")
@@ -19102,9 +19108,7 @@ var shapeBar = {
         }
         var mainBarUpdate = $el.main.select(".".concat($BAR.chartBars))
             .selectAll(".".concat($BAR.chartBar))
-            .data(
-        // remove
-        targets.filter(function (v) { return v.values.some(function (d) { return (isNumber(d.value) || $$.isBarRangeType(d)); }); }))
+            .data($$.filterNullish(targets))
             .attr("class", function (d) { return classChartBar(d) + classFocus(d); });
         var mainBarEnter = mainBarUpdate.enter().append("g")
             .attr("class", classChartBar)
@@ -19430,7 +19434,7 @@ var shapeCandlestick = {
         }
         var mainUpdate = $$.$el.main.select(".".concat($CANDLESTICK.chartCandlesticks))
             .selectAll(".".concat($CANDLESTICK.chartCandlestick))
-            .data(targets);
+            .data($$.filterNullish(targets));
         mainUpdate.enter().append("g")
             .attr("class", classChart)
             .style("pointer-events", "none");
@@ -19828,7 +19832,7 @@ var shapeFunnel = {
         var targets = getFunnelData.call($$, t.filter($$.isFunnelType.bind($$)));
         var mainFunnelUpdate = funnel
             .selectAll(".".concat($FUNNEL.chartFunnel))
-            .data(targets);
+            .data($$.filterNullish(targets));
         mainFunnelUpdate.exit().remove();
         var mainFunnelEnter = mainFunnelUpdate
             .enter()
@@ -20080,7 +20084,7 @@ var shapeLine = {
         var targets = t.filter(function (d) { return !($$.isScatterType(d) || $$.isBubbleType(d)); });
         var mainLineUpdate = main.select(".".concat($LINE.chartLines))
             .selectAll(".".concat($LINE.chartLine))
-            .data(targets)
+            .data($$.filterNullish(targets))
             .attr("class", function (d) { return classChartLine(d) + classFocus(d); });
         var mainLineEnter = mainLineUpdate.enter().append("g")
             .attr("class", classChartLine)
@@ -20434,7 +20438,7 @@ var shapePoint = {
         var enterNode = enterNodeValue;
         // only for scatter & bubble type should generate seprate <g> node
         if (!targets) {
-            targets = data.targets
+            targets = $$.filterNullish(data.targets)
                 .filter(function (d) { return _this.isScatterType(d) || _this.isBubbleType(d); });
             var mainCircle = $el.main.select(".".concat($CIRCLE.chartCircles))
                 .style("pointer-events", "none")
@@ -20476,10 +20480,14 @@ var shapePoint = {
             config.point_radialGradient && $$.updateLinearGradient();
             var circles = $root.main.selectAll(".".concat($CIRCLE.circles))
                 .selectAll(".".concat($CIRCLE.circle))
-                .data(function (d) { return (($$.isLineType(d) && $$.shouldDrawPointsForLine(d)) ||
-                $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ?
-                (focusOnly ? [d.values[0]] : d.values) :
-                []); });
+                .data(function (d) {
+                var data = ($$.isLineType(d) && $$.shouldDrawPointsForLine(d)) ||
+                    $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ?
+                    (focusOnly ? [d.values[0]] : d.values) :
+                    [];
+                // return data;
+                return $$.filterNullish(data);
+            });
             circles.exit().remove();
             circles.enter()
                 .filter(Boolean)
@@ -21343,7 +21351,7 @@ var shapeRadar = {
         var points = $$.cache.get(cacheKeyPoints);
         var areas = $$.$el.radar.shapes
             .selectAll("polygon")
-            .data(targets);
+            .data($$.filterNullish(targets));
         var areasEnter = areas.enter().append("g")
             .attr("class", $$.getChartClass("Radar"));
         $$.$T(areas.exit())
@@ -21534,7 +21542,7 @@ var shapeTreemap = {
         var treemap = $$.$el.treemap;
         var treemapData = getHierachyData.call($$, $$.getTreemapData(targets !== null && targets !== void 0 ? targets : $$.data.targets));
         // using $el.treemap reference can alter data, so select treemap <g> again
-        treemap.data(treemapData);
+        treemap.data($$.filterNullish(treemapData));
     },
     /**
      * Render treemap
@@ -24766,7 +24774,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.15.0-nightly-20250409004700
+ * @version 3.15.0-nightly-20250415004916
  */
 var bb = {
     /**
@@ -24776,7 +24784,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.15.0-nightly-20250409004700",
+    version: "3.15.0-nightly-20250415004916",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.0-nightly-20250409004700
+ * @version 3.15.0-nightly-20250415004916
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -28164,6 +28164,12 @@ function getDataKeyForJson(keysParam, config) {
   filterByX(targets, x) {
     return mergeArray(targets.map((t) => t.values)).filter((v) => v.x - x === 0);
   },
+  filterNullish(data) {
+    const filter = (v) => isValue(v.value);
+    return data ? data.filter(
+      (v) => "value" in v ? filter(v) : v.values.some(filter)
+    ) : data;
+  },
   filterRemoveNull(data) {
     return data.filter((d) => isValue(this.getBaseValue(d)));
   },
@@ -32316,7 +32322,7 @@ function getTextPos(d, type) {
     const classChartText = $$.getChartClass("Text");
     const classTexts = $$.getClass("texts", "id");
     const classFocus = $$.classFocus.bind($$);
-    const mainTextUpdate = $$.$el.main.select(`.${$TEXT.chartTexts}`).selectAll(`.${$TEXT.chartText}`).data(targets).attr("class", (d) => `${classChartText(d)}${classFocus(d)}`.trim());
+    const mainTextUpdate = $$.$el.main.select(`.${$TEXT.chartTexts}`).selectAll(`.${$TEXT.chartText}`).data($$.filterNullish(targets)).attr("class", (d) => `${classChartText(d)}${classFocus(d)}`.trim());
     const mainTextEnter = mainTextUpdate.enter().append("g").style("opacity", "0").attr("class", classChartText).call(
       $$.setCssRule(
         true,
@@ -45687,12 +45693,7 @@ function point_y(p) {
     if (!$el.bar) {
       $$.initBar();
     }
-    const mainBarUpdate = $el.main.select(`.${$BAR.chartBars}`).selectAll(`.${$BAR.chartBar}`).data(
-      // remove
-      targets.filter(
-        (v) => v.values.some((d) => isNumber(d.value) || $$.isBarRangeType(d))
-      )
-    ).attr("class", (d) => classChartBar(d) + classFocus(d));
+    const mainBarUpdate = $el.main.select(`.${$BAR.chartBars}`).selectAll(`.${$BAR.chartBar}`).data($$.filterNullish(targets)).attr("class", (d) => classChartBar(d) + classFocus(d));
     const mainBarEnter = mainBarUpdate.enter().append("g").attr("class", classChartBar).style("opacity", "0").style("pointer-events", $$.getStylePropValue("none"));
     mainBarEnter.append("g").attr("class", classBars).style("cursor", (d) => {
       var _a;
@@ -45987,7 +45988,7 @@ var candlestick_spreadValues = (a, b) => {
     if (!$el.candlestick) {
       $$.initCandlestick();
     }
-    const mainUpdate = $$.$el.main.select(`.${$CANDLESTICK.chartCandlesticks}`).selectAll(`.${$CANDLESTICK.chartCandlestick}`).data(targets);
+    const mainUpdate = $$.$el.main.select(`.${$CANDLESTICK.chartCandlesticks}`).selectAll(`.${$CANDLESTICK.chartCandlestick}`).data($$.filterNullish(targets));
     mainUpdate.enter().append("g").attr("class", classChart).style("pointer-events", "none");
   },
   /**
@@ -46338,7 +46339,7 @@ function updateRatio(data) {
       $$.initFunnel();
     }
     const targets = getFunnelData.call($$, t.filter($$.isFunnelType.bind($$)));
-    const mainFunnelUpdate = funnel.selectAll(`.${$FUNNEL.chartFunnel}`).data(targets);
+    const mainFunnelUpdate = funnel.selectAll(`.${$FUNNEL.chartFunnel}`).data($$.filterNullish(targets));
     mainFunnelUpdate.exit().remove();
     const mainFunnelEnter = mainFunnelUpdate.enter().insert("g", `.${$FUNNEL.funnelBackground}`);
     mainFunnelEnter.append("path");
@@ -46522,7 +46523,7 @@ function getRegions(d, _regions, isTimeSeries) {
       $$.initLine();
     }
     const targets = t.filter((d) => !($$.isScatterType(d) || $$.isBubbleType(d)));
-    const mainLineUpdate = main.select(`.${$LINE.chartLines}`).selectAll(`.${$LINE.chartLine}`).data(targets).attr("class", (d) => classChartLine(d) + classFocus(d));
+    const mainLineUpdate = main.select(`.${$LINE.chartLines}`).selectAll(`.${$LINE.chartLine}`).data($$.filterNullish(targets)).attr("class", (d) => classChartLine(d) + classFocus(d));
     const mainLineEnter = mainLineUpdate.enter().append("g").attr("class", classChartLine).style("opacity", "0").style("pointer-events", $$.getStylePropValue("none"));
     mainLineEnter.append("g").attr("class", classLines);
     if ($$.hasTypeOf("Area")) {
@@ -46819,7 +46820,7 @@ const getTransitionName = () => getRandom();
     let targets = targetsValue;
     let enterNode = enterNodeValue;
     if (!targets) {
-      targets = data.targets.filter((d) => this.isScatterType(d) || this.isBubbleType(d));
+      targets = $$.filterNullish(data.targets).filter((d) => this.isScatterType(d) || this.isBubbleType(d));
       const mainCircle = $el.main.select(`.${$CIRCLE.chartCircles}`).style("pointer-events", "none").selectAll(`.${$CIRCLE.circles}`).data(targets);
       mainCircle.exit().remove();
       enterNode = mainCircle.enter();
@@ -46847,7 +46848,10 @@ const getTransitionName = () => getRandom();
     const $root = isSub ? $el.subchart : $el;
     if (config.point_show && !state.toggling) {
       config.point_radialGradient && $$.updateLinearGradient();
-      const circles = $root.main.selectAll(`.${$CIRCLE.circles}`).selectAll(`.${$CIRCLE.circle}`).data((d) => $$.isLineType(d) && $$.shouldDrawPointsForLine(d) || $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ? focusOnly ? [d.values[0]] : d.values : []);
+      const circles = $root.main.selectAll(`.${$CIRCLE.circles}`).selectAll(`.${$CIRCLE.circle}`).data((d) => {
+        const data = $$.isLineType(d) && $$.shouldDrawPointsForLine(d) || $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ? focusOnly ? [d.values[0]] : d.values : [];
+        return $$.filterNullish(data);
+      });
       circles.exit().remove();
       circles.enter().filter(Boolean).append(
         $$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$))
@@ -47584,7 +47588,7 @@ const cacheKeyTextWidth = KEY.radarTextWidth;
     const $$ = this;
     const targets = $$.data.targets.filter((d) => $$.isRadarType(d));
     const points = $$.cache.get(cacheKeyPoints);
-    const areas = $$.$el.radar.shapes.selectAll("polygon").data(targets);
+    const areas = $$.$el.radar.shapes.selectAll("polygon").data($$.filterNullish(targets));
     const areasEnter = areas.enter().append("g").attr("class", $$.getChartClass("Radar"));
     $$.$T(areas.exit()).remove();
     areasEnter.append("polygon").merge(areas).style("fill", $$.color).style("stroke", $$.color).attr("points", (d) => points[d.id].join(" "));
@@ -48204,7 +48208,7 @@ function getHierachyData(data) {
     const $$ = this;
     const { $el: { treemap } } = $$;
     const treemapData = getHierachyData.call($$, $$.getTreemapData(targets != null ? targets : $$.data.targets));
-    treemap.data(treemapData);
+    treemap.data($$.filterNullish(treemapData));
   },
   /**
    * Render treemap
@@ -49635,7 +49639,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.0-nightly-20250409004700",
+  version: "3.15.0-nightly-20250415004916",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
