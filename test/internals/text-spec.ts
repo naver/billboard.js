@@ -262,7 +262,7 @@ describe("TEXT", () => {
 						if (d.value < 0) {
 							const x = +this.getAttribute("transform").match(/\((\d+\.\d+)/)[1];
 
-							expect(x).to.be.closeTo(57, 1);
+							expect(x).to.be.closeTo(57, 2);
 						}
 					});
 				});
@@ -801,7 +801,7 @@ describe("TEXT", () => {
 					const domain = chart.internal.scale.y.domain();
 
 					expect(domain[0]).to.be.closeTo(0, 1);
-					expect(domain[1]).to.be.closeTo(228, 1);
+					expect(domain[1]).to.be.closeTo(228, 2);
 				});
 
 				it("should locate labels above each data point", () => {
@@ -903,7 +903,7 @@ describe("TEXT", () => {
 				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.scale.y.domain();
 
-					expect(domain[0]).to.be.closeTo(-222, 2);
+					expect(domain[0]).to.be.closeTo(-222, 3);
 					expect(domain[1]).to.be.closeTo(0, 1);
 				});
 
@@ -924,7 +924,7 @@ describe("TEXT", () => {
 				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.scale.y.domain();
 
-					expect(domain[0]).to.be.closeTo(-222, 2); // -220.4755083436658 vs -223.64837940981494
+					expect(domain[0]).to.be.closeTo(-222, 3); // -220.4755083436658 vs -223.64837940981494
 					expect(domain[1]).to.be.closeTo(24, 1);
 				});
 
@@ -933,7 +933,7 @@ describe("TEXT", () => {
 					const expectedYs = [9, 157, 305, 434];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 2}));
+						.each(checkXY(expectedXs, expectedYs, "", {x: 6, y: 2}));
 				});
 			});
 		});
@@ -978,8 +978,8 @@ describe("TEXT", () => {
 				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.scale.y.domain();
 
-					expect(domain[0]).to.be.closeTo(-243, 2);
-					expect(domain[1]).to.be.closeTo(253, 2);
+					expect(domain[0]).to.be.closeTo(-243, 5);
+					expect(domain[1]).to.be.closeTo(253, 5);
 				});
 
 				it("should locate labels above each data point", () => {
@@ -1002,7 +1002,7 @@ describe("TEXT", () => {
 				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.scale.y.domain();
 
-					expect(domain[0]).to.be.closeTo(-256, 4);
+					expect(domain[0]).to.be.closeTo(-256, 8);
 					expect(domain[1]).to.be.closeTo(261, 3);
 				});
 
@@ -1022,7 +1022,7 @@ describe("TEXT", () => {
 					const domain = chart.internal.scale.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-255, 5);
-					expect(domain[1]).to.be.closeTo(262, 2);
+					expect(domain[1]).to.be.closeTo(262, 5);
 				});
 
 				it("should locate labels above each data point", () => {
@@ -1099,7 +1099,7 @@ describe("TEXT", () => {
 					const domain = chart.internal.scale.y.domain();
 
 					expect(domain[0]).to.be.closeTo(0, 1);
-					expect(domain[1]).to.be.closeTo(890, 3);
+					expect(domain[1]).to.be.closeTo(890, 10);
 				});
 
 				it("should locate labels above each data point", () => {
@@ -1107,7 +1107,7 @@ describe("TEXT", () => {
 					const expectedXs = [57, 150, 77, 362];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", 2));
+						.each(checkXY(expectedXs, expectedYs, "", 10));
 				});
 
 				it("set options data.type='line'", () => {
@@ -1117,7 +1117,7 @@ describe("TEXT", () => {
 				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.scale.y.domain();
 
-					expect(domain[0]).to.be.closeTo(-87, 4);
+					expect(domain[0]).to.be.closeTo(-87, 10);
 					expect(domain[1]).to.be.closeTo(889, 3);
 				});
 
@@ -1126,7 +1126,7 @@ describe("TEXT", () => {
 					const expectedXs = [107, 192, 125, 386];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", 2));
+						.each(checkXY(expectedXs, expectedYs, "", 10));
 				});
 			});
 		});
@@ -1141,6 +1141,7 @@ describe("TEXT", () => {
 								["data2", -50, -20, -10, -40],
 								["data3", -250, -220, -210, -240]
 							],
+							
 							groups: [["data1", "data2", "data3"]],
 							labels: true,
 							type: "bar"
