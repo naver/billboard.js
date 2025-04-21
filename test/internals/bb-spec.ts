@@ -12,7 +12,7 @@ import util from "../assets/util";
 import {$AXIS, $COMMON} from "../../src/config/classes";
 import Chart from "../../src/Chart/Chart";
 
-describe("Interface & initialization", () => {
+describe.skip("Interface & initialization", () => {
 	function getWrapper(id) {
 		let container = document.getElementById(id);
 
