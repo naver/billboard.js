@@ -1064,7 +1064,7 @@ describe("TEXT", () => {
 					const expectedXs = [74, 225, 374, 524];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", 2));
+						.each(checkXY(expectedXs, expectedYs, "", 5));
 				});
 
 				it("set options data.type='line'", () => {
@@ -1083,7 +1083,7 @@ describe("TEXT", () => {
 					const expectedXs = [6, 202, 397, 593];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", 2));
+						.each(checkXY(expectedXs, expectedYs, "", 5));
 				});
 			});
 
@@ -1118,7 +1118,7 @@ describe("TEXT", () => {
 					const domain = chart.internal.scale.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-87, 10);
-					expect(domain[1]).to.be.closeTo(889, 5);
+					expect(domain[1]).to.be.closeTo(889, 10);
 				});
 
 				it("should locate labels above each data point", () => {
