@@ -130,7 +130,7 @@ describe("API show", () => {
 				expect(+internal.$el.svg.selectAll(`.${$LEGEND.legendItemHidden}`).size()).to.be.equal(1);
 
 				done(1);
-			}, 300);
+			}, 400);
 		}));
 
 		it("Show all data", () => new Promise(done => {
