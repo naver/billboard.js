@@ -4561,7 +4561,7 @@ __metadata:
     jsdoc: "npm:^4.0.4"
     lint-staged: "npm:^15.5.1"
     mini-css-extract-plugin: "npm:^2.9.2"
-    playwright: "npm:^1.51.1"
+    playwright: "npm:^1.52.0"
     regenerator-runtime: "npm:^0.14.1"
     rollup: "npm:^4.40.0"
     rollup-plugin-delete: "npm:^3.0.1"
@@ -12756,7 +12756,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.51.1":
+"playwright@npm:^1.52.0":
   version: 1.52.0
   resolution: "playwright@npm:1.52.0"
   dependencies:

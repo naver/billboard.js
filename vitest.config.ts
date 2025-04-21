@@ -53,7 +53,7 @@ export default defineConfig({
                     browser: "chromium"
                 }
             ],
-            screenshotFailures: false
+            screenshotFailures: true
         },
         alias: [
             {
