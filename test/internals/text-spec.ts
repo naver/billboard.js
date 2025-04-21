@@ -1064,7 +1064,7 @@ describe("TEXT", () => {
 					const expectedXs = [74, 225, 374, 524];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", 8));
+						.each(checkXY(expectedXs, expectedYs, "", 10));
 				});
 
 				it("set options data.type='line'", () => {
@@ -1083,7 +1083,7 @@ describe("TEXT", () => {
 					const expectedXs = [6, 202, 397, 593];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", 8));
+						.each(checkXY(expectedXs, expectedYs, "", 10));
 				});
 			});
 

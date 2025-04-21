@@ -45,7 +45,7 @@ export default defineConfig({
             provider: "playwright",
             headless: true,
             viewport: {
-                width: 806,
+                width: 800,
                 height: 600
             },
             instances: [
