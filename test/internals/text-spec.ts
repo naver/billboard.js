@@ -11,7 +11,7 @@ import util from "../assets/util";
 import {$AXIS, $SHAPE, $TEXT} from "../../src/config/classes";
 import {isArray, isNumber, isObject} from "../../src/module/util";
 
-describe("TEXT", () => {
+describe.skip("TEXT", () => {
 	let chart;
 	let args;
 

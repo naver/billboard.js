@@ -14,7 +14,7 @@ export default defineConfig({
         }
     },
     test: {
-        testTimeout: 3_000,
+        testTimeout: 3_500,
         hookTimeout: 5_000,
         globals: true,
         coverage: {

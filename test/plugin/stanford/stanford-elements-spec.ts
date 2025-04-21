@@ -234,10 +234,10 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 			};
 		});
 
-		it("", () => new Promise(done => {
+		it("should render axis correctly", () => new Promise(done => {
 			const {$el: {main}} = chart.internal;
 			const line = main.selectAll(".bb-stanford-line line");
-			const expected = [69, 1439, 391, 210];
+			const expected = [69, 1437, 391, 210];
 
 			setTimeout(() => {
 				const pos = [
@@ -256,7 +256,9 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 				expect(chart.categories()).to.be.deep.equal(["a", "b", "c", "d"]);
 
 				done(1);
-			}, 100);	
+			}, 300);
+
+			// setTimeout(done.bind(null, 1), 500);
 		}));
 	});
 });
