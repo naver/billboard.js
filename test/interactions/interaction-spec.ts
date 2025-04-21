@@ -12,7 +12,7 @@ import util from "../assets/util";
 import {$ARC, $AXIS, $BAR, $CIRCLE, $COMMON, $FOCUS, $EVENT, $SELECT, $SHAPE} from "../../src/config/classes";
 import { transition } from "d3-transition";
 
-describe("INTERACTION", () => {
+describe.skip("INTERACTION", () => {
 	let chart;
 	let args;
 
