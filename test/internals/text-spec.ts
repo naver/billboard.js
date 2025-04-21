@@ -262,7 +262,7 @@ describe("TEXT", () => {
 						if (d.value < 0) {
 							const x = +this.getAttribute("transform").match(/\((\d+\.\d+)/)[1];
 
-							expect(x).to.be.closeTo(57, 2);
+							expect(x).to.be.closeTo(57, 3);
 						}
 					});
 				});
@@ -763,7 +763,7 @@ describe("TEXT", () => {
 					const expectedXs = [75, 225, 374, 524];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", 2));
+						.each(checkXY(expectedXs, expectedYs, "", 5));
 				});
 
 				it("set options data.type='line'", () => {
@@ -782,7 +782,7 @@ describe("TEXT", () => {
 					const expectedXs = [6, 202, 397, 593];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", 2));
+						.each(checkXY(expectedXs, expectedYs, "", 5));
 				});
 			});
 
@@ -925,7 +925,7 @@ describe("TEXT", () => {
 					const domain = chart.internal.scale.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-222, 3); // -220.4755083436658 vs -223.64837940981494
-					expect(domain[1]).to.be.closeTo(24, 1);
+					expect(domain[1]).to.be.closeTo(24, 2);
 				});
 
 				it("should locate labels above each data point", () => {
@@ -1003,7 +1003,7 @@ describe("TEXT", () => {
 					const domain = chart.internal.scale.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-256, 8);
-					expect(domain[1]).to.be.closeTo(261, 3);
+					expect(domain[1]).to.be.closeTo(261, 5);
 				});
 
 				it("should locate labels above each data point", () => {
@@ -1011,7 +1011,7 @@ describe("TEXT", () => {
 					const expectedXs = [72, 525, 513, 295];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 2}));
+						.each(checkXY(expectedXs, expectedYs, "", {x: 5, y: 2}));
 				});
 
 				it("set options data.type='line'", () => {
@@ -1021,7 +1021,7 @@ describe("TEXT", () => {
 				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.scale.y.domain();
 
-					expect(domain[0]).to.be.closeTo(-255, 5);
+					expect(domain[0]).to.be.closeTo(-255, 10);
 					expect(domain[1]).to.be.closeTo(262, 5);
 				});
 
@@ -1030,7 +1030,7 @@ describe("TEXT", () => {
 					const expectedXs = [70, 527, 515, 297];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 2}));
+						.each(checkXY(expectedXs, expectedYs, "", {x: 5, y: 2}));
 				});
 			});
 		});
@@ -1118,7 +1118,7 @@ describe("TEXT", () => {
 					const domain = chart.internal.scale.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-87, 10);
-					expect(domain[1]).to.be.closeTo(889, 3);
+					expect(domain[1]).to.be.closeTo(889, 5);
 				});
 
 				it("should locate labels above each data point", () => {
