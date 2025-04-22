@@ -5,7 +5,7 @@
 import Chart from "./Chart/Chart";
 import {isObject, mergeObj} from "./module/util";
 
-let defaults = {};
+let defaults = Object.create(null);
 
 /**
  * @namespace bb
@@ -92,7 +92,7 @@ const bb = {
 	 * });
 	 */
 	generate(config) {
-		const options = mergeObj({}, defaults, config);
+		const options = mergeObj(Object.create(null), defaults, config);
 		const inst = new Chart(options);
 
 		inst.internal.charts = this.instance;

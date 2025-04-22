@@ -620,13 +620,15 @@ function mergeObj(target: object, ...objectN): any {
 
 	if (isObject(target) && isObject(source)) {
 		Object.keys(source).forEach(key => {
-			const value = source[key];
+			if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
+				const value = source[key];
 
-			if (isObject(value)) {
-				!target[key] && (target[key] = {});
-				target[key] = mergeObj(target[key], value);
-			} else {
-				target[key] = isArray(value) ? value.concat() : value;
+				if (isObject(value)) {
+					!target[key] && (target[key] = {});
+					target[key] = mergeObj(target[key], value);
+				} else {
+					target[key] = isArray(value) ? value.concat() : value;
+				}
 			}
 		});
 	}

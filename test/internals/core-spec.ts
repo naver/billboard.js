@@ -344,4 +344,14 @@ describe("CORE", function() {
 			expect(d3Select(previous).classed($GRID.grid)).to.be.true;
 		});
 	});
+
+	describe("security prevention", () => {
+		it("should not allow pollution of the prototype", () => {
+			const chart = util.generate(JSON.parse(`{"data":{"columns":[["data1",30,200,100,400,150,250],["data2",130,100,140,200,150,50]],"type":"bar"},"bar":{"width":{"ratio":0.5}},"bindto":"#chart","__proto__":{"pollutedKey":"pollutedValue"}}`));
+
+			// @ts-ignore
+			expect(({}.__proto__).pollutedKey).to.be.undefined;
+		});
+	});
+
 });
