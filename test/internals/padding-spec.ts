@@ -7,7 +7,7 @@ import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$AXIS} from "../../src/config/classes";
 
-describe.skip("PADDING", () => {
+describe("PADDING", () => {
 	let chart;
 	let args: any = {
 		svg: {
@@ -436,7 +436,7 @@ describe.skip("PADDING", () => {
 		});
 
 		describe("non-rotated axis", () => {
-			const bottom = 37 - (util.isCI ? 1 : 0);
+			const bottom = 37;
 
 			it("outer y axis with legend", () => {
 				deepEqual({top: 0, right: 2, bottom, left: 40.59375});

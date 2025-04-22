@@ -1032,7 +1032,7 @@ describe("TOOLTIP", function() {
 						expect(+chart.$.tooltip.select(".value").html()).to.be.equal(160);
 
 						done(1);
-					}, 300);
+					}, 350);
 				}
 			});
 		}));

@@ -374,7 +374,7 @@ describe("COLOR", () => {
 				expect(arc.style.fill).to.be.equal(originalColor);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -392,6 +392,9 @@ describe("COLOR", () => {
 					threshold: {
 						values: [0, 20, 40, 60, 80]
 					}
+				},
+				transition: {
+					duration: 200
 				}
 			}
 		});
@@ -406,13 +409,17 @@ describe("COLOR", () => {
 
 			setTimeout(() => {
 				expect(path.style("fill")).to.be.equal(args.color.pattern[i++]);
-				chart.load({columns: [["data", 40]]});
-			}, 300);
 
-			setTimeout(() => {
-				expect(path.style("fill")).to.be.equal(args.color.pattern[i++]);
-				done(1);
-			}, 600);
+				chart.load({
+					columns: [["data", 40]],
+					done() {
+						setTimeout(() => {
+							expect(path.style("fill")).to.be.equal(args.color.pattern[i++]);
+							done(1);
+						}, 350);
+					}
+				});
+			}, 350);
 		}));
 	});
 

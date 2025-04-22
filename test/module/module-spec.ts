@@ -162,7 +162,7 @@ describe("MODULE", function() {
                 [depsFn]
             )();
 
-            setTimeout(() => done(1), 3000);
+            setTimeout(() => done(1), 2000);
         }), 3000);
     });
 });

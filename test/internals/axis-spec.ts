@@ -16,7 +16,7 @@ import {$AXIS} from "../../src/config/classes";
 import AxisRendererHelper from "../../src/ChartInternal/Axis/AxisRendererHelper";
 //import getSizeFor1Char from "exports-loader?getSizeFor1Char!../../src/axis/bb.axis";
 
-describe.skip("AXIS", function() {
+describe("AXIS", function() {
 	let chart;
 	let args: any = {
 		data: {
@@ -3832,7 +3832,7 @@ describe.skip("AXIS", function() {
 				text.style("font-size", null);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 });

@@ -16,6 +16,9 @@ describe("API show", () => {
 				["data1", 30, 200, 100, 400],
 				["data2", 500, 800, 500, 2000]
 			]
+		},
+		transition: {
+			duration: 150
 		}
 	};
 
@@ -39,7 +42,7 @@ describe("API show", () => {
 				expect(+internal.$el.svg.selectAll(`.${$LEGEND.legendItemHidden}`).size()).to.be.equal(1);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("Hide all data", () => new Promise(done => {
@@ -62,7 +65,7 @@ describe("API show", () => {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("Hide all data with legend", () => new Promise(done => {
@@ -77,7 +80,7 @@ describe("API show", () => {
 					});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		// https://github.com/naver/billboard.js/issues/1758
@@ -98,7 +101,7 @@ describe("API show", () => {
 					chart.$.main.select(`.${$COMMON.target}-data1`).style("display")
 				).to.be.equal("none");
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("legend items should be hidden", () => {
@@ -161,7 +164,7 @@ describe("API show", () => {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("Show all data using 'withLegend' option", () => new Promise(done => {
@@ -188,7 +191,7 @@ describe("API show", () => {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -216,7 +219,7 @@ describe("API show", () => {
 
 				// show data
 				chart.toggle();
-			}, 100);
+			}, 350);
 
 			setTimeout(() => {
 				main.selectAll(`.${$LINE.chartLine}`).each(function() {
@@ -232,7 +235,7 @@ describe("API show", () => {
 				});
 
 				done(1);
-			}, 400);
+			}, 700);
 		}));
 	});
 
@@ -279,7 +282,7 @@ describe("API show", () => {
 					});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 });

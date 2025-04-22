@@ -51,7 +51,7 @@ describe("SHAPE GAUGE", () => {
 				expect(chartArc.select(`.${$GAUGE.gaugeValue}`).attr("dy")).to.be.equal("-.1em");
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("gauge max value should be equal to totalSum if gauge max < totalSum", () => {
@@ -107,7 +107,7 @@ describe("SHAPE GAUGE", () => {
 					.to.be.equal("M-211.85,0A211.85,211.85,0,1,1,-65.465,201.481L-62.375,191.971A201.85,201.85,0,1,0,-201.85,0Z");
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should render correctly based when min value is specified", () => {
@@ -229,7 +229,7 @@ describe("SHAPE GAUGE", () => {
 				expect(max.empty()).to.be.true;
 
 				done(1);
-			}, 100);
+			}, 350);
 		}));
 
 		it("check for arcLength option", () => new Promise(done => {
@@ -266,7 +266,7 @@ describe("SHAPE GAUGE", () => {
 				expect(arcPath).to.be.equal("M-211.85,0A211.85,211.85,0,1,1,0,211.85L0,201.85A201.85,201.85,0,1,0,-201.85,0Z");
 
 				done(1);
-			}, 100);
+			}, 350);
 		}));
 
 		it("check for stack data #1", () => new Promise(done => {
@@ -305,7 +305,7 @@ describe("SHAPE GAUGE", () => {
 				});
 
 				done(1);
-			}, 200);
+			}, 350);
 		}));
 
 		it("check for stack data #2", () => new Promise(done => {
@@ -346,7 +346,7 @@ describe("SHAPE GAUGE", () => {
 				});
 
 				done(1);
-			}, 100);
+			}, 350);
 		}));
 
 		it("check for stack data #3", () => new Promise(done => {
@@ -378,7 +378,7 @@ describe("SHAPE GAUGE", () => {
 				});
 				
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("check for startingAngle option", () => {
@@ -497,7 +497,7 @@ describe("SHAPE GAUGE", () => {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -574,7 +574,7 @@ describe("SHAPE GAUGE", () => {
 				});
 
 				done(1);
-			}, 100);
+			}, 350);
 		}));
 
 		it("each data_column should have one background", () => {
@@ -605,7 +605,7 @@ describe("SHAPE GAUGE", () => {
 				});
 
 				done(1);
-			}, 100);
+			}, 350);
 		}));
 
 		it("each label should have the same color", () => {
@@ -749,7 +749,7 @@ describe("SHAPE GAUGE", () => {
 				})
 
 				done(1);
-			}, 100);
+			}, 350);
 		}));
 
 		it("set gauge.fullCircle", () => {
@@ -794,7 +794,7 @@ describe("SHAPE GAUGE", () => {
 				expect(max.empty()).to.be.true;
 
 				done(1);
-			}, 100);
+			}, 350);
 		}));
 
 		it("set gauge.arcLength", () => {
@@ -831,7 +831,7 @@ describe("SHAPE GAUGE", () => {
 				})
 
 				done(1);
-			}, 100);
+			}, 500);
 		}));
 
 		const gaugeSizeWithoutLabel = {

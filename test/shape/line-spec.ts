@@ -13,7 +13,7 @@ import {
 import {$AXIS, $COMMON, $LINE, $SELECT} from "../../src/config/classes";
 import util from "../assets/util";
 
-describe.skip("SHAPE LINE", () => {
+describe("SHAPE LINE", () => {
 	let chart;
 	let args;
 	let skipEach = false;
@@ -105,7 +105,7 @@ describe.skip("SHAPE LINE", () => {
 				});
 
 				done(1);
-			}, 300)
+			}, 350)
 
 		}));
 
@@ -122,7 +122,7 @@ describe.skip("SHAPE LINE", () => {
 				expect(segments).to.be.equal(3);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
