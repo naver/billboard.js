@@ -1,3 +1,10 @@
+## [3.15.1](https://github.com/naver/billboard.js/compare/3.15.0...3.15.1) (2025-04-22)
+
+
+### Bug Fixes
+
+* **core:** Fix potential security vulnerability ([82ea7ac](https://github.com/naver/billboard.js/commit/82ea7ac4f5720d6a7f0c2fa5a5dad51a549667bb)), closes [#3975](https://github.com/naver/billboard.js/issues/3975)
+
 # [3.15.0](https://github.com/naver/billboard.js/compare/3.14.3...3.15.0) (2025-03-20)
 
 
