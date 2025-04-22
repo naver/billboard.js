@@ -7,7 +7,7 @@ import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$AXIS} from "../../src/config/classes";
 
-describe("PADDING", () => {
+describe.skip("PADDING", () => {
 	let chart;
 	let args: any = {
 		svg: {

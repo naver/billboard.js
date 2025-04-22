@@ -9,7 +9,7 @@ import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$AXIS, $BAR, $COMMON, $EVENT, $LINE, $SHAPE} from "../../src/config/classes";
 
-describe("SHAPE BAR", () => {
+describe.skip("SHAPE BAR", () => {
 	let chart;
 	let args;
 

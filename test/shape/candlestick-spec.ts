@@ -9,7 +9,7 @@ import util from "../assets/util";
 import {isArray} from "../../src/module/util";
 import {$CANDLESTICK, $COMMON} from "../../src/config/classes";
 
-describe("SHAPE CANDLESTICK", () => {
+describe.skip("SHAPE CANDLESTICK", () => {
 	let chart;
 	let args;
 

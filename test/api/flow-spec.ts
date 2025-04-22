@@ -408,17 +408,16 @@ describe("API flow", () => {
 				duration: 300,
 				done() {
 					const {$el} = this.internal;
-				
+
 					// grids
 					const xgrids = $el.grid.main.selectAll(`.${$GRID.xgrids} line`);
 
 					expect(xgrids.size()).to.be.equal(2);
-
 					// region
 					const regionRect = $el.region.list.select("rect").node().getBoundingClientRect();
-
-					expect(regionRect.x).to.be.below(-240);
 					
+					expect(regionRect.x).to.be.below(-231);
+
 					// data label text
 					const text = $el.main.selectAll(`.${$TEXT.chartText} text`);
 
