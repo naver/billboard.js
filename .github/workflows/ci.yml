@@ -25,6 +25,7 @@ jobs:
       run: |
         npm config set package-lock false
         npm install --save --legacy-peer-deps
+        sudo npx playwright install-deps
         npx playwright install
 
     - name: Lint
