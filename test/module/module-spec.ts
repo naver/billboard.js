@@ -161,6 +161,8 @@ describe("MODULE", function() {
                 },
                 [depsFn]
             )();
-        }), 5000);
+
+            setTimeout(() => done(1), 3000);
+        }), 3000);
     });
 });

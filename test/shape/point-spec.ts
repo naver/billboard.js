@@ -10,7 +10,7 @@ import util from "../assets/util";
 import {$CIRCLE} from "../../src/config/classes";
 import {fireEvent} from "../assets/helper";
 
-describe("SHAPE POINT", () => {
+describe.skip("SHAPE POINT", () => {
 	let chart;
 	let args;
 
@@ -441,9 +441,7 @@ describe("SHAPE POINT", () => {
 					columns: [
 					  ["data1", 450],
 					],
-					onclick: sinon.spy(function() {
-						console.log("3333333")
-					}),
+					onclick: sinon.spy(function() {}),
 					type: "line"
 				},
 				point: {

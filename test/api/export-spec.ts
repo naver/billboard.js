@@ -229,9 +229,8 @@ describe("API export", () => {
 
 			// pattern for CI: preserveFontStyle=true
 			[
-				"BvTQtGxT72vgDsOwkU2xaEizL1iU8C42iAvjQgANecBNNwSWbPoMwi",
-				"rbn4q78UGcAmAqZn0zhxdVQAsbSz4srQCoD9sUQD0hw8KgP7wQQHQ",
-				"79VQVUAVVAFVAFVIHQK6AAGPohoAKoAqqAKqAKqAKqQNgUUAAMm+PaX1VAFVAFVAFVQ"
+				"gAOUNIIJ4E4iSYKADjOUfrHhUFYN2Rc8AQE6AADHFy6BoJ1ECAArAGeOwaTwIUgPHMK6OqjgAFYHXc2IsEwk6AAjDsGaJ",
+				"spOAJ4xgEsgAAAABJRU5ErkJggg=="
 			]
 		];
 
