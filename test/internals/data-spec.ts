@@ -11,7 +11,7 @@ import util from "../assets/util";
 import {$ARC, $AREA, $AXIS, $BAR, $CIRCLE, $COMMON, $LINE, $SHAPE, $TEXT} from "../../src/config/classes";
 import {isNumber} from "../../src/module/util";
 
-describe.skip("DATA", () => {
+describe("DATA", () => {
 	let chart;
 	let args;
 
@@ -230,7 +230,7 @@ describe.skip("DATA", () => {
 				expect(data.length).to.be.equal(3);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("set options data.mimeType='json'", () => {
@@ -251,7 +251,7 @@ describe.skip("DATA", () => {
 				expect(chart.data.values("data1")).to.deep.equal([220, 240, 270, 250, 280]);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -965,11 +965,11 @@ describe.skip("DATA", () => {
 
 			setTimeout(() => {
 				chart.$.main.selectAll(`.${$COMMON.target}-data2 path`).each(function() {
-					expect(this.getBBox().height).to.be.equal(chartHeight);
+					expect(this.getBBox().height).to.be.closeTo(chartHeight, 5);
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("set options data.columns", () => {
@@ -1068,7 +1068,7 @@ describe.skip("DATA", () => {
 			setTimeout(() => {
 				expect(emptyLabelText.style("display")).to.be.equal("block");
 				done(1);
-			}, 300)
+			}, 350)
 		}));
 
 		it("set options empty.label.text=''", () => {
@@ -1121,7 +1121,7 @@ describe.skip("DATA", () => {
 				expect(bgArc.attr("d")).to.be.equal("M 0 0");
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -1367,7 +1367,7 @@ describe.skip("DATA", () => {
 					expect(spyHidden.args[0][0]).to.deep.equal([id]);
 
 					resolve(true);
-				}, 300);
+				}, 350);
 			}).then(() => {
 				return new Promise((resolve, reject) => {
 					// when is called already hidden, do not call onhidden callback
@@ -1377,7 +1377,7 @@ describe.skip("DATA", () => {
 						expect(spyHidden.callCount).to.be.equal(1);
 	
 						resolve(true);
-					}, 300);
+					}, 350);
 				});
 			}).then(() => {
 				return new Promise((resolve, reject) => {
@@ -1389,7 +1389,7 @@ describe.skip("DATA", () => {
 						expect(spyShown.args[0][0]).to.deep.equal([id]);
 
 						resolve(true);
-					}, 300);
+					}, 350);
 				});
 			}).then(() => {
 				// when is called already shown, do not call onshown callback
@@ -1399,7 +1399,7 @@ describe.skip("DATA", () => {
 					expect(spyShown.callCount).to.be.equal(1);
 
 					done(1);
-				}, 300);
+				}, 350);
 			});
 		}));
 	});

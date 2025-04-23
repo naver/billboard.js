@@ -94,7 +94,7 @@ describe("SHAPE POLAR", () => {
                 });
 
                 done(1);
-            }, 300);
+            }, 350);
         }));
     });
 
@@ -118,7 +118,7 @@ describe("SHAPE POLAR", () => {
                 });
 
                 done(1);
-            }, 300);
+            }, 350);
         }));
 
         it("set options: padAngle=0.3", () => {
@@ -132,7 +132,7 @@ describe("SHAPE POLAR", () => {
                 });
 
                 done(1);
-            }, 300);
+            }, 350);
         }));
 
         it("set options: padding=10", () => {
@@ -147,7 +147,7 @@ describe("SHAPE POLAR", () => {
                 });
 
                 done(1);
-            }, 300);
+            }, 350);
         }));
 
         it("set options: startingAngle=3", () => {
@@ -166,7 +166,7 @@ describe("SHAPE POLAR", () => {
                 });
 
                 done(1);
-            }, 300);
+            }, 350);
         }));
     });
 

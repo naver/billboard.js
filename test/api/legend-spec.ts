@@ -49,7 +49,7 @@ describe("API legend", () => {
 			});
 
 			done(1);
-		}, 300)
+		}, 350)
 	}));
 
 	it("it should hide 'data1' legend", () => {
@@ -70,6 +70,6 @@ describe("API legend", () => {
 			});
 
 			done(1);
-		}, 300);
+		}, 350);
 	}));
 });

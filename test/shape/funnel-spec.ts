@@ -102,7 +102,7 @@ describe("SHAPE FUNNEL", () => {
 				expect(accumulatedHeight).to.be.equal(internal.state.current.height);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("data shape hide -> show correctly?", () => new Promise(done => {
@@ -124,7 +124,7 @@ describe("SHAPE FUNNEL", () => {
 				expect(parseInt(`${accumulatedHeight}`)).to.be.equal(internal.state.current.height);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should .tooltip.show/hide() API works", () => {

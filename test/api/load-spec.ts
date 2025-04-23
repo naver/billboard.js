@@ -106,7 +106,7 @@ describe("API load", function() {
 						done(1);
 					}
 				});
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -390,7 +390,7 @@ describe("API load", function() {
 					setTimeout(() => {
 						expect(+axisLabel.attr("dy")).to.be.below(dy);
 						done(1);
-					}, 300);
+					}, 350);
 				}
 			});
 		}));
@@ -586,7 +586,7 @@ describe("API load", function() {
 						done(1);
 					}
 				});
-			}, 300);
+			}, 350);
 		}));
 
 		it("set options data.type='area'", () => {
@@ -614,7 +614,7 @@ describe("API load", function() {
 						done(1);
 					}
 				});
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -1079,7 +1079,7 @@ describe("API load", function() {
 						expect(lastLegend.getBoundingClientRect().bottom).to.be.below(chartNode.getBoundingClientRect().bottom);
 						
 						done(1);
-					}, 300);
+					}, 350);
 				}
 			});
 		}));
@@ -1107,7 +1107,7 @@ describe("API load", function() {
 						expect(lastLegend.getBoundingClientRect().bottom).to.be.above(chartNode.getBoundingClientRect().bottom);
 						
 						done(1);
-					}, 300);
+					}, 350);
 				}
 			});
 		}));
@@ -1140,7 +1140,7 @@ describe("API load", function() {
 								expect(legendBottom < chartBottom).to.be.true;
 								
 								done(1);
-							}, 300);
+							}, 350);
 						}
                     })
 				}
@@ -1175,7 +1175,7 @@ describe("API load", function() {
 								expect(chartBottom - legendBottom > 25).to.be.true;
 								
 								done(1);
-							}, 300);
+							}, 350);
 						}
                     })
 				}

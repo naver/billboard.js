@@ -237,7 +237,7 @@ describe("SUBCHART", () => {
 				expect(chart.internal.scale.x.domain()).to.not.deep.equal(chart.internal.orgXDomain);
 
 				done(1);
-			}, 300);
+			}, 350);
 		});
 
 		it("check initial subchart range selection", () => {

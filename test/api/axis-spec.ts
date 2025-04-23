@@ -70,7 +70,7 @@ describe("API axis", function() {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should update y axis label", () => new Promise(done => {
@@ -87,7 +87,7 @@ describe("API axis", function() {
 				expect(label.attr("dy")).to.be.equal("-0.5em");
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should return axis labels", () => {
@@ -133,7 +133,7 @@ describe("API axis", function() {
 				expect(tspan.empty()).to.be.false;
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should update axis max value", () => new Promise(done => {
@@ -167,7 +167,7 @@ describe("API axis", function() {
 				expect(+tspan[tspan.length - 1].innerHTML).to.be.equal(y2);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("axis.min(): check unset & shorthand", () => {
@@ -301,7 +301,7 @@ describe("API axis", function() {
 				expect(tspan.size()).to.be.equal(2);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("axis.range(): check unset & shorthand", () => {

@@ -11,7 +11,7 @@ import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$ARC, $AXIS, $BAR, $CIRCLE, $COMMON, $FOCUS, $EVENT, $SELECT, $SHAPE} from "../../src/config/classes";
 
-describe.skip("INTERACTION", () => {
+describe("INTERACTION", () => {
 	let chart;
 	let args;
 
@@ -286,7 +286,7 @@ describe.skip("INTERACTION", () => {
 						});
 
 						done(1);
-					}, 300);
+					}, 350);
 				}));
 			});
 
@@ -371,7 +371,7 @@ describe.skip("INTERACTION", () => {
 								done(1);
 							}
 						});
-					}, 300);
+					}, 350);
 				}));
 			});
 		});
@@ -434,7 +434,7 @@ describe.skip("INTERACTION", () => {
 					});
 
 					done(1);
-				}, 300);
+				}, 350);
 			}));
 
 			it("set options data.groups / tooltip.grouped=false", () => {
@@ -462,7 +462,7 @@ describe.skip("INTERACTION", () => {
 					});
 
 					done(1);
-				}, 300);
+				}, 350);
 			}));
 
 			it("Overlapped circles: Callbacks were called correctly with its arguments?", () => new Promise(done => {
@@ -484,7 +484,7 @@ describe.skip("INTERACTION", () => {
 					});
 
 					done(1);
-				}, 300);
+				}, 350);
 			}));
 
 			it("set options", () => {
@@ -1192,7 +1192,7 @@ describe.skip("INTERACTION", () => {
 						expect(parseInt(chart.$.tooltip.style("left"))).to.be.above(left);
 	
 						done(1);
-					}, 300);
+					}, 350);
 				});
 			}));
 
@@ -1253,7 +1253,7 @@ describe.skip("INTERACTION", () => {
 					expect(xGridFocus.style("visibility")).to.be.equal("visible");
 	
 					done(1);
-				}, 300);
+				}, 350);
 			});
 		}));
 

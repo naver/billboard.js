@@ -10,7 +10,7 @@ import util from "../assets/util";
 import {$CIRCLE} from "../../src/config/classes";
 import {fireEvent} from "../assets/helper";
 
-describe.skip("SHAPE POINT", () => {
+describe("SHAPE POINT", () => {
 	let chart;
 	let args;
 
@@ -180,7 +180,7 @@ describe.skip("SHAPE POINT", () => {
 
 				expect(point.parentNode.style.opacity).to.be.equal("0");
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -221,10 +221,10 @@ describe.skip("SHAPE POINT", () => {
 							expect(pos.every(v => v === currPos)).to.be.true;
 
 							done(1);
-						}, 300);
+						}, 350);
 					}
 				});
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -627,7 +627,7 @@ describe.skip("SHAPE POINT", () => {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("set option: data.type=scatter", () => {
@@ -643,7 +643,7 @@ describe.skip("SHAPE POINT", () => {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
