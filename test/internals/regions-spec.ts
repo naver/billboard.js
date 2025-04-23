@@ -282,8 +282,6 @@ describe("REGIONS", function() {
 			chart.internal.$el.region.list.each(function(d, i) {
 				const rect = this.querySelector("rect");
 				const text = this.querySelector("text");
-
-				//console.log(util.parseNum(text.getAttribute("transform").replace("rotate(-90)", "")));
 				const center = args.regions[i].label.center;
 
 				const w = +rect.getAttribute("width") / 2;

@@ -257,7 +257,7 @@ export default {
 		const $$ = this.internal;
 		const {state, $el: {chart, svg}} = $$;
 		const {width, height} = state.current;
-		const opt = mergeObj({
+		const opt = mergeObj(Object.create(null), {
 			width,
 			height,
 			preserveAspectRatio: true,
