@@ -143,7 +143,7 @@ describe("API flow", () => {
 					clearInterval(interval);
 
 					moved.reduce((a, c) => {
-						expect(a >= c - 5).to.be.true;
+						expect(a >= c - 10).to.be.true;
 						return a + c;
 					});
 

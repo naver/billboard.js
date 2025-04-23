@@ -330,7 +330,7 @@ describe("API tooltip", () => {
 				expect(tooltip.select(".value").text()).to.be.equal("19.2%");
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should show tooltip correctly using 'id'?", () => new Promise(done => {
@@ -344,7 +344,7 @@ describe("API tooltip", () => {
 				expect(tooltip.select(".value").text()).to.be.equal("19.2%");
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("set options tooltip.init", () => {

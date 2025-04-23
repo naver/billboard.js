@@ -245,7 +245,7 @@ describe("Interface & initialization", () => {
 			setTimeout(() => {
 				expect(+chart.internal.$el.svg.attr("height")).to.be.equal(chartHeight);
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should be resizing all generated chart elements", () => new Promise(done => {
@@ -284,7 +284,7 @@ describe("Interface & initialization", () => {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should set correct height value", () => {
@@ -353,7 +353,7 @@ describe("Interface & initialization", () => {
 			// should resize on parent element
 			setTimeout(() => {
 				expect(+chart.$.svg.attr("width")).to.be.equal(width);
-			}, 300);
+			}, 350);
 		});
 
 	});
@@ -542,7 +542,7 @@ describe("Interface & initialization", () => {
 				expect(spy.afterinit.called).to.be.true;
 				expect(spy.rendered.called).to.be.true;
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("check lazy rendering & mutation observer: class attribute", () => new Promise(done => {
@@ -567,7 +567,7 @@ describe("Interface & initialization", () => {
 				expect(spy.rendered.called).to.be.true;
 				
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("check lazy rendering on callbacks", () => new Promise(done => {
@@ -605,8 +605,8 @@ describe("Interface & initialization", () => {
 					expect(spy.resized.called).to.be.true;
 					
 					done(1);
-				}, 300);	
-			}, 300);
+				}, 350);	
+			}, 350);
 		}), 4000);
 
 		it("check lazy rendering via option", () => new Promise(done => {
@@ -635,7 +635,7 @@ describe("Interface & initialization", () => {
 				expect(spy.rendered.called).to.be.true;
 		
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should forcely linitialize even chart element visibility is hidden.", () =>{

@@ -111,7 +111,7 @@ describe("SHAPE ARC", () => {
 					.to.be.equal("M-124.522,-171.39A211.85,211.85,0,0,1,0,-211.85L0,0Z");
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -245,7 +245,7 @@ describe("SHAPE ARC", () => {
 					expect(this.getAttribute("d").indexOf(expectedPath[d.data.id]) > -1).to.be.ok;
 				});
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("check for outerRadius", () => new Promise(done => {
@@ -273,7 +273,7 @@ describe("SHAPE ARC", () => {
 				expect(chart.internal.state.outerRadius).to.be.equal(chart.config("pie.outerRadius"));
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("check for variant outerRadius", () => new Promise(done => {
@@ -316,7 +316,7 @@ describe("SHAPE ARC", () => {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -434,7 +434,7 @@ describe("SHAPE ARC", () => {
 
 				expect(chart.$.tooltip.select(".value").text()).to.be.equal("50.0%");
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -587,10 +587,10 @@ describe("SHAPE ARC", () => {
 							});
 
 							done(1);
-						}, 300);
+						}, 350);
 					}
 				});
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -704,12 +704,12 @@ describe("SHAPE ARC", () => {
 					chart.focus("data1");
 
 					resolve(undefined);
-				}, 300);
+				}, 350);
 			}).then(() => {
 				setTimeout(() => {
 					expect(path.getTotalLength()).to.be.greaterThan(length);
 					done(1);
-				}, 300);
+				}, 350);
 			});
 		};
 
@@ -795,7 +795,7 @@ describe("SHAPE ARC", () => {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("set option: function", () => {
@@ -892,7 +892,7 @@ describe("SHAPE ARC", () => {
 				onafterinit: function() {
 					setTimeout(() => {
 						this.focus("red");
-					}, 300);
+					}, 350);
 			
 					setTimeout(() => {
 						const d = this.$.arc.select(".bb-arc-red").attr("d");
@@ -901,7 +901,7 @@ describe("SHAPE ARC", () => {
 						expect(d).to.not.be.equal("M 0 0");
 
 						done(1);
-					}, 300);
+					}, 350);
 				}
 			});			
 		}));

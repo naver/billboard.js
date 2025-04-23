@@ -139,7 +139,7 @@ describe("API chart", () => {
 
 				chart.destroy();
 				setTimeout(done, 500);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should not throw error when already destroyed", () => {

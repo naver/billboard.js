@@ -326,7 +326,7 @@ describe("DOMAIN", function() {
 				setTimeout(() => {
 					expect(chart.internal.scale[axisId].domain()).to.be.deep.equal(domain);
 					done(1);
-				}, 300);
+				}, 350);
 			};
 
 			it("y Axis domain should maintain", () => new Promise(done => {
