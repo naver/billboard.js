@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.0-nightly-20250415004916
+ * @version 3.15.0-nightly-20250423004702
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -590,12 +590,14 @@ function mergeObj(target, ...objectN) {
   const source = objectN.shift();
   if (isObject(target) && isObject(source)) {
     Object.keys(source).forEach((key) => {
-      const value = source[key];
-      if (isObject(value)) {
-        !target[key] && (target[key] = {});
-        target[key] = mergeObj(target[key], value);
-      } else {
-        target[key] = isArray(value) ? value.concat() : value;
+      if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
+        const value = source[key];
+        if (isObject(value)) {
+          !target[key] && (target[key] = {});
+          target[key] = mergeObj(target[key], value);
+        } else {
+          target[key] = isArray(value) ? value.concat() : value;
+        }
       }
     });
   }
@@ -845,7 +847,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.15.0-nightly-20250415004916");
+__publicField(Plugin, "version", "3.15.0-nightly-20250423004702");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);

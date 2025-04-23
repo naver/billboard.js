@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.0-nightly-20250415004916
+ * @version 3.15.0-nightly-20250423004702
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -2702,13 +2702,15 @@ function mergeObj(target) {
     var source = objectN.shift();
     if (isObject(target) && isObject(source)) {
         Object.keys(source).forEach(function (key) {
-            var value = source[key];
-            if (isObject(value)) {
-                !target[key] && (target[key] = {});
-                target[key] = mergeObj(target[key], value);
-            }
-            else {
-                target[key] = isArray(value) ? value.concat() : value;
+            if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
+                var value = source[key];
+                if (isObject(value)) {
+                    !target[key] && (target[key] = {});
+                    target[key] = mergeObj(target[key], value);
+                }
+                else {
+                    target[key] = isArray(value) ? value.concat() : value;
+                }
             }
         });
     }
@@ -11024,7 +11026,7 @@ var apiExport = {
         var $$ = this.internal;
         var state = $$.state, _a = $$.$el, chart = _a.chart, svg = _a.svg;
         var _b = state.current, width = _b.width, height = _b.height;
-        var opt = mergeObj({
+        var opt = mergeObj(Object.create(null), {
             width: width,
             height: height,
             preserveAspectRatio: true,
@@ -24771,10 +24773,10 @@ var zoomModule = function () {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
  */
-var defaults = {};
+var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.15.0-nightly-20250415004916
+ * @version 3.15.0-nightly-20250423004702
  */
 var bb = {
     /**
@@ -24784,7 +24786,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.15.0-nightly-20250415004916",
+    version: "3.15.0-nightly-20250423004702",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -24856,7 +24858,7 @@ var bb = {
      * });
      */
     generate: function (config) {
-        var options = mergeObj({}, defaults, config);
+        var options = mergeObj(Object.create(null), defaults, config);
         var inst = new Chart(options);
         inst.internal.charts = this.instance;
         this.instance.push(inst);

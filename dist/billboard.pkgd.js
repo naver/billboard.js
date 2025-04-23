@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.0-nightly-20250415004916
+ * @version 3.15.0-nightly-20250423004702
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -26458,12 +26458,14 @@ function mergeObj(target, ...objectN) {
   const source = objectN.shift();
   if (isObject(target) && isObject(source)) {
     Object.keys(source).forEach((key) => {
-      const value = source[key];
-      if (isObject(value)) {
-        !target[key] && (target[key] = {});
-        target[key] = mergeObj(target[key], value);
-      } else {
-        target[key] = isArray(value) ? value.concat() : value;
+      if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
+        const value = source[key];
+        if (isObject(value)) {
+          !target[key] && (target[key] = {});
+          target[key] = mergeObj(target[key], value);
+        } else {
+          target[key] = isArray(value) ? value.concat() : value;
+        }
       }
     });
   }
@@ -36018,7 +36020,7 @@ function renderText(ctx, glyph) {
     const $$ = this.internal;
     const { state, $el: { chart, svg } } = $$;
     const { width, height } = state.current;
-    const opt = mergeObj({
+    const opt = mergeObj(/* @__PURE__ */ Object.create(null), {
       width,
       height,
       preserveAspectRatio: true,
@@ -49630,7 +49632,7 @@ let resolver_shape_treemap = () => (extendAxis([shape_treemap], [Options_shape_t
 ;// ./src/core.ts
 
 
-let defaults = {};
+let defaults = /* @__PURE__ */ Object.create(null);
 const bb = {
   /**
    * Version information
@@ -49639,7 +49641,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.0-nightly-20250415004916",
+  version: "3.15.0-nightly-20250423004702",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -49711,7 +49713,7 @@ const bb = {
    * });
    */
   generate(config) {
-    const options = mergeObj({}, defaults, config);
+    const options = mergeObj(/* @__PURE__ */ Object.create(null), defaults, config);
     const inst = new Chart(options);
     inst.internal.charts = this.instance;
     this.instance.push(inst);

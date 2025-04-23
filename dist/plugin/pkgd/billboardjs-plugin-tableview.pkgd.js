@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.0-nightly-20250415004916
+ * @version 3.15.0-nightly-20250423004702
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23569,12 +23569,14 @@ function mergeObj(target, ...objectN) {
   const source = objectN.shift();
   if (isObject(target) && isObject(source)) {
     Object.keys(source).forEach((key) => {
-      const value = source[key];
-      if (isObject(value)) {
-        !target[key] && (target[key] = {});
-        target[key] = mergeObj(target[key], value);
-      } else {
-        target[key] = isArray(value) ? value.concat() : value;
+      if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
+        const value = source[key];
+        if (isObject(value)) {
+          !target[key] && (target[key] = {});
+          target[key] = mergeObj(target[key], value);
+        } else {
+          target[key] = isArray(value) ? value.concat() : value;
+        }
       }
     });
   }
@@ -23824,7 +23826,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.15.0-nightly-20250415004916");
+__publicField(Plugin, "version", "3.15.0-nightly-20250423004702");
 
 ;// ./src/Plugin/tableview/const.ts
 
