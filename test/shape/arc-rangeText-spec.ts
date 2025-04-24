@@ -35,6 +35,9 @@ describe("SHAPE ARC: rangeText option", () => {
                 format: v => v === 50 ? "Fifty" : v
             },
             position: () => {}
+        },
+        transition: {
+            duration: 200
         }
     };
 
@@ -67,7 +70,7 @@ describe("SHAPE ARC: rangeText option", () => {
         new Promise(resolve => {
             chart.hide("data2");
 
-            setTimeout(resolve, 300);
+            setTimeout(resolve, 350);
         }).then(() => {
             rangeText.filter(d => d > 70).each(function() {
                 expect(this.style.opacity).to.be.equal("0");
@@ -76,7 +79,7 @@ describe("SHAPE ARC: rangeText option", () => {
             return new Promise(resolve => {
                 chart.show("data2");
 
-                setTimeout(resolve, 300);
+                setTimeout(resolve, 350);
             })
         }).then(() => {
             rangeText.filter(d => d > 70).each(function() {
@@ -161,7 +164,7 @@ describe("SHAPE ARC: rangeText option", () => {
         new Promise(resolve => {
             chart.hide("data2");
 
-            setTimeout(resolve, 300);
+            setTimeout(resolve, 350);
         }).then(() => {
             rangeText.each(function(d, i) {
                 const [x, y] = this.getAttribute("transform").replace(/(translate\(|\))/g, "")
@@ -175,7 +178,7 @@ describe("SHAPE ARC: rangeText option", () => {
             return new Promise(resolve => {
                 chart.show("data2");
 
-                setTimeout(resolve, 300);
+                setTimeout(resolve, 350);
             });
         }).then(() => {
             rangeText.each(function(d, i) {

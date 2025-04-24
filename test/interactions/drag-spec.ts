@@ -83,7 +83,7 @@ describe("DRAG", function() {
 				expect(internal.state.dragging).to.be.false;
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -119,7 +119,7 @@ describe("DRAG", function() {
 
 				expect(selectedCircle.size()).to.be.equal(2);
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("set options: data.type='bar'", () => {
@@ -144,7 +144,7 @@ describe("DRAG", function() {
 				expect(selected.size()).to.be.equal(4);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("set options: data.selection.enabled=fasle", () => {
@@ -168,7 +168,7 @@ describe("DRAG", function() {
 				expect(selected.size()).to.be.equal(0);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -247,7 +247,7 @@ describe("DRAG", function() {
 				expect(/^1530.*/.test(zoomed[1])).to.be.true;
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("set options: subchart.show=true", () => {

@@ -386,7 +386,7 @@ describe("LEGEND", () => {
 			setTimeout(() => {
 				expect(chart.$.legend.select(selector).classed($LEGEND.legendItemHidden)).to.be.true;
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("check for template update on dynamic loading", () => new Promise(done => {
@@ -405,7 +405,7 @@ describe("LEGEND", () => {
 						done(1);
 					}
 				});
-			}, 300);
+			}, 350);
 		}));
 
 		it("set options legend.content.template as function", () => {

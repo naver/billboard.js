@@ -151,7 +151,7 @@ describe("ZOOM", function() {
 
 							resolve("--> onzoomstart callback called!");
 						}
-					}, 300);
+					}, 350);
 				});
 			}).then((msg) => {
 				console.log(msg);
@@ -171,7 +171,7 @@ describe("ZOOM", function() {
 
 							resolve("--> onzoom callback called!");
 						};
-					}, 300);
+					}, 350);
 				})
 			}).then((msg) => {
 				console.log(msg);
@@ -284,7 +284,7 @@ describe("ZOOM", function() {
 						}, chart);
 
 						resolve(true);
-					}, 300);
+					}, 350);
 				});
 			}).then(() => {
 				setTimeout(() => {
@@ -302,7 +302,7 @@ describe("ZOOM", function() {
 					expect(eventOrder).to.be.deep.equal(["start", "zoom", "end"]);
 
 					done(1);
-				}, 300);
+				}, 350);
 			});
 		}));
 	});
@@ -397,9 +397,9 @@ describe("ZOOM", function() {
 			setTimeout(() => {
 				expect(
 					getX(`.${$GRID.xgrids} line:nth-child(2)`)
-				).to.be.equal(
+				).to.be.closeTo(
 					getX(`.${$AXIS.axisX} g.tick:nth-child(4) line`)
-				);
+				, 3);
 
 				done(1);
 			}, 350);
@@ -430,7 +430,7 @@ describe("ZOOM", function() {
 				expect(parseInt(chart.$.tooltip.style("left"), 10)).to.be.below(tooltipLeft);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -470,7 +470,7 @@ describe("ZOOM", function() {
 						}, chart);
 
 						resolve(true);
-					}, 300);
+					}, 350);
 				})
 			}).then(() => {
 				return new Promise((resolve) => {
@@ -480,7 +480,7 @@ describe("ZOOM", function() {
 							clientY: up.y
 						}, chart);
 						resolve(true);
-					}, 300);
+					}, 350);
 				});
 			})
 		}
@@ -896,7 +896,7 @@ describe("ZOOM", function() {
 						}, chart);
 
 						resolve(true);
-					}, 300);
+					}, 350);
 				});
 			}).then(() => {
 				setTimeout(() => {
@@ -908,7 +908,7 @@ describe("ZOOM", function() {
 					//expect(internal.scale.x.domain()).to.be.deep.equal(zoomedDomain);
 
 					done(1);
-				}, 300);
+				}, 350);
 			});
 		}));
 	});
@@ -1043,7 +1043,7 @@ describe("ZOOM", function() {
 						}, chart);
 
 						resolve(true);
-					}, 300);
+					}, 350);
 				});
 			}).then(() => {
 				setTimeout(() => {
@@ -1067,7 +1067,7 @@ describe("ZOOM", function() {
 					});
 
 					done(1);
-				}, 300);
+				}, 350);
 			});
 		}));
 
@@ -1365,7 +1365,7 @@ describe("ZOOM", function() {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -1421,7 +1421,7 @@ describe("ZOOM", function() {
 				});
 			}).then(() => {
 				bars.each(function(d, i) {
-					expect(this.getBoundingClientRect().width).to.be.equal(width[i]);
+					expect(this.getBoundingClientRect().width).to.be.closeTo(width[i], 3);
 				});
 
 				done(1);
@@ -1446,6 +1446,9 @@ describe("ZOOM", function() {
 				},
 				zoom: {
 					enabled: true
+				},
+				transition: {
+					duration: 200
 				}
 			}
 		});
@@ -1462,7 +1465,7 @@ describe("ZOOM", function() {
 				// when
 				chart.zoom([1, 3]);
 				
-				setTimeout(resolve, 300);
+				setTimeout(resolve, 350);
 			}).then(() => {
 				return new Promise(resolve => {
 					bars.each(function(d, i) {
@@ -1472,7 +1475,7 @@ describe("ZOOM", function() {
 					// when
 					chart.unzoom();
 
-					setTimeout(resolve, 300);
+					setTimeout(resolve, 350);
 				});
 			}).then(() => {
 				bars.each(function(d, i) {

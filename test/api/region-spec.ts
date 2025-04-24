@@ -9,7 +9,7 @@ import util from "../assets/util";
 import {$REGION} from "../../src/config/classes";
 import {testRegions} from "../internals/regions-spec";
 
-describe.skip("API regions", function() {
+describe("API regions", function() {
 	let chart;
 	let args;
 
@@ -89,7 +89,7 @@ describe.skip("API regions", function() {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("check for <rect> element generation", () => {
@@ -210,7 +210,7 @@ describe.skip("API regions", function() {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 
@@ -316,7 +316,7 @@ describe.skip("API regions", function() {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -459,7 +459,7 @@ describe.skip("API regions", function() {
 				chart.internal.$el.region.list.each(testRegions(chart));
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 });

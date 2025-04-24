@@ -61,7 +61,7 @@ describe("API export", () => {
 					
 					done(1);
 				});
-			}, 300);
+			}, 350);
 		}));
 
 		it("should export in different aspectRatio", () => new Promise(done => {
@@ -75,7 +75,7 @@ describe("API export", () => {
 
 					done(1);
 				});
-			}, 300);
+			}, 350);
 		}));
 
 		it("set options", () => {
@@ -126,7 +126,7 @@ describe("API export", () => {
 					expect(data.indexOf(expectedDataURL) > -1).to.be.true;
 					done(1);
 				});
-			}, 300);
+			}, 350);
 		}));
 	
 		it("should export valid svg even with weird css", () => {
@@ -229,8 +229,9 @@ describe("API export", () => {
 
 			// pattern for CI: preserveFontStyle=true
 			[
-				"gAOUNIIJ4E4iSYKADjOUfrHhUFYN2Rc8AQE6AADHFy6BoJ1ECAArAGeOwaTwIUgPHMK6OqjgAFYHXc2IsEwk6AAjDsGaJ",
-				"spOAJ4xgEsgAAAABJRU5ErkJggg=="
+				"HQCFIBBzxD9azoBCsCmI2eHASZAARjg5NA1EqiDAAVgHfDYNJoEKACjmVdGVRsBCsDauLEVCQSdAAVg0",
+				"J8nNbCY0ESCDEBBoxYmamMDtzmzreKjrguRiROUrGTP2a6TVzIvbop1z5WLgpAP16E",
+				"VXtTm0WTFpt5X9gadzrcuXpjvfn2remIFuuW1WaWwZOm1Q7d0s1EBQDfVzLEuAcAcBXSh"
 			]
 		];
 

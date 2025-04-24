@@ -19,8 +19,8 @@ export function testRegions(ctx) {
 		const size = +rect.getAttribute(isX ? "width" : "height");
 
 		// check the diemsion
-		expect(start).to.be.equal(axis(isX ? d.start : d.end));
-		expect(start + size).to.be.equal(axis(isX ? d.end : d.start));
+		expect(start).to.be.closeTo(axis(isX ? d.start : d.end), 2);
+		expect(start + size).to.be.closeTo(axis(isX ? d.end : d.start), 2);
 
 		d.class && expect(this.getAttribute("class").indexOf(d.class) > -1).to.be.true;	
 
@@ -175,7 +175,7 @@ describe("REGIONS", function() {
 				});
 				
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 

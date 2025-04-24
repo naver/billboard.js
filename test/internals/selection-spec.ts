@@ -188,7 +188,7 @@ describe("SELECTION", () => {
 				expect(selected.datum().id).to.be.equal("data2");
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 });

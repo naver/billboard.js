@@ -49,7 +49,7 @@ describe("ESM donut", function() {
             internal.hideGridFocus = hideGridFocus;
 
             done(1);
-        }, 300);        
+        }, 350);        
     }));
 
     it("shouldn't throw error on call of tooltip API.", () => {

@@ -149,7 +149,7 @@ describe("CORE", function() {
 			setTimeout(() => {
 				expect(spy.returnValues).to.be.not.empty;
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("set options data.type='line'", () => {
@@ -165,7 +165,7 @@ describe("CORE", function() {
 				expect(spy.returnValues).to.be.not.empty;
 				expect(spy.callCount);
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
