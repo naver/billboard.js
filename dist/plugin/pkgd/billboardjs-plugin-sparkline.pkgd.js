@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.0-nightly-20250423004702
+ * @version 3.15.0-nightly-20250424004710
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -24005,7 +24005,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.15.0-nightly-20250423004702");
+__publicField(Plugin, "version", "3.15.0-nightly-20250424004710");
 
 ;// ./src/Plugin/sparkline/Options.ts
 class Options {
