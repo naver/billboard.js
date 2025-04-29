@@ -51,6 +51,6 @@ export default {
 	getStylePropValue(v: Function | string): string | null {
 		const {config: {boost_useCssRule: useCssRule}} = this;
 
-		return useCssRule ? null : isFunction(v) ? v.bind(this) : v;
+		return useCssRule ? null : isFunction(v) ? v.bind(this) : v as string;
 	}
 };
