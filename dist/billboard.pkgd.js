@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.1-nightly-20250429004717
+ * @version 3.15.1-nightly-20250430004716
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -122,13 +122,13 @@ __webpack_require__(253);
 __webpack_require__(254);
 __webpack_require__(255);
 __webpack_require__(256);
-__webpack_require__(261);
 __webpack_require__(262);
 __webpack_require__(263);
 __webpack_require__(264);
-__webpack_require__(266);
+__webpack_require__(265);
 __webpack_require__(267);
 __webpack_require__(268);
+__webpack_require__(269);
 __webpack_require__(270);
 __webpack_require__(271);
 __webpack_require__(272);
@@ -1254,10 +1254,10 @@ var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 
 (store.versions || (store.versions = [])).push({
-  version: '3.41.0',
+  version: '3.42.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2025 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.41.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.42.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -7606,8 +7606,12 @@ var anObject = __webpack_require__(46);
 var getIteratorDirect = __webpack_require__(257);
 var notANaN = __webpack_require__(258);
 var toPositiveInteger = __webpack_require__(259);
+var iteratorClose = __webpack_require__(135);
 var createIteratorProxy = __webpack_require__(260);
+var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(261);
 var IS_PURE = __webpack_require__(36);
+
+var dropWithoutClosingOnEarlyError = !IS_PURE && iteratorHelperWithoutClosingOnEarlyError('drop', RangeError);
 
 var IteratorProxy = createIteratorProxy(function () {
   var iterator = this.iterator;
@@ -7626,10 +7630,18 @@ var IteratorProxy = createIteratorProxy(function () {
 
 // `Iterator.prototype.drop` method
 // https://tc39.es/ecma262/#sec-iterator.prototype.drop
-$({ target: 'Iterator', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Iterator', proto: true, real: true, forced: IS_PURE || dropWithoutClosingOnEarlyError }, {
   drop: function drop(limit) {
     anObject(this);
-    var remaining = toPositiveInteger(notANaN(+limit));
+    var remaining;
+    try {
+      remaining = toPositiveInteger(notANaN(+limit));
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (dropWithoutClosingOnEarlyError) return call(dropWithoutClosingOnEarlyError, this, remaining);
+
     return new IteratorProxy(getIteratorDirect(this), {
       remaining: remaining
     });
@@ -7769,21 +7781,62 @@ module.exports = function (nextHandler, IS_ITERATOR, RETURN_HANDLER_RESULT) {
 
 /***/ }),
 /* 261 */
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+
+var globalThis = __webpack_require__(4);
+
+// https://github.com/tc39/ecma262/pull/3467
+module.exports = function (METHOD_NAME, ExpectedError) {
+  var Iterator = globalThis.Iterator;
+  var IteratorPrototype = Iterator && Iterator.prototype;
+  var method = IteratorPrototype && IteratorPrototype[METHOD_NAME];
+
+  var CLOSED = false;
+
+  if (method) try {
+    method.call({
+      next: function () { return { done: true }; },
+      'return': function () { CLOSED = true; }
+    }, -1);
+  } catch (error) {
+    // https://bugs.webkit.org/show_bug.cgi?id=291195
+    if (!(error instanceof ExpectedError)) CLOSED = false;
+  }
+
+  if (!CLOSED) return method;
+};
+
+
+/***/ }),
+/* 262 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 
 var $ = __webpack_require__(3);
+var call = __webpack_require__(8);
 var iterate = __webpack_require__(130);
 var aCallable = __webpack_require__(30);
 var anObject = __webpack_require__(46);
 var getIteratorDirect = __webpack_require__(257);
+var iteratorClose = __webpack_require__(135);
+var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(261);
+
+var everyWithoutClosingOnEarlyError = iteratorHelperWithoutClosingOnEarlyError('every', TypeError);
 
 // `Iterator.prototype.every` method
 // https://tc39.es/ecma262/#sec-iterator.prototype.every
-$({ target: 'Iterator', proto: true, real: true }, {
+$({ target: 'Iterator', proto: true, real: true, forced: everyWithoutClosingOnEarlyError }, {
   every: function every(predicate) {
     anObject(this);
-    aCallable(predicate);
+    try {
+      aCallable(predicate);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (everyWithoutClosingOnEarlyError) return call(everyWithoutClosingOnEarlyError, this, predicate);
+
     var record = getIteratorDirect(this);
     var counter = 0;
     return !iterate(record, function (value, stop) {
@@ -7794,7 +7847,7 @@ $({ target: 'Iterator', proto: true, real: true }, {
 
 
 /***/ }),
-/* 262 */
+/* 263 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 
@@ -7806,6 +7859,10 @@ var getIteratorDirect = __webpack_require__(257);
 var createIteratorProxy = __webpack_require__(260);
 var callWithSafeIterationClosing = __webpack_require__(163);
 var IS_PURE = __webpack_require__(36);
+var iteratorClose = __webpack_require__(135);
+var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(261);
+
+var filterWithoutClosingOnEarlyError = !IS_PURE && iteratorHelperWithoutClosingOnEarlyError('filter', TypeError);
 
 var IteratorProxy = createIteratorProxy(function () {
   var iterator = this.iterator;
@@ -7823,39 +7880,20 @@ var IteratorProxy = createIteratorProxy(function () {
 
 // `Iterator.prototype.filter` method
 // https://tc39.es/ecma262/#sec-iterator.prototype.filter
-$({ target: 'Iterator', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Iterator', proto: true, real: true, forced: IS_PURE || filterWithoutClosingOnEarlyError }, {
   filter: function filter(predicate) {
     anObject(this);
-    aCallable(predicate);
+    try {
+      aCallable(predicate);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (filterWithoutClosingOnEarlyError) return call(filterWithoutClosingOnEarlyError, this, predicate);
+
     return new IteratorProxy(getIteratorDirect(this), {
       predicate: predicate
     });
-  }
-});
-
-
-/***/ }),
-/* 263 */
-/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
-
-
-var $ = __webpack_require__(3);
-var iterate = __webpack_require__(130);
-var aCallable = __webpack_require__(30);
-var anObject = __webpack_require__(46);
-var getIteratorDirect = __webpack_require__(257);
-
-// `Iterator.prototype.find` method
-// https://tc39.es/ecma262/#sec-iterator.prototype.find
-$({ target: 'Iterator', proto: true, real: true }, {
-  find: function find(predicate) {
-    anObject(this);
-    aCallable(predicate);
-    var record = getIteratorDirect(this);
-    var counter = 0;
-    return iterate(record, function (value, stop) {
-      if (predicate(value, counter++)) return stop(value);
-    }, { IS_RECORD: true, INTERRUPTED: true }).result;
   }
 });
 
@@ -7867,13 +7905,54 @@ $({ target: 'Iterator', proto: true, real: true }, {
 
 var $ = __webpack_require__(3);
 var call = __webpack_require__(8);
+var iterate = __webpack_require__(130);
 var aCallable = __webpack_require__(30);
 var anObject = __webpack_require__(46);
 var getIteratorDirect = __webpack_require__(257);
-var getIteratorFlattenable = __webpack_require__(265);
+var iteratorClose = __webpack_require__(135);
+var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(261);
+
+var findWithoutClosingOnEarlyError = iteratorHelperWithoutClosingOnEarlyError('find', TypeError);
+
+// `Iterator.prototype.find` method
+// https://tc39.es/ecma262/#sec-iterator.prototype.find
+$({ target: 'Iterator', proto: true, real: true, forced: findWithoutClosingOnEarlyError }, {
+  find: function find(predicate) {
+    anObject(this);
+    try {
+      aCallable(predicate);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (findWithoutClosingOnEarlyError) return call(findWithoutClosingOnEarlyError, this, predicate);
+
+    var record = getIteratorDirect(this);
+    var counter = 0;
+    return iterate(record, function (value, stop) {
+      if (predicate(value, counter++)) return stop(value);
+    }, { IS_RECORD: true, INTERRUPTED: true }).result;
+  }
+});
+
+
+/***/ }),
+/* 265 */
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+
+var $ = __webpack_require__(3);
+var call = __webpack_require__(8);
+var aCallable = __webpack_require__(30);
+var anObject = __webpack_require__(46);
+var getIteratorDirect = __webpack_require__(257);
+var getIteratorFlattenable = __webpack_require__(266);
 var createIteratorProxy = __webpack_require__(260);
 var iteratorClose = __webpack_require__(135);
 var IS_PURE = __webpack_require__(36);
+var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(261);
+
+var flatMapWithoutClosingOnEarlyError = !IS_PURE && iteratorHelperWithoutClosingOnEarlyError('flatMap', TypeError);
 
 var IteratorProxy = createIteratorProxy(function () {
   var iterator = this.iterator;
@@ -7899,10 +7978,17 @@ var IteratorProxy = createIteratorProxy(function () {
 
 // `Iterator.prototype.flatMap` method
 // https://tc39.es/ecma262/#sec-iterator.prototype.flatmap
-$({ target: 'Iterator', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Iterator', proto: true, real: true, forced: IS_PURE || flatMapWithoutClosingOnEarlyError }, {
   flatMap: function flatMap(mapper) {
     anObject(this);
-    aCallable(mapper);
+    try {
+      aCallable(mapper);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (flatMapWithoutClosingOnEarlyError) return call(flatMapWithoutClosingOnEarlyError, this, mapper);
+
     return new IteratorProxy(getIteratorDirect(this), {
       mapper: mapper,
       inner: null
@@ -7912,7 +7998,7 @@ $({ target: 'Iterator', proto: true, real: true, forced: IS_PURE }, {
 
 
 /***/ }),
-/* 265 */
+/* 266 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 
@@ -7929,22 +8015,34 @@ module.exports = function (obj, stringHandling) {
 
 
 /***/ }),
-/* 266 */
+/* 267 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 
 var $ = __webpack_require__(3);
+var call = __webpack_require__(8);
 var iterate = __webpack_require__(130);
 var aCallable = __webpack_require__(30);
 var anObject = __webpack_require__(46);
 var getIteratorDirect = __webpack_require__(257);
+var iteratorClose = __webpack_require__(135);
+var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(261);
+
+var forEachWithoutClosingOnEarlyError = iteratorHelperWithoutClosingOnEarlyError('forEach', TypeError);
 
 // `Iterator.prototype.forEach` method
 // https://tc39.es/ecma262/#sec-iterator.prototype.foreach
-$({ target: 'Iterator', proto: true, real: true }, {
+$({ target: 'Iterator', proto: true, real: true, forced: forEachWithoutClosingOnEarlyError }, {
   forEach: function forEach(fn) {
     anObject(this);
-    aCallable(fn);
+    try {
+      aCallable(fn);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (forEachWithoutClosingOnEarlyError) return call(forEachWithoutClosingOnEarlyError, this, fn);
+
     var record = getIteratorDirect(this);
     var counter = 0;
     iterate(record, function (value) {
@@ -7955,7 +8053,7 @@ $({ target: 'Iterator', proto: true, real: true }, {
 
 
 /***/ }),
-/* 267 */
+/* 268 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 
@@ -7965,7 +8063,7 @@ var toObject = __webpack_require__(39);
 var isPrototypeOf = __webpack_require__(24);
 var IteratorPrototype = (__webpack_require__(171).IteratorPrototype);
 var createIteratorProxy = __webpack_require__(260);
-var getIteratorFlattenable = __webpack_require__(265);
+var getIteratorFlattenable = __webpack_require__(266);
 var IS_PURE = __webpack_require__(36);
 
 var IteratorProxy = createIteratorProxy(function () {
@@ -7985,32 +8083,22 @@ $({ target: 'Iterator', stat: true, forced: IS_PURE }, {
 
 
 /***/ }),
-/* 268 */
+/* 269 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 
 var $ = __webpack_require__(3);
-var map = __webpack_require__(269);
-var IS_PURE = __webpack_require__(36);
-
-// `Iterator.prototype.map` method
-// https://tc39.es/ecma262/#sec-iterator.prototype.map
-$({ target: 'Iterator', proto: true, real: true, forced: IS_PURE }, {
-  map: map
-});
-
-
-/***/ }),
-/* 269 */
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-
 var call = __webpack_require__(8);
 var aCallable = __webpack_require__(30);
 var anObject = __webpack_require__(46);
 var getIteratorDirect = __webpack_require__(257);
 var createIteratorProxy = __webpack_require__(260);
 var callWithSafeIterationClosing = __webpack_require__(163);
+var iteratorClose = __webpack_require__(135);
+var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(261);
+var IS_PURE = __webpack_require__(36);
+
+var mapWithoutClosingOnEarlyError = !IS_PURE && iteratorHelperWithoutClosingOnEarlyError('map', TypeError);
 
 var IteratorProxy = createIteratorProxy(function () {
   var iterator = this.iterator;
@@ -8020,14 +8108,23 @@ var IteratorProxy = createIteratorProxy(function () {
 });
 
 // `Iterator.prototype.map` method
-// https://github.com/tc39/proposal-iterator-helpers
-module.exports = function map(mapper) {
-  anObject(this);
-  aCallable(mapper);
-  return new IteratorProxy(getIteratorDirect(this), {
-    mapper: mapper
-  });
-};
+// https://tc39.es/ecma262/#sec-iterator.prototype.map
+$({ target: 'Iterator', proto: true, real: true, forced: IS_PURE || mapWithoutClosingOnEarlyError }, {
+  map: function map(mapper) {
+    anObject(this);
+    try {
+      aCallable(mapper);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (mapWithoutClosingOnEarlyError) return call(mapWithoutClosingOnEarlyError, this, mapper);
+
+    return new IteratorProxy(getIteratorDirect(this), {
+      mapper: mapper
+    });
+  }
+});
 
 
 /***/ }),
@@ -8040,18 +8137,38 @@ var iterate = __webpack_require__(130);
 var aCallable = __webpack_require__(30);
 var anObject = __webpack_require__(46);
 var getIteratorDirect = __webpack_require__(257);
+var iteratorClose = __webpack_require__(135);
+var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(261);
+var apply = __webpack_require__(94);
+var fails = __webpack_require__(7);
 
 var $TypeError = TypeError;
 
+// https://bugs.webkit.org/show_bug.cgi?id=291651
+var FAILS_ON_INITIAL_UNDEFINED = fails(function () {
+  // eslint-disable-next-line es/no-iterator-prototype-reduce, es/no-array-prototype-keys, array-callback-return -- required for testing
+  [].keys().reduce(function () { /* empty */ }, undefined);
+});
+
+var reduceWithoutClosingOnEarlyError = !FAILS_ON_INITIAL_UNDEFINED && iteratorHelperWithoutClosingOnEarlyError('reduce', $TypeError);
+
 // `Iterator.prototype.reduce` method
 // https://tc39.es/ecma262/#sec-iterator.prototype.reduce
-$({ target: 'Iterator', proto: true, real: true }, {
+$({ target: 'Iterator', proto: true, real: true, forced: FAILS_ON_INITIAL_UNDEFINED || reduceWithoutClosingOnEarlyError }, {
   reduce: function reduce(reducer /* , initialValue */) {
     anObject(this);
-    aCallable(reducer);
-    var record = getIteratorDirect(this);
+    try {
+      aCallable(reducer);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
     var noInitial = arguments.length < 2;
     var accumulator = noInitial ? undefined : arguments[1];
+    if (reduceWithoutClosingOnEarlyError) {
+      return apply(reduceWithoutClosingOnEarlyError, this, noInitial ? [reducer] : [reducer, accumulator]);
+    }
+    var record = getIteratorDirect(this);
     var counter = 0;
     iterate(record, function (value) {
       if (noInitial) {
@@ -8074,17 +8191,29 @@ $({ target: 'Iterator', proto: true, real: true }, {
 
 
 var $ = __webpack_require__(3);
+var call = __webpack_require__(8);
 var iterate = __webpack_require__(130);
 var aCallable = __webpack_require__(30);
 var anObject = __webpack_require__(46);
 var getIteratorDirect = __webpack_require__(257);
+var iteratorClose = __webpack_require__(135);
+var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(261);
+
+var someWithoutClosingOnEarlyError = iteratorHelperWithoutClosingOnEarlyError('some', TypeError);
 
 // `Iterator.prototype.some` method
 // https://tc39.es/ecma262/#sec-iterator.prototype.some
-$({ target: 'Iterator', proto: true, real: true }, {
+$({ target: 'Iterator', proto: true, real: true, forced: someWithoutClosingOnEarlyError }, {
   some: function some(predicate) {
     anObject(this);
-    aCallable(predicate);
+    try {
+      aCallable(predicate);
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (someWithoutClosingOnEarlyError) return call(someWithoutClosingOnEarlyError, this, predicate);
+
     var record = getIteratorDirect(this);
     var counter = 0;
     return iterate(record, function (value, stop) {
@@ -8107,7 +8236,10 @@ var notANaN = __webpack_require__(258);
 var toPositiveInteger = __webpack_require__(259);
 var createIteratorProxy = __webpack_require__(260);
 var iteratorClose = __webpack_require__(135);
+var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(261);
 var IS_PURE = __webpack_require__(36);
+
+var takeWithoutClosingOnEarlyError = !IS_PURE && iteratorHelperWithoutClosingOnEarlyError('take', RangeError);
 
 var IteratorProxy = createIteratorProxy(function () {
   var iterator = this.iterator;
@@ -8122,10 +8254,18 @@ var IteratorProxy = createIteratorProxy(function () {
 
 // `Iterator.prototype.take` method
 // https://tc39.es/ecma262/#sec-iterator.prototype.take
-$({ target: 'Iterator', proto: true, real: true, forced: IS_PURE }, {
+$({ target: 'Iterator', proto: true, real: true, forced: IS_PURE || takeWithoutClosingOnEarlyError }, {
   take: function take(limit) {
     anObject(this);
-    var remaining = toPositiveInteger(notANaN(+limit));
+    var remaining;
+    try {
+      remaining = toPositiveInteger(notANaN(+limit));
+    } catch (error) {
+      iteratorClose(this, 'throw', error);
+    }
+
+    if (takeWithoutClosingOnEarlyError) return call(takeWithoutClosingOnEarlyError, this, remaining);
+
     return new IteratorProxy(getIteratorDirect(this), {
       remaining: remaining
     });
@@ -8686,6 +8826,7 @@ var get = MapHelpers.get;
 var set = MapHelpers.set;
 var push = uncurryThis([].push);
 
+// https://bugs.webkit.org/show_bug.cgi?id=271524
 var DOES_NOT_WORK_WITH_PRIMITIVES = IS_PURE || fails(function () {
   return Map.groupBy('ab', function (it) {
     return it;
@@ -10305,6 +10446,7 @@ var nativeGroupBy = Object.groupBy;
 var create = getBuiltIn('Object', 'create');
 var push = uncurryThis([].push);
 
+// https://bugs.webkit.org/show_bug.cgi?id=271524
 var DOES_NOT_WORK_WITH_PRIMITIVES = !nativeGroupBy || fails(function () {
   return nativeGroupBy('ab', function (it) {
     return it;
@@ -13298,8 +13440,10 @@ module.exports = function (name, callback) {
   try {
     new Set()[name](createSetLike(0));
     try {
-      // late spec change, early WebKit ~ Safari 17.0 beta implementation does not pass it
+      // late spec change, early WebKit ~ Safari 17 implementation does not pass it
       // https://github.com/tc39/proposal-set-methods/pull/88
+      // also covered engines with
+      // https://bugs.webkit.org/show_bug.cgi?id=272679
       new Set()[name](createSetLike(-1));
       return false;
     } catch (error2) {
@@ -13912,7 +14056,7 @@ defineIterator(String, 'String', function (iterated) {
 var call = __webpack_require__(8);
 var fixRegExpWellKnownSymbolLogic = __webpack_require__(457);
 var anObject = __webpack_require__(46);
-var isNullOrUndefined = __webpack_require__(17);
+var isObject = __webpack_require__(20);
 var toLength = __webpack_require__(64);
 var toString = __webpack_require__(68);
 var requireObjectCoercible = __webpack_require__(16);
@@ -13927,7 +14071,7 @@ fixRegExpWellKnownSymbolLogic('match', function (MATCH, nativeMatch, maybeCallNa
     // https://tc39.es/ecma262/#sec-string.prototype.match
     function match(regexp) {
       var O = requireObjectCoercible(this);
-      var matcher = isNullOrUndefined(regexp) ? undefined : getMethod(regexp, MATCH);
+      var matcher = isObject(regexp) ? getMethod(regexp, MATCH) : undefined;
       return matcher ? call(matcher, regexp, O) : new RegExp(regexp)[MATCH](toString(O));
     },
     // `RegExp.prototype[@@match]` method
@@ -14096,7 +14240,7 @@ var requireObjectCoercible = __webpack_require__(16);
 var toLength = __webpack_require__(64);
 var toString = __webpack_require__(68);
 var anObject = __webpack_require__(46);
-var isNullOrUndefined = __webpack_require__(17);
+var isObject = __webpack_require__(20);
 var classof = __webpack_require__(15);
 var isRegExp = __webpack_require__(407);
 var getRegExpFlags = __webpack_require__(408);
@@ -14170,7 +14314,7 @@ $({ target: 'String', proto: true, forced: WORKS_WITH_NON_GLOBAL_REGEX }, {
   matchAll: function matchAll(regexp) {
     var O = requireObjectCoercible(this);
     var flags, S, matcher, rx;
-    if (!isNullOrUndefined(regexp)) {
+    if (isObject(regexp)) {
       if (isRegExp(regexp)) {
         flags = toString(requireObjectCoercible(getRegExpFlags(regexp)));
         if (!~stringIndexOf(flags, 'g')) throw new $TypeError('`.matchAll` does not allow non-global regexes');
@@ -14297,7 +14441,7 @@ var fixRegExpWellKnownSymbolLogic = __webpack_require__(457);
 var fails = __webpack_require__(7);
 var anObject = __webpack_require__(46);
 var isCallable = __webpack_require__(21);
-var isNullOrUndefined = __webpack_require__(17);
+var isObject = __webpack_require__(20);
 var toIntegerOrInfinity = __webpack_require__(61);
 var toLength = __webpack_require__(64);
 var toString = __webpack_require__(68);
@@ -14355,7 +14499,7 @@ fixRegExpWellKnownSymbolLogic('replace', function (_, nativeReplace, maybeCallNa
     // https://tc39.es/ecma262/#sec-string.prototype.replace
     function replace(searchValue, replaceValue) {
       var O = requireObjectCoercible(this);
-      var replacer = isNullOrUndefined(searchValue) ? undefined : getMethod(searchValue, REPLACE);
+      var replacer = isObject(searchValue) ? getMethod(searchValue, REPLACE) : undefined;
       return replacer
         ? call(replacer, searchValue, O, replaceValue)
         : call(nativeReplace, toString(O), searchValue, replaceValue);
@@ -14495,7 +14639,7 @@ var call = __webpack_require__(8);
 var uncurryThis = __webpack_require__(14);
 var requireObjectCoercible = __webpack_require__(16);
 var isCallable = __webpack_require__(21);
-var isNullOrUndefined = __webpack_require__(17);
+var isObject = __webpack_require__(20);
 var isRegExp = __webpack_require__(407);
 var toString = __webpack_require__(68);
 var getMethod = __webpack_require__(29);
@@ -14519,7 +14663,7 @@ $({ target: 'String', proto: true }, {
     var IS_REG_EXP, flags, replacer, string, searchString, functionalReplace, searchLength, advanceBy, position, replacement;
     var endOfLastMatch = 0;
     var result = '';
-    if (!isNullOrUndefined(searchValue)) {
+    if (isObject(searchValue)) {
       IS_REG_EXP = isRegExp(searchValue);
       if (IS_REG_EXP) {
         flags = toString(requireObjectCoercible(getRegExpFlags(searchValue)));
@@ -14560,7 +14704,7 @@ $({ target: 'String', proto: true }, {
 var call = __webpack_require__(8);
 var fixRegExpWellKnownSymbolLogic = __webpack_require__(457);
 var anObject = __webpack_require__(46);
-var isNullOrUndefined = __webpack_require__(17);
+var isObject = __webpack_require__(20);
 var requireObjectCoercible = __webpack_require__(16);
 var sameValue = __webpack_require__(346);
 var toString = __webpack_require__(68);
@@ -14574,7 +14718,7 @@ fixRegExpWellKnownSymbolLogic('search', function (SEARCH, nativeSearch, maybeCal
     // https://tc39.es/ecma262/#sec-string.prototype.search
     function search(regexp) {
       var O = requireObjectCoercible(this);
-      var searcher = isNullOrUndefined(regexp) ? undefined : getMethod(regexp, SEARCH);
+      var searcher = isObject(regexp) ? getMethod(regexp, SEARCH) : undefined;
       return searcher ? call(searcher, regexp, O) : new RegExp(regexp)[SEARCH](toString(O));
     },
     // `RegExp.prototype[@@search]` method
@@ -14605,7 +14749,7 @@ var call = __webpack_require__(8);
 var uncurryThis = __webpack_require__(14);
 var fixRegExpWellKnownSymbolLogic = __webpack_require__(457);
 var anObject = __webpack_require__(46);
-var isNullOrUndefined = __webpack_require__(17);
+var isObject = __webpack_require__(20);
 var requireObjectCoercible = __webpack_require__(16);
 var speciesConstructor = __webpack_require__(364);
 var advanceStringIndex = __webpack_require__(458);
@@ -14653,7 +14797,7 @@ fixRegExpWellKnownSymbolLogic('split', function (SPLIT, nativeSplit, maybeCallNa
     // https://tc39.es/ecma262/#sec-string.prototype.split
     function split(separator, limit) {
       var O = requireObjectCoercible(this);
-      var splitter = isNullOrUndefined(separator) ? undefined : getMethod(separator, SPLIT);
+      var splitter = isObject(separator) ? getMethod(separator, SPLIT) : undefined;
       return splitter
         ? call(splitter, separator, O, limit)
         : call(internalSplit, toString(O), separator, limit);
@@ -49641,7 +49785,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.1-nightly-20250429004717",
+  version: "3.15.1-nightly-20250430004716",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
