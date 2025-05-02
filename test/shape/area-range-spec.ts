@@ -174,6 +174,48 @@ describe("SHAPE AREA-RANGE", () => {
 		});
 	});
 
+	describe("combined area-range type with regions", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", [130,120,110], [120,110,100], [150,140,130], [140,130,120],[160,150,140],[150,140,130]],
+					],
+					type: "area-line-range",
+					regions: {
+						data1: [
+							{ start: 1, end: 3, style: { dasharray: "5 5" } },
+						]
+					}
+				}
+			}
+		});
+
+		it("check for correct generation", () => {
+			const d = chart.$.line.lines.attr("d");
+			const box = util.getBBox(d3Select(`.${$LINE.chartLine}.${$COMMON.target}-data1`));
+
+			// check for correct path data
+			expect(/NaN/.test(d)).to.be.false;
+			// check that path does not contain "undefined"
+			expect(/undefined/.test(d)).to.be.false;
+
+			// check for correct pos
+			expect(Math.round(box.height)).to.be.equal(145);
+			expect(Math.round(box.y)).to.be.equal(40);
+		});
+
+		it("check all range type path", () => {
+			const expected = [
+				"M5.873,160.375L123.324,184.523L240.775,112.08L358.225,136.227L475.676,87.932L593.127,112.08L593.127,63.784L475.676,39.636L358.225,87.932L240.775,63.784L123.324,136.227L5.873,112.08Z"
+			];
+
+			chart.$.line.areas.each(function(d, i) {
+				expect(this.getAttribute("d")).to.be.equal(expected.shift());
+			});
+		});
+	});
+
 	describe("area-step-range", () => {
 		beforeAll(() => {
 			args = {
