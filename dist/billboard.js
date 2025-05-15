@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.1-nightly-20250430004716
+ * @version 3.15.1-nightly-20250515004714
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -4985,8 +4985,6 @@ const schemeCategory10 = [
   generateColor() {
     const $$ = this;
     const { $el, config } = $$;
-    const colors = config.data_colors;
-    const callback = config.data_color;
     const ids = [];
     let pattern = notEmpty(config.color_pattern) ? config.color_pattern : (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleOrdinal)(getColorFromCss($el.chart) || schemeCategory10).range();
     const originalColorPattern = pattern;
@@ -5002,6 +5000,8 @@ const schemeCategory10 = [
     }
     return function(d) {
       var _a;
+      const colors = config.data_colors;
+      const callback = config.data_color;
       const id = d.id || ((_a = d.data) == null ? void 0 : _a.id) || d;
       const isLine = $$.isTypeOf(id, ["line", "spline", "step"]) || !config.data_types[id];
       let color;
@@ -19261,6 +19261,25 @@ function updateRatio(data) {
 });
 
 ;// ./src/ChartInternal/shape/line.ts
+var line_defProp = Object.defineProperty;
+var line_defProps = Object.defineProperties;
+var line_getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var line_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var line_hasOwnProp = Object.prototype.hasOwnProperty;
+var line_propIsEnum = Object.prototype.propertyIsEnumerable;
+var line_defNormalProp = (obj, key, value) => key in obj ? line_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var line_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (line_hasOwnProp.call(b, prop))
+      line_defNormalProp(a, prop, b[prop]);
+  if (line_getOwnPropSymbols)
+    for (var prop of line_getOwnPropSymbols(b)) {
+      if (line_propIsEnum.call(b, prop))
+        line_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var line_spreadProps = (a, b) => line_defProps(a, line_getOwnPropDescs(b));
 
 
 
@@ -19400,6 +19419,9 @@ function getRegions(d, _regions, isTimeSeries) {
       if ($$.isLineType(d)) {
         const regions = config.data_regions[d.id];
         if (regions) {
+          if ($$.isAreaRangeType(d)) {
+            values = values.map((dv) => line_spreadProps(line_spreadValues({}, dv), { value: $$.getRangedData(dv, "mid") }));
+          }
           path = $$.lineWithRegions(values, scale.zoom || x, y, regions);
         } else {
           if ($$.isStepType(d)) {
@@ -21971,7 +21993,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.1-nightly-20250430004716",
+  version: "3.15.1-nightly-20250515004714",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

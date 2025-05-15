@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.1-nightly-20250430004716
+ * @version 3.15.1-nightly-20250515004714
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -5502,8 +5502,6 @@ var color = {
     generateColor: function () {
         var $$ = this;
         var $el = $$.$el, config = $$.config;
-        var colors = config.data_colors;
-        var callback = config.data_color;
         var ids = [];
         var pattern = notEmpty(config.color_pattern) ?
             config.color_pattern :
@@ -5522,6 +5520,8 @@ var color = {
         }
         return function (d) {
             var _a;
+            var colors = config.data_colors;
+            var callback = config.data_color;
             var id = d.id ||
                 ((_a = d.data) === null || _a === void 0 ? void 0 : _a.id) ||
                 d;
@@ -20007,10 +20007,6 @@ var shapeGauge = {
 };
 
 /**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
  * Get stroke dasharray style value
  * @param {number} start Start position in path length
  * @param {number} end End position in path length
@@ -20204,6 +20200,9 @@ var shapeLine = {
             if ($$.isLineType(d)) {
                 var regions = config.data_regions[d.id];
                 if (regions) {
+                    if ($$.isAreaRangeType(d)) {
+                        values = values.map(function (dv) { return (__assign(__assign({}, dv), { value: $$.getRangedData(dv, "mid") })); });
+                    }
                     path = $$.lineWithRegions(values, scale.zoom || x, y, regions);
                 }
                 else {
@@ -20360,7 +20359,7 @@ var shapeLine = {
             }
         }
         if (dashArray.dash.length) {
-            // if not last x tick, then should draw rest of path that is not drawed yet
+            // if not last x tick, then should draw rest of path that is not drawn yet
             !isLastX && dashArray.dash.push(getLength(tempNode, path));
             tempNode.remove();
             target.attr("stroke-dasharray", dashArray.dash.join(" "));
@@ -24776,7 +24775,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.15.1-nightly-20250430004716
+ * @version 3.15.1-nightly-20250515004714
  */
 var bb = {
     /**
@@ -24786,7 +24785,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.15.1-nightly-20250430004716",
+    version: "3.15.1-nightly-20250515004714",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
