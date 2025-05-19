@@ -409,4 +409,58 @@ describe("DOMAIN", function() {
 			expect(trimmed[1]).to.approximately(domain[1], 0.1);
 		});
 	});
+
+	describe("when chart area shrinks as much as possible on rotated axis.", () => {
+		beforeAll(() => {
+			args = {
+				size: {
+					width: 200,
+					height: 480
+				},
+				data: {
+					columns: [
+						["1 Year", 62350, 56722, 45912, 17436, 17102, 9349, 9183, 9084, 7709, 7653]
+					],
+					type: "bar",
+					labels: {
+						colors: "black"
+					}
+				},
+				legend: {
+					show: false
+				},
+				axis: {
+					x: {
+						tick: {
+							fit: true,
+							multiline: false,
+							autorotate: true,
+							rotate: 20,
+							culling: false
+						},
+						type: "category",
+						categories: [
+							"loremIpsumDolorSitAmet", 
+							"consecteturAdipiscingElitSedDo",
+							"eiusmodTemporIncididuntUtLabore",
+							"etDoloreMagnaAliquaUtEnim",
+							"adMinimVeniamQuisNostrudExercitation",
+							"loremIpsumDolorSitAmet", 
+							"consecteturAdipiscingElitSedDo",
+							"eiusmodTemporIncididuntUtLabore",
+							"etDoloreMagnaAliquaUtEnim",
+							"adMinimVeniamQuisNostrudExercitation"
+						]
+					},
+					rotated: true
+				}
+			};
+		});
+
+		it("should specify all path values correctly.", () => {
+			chart.$.bar.bars.each(function(d) {
+				expect(this.getAttribute("d").indexOf("NaN") === -1).to.be.true;
+			});
+		});
+	});
 });
