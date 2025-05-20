@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.1-nightly-20250515004714
+ * @version 3.15.1-nightly-20250520004715
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -29738,7 +29738,10 @@ const schemeCategory10 = [
     }
     if (showHorizontalDataLabel) {
       const diff = diffDomain(scale.y.range());
-      const ratio = $$.getDataLabelLength(yDomainMin, yDomainMax, "width").map((v) => v / diff);
+      const ratio = $$.getDataLabelLength(yDomainMin, yDomainMax, "width").map((v) => {
+        const result = v / diff;
+        return isFinite(result) ? result : 0;
+      });
       ["bottom", "top"].forEach((v, i) => {
         padding[v] += domainLength * (ratio[i] / (1 - ratio[0] - ratio[1]));
       });
@@ -49807,7 +49810,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.1-nightly-20250515004714",
+  version: "3.15.1-nightly-20250520004715",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
