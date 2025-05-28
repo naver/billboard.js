@@ -113,7 +113,8 @@ export default class AxisRenderer {
 
 			if (tickShow.tick || tickShow.text) {
 				// count of tick data in array
-				const ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight);
+				const ticks = config.tickValues ||
+					helper.generateTicks(scale1, isLeftRight || params.config.axis_rotated);
 
 				// set generated ticks
 				ctx.generatedTicks = ticks;
