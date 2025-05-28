@@ -286,6 +286,48 @@ describe("AXIS", function() {
 				expect(this.textContent % 1).to.be.equal(0);
 			});
 		});
+
+		it("set options", () => {
+			args = {
+				  data: {
+					columns: [
+						["data1", 3, 10, 11, 12]
+					],
+					type: "bar"
+				},
+				axis: {
+					rotated: true,
+					y: {
+						max: 100,
+						min: 0,
+						tick: {
+							stepSize: 2,
+						}
+					}
+				}
+			};
+		});
+
+		it("should stepSize works on rotated axis.", () => {
+			const {stepSize} = args.axis.y.tick;
+			let {$el: {axis: {y}}} = chart.internal;			
+			let temp;
+
+			y = y.selectAll(".tick tspan");
+
+			expect(y.size()).to.be.equal(61);
+
+			y.each(function() {
+				const value = +this.textContent;
+
+				if (!temp) {
+					temp = value;
+				} else {
+					expect(temp + stepSize).to.be.equal(value);
+					temp = value;
+				}
+			});
+		});
 	});
 
 	describe("axis label #1", () => {
