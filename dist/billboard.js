@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.1-nightly-20250520004715
+ * @version 3.15.1-nightly-20250529004717
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -12983,7 +12983,7 @@ class AxisRenderer {
         return isTopBottom ? `M${range[0]},${outerTickSized}V0H${range[1]}V${outerTickSized}` : `M${outerTickSized},${range[0]}H0V${range[1]}H${outerTickSized}`;
       });
       if (tickShow.tick || tickShow.text) {
-        const ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight);
+        const ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight || params.config.axis_rotated);
         ctx.generatedTicks = ticks;
         let tick = g2.selectAll(".tick").data(ticks, scale1);
         const tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick");
@@ -21996,7 +21996,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.1-nightly-20250520004715",
+  version: "3.15.1-nightly-20250529004717",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
