@@ -1804,4 +1804,32 @@ describe("ZOOM", function() {
 			expect(true).to.be.true;
 		});
 	});
+
+	describe("zoomed state on resize", () => {
+		beforeAll(() => {
+			args = {
+				  data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150]
+					],
+					type: "line"
+				},
+				zoom: {
+					enabled: true
+				},
+				legend: {
+					show: false
+				}
+			};
+		});
+
+		it("should maintain zoomed state on resize", () => {
+			const zoomedDomain = [1, 2];
+
+			chart.zoom(zoomedDomain);
+			chart.resize({width: 450});
+
+			expect(chart.zoom()).to.be.deep.equal(zoomedDomain);
+		});
+	});
 });
