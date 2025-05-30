@@ -65,6 +65,12 @@ export default {
 			// hide possible reset zoom button
 			// https://github.com/naver/billboard.js/issues/2201
 			zoomResetBtn?.style("display", "none");
+
+			// keep current zoom domain
+			if ($$.scale.zoom) {
+				state.current.zoomDomain = $$.scale.zoom.domain();
+			}
+
 			$$.scale.zoom = null;
 
 			soft ?
@@ -84,6 +90,12 @@ export default {
 			if (!state.resizing && $$.brush) {
 				$$.brush.getSelection().call($$.brush.move);
 				$$.unselectRect();
+			}
+
+			// restore zoom domain
+			if (state.current.zoomDomain) {
+				$$.api.zoom(state.current.zoomDomain);
+				state.current.zoomDomain = null;
 			}
 		} else {
 			$$.initToRender(true);
