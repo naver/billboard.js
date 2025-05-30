@@ -69,7 +69,8 @@ export default class State {
 
 				// current used chart type list
 				types: <string[]>[],
-				needle: undefined // arc needle current value
+				needle: undefined, // arc needle current value
+				zoomDomain: null // zoomed domain value
 			},
 
 			// legend
