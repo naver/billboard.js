@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.1-nightly-20250529004717
+ * @version 3.15.1-nightly-20250531004703
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -3109,7 +3109,8 @@ var State = /** @class */ (function () {
                 },
                 // current used chart type list
                 types: [],
-                needle: undefined // arc needle current value
+                needle: undefined, // arc needle current value
+                zoomDomain: null // zoomed domain value
             },
             // legend
             isLegendRight: false,
@@ -10506,6 +10507,10 @@ var apiChart = {
             // hide possible reset zoom button
             // https://github.com/naver/billboard.js/issues/2201
             zoomResetBtn === null || zoomResetBtn === void 0 ? void 0 : zoomResetBtn.style("display", "none");
+            // keep current zoom domain
+            if ($$.scale.zoom) {
+                state.current.zoomDomain = $$.scale.zoom.domain();
+            }
             $$.scale.zoom = null;
             soft ?
                 $$.redraw({
@@ -10523,6 +10528,11 @@ var apiChart = {
             if (!state.resizing && $$.brush) {
                 $$.brush.getSelection().call($$.brush.move);
                 $$.unselectRect();
+            }
+            // restore zoom domain
+            if (state.current.zoomDomain) {
+                $$.api.zoom(state.current.zoomDomain);
+                state.current.zoomDomain = null;
             }
         }
         else {
@@ -24779,7 +24789,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.15.1-nightly-20250529004717
+ * @version 3.15.1-nightly-20250531004703
  */
 var bb = {
     /**
@@ -24789,7 +24799,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.15.1-nightly-20250529004717",
+    version: "3.15.1-nightly-20250531004703",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
