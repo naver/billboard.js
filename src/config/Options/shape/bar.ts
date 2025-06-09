@@ -132,6 +132,7 @@ export default {
 	 *      zerobased: false
 	 *  }
 	 */
+	bar_connectLine: <"end-end" | "end-start" | "start-end" | "start-start" | false>false,
 	bar_front: false,
 	bar_indices_removeNull: false,
 	bar_label_threshold: 0,
