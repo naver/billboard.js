@@ -21,7 +21,7 @@ describe("API subchart", () => {
 			args = {
 				data: {
 					columns: [
-						["data1", 30, 500, 60]
+						["data1", 32, 500, 60]
 					]
 				},
 				axis: {
