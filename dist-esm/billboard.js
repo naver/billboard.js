@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.1-nightly-20250605004705
+ * @version 3.15.1-nightly-20250614004713
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -111,7 +111,8 @@ var $BAR = {
     bar: "bb-bar",
     bars: "bb-bars",
     chartBar: "bb-chart-bar",
-    chartBars: "bb-chart-bars"
+    chartBars: "bb-chart-bars",
+    barConnectLine: "bb-bar-connectLine"
 };
 var $CANDLESTICK = {
     candlestick: "bb-candlestick",
@@ -19098,6 +19099,20 @@ var shapeArea = {
     }
 };
 
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Get the type of connect line for bar chart
+ * @param {string} id Data id
+ * @returns {string|null} Connect line type or null if not applicable
+ */
+function getConnectLineType(id) {
+    var connectLine = this.config.bar_connectLine;
+    var type = (connectLine === null || connectLine === void 0 ? void 0 : connectLine[id]) || connectLine;
+    return (/^(start|end)\-(start|end)$/.test(type)) ? type : null;
+}
 var shapeBar = {
     initBar: function () {
         var _a = this, $el = _a.$el, config = _a.config, clip = _a.state.clip;
@@ -19134,7 +19149,16 @@ var shapeBar = {
         mainBarEnter.append("g")
             .attr("class", classBars)
             .style("cursor", function (d) { var _a; return (((_a = isSelectable === null || isSelectable === void 0 ? void 0 : isSelectable.bind) === null || _a === void 0 ? void 0 : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null); })
-            .call($$.setCssRule(true, " .".concat($BAR.bar), ["fill"], $$.color));
+            .call(function (selection) {
+            $$.setCssRule(true, " .".concat($BAR.bar), ["fill"], $$.color)(selection);
+            // add bar connect line
+            selection.each(function (d) {
+                if (getConnectLineType.call($$, d.id)) {
+                    select(this).append("path")
+                        .attr("class", $BAR.barConnectLine);
+                }
+            });
+        });
     },
     /**
      * Generate/Update elements
@@ -19187,9 +19211,23 @@ var shapeBar = {
         if (isSub === void 0) { isSub = false; }
         var $$ = this;
         var bar = (isSub ? $$.$el.subchart : $$.$el).bar;
+        var barPath = [];
         return [
             $$.$T(bar, withTransition, getRandom())
-                .attr("d", function (d) { return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d); })
+                .attr("d", function (d, i, arr) {
+                var path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
+                var connectLineType = getConnectLineType.call($$, d.id);
+                // for bar.coonectLine option
+                if (path.length > 1) {
+                    barPath.push(path[1]);
+                    if (i === arr.length - 1) {
+                        var barConnectLineNode = $$.$T(select(this.parentNode.querySelector(".".concat($BAR.barConnectLine))), withTransition, getRandom());
+                        $$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
+                        barPath.splice(0);
+                    }
+                }
+                return path[0];
+            })
                 .style("fill", $$.updateBarColor.bind($$))
                 .style("clip-path", function (d) { return d.clipPath; })
                 .style("opacity", null)
@@ -19284,7 +19322,23 @@ var shapeBar = {
             var path = isRotated ?
                 "H".concat(pos, " ").concat(pathRadius[0], "V").concat(points[2][indexY] - radius, " ").concat(pathRadius[1], "H").concat(points[3][indexX]) :
                 "V".concat(pos, " ").concat(pathRadius[0], "H").concat(points[2][indexX] - radius, " ").concat(pathRadius[1], "V").concat(points[3][indexY]);
-            return "M".concat(points[0][indexX], ",").concat(points[0][indexY]).concat(path, "z");
+            var coords = ["M".concat(points[0][indexX], ",").concat(points[0][indexY]).concat(path, "z")];
+            if (getConnectLineType.call($$, d.id)) {
+                coords.push(isRotated ?
+                    {
+                        x: points[0][indexX],
+                        y: points[0][indexY],
+                        width: points[0][indexX] - pos,
+                        height: points[2][indexY] - points[0][indexY]
+                    } :
+                    {
+                        x: points[0][indexX],
+                        y: pos,
+                        width: points[2][indexX] - points[0][indexX],
+                        height: points[3][indexY] - pos
+                    });
+            }
+            return coords;
         };
     },
     /**
@@ -19359,6 +19413,36 @@ var shapeBar = {
                 [startPosX, offset]
             ];
         };
+    },
+    /**
+     * Update the bar connect line path
+     * @param {d3Selection} node d3 selection of bar connect line
+     * @param {string} type Type of connect line, one of "start-start", "start-end", "end-start", "end-end"
+     * @param {Array} barPath d3 path data for the bar
+     */
+    updateConnectLine: function (node, type, barPath) {
+        var _this = this;
+        var path = barPath.map(function (v, i, arr) {
+            var isRotated = _this.config.axis_rotated;
+            var isStart = /^start-(start|end)$/.test(type);
+            var isEnd = /^end-(start|end)$/.test(type);
+            var path = [];
+            var x = isRotated ? (isEnd ? v.x - v.width : v.x) : (v.x + v.width);
+            var y = isRotated ? v.y + v.height : isStart ? v.y + v.height : v.y;
+            if (i === 0) {
+                path.push("".concat(x, ",").concat(y));
+            }
+            else {
+                path.push(isRotated ?
+                    "L".concat(v.x - (/\w+-end$/.test(type) ? v.width : 0), ",").concat(v.y) :
+                    "L".concat(v.x, ",").concat(v.y + (/\w+-start$/.test(type) ? v.height : 0)));
+                if (i < arr.length - 1) {
+                    path.push("M".concat(x, ",").concat(y));
+                }
+            }
+            return path.join(" ");
+        });
+        node.attr("d", "M".concat(path.join(""), "z"));
     }
 };
 
@@ -22009,6 +22093,7 @@ var optBar = {
      *      zerobased: false
      *  }
      */
+    bar_connectLine: false,
     bar_front: false,
     bar_indices_removeNull: false,
     bar_label_threshold: 0,
@@ -24789,7 +24874,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.15.1-nightly-20250605004705
+ * @version 3.15.1-nightly-20250614004713
  */
 var bb = {
     /**
@@ -24799,7 +24884,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.15.1-nightly-20250605004705",
+    version: "3.15.1-nightly-20250614004713",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

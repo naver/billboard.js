@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.1-nightly-20250605004705
+ * @version 3.15.1-nightly-20250614004713
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -98,7 +98,8 @@ var $BAR = {
     bar: "bb-bar",
     bars: "bb-bars",
     chartBar: "bb-chart-bar",
-    chartBars: "bb-chart-bars"
+    chartBars: "bb-chart-bars",
+    barConnectLine: "bb-bar-connectLine"
 };
 var $CANDLESTICK = {
     candlestick: "bb-candlestick",
@@ -370,7 +371,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.15.1-nightly-20250605004705";
+    Plugin.version = "3.15.1-nightly-20250614004713";
     return Plugin;
 }());
 

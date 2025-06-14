@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.1-nightly-20250605004705
+ * @version 3.15.1-nightly-20250614004713
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -268,7 +268,8 @@ const $BAR = {
   bar: "bb-bar",
   bars: "bb-bars",
   chartBar: "bb-chart-bar",
-  chartBars: "bb-chart-bars"
+  chartBars: "bb-chart-bars",
+  barConnectLine: "bb-bar-connectLine"
 };
 const $CANDLESTICK = {
   candlestick: "bb-candlestick",
@@ -18473,6 +18474,12 @@ function getAttrTweenFn(fn) {
 ;// ./src/ChartInternal/shape/bar.ts
 
 
+
+function getConnectLineType(id) {
+  const connectLine = this.config.bar_connectLine;
+  const type = (connectLine == null ? void 0 : connectLine[id]) || connectLine;
+  return /^(start|end)\-(start|end)$/.test(type) ? type : null;
+}
 /* harmony default export */ var bar = ({
   initBar() {
     const { $el, config, state: { clip } } = this;
@@ -18498,7 +18505,14 @@ function getAttrTweenFn(fn) {
     mainBarEnter.append("g").attr("class", classBars).style("cursor", (d) => {
       var _a;
       return ((_a = isSelectable == null ? void 0 : isSelectable.bind) == null ? void 0 : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null;
-    }).call($$.setCssRule(true, ` .${$BAR.bar}`, ["fill"], $$.color));
+    }).call((selection) => {
+      $$.setCssRule(true, ` .${$BAR.bar}`, ["fill"], $$.color)(selection);
+      selection.each(function(d) {
+        if (getConnectLineType.call($$, d.id)) {
+          (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).append("path").attr("class", $BAR.barConnectLine);
+        }
+      });
+    });
   },
   /**
    * Generate/Update elements
@@ -18540,8 +18554,25 @@ function getAttrTweenFn(fn) {
   redrawBar(drawFn, withTransition, isSub = false) {
     const $$ = this;
     const { bar } = isSub ? $$.$el.subchart : $$.$el;
+    const barPath = [];
     return [
-      $$.$T(bar, withTransition, getRandom()).attr("d", (d) => (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d)).style("fill", $$.updateBarColor.bind($$)).style("clip-path", (d) => d.clipPath).style("opacity", null)
+      $$.$T(bar, withTransition, getRandom()).attr("d", function(d, i, arr) {
+        const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
+        const connectLineType = getConnectLineType.call($$, d.id);
+        if (path.length > 1) {
+          barPath.push(path[1]);
+          if (i === arr.length - 1) {
+            const barConnectLineNode = $$.$T(
+              (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this.parentNode.querySelector(`.${$BAR.barConnectLine}`)),
+              withTransition,
+              getRandom()
+            );
+            $$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
+            barPath.splice(0);
+          }
+        }
+        return path[0];
+      }).style("fill", $$.updateBarColor.bind($$)).style("clip-path", (d) => d.clipPath).style("opacity", null)
     ];
   },
   /**
@@ -18618,7 +18649,21 @@ function getAttrTweenFn(fn) {
         }
       }
       const path = isRotated ? `H${pos} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${points[3][indexX]}` : `V${pos} ${pathRadius[0]}H${points[2][indexX] - radius} ${pathRadius[1]}V${points[3][indexY]}`;
-      return `M${points[0][indexX]},${points[0][indexY]}${path}z`;
+      const coords = [`M${points[0][indexX]},${points[0][indexY]}${path}z`];
+      if (getConnectLineType.call($$, d.id)) {
+        coords.push(isRotated ? {
+          x: points[0][indexX],
+          y: points[0][indexY],
+          width: points[0][indexX] - pos,
+          height: points[2][indexY] - points[0][indexY]
+        } : {
+          x: points[0][indexX],
+          y: pos,
+          width: points[2][indexX] - points[0][indexX],
+          height: points[3][indexY] - pos
+        });
+      }
+      return coords;
     };
   },
   /**
@@ -18685,6 +18730,34 @@ function getAttrTweenFn(fn) {
         [startPosX, offset]
       ];
     };
+  },
+  /**
+   * Update the bar connect line path
+   * @param {d3Selection} node d3 selection of bar connect line
+   * @param {string} type Type of connect line, one of "start-start", "start-end", "end-start", "end-end"
+   * @param {Array} barPath d3 path data for the bar
+   */
+  updateConnectLine(node, type, barPath) {
+    const path = barPath.map((v, i, arr) => {
+      const isRotated = this.config.axis_rotated;
+      const isStart = /^start-(start|end)$/.test(type);
+      const isEnd = /^end-(start|end)$/.test(type);
+      const path2 = [];
+      const x = isRotated ? isEnd ? v.x - v.width : v.x : v.x + v.width;
+      const y = isRotated ? v.y + v.height : isStart ? v.y + v.height : v.y;
+      if (i === 0) {
+        path2.push(`${x},${y}`);
+      } else {
+        path2.push(
+          isRotated ? `L${v.x - (/\w+-end$/.test(type) ? v.width : 0)},${v.y}` : `L${v.x},${v.y + (/\w+-start$/.test(type) ? v.height : 0)}`
+        );
+        if (i < arr.length - 1) {
+          path2.push(`M${x},${y}`);
+        }
+      }
+      return path2.join(" ");
+    });
+    node.attr("d", `M${path.join("")}z`);
   }
 });
 
@@ -20998,6 +21071,7 @@ ${percentValue}%`;
    *      zerobased: false
    *  }
    */
+  bar_connectLine: false,
   bar_front: false,
   bar_indices_removeNull: false,
   bar_label_threshold: 0,
@@ -22005,7 +22079,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.1-nightly-20250605004705",
+  version: "3.15.1-nightly-20250614004713",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
