@@ -5088,6 +5088,126 @@ d3.select(".chart_area")
 		]
 	},
 	BarChartOptions: {
+		BarConnectLine: [
+			{
+				options: {
+					title: {
+						text: "start-start"
+					},
+					data: {
+						columns: [
+							["data1", -30, [30, 200], 150, 400, -150, 250]
+						],
+						type: "bar", 
+						groups: [
+							[
+								"data1",
+								"data2"
+							]
+						]
+				  	},
+					bar: {
+						connectLine: "start-start",
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "start-end"
+					},
+					data: {
+						columns: [
+							["data1", -30, [30, 200], 150, 400, -150, 250]
+						],
+						type: "bar", 
+						groups: [
+							[
+								"data1",
+								"data2"
+							]
+						]
+				  	},
+					bar: {
+						connectLine: "start-end"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "end-start"
+					},
+					data: {
+						columns: [
+							["data1", -30, [30, 200], 150, 400, -150, 250]
+						],
+						type: "bar", 
+						groups: [
+							[
+								"data1",
+								"data2"
+							]
+						]
+				  	},
+					bar: {
+						connectLine: "end-start"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "end-end"
+					},
+					data: {
+						columns: [
+							["data1", -30, [30, 200], 150, 400, -150, 250]
+						],
+						type: "bar", 
+						groups: [
+							[
+								"data1",
+								"data2"
+							]
+						]
+				  	},
+					bar: {
+						connectLine: "end-end"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "combination"
+					},
+					data: {
+						columns: [
+							["data1", -30, [30, 200], 150, 400, -150, 250],
+							["data2", 100, -100, 200, -150, 50],
+							["data3", -230, 200, 200, -300, 250, 250],
+							["data4", 100, 200, 100, 150, 50]
+						],
+						type: "bar", 
+						groups: [
+							[
+								"data1",
+								"data2"
+							]
+						]
+					},
+					bar: {
+						connectLine: {
+							data1: "start-start",
+							data2: "start-end",
+							data3: "end-start",
+							data4: "end-end"
+						}
+					}
+				}
+			}
+		],
 		BarFront: [
 			{
 				options: {

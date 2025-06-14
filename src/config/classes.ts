@@ -49,7 +49,8 @@ export const $BAR = {
 	bar: "bb-bar",
 	bars: "bb-bars",
 	chartBar: "bb-chart-bar",
-	chartBars: "bb-chart-bars"
+	chartBars: "bb-chart-bars",
+	barConnectLine: "bb-bar-connectLine"
 };
 
 export const $CANDLESTICK = {

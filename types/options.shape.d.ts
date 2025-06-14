@@ -159,7 +159,13 @@ export interface AreaOptions {
 	zerobased?: boolean;
 }
 
+type TConnectLine = "start-start" | "start-end" | "end-start" | "end-end";
+
 export interface BarOptions {
+	connectLine?: TConnectLine | {
+		[key: string]: TConnectLine;
+	};
+
 	/**
 	 * Set 'bar' to be positioned over(on the top) other shapes elements.
 	 */
