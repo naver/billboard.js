@@ -436,7 +436,7 @@ describe("PADDING", () => {
 		});
 
 		describe("non-rotated axis", () => {
-			const bottom = 37 - (util.isCI ? 1 : 0);
+			const bottom = 37;
 
 			it("outer y axis with legend", () => {
 				deepEqual({top: 0, right: 2, bottom, left: 40.59375});

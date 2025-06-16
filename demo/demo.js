@@ -2027,28 +2027,81 @@ var demos = {
 				}
 			}
 		},
-		XAxisTickCulling: {
-			options: {
-				data: {
-					columns: [
-						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250]
-					],
-					type: "line"
-				},
-				axis: {
-					x: {
-						type: "category",
-						tick: {
-							culling: {
-								max: 4 // the number of tick texts will be adjusted to less than this value
+		XAxisTickCulling: [
+			{
+				options: {
+					data: {
+						columns: [
+							["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250]
+						],
+						type: "line"
+					},
+					axis: {
+						x: {
+							type: "category",
+							tick: {
+								culling: {
+									max: 4 // the number of tick texts will be adjusted to less than this value
+								}
+								// for normal axis, default on
+								// for category axis, default off
 							}
-							// for normal axis, default on
-							// for category axis, default off
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Culling to start from the first tick",
+					},
+					data: {
+						x: 'periods',
+						type: "line",
+						columns: [
+							["periods", '1999', '2000', '2001', '2002', '2003','2004','2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015','2016'],
+							["data1", 0, 70, 200, 100, 170, 150, 350, 320, 200, 100, 170, 150, 250, 30, 200, 100, 170, 390],
+						]
+					},
+					axis: {
+						x: {
+							tick: {
+								outer: false,
+								culling: {
+									max: 6
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Culling to start from the last('reversed' way) tick",
+					},
+					data: {
+						x: 'periods',
+						type: "line",
+						columns: [
+							["periods", '1999', '2000', '2001', '2002', '2003','2004','2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015','2016'],
+							["data1", 0, 70, 200, 100, 170, 150, 350, 320, 200, 100, 170, 150, 250, 30, 200, 100, 170, 390],
+						]
+					},
+					axis: {
+						x: {
+							tick: {
+								outer: false,
+								culling: {
+									max: 6,
+									reverse: true
+								}
+							}
 						}
 					}
 				}
 			}
-		},
+		],
 		XAxisTickFitting: {
 			options: {
 				data: {
@@ -5035,6 +5088,126 @@ d3.select(".chart_area")
 		]
 	},
 	BarChartOptions: {
+		BarConnectLine: [
+			{
+				options: {
+					title: {
+						text: "start-start"
+					},
+					data: {
+						columns: [
+							["data1", -30, [30, 200], 150, 400, -150, 250]
+						],
+						type: "bar", 
+						groups: [
+							[
+								"data1",
+								"data2"
+							]
+						]
+				  	},
+					bar: {
+						connectLine: "start-start",
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "start-end"
+					},
+					data: {
+						columns: [
+							["data1", -30, [30, 200], 150, 400, -150, 250]
+						],
+						type: "bar", 
+						groups: [
+							[
+								"data1",
+								"data2"
+							]
+						]
+				  	},
+					bar: {
+						connectLine: "start-end"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "end-start"
+					},
+					data: {
+						columns: [
+							["data1", -30, [30, 200], 150, 400, -150, 250]
+						],
+						type: "bar", 
+						groups: [
+							[
+								"data1",
+								"data2"
+							]
+						]
+				  	},
+					bar: {
+						connectLine: "end-start"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "end-end"
+					},
+					data: {
+						columns: [
+							["data1", -30, [30, 200], 150, 400, -150, 250]
+						],
+						type: "bar", 
+						groups: [
+							[
+								"data1",
+								"data2"
+							]
+						]
+				  	},
+					bar: {
+						connectLine: "end-end"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "combination"
+					},
+					data: {
+						columns: [
+							["data1", -30, [30, 200], 150, 400, -150, 250],
+							["data2", 100, -100, 200, -150, 50],
+							["data3", -230, 200, 200, -300, 250, 250],
+							["data4", 100, 200, 100, 150, 50]
+						],
+						type: "bar", 
+						groups: [
+							[
+								"data1",
+								"data2"
+							]
+						]
+					},
+					bar: {
+						connectLine: {
+							data1: "start-start",
+							data2: "start-end",
+							data3: "end-start",
+							data4: "end-end"
+						}
+					}
+				}
+			}
+		],
 		BarFront: [
 			{
 				options: {

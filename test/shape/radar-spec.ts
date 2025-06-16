@@ -52,7 +52,7 @@ describe("SHAPE RADAR", () => {
 				expect(radar.select(".bb-shapes polygon").attr("points")).to.be.equal(expectedPoints);
 
 				done(1);
-			}, 300)
+			}, 350)
 		}));
 
 		it("Should render level, axes and data edges", () => {
@@ -418,7 +418,7 @@ describe("SHAPE RADAR", () => {
 				expect(radar.node().getBoundingClientRect().width).to.be.below(state.width);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 });

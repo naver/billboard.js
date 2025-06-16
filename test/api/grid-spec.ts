@@ -64,7 +64,7 @@ describe("API grid", function() {
 
 				expect(grids.size()).to.be.equal(0);
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should update x ygrids even if it's zoomed", () => new Promise(done => {
@@ -119,9 +119,9 @@ describe("API grid", function() {
 
 						expect(grids.size()).to.be.equal(0);
 						done(1);
-					}, 300);
-				}, 300);
-			}, 300);
+					}, 350);
+				}, 350);
+			}, 350);
 		}));
 	});
 

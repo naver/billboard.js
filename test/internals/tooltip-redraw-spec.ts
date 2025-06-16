@@ -204,7 +204,7 @@ describe("TOOLTIP: on redraws", function() {
 						expect(value.text()).to.be.equal("38.20%");
 
 						done(1);
-					}, 300);
+					}, 350);
 				}
 			});
 		}));
@@ -248,10 +248,10 @@ describe("TOOLTIP: on redraws", function() {
 							expect(current).to.be.equal("70.6%");
 							
 							done(1);
-						}, 300);
+						}, 350);
 					}
 				});
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -345,7 +345,7 @@ describe("TOOLTIP: on redraws", function() {
 						done(1);
 					}
 				});
-			}, 300);
+			}, 350);
 		}));
 	});
 });

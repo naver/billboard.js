@@ -251,6 +251,12 @@ export interface XTickConfiguration {
 		 * Control visibility of tick lines within culling option, along with tick text.
 		 */
 		lines?: boolean;
+
+		/**	
+		 * Control culling start point to be reversed. If set to true, the culling will be started from the end to start.
+	     * - **NOTE:** This option is only available when `axis.x.tick.culling` is set to truthy value.
+		 */
+		reverse?: boolean;
 	};
 
 	/**
@@ -404,6 +410,12 @@ export interface YTickConfiguration {
 		 * Control visibility of tick lines within culling option, along with tick text.
 		 */
 		lines?: boolean;
+
+		/**	
+		 * Control culling start point to be reversed. If set to true, the culling will be started from the end to start.
+	     * - **NOTE:** This option is only available when `axis.x.tick.culling` is set to truthy value.
+		 */
+		reverse?: boolean;
 	};
 
 	/**

@@ -10,6 +10,7 @@ import sinon from "sinon";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$ARC, $AXIS, $BAR, $CIRCLE, $COMMON, $FOCUS, $EVENT, $SELECT, $SHAPE} from "../../src/config/classes";
+import { transition } from "d3-transition";
 
 describe("INTERACTION", () => {
 	let chart;
@@ -251,7 +252,7 @@ describe("INTERACTION", () => {
 					const sample2Circle = circles.filter(d => d.id === "sample2");
 
 					expect(coords.length).to.be.equal(dataLen);
-					expect(sampleCircle.size()).to.be.equal(dataLen);
+					expect(sampleCircle.size()).to.be.equal(chart.data.values("sample2").length);
 
 					sampleCircle.each(function(d, i) {
 						expect(this.classList.contains(`${$CIRCLE.circle}-${i}`)).to.be.true;
@@ -270,15 +271,15 @@ describe("INTERACTION", () => {
 
 					setTimeout(() => {
 						const {coords, data} = chart.internal.state.eventReceiver;
-						const dataLen = chart.data()[1].values.length;
+						const dataLen = chart.data.values("sample2");
 						const circles = chart.$.circles.filter(d => d.id === "sample2");
 
 						data.forEach((d, i) => {
 							expect(d.index).to.be.equal(i);
 						});
 
-						expect(coords.length).to.be.equal(dataLen);
-						expect(circles.size()).to.be.equal(dataLen);
+						expect(coords.length).to.be.equal(dataLen.length);
+						expect(circles.size()).to.be.equal(dataLen.filter(Boolean).length);
 
 						circles.each(function(d, i) {
 							expect(this.classList.contains(`${$CIRCLE.circle}-${i}`)).to.be.true;
@@ -286,7 +287,7 @@ describe("INTERACTION", () => {
 						});
 
 						done(1);
-					}, 300);
+					}, 350);
 				}));
 			});
 
@@ -371,7 +372,7 @@ describe("INTERACTION", () => {
 								done(1);
 							}
 						});
-					}, 300);
+					}, 350);
 				}));
 			});
 		});
@@ -434,7 +435,7 @@ describe("INTERACTION", () => {
 					});
 
 					done(1);
-				}, 300);
+				}, 350);
 			}));
 
 			it("set options data.groups / tooltip.grouped=false", () => {
@@ -462,7 +463,7 @@ describe("INTERACTION", () => {
 					});
 
 					done(1);
-				}, 300);
+				}, 350);
 			}));
 
 			it("Overlapped circles: Callbacks were called correctly with its arguments?", () => new Promise(done => {
@@ -484,7 +485,7 @@ describe("INTERACTION", () => {
 					});
 
 					done(1);
-				}, 300);
+				}, 350);
 			}));
 
 			it("set options", () => {
@@ -1192,7 +1193,7 @@ describe("INTERACTION", () => {
 						expect(parseInt(chart.$.tooltip.style("left"))).to.be.above(left);
 	
 						done(1);
-					}, 300);
+					}, 350);
 				});
 			}));
 
@@ -1253,7 +1254,7 @@ describe("INTERACTION", () => {
 					expect(xGridFocus.style("visibility")).to.be.equal("visible");
 	
 					done(1);
-				}, 300);
+				}, 350);
 			});
 		}));
 

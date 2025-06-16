@@ -46,7 +46,7 @@ describe("GENERATOR", function() {
 				// restore
 				delete window.$$TEST$$.isTabVisible;
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 });

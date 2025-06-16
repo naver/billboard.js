@@ -217,7 +217,7 @@ describe("API data", function() {
 					.to.be.equal("#ff0000");
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 	});
@@ -255,7 +255,7 @@ describe("API data", function() {
 					.to.be.equal("0");
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 

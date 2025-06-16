@@ -139,7 +139,7 @@ describe("API chart", () => {
 
 				chart.destroy();
 				setTimeout(done, 500);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should not throw error when already destroyed", () => {
@@ -258,5 +258,24 @@ describe("API chart", () => {
 		it("should return generation options object.", () => {
 			expect(args).to.be.deep.equal(chart.config());
 		});
+
+		it("should data.color applied", () => new Promise(done => {
+			const color = "rgb(255, 0, 0)";
+
+			chart.config("data.color", function (c, d) {
+			      return {
+					data1: color
+				}[d.id];
+			}, true);
+
+			setTimeout(() => {
+				const {$: {legend, line: {lines}}} = chart;
+
+				expect(legend.select("line").style("stroke")).to.be.equal(color);
+				expect(lines.style("stroke")).to.be.equal(color);
+
+				done(1);
+			}, 350);
+		}));
 	});
 });

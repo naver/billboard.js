@@ -204,7 +204,7 @@ export default {
 			return ind;
 		}
 
-		return notEmpty(xs) ? indices[xs[id]] : indices;
+		return notEmpty(xs) ? indices[xs[id]] : indices as IDataIndice;
 	},
 
 	/**

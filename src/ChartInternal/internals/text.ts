@@ -155,7 +155,7 @@ export default {
 		const classFocus = $$.classFocus.bind($$);
 		const mainTextUpdate = $$.$el.main.select(`.${$TEXT.chartTexts}`)
 			.selectAll(`.${$TEXT.chartText}`)
-			.data(targets)
+			.data($$.filterNullish(targets))
 			.attr("class", d => `${classChartText(d)}${classFocus(d)}`.trim());
 
 		const mainTextEnter = mainTextUpdate.enter().append("g")

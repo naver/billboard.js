@@ -1,11 +1,11 @@
-# [3.15.0-next.2](https://github.com/naver/billboard.js/compare/3.15.0-next.1...3.15.0-next.2) (2025-03-17)
+## [3.15.1](https://github.com/naver/billboard.js/compare/3.15.0...3.15.1) (2025-04-22)
 
 
-### Features
+### Bug Fixes
 
-* **regions:** Intent to ship regions.label.center ([31722d9](https://github.com/naver/billboard.js/commit/31722d9d94f5c0aa45ee66d9e44fb25345ba012c)), closes [#3960](https://github.com/naver/billboard.js/issues/3960)
+* **core:** Fix potential security vulnerability ([82ea7ac](https://github.com/naver/billboard.js/commit/82ea7ac4f5720d6a7f0c2fa5a5dad51a549667bb)), closes [#3975](https://github.com/naver/billboard.js/issues/3975)
 
-# [3.15.0-next.1](https://github.com/naver/billboard.js/compare/3.14.3...3.15.0-next.1) (2025-03-06)
+# [3.15.0](https://github.com/naver/billboard.js/compare/3.14.3...3.15.0) (2025-03-20)
 
 
 ### Bug Fixes
@@ -16,6 +16,7 @@
 ### Features
 
 * **region:** Enhance regions accept category range ([904e35b](https://github.com/naver/billboard.js/commit/904e35b93f03dd16160376716df8a7149ecb1cf8)), closes [#3920](https://github.com/naver/billboard.js/issues/3920)
+* **regions:** Intent to ship regions.label.center ([31722d9](https://github.com/naver/billboard.js/commit/31722d9d94f5c0aa45ee66d9e44fb25345ba012c)), closes [#3960](https://github.com/naver/billboard.js/issues/3960)
 * **resize:** Container based auto resize ([#3956](https://github.com/naver/billboard.js/issues/3956)) ([fa3b751](https://github.com/naver/billboard.js/commit/fa3b7516276d96ffb8ca868ccda76c82e2c00ec7)), closes [#3955](https://github.com/naver/billboard.js/issues/3955)
 
 ## [3.14.3](https://github.com/naver/billboard.js/compare/3.14.2...3.14.3) (2025-01-07)

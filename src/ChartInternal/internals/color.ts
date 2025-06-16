@@ -89,8 +89,6 @@ export default {
 	generateColor(): Function {
 		const $$ = this;
 		const {$el, config} = $$;
-		const colors = config.data_colors;
-		const callback = config.data_color;
 		const ids: string[] = [];
 
 		let pattern = notEmpty(config.color_pattern) ?
@@ -115,6 +113,8 @@ export default {
 		}
 
 		return function(d: IDataRow | IArcData | string): string {
+			const colors = config.data_colors;
+			const callback = config.data_color;
 			const id: string = (d as IDataRow).id ||
 				(d as IArcData).data?.id ||
 				d as string;

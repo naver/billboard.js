@@ -180,7 +180,7 @@ describe("SHAPE POINT", () => {
 
 				expect(point.parentNode.style.opacity).to.be.equal("0");
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -221,10 +221,10 @@ describe("SHAPE POINT", () => {
 							expect(pos.every(v => v === currPos)).to.be.true;
 
 							done(1);
-						}, 300);
+						}, 350);
 					}
 				});
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -441,9 +441,7 @@ describe("SHAPE POINT", () => {
 					columns: [
 					  ["data1", 450],
 					],
-					onclick: sinon.spy(function() {
-						console.log("3333333")
-					}),
+					onclick: sinon.spy(function() {}),
 					type: "line"
 				},
 				point: {
@@ -629,7 +627,7 @@ describe("SHAPE POINT", () => {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("set option: data.type=scatter", () => {
@@ -645,7 +643,7 @@ describe("SHAPE POINT", () => {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 

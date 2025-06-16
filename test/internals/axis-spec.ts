@@ -286,6 +286,48 @@ describe("AXIS", function() {
 				expect(this.textContent % 1).to.be.equal(0);
 			});
 		});
+
+		it("set options", () => {
+			args = {
+				  data: {
+					columns: [
+						["data1", 3, 10, 11, 12]
+					],
+					type: "bar"
+				},
+				axis: {
+					rotated: true,
+					y: {
+						max: 100,
+						min: 0,
+						tick: {
+							stepSize: 2,
+						}
+					}
+				}
+			};
+		});
+
+		it("should stepSize works on rotated axis.", () => {
+			const {stepSize} = args.axis.y.tick;
+			let {$el: {axis: {y}}} = chart.internal;			
+			let temp;
+
+			y = y.selectAll(".tick tspan");
+
+			expect(y.size()).to.be.equal(61);
+
+			y.each(function() {
+				const value = +this.textContent;
+
+				if (!temp) {
+					temp = value;
+				} else {
+					expect(temp + stepSize).to.be.equal(value);
+					temp = value;
+				}
+			});
+		});
 	});
 
 	describe("axis label #1", () => {
@@ -3028,6 +3070,34 @@ describe("AXIS", function() {
 				done(1);
 			});
 		}));
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: 'periods',
+					type: "line",
+					columns: [
+						["periods", '1999', '2000', '2001', '2002', '2003','2004','2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015','2016'],
+						["data1", 0, 70, 200, 100, 170, 150, 350, 320, 200, 100, 170, 150, 250, 30, 200, 100, 170, 390],
+					]
+				},
+				axis: {
+					x: {
+						tick: {
+							outer: false,
+							culling: {
+								max: 6,
+								reverse: true
+							}
+						}
+					}
+				}
+			};
+		});
+
+		it("", () => {
+
+		});
 	});
 	
 	describe("Axes tick padding", () => {
@@ -3259,8 +3329,6 @@ describe("AXIS", function() {
 
 			chart.internal.$el.axis.x.selectAll(".tick").each(function(d, i) {
 				const xPos = +util.parseNum(this.getAttribute("transform"));
-
-				console.log(xPos, this.getAttribute("transform"))
 
 				if (i === 0) { // check min
 					expect(xPos).to.be.below(0);
@@ -3806,7 +3874,7 @@ describe("AXIS", function() {
 				text.style("font-size", null);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 });

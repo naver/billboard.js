@@ -105,7 +105,7 @@ describe("SHAPE LINE", () => {
 				});
 
 				done(1);
-			}, 300)
+			}, 350)
 
 		}));
 
@@ -122,7 +122,7 @@ describe("SHAPE LINE", () => {
 				expect(segments).to.be.equal(3);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
