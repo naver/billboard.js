@@ -9,7 +9,7 @@ import {
 	axisTop as d3AxisTop
 } from "d3-axis";
 import type {AxisType} from "../../../types/types";
-import {$AXIS} from "../../config/classes";
+import {$AXIS, $COMMON} from "../../config/classes";
 import {
 	capitalize,
 	isArray,
@@ -682,14 +682,24 @@ class Axis {
 				.style("visibility", "hidden")
 				.style("position", "fixed")
 				.style("top", "0")
-				.style("left", "0");
+				.style("left", "0")
+				.append("g")
+				.attr("class", `${$AXIS[`axis${capitalize(id)}`]} ${$COMMON.dummy}`);
 
 			axis.create(dummy);
+
+			// when evalTextSize is set as function, sizeFor1Char is set to the dummy element
+			const {sizeFor1Char} = dummy.node();
 
 			dummy.selectAll("text")
 				.attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null)
 				.each(function(d, i) {
-					const {width, height} = this.getBoundingClientRect();
+					const {width, height} = sizeFor1Char ?
+						{
+							width: this.textContent.length * sizeFor1Char.w,
+							height: sizeFor1Char.h
+						} :
+						this.getBoundingClientRect();
 
 					max.width = Math.max(max.width, width);
 					max.height = Math.max(max.height, height);
