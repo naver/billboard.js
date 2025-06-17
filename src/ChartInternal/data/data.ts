@@ -300,9 +300,12 @@ export default {
 			let min = [];
 			let max = [];
 
+			// Cache the getFilteredDataByValue function calls
+			const {min: minVal, max: maxVal} = minMax;
+
 			data.forEach(v => {
-				const minData = $$.getFilteredDataByValue(v, minMax.min);
-				const maxData = $$.getFilteredDataByValue(v, minMax.max);
+				const minData = $$.getFilteredDataByValue(v, minVal);
+				const maxData = $$.getFilteredDataByValue(v, maxVal);
 
 				if (minData.length) {
 					min = min.concat(minData);
@@ -582,20 +585,8 @@ export default {
 	},
 
 	checkValueInTargets(targets, checker: Function): boolean {
-		const ids = Object.keys(targets);
-		let values;
-
-		for (let i = 0; i < ids.length; i++) {
-			values = targets[ids[i]].values;
-
-			for (let j = 0; j < values.length; j++) {
-				if (checker(values[j].value)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
+		return Object.keys(targets)
+			.some(id => targets[id].values.some(v => checker(v.value)));
 	},
 
 	hasMultiTargets(): boolean {

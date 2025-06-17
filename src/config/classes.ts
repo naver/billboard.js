@@ -12,7 +12,8 @@ export const $COMMON = {
 	empty: "bb-empty",
 	main: "bb-main",
 	target: "bb-target",
-	EXPANDED: "_expanded_"
+	EXPANDED: "_expanded_",
+	dummy: "_dummy_"
 };
 
 export const $ARC = {
