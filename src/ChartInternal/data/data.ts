@@ -7,6 +7,7 @@ import {$BAR, $CANDLESTICK, $COMMON} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {
 	findIndex,
+	getBoundingRect,
 	getScrollPosition,
 	getTransformCTM,
 	getUnique,
@@ -754,7 +755,7 @@ export default {
 		return index;
 	},
 
-	getDataLabelLength(min, max, key) {
+	getDataLabelLength(min: number, max: number, key: string): number[] {
 		const $$ = this;
 		const lengths = [0, 0];
 		const paddingCoef = 1.3;
@@ -765,7 +766,7 @@ export default {
 			.append("text")
 			.text(d => $$.dataLabelFormat(d.id)(d))
 			.each(function(d, i) {
-				lengths[i] = this.getBoundingClientRect()[key] * paddingCoef;
+				lengths[i] = getBoundingRect(this, true)[key] * paddingCoef;
 			})
 			.remove();
 

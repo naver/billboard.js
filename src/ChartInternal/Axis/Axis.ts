@@ -12,6 +12,7 @@ import type {AxisType} from "../../../types/types";
 import {$AXIS, $COMMON} from "../../config/classes";
 import {
 	capitalize,
+	getBoundingRect,
 	isArray,
 	isEmpty,
 	isFunction,
@@ -699,7 +700,7 @@ class Axis {
 							width: this.textContent.length * sizeFor1Char.w,
 							height: sizeFor1Char.h
 						} :
-						this.getBoundingClientRect();
+						getBoundingRect(this, true);
 
 					max.width = Math.max(max.width, width);
 					max.height = Math.max(max.height, height);
