@@ -1231,6 +1231,51 @@ var demos = {
 				}
 			}
 		},
+		AxisEvalTextSize: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 50, 20, 10, 40, 15, 25]
+						],
+					},
+					axis: {
+						y2: {
+							show: true
+						}
+					}
+				},
+				style: [
+					"#axisEvalTextSize_1 .bb-axis-x text{font-size: 20px;}",
+					"#AxisEvalTextSize_1 .bb-axis-y text{font-size: 35px;}",
+					"#AxisEvalTextSize_1 .bb-axis-y2 text{font-size: 25px;}"
+				]
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 50, 20, 10, 40, 15, 25]
+						],
+					},
+					axis: {
+						y2: {
+							show: true
+						},
+						evalTextSize: function(text, id) {
+						// specify manual axis text character size
+						return {
+							x: { w: 30, h: 30},
+						    y: { w: 25, h: 20},
+						    y2: { w: 15.5, h: 20}
+						}[id];
+						}
+					}
+				}
+			}
+		],
 		AxisLabel: {
 			options: {
 				data: {
