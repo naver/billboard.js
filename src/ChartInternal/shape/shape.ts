@@ -27,6 +27,7 @@ import type {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
 import {
 	capitalize,
+	getBBox,
 	getPointer,
 	getRectSegList,
 	getUnique,
@@ -590,7 +591,7 @@ export default {
 		const x = Math.min(seg0.x, seg1.x);
 		const y = Math.min(seg0.y, seg1.y);
 		const offset = this.config.bar_sensitivity;
-		const {width, height} = that.getBBox();
+		const {width, height} = getBBox(that, true);
 		const sx = x - offset;
 		const ex = x + width + offset;
 		const sy = y + height + offset;

@@ -4,7 +4,7 @@
  * @ignore
  */
 import type {d3Selection} from "../../../types/types";
-import {isDefined, isNumber, isString, isValue} from "../../module/util";
+import {getBBox, isDefined, isNumber, isString, isValue} from "../../module/util";
 import {getScale} from "../internals/scale";
 
 export default class AxisRendererHelper {
@@ -46,7 +46,7 @@ export default class AxisRendererHelper {
 			.text("0")
 			.call((el: d3Selection) => {
 				try {
-					const {width, height} = el.node().getBBox();
+					const {width, height} = getBBox(el.node(), true);
 
 					if (width && height) {
 						size.w = width;

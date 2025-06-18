@@ -6,6 +6,7 @@ import {select as d3Select} from "d3-selection";
 import {$AXIS, $COMMON, $LEVEL, $RADAR, $SHAPE, $TEXT} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {
+	getBoundingRect,
 	getMinMax,
 	getPathBox,
 	getRange,
@@ -293,7 +294,7 @@ export default {
 				.attr("transform", function(d) {
 					if (isUndefined(this.width)) {
 						// cache evaluated axis text width
-						this.width = this.getBoundingClientRect().width / 2;
+						this.width = getBoundingRect(this, true).width / 2;
 					}
 
 					let posX = $$.getRadarPosition("x", d.index, undefined, 1);
