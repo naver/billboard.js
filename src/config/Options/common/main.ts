@@ -168,7 +168,7 @@ export default {
 	 *   - false: Disables automatic resize.
 	 *   - "parent": Enables automatic resize when the parent node is resized.
 	 *   - "viewBox": Enables automatic resize, and size will be fixed based on the viewbox.
-	 * @property {boolean|number} [resize.timer=false] Set resize timer option.
+	 * @property {boolean|number} [resize.timer=true] Set resize timer option.
 	 * - **NOTE:** Available options
 	 *   - The resize function will be called using:
 	 *     - true: `setTimeout()`
@@ -197,7 +197,7 @@ export default {
 	 *  }
 	 */
 	resize_auto: <boolean | "parent" | "viewBox">true,
-	resize_timer: false,
+	resize_timer: true,
 
 	/**
 	 * Set a callback to execute when the chart is clicked.
