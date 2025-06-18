@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.1-nightly-20250617004715
+ * @version 3.15.1-nightly-20250618004719
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -78,7 +78,8 @@ var $COMMON = {
     empty: "bb-empty",
     main: "bb-main",
     target: "bb-target",
-    EXPANDED: "_expanded_"
+    EXPANDED: "_expanded_",
+    dummy: "_dummy_"
 };
 var $ARC = {
     arc: "bb-arc",
@@ -4232,12 +4233,14 @@ var data$1 = {
         var minMaxData = $$.cache.get(cacheKey);
         if (!minMaxData) {
             var data = $$.data.targets.map(function (t) { return t.values; });
-            var minMax_1 = $$.getMinMaxValue(data);
+            var minMax = $$.getMinMaxValue(data);
             var min_1 = [];
             var max_1 = [];
+            // Cache the getFilteredDataByValue function calls
+            var minVal_1 = minMax.min, maxVal_1 = minMax.max;
             data.forEach(function (v) {
-                var minData = $$.getFilteredDataByValue(v, minMax_1.min);
-                var maxData = $$.getFilteredDataByValue(v, minMax_1.max);
+                var minData = $$.getFilteredDataByValue(v, minVal_1);
+                var maxData = $$.getFilteredDataByValue(v, maxVal_1);
                 if (minData.length) {
                     min_1 = min_1.concat(minData);
                 }
@@ -4469,17 +4472,8 @@ var data$1 = {
         return ys;
     },
     checkValueInTargets: function (targets, checker) {
-        var ids = Object.keys(targets);
-        var values;
-        for (var i = 0; i < ids.length; i++) {
-            values = targets[ids[i]].values;
-            for (var j = 0; j < values.length; j++) {
-                if (checker(values[j].value)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return Object.keys(targets)
+            .some(function (id) { return targets[id].values.some(function (v) { return checker(v.value); }); });
     },
     hasMultiTargets: function () {
         return this.filterTargetsToShow().length > 1;
@@ -13025,10 +13019,18 @@ var AxisRenderer = /** @class */ (function () {
                 tickShow.tick && tickEnter.append("line");
                 tickShow.text && tickEnter.append("text");
                 var tickText = tick.select("text");
-                var sizeFor1Char_1 = isFunction(evalTextSize) ?
-                    evalTextSize.bind(ctx.params.owner.api)(tickText.node()) :
-                    AxisRendererHelper.getSizeFor1Char(tickText, evalTextSize);
                 var counts_1 = [];
+                var sizeFor1Char_1;
+                if (isFunction(evalTextSize)) {
+                    // set evalTextSize to dummy axis element to be used in .getMaxTickSize()
+                    sizeFor1Char_1 = evalTextSize.bind(ctx.params.owner.api)(tickText.node(), id);
+                    if (this.classList.contains($COMMON.dummy)) {
+                        this.sizeFor1Char = sizeFor1Char_1;
+                    }
+                }
+                if (!sizeFor1Char_1) {
+                    sizeFor1Char_1 = AxisRendererHelper.getSizeFor1Char(tickText, !!evalTextSize);
+                }
                 var tspan = tickText
                     .selectAll("tspan")
                     .data(function (d, index) {
@@ -13910,12 +13912,21 @@ var Axis = /** @class */ (function () {
                 .style("visibility", "hidden")
                 .style("position", "fixed")
                 .style("top", "0")
-                .style("left", "0");
+                .style("left", "0")
+                .append("g")
+                .attr("class", "".concat($AXIS["axis".concat(capitalize(id))], " ").concat($COMMON.dummy));
             axis.create(dummy);
+            // when evalTextSize is set as function, sizeFor1Char is set to the dummy element
+            var sizeFor1Char_1 = dummy.node().sizeFor1Char;
             dummy.selectAll("text")
                 .attr("transform", isNumber(tickRotate) ? "rotate(".concat(tickRotate, ")") : null)
                 .each(function (d, i) {
-                var _a = this.getBoundingClientRect(), width = _a.width, height = _a.height;
+                var _a = sizeFor1Char_1 ?
+                    {
+                        width: this.textContent.length * sizeFor1Char_1.w,
+                        height: sizeFor1Char_1.h
+                    } :
+                    this.getBoundingClientRect(), width = _a.width, height = _a.height;
                 max.width = Math.max(max.width, width);
                 max.height = Math.max(max.height, height);
                 // cache tick text width for getXAxisTickTextY2Overflow()
@@ -17623,23 +17634,34 @@ var optAxis = __assign(__assign(__assign({
      * @memberof Options
      * @type {boolean|Function}
      * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.AxisEvalTextSize)
      * @example
      * axis: {
      *   // will evaluate getting text size every time.
      *   evalTextSize: false.
      *
      *   // set a custom evaluator
-     *   evalTextSize: function(textElement) {
+     *   evalTextSize: function(textElement, axisId) {
      *     // set some character to be evaluated
-     *     text.textContent = "0";
+     *     // NOTE: The dummy textElement is a descendant of given axisId('x', 'y' or 'y2').
+     *     textElement.textContent = "0";
      *
      *     // get the size
-     *      const box = text.getBBox();
+     *     const box = textElement.getBBox();
      *
      *     // clear text
-     *     text.textContent = "";
+     *     textElement.textContent = "";
      *
      *     return { w: 7, h: 12};
+     *   },
+     *
+     *   // set a custom evaluator by returning fixed value
+     *   evalTextSize: function(textElement, axisId) {
+     *     return {
+     *        x: {w: 7, h: 12},
+     *        y: {w: 15.75, h: 30},
+     *        y2: {w: 9.5, h: 18}
+     *     }[axisId];
      *   }
      * }
      */
@@ -24874,7 +24896,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.15.1-nightly-20250617004715
+ * @version 3.15.1-nightly-20250618004719
  */
 var bb = {
     /**
@@ -24884,7 +24906,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.15.1-nightly-20250617004715",
+    version: "3.15.1-nightly-20250618004719",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

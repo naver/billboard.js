@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.1-nightly-20250617004715
+ * @version 3.15.1-nightly-20250618004719
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -23176,7 +23176,8 @@ const $COMMON = {
   empty: "bb-empty",
   main: "bb-main",
   target: "bb-target",
-  EXPANDED: "_expanded_"
+  EXPANDED: "_expanded_",
+  dummy: "_dummy_"
 };
 const $ARC = {
   arc: "bb-arc",
@@ -29129,9 +29130,10 @@ function getDataKeyForJson(keysParam, config) {
       const minMax = $$.getMinMaxValue(data);
       let min = [];
       let max = [];
+      const { min: minVal, max: maxVal } = minMax;
       data.forEach((v) => {
-        const minData = $$.getFilteredDataByValue(v, minMax.min);
-        const maxData = $$.getFilteredDataByValue(v, minMax.max);
+        const minData = $$.getFilteredDataByValue(v, minVal);
+        const maxData = $$.getFilteredDataByValue(v, maxVal);
         if (minData.length) {
           min = min.concat(minData);
         }
@@ -29341,17 +29343,7 @@ function getDataKeyForJson(keysParam, config) {
     return ys;
   },
   checkValueInTargets(targets, checker) {
-    const ids = Object.keys(targets);
-    let values;
-    for (let i = 0; i < ids.length; i++) {
-      values = targets[ids[i]].values;
-      for (let j = 0; j < values.length; j++) {
-        if (checker(values[j].value)) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return Object.keys(targets).some((id) => targets[id].values.some((v) => checker(v.value)));
   },
   hasMultiTargets() {
     return this.filterTargetsToShow().length > 1;
@@ -40924,6 +40916,7 @@ var AxisRenderer_publicField = (obj, key, value) => AxisRenderer_defNormalProp(o
 
 
 
+
 class AxisRenderer {
   constructor(params = {}) {
     AxisRenderer_publicField(this, "helper");
@@ -41003,8 +40996,17 @@ class AxisRenderer {
         tickShow.tick && tickEnter.append("line");
         tickShow.text && tickEnter.append("text");
         const tickText = tick.select("text");
-        const sizeFor1Char = isFunction(evalTextSize) ? evalTextSize.bind(ctx.params.owner.api)(tickText.node()) : AxisRendererHelper.getSizeFor1Char(tickText, evalTextSize);
         const counts = [];
+        let sizeFor1Char;
+        if (isFunction(evalTextSize)) {
+          sizeFor1Char = evalTextSize.bind(ctx.params.owner.api)(tickText.node(), id);
+          if (this.classList.contains($COMMON.dummy)) {
+            this.sizeFor1Char = sizeFor1Char;
+          }
+        }
+        if (!sizeFor1Char) {
+          sizeFor1Char = AxisRendererHelper.getSizeFor1Char(tickText, !!evalTextSize);
+        }
         let tspan = tickText.selectAll("tspan").data((d, index) => {
           const split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helper.textFormatted(d)) ? helper.textFormatted(d).concat() : [helper.textFormatted(d)];
           counts[index] = split.length;
@@ -41781,10 +41783,14 @@ class Axis_Axis {
         );
       }
       !isYAxis && this.updateXAxisTickValues(targetsToShow, axis);
-      const dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0").style("left", "0");
+      const dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0").style("left", "0").append("g").attr("class", `${$AXIS[`axis${capitalize(id)}`]} ${$COMMON.dummy}`);
       axis.create(dummy);
+      const { sizeFor1Char } = dummy.node();
       dummy.selectAll("text").attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null).each(function(d, i) {
-        const { width, height } = this.getBoundingClientRect();
+        const { width, height } = sizeFor1Char ? {
+          width: this.textContent.length * sizeFor1Char.w,
+          height: sizeFor1Char.h
+        } : this.getBoundingClientRect();
         max.width = Math.max(max.width, width);
         max.height = Math.max(max.height, height);
         if (!isYAxis) {
@@ -45166,23 +45172,34 @@ var axis_spreadValues = (a, b) => {
    * @memberof Options
    * @type {boolean|Function}
    * @default true
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.AxisEvalTextSize)
    * @example
    * axis: {
    *   // will evaluate getting text size every time.
    *   evalTextSize: false.
    *
    *   // set a custom evaluator
-   *   evalTextSize: function(textElement) {
+   *   evalTextSize: function(textElement, axisId) {
    *     // set some character to be evaluated
-   *     text.textContent = "0";
+   *     // NOTE: The dummy textElement is a descendant of given axisId('x', 'y' or 'y2').
+   *     textElement.textContent = "0";
    *
    *     // get the size
-   *      const box = text.getBBox();
+   *     const box = textElement.getBBox();
    *
    *     // clear text
-   *     text.textContent = "";
+   *     textElement.textContent = "";
    *
    *     return { w: 7, h: 12};
+   *   },
+   *
+   *   // set a custom evaluator by returning fixed value
+   *   evalTextSize: function(textElement, axisId) {
+   *     return {
+   *        x: {w: 7, h: 12},
+   *        y: {w: 15.75, h: 30},
+   *        y2: {w: 9.5, h: 18}
+   *     }[axisId];
    *   }
    * }
    */
@@ -50985,7 +51002,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.1-nightly-20250617004715",
+  version: "3.15.1-nightly-20250618004719",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
