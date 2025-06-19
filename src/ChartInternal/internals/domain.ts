@@ -82,7 +82,7 @@ export default {
 			.some(v => $$.axis.getId(v) === id);
 	},
 
-	getYDomain(targets, axisId: string, xDomain) {
+	getYDomain(targets: IData[], axisId: "y" | "y2", xDomain: TDomainRange) {
 		const $$ = this;
 		const {axis, config, scale} = $$;
 		const pfx = `axis_${axisId}`;

@@ -7,7 +7,6 @@ import {$BAR, $CANDLESTICK, $COMMON} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {
 	findIndex,
-	getBoundingRect,
 	getScrollPosition,
 	getTransformCTM,
 	getUnique,
@@ -755,22 +754,13 @@ export default {
 		return index;
 	},
 
-	getDataLabelLength(min: number, max: number, key: string): number[] {
+	getDataLabelLength(min: number, max: number, key: "width" | "height"): number[] {
 		const $$ = this;
-		const lengths = [0, 0];
 		const paddingCoef = 1.3;
 
-		$$.$el.chart.select("svg").selectAll(".dummy")
-			.data([min, max])
-			.enter()
-			.append("text")
-			.text(d => $$.dataLabelFormat(d.id)(d))
-			.each(function(d, i) {
-				lengths[i] = getBoundingRect(this, true)[key] * paddingCoef;
-			})
-			.remove();
-
-		return lengths;
+		return $$.getTextRect(
+			[min, max].map(v => $$.dataLabelFormat()(v))
+		)?.map((rect: DOMRect) => rect[key] * paddingCoef) || [0, 0];
 	},
 
 	isNoneArc(d) {
