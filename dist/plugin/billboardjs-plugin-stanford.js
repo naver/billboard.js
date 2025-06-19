@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.1-nightly-20250618004719
+ * @version 3.15.1-nightly-20250619004716
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -436,7 +436,7 @@ function getRectSegList(path) {
   ];
 }
 function getPathBox(path) {
-  const { width, height } = path.getBoundingClientRect();
+  const { width, height } = getBoundingRect(path);
   const items = getRectSegList(path);
   const x = items[0].x;
   const y = Math.min(items[0].y, items[1].y);
@@ -468,9 +468,20 @@ function getBrushSelection(ctx) {
   }
   return selection;
 }
-function getBoundingRect(node) {
-  const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width");
-  return needEvaluate ? node.rect = node.getBoundingClientRect() : node.rect;
+function getRect(relativeViewport, node, forceEval = false) {
+  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+  if (forceEval) {
+    return _(node);
+  } else {
+    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
+    return needEvaluate ? node.rect = _(node) : node.rect;
+  }
+}
+function getBoundingRect(node, forceEval = false) {
+  return getRect(true, node, forceEval);
+}
+function getBBox(node, forceEval = false) {
+  return getRect(false, node, forceEval);
 }
 function getRandom(asStr = true, min = 0, max = 1e4) {
   const crpt = win.crypto || win.msCrypto;
@@ -566,7 +577,7 @@ function getTransformCTM(node, x = 0, y = 0, inverse = true) {
     inverse ? screen == null ? void 0 : screen.inverse() : screen
   );
   if (inverse === false) {
-    const rect = node.getBoundingClientRect();
+    const rect = getBoundingRect(node);
     res.x -= rect.x;
     res.y -= rect.y;
   }
@@ -849,7 +860,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.15.1-nightly-20250618004719");
+__publicField(Plugin, "version", "3.15.1-nightly-20250619004716");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);

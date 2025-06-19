@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.1-nightly-20250618004719
+ * @version 3.15.1-nightly-20250619004716
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -723,7 +723,7 @@ var main = {
      *  }
      */
     resize_auto: true,
-    resize_timer: false,
+    resize_timer: true,
     /**
      * Set a callback to execute when the chart is clicked.
      * @name onclick
@@ -2384,7 +2384,7 @@ function getRectSegList(path) {
  * @private
  */
 function getPathBox(path) {
-    var _a = path.getBoundingClientRect(), width = _a.width, height = _a.height;
+    var _a = getBoundingRect(path), width = _a.width, height = _a.height;
     var items = getRectSegList(path);
     var x = items[0].x;
     var y = Math.min(items[0].y, items[1].y);
@@ -2436,14 +2436,46 @@ function getBrushSelection(ctx) {
 /**
  * Get boundingClientRect.
  * Cache the evaluated value once it was called.
- * @param {HTMLElement} node Target element
+ * @param {boolean} relativeViewport Relative to viewport - true: will use .getBoundingClientRect(), false: will use .getBBox()
+ * @param {SVGElement} node Target element
+ * @param {boolean} forceEval Force evaluation
  * @returns {object}
  * @private
  */
-function getBoundingRect(node) {
-    var needEvaluate = !("rect" in node) || ("rect" in node && node.hasAttribute("width") &&
-        node.rect.width !== +node.getAttribute("width"));
-    return needEvaluate ? (node.rect = node.getBoundingClientRect()) : node.rect;
+function getRect(relativeViewport, node, forceEval) {
+    if (forceEval === void 0) { forceEval = false; }
+    var _ = function (n) { return n[relativeViewport ? "getBoundingClientRect" : "getBBox"](); };
+    if (forceEval) {
+        return _(node);
+    }
+    else {
+        // will cache the value if the element is not a SVGElement or the width is not set
+        var needEvaluate = !("rect" in node) || ("rect" in node && node.hasAttribute("width") &&
+            node.rect.width !== +(node.getAttribute("width") || 0));
+        return needEvaluate ? (node.rect = _(node)) : node.rect;
+    }
+}
+/**
+ * Get boundingClientRect.
+ * @param {SVGElement} node Target element
+ * @param {boolean} forceEval Force evaluation
+ * @returns {object}
+ * @private
+ */
+function getBoundingRect(node, forceEval) {
+    if (forceEval === void 0) { forceEval = false; }
+    return getRect(true, node, forceEval);
+}
+/**
+ * Get BBox.
+ * @param {SVGElement} node Target element
+ * @param {boolean} forceEval Force evaluation
+ * @returns {object}
+ * @private
+ */
+function getBBox(node, forceEval) {
+    if (forceEval === void 0) { forceEval = false; }
+    return getRect(false, node, forceEval);
 }
 /**
  * Retrun random number
@@ -2646,7 +2678,7 @@ function getTransformCTM(node, x, y, inverse) {
     var screen = node.getScreenCTM();
     var res = point.matrixTransform(inverse ? screen === null || screen === void 0 ? void 0 : screen.inverse() : screen);
     if (inverse === false) {
-        var rect = node.getBoundingClientRect();
+        var rect = getBoundingRect(node);
         res.x -= rect.x;
         res.y -= rect.y;
     }
@@ -4614,7 +4646,7 @@ var data$1 = {
             .append("text")
             .text(function (d) { return $$.dataLabelFormat(d.id)(d); })
             .each(function (d, i) {
-            lengths[i] = this.getBoundingClientRect()[key] * paddingCoef;
+            lengths[i] = getBoundingRect(this, true)[key] * paddingCoef;
         })
             .remove();
         return lengths;
@@ -5222,7 +5254,7 @@ var interaction = {
         if (element) {
             var isMultipleX = $$.isMultipleX();
             var isRotated = config.axis_rotated;
-            var _f = element.getBoundingClientRect(), width = _f.width, left = _f.left, top_1 = _f.top;
+            var _f = getBoundingRect(element), width = _f.width, left = _f.left, top_1 = _f.top;
             if (hasAxis && !hasRadar && !isMultipleX) {
                 var coords = eventReceiver.coords[index];
                 if (coords) {
@@ -7390,7 +7422,7 @@ var size = {
         var v = 0;
         while (v < 30 && parent && parent.tagName !== "BODY") {
             try {
-                v = parent.getBoundingClientRect()[key];
+                v = getBoundingRect(parent, true)[key];
             }
             catch (_a) {
                 if (offsetName in parent) {
@@ -7432,11 +7464,14 @@ var size = {
             /^inner-/.test(leftLabel === null || leftLabel === void 0 ? void 0 : leftLabel.position))) {
             var label = $el.main.select(".".concat(leftAxisClass, "-label"));
             if (!label.empty()) {
-                labelWidth = label.node().getBoundingClientRect().left;
+                labelWidth = getBoundingRect(label.node()).left;
             }
         }
-        var svgRect = leftAxis && hasLeftAxisRect ? leftAxis.getBoundingClientRect() : { right: 0 };
-        var chartRectLeft = $el.chart.node().getBoundingClientRect().left + labelWidth;
+        var svgRect = leftAxis && hasLeftAxisRect ?
+            getBoundingRect(leftAxis, !withoutRecompute) :
+            { right: 0 };
+        var chartRectLeft = getBoundingRect($el.chart.node(), !withoutRecompute).left +
+            labelWidth;
         var hasArc = $$.hasArcType();
         var svgLeft = svgRect.right - chartRectLeft -
             (hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
@@ -8698,7 +8733,7 @@ var tooltip$1 = {
         }
         // currPos value based on SVG coordinate
         var ctm = getTransformCTM(target, x, y, false);
-        var rect = target.getBoundingClientRect();
+        var rect = getBoundingRect(target);
         var size = getTransformCTM(target, 20, 0, false).x;
         var top = ctm.y;
         var left = ctm.x + (tWidth / 2) + size;
@@ -9754,7 +9789,7 @@ var shape = {
         var x = Math.min(seg0.x, seg1.x);
         var y = Math.min(seg0.y, seg1.y);
         var offset = this.config.bar_sensitivity;
-        var _a = that.getBBox(), width = _a.width, height = _a.height;
+        var _a = getBBox(that, true), width = _a.width, height = _a.height;
         var sx = x - offset;
         var ex = x + width + offset;
         var sy = y + height + offset;
@@ -10888,9 +10923,9 @@ function nodeToSvgDataUrl(node, option, orgSize) {
  */
 function getCoords(elem, svgOffset) {
     var top = svgOffset.top, left = svgOffset.left;
-    var _a = elem.getBBox(), x = _a.x, y = _a.y;
+    var _a = getBBox(elem, true), x = _a.x, y = _a.y;
     var _b = elem.getScreenCTM(), a = _b.a, b = _b.b, c = _b.c, d = _b.d, e = _b.e, f = _b.f;
-    var _c = elem.getBoundingClientRect(), width = _c.width, height = _c.height;
+    var _c = getBoundingRect(elem, true), width = _c.width, height = _c.height;
     return {
         x: (a * x) + (c * y) + e - left,
         y: (b * x) + (d * y) + f - top + (height - Math.round(height / 4)),
@@ -10905,7 +10940,7 @@ function getCoords(elem, svgOffset) {
  * @private
  */
 function getGlyph(svg) {
-    var _a = svg.getBoundingClientRect(), left = _a.left, top = _a.top;
+    var _a = getBoundingRect(svg), left = _a.left, top = _a.top;
     var filterFn = function (t) { return t.textContent || t.childElementCount; };
     var glyph = [];
     toArray(svg.querySelectorAll("text"))
@@ -12801,7 +12836,7 @@ var AxisRendererHelper = /** @class */ (function () {
             .text("0")
             .call(function (el) {
             try {
-                var _a = el.node().getBBox(), width = _a.width, height = _a.height;
+                var _a = getBBox(el.node(), true), width = _a.width, height = _a.height;
                 if (width && height) {
                     size.w = width;
                     size.h = height;
@@ -13926,7 +13961,7 @@ var Axis = /** @class */ (function () {
                         width: this.textContent.length * sizeFor1Char_1.w,
                         height: sizeFor1Char_1.h
                     } :
-                    this.getBoundingClientRect(), width = _a.width, height = _a.height;
+                    getBoundingRect(this, true), width = _a.width, height = _a.height;
                 max.width = Math.max(max.width, width);
                 max.height = Math.max(max.height, height);
                 // cache tick text width for getXAxisTickTextY2Overflow()
@@ -14421,8 +14456,7 @@ var eventrect = {
         var updateClientRect = function () {
             if (eventReceiver) {
                 var scrollPos = getScrollPosition($el.chart.node());
-                eventReceiver.rect = rectElement.node()
-                    .getBoundingClientRect()
+                eventReceiver.rect = getBoundingRect(rectElement.node(), true)
                     .toJSON();
                 eventReceiver.rect.top += scrollPos.y;
                 eventReceiver.rect.left += scrollPos.x;
@@ -20737,7 +20771,7 @@ var shapePoint = {
                     point.attr("r", r);
                 }
                 else {
-                    var _a = this.getBBox(), width = _a.width, height = _a.height;
+                    var _a = getBBox(this), width = _a.width, height = _a.height;
                     var x = ratio * (+point.attr("x") + width / 2);
                     var y = ratio * (+point.attr("y") + height / 2);
                     point.attr("transform", "translate(".concat(x, " ").concat(y, ") scale(").concat(scale, ")"));
@@ -20884,7 +20918,7 @@ var shapePoint = {
         },
         update: function (element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
             var $$ = this;
-            var _a = element.node().getBBox(), width = _a.width, height = _a.height;
+            var _a = getBBox(element.node()), width = _a.width, height = _a.height;
             var xPosFn2 = function (d) { return (isValue(d.value) ? xPosFn(d) - width / 2 : 0); };
             var yPosFn2 = function (d) { return (isValue(d.value) ? yPosFn(d) - height / 2 : 0); };
             var mainCircles = element;
@@ -21396,7 +21430,7 @@ var shapeRadar = {
                 .attr("transform", function (d) {
                 if (isUndefined(this.width)) {
                     // cache evaluated axis text width
-                    this.width = this.getBoundingClientRect().width / 2;
+                    this.width = getBoundingRect(this, true).width / 2;
                 }
                 var posX = $$.getRadarPosition("x", d.index, undefined, 1);
                 var posY = Math.round($$.getRadarPosition("y", d.index, undefined, 1));
@@ -24896,7 +24930,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.15.1-nightly-20250618004719
+ * @version 3.15.1-nightly-20250619004716
  */
 var bb = {
     /**
@@ -24906,7 +24940,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.15.1-nightly-20250618004719",
+    version: "3.15.1-nightly-20250619004716",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

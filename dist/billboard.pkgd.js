@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.1-nightly-20250618004719
+ * @version 3.15.1-nightly-20250619004716
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -23801,7 +23801,7 @@ const $ZOOM = {
    *  }
    */
   resize_auto: true,
-  resize_timer: false,
+  resize_timer: true,
   /**
    * Set a callback to execute when the chart is clicked.
    * @name onclick
@@ -27540,7 +27540,7 @@ function getRectSegList(path) {
   ];
 }
 function getPathBox(path) {
-  const { width, height } = path.getBoundingClientRect();
+  const { width, height } = getBoundingRect(path);
   const items = getRectSegList(path);
   const x = items[0].x;
   const y = Math.min(items[0].y, items[1].y);
@@ -27572,9 +27572,20 @@ function getBrushSelection(ctx) {
   }
   return selection;
 }
-function getBoundingRect(node) {
-  const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width");
-  return needEvaluate ? node.rect = node.getBoundingClientRect() : node.rect;
+function getRect(relativeViewport, node, forceEval = false) {
+  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+  if (forceEval) {
+    return _(node);
+  } else {
+    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
+    return needEvaluate ? node.rect = _(node) : node.rect;
+  }
+}
+function getBoundingRect(node, forceEval = false) {
+  return getRect(true, node, forceEval);
+}
+function getBBox(node, forceEval = false) {
+  return getRect(false, node, forceEval);
 }
 function getRandom(asStr = true, min = 0, max = 1e4) {
   const crpt = win.crypto || win.msCrypto;
@@ -27670,7 +27681,7 @@ function getTransformCTM(node, x = 0, y = 0, inverse = true) {
     inverse ? screen == null ? void 0 : screen.inverse() : screen
   );
   if (inverse === false) {
-    const rect = node.getBoundingClientRect();
+    const rect = getBoundingRect(node);
     res.x -= rect.x;
     res.y -= rect.y;
   }
@@ -29474,7 +29485,7 @@ function getDataKeyForJson(keysParam, config) {
     const lengths = [0, 0];
     const paddingCoef = 1.3;
     $$.$el.chart.select("svg").selectAll(".dummy").data([min, max]).enter().append("text").text((d) => $$.dataLabelFormat(d.id)(d)).each(function(d, i) {
-      lengths[i] = this.getBoundingClientRect()[key] * paddingCoef;
+      lengths[i] = getBoundingRect(this, true)[key] * paddingCoef;
     }).remove();
     return lengths;
   },
@@ -30185,7 +30196,7 @@ function drag_defaultTouchable() {
     if (element) {
       const isMultipleX = $$.isMultipleX();
       const isRotated = config.axis_rotated;
-      let { width, left, top } = element.getBoundingClientRect();
+      let { width, left, top } = getBoundingRect(element);
       if (hasAxis && !hasRadar && !isMultipleX) {
         const coords = eventReceiver.coords[index];
         if (coords) {
@@ -33168,7 +33179,7 @@ function getScale(type = "linear", min, max) {
     let v = 0;
     while (v < 30 && parent && parent.tagName !== "BODY") {
       try {
-        v = parent.getBoundingClientRect()[key];
+        v = getBoundingRect(parent, true)[key];
       } catch (e) {
         if (offsetName in parent) {
           v = parent[offsetName];
@@ -33203,11 +33214,11 @@ function getScale(type = "linear", min, max) {
     if (hasAxis && (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel == null ? void 0 : leftLabel.position))) {
       const label = $el.main.select(`.${leftAxisClass}-label`);
       if (!label.empty()) {
-        labelWidth = label.node().getBoundingClientRect().left;
+        labelWidth = getBoundingRect(label.node()).left;
       }
     }
-    const svgRect = leftAxis && hasLeftAxisRect ? leftAxis.getBoundingClientRect() : { right: 0 };
-    const chartRectLeft = $el.chart.node().getBoundingClientRect().left + labelWidth;
+    const svgRect = leftAxis && hasLeftAxisRect ? getBoundingRect(leftAxis, !withoutRecompute) : { right: 0 };
+    const chartRectLeft = getBoundingRect($el.chart.node(), !withoutRecompute).left + labelWidth;
     const hasArc = $$.hasArcType();
     const svgLeft = svgRect.right - chartRectLeft - (hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
     return svgLeft > 0 ? svgLeft : 0;
@@ -34247,7 +34258,7 @@ function getTextXPos(pos = "left", width) {
       y = isRotated ? currPos.xAxis : y;
     }
     const ctm = getTransformCTM(target, x, y, false);
-    const rect = target.getBoundingClientRect();
+    const rect = getBoundingRect(target);
     const size = getTransformCTM(target, 20, 0, false).x;
     let top = ctm.y;
     let left = ctm.x + tWidth / 2 + size;
@@ -36114,7 +36125,7 @@ function getGroupedDataPointsFn(d) {
     const x = Math.min(seg0.x, seg1.x);
     const y = Math.min(seg0.y, seg1.y);
     const offset = this.config.bar_sensitivity;
-    const { width, height } = that.getBBox();
+    const { width, height } = getBBox(that, true);
     const sx = x - offset;
     const ex = x + width + offset;
     const sy = y + height + offset;
@@ -37137,9 +37148,9 @@ function nodeToSvgDataUrl(node, option, orgSize) {
 }
 function getCoords(elem, svgOffset) {
   const { top, left } = svgOffset;
-  const { x, y } = elem.getBBox();
+  const { x, y } = getBBox(elem, true);
   const { a, b, c, d, e, f } = elem.getScreenCTM();
-  const { width, height } = elem.getBoundingClientRect();
+  const { width, height } = getBoundingRect(elem, true);
   return {
     x: a * x + c * y + e - left,
     y: b * x + d * y + f - top + (height - Math.round(height / 4)),
@@ -37148,7 +37159,7 @@ function getCoords(elem, svgOffset) {
   };
 }
 function getGlyph(svg) {
-  const { left, top } = svg.getBoundingClientRect();
+  const { left, top } = getBoundingRect(svg);
   const filterFn = (t) => t.textContent || t.childElementCount;
   const glyph = [];
   toArray(svg.querySelectorAll("text")).filter(filterFn).forEach((t) => {
@@ -40815,7 +40826,7 @@ class AxisRendererHelper {
     };
     !text.empty() && text.text("0").call((el) => {
       try {
-        const { width, height } = el.node().getBBox();
+        const { width, height } = getBBox(el.node(), true);
         if (width && height) {
           size.w = width;
           size.h = height;
@@ -41790,7 +41801,7 @@ class Axis_Axis {
         const { width, height } = sizeFor1Char ? {
           width: this.textContent.length * sizeFor1Char.w,
           height: sizeFor1Char.h
-        } : this.getBoundingClientRect();
+        } : getBoundingRect(this, true);
         max.width = Math.max(max.width, width);
         max.height = Math.max(max.height, height);
         if (!isYAxis) {
@@ -42235,7 +42246,7 @@ class Axis_Axis {
     const updateClientRect = () => {
       if (eventReceiver) {
         const scrollPos = getScrollPosition($el.chart.node());
-        eventReceiver.rect = rectElement.node().getBoundingClientRect().toJSON();
+        eventReceiver.rect = getBoundingRect(rectElement.node(), true).toJSON();
         eventReceiver.rect.top += scrollPos.y;
         eventReceiver.rect.left += scrollPos.x;
       }
@@ -48342,7 +48353,7 @@ const getTransitionName = () => getRandom();
         if (this.tagName === "circle") {
           point.attr("r", r);
         } else {
-          const { width, height } = this.getBBox();
+          const { width, height } = getBBox(this);
           const x = ratio * (+point.attr("x") + width / 2);
           const y = ratio * (+point.attr("y") + height / 2);
           point.attr("transform", `translate(${x} ${y}) scale(${scale})`);
@@ -48475,7 +48486,7 @@ const getTransitionName = () => getRandom();
     },
     update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
       const $$ = this;
-      const { width, height } = element.node().getBBox();
+      const { width, height } = getBBox(element.node());
       const xPosFn2 = (d) => isValue(d.value) ? xPosFn(d) - width / 2 : 0;
       const yPosFn2 = (d) => isValue(d.value) ? yPosFn(d) - height / 2 : 0;
       let mainCircles = element;
@@ -48883,7 +48894,7 @@ const cacheKeyTextWidth = KEY.radarTextWidth;
         });
       }).datum((d, i) => ({ index: i })).attr("transform", function(d) {
         if (isUndefined(this.width)) {
-          this.width = this.getBoundingClientRect().width / 2;
+          this.width = getBoundingRect(this, true).width / 2;
         }
         let posX = $$.getRadarPosition("x", d.index, void 0, 1);
         let posY = Math.round($$.getRadarPosition("y", d.index, void 0, 1));
@@ -51002,7 +51013,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.1-nightly-20250618004719",
+  version: "3.15.1-nightly-20250619004716",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
