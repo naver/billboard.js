@@ -4,7 +4,14 @@
  */
 import {namespaces as d3Namespaces} from "d3-selection";
 import {document, window} from "../../module/browser";
-import {getCssRules, isFunction, mergeObj, toArray} from "../../module/util";
+import {
+	getBBox,
+	getBoundingRect,
+	getCssRules,
+	isFunction,
+	mergeObj,
+	toArray
+} from "../../module/util";
 
 type TExportOption = TSize & {
 	preserveAspectRatio: boolean,
@@ -98,9 +105,9 @@ function nodeToSvgDataUrl(node, option: TExportOption, orgSize: TSize) {
  */
 function getCoords(elem, svgOffset): TSize {
 	const {top, left} = svgOffset;
-	const {x, y} = elem.getBBox();
+	const {x, y} = getBBox(elem, true);
 	const {a, b, c, d, e, f} = elem.getScreenCTM();
-	const {width, height} = elem.getBoundingClientRect();
+	const {width, height} = getBoundingRect(elem, true);
 
 	return {
 		x: (a * x) + (c * y) + e - left,
@@ -117,7 +124,7 @@ function getCoords(elem, svgOffset): TSize {
  * @private
  */
 function getGlyph(svg: SVGElement): TTextGlyph[] {
-	const {left, top} = svg.getBoundingClientRect();
+	const {left, top} = getBoundingRect(svg);
 	const filterFn = t => t.textContent || t.childElementCount;
 	const glyph: TTextGlyph[] = [];
 

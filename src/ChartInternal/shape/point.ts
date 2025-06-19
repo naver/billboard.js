@@ -6,6 +6,7 @@ import {select as d3Select} from "d3-selection";
 import type {d3Selection} from "../../../types/types";
 import {$CIRCLE, $COMMON, $SELECT} from "../../config/classes";
 import {
+	getBBox,
 	getBoundingRect,
 	getPointer,
 	getRandom,
@@ -301,7 +302,7 @@ export default {
 				if (this.tagName === "circle") {
 					point.attr("r", r);
 				} else {
-					const {width, height} = this.getBBox();
+					const {width, height} = getBBox(this);
 					const x = ratio * (+point.attr("x") + width / 2);
 					const y = ratio * (+point.attr("y") + height / 2);
 
@@ -487,7 +488,7 @@ export default {
 
 		update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
 			const $$ = this;
-			const {width, height} = element.node().getBBox();
+			const {width, height} = getBBox(element.node());
 
 			const xPosFn2 = d => (isValue(d.value) ? xPosFn(d) - width / 2 : 0);
 			const yPosFn2 = d => (isValue(d.value) ? yPosFn(d) - height / 2 : 0);

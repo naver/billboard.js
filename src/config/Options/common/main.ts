@@ -197,7 +197,7 @@ export default {
 	 *  }
 	 */
 	resize_auto: <boolean | "parent" | "viewBox">true,
-	resize_timer: false,
+	resize_timer: true,
 
 	/**
 	 * Set a callback to execute when the chart is clicked.

@@ -7,6 +7,7 @@ import {$ARC, $TOOLTIP} from "../../config/classes";
 import {document} from "../../module/browser";
 import {
 	callFn,
+	getBoundingRect,
 	getPointer,
 	getTransformCTM,
 	hasViewBox,
@@ -387,7 +388,7 @@ export default {
 
 		// currPos value based on SVG coordinate
 		const ctm = getTransformCTM(target, x, y, false);
-		const rect = target.getBoundingClientRect();
+		const rect = getBoundingRect(target);
 		const size = getTransformCTM(target, 20, 0, false).x;
 
 		let top = ctm.y;
