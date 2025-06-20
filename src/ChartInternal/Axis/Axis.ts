@@ -617,7 +617,7 @@ class Axis {
 	 */
 	getMaxTickSize(id: AxisType, withoutRecompute?: boolean): {width: number, height: number} {
 		const $$ = this.owner;
-		const {config, state: {current}, $el: {svg, chart}} = $$;
+		const {config, state: {current, resizing}, $el: {svg, chart}} = $$;
 		const currentTickMax = current.maxTickSize[id];
 		const configPrefix = `axis_${id}`;
 		const max = {
@@ -626,7 +626,7 @@ class Axis {
 		};
 
 		if (
-			withoutRecompute || !config[`${configPrefix}_show`] || (
+			resizing || withoutRecompute || !config[`${configPrefix}_show`] || (
 				currentTickMax.width > 0 && $$.filterTargetsToShow().length === 0
 			)
 		) {
