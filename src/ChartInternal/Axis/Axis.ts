@@ -683,14 +683,16 @@ class Axis {
 				.style("visibility", "hidden")
 				.style("position", "fixed")
 				.style("top", "0")
-				.style("left", "0")
+				.style("left", "0");
+
+			const g = dummy
 				.append("g")
 				.attr("class", `${$AXIS[`axis${capitalize(id)}`]} ${$COMMON.dummy}`);
 
-			axis.create(dummy);
+			axis.create(g);
 
 			// when evalTextSize is set as function, sizeFor1Char is set to the dummy element
-			const {sizeFor1Char} = dummy.node();
+			const {sizeFor1Char} = g.node();
 
 			dummy.selectAll("text")
 				.attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null)
