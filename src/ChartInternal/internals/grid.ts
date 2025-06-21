@@ -371,7 +371,7 @@ export default {
 		const $$ = this;
 
 		$$.$el.main.selectAll(
-			`line.bb-axis-tooltip-x, line.bb-axis-tooltip-y`
+			`line.${$AXIS.axisTooltipX}, line.${$AXIS.axisTooltipY}`
 		).style("visibility", "hidden");
 
 		Object.values($$.$el.axisTooltip)
