@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.1-nightly-20250619004716
+ * @version 3.15.1-nightly-20250621004704
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -263,7 +263,9 @@ const $AXIS = {
   axisYLabel: "bb-axis-y-label",
   axisXTooltip: "bb-axis-x-tooltip",
   axisYTooltip: "bb-axis-y-tooltip",
-  axisY2Tooltip: "bb-axis-y2-tooltip"
+  axisY2Tooltip: "bb-axis-y2-tooltip",
+  axisTooltipX: "bb-axis-tooltip-x",
+  axisTooltipY: "bb-axis-tooltip-y"
 };
 const $BAR = {
   bar: "bb-bar",
@@ -4222,13 +4224,12 @@ function getDataKeyForJson(keysParam, config) {
     return index;
   },
   getDataLabelLength(min, max, key) {
+    var _a;
     const $$ = this;
-    const lengths = [0, 0];
     const paddingCoef = 1.3;
-    $$.$el.chart.select("svg").selectAll(".dummy").data([min, max]).enter().append("text").text((d) => $$.dataLabelFormat(d.id)(d)).each(function(d, i) {
-      lengths[i] = getBoundingRect(this, true)[key] * paddingCoef;
-    }).remove();
-    return lengths;
+    return ((_a = $$.getTextRect(
+      [min, max].map((v) => $$.dataLabelFormat()(v))
+    )) == null ? void 0 : _a.map((rect) => rect[key] * paddingCoef)) || [0, 0];
   },
   isNoneArc(d) {
     return this.hasTarget(this.data.targets, d.id);
@@ -7170,27 +7171,35 @@ function getTextPos(d, type) {
   },
   /**
    * Gets the getBoundingClientRect value of the element
-   * @param {HTMLElement|d3.selection} element Target element
+   * @param {HTMLElement|d3.selection|Array} source Target element
    * @param {string} className Class name
    * @returns {object} value of element.getBoundingClientRect()
    * @private
    */
-  getTextRect(element, className) {
+  getTextRect(source, className) {
+    var _a, _b;
     const $$ = this;
-    let base = element.node ? element.node() : element;
-    if (!/text/i.test(base.tagName)) {
-      base = base.querySelector("text");
+    let cacheKey;
+    let base;
+    let text;
+    if (Array.isArray(source)) {
+      cacheKey = `${KEY.textRect}-${source.join("_")}`;
+    } else {
+      base = (_b = (_a = source.node) == null ? void 0 : _a.call(source)) != null ? _b : source;
+      if (!/text/i.test(base.tagName)) {
+        base = base.querySelector("text");
+      }
+      text = base.textContent;
+      cacheKey = `${KEY.textRect}-${text.replace(/\W/g, "_")}`;
     }
-    const text = base.textContent;
-    const cacheKey = `${KEY.textRect}-${text.replace(/\W/g, "_")}`;
-    let rect = $$.cache.get(cacheKey);
-    if (!rect) {
-      $$.$el.svg.append("text").style("visibility", "hidden").style("font", (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(base).style("font")).classed(className, true).text(text).call((v) => {
-        rect = getBoundingRect(v.node());
+    const rect = $$.cache.get(cacheKey) || [];
+    if (rect.length === 0) {
+      ($$.$el.svg || $$.$el.chart.select("svg")).selectAll(`.${$COMMON.dummy}`).data(text ? [text] : source).enter().append("text").style("visibility", "hidden").style("font", base ? (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(base).style("font") : null).classed(className || $COMMON.dummy, true).text((d) => d).each(function(v, i) {
+        rect[i] = getBoundingRect(this);
       }).remove();
       $$.cache.add(cacheKey, rect);
     }
-    return rect;
+    return rect.length > 1 ? rect : rect[0];
   },
   /**
    * Gets the x or y coordinate of the text
@@ -13752,14 +13761,14 @@ class Axis_Axis {
    */
   getMaxTickSize(id, withoutRecompute) {
     const $$ = this.owner;
-    const { config, state: { current }, $el: { svg, chart } } = $$;
+    const { config, state: { current, resizing }, $el: { svg, chart } } = $$;
     const currentTickMax = current.maxTickSize[id];
     const configPrefix = `axis_${id}`;
     const max = {
       width: 0,
       height: 0
     };
-    if (withoutRecompute || !config[`${configPrefix}_show`] || currentTickMax.width > 0 && $$.filterTargetsToShow().length === 0) {
+    if (resizing || withoutRecompute || !config[`${configPrefix}_show`] || currentTickMax.width > 0 && $$.filterTargetsToShow().length === 0) {
       return currentTickMax;
     }
     if (svg) {
@@ -13793,9 +13802,10 @@ class Axis_Axis {
         );
       }
       !isYAxis && this.updateXAxisTickValues(targetsToShow, axis);
-      const dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0").style("left", "0").append("g").attr("class", `${$AXIS[`axis${capitalize(id)}`]} ${$COMMON.dummy}`);
-      axis.create(dummy);
-      const { sizeFor1Char } = dummy.node();
+      const dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0").style("left", "0");
+      const g = dummy.append("g").attr("class", `${$AXIS[`axis${capitalize(id)}`]} ${$COMMON.dummy}`);
+      axis.create(g);
+      const { sizeFor1Char } = g.node();
       dummy.selectAll("text").attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null).each(function(d, i) {
         const { width, height } = sizeFor1Char ? {
           width: this.textContent.length * sizeFor1Char.w,
@@ -15075,7 +15085,7 @@ function smoothLines(el, type) {
   hideAxisGridFocus() {
     const $$ = this;
     $$.$el.main.selectAll(
-      `line.bb-axis-tooltip-x, line.bb-axis-tooltip-y`
+      `line.${$AXIS.axisTooltipX}, line.${$AXIS.axisTooltipY}`
     ).style("visibility", "hidden");
     Object.values($$.$el.axisTooltip).forEach((v) => v == null ? void 0 : v.style("display", "none"));
   },
@@ -22107,7 +22117,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.1-nightly-20250619004716",
+  version: "3.15.1-nightly-20250621004704",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

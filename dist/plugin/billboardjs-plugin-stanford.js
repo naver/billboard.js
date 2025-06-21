@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.1-nightly-20250619004716
+ * @version 3.15.1-nightly-20250621004704
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -178,7 +178,9 @@ const $AXIS = {
   axisYLabel: "bb-axis-y-label",
   axisXTooltip: "bb-axis-x-tooltip",
   axisYTooltip: "bb-axis-y-tooltip",
-  axisY2Tooltip: "bb-axis-y2-tooltip"
+  axisY2Tooltip: "bb-axis-y2-tooltip",
+  axisTooltipX: "bb-axis-tooltip-x",
+  axisTooltipY: "bb-axis-tooltip-y"
 };
 const $BAR = {
   bar: "bb-bar",
@@ -860,7 +862,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.15.1-nightly-20250619004716");
+__publicField(Plugin, "version", "3.15.1-nightly-20250621004704");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.1-nightly-20250619004716
+ * @version 3.15.1-nightly-20250621004704
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -93,7 +93,9 @@ var $AXIS = {
     axisYLabel: "bb-axis-y-label",
     axisXTooltip: "bb-axis-x-tooltip",
     axisYTooltip: "bb-axis-y-tooltip",
-    axisY2Tooltip: "bb-axis-y2-tooltip"
+    axisY2Tooltip: "bb-axis-y2-tooltip",
+    axisTooltipX: "bb-axis-tooltip-x",
+    axisTooltipY: "bb-axis-tooltip-y"
 };
 var $BAR = {
     bar: "bb-bar",
@@ -372,7 +374,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.15.1-nightly-20250619004716";
+    Plugin.version = "3.15.1-nightly-20250621004704";
     return Plugin;
 }());
 
