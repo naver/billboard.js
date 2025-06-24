@@ -86,8 +86,19 @@ export default {
 		}
 
 		const dataKeys = Object.keys(data[0] || {});
-		const ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [];
-		const xs = dataKeys.length ? dataKeys.filter($$.isX, $$) : [];
+
+		// Extract ids and xs from data keys to handle x and non-x values
+		const {ids, xs} = dataKeys.length ?
+			dataKeys.reduce((acc, key) => {
+				if ($$.isX.call($$, key)) {
+					acc.xs.push(key);
+				} else if ($$.isNotX.call($$, key)) {
+					acc.ids.push(key);
+				}
+
+				return acc;
+			}, {ids: [] as string[], xs: [] as string[]}) :
+			{ids: [], xs: []};
 
 		let xsData;
 
@@ -131,8 +142,10 @@ export default {
 			const convertedId = config.data_idConverter.bind($$.api)(id);
 			const xKey = $$.getXKey(id);
 			const isCategory = isCustomX && isCategorized;
-			const hasCategory = isCategory && data.map(v => v.x)
-				.every(v => config.axis_x_categories.indexOf(v) > -1);
+			const hasCategory = isCategory && (() => {
+				const categorySet = new Set(config.axis_x_categories);
+				return data.every(v => categorySet.has(v.x));
+			})();
 
 			// when .load() with 'append' option is used for indexed axis
 			// @ts-ignore

@@ -342,7 +342,7 @@ export default {
 						sum[i] = 0;
 					}
 
-					sum[i] += isNumber(v.value) ? v.value : 0;
+					sum[i] += ~~v.value;
 				});
 			});
 		}
@@ -362,10 +362,9 @@ export default {
 		let total = $$.cache.get(cacheKey);
 
 		if (!isNumber(total)) {
-			const sum = mergeArray($$.data.targets.map(t => t.values))
-				.map(v => v.value);
-
-			total = sum.length ? sum.reduce((p, c) => p + c) : 0;
+			total = $$.data.targets.reduce((acc, t) => {
+				return acc + t.values.reduce((sum, v) => sum + ~~v.value, 0);
+			}, 0);
 
 			$$.cache.add(cacheKey, total);
 		}
@@ -1022,9 +1021,7 @@ export default {
 
 					if (hiddenSum.length) {
 						hiddenSum = hiddenSum
-							.reduce((acc, curr) =>
-								acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i])
-							);
+							.reduce((acc, curr) => acc.map((v, i) => ~~v + curr[i]));
 
 						total = total.map((v, i) => v - hiddenSum[i]);
 					}
@@ -1106,7 +1103,7 @@ export default {
 		const {value} = d;
 
 		return $$.isBarType(d) && isArray(value) && value.length >= 2 &&
-			value.every(v => isNumber(v));
+			value.every(isNumber);
 	},
 
 	/**
