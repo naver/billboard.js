@@ -15,3 +15,15 @@
 .regions_class1{
     fill: red;
 }
+
+.eval-text-size .bb-axis-x text {
+	font-size: 20px;
+}
+
+.eval-text-size .bb-axis-y text {
+	font-size: 35px;
+}
+
+.eval-text-size .bb-axis-y2 text {
+	font-size: 30px;
+}

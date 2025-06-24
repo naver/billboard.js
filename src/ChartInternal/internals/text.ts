@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select, selectAll as d3SelectAll} from "d3-selection";
-import type {AxisType} from "../../../types/types";
+import type {AxisType, d3Selection} from "../../../types/types";
 import {$COMMON, $TEXT} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {
@@ -348,38 +348,51 @@ export default {
 
 	/**
 	 * Gets the getBoundingClientRect value of the element
-	 * @param {HTMLElement|d3.selection} element Target element
+	 * @param {HTMLElement|d3.selection|Array} source Target element
 	 * @param {string} className Class name
 	 * @returns {object} value of element.getBoundingClientRect()
 	 * @private
 	 */
-	getTextRect(element, className: string): object {
+	getTextRect(source: d3Selection | SVGElement | number[], className: string): DOMRect[] {
 		const $$ = this;
-		let base = element.node ? element.node() : element;
+		let cacheKey;
+		let base;
+		let text;
 
-		if (!/text/i.test(base.tagName)) {
-			base = base.querySelector("text");
+		if (Array.isArray(source)) {
+			cacheKey = `${KEY.textRect}-${source.join("_")}`;
+		} else {
+			base = (source as d3Selection).node?.() ?? source as SVGElement;
+
+			if (!/text/i.test(base.tagName)) {
+				base = base.querySelector("text");
+			}
+
+			text = base.textContent;
+			cacheKey = `${KEY.textRect}-${text.replace(/\W/g, "_")}`;
 		}
 
-		const text = base.textContent;
-		const cacheKey = `${KEY.textRect}-${text.replace(/\W/g, "_")}`;
-		let rect = $$.cache.get(cacheKey);
+		const rect = $$.cache.get(cacheKey) || [];
 
-		if (!rect) {
-			$$.$el.svg.append("text")
+		if (rect.length === 0) {
+			($$.$el.svg || $$.$el.chart.select("svg"))
+				.selectAll(`.${$COMMON.dummy}`)
+				.data(text ? [text] : source)
+				.enter()
+				.append("text")
 				.style("visibility", "hidden")
-				.style("font", d3Select(base).style("font"))
-				.classed(className, true)
-				.text(text)
-				.call(v => {
-					rect = getBoundingRect(v.node());
+				.style("font", base ? d3Select(base).style("font") : null)
+				.classed(className || $COMMON.dummy, true)
+				.text(d => d)
+				.each(function(v, i) {
+					rect[i] = getBoundingRect(this);
 				})
 				.remove();
 
 			$$.cache.add(cacheKey, rect);
 		}
 
-		return rect;
+		return rect.length > 1 ? rect : rect[0];
 	},
 
 	/**

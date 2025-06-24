@@ -9,9 +9,10 @@ import {
 	axisTop as d3AxisTop
 } from "d3-axis";
 import type {AxisType} from "../../../types/types";
-import {$AXIS} from "../../config/classes";
+import {$AXIS, $COMMON} from "../../config/classes";
 import {
 	capitalize,
+	getBoundingRect,
 	isArray,
 	isEmpty,
 	isFunction,
@@ -616,7 +617,7 @@ class Axis {
 	 */
 	getMaxTickSize(id: AxisType, withoutRecompute?: boolean): {width: number, height: number} {
 		const $$ = this.owner;
-		const {config, state: {current}, $el: {svg, chart}} = $$;
+		const {config, state: {current, resizing}, $el: {svg, chart}} = $$;
 		const currentTickMax = current.maxTickSize[id];
 		const configPrefix = `axis_${id}`;
 		const max = {
@@ -625,7 +626,7 @@ class Axis {
 		};
 
 		if (
-			withoutRecompute || !config[`${configPrefix}_show`] || (
+			resizing || withoutRecompute || !config[`${configPrefix}_show`] || (
 				currentTickMax.width > 0 && $$.filterTargetsToShow().length === 0
 			)
 		) {
@@ -684,12 +685,24 @@ class Axis {
 				.style("top", "0")
 				.style("left", "0");
 
-			axis.create(dummy);
+			const g = dummy
+				.append("g")
+				.attr("class", `${$AXIS[`axis${capitalize(id)}`]} ${$COMMON.dummy}`);
+
+			axis.create(g);
+
+			// when evalTextSize is set as function, sizeFor1Char is set to the dummy element
+			const {sizeFor1Char} = g.node();
 
 			dummy.selectAll("text")
 				.attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null)
 				.each(function(d, i) {
-					const {width, height} = this.getBoundingClientRect();
+					const {width, height} = sizeFor1Char ?
+						{
+							width: this.textContent.length * sizeFor1Char.w,
+							height: sizeFor1Char.h
+						} :
+						getBoundingRect(this, true);
 
 					max.width = Math.max(max.width, width);
 					max.height = Math.max(max.height, height);

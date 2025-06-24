@@ -12,7 +12,8 @@ export const $COMMON = {
 	empty: "bb-empty",
 	main: "bb-main",
 	target: "bb-target",
-	EXPANDED: "_expanded_"
+	EXPANDED: "_expanded_",
+	dummy: "_dummy_"
 };
 
 export const $ARC = {
@@ -42,7 +43,9 @@ export const $AXIS = {
 	axisYLabel: "bb-axis-y-label",
 	axisXTooltip: "bb-axis-x-tooltip",
 	axisYTooltip: "bb-axis-y-tooltip",
-	axisY2Tooltip: "bb-axis-y2-tooltip"
+	axisY2Tooltip: "bb-axis-y2-tooltip",
+	axisTooltipX: "bb-axis-tooltip-x",
+	axisTooltipY: "bb-axis-tooltip-y"
 };
 
 export const $BAR = {

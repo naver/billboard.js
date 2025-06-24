@@ -55,9 +55,7 @@ function getRadiusFn(expandRate = 0) {
 
 			return hasMultiArcGauge ?
 				state.radius - singleArcWidth * (d.index + 1) :
-				isNumber(innerRadius) ?
-				innerRadius :
-				0;
+				(isNumber(innerRadius) ? innerRadius : 0);
 		},
 
 		/**
@@ -786,7 +784,7 @@ export default {
 			}
 
 			return tplProcess(title, {
-				NEEDLE_VALUE: isNumber(value) ? value : 0
+				NEEDLE_VALUE: ~~value
 			});
 		}
 

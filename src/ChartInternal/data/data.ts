@@ -300,9 +300,12 @@ export default {
 			let min = [];
 			let max = [];
 
+			// Cache the getFilteredDataByValue function calls
+			const {min: minVal, max: maxVal} = minMax;
+
 			data.forEach(v => {
-				const minData = $$.getFilteredDataByValue(v, minMax.min);
-				const maxData = $$.getFilteredDataByValue(v, minMax.max);
+				const minData = $$.getFilteredDataByValue(v, minVal);
+				const maxData = $$.getFilteredDataByValue(v, maxVal);
 
 				if (minData.length) {
 					min = min.concat(minData);
@@ -339,7 +342,7 @@ export default {
 						sum[i] = 0;
 					}
 
-					sum[i] += isNumber(v.value) ? v.value : 0;
+					sum[i] += ~~v.value;
 				});
 			});
 		}
@@ -359,10 +362,9 @@ export default {
 		let total = $$.cache.get(cacheKey);
 
 		if (!isNumber(total)) {
-			const sum = mergeArray($$.data.targets.map(t => t.values))
-				.map(v => v.value);
-
-			total = sum.length ? sum.reduce((p, c) => p + c) : 0;
+			total = $$.data.targets.reduce((acc, t) => {
+				return acc + t.values.reduce((sum, v) => sum + ~~v.value, 0);
+			}, 0);
 
 			$$.cache.add(cacheKey, total);
 		}
@@ -582,20 +584,8 @@ export default {
 	},
 
 	checkValueInTargets(targets, checker: Function): boolean {
-		const ids = Object.keys(targets);
-		let values;
-
-		for (let i = 0; i < ids.length; i++) {
-			values = targets[ids[i]].values;
-
-			for (let j = 0; j < values.length; j++) {
-				if (checker(values[j].value)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
+		return Object.keys(targets)
+			.some(id => targets[id].values.some(v => checker(v.value)));
 	},
 
 	hasMultiTargets(): boolean {
@@ -763,22 +753,13 @@ export default {
 		return index;
 	},
 
-	getDataLabelLength(min, max, key) {
+	getDataLabelLength(min: number, max: number, key: "width" | "height"): number[] {
 		const $$ = this;
-		const lengths = [0, 0];
 		const paddingCoef = 1.3;
 
-		$$.$el.chart.select("svg").selectAll(".dummy")
-			.data([min, max])
-			.enter()
-			.append("text")
-			.text(d => $$.dataLabelFormat(d.id)(d))
-			.each(function(d, i) {
-				lengths[i] = this.getBoundingClientRect()[key] * paddingCoef;
-			})
-			.remove();
-
-		return lengths;
+		return $$.getTextRect(
+			[min, max].map(v => $$.dataLabelFormat()(v))
+		)?.map((rect: DOMRect) => rect[key] * paddingCoef) || [0, 0];
 	},
 
 	isNoneArc(d) {
@@ -1040,9 +1021,7 @@ export default {
 
 					if (hiddenSum.length) {
 						hiddenSum = hiddenSum
-							.reduce((acc, curr) =>
-								acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i])
-							);
+							.reduce((acc, curr) => acc.map((v, i) => ~~v + curr[i]));
 
 						total = total.map((v, i) => v - hiddenSum[i]);
 					}
@@ -1124,7 +1103,7 @@ export default {
 		const {value} = d;
 
 		return $$.isBarType(d) && isArray(value) && value.length >= 2 &&
-			value.every(v => isNumber(v));
+			value.every(isNumber);
 	},
 
 	/**

@@ -5,7 +5,15 @@
 import {$AXIS, $SUBCHART} from "../../config/classes";
 import {document} from "../../module/browser";
 import {KEY} from "../../module/Cache";
-import {capitalize, ceil10, isEmpty, isNumber, isString, isUndefined} from "../../module/util";
+import {
+	capitalize,
+	ceil10,
+	getBoundingRect,
+	isEmpty,
+	isNumber,
+	isString,
+	isUndefined
+} from "../../module/util";
 
 export default {
 	/**
@@ -47,7 +55,7 @@ export default {
 
 		while (v < 30 && parent && parent.tagName !== "BODY") {
 			try {
-				v = parent.getBoundingClientRect()[key];
+				v = getBoundingRect(parent, true)[key];
 			} catch {
 				if (offsetName in parent) {
 					// In IE in certain cases getBoundingClientRect
@@ -103,12 +111,15 @@ export default {
 			const label = $el.main.select(`.${leftAxisClass}-label`);
 
 			if (!label.empty()) {
-				labelWidth = label.node().getBoundingClientRect().left;
+				labelWidth = getBoundingRect(label.node()).left;
 			}
 		}
 
-		const svgRect = leftAxis && hasLeftAxisRect ? leftAxis.getBoundingClientRect() : {right: 0};
-		const chartRectLeft = $el.chart.node().getBoundingClientRect().left + labelWidth;
+		const svgRect = leftAxis && hasLeftAxisRect ?
+			getBoundingRect(leftAxis, !withoutRecompute) :
+			{right: 0};
+		const chartRectLeft = getBoundingRect($el.chart.node(), !withoutRecompute).left +
+			labelWidth;
 		const hasArc = $$.hasArcType();
 		const svgLeft = svgRect.right - chartRectLeft -
 			(hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
