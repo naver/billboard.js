@@ -1,3 +1,10 @@
+# [3.16.0-next.2](https://github.com/naver/billboard.js/compare/3.16.0-next.1...3.16.0-next.2) (2025-06-24)
+
+
+### Features
+
+* **axis:** Enhance axis.evalTextSize per axis ([7fa445e](https://github.com/naver/billboard.js/commit/7fa445e6fe8d3b9ae3d785fc199611809766067f)), closes [#4002](https://github.com/naver/billboard.js/issues/4002)
+
 # [3.16.0-next.1](https://github.com/naver/billboard.js/compare/3.15.0...3.16.0-next.1) (2025-06-16)
 
 
