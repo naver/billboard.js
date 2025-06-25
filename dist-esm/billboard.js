@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.1-nightly-20250621004704
+ * @version 3.15.1-nightly-20250625004724
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -3938,8 +3938,18 @@ var dataConvert = {
             isCustomX = axis.isCustomX();
         }
         var dataKeys = Object.keys(data[0] || {});
-        var ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [];
-        var xs = dataKeys.length ? dataKeys.filter($$.isX, $$) : [];
+        // Extract ids and xs from data keys to handle x and non-x values
+        var _a = dataKeys.length ?
+            dataKeys.reduce(function (acc, key) {
+                if ($$.isX.call($$, key)) {
+                    acc.xs.push(key);
+                }
+                else if ($$.isNotX.call($$, key)) {
+                    acc.ids.push(key);
+                }
+                return acc;
+            }, { ids: [], xs: [] }) :
+            { ids: [], xs: [] }, ids = _a.ids, xs = _a.xs;
         var xsData;
         // save x for update data by load when custom x and bb.x API
         ids.forEach(function (id) {
@@ -3978,8 +3988,10 @@ var dataConvert = {
             var convertedId = config.data_idConverter.bind($$.api)(id);
             var xKey = $$.getXKey(id);
             var isCategory = isCustomX && isCategorized;
-            var hasCategory = isCategory && data.map(function (v) { return v.x; })
-                .every(function (v) { return config.axis_x_categories.indexOf(v) > -1; });
+            var hasCategory = isCategory && (function () {
+                var categorySet = new Set(config.axis_x_categories);
+                return data.every(function (v) { return categorySet.has(v.x); });
+            })();
             // when .load() with 'append' option is used for indexed axis
             // @ts-ignore
             var isDataAppend = data.__append__;
@@ -4303,7 +4315,7 @@ var data$1 = {
                     if (!sum[i]) {
                         sum[i] = 0;
                     }
-                    sum[i] += isNumber(v.value) ? v.value : 0;
+                    sum[i] += ~~v.value;
                 });
             });
         }
@@ -4320,9 +4332,9 @@ var data$1 = {
         var cacheKey = KEY.dataTotalSum;
         var total = $$.cache.get(cacheKey);
         if (!isNumber(total)) {
-            var sum = mergeArray($$.data.targets.map(function (t) { return t.values; }))
-                .map(function (v) { return v.value; });
-            total = sum.length ? sum.reduce(function (p, c) { return p + c; }) : 0;
+            total = $$.data.targets.reduce(function (acc, t) {
+                return acc + t.values.reduce(function (sum, v) { return sum + ~~v.value; }, 0);
+            }, 0);
             $$.cache.add(cacheKey, total);
         }
         if (subtractHidden) {
@@ -4855,9 +4867,7 @@ var data$1 = {
                     var hiddenSum_1 = dataValues(state.hiddenTargetIds, false);
                     if (hiddenSum_1.length) {
                         hiddenSum_1 = hiddenSum_1
-                            .reduce(function (acc, curr) {
-                            return acc.map(function (v, i) { return (isNumber(v) ? v : 0) + curr[i]; });
-                        });
+                            .reduce(function (acc, curr) { return acc.map(function (v, i) { return ~~v + curr[i]; }); });
                         total = total.map(function (v, i) { return v - hiddenSum_1[i]; });
                     }
                 }
@@ -4922,7 +4932,7 @@ var data$1 = {
         var $$ = this;
         var value = d.value;
         return $$.isBarType(d) && isArray(value) && value.length >= 2 &&
-            value.every(function (v) { return isNumber(v); });
+            value.every(isNumber);
     },
     /**
      * Get data object by id
@@ -18032,9 +18042,7 @@ function getRadiusFn(expandRate) {
             var innerRadius = $$.getRadius(d).innerRadius;
             return hasMultiArcGauge ?
                 state.radius - singleArcWidth * (d.index + 1) :
-                isNumber(innerRadius) ?
-                    innerRadius :
-                    0;
+                (isNumber(innerRadius) ? innerRadius : 0);
         },
         /**
          * Getter of arc outerRadius value
@@ -18629,7 +18637,7 @@ var shapeArc = {
                 value = config.arc_needle_value;
             }
             return tplProcess(title, {
-                NEEDLE_VALUE: isNumber(value) ? value : 0
+                NEEDLE_VALUE: ~~value
             });
         }
         return false;
@@ -24937,7 +24945,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.15.1-nightly-20250621004704
+ * @version 3.15.1-nightly-20250625004724
  */
 var bb = {
     /**
@@ -24947,7 +24955,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.15.1-nightly-20250621004704",
+    version: "3.15.1-nightly-20250625004724",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

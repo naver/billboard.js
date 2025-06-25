@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.1-nightly-20250621004704
+ * @version 3.15.1-nightly-20250625004724
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -28850,8 +28850,14 @@ function getDataKeyForJson(keysParam, config) {
       isCustomX = axis.isCustomX();
     }
     const dataKeys = Object.keys(data[0] || {});
-    const ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [];
-    const xs = dataKeys.length ? dataKeys.filter($$.isX, $$) : [];
+    const { ids, xs } = dataKeys.length ? dataKeys.reduce((acc, key) => {
+      if ($$.isX.call($$, key)) {
+        acc.xs.push(key);
+      } else if ($$.isNotX.call($$, key)) {
+        acc.ids.push(key);
+      }
+      return acc;
+    }, { ids: [], xs: [] }) : { ids: [], xs: [] };
     let xsData;
     ids.forEach((id) => {
       const xKey = this.getXKey(id);
@@ -28879,7 +28885,10 @@ function getDataKeyForJson(keysParam, config) {
       const convertedId = config.data_idConverter.bind($$.api)(id);
       const xKey = $$.getXKey(id);
       const isCategory = isCustomX && isCategorized;
-      const hasCategory = isCategory && data.map((v) => v.x).every((v) => config.axis_x_categories.indexOf(v) > -1);
+      const hasCategory = isCategory && (() => {
+        const categorySet = new Set(config.axis_x_categories);
+        return data.every((v) => categorySet.has(v.x));
+      })();
       const isDataAppend = data.__append__;
       const xIndex = xKey === null && isDataAppend ? $$.api.data.values(id).length : 0;
       return {
@@ -29174,7 +29183,7 @@ function getDataKeyForJson(keysParam, config) {
           if (!sum[i]) {
             sum[i] = 0;
           }
-          sum[i] += isNumber(v.value) ? v.value : 0;
+          sum[i] += ~~v.value;
         });
       });
     }
@@ -29191,8 +29200,9 @@ function getDataKeyForJson(keysParam, config) {
     const cacheKey = KEY.dataTotalSum;
     let total = $$.cache.get(cacheKey);
     if (!isNumber(total)) {
-      const sum = mergeArray($$.data.targets.map((t) => t.values)).map((v) => v.value);
-      total = sum.length ? sum.reduce((p, c) => p + c) : 0;
+      total = $$.data.targets.reduce((acc, t) => {
+        return acc + t.values.reduce((sum, v) => sum + ~~v.value, 0);
+      }, 0);
       $$.cache.add(cacheKey, total);
     }
     if (subtractHidden) {
@@ -29670,9 +29680,7 @@ function getDataKeyForJson(keysParam, config) {
         if (state.hiddenTargetIds.length) {
           let hiddenSum = dataValues(state.hiddenTargetIds, false);
           if (hiddenSum.length) {
-            hiddenSum = hiddenSum.reduce(
-              (acc, curr) => acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i])
-            );
+            hiddenSum = hiddenSum.reduce((acc, curr) => acc.map((v, i) => ~~v + curr[i]));
             total = total.map((v, i) => v - hiddenSum[i]);
           }
         }
@@ -29733,7 +29741,7 @@ function getDataKeyForJson(keysParam, config) {
   isBarRangeType(d) {
     const $$ = this;
     const { value } = d;
-    return $$.isBarType(d) && isArray(value) && value.length >= 2 && value.every((v) => isNumber(v));
+    return $$.isBarType(d) && isArray(value) && value.length >= 2 && value.every(isNumber);
   },
   /**
    * Get data object by id
@@ -46400,7 +46408,7 @@ function getAttrTweenFn(fn) {
         value = config.arc_needle_value;
       }
       return tplProcess(title, {
-        NEEDLE_VALUE: isNumber(value) ? value : 0
+        NEEDLE_VALUE: ~~value
       });
     }
     return false;
@@ -51023,7 +51031,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.1-nightly-20250621004704",
+  version: "3.15.1-nightly-20250625004724",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
