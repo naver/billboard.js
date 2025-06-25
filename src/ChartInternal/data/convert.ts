@@ -49,7 +49,7 @@ function setXS(
 		const xKey = $$.getXKey(id);
 
 		if (params.customX || params.timeSeries) {
-			// if included in input data 
+			// if included in input data
 			if (params.xs.indexOf(xKey) >= 0) {
 				xsData = ((params.appendXs && $$.data.xs[id]) || [])
 					.concat(
