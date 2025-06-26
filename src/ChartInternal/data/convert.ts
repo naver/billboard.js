@@ -25,6 +25,60 @@ function getDataKeyForJson(keysParam, config) {
 }
 
 /**
+ * Set `xs` for each id
+ * @param {string[]} ids Ids to set xs
+ * @param {object[]} data Data to set xs from
+ * @param {object} params Parameters for setting xs
+ * @param {boolean} params.appendXs Whether to append xs
+ * @param {string[]} params.xs X keys to set xs from
+ * @param {boolean} params.categorized Whether the axis is categorized
+ * @param {boolean} params.timeSeries Whether the axis is time series
+ * @param {boolean} params.customX Whether the x is custom
+ * @private
+ */
+function setXS(
+	ids: string[],
+	data: {[key: string]: number | null}[],
+	params: {appendXs, xs, categorized: boolean, timeSeries: boolean, customX: boolean}
+): void {
+	const $$ = this;
+	const {config} = $$;
+	let xsData;
+
+	ids.forEach(id => {
+		const xKey = $$.getXKey(id);
+
+		if (params.customX || params.timeSeries) {
+			// if included in input data
+			if (params.xs.indexOf(xKey) >= 0) {
+				xsData = ((params.appendXs && $$.data.xs[id]) || [])
+					.concat(
+						data.map((d, i) => {
+							const rawX = isValue(d[xKey]);
+							return rawX ? $$.generateTargetX(rawX, id, i) : false;
+						}).filter(v => v !== false)
+					);
+			} else if (config.data_x) {
+				// if not included in input data, find from preloaded data of other id's x
+				xsData = this.getOtherTargetXs();
+			} else if (notEmpty(config.data_xs)) {
+				// if not included in input data, find from preloaded data
+				xsData = $$.getXValuesOfXKey(xKey, $$.data.targets);
+			}
+			// MEMO: if no x included, use same x of current will be used
+		} else {
+			xsData = data.map((d, i) => i);
+		}
+
+		if (xsData) {
+			$$.data.xs[id] = xsData;
+		} else {
+			throw new Error(`x is not defined for id = "${id}".`);
+		}
+	});
+}
+
+/**
  * Data convert
  * @memberof ChartInternal
  * @private
@@ -71,20 +125,17 @@ export default {
 		}
 	},
 
+	/**
+	 * Convert data to targets
+	 * @param {object[]} data Data to convert
+	 * @param {boolean} appendXs Whether to append xs
+	 * @returns {IData[]} Converted targets
+	 * @private
+	 */
 	convertDataToTargets(data: {[key: string]: number | null}[], appendXs: boolean): IData[] {
 		const $$ = this;
 		const {axis, config, state} = $$;
 		const chartType = config.data_type;
-		let isCategorized = false;
-		let isTimeSeries = false;
-		let isCustomX = false;
-
-		if (axis) {
-			isCategorized = axis.isCategorized();
-			isTimeSeries = axis.isTimeSeries();
-			isCustomX = axis.isCustomX();
-		}
-
 		const dataKeys = Object.keys(data[0] || {});
 
 		// Extract ids and xs from data keys to handle x and non-x values
@@ -100,48 +151,23 @@ export default {
 			}, {ids: [] as string[], xs: [] as string[]}) :
 			{ids: [], xs: []};
 
-		let xsData;
+		const params = {
+			appendXs,
+			xs,
+			idConverter: config.data_idConverter.bind($$.api),
+			categorized: axis?.isCategorized(),
+			timeSeries: axis?.isTimeSeries(),
+			customX: axis?.isCustomX()
+		};
 
 		// save x for update data by load when custom x and bb.x API
-		ids.forEach(id => {
-			const xKey = this.getXKey(id);
-
-			if (isCustomX || isTimeSeries) {
-				// if included in input data
-				if (xs.indexOf(xKey) >= 0) {
-					xsData = ((appendXs && $$.data.xs[id]) || [])
-						.concat(
-							data.map(d => d[xKey])
-								.filter(isValue)
-								.map((rawX, i) => $$.generateTargetX(rawX, id, i))
-						);
-				} else if (config.data_x) {
-					// if not included in input data, find from preloaded data of other id's x
-					xsData = this.getOtherTargetXs();
-				} else if (notEmpty(config.data_xs)) {
-					// if not included in input data, find from preloaded data
-					xsData = $$.getXValuesOfXKey(xKey, $$.data.targets);
-				}
-				// MEMO: if no x included, use same x of current will be used
-			} else {
-				xsData = data.map((d, i) => i);
-			}
-
-			xsData && (this.data.xs[id] = xsData);
-		});
-
-		// check x is defined
-		ids.forEach(id => {
-			if (!this.data.xs[id]) {
-				throw new Error(`x is not defined for id = "${id}".`);
-			}
-		});
+		setXS.bind($$)(ids, data, params);
 
 		// convert to target
 		const targets = ids.map((id, index) => {
 			const convertedId = config.data_idConverter.bind($$.api)(id);
 			const xKey = $$.getXKey(id);
-			const isCategory = isCustomX && isCategorized;
+			const isCategory = params.customX && params.categorized;
 			const hasCategory = isCategory && (() => {
 				const categorySet = new Set(config.axis_x_categories);
 				return data.every(v => categorySet.has(v.x));

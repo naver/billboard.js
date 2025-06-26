@@ -1,6 +1,7 @@
 window.bench = {
     chart: null,
     timer: null,
+    performance: {},
     billboard: null,
     target: ["1.12.11", "2.0.0", "3.0.0", "latest"],
     $el: {
@@ -65,6 +66,12 @@ window.bench = {
       
         document.head.appendChild(this.billboard);
     },
+    perf: function(isEnd = false, taskName) {
+        const perf = this.performance[taskName] || (this.performance[taskName] = {start: 0, end: 0});
+
+        perf[isEnd ? "end" : "start"] = performance.now();
+        isEnd && console.info(`⚡️${taskName} took: %c${perf.end - perf.start}%c ms.`, "background-color:red;color:#fff", "background-color:inherit;color:inherit");
+    },
     generate: function(type) {
         if (!window.bb) {
             alert("Select the desired version fisrt.");
@@ -74,6 +81,8 @@ window.bench = {
         }
 
         const chartType = this.$el.type.value;
+
+        this.perf(false, "Generate");
 
         this.chart = bb.generate({
             boost: {
@@ -101,6 +110,9 @@ window.bench = {
                         show: false
                     }
                 }
+            },
+            onrendered: () => {
+                !type && this.perf(true, "Generate");             
             }
         });
 
@@ -110,6 +122,7 @@ window.bench = {
         const ctx = this;
 
         this.stop();
+        this.perf(false, "Load");
 
         this.chart.load({
             columns: this.getData(),
@@ -117,22 +130,27 @@ window.bench = {
                 ctx.timer = setTimeout(bench.load.bind(bench), 500);
             }
         });
+
+        this.perf(true, "Load");
     },
     resize: function() {
-        const ctx = this;
-
         this.stop();
-        this.timer = setInterval(function() {
+        
+        this.timer = setInterval(() => {
+            this.perf(false, "Resize");
+            
             bench.chart.resize({
-                width: ctx.getRandom(200, 600),
-                height: ctx.getRandom(200, 480)
+                width: this.getRandom(200, 600),
+                height: this.getRandom(200, 480)
             });
+
+            this.perf(true, "Resize");
         }, 500);
     },
     stop: function() {
         this.play = false;
         clearInterval(this.timer);
-    }  
+    }
 };
 
 window.bench.init();
