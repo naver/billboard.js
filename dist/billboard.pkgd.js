@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.1-nightly-20250625004724
+ * @version 3.15.1-nightly-20250626004728
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -28796,6 +28796,35 @@ function getDataKeyForJson(keysParam, config) {
   }
   return keys;
 }
+function setXS(ids, data, params) {
+  const $$ = this;
+  const { config } = $$;
+  let xsData;
+  ids.forEach((id) => {
+    const xKey = $$.getXKey(id);
+    if (params.customX || params.timeSeries) {
+      if (params.xs.indexOf(xKey) >= 0) {
+        xsData = (params.appendXs && $$.data.xs[id] || []).concat(
+          data.map((d, i) => {
+            const rawX = isValue(d[xKey]);
+            return rawX ? $$.generateTargetX(rawX, id, i) : false;
+          }).filter((v) => v !== false)
+        );
+      } else if (config.data_x) {
+        xsData = this.getOtherTargetXs();
+      } else if (notEmpty(config.data_xs)) {
+        xsData = $$.getXValuesOfXKey(xKey, $$.data.targets);
+      }
+    } else {
+      xsData = data.map((d, i) => i);
+    }
+    if (xsData) {
+      $$.data.xs[id] = xsData;
+    } else {
+      throw new Error(`x is not defined for id = "${id}".`);
+    }
+  });
+}
 /* harmony default export */ var convert = ({
   /**
    * Convert data according its type
@@ -28837,18 +28866,17 @@ function getDataKeyForJson(keysParam, config) {
       throw Error("url or json or rows or columns is required.");
     }
   },
+  /**
+   * Convert data to targets
+   * @param {object[]} data Data to convert
+   * @param {boolean} appendXs Whether to append xs
+   * @returns {IData[]} Converted targets
+   * @private
+   */
   convertDataToTargets(data, appendXs) {
     const $$ = this;
     const { axis, config, state } = $$;
     const chartType = config.data_type;
-    let isCategorized = false;
-    let isTimeSeries = false;
-    let isCustomX = false;
-    if (axis) {
-      isCategorized = axis.isCategorized();
-      isTimeSeries = axis.isTimeSeries();
-      isCustomX = axis.isCustomX();
-    }
     const dataKeys = Object.keys(data[0] || {});
     const { ids, xs } = dataKeys.length ? dataKeys.reduce((acc, key) => {
       if ($$.isX.call($$, key)) {
@@ -28858,33 +28886,19 @@ function getDataKeyForJson(keysParam, config) {
       }
       return acc;
     }, { ids: [], xs: [] }) : { ids: [], xs: [] };
-    let xsData;
-    ids.forEach((id) => {
-      const xKey = this.getXKey(id);
-      if (isCustomX || isTimeSeries) {
-        if (xs.indexOf(xKey) >= 0) {
-          xsData = (appendXs && $$.data.xs[id] || []).concat(
-            data.map((d) => d[xKey]).filter(isValue).map((rawX, i) => $$.generateTargetX(rawX, id, i))
-          );
-        } else if (config.data_x) {
-          xsData = this.getOtherTargetXs();
-        } else if (notEmpty(config.data_xs)) {
-          xsData = $$.getXValuesOfXKey(xKey, $$.data.targets);
-        }
-      } else {
-        xsData = data.map((d, i) => i);
-      }
-      xsData && (this.data.xs[id] = xsData);
-    });
-    ids.forEach((id) => {
-      if (!this.data.xs[id]) {
-        throw new Error(`x is not defined for id = "${id}".`);
-      }
-    });
+    const params = {
+      appendXs,
+      xs,
+      idConverter: config.data_idConverter.bind($$.api),
+      categorized: axis == null ? void 0 : axis.isCategorized(),
+      timeSeries: axis == null ? void 0 : axis.isTimeSeries(),
+      customX: axis == null ? void 0 : axis.isCustomX()
+    };
+    setXS.bind($$)(ids, data, params);
     const targets = ids.map((id, index) => {
       const convertedId = config.data_idConverter.bind($$.api)(id);
       const xKey = $$.getXKey(id);
-      const isCategory = isCustomX && isCategorized;
+      const isCategory = params.customX && params.categorized;
       const hasCategory = isCategory && (() => {
         const categorySet = new Set(config.axis_x_categories);
         return data.every((v) => categorySet.has(v.x));
@@ -51031,7 +51045,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.1-nightly-20250625004724",
+  version: "3.15.1-nightly-20250626004728",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

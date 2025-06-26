@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.1-nightly-20250625004724
+ * @version 3.15.1-nightly-20250626004728
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -3883,6 +3883,55 @@ function getDataKeyForJson(keysParam, config) {
     return keys;
 }
 /**
+ * Set `xs` for each id
+ * @param {string[]} ids Ids to set xs
+ * @param {object[]} data Data to set xs from
+ * @param {object} params Parameters for setting xs
+ * @param {boolean} params.appendXs Whether to append xs
+ * @param {string[]} params.xs X keys to set xs from
+ * @param {boolean} params.categorized Whether the axis is categorized
+ * @param {boolean} params.timeSeries Whether the axis is time series
+ * @param {boolean} params.customX Whether the x is custom
+ * @private
+ */
+function setXS(ids, data, params) {
+    var _this = this;
+    var $$ = this;
+    var config = $$.config;
+    var xsData;
+    ids.forEach(function (id) {
+        var xKey = $$.getXKey(id);
+        if (params.customX || params.timeSeries) {
+            // if included in input data
+            if (params.xs.indexOf(xKey) >= 0) {
+                xsData = ((params.appendXs && $$.data.xs[id]) || [])
+                    .concat(data.map(function (d, i) {
+                    var rawX = isValue(d[xKey]);
+                    return rawX ? $$.generateTargetX(rawX, id, i) : false;
+                }).filter(function (v) { return v !== false; }));
+            }
+            else if (config.data_x) {
+                // if not included in input data, find from preloaded data of other id's x
+                xsData = _this.getOtherTargetXs();
+            }
+            else if (notEmpty(config.data_xs)) {
+                // if not included in input data, find from preloaded data
+                xsData = $$.getXValuesOfXKey(xKey, $$.data.targets);
+            }
+            // MEMO: if no x included, use same x of current will be used
+        }
+        else {
+            xsData = data.map(function (d, i) { return i; });
+        }
+        if (xsData) {
+            $$.data.xs[id] = xsData;
+        }
+        else {
+            throw new Error("x is not defined for id = \"".concat(id, "\"."));
+        }
+    });
+}
+/**
  * Data convert
  * @memberof ChartInternal
  * @private
@@ -3924,19 +3973,17 @@ var dataConvert = {
             throw Error("url or json or rows or columns is required.");
         }
     },
+    /**
+     * Convert data to targets
+     * @param {object[]} data Data to convert
+     * @param {boolean} appendXs Whether to append xs
+     * @returns {IData[]} Converted targets
+     * @private
+     */
     convertDataToTargets: function (data, appendXs) {
-        var _this = this;
         var $$ = this;
         var axis = $$.axis, config = $$.config, state = $$.state;
         var chartType = config.data_type;
-        var isCategorized = false;
-        var isTimeSeries = false;
-        var isCustomX = false;
-        if (axis) {
-            isCategorized = axis.isCategorized();
-            isTimeSeries = axis.isTimeSeries();
-            isCustomX = axis.isCustomX();
-        }
         var dataKeys = Object.keys(data[0] || {});
         // Extract ids and xs from data keys to handle x and non-x values
         var _a = dataKeys.length ?
@@ -3950,44 +3997,21 @@ var dataConvert = {
                 return acc;
             }, { ids: [], xs: [] }) :
             { ids: [], xs: [] }, ids = _a.ids, xs = _a.xs;
-        var xsData;
+        var params = {
+            appendXs: appendXs,
+            xs: xs,
+            idConverter: config.data_idConverter.bind($$.api),
+            categorized: axis === null || axis === void 0 ? void 0 : axis.isCategorized(),
+            timeSeries: axis === null || axis === void 0 ? void 0 : axis.isTimeSeries(),
+            customX: axis === null || axis === void 0 ? void 0 : axis.isCustomX()
+        };
         // save x for update data by load when custom x and bb.x API
-        ids.forEach(function (id) {
-            var xKey = _this.getXKey(id);
-            if (isCustomX || isTimeSeries) {
-                // if included in input data
-                if (xs.indexOf(xKey) >= 0) {
-                    xsData = ((appendXs && $$.data.xs[id]) || [])
-                        .concat(data.map(function (d) { return d[xKey]; })
-                        .filter(isValue)
-                        .map(function (rawX, i) { return $$.generateTargetX(rawX, id, i); }));
-                }
-                else if (config.data_x) {
-                    // if not included in input data, find from preloaded data of other id's x
-                    xsData = _this.getOtherTargetXs();
-                }
-                else if (notEmpty(config.data_xs)) {
-                    // if not included in input data, find from preloaded data
-                    xsData = $$.getXValuesOfXKey(xKey, $$.data.targets);
-                }
-                // MEMO: if no x included, use same x of current will be used
-            }
-            else {
-                xsData = data.map(function (d, i) { return i; });
-            }
-            xsData && (_this.data.xs[id] = xsData);
-        });
-        // check x is defined
-        ids.forEach(function (id) {
-            if (!_this.data.xs[id]) {
-                throw new Error("x is not defined for id = \"".concat(id, "\"."));
-            }
-        });
+        setXS.bind($$)(ids, data, params);
         // convert to target
         var targets = ids.map(function (id, index) {
             var convertedId = config.data_idConverter.bind($$.api)(id);
             var xKey = $$.getXKey(id);
-            var isCategory = isCustomX && isCategorized;
+            var isCategory = params.customX && params.categorized;
             var hasCategory = isCategory && (function () {
                 var categorySet = new Set(config.axis_x_categories);
                 return data.every(function (v) { return categorySet.has(v.x); });
@@ -24945,7 +24969,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.15.1-nightly-20250625004724
+ * @version 3.15.1-nightly-20250626004728
  */
 var bb = {
     /**
@@ -24955,7 +24979,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.15.1-nightly-20250625004724",
+    version: "3.15.1-nightly-20250626004728",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
