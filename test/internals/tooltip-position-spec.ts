@@ -191,7 +191,7 @@ describe.skip("TOOLTIP Position", function() {
 			  expect(pointRect.left).to.be.above(tooltipPos, "20");
 	  
 			  done(1);
-			}, 300);
+			}, 350);
 		  }));
 		});
 	  
@@ -599,7 +599,7 @@ describe.skip("TOOLTIP Position", function() {
 			  setTimeout(() => {
 				chart.$.chart.node().scrollTo(500, 0);
 				resolve();
-			  }, 300);
+			  }, 350);
 			}).then(() => {
 			  new Promise(resolve => {
 				util.hoverChart(chart, "mousemove", {
@@ -644,7 +644,7 @@ describe.skip("TOOLTIP Position", function() {
 			  setTimeout(() => {
 				chart.$.chart.node().scrollTo(0, 500);
 				resolve();
-			  }, 300);
+			  }, 350);
 			}).then(() => {
 			  new Promise(resolve => {
 				util.hoverChart(chart, "mousemove", {
@@ -750,7 +750,7 @@ describe.skip("TOOLTIP Position", function() {
 			  checkPos(tooltip, [445.5, 524.5]);
 	  
 			  done(1);
-			}, 300)
+			}, 350)
 		  }));
 	  
 		  it("set options: data.type='treemap'", () => {

@@ -18,27 +18,41 @@ export default {
 	 * @memberof Options
 	 * @type {boolean|Function}
 	 * @default true
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.AxisEvalTextSize)
 	 * @example
 	 * axis: {
 	 *   // will evaluate getting text size every time.
 	 *   evalTextSize: false.
 	 *
 	 *   // set a custom evaluator
-	 *   evalTextSize: function(textElement) {
+	 *   evalTextSize: function(textElement, axisId) {
 	 *     // set some character to be evaluated
-	 *     text.textContent = "0";
+	 *     // NOTE: The dummy textElement is a descendant of given axisId('x', 'y' or 'y2').
+	 *     textElement.textContent = "0";
 	 *
 	 *     // get the size
-	 *      const box = text.getBBox();
+	 *     const box = textElement.getBBox();
 	 *
 	 *     // clear text
-	 *     text.textContent = "";
+	 *     textElement.textContent = "";
 	 *
 	 *     return { w: 7, h: 12};
+	 *   },
+	 *
+	 *   // set a custom evaluator by returning fixed value
+	 *   evalTextSize: function(textElement, axisId) {
+	 *     return {
+	 *        x: {w: 7, h: 12},
+	 *        y: {w: 15.75, h: 30},
+	 *        y2: {w: 9.5, h: 18}
+	 *     }[axisId];
 	 *   }
 	 * }
 	 */
-	axis_evalTextSize: <boolean | ((text: SVGTextElement) => {w: number, h: number})>true,
+	axis_evalTextSize: <
+		| boolean
+		| ((text: SVGTextElement, axisId: "x" | "y" | "y2") => {w: number, h: number})
+	>true,
 
 	/**
 	 * Switch x and y axis position.

@@ -47,7 +47,7 @@ export default {
 		if (!categories || !Array.isArray(categories)) {
 			const cat = config.axis_x_categories;
 
-			return isEmpty(cat) ? Object.values($$.data.xs)[0] : cat;
+			return isEmpty(cat) ? Object.values($$.data.xs)[0] as string[] : cat;
 		}
 
 		config.axis_x_categories = categories;

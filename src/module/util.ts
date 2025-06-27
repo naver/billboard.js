@@ -23,6 +23,7 @@ export {
 	endall,
 	extend,
 	findIndex,
+	getBBox,
 	getBoundingRect,
 	getBrushSelection,
 	getCssRules,
@@ -251,7 +252,7 @@ function getRectSegList(path: SVGGraphicsElement): {x: number, y: number}[] {
 function getPathBox(
 	path: SVGGraphicsElement
 ): {x: number, y: number, width: number, height: number} {
-	const {width, height} = path.getBoundingClientRect();
+	const {width, height} = getBoundingRect(path);
 	const items = getRectSegList(path);
 	const x = items[0].x;
 	const y = Math.min(items[0].y, items[1].y);
@@ -308,28 +309,52 @@ function getBrushSelection(ctx) {
 /**
  * Get boundingClientRect.
  * Cache the evaluated value once it was called.
- * @param {HTMLElement} node Target element
+ * @param {boolean} relativeViewport Relative to viewport - true: will use .getBoundingClientRect(), false: will use .getBBox()
+ * @param {SVGElement} node Target element
+ * @param {boolean} forceEval Force evaluation
  * @returns {object}
  * @private
  */
-function getBoundingRect(
-	node
-): {
-	left: number,
-	top: number,
-	right: number,
-	bottom: number,
-	x: number,
-	y: number,
-	width: number,
-	height: number
-} {
-	const needEvaluate = !("rect" in node) || (
-		"rect" in node && node.hasAttribute("width") &&
-		node.rect.width !== +node.getAttribute("width")
-	);
+function getRect(
+	relativeViewport: boolean,
+	node: SVGElement & Partial<{rect: DOMRect | SVGRect}>,
+	forceEval = false
+): DOMRect | SVGRect {
+	const _ = n => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
 
-	return needEvaluate ? (node.rect = node.getBoundingClientRect()) : node.rect;
+	if (forceEval) {
+		return _(node);
+	} else {
+		// will cache the value if the element is not a SVGElement or the width is not set
+		const needEvaluate = !("rect" in node) || (
+			"rect" in node && node.hasAttribute("width") &&
+			node.rect!.width !== +(node.getAttribute("width") || 0)
+		);
+
+		return needEvaluate ? (node.rect = _(node)) : node.rect!;
+	}
+}
+
+/**
+ * Get boundingClientRect.
+ * @param {SVGElement} node Target element
+ * @param {boolean} forceEval Force evaluation
+ * @returns {object}
+ * @private
+ */
+function getBoundingRect(node, forceEval = false) {
+	return getRect(true, node, forceEval);
+}
+
+/**
+ * Get BBox.
+ * @param {SVGElement} node Target element
+ * @param {boolean} forceEval Force evaluation
+ * @returns {object}
+ * @private
+ */
+function getBBox(node, forceEval = false) {
+	return getRect(false, node, forceEval);
 }
 
 /**
@@ -556,7 +581,7 @@ function getTransformCTM(node: SVGGraphicsElement, x = 0, y = 0, inverse = true)
 	);
 
 	if (inverse === false) {
-		const rect = node.getBoundingClientRect();
+		const rect = getBoundingRect(node);
 
 		res.x -= rect.x;
 		res.y -= rect.y;

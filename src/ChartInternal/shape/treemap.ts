@@ -212,7 +212,7 @@ export default {
 		const treemapData = getHierachyData.call($$, $$.getTreemapData(targets ?? $$.data.targets));
 
 		// using $el.treemap reference can alter data, so select treemap <g> again
-		treemap.data(treemapData);
+		treemap.data($$.filterNullish(treemapData));
 	},
 
 	/**

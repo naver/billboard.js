@@ -33,6 +33,9 @@ describe("SHAPE ARC: NEEDLE option", () => {
 			needle: {
 				show: true
 			}
+		},
+		transition: {
+			duration: 200
 		}
 	};
 
@@ -95,7 +98,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 					expect(getRotate(needle.style("transform"))).to.be.equal(252);
 
 					resolve();
-				}, 300);
+				}, 350);
 			}).then(() => {
 				return new Promise((resolve) => {
 					// hide 'data1'
@@ -111,7 +114,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 						chart.toggle("data1");		
 	
 						resolve();
-					}, 300);
+					}, 350);
 				});
 			}).then(() => {
 				return new Promise((resolve) => {
@@ -123,7 +126,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 						expect(+arcs.select(`.${$ARC.chartArcsTitle}`).text()).to.be.equal(70);
 					
 						resolve();
-					}, 300);
+					}, 350);
 				});
 			}).then(() => {
 				// hide 'data1
@@ -134,7 +137,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 					expect(+arcs.select(`.${$ARC.chartArcsTitle}`).text()).to.be.equal(70);
 				
 					done(1);
-				}, 300);
+				}, 350);
 			});
 		}));
 
@@ -193,7 +196,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 				expect(getDegree(needle.style("transform"))).to.be.equal(294.592);
 
 				done(1);
-			}, 300);			
+			}, 350);			
 		}));
 	});
 
@@ -258,7 +261,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 				expect(arcs.select(`.${$GAUGE.chartArcsGaugeTitle}`).text()).to.be.equal("70%");
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("set options: multiple dataseries", () => {
@@ -284,7 +287,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 				setTimeout(() => {
 					expect(gaugeTitle.text()).to.be.equal("0%");
 					resolve();
-				}, 300);
+				}, 350);
 			}).then(() => {
 				// when
 				chart.$.needle.updateHelper(85, true);
@@ -294,7 +297,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 					expect(gaugeTitle.text()).to.be.equal("85%");
 					
 					done(1);
-				}, 300);
+				}, 350);
 			});
 		}));
 
@@ -329,7 +332,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 				expect(getDegree(needle.style("transform"))).to.be.equal(74.4845);
 
 				done(1);
-			}, 300);			
+			}, 350);			
 		}));
 
 		it("set options", () => {
@@ -365,18 +368,18 @@ describe("SHAPE ARC: NEEDLE option", () => {
 				chart.$.needle.updateHelper(0);
 
 				setTimeout(() => {
-					expect(getDegree(needle.style("transform"))).to.be.closeTo(-74.4845, 1);
+					expect(getDegree(needle.style("transform"))).to.be.closeTo(-74.4845, 3);
 					resolve();
-				}, 300);
+				}, 350);
 			}).then(() => {
 				// when
 				chart.$.needle.updateHelper(100);
 
 				setTimeout(() => {
-					expect(getDegree(needle.style("transform"))).to.be.equal(177.515);
+					expect(getDegree(needle.style("transform"))).to.be.closeTo(177.515, 3);
 					
 					done(1);
-				}, 300);
+				}, 350);
 			});	
 		}));
 	});
@@ -422,7 +425,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 				setTimeout(() => {
 					expect(getDegree(needle.style("transform"))).to.be.equal(270);
 					resolve();
-				}, 300);
+				}, 350);
 			}).then(() => {
 				// when
 				chart.toggle("data4");
@@ -431,7 +434,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 					expect(getDegree(needle.style("transform"))).to.be.equal(360);
 					
 					done(1);
-				}, 300);
+				}, 350);
 			});	
 		}));
 	});

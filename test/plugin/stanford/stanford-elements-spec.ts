@@ -256,7 +256,7 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 				expect(chart.categories()).to.be.deep.equal(["a", "b", "c", "d"]);
 
 				done(1);
-			}, 300);
+			}, 350);
 
 			// setTimeout(done.bind(null, 1), 500);
 		}));

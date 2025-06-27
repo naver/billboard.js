@@ -5,6 +5,7 @@
  */
 import {select as d3Select} from "d3-selection";
 import type {d3Selection} from "../../../types/types";
+import {$COMMON} from "../../config/classes";
 import {isArray, isFunction, isNumber, isString, toArray} from "../../module/util";
 import Helper from "./AxisRendererHelper";
 
@@ -113,7 +114,8 @@ export default class AxisRenderer {
 
 			if (tickShow.tick || tickShow.text) {
 				// count of tick data in array
-				const ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight);
+				const ticks = config.tickValues ||
+					helper.generateTicks(scale1, isLeftRight || params.config.axis_rotated);
 
 				// set generated ticks
 				ctx.generatedTicks = ticks;
@@ -138,10 +140,21 @@ export default class AxisRenderer {
 				tickShow.text && tickEnter.append("text");
 
 				const tickText = tick.select("text");
-				const sizeFor1Char = isFunction(evalTextSize) ?
-					evalTextSize.bind(ctx.params.owner.api)(tickText.node()) :
-					Helper.getSizeFor1Char(tickText, evalTextSize);
 				const counts: number[] = [];
+				let sizeFor1Char: {w: number, h: number} | undefined;
+
+				if (isFunction(evalTextSize)) {
+					// set evalTextSize to dummy axis element to be used in .getMaxTickSize()
+					sizeFor1Char = evalTextSize.bind(ctx.params.owner.api)(tickText.node(), id);
+
+					if (this.classList.contains($COMMON.dummy)) {
+						this.sizeFor1Char = sizeFor1Char;
+					}
+				}
+
+				if (!sizeFor1Char) {
+					sizeFor1Char = Helper.getSizeFor1Char(tickText, !!evalTextSize);
+				}
 
 				let tspan: d3Selection = tickText
 					.selectAll("tspan")

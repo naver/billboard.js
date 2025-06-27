@@ -10,7 +10,7 @@ import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
 import {timeMinute as d3TimeMinute} from "d3-time";
 import util from "../assets/util";
-import {getBoundingRect} from "../../src/module/util";
+import {addCssRules, getBoundingRect} from "../assets/module/util";
 import bb from "../../src";
 import {$AXIS} from "../../src/config/classes";
 import AxisRendererHelper from "../../src/ChartInternal/Axis/AxisRendererHelper";
@@ -284,6 +284,48 @@ describe.skip("AXIS", function() {
 		it("y Axis tick value should be rounded", () => {
 			chart.internal.$el.axis.y.selectAll(".tick").each(function() {
 				expect(this.textContent % 1).to.be.equal(0);
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				  data: {
+					columns: [
+						["data1", 3, 10, 11, 12]
+					],
+					type: "bar"
+				},
+				axis: {
+					rotated: true,
+					y: {
+						max: 100,
+						min: 0,
+						tick: {
+							stepSize: 2,
+						}
+					}
+				}
+			};
+		});
+
+		it("should stepSize works on rotated axis.", () => {
+			const {stepSize} = args.axis.y.tick;
+			let {$el: {axis: {y}}} = chart.internal;			
+			let temp;
+
+			y = y.selectAll(".tick tspan");
+
+			expect(y.size()).to.be.equal(61);
+
+			y.each(function() {
+				const value = +this.textContent;
+
+				if (!temp) {
+					temp = value;
+				} else {
+					expect(temp + stepSize).to.be.equal(value);
+					temp = value;
+				}
 			});
 		});
 	});
@@ -3028,6 +3070,34 @@ describe.skip("AXIS", function() {
 				done(1);
 			});
 		}));
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: 'periods',
+					type: "line",
+					columns: [
+						["periods", '1999', '2000', '2001', '2002', '2003','2004','2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015','2016'],
+						["data1", 0, 70, 200, 100, 170, 150, 350, 320, 200, 100, 170, 150, 250, 30, 200, 100, 170, 390],
+					]
+				},
+				axis: {
+					x: {
+						tick: {
+							outer: false,
+							culling: {
+								max: 6,
+								reverse: true
+							}
+						}
+					}
+				}
+			};
+		});
+
+		it("", () => {
+
+		});
 	});
 	
 	describe("Axes tick padding", () => {
@@ -3761,6 +3831,9 @@ describe.skip("AXIS", function() {
 							"Some label with a very long text which will definitely be wrapped in an odd way"
 						]
 					},
+					y2: {
+						show: false
+					},
 					evalTextSize: sinon.spy(function(text) {
 						return {
 							w: 5,
@@ -3804,7 +3877,47 @@ describe.skip("AXIS", function() {
 				text.style("font-size", null);
 
 				done(1);
-			}, 300);
+			}, 350);
+		}));
+
+		it("set options", () => {
+			args.axis.evalTextSize = function(text, id) {
+				return {
+					y: { w: 20, h: 20},
+					y2: { w: 15.5, h: 20}
+				}[id];
+			};
+			args.axis.y2.show = true;
+		});
+
+		it("should axes width be calculated correctly.", () => {
+			expect(chart.$.main.node().getBBox().width).to.be.closeTo(545, 5);
+		});
+
+		it("set options", () => {
+			delete args.axis.evalTextSize;
+
+			args.bindto = {
+				element: "#chart",
+				classname: "bb eval-text-size"
+			};
+		});
+
+		it("should y/y2 axes text not hidden.", () => new Promise(done => {
+			const {$el: {axis: {y, y2}}} = chart.internal;
+
+			expect(window.getComputedStyle(y.select("text").node()).fontSize).to.be.equal("35px");
+			expect(window.getComputedStyle(y2.select("text").node()).fontSize).to.be.equal("30px");
+
+			setTimeout(() => {
+				const yRect = y.node().getBoundingClientRect();
+				const y2Rect = y2.node().getBoundingClientRect();
+
+				expect(y.node().getBoundingClientRect().x > 0).to.be.true;
+				expect(y2Rect.x + y2Rect.width <= chart.internal.state.current.width).to.be.true;
+
+				done(1);
+			}, 500);
 		}));
 	});
 });

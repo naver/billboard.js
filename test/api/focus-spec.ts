@@ -90,7 +90,7 @@ describe("API focus", function() {
 				expect(legendItems.data3.classed(itemFocused)).to.not.be.ok;
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should focus multiple targets", () => new Promise(done => {
@@ -119,7 +119,7 @@ describe("API focus", function() {
 				expect(legendItems.data3.classed(itemFocused)).to.not.be.ok;
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -146,7 +146,7 @@ describe("API focus", function() {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 
@@ -214,7 +214,7 @@ describe("API focus", function() {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should defocus multiple targets after focused", () => new Promise(done => {
@@ -253,8 +253,8 @@ describe("API focus", function() {
 					).to.be.ok;
 
 					done(1);
-				}, 300);
-			}, 300);
+				}, 350);
+			}, 350);
 		}));
 	});
 
@@ -284,8 +284,8 @@ describe("API focus", function() {
 					});
 
 					done(1);
-				}, 300);
-			}, 300);
+				}, 350);
+			}, 350);
 		}));
 
 		it("should revert all targets after defocus", () => new Promise(done => {
@@ -313,8 +313,8 @@ describe("API focus", function() {
 					});
 
 					done(1);
-				}, 300);
-			}, 300);
+				}, 350);
+			}, 350);
 		}));
 
 		it("should revert one target after focus", () => new Promise(done => {
@@ -361,8 +361,8 @@ describe("API focus", function() {
 					expect(legendItems.data3.classed(itemFocused)).to.be.ok;
 
 					done(1);
-				}, 300);
-			}, 300);
+				}, 350);
+			}, 350);
 		}));
 
 		it("should revert one target after defocus", () => new Promise(done => {
@@ -401,8 +401,8 @@ describe("API focus", function() {
 					expect(legendItems.data3.classed(itemFocused)).to.not.be.ok;
 
 					done(1);
-				}, 300);
-			}, 300);
+				}, 350);
+			}, 350);
 		}));
 
 		it("should focus multiple targets after focus", () => new Promise(done => {
@@ -451,8 +451,8 @@ describe("API focus", function() {
 					expect(legendItems.data3.classed(itemFocused)).to.be.ok;
 
 					done(1);
-				}, 300);
-			}, 300);
+				}, 350);
+			}, 350);
 		}));
 
 		it("should focus multiple targets after defocus", () => new Promise(done => {
@@ -496,8 +496,8 @@ describe("API focus", function() {
 					expect(legendItems.data3.classed(itemFocused)).to.not.be.ok;
 
 					done(1);
-				}, 300);
-			}, 300);
+				}, 350);
+			}, 350);
 		}));
 
 	});
@@ -541,7 +541,7 @@ describe("API focus", function() {
 				expect(legend).to.be.null;
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should defocus all targets without showing legend", () => new Promise(done => {
@@ -559,7 +559,7 @@ describe("API focus", function() {
 				expect(legend).to.be.null;
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should revert all targets after focus", () => new Promise(done => {
@@ -580,8 +580,8 @@ describe("API focus", function() {
 					expect(legend).to.be.null;
 
 					done(1);
-				}, 300);
-			}, 300);
+				}, 350);
+			}, 350);
 		}));
 	});
 });

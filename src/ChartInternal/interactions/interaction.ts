@@ -8,6 +8,7 @@ import {$ARC, $AXIS, $COMMON, $SHAPE} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {
 	emulateEvent,
+	getBoundingRect,
 	getPointer,
 	getTransformCTM,
 	hasViewBox,
@@ -71,7 +72,7 @@ export default {
 
 			config.color_onover && $$.setOverColor(isOver, d, isArcishData);
 
-			if (isArcishData && "id") {
+			if (isArcishData) {
 				const suffix = $$.getTargetSelectorSuffix((d as IArcDataRow).id);
 				const selector = hasFunnel || hasTreemap ?
 					`${$COMMON.target + suffix} .${$SHAPE.shape}` :
@@ -202,7 +203,7 @@ export default {
 		if (element) {
 			const isMultipleX = $$.isMultipleX();
 			const isRotated = config.axis_rotated;
-			let {width, left, top} = element.getBoundingClientRect();
+			let {width, left, top} = getBoundingRect(element);
 
 			if (hasAxis && !hasRadar && !isMultipleX) {
 				const coords = eventReceiver.coords[index];

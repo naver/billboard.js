@@ -4,7 +4,13 @@
  */
 import type {d3Selection} from "../../../types";
 import {$COMMON, $EVENT, $SHAPE} from "../../config/classes";
-import {getPointer, getScrollPosition, isBoolean, isFunction} from "../../module/util";
+import {
+	getBoundingRect,
+	getPointer,
+	getScrollPosition,
+	isBoolean,
+	isFunction
+} from "../../module/util";
 
 export default {
 	/**
@@ -205,8 +211,7 @@ export default {
 			if (eventReceiver) {
 				const scrollPos = getScrollPosition($el.chart.node());
 
-				eventReceiver.rect = rectElement.node()
-					.getBoundingClientRect()
+				eventReceiver.rect = getBoundingRect(rectElement.node(), true)
 					.toJSON();
 
 				eventReceiver.rect.top += scrollPos.y;

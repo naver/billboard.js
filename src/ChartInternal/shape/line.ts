@@ -103,7 +103,7 @@ export default {
 
 		const mainLineUpdate = main.select(`.${$LINE.chartLines}`)
 			.selectAll(`.${$LINE.chartLine}`)
-			.data(targets)
+			.data($$.filterNullish(targets))
 			.attr("class", d => classChartLine(d) + classFocus(d));
 
 		const mainLineEnter = mainLineUpdate.enter().append("g")
@@ -254,6 +254,10 @@ export default {
 				const regions = config.data_regions[d.id];
 
 				if (regions) {
+					if ($$.isAreaRangeType(d)) {
+						values = values.map(dv => ({...dv, value: $$.getRangedData(dv, "mid")}));
+					}
+
 					path = $$.lineWithRegions(values, scale.zoom || x, y, regions);
 				} else {
 					if ($$.isStepType(d)) {
@@ -440,7 +444,7 @@ export default {
 		}
 
 		if (dashArray.dash.length) {
-			// if not last x tick, then should draw rest of path that is not drawed yet
+			// if not last x tick, then should draw rest of path that is not drawn yet
 			!isLastX && dashArray.dash.push(getLength(tempNode, path));
 
 			tempNode.remove();

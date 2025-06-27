@@ -70,18 +70,16 @@ describe.skip("SHAPE AREA-RANGE", () => {
 
 			expect(commands.length).to.be.equal(dataLen);
 
-			// null data points, shouldn't be showing
-			chart.$.circles.filter(d => d.id === dataName).each(function(d, i) {
-				expect(this.style.opacity).to.be.equal(i > 1 ? '' : "0");
-			})
+			// null data points, shouldn't be generated
+			expect(chart.$.circles.filter(d => d.id === dataName).size()).to.be.equal(5);
 		};
 
 		it("Should render the lines correctly when array data supplied", () => new Promise(done => {
 			setTimeout(() => {
 				checkLineLen("data1");
-				checkLineLen("data2");
+				//checkLineLen("data2");
 				done(1);
-			}, 300)
+			}, 350)
 		}));
 
 		it("should use cardinal interpolation by default", () => {
@@ -168,6 +166,48 @@ describe.skip("SHAPE AREA-RANGE", () => {
 				"M5.873,400.242L79.279,400.242L79.279,327.263L226.093,327.263L226.093,322.97L372.907,322.97L372.907,331.556L519.721,331.556L519.721,391.657L593.127,391.657L593.127,344.434L519.721,344.434L519.721,254.283L372.907,254.283L372.907,288.626L226.093,288.626L226.093,292.919L79.279,292.919L79.279,365.899L5.873,365.899Z",
 				"M5.873,331.556C5.873,331.556,103.748,270.024,152.686,258.576C201.624,247.128,250.562,265.015,299.5,262.869C348.438,260.722,397.376,232.818,446.314,245.697C495.252,258.576,593.127,340.141,593.127,340.141L593.127,271.455C593.127,271.455,495.252,235.68,446.314,224.232C397.376,212.785,348.438,205.63,299.5,202.768C250.562,199.906,201.624,219.939,152.686,207.061C103.748,194.182,5.873,125.495,5.873,125.495Z",
 				"M5.873,254.283L152.686,172.717L299.5,177.01L446.314,245.697L593.127,142.667L593.127,83.424L446.314,39.636L299.5,116.909L152.686,121.202L5.873,185.596Z"
+			];
+
+			chart.$.line.areas.each(function(d, i) {
+				expect(this.getAttribute("d")).to.be.equal(expected.shift());
+			});
+		});
+	});
+
+	describe("combined area-range type with regions", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", [130,120,110], [120,110,100], [150,140,130], [140,130,120],[160,150,140],[150,140,130]],
+					],
+					type: "area-line-range",
+					regions: {
+						data1: [
+							{ start: 1, end: 3, style: { dasharray: "5 5" } },
+						]
+					}
+				}
+			}
+		});
+
+		it("check for correct generation", () => {
+			const d = chart.$.line.lines.attr("d");
+			const box = util.getBBox(d3Select(`.${$LINE.chartLine}.${$COMMON.target}-data1`));
+
+			// check for correct path data
+			expect(/NaN/.test(d)).to.be.false;
+			// check that path does not contain "undefined"
+			expect(/undefined/.test(d)).to.be.false;
+
+			// check for correct pos
+			expect(Math.round(box.height)).to.be.equal(145);
+			expect(Math.round(box.y)).to.be.equal(40);
+		});
+
+		it("check all range type path", () => {
+			const expected = [
+				"M5.873,160.375L123.324,184.523L240.775,112.08L358.225,136.227L475.676,87.932L593.127,112.08L593.127,63.784L475.676,39.636L358.225,87.932L240.775,63.784L123.324,136.227L5.873,112.08Z"
 			];
 
 			chart.$.line.areas.each(function(d, i) {

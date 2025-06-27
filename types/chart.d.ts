@@ -28,6 +28,11 @@ export interface Chart {
 		main: d3Selection;
 
 		/**
+		 * Needle element
+		 */
+		needle: d3Selection;
+
+		/**
 		 * Tooltip element
 		 */
 		tooltip: d3Selection;
@@ -51,6 +56,11 @@ export interface Chart {
 		 * Arc element
 		 */
 		arc: d3Selection;
+
+		/**
+		 * Data point circle elements
+		 */
+		circles: d3Selection;
 
 		bar: {
 			/**

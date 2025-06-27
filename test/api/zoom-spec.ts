@@ -127,7 +127,7 @@ describe("API zoom", function() {
 				expect(domain[1].getDate()).to.be.equal(target[1].getDate());
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should be zoomed properly (string)", () => new Promise(done => {
@@ -361,7 +361,7 @@ describe("API zoom", function() {
 			setTimeout(() => {
 				expect(+chart.$.main.select(`.${$AXIS.axisX} .tick`).attr("transform").match(/\d+/)[0]).to.be.above(250);
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should be updated the maximum zoom range", () => new Promise(done => {
@@ -375,7 +375,7 @@ describe("API zoom", function() {
 
 				expect(+tick.filter(`:nth-child(${tick.size()})`).attr("transform").match(/\d+/)[0]).to.be.below(500);
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("should be updated zoom range", () => new Promise(done => {
@@ -401,7 +401,7 @@ describe("API zoom", function() {
 
 				expect(+tick.filter(`:nth-child(${tick.size()})`).attr("transform").match(/\d+/)[0]).to.be.below(5);
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -454,7 +454,7 @@ describe("API zoom", function() {
 					});
 
 					done(1);
-				}, 300);
+				}, 350);
 			});
 		}));
 	});
@@ -496,7 +496,7 @@ describe("API zoom", function() {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -675,7 +675,7 @@ describe("API zoom", function() {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("shouldn't throw error for indexed x axis, when is given out of range.", () => new Promise(done => {
@@ -706,7 +706,7 @@ describe("API zoom", function() {
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 });

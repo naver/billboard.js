@@ -82,7 +82,7 @@ export default {
 			.some(v => $$.axis.getId(v) === id);
 	},
 
-	getYDomain(targets, axisId: string, xDomain) {
+	getYDomain(targets: IData[], axisId: "y" | "y2", xDomain: TDomainRange) {
 		const $$ = this;
 		const {axis, config, scale} = $$;
 		const pfx = `axis_${axisId}`;
@@ -180,7 +180,11 @@ export default {
 		if (showHorizontalDataLabel) {
 			const diff = diffDomain(scale.y.range());
 			const ratio = $$.getDataLabelLength(yDomainMin, yDomainMax, "width")
-				.map(v => v / diff);
+				.map(v => {
+					const result = v / diff;
+
+					return isFinite(result) ? result : 0;
+				});
 
 			["bottom", "top"].forEach((v, i) => {
 				padding[v] += domainLength * (ratio[i] / (1 - ratio[0] - ratio[1]));

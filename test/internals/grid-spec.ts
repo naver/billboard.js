@@ -387,7 +387,7 @@ describe.skip("GRID", function() {
 					});
 
 					done(1);
-				}, 300);
+				}, 350);
 			}));
 
 			it("should locate grid texts properly", () => {
@@ -446,7 +446,7 @@ describe.skip("GRID", function() {
 					});
 
 					done(1);
-				}, 300);
+				}, 350);
 			}));
 
 			it("should locate grid texts properly", () => {
@@ -530,7 +530,7 @@ describe.skip("GRID", function() {
 					});
 
 					done(1);
-				}, 300);
+				}, 350);
 			}));
 
 			it("should locate grid texts properly", () => {
@@ -587,7 +587,7 @@ describe.skip("GRID", function() {
 						expect(y1).to.be.closeTo(expectedY1s[i], 1);
 					});
 					done(1);
-				}, 300);
+				}, 350);
 			}));
 
 			it("should locate grid texts properly", () => {
@@ -644,7 +644,7 @@ describe.skip("GRID", function() {
 					});
 					
 					done(1);
-				}, 300);
+				}, 350);
 			}));
 		});
 
@@ -690,7 +690,7 @@ describe.skip("GRID", function() {
 					});
 
 					done(1);
-				}, 300);
+				}, 350);
 			}));
 		});
 	});
@@ -1001,7 +1001,7 @@ describe.skip("GRID", function() {
 						}, chart);
 
 						resolve(true);
-					}, 300);
+					}, 350);
 				});  
 			}).then(() => {
 				setTimeout(() => {
@@ -1018,7 +1018,7 @@ describe.skip("GRID", function() {
 					});
 
 					done(1);
-				}, 300);
+				}, 350);
 			});
 		}));
 	});

@@ -23,6 +23,7 @@ export const {
 	findIndex,
 	getBrushSelection,
 	getBoundingRect,
+	getBBox,
 	getCssRules,
 	getMinMax,
 	getOption,

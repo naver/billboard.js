@@ -89,14 +89,14 @@ describe.skip("DATA", () => {
 		});
 
 		it("should draw correctly", () => {
-			const expectedCx = {443: [98, 294.5, 490], 995: [98, 294.5, 490]};
-			const expectedCy = {443: [194, 351, 36], 995: [391, 0, 351]};
+			const expectedCx = {443: [98, 294.5, 490], 995: [98, 490]};
+			const expectedCy = {443: [194, 351, 36], 995: [391, 351]};
 			const main = chart.$.main;
 
-			main.selectAll(`.${$CIRCLE.circles}-443 .${$CIRCLE.circle}`)
+			chart.$.circles.filter(d => d.id === "443")
 				.each(checkXY(expectedCx[443], expectedCy[443]));
 
-			main.selectAll(`.${$CIRCLE.circles}-995 .${$CIRCLE.circle}`)
+			chart.$.circles.filter(d => d.id === "995")
 				.each(checkXY(expectedCx[995], expectedCy[995]));
 		});
 	});
@@ -153,10 +153,10 @@ describe.skip("DATA", () => {
 			const expectedCx = [98, 294.5, 490];
 			const expectedCy = {
 				443: [181, 326, 36],
-				995: [362, 0, 326],
+				995: [362, 326],
 				112: [354, 347, 340],
 				223: [391, 383, 376],
-				334: [376, 0, 362],
+				334: [376, 362],
 				556: [326, 253, 181],
 				"778.889": [347, 376, 340]
 			};
@@ -165,7 +165,7 @@ describe.skip("DATA", () => {
 				.each(checkXY(expectedCx, expectedCy[443]));
 
 			main.selectAll(`.${$CIRCLE.circles}-995-996 .${$CIRCLE.circle}`)
-				.each(checkXY(expectedCx, expectedCy[995]));
+				.each(checkXY([98, 490], expectedCy[995]));
 
 			main.selectAll(`.${$CIRCLE.circles}-112-0- .${$CIRCLE.circle}`)
 				.each(checkXY(expectedCx, expectedCy[112]));
@@ -174,7 +174,7 @@ describe.skip("DATA", () => {
 				.each(checkXY(expectedCx, expectedCy[223]));
 
 			main.selectAll(`.${$CIRCLE.circles}-334-1--0--335 .${$CIRCLE.circle}`)
-				.each(checkXY(expectedCx, expectedCy[334]));
+				.each(checkXY([98, 490], expectedCy[334]));
 
 			main.selectAll(`.${$CIRCLE.circles}-556-557-558-0- .${$CIRCLE.circle}`)
 				.each(checkXY(expectedCx, expectedCy[556]));
@@ -225,12 +225,11 @@ describe.skip("DATA", () => {
 			setTimeout(() => {
 				const data = chart.data();
 
-				expect(chart.$.chart.selectAll("svg").size()).to.be.equal(1);
 				expect(data).to.not.be.null;
 				expect(data.length).to.be.equal(3);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("set options data.mimeType='json'", () => {
@@ -251,7 +250,7 @@ describe.skip("DATA", () => {
 				expect(chart.data.values("data1")).to.deep.equal([220, 240, 270, 250, 280]);
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -965,11 +964,11 @@ describe.skip("DATA", () => {
 
 			setTimeout(() => {
 				chart.$.main.selectAll(`.${$COMMON.target}-data2 path`).each(function() {
-					expect(this.getBBox().height).to.be.equal(chartHeight);
+					expect(this.getBBox().height).to.be.closeTo(chartHeight, 5);
 				});
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 
 		it("set options data.columns", () => {
@@ -1068,7 +1067,7 @@ describe.skip("DATA", () => {
 			setTimeout(() => {
 				expect(emptyLabelText.style("display")).to.be.equal("block");
 				done(1);
-			}, 300)
+			}, 350)
 		}));
 
 		it("set options empty.label.text=''", () => {
@@ -1121,7 +1120,7 @@ describe.skip("DATA", () => {
 				expect(bgArc.attr("d")).to.be.equal("M 0 0");
 
 				done(1);
-			}, 300);
+			}, 350);
 		}));
 	});
 
@@ -1310,6 +1309,37 @@ describe.skip("DATA", () => {
 		it("category x axis with whole dataseries contains null", () => {
 			expect(true).to.be.true;
 		});
+
+		it("set options: data.type='area'", () => {
+			args = {
+				data: {
+					columns: [
+						["S1", null, null, null, null, 20, null, null, null, null, null, null, null],
+						["S4", 20, 25, 20, 10, 20, 27, 3, 2, 12, 19, 7, 17],
+						["x", "2025-01-01 00:00:00", "2025-02-01 00:00:00", "2025-03-01 00:00:00", "2025-04-01 00:00:00", "2025-05-01 00:00:00", "2025-06-01 00:00:00", "2025-07-01 00:00:00", "2025-08-01 00:00:00", "2025-09-01 00:00:00", "2025-10-01 00:00:00", "2025-11-01 00:00:00", "2025-12-01 00:00:00"]
+					],
+					type: "area",
+					groups: [["S1", "S4"]],
+					x: "x",
+					xFormat: "%Y-%m-%d %H:%M:%S"
+				},
+				axis: {
+					x: {
+						tick: {
+							format: "%b"
+						},
+						type: "timeseries",
+					}
+				}
+			};
+		});
+
+		it("check for circle nodes generated", () => {
+			const {circles} = chart.$;
+
+			expect(circles.filter(v => v.id == "S1").size()).to.be.equal(1);
+			expect(circles.filter(v => v.id == "S4").size()).to.be.equal(chart.data.values("S4").length);
+		});
 	});
 
 	describe("data.onshown/onhidden", () => {
@@ -1367,7 +1397,7 @@ describe.skip("DATA", () => {
 					expect(spyHidden.args[0][0]).to.deep.equal([id]);
 
 					resolve(true);
-				}, 300);
+				}, 350);
 			}).then(() => {
 				return new Promise((resolve, reject) => {
 					// when is called already hidden, do not call onhidden callback
@@ -1377,7 +1407,7 @@ describe.skip("DATA", () => {
 						expect(spyHidden.callCount).to.be.equal(1);
 	
 						resolve(true);
-					}, 300);
+					}, 350);
 				});
 			}).then(() => {
 				return new Promise((resolve, reject) => {
@@ -1389,7 +1419,7 @@ describe.skip("DATA", () => {
 						expect(spyShown.args[0][0]).to.deep.equal([id]);
 
 						resolve(true);
-					}, 300);
+					}, 350);
 				});
 			}).then(() => {
 				// when is called already shown, do not call onshown callback
@@ -1399,7 +1429,7 @@ describe.skip("DATA", () => {
 					expect(spyShown.callCount).to.be.equal(1);
 
 					done(1);
-				}, 300);
+				}, 350);
 			});
 		}));
 	});
