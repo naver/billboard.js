@@ -432,6 +432,10 @@ div.row {
     border-top: 1px dotted #a7a7a7;
 }
 
+#axisEvalTextSize_1 .bb-axis-x text{font-size: 20px;}
+#axisEvalTextSize_1 .bb-axis-y text{font-size: 35px;}
+#axisEvalTextSize_1 .bb-axis-y2 text{font-size: 25px;}
+
 /* div[id$="_2"], div[id$="_3"], div[id$="_4"], div[id$="_5"] {
     margin: 20px 0;
     box-shadow: 0 -1px 0 #ccc;
