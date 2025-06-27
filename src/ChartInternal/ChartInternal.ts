@@ -213,8 +213,8 @@ export default class ChartInternal {
 			document.head.appendChild(styleEl);
 
 			state.style = {
-				"rootSelctor": `.${state.datetimeId}`,
-				"sheet": styleEl.sheet
+				rootSelctor: `.${state.datetimeId}`,
+				sheet: styleEl.sheet
 			};
 
 			// used on .destroy()
@@ -222,8 +222,8 @@ export default class ChartInternal {
 		}
 
 		const bindConfig = {
-			"element": bindto,
-			"classname": "bb"
+			element: bindto,
+			classname: "bb"
 		};
 
 		if (isObject(bindto)) {
@@ -330,11 +330,13 @@ export default class ChartInternal {
 		}
 
 		const {legend_position, legend_inset_anchor, axis_rotated} = config;
-		
+
 		state.isLegendRight = legend_position === "right";
 		state.isLegendInset = legend_position === "inset";
-		state.isLegendTop = legend_inset_anchor === "top-left" || legend_inset_anchor === "top-right";
-		state.isLegendLeft = legend_inset_anchor === "top-left" || legend_inset_anchor === "bottom-left";
+		state.isLegendTop = legend_inset_anchor === "top-left" ||
+			legend_inset_anchor === "top-right";
+		state.isLegendLeft = legend_inset_anchor === "top-left" ||
+			legend_inset_anchor === "bottom-left";
 
 		state.rotatedPadding.top = $$.getResettedPadding(state.rotatedPadding.top);
 		state.rotatedPadding.right = axis_rotated && !config.axis_x_show ? 0 : 30;
@@ -744,19 +746,19 @@ export default class ChartInternal {
 
 	getWithOption(options) {
 		const withOptions = {
-			"Dimension": true,
-			"EventRect": true,
-			"Legend": false,
-			"Subchart": true,
-			"Transform": false,
-			"Transition": true,
-			"TrimXDomain": true,
-			"UpdateXAxis": "UpdateXDomain",
-			"UpdateXDomain": false,
-			"UpdateOrgXDomain": false,
-			"TransitionForExit": "Transition",
-			"TransitionForAxis": "Transition",
-			"Y": true
+			Dimension: true,
+			EventRect: true,
+			Legend: false,
+			Subchart: true,
+			Transform: false,
+			Transition: true,
+			TrimXDomain: true,
+			UpdateXAxis: "UpdateXDomain",
+			UpdateXDomain: false,
+			UpdateOrgXDomain: false,
+			TransitionForExit: "Transition",
+			TransitionForAxis: "Transition",
+			Y: true
 		};
 
 		for (const [key, defVal] of Object.entries(withOptions)) {
