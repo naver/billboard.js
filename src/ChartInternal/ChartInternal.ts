@@ -191,19 +191,20 @@ export default class ChartInternal {
 	init(): void {
 		const $$ = <any>this;
 		const {config, state, $el} = $$;
-		const useCssRule = config.boost_useCssRule;
+		const {boost_useCssRule, bindto} = config;
 
 		checkModuleImport($$);
 
+		const hasArcType = $$.hasArcType();
 		state.hasRadar = !state.hasAxis && $$.hasType("radar");
 		state.hasFunnel = !state.hasAxis && $$.hasType("funnel");
 		state.hasTreemap = !state.hasAxis && $$.hasType("treemap");
-		state.hasAxis = !$$.hasArcType() && !state.hasFunnel && !state.hasTreemap;
+		state.hasAxis = !hasArcType && !state.hasFunnel && !state.hasTreemap;
 
 		// datetime to be used for uniqueness
 		state.datetimeId = `bb-${+new Date() * (getRandom() as number)}`;
 
-		if (useCssRule) {
+		if (boost_useCssRule) {
 			// append style element
 			const styleEl = document.createElement("style");
 
@@ -212,36 +213,36 @@ export default class ChartInternal {
 			document.head.appendChild(styleEl);
 
 			state.style = {
-				rootSelctor: `.${state.datetimeId}`,
-				sheet: styleEl.sheet
+				"rootSelctor": `.${state.datetimeId}`,
+				"sheet": styleEl.sheet
 			};
 
 			// used on .destroy()
 			$el.style = styleEl;
 		}
 
-		const bindto = {
-			element: config.bindto,
-			classname: "bb"
+		const bindConfig = {
+			"element": bindto,
+			"classname": "bb"
 		};
 
-		if (isObject(config.bindto)) {
-			bindto.element = config.bindto.element || "#chart";
-			bindto.classname = config.bindto.classname || bindto.classname;
+		if (isObject(bindto)) {
+			bindConfig.element = bindto.element || "#chart";
+			bindConfig.classname = bindto.classname || bindConfig.classname;
 		}
 
 		// select bind element
-		$el.chart = isFunction(bindto.element.node) ?
-			config.bindto.element :
-			d3Select(bindto.element || []);
+		$el.chart = isFunction(bindConfig.element.node) ?
+			bindto.element :
+			d3Select(bindConfig.element || []);
 
 		if ($el.chart.empty()) {
 			$el.chart = d3Select(document.body.appendChild(document.createElement("div")));
 		}
 
 		$el.chart.html("")
-			.classed(bindto.classname, true)
-			.classed(state.datetimeId, useCssRule)
+			.classed(bindConfig.classname, true)
+			.classed(state.datetimeId, boost_useCssRule)
 			.style("position", "relative");
 
 		$$.initParams();
@@ -284,7 +285,6 @@ export default class ChartInternal {
 	initParams(): void {
 		const $$ = <any>this;
 		const {config, format, state} = $$;
-		const isRotated = config.axis_rotated;
 
 		// color settings
 		$$.color = $$.generateColor();
@@ -309,7 +309,7 @@ export default class ChartInternal {
 			format.dataTime = config.data_xLocaltime ? d3TimeParse : d3UtcParse;
 			format.axisTime = config.axis_x_localtime ? d3TimeFormat : d3UtcFormat;
 
-			const isDragZoom = $$.config.zoom_enabled && $$.config.zoom_type === "drag";
+			const isDragZoom = config.zoom_enabled && config.zoom_type === "drag";
 
 			format.defaultAxisTime = d => {
 				const {x, zoom} = $$.scale;
@@ -329,17 +329,15 @@ export default class ChartInternal {
 			};
 		}
 
-		state.isLegendRight = config.legend_position === "right";
-		state.isLegendInset = config.legend_position === "inset";
-
-		state.isLegendTop = config.legend_inset_anchor === "top-left" ||
-			config.legend_inset_anchor === "top-right";
-
-		state.isLegendLeft = config.legend_inset_anchor === "top-left" ||
-			config.legend_inset_anchor === "bottom-left";
+		const {legend_position, legend_inset_anchor, axis_rotated} = config;
+		
+		state.isLegendRight = legend_position === "right";
+		state.isLegendInset = legend_position === "inset";
+		state.isLegendTop = legend_inset_anchor === "top-left" || legend_inset_anchor === "top-right";
+		state.isLegendLeft = legend_inset_anchor === "top-left" || legend_inset_anchor === "bottom-left";
 
 		state.rotatedPadding.top = $$.getResettedPadding(state.rotatedPadding.top);
-		state.rotatedPadding.right = isRotated && !config.axis_x_show ? 0 : 30;
+		state.rotatedPadding.right = axis_rotated && !config.axis_x_show ? 0 : 30;
 
 		state.inputType = convertInputType(
 			config.interaction_inputType_mouse,
@@ -560,25 +558,25 @@ export default class ChartInternal {
 				shapes.push(shapes.shift() as string);
 			}
 
-			shapes.forEach(v => {
-				const name = capitalize(v);
-
-				if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
+			for (const shape of shapes) {
+				const name = capitalize(shape);
+				if ((shape === "line" && $$.hasTypeOf(name)) || $$.hasType(shape)) {
 					types.push(name);
 				}
-			});
+			}
 		} else if (hasTreemap) {
 			types.push("Treemap");
 		} else if ($$.hasType("funnel")) {
 			types.push("Funnel");
 		} else {
 			const hasPolar = $$.hasType("polar");
+			const hasGauge = $$.hasType("gauge");
 
 			if (!hasRadar) {
 				types.push("Arc", "Pie");
 			}
 
-			if ($$.hasType("gauge")) {
+			if (hasGauge) {
 				types.push("Gauge");
 			} else if (hasRadar) {
 				types.push("Radar");
@@ -587,11 +585,13 @@ export default class ChartInternal {
 			}
 		}
 
-		types.forEach(v => {
-			$$[`init${v}`]();
-		});
+		for (const type of types) {
+			$$[`init${type}`]();
+		}
 
-		notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"]) && $$.initText();
+		if (notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"])) {
+			$$.initText();
+		}
 	}
 
 	/**
@@ -685,17 +685,16 @@ export default class ChartInternal {
 		$$.updateTargetsForText(targets);
 
 		if (hasAxis) {
-			["bar", "candlestick", "line"].forEach(v => {
-				const name = capitalize(v);
-
-				if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
+			const shapes = ["bar", "candlestick", "line"];
+			for (const shape of shapes) {
+				const name = capitalize(shape);
+				if ((shape === "line" && $$.hasTypeOf(name)) || $$.hasType(shape)) {
 					helper(name);
 				}
-			});
+			}
 
 			// Sub Chart
-			$$.updateTargetsForSubchart &&
-				$$.updateTargetsForSubchart(targets);
+			$$.updateTargetsForSubchart?.(targets);
 
 			// Arc, Polar, Radar
 		} else if ($$.hasArcType(targets)) {
@@ -745,30 +744,25 @@ export default class ChartInternal {
 
 	getWithOption(options) {
 		const withOptions = {
-			Dimension: true,
-			EventRect: true,
-			Legend: false,
-			Subchart: true,
-			Transform: false,
-			Transition: true,
-			TrimXDomain: true,
-			UpdateXAxis: "UpdateXDomain",
-			UpdateXDomain: false,
-			UpdateOrgXDomain: false,
-			TransitionForExit: "Transition",
-			TransitionForAxis: "Transition",
-			Y: true
+			"Dimension": true,
+			"EventRect": true,
+			"Legend": false,
+			"Subchart": true,
+			"Transform": false,
+			"Transition": true,
+			"TrimXDomain": true,
+			"UpdateXAxis": "UpdateXDomain",
+			"UpdateXDomain": false,
+			"UpdateOrgXDomain": false,
+			"TransitionForExit": "Transition",
+			"TransitionForAxis": "Transition",
+			"Y": true
 		};
 
-		Object.keys(withOptions).forEach(key => {
-			let defVal = withOptions[key];
-
-			if (isString(defVal)) {
-				defVal = withOptions[defVal];
-			}
-
-			withOptions[key] = getOption(options, `with${key}`, defVal);
-		});
+		for (const [key, defVal] of Object.entries(withOptions)) {
+			const value = isString(defVal) ? withOptions[defVal] : defVal;
+			withOptions[key] = getOption(options, `with${key}`, value);
+		}
 
 		return withOptions;
 	}
@@ -777,23 +771,19 @@ export default class ChartInternal {
 		const $$ = <any>this;
 		const {withoutFadeIn} = $$.state;
 
-		const r = $$.getBaseValue(d) !== null &&
-				withoutFadeIn[d.id] ?
-			null :
-			"0";
-
-		return r;
+		return $$.getBaseValue(d) !== null && withoutFadeIn[d.id] ? null : "0";
 	}
 
 	bindResize(): void {
 		const $$ = <any>this;
 		const {$el, config, state} = $$;
 		const resizeFunction = generateResize(config.resize_timer);
-		const list: Function[] = [];
+		const {resize_auto} = config;
+		const list: (() => void)[] = [];
 
 		list.push(() => callFn(config.onresize, $$.api));
 
-		if (/^(true|parent)$/.test(config.resize_auto)) {
+		if (/^(true|parent)$/.test(resize_auto)) {
 			list.push(() => {
 				state.resizing = true;
 
@@ -814,11 +804,10 @@ export default class ChartInternal {
 
 		// add resize functions
 		list.forEach(v => resizeFunction.add(v));
-
 		$$.resizeFunction = resizeFunction;
 
 		// attach resize event
-		if (config.resize_auto === "parent") {
+		if (resize_auto === "parent") {
 			($$.resizeFunction.resizeObserver = new ResizeObserver($$.resizeFunction.bind($$)))
 				.observe($el.chart.node().parentNode);
 		} else {
