@@ -1,3 +1,23 @@
+# [3.16.0](https://github.com/naver/billboard.js/compare/3.15.1...3.16.0) (2025-06-27)
+
+
+### Bug Fixes
+
+* **area-range:** Fix line drawn when combining Area Range with regions ([4a86e55](https://github.com/naver/billboard.js/commit/4a86e559d8aff9bdbfb2c4723fe179d23c3d3275)), closes [#3982](https://github.com/naver/billboard.js/issues/3982) [#3983](https://github.com/naver/billboard.js/issues/3983)
+* **axis:** adjust tick generation logic for rotated axes ([67c54aa](https://github.com/naver/billboard.js/commit/67c54aa2203eda7e5c537bfda13af46f47c579be)), closes [#3991](https://github.com/naver/billboard.js/issues/3991)
+* **core:** Fix potential security vulnerability ([a114a31](https://github.com/naver/billboard.js/commit/a114a316f2a4b21918ce0815c3f520897673153e)), closes [#3975](https://github.com/naver/billboard.js/issues/3975)
+* **data:** Filter nullish data from rendering ([02939b8](https://github.com/naver/billboard.js/commit/02939b8bed7f6e871b04ee26b3b3ba171ef9436f)), closes [#3973](https://github.com/naver/billboard.js/issues/3973)
+* **domain:** handle NaN values in data label calculations ([bdd3589](https://github.com/naver/billboard.js/commit/bdd3589396744cfb6f19ce341a27a9666e699ed6)), closes [#3985](https://github.com/naver/billboard.js/issues/3985)
+* **types:** update type definitions for elements ([591f6a6](https://github.com/naver/billboard.js/commit/591f6a68f7f5398b63a567cdae6be45763e633cb)), closes [#3969](https://github.com/naver/billboard.js/issues/3969)
+* **zoom:** maintain zoom state during chart resize ([2da91de](https://github.com/naver/billboard.js/commit/2da91dec4b4be9be2c36791f196dba5662dd96b1)), closes [#3992](https://github.com/naver/billboard.js/issues/3992)
+
+
+### Features
+
+* **axis:** Enhance axis.evalTextSize per axis ([7fa445e](https://github.com/naver/billboard.js/commit/7fa445e6fe8d3b9ae3d785fc199611809766067f)), closes [#4002](https://github.com/naver/billboard.js/issues/4002)
+* **axis:** Intent to ship axis' tick.culling.reverse ([1496d91](https://github.com/naver/billboard.js/commit/1496d911c4a3259e835301aff80f68d9b11ba5dc)), closes [#3967](https://github.com/naver/billboard.js/issues/3967)
+* **bar:** Intent to ship bar.connectLine ([7dd7200](https://github.com/naver/billboard.js/commit/7dd720014a7623fb63bba1c3de84c80b31373f5d)), closes [#3988](https://github.com/naver/billboard.js/issues/3988) [#4000](https://github.com/naver/billboard.js/issues/4000)
+
 ## [3.15.1](https://github.com/naver/billboard.js/compare/3.15.0...3.15.1) (2025-04-22)
 
 
