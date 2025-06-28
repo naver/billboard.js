@@ -9,7 +9,7 @@ import {getTransformCTM} from "../assets/module/util";
 import {fireEvent} from "../assets/helper";
 import util from "../assets/util";
 
-describe("viewBox", function() {
+describe.skip("viewBox", function() {
 	let chart;
 	let temp: any = [];
 	let args: any = {

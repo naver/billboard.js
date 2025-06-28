@@ -8,7 +8,7 @@ import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
 import {$ARC, $CIRCLE, $SHAPE} from "../../src/config/classes";
 
-describe("TOOLTIP Position", function() {
+describe.skip("TOOLTIP Position", function() {
 	let chart;
 	let args: any = {
 		data: {

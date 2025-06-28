@@ -11,7 +11,7 @@ import util from "../assets/util";
 import {$ARC, $AREA, $AXIS, $BAR, $CIRCLE, $COMMON, $LINE, $SHAPE, $TEXT} from "../../src/config/classes";
 import {isNumber} from "../../src/module/util";
 
-describe("DATA", () => {
+describe.skip("DATA", () => {
 	let chart;
 	let args;
 

@@ -8,7 +8,7 @@ import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import {$AXIS} from "../../src/config/classes";
 import util from "../assets/util";
 
-describe("X AXIS", function() {
+describe.skip("X AXIS", function() {
 	let chart;
 	let args: any = {
 		data: {

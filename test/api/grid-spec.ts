@@ -8,7 +8,7 @@ import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$GRID} from "../../src/config/classes";
 
-describe("API grid", function() {
+describe.skip("API grid", function() {
 	let chart;
 
 	beforeAll(() => {

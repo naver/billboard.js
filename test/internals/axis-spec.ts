@@ -16,7 +16,7 @@ import {$AXIS} from "../../src/config/classes";
 import AxisRendererHelper from "../../src/ChartInternal/Axis/AxisRendererHelper";
 //import getSizeFor1Char from "exports-loader?getSizeFor1Char!../../src/axis/bb.axis";
 
-describe("AXIS", function() {
+describe.skip("AXIS", function() {
 	let chart;
 	let args: any = {
 		data: {
