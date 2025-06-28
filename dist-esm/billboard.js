@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.15.1-nightly-20250626004728
+ * @version 3.16.0-nightly-20250628004712
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -9941,15 +9941,16 @@ var ChartInternal = /** @class */ (function () {
     ChartInternal.prototype.init = function () {
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el;
-        var useCssRule = config.boost_useCssRule;
+        var boost_useCssRule = config.boost_useCssRule, bindto = config.bindto;
         checkModuleImport($$);
+        var hasArcType = $$.hasArcType();
         state.hasRadar = !state.hasAxis && $$.hasType("radar");
         state.hasFunnel = !state.hasAxis && $$.hasType("funnel");
         state.hasTreemap = !state.hasAxis && $$.hasType("treemap");
-        state.hasAxis = !$$.hasArcType() && !state.hasFunnel && !state.hasTreemap;
+        state.hasAxis = !hasArcType && !state.hasFunnel && !state.hasTreemap;
         // datetime to be used for uniqueness
         state.datetimeId = "bb-".concat(+new Date() * getRandom());
-        if (useCssRule) {
+        if (boost_useCssRule) {
             // append style element
             var styleEl = doc.createElement("style");
             // styleEl.id = styleId;
@@ -9962,24 +9963,24 @@ var ChartInternal = /** @class */ (function () {
             // used on .destroy()
             $el.style = styleEl;
         }
-        var bindto = {
-            element: config.bindto,
+        var bindConfig = {
+            element: bindto,
             classname: "bb"
         };
-        if (isObject(config.bindto)) {
-            bindto.element = config.bindto.element || "#chart";
-            bindto.classname = config.bindto.classname || bindto.classname;
+        if (isObject(bindto)) {
+            bindConfig.element = bindto.element || "#chart";
+            bindConfig.classname = bindto.classname || bindConfig.classname;
         }
         // select bind element
-        $el.chart = isFunction(bindto.element.node) ?
-            config.bindto.element :
-            select(bindto.element || []);
+        $el.chart = isFunction(bindConfig.element.node) ?
+            bindto.element :
+            select(bindConfig.element || []);
         if ($el.chart.empty()) {
             $el.chart = select(doc.body.appendChild(doc.createElement("div")));
         }
         $el.chart.html("")
-            .classed(bindto.classname, true)
-            .classed(state.datetimeId, useCssRule)
+            .classed(bindConfig.classname, true)
+            .classed(state.datetimeId, boost_useCssRule)
             .style("position", "relative");
         $$.initParams();
         $$.initToRender();
@@ -10017,7 +10018,6 @@ var ChartInternal = /** @class */ (function () {
         var _a;
         var $$ = this;
         var config = $$.config, format = $$.format, state = $$.state;
-        var isRotated = config.axis_rotated;
         // color settings
         $$.color = $$.generateColor();
         $$.levelColor = $$.generateLevelColor();
@@ -10036,7 +10036,7 @@ var ChartInternal = /** @class */ (function () {
             format.extraLineClasses = $$.generateExtraLineClass();
             format.dataTime = config.data_xLocaltime ? timeParse : utcParse;
             format.axisTime = config.axis_x_localtime ? timeFormat : utcFormat;
-            var isDragZoom_1 = $$.config.zoom_enabled && $$.config.zoom_type === "drag";
+            var isDragZoom_1 = config.zoom_enabled && config.zoom_type === "drag";
             format.defaultAxisTime = function (d) {
                 var _a = $$.scale, x = _a.x, zoom = _a.zoom;
                 var isZoomed = isDragZoom_1 ?
@@ -10052,14 +10052,15 @@ var ChartInternal = /** @class */ (function () {
                 return format.axisTime(specifier)(d);
             };
         }
-        state.isLegendRight = config.legend_position === "right";
-        state.isLegendInset = config.legend_position === "inset";
-        state.isLegendTop = config.legend_inset_anchor === "top-left" ||
-            config.legend_inset_anchor === "top-right";
-        state.isLegendLeft = config.legend_inset_anchor === "top-left" ||
-            config.legend_inset_anchor === "bottom-left";
+        var legend_position = config.legend_position, legend_inset_anchor = config.legend_inset_anchor, axis_rotated = config.axis_rotated;
+        state.isLegendRight = legend_position === "right";
+        state.isLegendInset = legend_position === "inset";
+        state.isLegendTop = legend_inset_anchor === "top-left" ||
+            legend_inset_anchor === "top-right";
+        state.isLegendLeft = legend_inset_anchor === "top-left" ||
+            legend_inset_anchor === "bottom-left";
         state.rotatedPadding.top = $$.getResettedPadding(state.rotatedPadding.top);
-        state.rotatedPadding.right = isRotated && !config.axis_x_show ? 0 : 30;
+        state.rotatedPadding.right = axis_rotated && !config.axis_x_show ? 0 : 30;
         state.inputType = convertInputType(config.interaction_inputType_mouse, config.interaction_inputType_touch);
     };
     ChartInternal.prototype.initWithData = function (data) {
@@ -10220,12 +10221,13 @@ var ChartInternal = /** @class */ (function () {
             if ($$.config.bar_front) {
                 shapes.push(shapes.shift());
             }
-            shapes.forEach(function (v) {
-                var name = capitalize(v);
-                if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
-                    types.push(name);
+            for (var _i = 0, shapes_1 = shapes; _i < shapes_1.length; _i++) {
+                var shape_1 = shapes_1[_i];
+                var name_1 = capitalize(shape_1);
+                if ((shape_1 === "line" && $$.hasTypeOf(name_1)) || $$.hasType(shape_1)) {
+                    types.push(name_1);
                 }
-            });
+            }
         }
         else if (hasTreemap) {
             types.push("Treemap");
@@ -10235,10 +10237,11 @@ var ChartInternal = /** @class */ (function () {
         }
         else {
             var hasPolar = $$.hasType("polar");
+            var hasGauge = $$.hasType("gauge");
             if (!hasRadar) {
                 types.push("Arc", "Pie");
             }
-            if ($$.hasType("gauge")) {
+            if (hasGauge) {
                 types.push("Gauge");
             }
             else if (hasRadar) {
@@ -10248,10 +10251,13 @@ var ChartInternal = /** @class */ (function () {
                 types.push("Polar");
             }
         }
-        types.forEach(function (v) {
-            $$["init".concat(v)]();
-        });
-        notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"]) && $$.initText();
+        for (var _b = 0, types_1 = types; _b < types_1.length; _b++) {
+            var type = types_1[_b];
+            $$["init".concat(type)]();
+        }
+        if (notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"])) {
+            $$.initText();
+        }
     };
     /**
      * Set chart elements
@@ -10309,24 +10315,25 @@ var ChartInternal = /** @class */ (function () {
      * @private
      */
     ChartInternal.prototype.updateTargets = function (targets) {
-        var _a;
+        var _a, _b;
         var $$ = this;
-        var _b = $$.state, hasAxis = _b.hasAxis, hasFunnel = _b.hasFunnel, hasRadar = _b.hasRadar, hasTreemap = _b.hasTreemap;
+        var _c = $$.state, hasAxis = _c.hasAxis, hasFunnel = _c.hasFunnel, hasRadar = _c.hasRadar, hasTreemap = _c.hasTreemap;
         var helper = function (type) {
             return $$["updateTargetsFor".concat(type)](targets.filter($$["is".concat(type, "Type")].bind($$)));
         };
         // Text
         $$.updateTargetsForText(targets);
         if (hasAxis) {
-            ["bar", "candlestick", "line"].forEach(function (v) {
-                var name = capitalize(v);
-                if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
-                    helper(name);
+            var shapes = ["bar", "candlestick", "line"];
+            for (var _i = 0, shapes_2 = shapes; _i < shapes_2.length; _i++) {
+                var shape_2 = shapes_2[_i];
+                var name_2 = capitalize(shape_2);
+                if ((shape_2 === "line" && $$.hasTypeOf(name_2)) || $$.hasType(shape_2)) {
+                    helper(name_2);
                 }
-            });
+            }
             // Sub Chart
-            $$.updateTargetsForSubchart &&
-                $$.updateTargetsForSubchart(targets);
+            (_a = $$.updateTargetsForSubchart) === null || _a === void 0 ? void 0 : _a.call($$, targets);
             // Arc, Polar, Radar
         }
         else if ($$.hasArcType(targets)) {
@@ -10348,7 +10355,7 @@ var ChartInternal = /** @class */ (function () {
         // Point types
         var hasPointType = $$.hasType("bubble") || $$.hasType("scatter");
         if (hasPointType) {
-            (_a = $$.updateTargetForCircle) === null || _a === void 0 ? void 0 : _a.call($$);
+            (_b = $$.updateTargetForCircle) === null || _b === void 0 ? void 0 : _b.call($$);
         }
         // Fade-in each chart
         $$.filterTargetsToShowAtInit(hasPointType);
@@ -10385,31 +10392,26 @@ var ChartInternal = /** @class */ (function () {
             TransitionForAxis: "Transition",
             Y: true
         };
-        Object.keys(withOptions).forEach(function (key) {
-            var defVal = withOptions[key];
-            if (isString(defVal)) {
-                defVal = withOptions[defVal];
-            }
-            withOptions[key] = getOption(options, "with".concat(key), defVal);
-        });
+        for (var _i = 0, _a = Object.entries(withOptions); _i < _a.length; _i++) {
+            var _b = _a[_i], key = _b[0], defVal = _b[1];
+            var value = isString(defVal) ? withOptions[defVal] : defVal;
+            withOptions[key] = getOption(options, "with".concat(key), value);
+        }
         return withOptions;
     };
     ChartInternal.prototype.initialOpacity = function (d) {
         var $$ = this;
         var withoutFadeIn = $$.state.withoutFadeIn;
-        var r = $$.getBaseValue(d) !== null &&
-            withoutFadeIn[d.id] ?
-            null :
-            "0";
-        return r;
+        return $$.getBaseValue(d) !== null && withoutFadeIn[d.id] ? null : "0";
     };
     ChartInternal.prototype.bindResize = function () {
         var $$ = this;
         var $el = $$.$el, config = $$.config, state = $$.state;
         var resizeFunction = generateResize(config.resize_timer);
+        var resize_auto = config.resize_auto;
         var list = [];
         list.push(function () { return callFn(config.onresize, $$.api); });
-        if (/^(true|parent)$/.test(config.resize_auto)) {
+        if (/^(true|parent)$/.test(resize_auto)) {
             list.push(function () {
                 state.resizing = true;
                 // https://github.com/naver/billboard.js/issues/2650
@@ -10428,7 +10430,7 @@ var ChartInternal = /** @class */ (function () {
         list.forEach(function (v) { return resizeFunction.add(v); });
         $$.resizeFunction = resizeFunction;
         // attach resize event
-        if (config.resize_auto === "parent") {
+        if (resize_auto === "parent") {
             ($$.resizeFunction.resizeObserver = new ResizeObserver($$.resizeFunction.bind($$)))
                 .observe($el.chart.node().parentNode);
         }
@@ -24969,7 +24971,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.15.1-nightly-20250626004728
+ * @version 3.16.0-nightly-20250628004712
  */
 var bb = {
     /**
@@ -24979,7 +24981,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.15.1-nightly-20250626004728",
+    version: "3.16.0-nightly-20250628004712",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

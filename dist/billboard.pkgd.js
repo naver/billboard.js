@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.15.1-nightly-20250626004728
+ * @version 3.16.0-nightly-20250628004712
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -36298,14 +36298,15 @@ class ChartInternal {
   init() {
     const $$ = this;
     const { config, state, $el } = $$;
-    const useCssRule = config.boost_useCssRule;
+    const { boost_useCssRule, bindto } = config;
     checkModuleImport($$);
+    const hasArcType = $$.hasArcType();
     state.hasRadar = !state.hasAxis && $$.hasType("radar");
     state.hasFunnel = !state.hasAxis && $$.hasType("funnel");
     state.hasTreemap = !state.hasAxis && $$.hasType("treemap");
-    state.hasAxis = !$$.hasArcType() && !state.hasFunnel && !state.hasTreemap;
+    state.hasAxis = !hasArcType && !state.hasFunnel && !state.hasTreemap;
     state.datetimeId = `bb-${+/* @__PURE__ */ new Date() * getRandom()}`;
-    if (useCssRule) {
+    if (boost_useCssRule) {
       const styleEl = browser_doc.createElement("style");
       styleEl.type = "text/css";
       browser_doc.head.appendChild(styleEl);
@@ -36315,19 +36316,19 @@ class ChartInternal {
       };
       $el.style = styleEl;
     }
-    const bindto = {
-      element: config.bindto,
+    const bindConfig = {
+      element: bindto,
       classname: "bb"
     };
-    if (isObject(config.bindto)) {
-      bindto.element = config.bindto.element || "#chart";
-      bindto.classname = config.bindto.classname || bindto.classname;
+    if (isObject(bindto)) {
+      bindConfig.element = bindto.element || "#chart";
+      bindConfig.classname = bindto.classname || bindConfig.classname;
     }
-    $el.chart = isFunction(bindto.element.node) ? config.bindto.element : src_select(bindto.element || []);
+    $el.chart = isFunction(bindConfig.element.node) ? bindto.element : src_select(bindConfig.element || []);
     if ($el.chart.empty()) {
       $el.chart = src_select(browser_doc.body.appendChild(browser_doc.createElement("div")));
     }
-    $el.chart.html("").classed(bindto.classname, true).classed(state.datetimeId, useCssRule).style("position", "relative");
+    $el.chart.html("").classed(bindConfig.classname, true).classed(state.datetimeId, boost_useCssRule).style("position", "relative");
     $$.initParams();
     $$.initToRender();
   }
@@ -36364,7 +36365,6 @@ class ChartInternal {
     var _a;
     const $$ = this;
     const { config, format: format2, state } = $$;
-    const isRotated = config.axis_rotated;
     $$.color = $$.generateColor();
     $$.levelColor = $$.generateLevelColor();
     if (config.padding === false) {
@@ -36381,7 +36381,7 @@ class ChartInternal {
       format2.extraLineClasses = $$.generateExtraLineClass();
       format2.dataTime = config.data_xLocaltime ? timeParse : utcParse;
       format2.axisTime = config.axis_x_localtime ? timeFormat : utcFormat;
-      const isDragZoom = $$.config.zoom_enabled && $$.config.zoom_type === "drag";
+      const isDragZoom = config.zoom_enabled && config.zoom_type === "drag";
       format2.defaultAxisTime = (d) => {
         const { x, zoom } = $$.scale;
         const isZoomed = isDragZoom ? zoom : zoom && x.orgDomain().toString() !== zoom.domain().toString();
@@ -36389,12 +36389,13 @@ class ChartInternal {
         return format2.axisTime(specifier)(d);
       };
     }
-    state.isLegendRight = config.legend_position === "right";
-    state.isLegendInset = config.legend_position === "inset";
-    state.isLegendTop = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "top-right";
-    state.isLegendLeft = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "bottom-left";
+    const { legend_position, legend_inset_anchor, axis_rotated } = config;
+    state.isLegendRight = legend_position === "right";
+    state.isLegendInset = legend_position === "inset";
+    state.isLegendTop = legend_inset_anchor === "top-left" || legend_inset_anchor === "top-right";
+    state.isLegendLeft = legend_inset_anchor === "top-left" || legend_inset_anchor === "bottom-left";
     state.rotatedPadding.top = $$.getResettedPadding(state.rotatedPadding.top);
-    state.rotatedPadding.right = isRotated && !config.axis_x_show ? 0 : 30;
+    state.rotatedPadding.right = axis_rotated && !config.axis_x_show ? 0 : 30;
     state.inputType = convertInputType(
       config.interaction_inputType_mouse,
       config.interaction_inputType_touch
@@ -36521,22 +36522,23 @@ class ChartInternal {
       if ($$.config.bar_front) {
         shapes.push(shapes.shift());
       }
-      shapes.forEach((v) => {
-        const name = capitalize(v);
-        if (v === "line" && $$.hasTypeOf(name) || $$.hasType(v)) {
+      for (const shape2 of shapes) {
+        const name = capitalize(shape2);
+        if (shape2 === "line" && $$.hasTypeOf(name) || $$.hasType(shape2)) {
           types.push(name);
         }
-      });
+      }
     } else if (hasTreemap) {
       types.push("Treemap");
     } else if ($$.hasType("funnel")) {
       types.push("Funnel");
     } else {
       const hasPolar = $$.hasType("polar");
+      const hasGauge = $$.hasType("gauge");
       if (!hasRadar) {
         types.push("Arc", "Pie");
       }
-      if ($$.hasType("gauge")) {
+      if (hasGauge) {
         types.push("Gauge");
       } else if (hasRadar) {
         types.push("Radar");
@@ -36544,10 +36546,12 @@ class ChartInternal {
         types.push("Polar");
       }
     }
-    types.forEach((v) => {
-      $$[`init${v}`]();
-    });
-    notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"]) && $$.initText();
+    for (const type of types) {
+      $$[`init${type}`]();
+    }
+    if (notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"])) {
+      $$.initText();
+    }
   }
   /**
    * Set chart elements
@@ -36616,7 +36620,7 @@ class ChartInternal {
    * @private
    */
   updateTargets(targets) {
-    var _a;
+    var _a, _b;
     const $$ = this;
     const { hasAxis, hasFunnel, hasRadar, hasTreemap } = $$.state;
     const helper = (type) => $$[`updateTargetsFor${type}`](
@@ -36624,13 +36628,14 @@ class ChartInternal {
     );
     $$.updateTargetsForText(targets);
     if (hasAxis) {
-      ["bar", "candlestick", "line"].forEach((v) => {
-        const name = capitalize(v);
-        if (v === "line" && $$.hasTypeOf(name) || $$.hasType(v)) {
+      const shapes = ["bar", "candlestick", "line"];
+      for (const shape2 of shapes) {
+        const name = capitalize(shape2);
+        if (shape2 === "line" && $$.hasTypeOf(name) || $$.hasType(shape2)) {
           helper(name);
         }
-      });
-      $$.updateTargetsForSubchart && $$.updateTargetsForSubchart(targets);
+      }
+      (_a = $$.updateTargetsForSubchart) == null ? void 0 : _a.call($$, targets);
     } else if ($$.hasArcType(targets)) {
       let type = "Arc";
       if (hasRadar) {
@@ -36646,7 +36651,7 @@ class ChartInternal {
     }
     const hasPointType = $$.hasType("bubble") || $$.hasType("scatter");
     if (hasPointType) {
-      (_a = $$.updateTargetForCircle) == null ? void 0 : _a.call($$);
+      (_b = $$.updateTargetForCircle) == null ? void 0 : _b.call($$);
     }
     $$.filterTargetsToShowAtInit(hasPointType);
   }
@@ -36680,28 +36685,25 @@ class ChartInternal {
       TransitionForAxis: "Transition",
       Y: true
     };
-    Object.keys(withOptions).forEach((key) => {
-      let defVal = withOptions[key];
-      if (isString(defVal)) {
-        defVal = withOptions[defVal];
-      }
-      withOptions[key] = getOption(options, `with${key}`, defVal);
-    });
+    for (const [key, defVal] of Object.entries(withOptions)) {
+      const value = isString(defVal) ? withOptions[defVal] : defVal;
+      withOptions[key] = getOption(options, `with${key}`, value);
+    }
     return withOptions;
   }
   initialOpacity(d) {
     const $$ = this;
     const { withoutFadeIn } = $$.state;
-    const r = $$.getBaseValue(d) !== null && withoutFadeIn[d.id] ? null : "0";
-    return r;
+    return $$.getBaseValue(d) !== null && withoutFadeIn[d.id] ? null : "0";
   }
   bindResize() {
     const $$ = this;
     const { $el, config, state } = $$;
     const resizeFunction = generateResize(config.resize_timer);
+    const { resize_auto } = config;
     const list = [];
     list.push(() => callFn(config.onresize, $$.api));
-    if (/^(true|parent)$/.test(config.resize_auto)) {
+    if (/^(true|parent)$/.test(resize_auto)) {
       list.push(() => {
         state.resizing = true;
         if (config.legend_show) {
@@ -36717,7 +36719,7 @@ class ChartInternal {
     });
     list.forEach((v) => resizeFunction.add(v));
     $$.resizeFunction = resizeFunction;
-    if (config.resize_auto === "parent") {
+    if (resize_auto === "parent") {
       ($$.resizeFunction.resizeObserver = new ResizeObserver($$.resizeFunction.bind($$))).observe($el.chart.node().parentNode);
     } else {
       win.addEventListener("resize", $$.resizeFunction);
@@ -51045,7 +51047,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.15.1-nightly-20250626004728",
+  version: "3.16.0-nightly-20250628004712",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
