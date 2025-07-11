@@ -1,0 +1,97 @@
+name: Update Dependencies
+
+on:
+  schedule:
+    # every Monday at 00:00 UTC
+    - cron: '0 0 * * 1'
+  workflow_dispatch: # can be run manually
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'yarn'
+        
+    - name: Configure git
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        
+    - name: Create and switch to dependency branch
+      run: |
+        git checkout -b dependency-update-$(date +%Y%m%d)
+        
+    - name: Install dependencies
+      run: |
+        yarn install --frozen-lockfile
+        
+    - name: Update all dependencies
+      run: |
+        yarn up "**"
+        
+    - name: Install updated dependencies
+      run: |
+        yarn install
+        
+    - name: Run tests
+      run: |
+        yarn coverage
+        
+    - name: Check if there are changes
+      id: check_changes
+      run: |
+        if git diff --quiet; then
+          echo "changes=false" >> $GITHUB_OUTPUT
+        else
+          echo "changes=true" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Commit changes
+      if: steps.check_changes.outputs.changes == 'true'
+      run: |
+        git commit -m "chore(deps-dev): update dependency
+        
+        update dependencies to the latest"
+        
+    - name: Push dependency branch
+      if: steps.check_changes.outputs.changes == 'true'
+      run: |
+        git push origin HEAD
+        
+    - name: Switch to master and merge
+      if: steps.check_changes.outputs.changes == 'true'
+      run: |
+        git checkout master
+        git merge --no-ff dependency-update-$(date +%Y%m%d) -m "Merge dependency updates"
+        git push origin master
+        
+    - name: Delete dependency branch
+      if: steps.check_changes.outputs.changes == 'true'
+      run: |
+        # delete remote branch
+        git push origin --delete dependency-update-$(date +%Y%m%d)
+        # delete local branch
+        git branch -D dependency-update-$(date +%Y%m%d)
+        echo "Dependency branch deleted successfully"
+        
+    - name: No changes found
+      if: steps.check_changes.outputs.changes == 'false'
+      run: |
+        echo "No dependency updates available"
+        git checkout master
+        git branch -D dependency-update-$(date +%Y%m%d) 
