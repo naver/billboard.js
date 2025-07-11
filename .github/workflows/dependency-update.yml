@@ -25,7 +25,17 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'yarn'
+        
+    - name: Enable Corepack and setup Yarn
+      run: |
+        corepack enable
+        corepack prepare yarn@4.3.1 --activate
+        # Set yarn version to 4.3.1 and ensure it's available
+        YARN_IGNORE_PATH=1 yarn set version 4.3.1
+        # Verify yarn is working
+        yarn --version
+      env:
+        YARN_IGNORE_PATH: 1
         
     - name: Configure git
       run: |
@@ -38,19 +48,29 @@ jobs:
         
     - name: Install dependencies
       run: |
-        yarn install --frozen-lockfile
+        yarn install --immutable
+      env:
+        YARN_IGNORE_PATH: 1
         
     - name: Update all dependencies
       run: |
         yarn up "**"
+      env:
+        YARN_IGNORE_PATH: 1
         
     - name: Install updated dependencies
       run: |
         yarn install
+        sudo npx playwright install-deps
+        npx playwright install
+      env:
+        YARN_IGNORE_PATH: 1
         
     - name: Run tests
       run: |
-        yarn coverage
+        yarn coverage:ci
+      env:
+        YARN_IGNORE_PATH: 1
         
     - name: Check if there are changes
       id: check_changes
@@ -64,6 +84,7 @@ jobs:
     - name: Commit changes
       if: steps.check_changes.outputs.changes == 'true'
       run: |
+        git add .
         git commit -m "chore(deps-dev): update dependency
         
         update dependencies to the latest"
@@ -71,23 +92,24 @@ jobs:
     - name: Push dependency branch
       if: steps.check_changes.outputs.changes == 'true'
       run: |
-        git push origin HEAD
+        git push origin HEAD --force-with-lease
         
-    - name: Switch to master and merge
+    - name: Create Pull Request
       if: steps.check_changes.outputs.changes == 'true'
       run: |
-        git checkout master
-        git merge --no-ff dependency-update-$(date +%Y%m%d) -m "Merge dependency updates"
-        git push origin master
+        gh pr create \
+          --title "chore(deps-dev): update dependencies" \
+          --body "Automated dependency updates to the latest versions.
         
-    - name: Delete dependency branch
-      if: steps.check_changes.outputs.changes == 'true'
-      run: |
-        # delete remote branch
-        git push origin --delete dependency-update-$(date +%Y%m%d)
-        # delete local branch
-        git branch -D dependency-update-$(date +%Y%m%d)
-        echo "Dependency branch deleted successfully"
+        This PR contains the following changes:
+        - Updated all dependencies to their latest compatible versions
+        - All tests are passing
+        
+        Please review and merge if everything looks good." \
+          --base master \
+          --head dependency-update-$(date +%Y%m%d)
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     - name: No changes found
       if: steps.check_changes.outputs.changes == 'false'
