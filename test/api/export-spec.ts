@@ -232,6 +232,10 @@ describe("API export", () => {
 				"ATh6xb5wFzqdedEkwF6TQB8CpTqAe6CGC6H3Q6+EBmJP89qDHDYTaN8q7wkyYG0m8BZYmx",
 				"GYdmVuXbFVidP90zNLmUE+bXECj4z82vTg5xDz7U9Gfu8PT444+ct/jX9p1281XXPglXLp+FeuOGS",
 				"P7bcvHKGWRcJkECdEaADWGcXlMMhgWoQeOXyCW4wWqQv9qSr3StnT+va0q09/GFqy752r5zlmW6Hei"
+			],
+			[
+				"qZzbE7syTcJEAUFG9elENOxYMbRK4NKqeiHMoZDASymyEBBET4I4TzBRFJsrsEeJUAQUEEgcitgii3QS5BDrMJ5Njp5",
+				"H8bPnTv343Uz4PoYKEdJAhLVAFBx7gZSFFNIoGgCF3d3d29RdCtsgARqgICqfjOdTp9YA0PhEEiABLIIRDUAdBhDf0URhQRIYEgEWIkESIAESKCuCUQ1AKzrk8bBkwAJkAAJkAAJkEAhBIJjGAAGJJiSAAmQAAmQAAmQQJ0QYABYJyeawyQBEiCBHgLckgAJkIBE9iEQnjsSIAESIAESIAESIIECCXAGsEBwUT6MvpMACZAACZAACdQ3AQaA9X3"
 			]
 		];
 
@@ -267,8 +271,6 @@ describe("API export", () => {
 				chart.export({
 					preserveFontStyle: true
 				}, function(dataUrl) {
-					// console.log(dataUrl);
-
 					expect(
 						expected.some(pttr => pttr.every(v => dataUrl.indexOf(v) >= 0))
 					).to.be.true;

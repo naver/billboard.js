@@ -92,23 +92,25 @@ jobs:
     - name: Push dependency branch
       if: steps.check_changes.outputs.changes == 'true'
       run: |
-        git push origin HEAD
+        git push origin HEAD --force-with-lease
         
-    - name: Switch to master and merge
+    - name: Create Pull Request
       if: steps.check_changes.outputs.changes == 'true'
       run: |
-        git checkout master
-        git merge --no-ff dependency-update-$(date +%Y%m%d) -m "Merge dependency updates"
-        git push origin master
+        gh pr create \
+          --title "chore(deps-dev): update dependencies" \
+          --body "Automated dependency updates to the latest versions.
         
-    - name: Delete dependency branch
-      if: steps.check_changes.outputs.changes == 'true'
-      run: |
-        # delete remote branch
-        git push origin --delete dependency-update-$(date +%Y%m%d)
-        # delete local branch
-        git branch -D dependency-update-$(date +%Y%m%d)
-        echo "Dependency branch deleted successfully"
+        This PR contains the following changes:
+        - Updated all dependencies to their latest compatible versions
+        - All tests are passing
+        
+        Please review and merge if everything looks good." \
+          --base master \
+          --head dependency-update-$(date +%Y%m%d) \
+          --label "chore,dependencies,dev-env"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     - name: No changes found
       if: steps.check_changes.outputs.changes == 'false'
