@@ -9,7 +9,7 @@ import {select as d3Select} from "d3-selection";
 import {$COMMON, $LINE} from "../../src/config/classes";
 import util from "../assets/util";
 
-describe.skip("SHAPE AREA-RANGE", () => {
+describe("SHAPE AREA-RANGE", () => {
 	let chart;
 	let args;
 	let skipEach = false;

@@ -9,7 +9,7 @@ import util from "../assets/util";
 import {$REGION} from "../../src/config/classes";
 import {testRegions} from "../internals/regions-spec";
 
-describe.skip("API regions", function() {
+describe("API regions", function() {
 	let chart;
 	let args;
 

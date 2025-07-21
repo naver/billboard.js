@@ -13,7 +13,7 @@ import {
 import {$AXIS, $COMMON, $LINE, $SELECT} from "../../src/config/classes";
 import util from "../assets/util";
 
-describe.skip("SHAPE LINE", () => {
+describe("SHAPE LINE", () => {
 	let chart;
 	let args;
 	let skipEach = false;
