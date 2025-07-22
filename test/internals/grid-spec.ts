@@ -8,7 +8,7 @@ import {select as d3Select} from "d3-selection";
 import {$AXIS, $COMMON, $EVENT, $FOCUS, $GRID} from "../../src/config/classes";
 import util from "../assets/util";
 
-describe.skip("GRID", function() {
+describe("GRID", function() {
 	let chart;
 	let args;
 

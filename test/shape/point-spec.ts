@@ -10,7 +10,7 @@ import util from "../assets/util";
 import {$CIRCLE} from "../../src/config/classes";
 import {fireEvent} from "../assets/helper";
 
-describe.skip("SHAPE POINT", () => {
+describe("SHAPE POINT", () => {
 	let chart;
 	let args;
 
