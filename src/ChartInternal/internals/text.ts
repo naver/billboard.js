@@ -8,6 +8,7 @@ import {$COMMON, $TEXT} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {
 	capitalize,
+	getBBox,
 	getBoundingRect,
 	getRandom,
 	getTranslation,
@@ -15,6 +16,7 @@ import {
 	isNumber,
 	isObject,
 	isString,
+	parseShorthand,
 	setTextValue
 } from "../../module/util";
 import type {IArcData, IDataRow} from "../data/IData";
@@ -116,6 +118,61 @@ function getTextPos(d, type): number {
 			position.bind(this.api)(type, value, id, index, this.$el.text) :
 			(id in position ? position[id] : position)[type]
 	) ?? 0;
+}
+
+/**
+ * Update text border
+ * @param {SVGTextElement} text Text element
+ * @param {Coord} pos Position object
+ * @param {string} rectClass Class name
+ * @private
+ */
+function updateTextBorder(text: SVGTextElement, pos: Coord, rectClass: string): void {
+	const $$ = this;
+	const {config, $T} = $$;
+	const isRotated = config.axis_rotated;
+	const {
+		border: {
+			padding = "3 5",
+			radius = 10,
+			stroke = "#000",
+			strokeWidth = 1,
+			fill = "none"
+		}
+	} = config.data_labels;
+
+	const borderPadding = parseShorthand(padding);
+	const applyStyle = config.data_labels.border !== true;
+	const textRect = getBBox(text);
+	let borderRect = d3Select(text.previousElementSibling as Element);
+
+	if (
+		borderRect.empty() ||
+		borderRect.node()?.tagName !== "rect" ||
+		!borderRect.attr("class")?.includes(rectClass)
+	) {
+		borderRect = d3Select(text.parentNode as Element)
+			.insert("rect", () => text)
+			.attr("class", `${$TEXT.textBorderRect} ${rectClass}`)
+			.attr("width",
+				textRect.width + (applyStyle ? borderPadding.left + borderPadding.right : 0))
+			.attr("height",
+				textRect.height + (applyStyle ? borderPadding.top + borderPadding.bottom : 0));
+
+		if (applyStyle) {
+			borderRect
+				.style("fill", fill)
+				.style("stroke", stroke)
+				.style("stroke-width", `${strokeWidth}px`)
+				.attr("rx", radius)
+				.attr("ry", radius);
+		}
+	}
+
+	$T(borderRect)
+		.attr("x",
+			pos.x - (applyStyle ? borderPadding.left : 0) - (isRotated ? 0 : textRect.width / 2))
+		.attr("y", pos.y - (applyStyle ? borderPadding.top : 0) - (textRect.height / 4 * 3.2));
 }
 
 export default {
@@ -339,6 +396,9 @@ export default {
 				} else {
 					node.attr("x", pos.x).attr("y", pos.y);
 				}
+
+				config.data_labels.border &&
+					updateTextBorder.call($$, node.node(), pos, `${$TEXT.textBorderRect}-${i}`);
 			});
 
 		// need to return 'true' as of being pushed to the redraw list
