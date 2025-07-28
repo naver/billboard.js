@@ -57,6 +57,7 @@ export {
 	mergeObj,
 	notEmpty,
 	parseDate,
+	parseShorthand,
 	runUntil,
 	sanitize,
 	setTextValue,
@@ -943,4 +944,29 @@ function runUntil(fn: Function, conditionFn: Function): void {
 	} else {
 		fn();
 	}
+}
+
+/**
+ * Parse CSS shorthand values (padding, margin, border-radius, etc.)
+ * @param {number|string|object} value Shorthand value(s)
+ * @returns {object} Parsed object with top, right, bottom, left properties
+ * @private
+ */
+function parseShorthand(
+	value: number | string | object
+): {top: number, right: number, bottom: number, left: number} {
+	if (isObject(value) && !isString(value)) {
+		const obj = value as {top?: number, right?: number, bottom?: number, left?: number};
+		return {
+			top: obj.top || 0,
+			right: obj.right || 0,
+			bottom: obj.bottom || 0,
+			left: obj.left || 0
+		};
+	}
+
+	const values = (isString(value) ? value.trim().split(/\s+/) : [value]).map(v => +v || 0);
+	const [a, b = a, c = a, d = b] = values;
+
+	return {top: a, right: b, bottom: c, left: d};
 }

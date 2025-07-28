@@ -54,6 +54,7 @@ export const {
 	mergeObj,
 	notEmpty,
 	parseDate,
+	parseShorthand,
 	runUntil,
 	sanitize,
 	setTextValue,

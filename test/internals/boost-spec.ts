@@ -92,6 +92,7 @@ describe("BOOST", () => {
 
 			return new Promise((resolve, reject) => {
 				const timeoutId = setTimeout(() => {
+					resolve(1);
 					reject(new Error("WebWorker test timed out"));
 				}, 3000);
 

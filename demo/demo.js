@@ -2984,6 +2984,83 @@ var demos = {
 				}
 			}
 		],
+		DataLabelBorder: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 50, 150, 150, 150, 50, 150],
+							["data3", 100, 100, 40, 100, 150, 50]
+						],
+						types: {
+							data1: "line",
+							data2: "area",
+							data3: "bar"
+						},
+						labels: {
+							border: {
+								padding: "3 5",
+								radius: 0,
+								strokeWidth: 1,
+								stroke: "#ccc",
+								fill: "none"
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 130, 280, 200, 300, 250, 180]
+						],
+						type: "bar",
+						labels: {
+							position: {
+								y: -15
+							},
+							border: {
+								padding: {
+									top: 5,
+									bottom: 7,
+									left: 10,
+									right: 15
+								},
+								radius: 13,
+								fill: "none",
+								stroke: "#000",
+								strokeWidth: 2
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 200, 350, 150, 400, 300, 220],
+							["data2", 180, 200, 300, 180, 250, 350]
+						],
+						type: "bar",
+						labels: {
+							border: {
+								padding: 7,
+								radius: 5,
+								strokeWidth: 2,
+								stroke: "#ff6b6b",
+								fill: "rgba(255, 255, 255, 1)"
+							}
+						}
+					},
+					axis: {
+						rotated: true
+					}
+				}
+			}
+		],
 		DataLabelColors: [
 			{
 				options: {
