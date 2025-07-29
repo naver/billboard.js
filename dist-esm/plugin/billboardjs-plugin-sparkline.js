@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.16.0-nightly-20250722004725
+ * @version 3.16.0-nightly-20250729004831
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -205,7 +205,8 @@ var $TEXT = {
     text: "bb-text",
     texts: "bb-texts",
     title: "bb-title",
-    TextOverlapping: "text-overlapping"
+    TextOverlapping: "text-overlapping",
+    textBorderRect: "bb-text-border"
 };
 var $TOOLTIP = {
     tooltip: "bb-tooltip",
@@ -374,7 +375,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.16.0-nightly-20250722004725";
+    Plugin.version = "3.16.0-nightly-20250729004831";
     return Plugin;
 }());
 

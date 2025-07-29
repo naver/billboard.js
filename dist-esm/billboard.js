@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.16.0-nightly-20250722004725
+ * @version 3.16.0-nightly-20250729004831
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -222,7 +222,8 @@ var $TEXT = {
     text: "bb-text",
     texts: "bb-texts",
     title: "bb-title",
-    TextOverlapping: "text-overlapping"
+    TextOverlapping: "text-overlapping",
+    textBorderRect: "bb-text-border"
 };
 var $TOOLTIP = {
     tooltip: "bb-tooltip",
@@ -1596,10 +1597,17 @@ var data$2 = {
      * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
      * @property {object} [data.labels.rotate] Rotate label text. Specify degree value in a range of `0 ~ 360`.
      * - **NOTE:** Depend on rotate value, text position need to be adjusted manually(using `data.labels.position` option) to be shown nicely.
+     * @property {boolean|object} [data.labels.border=false] Add border to data label text. NOTE: When set as `true`, styling aren't applied. Hence, need to set using `.bb-text-border` class.
+     * @property {number|string|object} [data.labels.border.padding="3 5"] Border padding. Can be a single number, string or object with top, bottom, left, right properties.
+     * @property {number} [data.labels.border.radius=10] Border radius value.
+     * @property {number} [data.labels.border.strokeWidth=1] Border stroke width.
+     * @property {string} [data.labels.border.stroke="#000"] Border stroke color.
+     * @property {string} [data.labels.border.fill="none"] Border fill color.
      * @memberof Options
      * @type {object}
      * @default {}
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
+     * @see [Demo: label border](https://naver.github.io/billboard.js/demo/#Data.DataLabelBorder)
      * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
      * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
      * @see [Demo: label multiline](https://naver.github.io/billboard.js/demo/#Data.DataLabelMultiline)
@@ -1674,7 +1682,28 @@ var data$2 = {
      *     },
      *
      * 	   // rotate degree for label text
-     *     rotate: 90
+     *     rotate: 90,
+     *
+     *     // add border to data label text
+     *     // NOTE: When set as `true`, styling aren't applied. Hence, need to set using '.bb-text-border' class.
+     *     // ex. ".bb-text-border { fill: red; stroke: #000; stroke-width: 2px; rx: 10px; ry: 10px; }"
+     *     border: true,
+     *
+     *     // or set detailed border options
+     *     border: {
+     *        padding: 10,  // set all padding to 10
+     *        padding: "5 10",  // set top and bottom padding to 5, left and right padding to 10
+     *        padding: {  // specify each padding
+     *           top: 3,
+     *           bottom: 5,
+     *           left: 10,
+     *           right: 13
+     *        },
+     *        radius: 10,
+     *        strokeWidth: 2,
+     *        stroke: "#000",
+     *        fill: "red"
+     *     }
      *   }
      * }
      */
@@ -2997,6 +3026,26 @@ function runUntil(fn, conditionFn) {
     else {
         fn();
     }
+}
+/**
+ * Parse CSS shorthand values (padding, margin, border-radius, etc.)
+ * @param {number|string|object} value Shorthand value(s)
+ * @returns {object} Parsed object with top, right, bottom, left properties
+ * @private
+ */
+function parseShorthand(value) {
+    if (isObject(value) && !isString(value)) {
+        var obj = value;
+        return {
+            top: obj.top || 0,
+            right: obj.right || 0,
+            bottom: obj.bottom || 0,
+            left: obj.left || 0
+        };
+    }
+    var values = (isString(value) ? value.trim().split(/\s+/) : [value]).map(function (v) { return +v || 0; });
+    var a = values[0], _a = values[1], b = _a === void 0 ? a : _a, _b = values[2], c = _b === void 0 ? a : _b, _c = values[3], d = _c === void 0 ? b : _c;
+    return { top: a, right: b, bottom: c, left: d };
 }
 
 /**
@@ -7912,6 +7961,44 @@ function getTextPos(d, type) {
         position.bind(this.api)(type, value, id, index, this.$el.text) :
         (id in position ? position[id] : position)[type])) !== null && _a !== void 0 ? _a : 0;
 }
+/**
+ * Update text border
+ * @param {SVGTextElement} text Text element
+ * @param {Coord} pos Position object
+ * @param {string} rectClass Class name
+ * @private
+ */
+function updateTextBorder(text, pos, rectClass) {
+    var _a, _b;
+    var $$ = this;
+    var config = $$.config, $T = $$.$T;
+    var isRotated = config.axis_rotated;
+    var _c = config.data_labels.border, _d = _c.padding, padding = _d === void 0 ? "3 5" : _d, _e = _c.radius, radius = _e === void 0 ? 10 : _e, _f = _c.stroke, stroke = _f === void 0 ? "#000" : _f, _g = _c.strokeWidth, strokeWidth = _g === void 0 ? 1 : _g, _h = _c.fill, fill = _h === void 0 ? "none" : _h;
+    var borderPadding = parseShorthand(padding);
+    var applyStyle = config.data_labels.border !== true;
+    var textRect = getBBox(text);
+    var borderRect = select(text.previousElementSibling);
+    if (borderRect.empty() ||
+        ((_a = borderRect.node()) === null || _a === void 0 ? void 0 : _a.tagName) !== "rect" ||
+        !((_b = borderRect.attr("class")) === null || _b === void 0 ? void 0 : _b.includes(rectClass))) {
+        borderRect = select(text.parentNode)
+            .insert("rect", function () { return text; })
+            .attr("class", "".concat($TEXT.textBorderRect, " ").concat(rectClass))
+            .attr("width", textRect.width + (applyStyle ? borderPadding.left + borderPadding.right : 0))
+            .attr("height", textRect.height + (applyStyle ? borderPadding.top + borderPadding.bottom : 0));
+        if (applyStyle) {
+            borderRect
+                .style("fill", fill)
+                .style("stroke", stroke)
+                .style("stroke-width", "".concat(strokeWidth, "px"))
+                .attr("rx", radius)
+                .attr("ry", radius);
+        }
+    }
+    $T(borderRect)
+        .attr("x", pos.x - (applyStyle ? borderPadding.left : 0) - (isRotated ? 0 : textRect.width / 2))
+        .attr("y", pos.y - (applyStyle ? borderPadding.top : 0) - (textRect.height / 4 * 3.2));
+}
 var text = {
     opacityForText: function (d) {
         var $$ = this;
@@ -8096,6 +8183,8 @@ var text = {
             else {
                 node.attr("x", pos.x).attr("y", pos.y);
             }
+            config.data_labels.border &&
+                updateTextBorder.call($$, node.node(), pos, "".concat($TEXT.textBorderRect, "-").concat(i));
         });
         // need to return 'true' as of being pushed to the redraw list
         // ref: getRedrawList()
@@ -13357,11 +13446,7 @@ var AxisRenderer = /** @class */ (function () {
             return this.config.orient;
         }
         this.config.orient = x in {
-            top: 1,
-            right: 1,
-            bottom: 1,
-            left: 1
-        } ?
+            } ?
             String(x) :
             "bottom";
         return this;
@@ -24971,7 +25056,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.16.0-nightly-20250722004725
+ * @version 3.16.0-nightly-20250729004831
  */
 var bb = {
     /**
@@ -24981,7 +25066,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.16.0-nightly-20250722004725",
+    version: "3.16.0-nightly-20250729004831",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

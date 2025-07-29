@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.16.0-nightly-20250722004725
+ * @version 3.16.0-nightly-20250729004831
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -23324,7 +23324,8 @@ const $TEXT = {
   text: "bb-text",
   texts: "bb-texts",
   title: "bb-title",
-  TextOverlapping: "text-overlapping"
+  TextOverlapping: "text-overlapping",
+  textBorderRect: "bb-text-border"
 };
 const $TOOLTIP = {
   tooltip: "bb-tooltip",
@@ -24668,10 +24669,17 @@ const $ZOOM = {
    * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
    * @property {object} [data.labels.rotate] Rotate label text. Specify degree value in a range of `0 ~ 360`.
    * - **NOTE:** Depend on rotate value, text position need to be adjusted manually(using `data.labels.position` option) to be shown nicely.
+   * @property {boolean|object} [data.labels.border=false] Add border to data label text. NOTE: When set as `true`, styling aren't applied. Hence, need to set using `.bb-text-border` class.
+   * @property {number|string|object} [data.labels.border.padding="3 5"] Border padding. Can be a single number, string or object with top, bottom, left, right properties.
+   * @property {number} [data.labels.border.radius=10] Border radius value.
+   * @property {number} [data.labels.border.strokeWidth=1] Border stroke width.
+   * @property {string} [data.labels.border.stroke="#000"] Border stroke color.
+   * @property {string} [data.labels.border.fill="none"] Border fill color.
    * @memberof Options
    * @type {object}
    * @default {}
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
+   * @see [Demo: label border](https://naver.github.io/billboard.js/demo/#Data.DataLabelBorder)
    * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
    * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
    * @see [Demo: label multiline](https://naver.github.io/billboard.js/demo/#Data.DataLabelMultiline)
@@ -24746,7 +24754,28 @@ const $ZOOM = {
    *     },
    *
    * 	   // rotate degree for label text
-   *     rotate: 90
+   *     rotate: 90,
+   *
+   *     // add border to data label text
+   *     // NOTE: When set as `true`, styling aren't applied. Hence, need to set using '.bb-text-border' class.
+   *     // ex. ".bb-text-border { fill: red; stroke: #000; stroke-width: 2px; rx: 10px; ry: 10px; }"
+   *     border: true,
+   *
+   *     // or set detailed border options
+   *     border: {
+   *        padding: 10,  // set all padding to 10
+   *        padding: "5 10",  // set top and bottom padding to 5, left and right padding to 10
+   *        padding: {  // specify each padding
+   *           top: 3,
+   *           bottom: 5,
+   *           left: 10,
+   *           right: 13
+   *        },
+   *        radius: 10,
+   *        strokeWidth: 2,
+   *        stroke: "#000",
+   *        fill: "red"
+   *     }
    *   }
    * }
    */
@@ -27888,6 +27917,20 @@ function runUntil(fn, conditionFn) {
   } else {
     fn();
   }
+}
+function parseShorthand(value) {
+  if (isObject(value) && !isString(value)) {
+    const obj = value;
+    return {
+      top: obj.top || 0,
+      right: obj.right || 0,
+      bottom: obj.bottom || 0,
+      left: obj.left || 0
+    };
+  }
+  const values = (isString(value) ? value.trim().split(/\s+/) : [value]).map((v) => +v || 0);
+  const [a, b = a, c = a, d = b] = values;
+  return { top: a, right: b, bottom: c, left: d };
 }
 
 ;// ./src/config/Options/Options.ts
@@ -33570,6 +33613,41 @@ function getTextPos(d, type) {
   const { id, index, value } = d;
   return (_a = isFunction(position) ? position.bind(this.api)(type, value, id, index, this.$el.text) : (id in position ? position[id] : position)[type]) != null ? _a : 0;
 }
+function updateTextBorder(text, pos, rectClass) {
+  var _a, _b;
+  const $$ = this;
+  const { config, $T } = $$;
+  const isRotated = config.axis_rotated;
+  const {
+    border: {
+      padding = "3 5",
+      radius = 10,
+      stroke = "#000",
+      strokeWidth = 1,
+      fill = "none"
+    }
+  } = config.data_labels;
+  const borderPadding = parseShorthand(padding);
+  const applyStyle = config.data_labels.border !== true;
+  const textRect = getBBox(text);
+  let borderRect = src_select(text.previousElementSibling);
+  if (borderRect.empty() || ((_a = borderRect.node()) == null ? void 0 : _a.tagName) !== "rect" || !((_b = borderRect.attr("class")) == null ? void 0 : _b.includes(rectClass))) {
+    borderRect = src_select(text.parentNode).insert("rect", () => text).attr("class", `${$TEXT.textBorderRect} ${rectClass}`).attr(
+      "width",
+      textRect.width + (applyStyle ? borderPadding.left + borderPadding.right : 0)
+    ).attr(
+      "height",
+      textRect.height + (applyStyle ? borderPadding.top + borderPadding.bottom : 0)
+    );
+    if (applyStyle) {
+      borderRect.style("fill", fill).style("stroke", stroke).style("stroke-width", `${strokeWidth}px`).attr("rx", radius).attr("ry", radius);
+    }
+  }
+  $T(borderRect).attr(
+    "x",
+    pos.x - (applyStyle ? borderPadding.left : 0) - (isRotated ? 0 : textRect.width / 2)
+  ).attr("y", pos.y - (applyStyle ? borderPadding.top : 0) - textRect.height / 4 * 3.2);
+}
 /* harmony default export */ var internals_text = ({
   opacityForText(d) {
     const $$ = this;
@@ -33730,6 +33808,7 @@ function getTextPos(d, type) {
       } else {
         node.attr("x", pos.x).attr("y", pos.y);
       }
+      config.data_labels.border && updateTextBorder.call($$, node.node(), pos, `${$TEXT.textBorderRect}-${i}`);
     });
     return true;
   },
@@ -51051,7 +51130,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.16.0-nightly-20250722004725",
+  version: "3.16.0-nightly-20250729004831",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
