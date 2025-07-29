@@ -1219,6 +1219,42 @@ export interface Data {
 		 * Rotate label text. Specify degree value in a range of `0 ~ 360`.
 		 */
 		rotate?: number;
+
+		/**
+		 * Add border to data label text.
+		 * NOTE: When set as `true`, styling aren't applied. Hence, need to set using `.bb-text-border` class.
+		 */
+		border?: boolean | {
+			/**
+			 * Border padding. Can be a single number, string or object with top, bottom, left, right properties.
+			 */
+			padding?: number | string | {
+				top?: number;
+				bottom?: number;
+				left?: number;
+				right?: number;
+			};
+
+			/**
+			 * Border radius value.
+			 */
+			radius?: number;
+
+			/**
+			 * Border stroke width.
+			 */
+			strokeWidth?: number;
+
+			/**
+			 * Border stroke color.
+			 */
+			stroke?: string;
+
+			/**
+			 * Border fill color.
+			 */
+			fill?: string;
+		};
 	};
 
 	/**

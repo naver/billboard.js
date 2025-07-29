@@ -178,7 +178,8 @@ export const $TEXT = {
 	text: "bb-text",
 	texts: "bb-texts",
 	title: "bb-title",
-	TextOverlapping: "text-overlapping"
+	TextOverlapping: "text-overlapping",
+	textBorderRect: "bb-text-border"
 };
 
 export const $TOOLTIP = {

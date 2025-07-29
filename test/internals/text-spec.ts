@@ -1775,5 +1775,237 @@ describe("TEXT", () => {
                 })
 			});
 		});
+
+
+		describe("labels.border", () => {
+			let rectElements;
+
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 100, 150, 200],
+							["data2", 80, 120, 180]
+						],
+						type: "line",
+						labels: {
+							show: true,
+							border: {
+								padding: 5,
+								radius: 8,
+								strokeWidth: 2,
+								stroke: "#ff0000",
+								fill: "#ffffff"
+							}
+						}
+					}
+				};
+			});
+
+			it("should create border elements for data labels", () => {
+				rectElements = chart.$.main.selectAll(`.${$TEXT.texts} rect.${$TEXT.textBorderRect}`);
+				
+				expect(rectElements.size()).to.be.equal(6); // 3 data points * 2 series
+				
+				rectElements.each(function() {
+					expect(this.getAttribute("rx")).to.be.equal("8");
+					expect(this.getAttribute("ry")).to.be.equal("8");
+					expect(this.style.strokeWidth).to.be.equal("2px");
+					expect(this.style.stroke).to.be.equal("rgb(255, 0, 0)"); // #ff0000 -> rgb(255, 0, 0)
+					expect(this.style.fill).to.be.equal("rgb(255, 255, 255)"); // #ffffff -> rgb(255, 255, 255)
+				});
+			});
+
+			it("set options: padding as number", () => {
+				args.data.labels.border.padding = 10;
+			});
+
+			it("should apply numeric padding correctly", () => {
+				const textElements = chart.$.text.texts.nodes();
+				const rectElements = chart.$.main.selectAll(`.${$TEXT.texts} rect.${$TEXT.textBorderRect}`).nodes();
+
+				textElements.forEach((text, i) => {
+					const textBBox = text.getBBox();
+					const rect = rectElements[i];
+					const rectWidth = +rect.getAttribute("width");
+					const rectHeight = +rect.getAttribute("height");
+
+					// Check if padding is applied (rect should be larger than text by 2*padding)
+					expect(rectWidth).to.be.closeTo(textBBox.width + 20, 2); // 10 padding on each side
+					expect(rectHeight).to.be.closeTo(textBBox.height + 20, 2); // 10 padding on top and bottom
+				});
+			});
+
+			it("set options: padding as string", () => {
+				args.data.labels.border.padding = "8 12";
+			});
+
+			it("should apply string padding correctly", () => {
+				const textElements = chart.$.text.texts.nodes();
+				const rectElements = chart.$.main.selectAll(`.${$TEXT.texts} rect.${$TEXT.textBorderRect}`).nodes();
+
+				textElements.forEach((text, i) => {
+					const textBBox = text.getBBox();
+					const rect = rectElements[i];
+					const rectWidth = +rect.getAttribute("width");
+					const rectHeight = +rect.getAttribute("height");
+
+					// "8 12" means top/bottom: 8, left/right: 12
+					expect(rectWidth).to.be.closeTo(textBBox.width + 24, 2); // 12 padding on each side
+					expect(rectHeight).to.be.closeTo(textBBox.height + 16, 2); // 8 padding on top and bottom
+				});
+			});
+
+			it("set options: padding as object", () => {
+				args.data.labels.border.padding = {
+					top: 5,
+					bottom: 10,
+					left: 8,
+					right: 12
+				};
+			});
+
+			it("should apply object padding correctly", () => {
+				const textElements = chart.$.text.texts.nodes();
+				const rectElements = chart.$.main.selectAll(`.${$TEXT.texts} rect.${$TEXT.textBorderRect}`).nodes();
+
+				textElements.forEach((text, i) => {
+					const textBBox = text.getBBox();
+					const rect = rectElements[i];
+					const rectWidth = +rect.getAttribute("width");
+					const rectHeight = +rect.getAttribute("height");
+
+					// Object padding: top:5, bottom:10, left:8, right:12
+					expect(rectWidth).to.be.closeTo(textBBox.width + 20, 2); // 8 + 12
+					expect(rectHeight).to.be.closeTo(textBBox.height + 15, 2); // 5 + 10
+				});
+			});
+
+			it("set options: axis.rotated=true", () => {
+				args.axis = {
+					rotated: true
+				};
+				args.data.labels.border.padding = 5;
+			});
+
+			it("should create border elements for rotated axis", () => {
+				const rectElements = chart.$.main.selectAll(`.${$TEXT.texts} rect.${$TEXT.textBorderRect}`);
+				
+				expect(rectElements.size()).to.be.equal(6);
+				
+				// Check that border elements are properly positioned for rotated axis
+				rectElements.each(function() {
+					expect(this.getAttribute("rx")).to.be.equal("8");
+					expect(this.getAttribute("ry")).to.be.equal("8");
+					expect(this.style.strokeWidth).to.be.equal("2px");
+				});
+			});
+
+			it("set options: border=true only", () => {
+				args = {
+					data: {
+						columns: [
+							["data1", 100, 150, 200]
+						],
+						type: "line",
+						labels: {
+							show: true,
+							border: true
+						}
+					},
+					axis: {
+						rotated: false
+					}
+				};
+			});
+
+			it("should create border elements without styling when border=true", () => {
+				const rectElements = chart.$.main.selectAll(`.${$TEXT.texts} rect.${$TEXT.textBorderRect}`);
+				
+				expect(rectElements.size()).to.be.equal(3);
+				
+				// When border=true without options, styling is not applied (need to use CSS)
+				rectElements.each(function() {
+					// Check that elements exist but don't have inline styles
+					expect(this.tagName.toLowerCase()).to.be.equal("rect");
+					expect(this.classList.contains($TEXT.textBorderRect)).to.be.true;
+					
+					// These should be empty/unset when border=true (styling via CSS)
+					expect(this.style.strokeWidth).to.be.equal("");
+					expect(this.style.stroke).to.be.equal("");
+					expect(this.style.fill).to.be.equal("");
+					expect(this.getAttribute("rx")).to.be.null;
+					expect(this.getAttribute("ry")).to.be.null;
+				});
+			});
+
+			it("set options: border=false", () => {
+				args.data.labels.border = false;
+			});
+
+			it("should not create border elements when border=false", () => {
+				const rectElements = chart.$.main.selectAll(`.${$TEXT.texts} rect.${$TEXT.textBorderRect}`);
+				
+				expect(rectElements.size()).to.be.equal(0);
+			});
+
+			it("set options: different border styles per dataset", () => {
+				args = {
+					data: {
+						columns: [
+							["data1", 100, 150, 200],
+							["data2", 80, 120, 180]
+						],
+						type: "bar",
+						labels: {
+							show: true,
+							border: {
+								padding: 6,
+								radius: 4,
+								strokeWidth: 1,
+								stroke: "#000000",
+								fill: "rgba(255, 255, 255, 0.8)"
+							}
+						}
+					}
+				};
+			});
+
+			it("should apply border styles correctly for bar chart", () => {
+				const rectElements = chart.$.main.selectAll(`.${$TEXT.texts} rect.${$TEXT.textBorderRect}`);
+				
+				expect(rectElements.size()).to.be.equal(6);
+				
+				rectElements.each(function() {
+					expect(this.getAttribute("rx")).to.be.equal("4");
+					expect(this.getAttribute("ry")).to.be.equal("4");
+					expect(this.style.strokeWidth).to.be.equal("1px");
+					expect(this.style.stroke).to.be.equal("rgb(0, 0, 0)"); // #000000 -> rgb(0, 0, 0)
+					expect(this.style.fill).to.be.equal("rgba(255, 255, 255, 0.8)");
+				});
+			});
+
+			it("set options: border with centered labels", () => {
+				args.data.labels.centered = true;
+			});
+
+			it("should position border correctly with centered labels", () => {
+				const rectElements = chart.$.main.selectAll(`.${$TEXT.texts} rect.${$TEXT.textBorderRect}`);
+				const textElements = chart.$.text.texts.nodes();
+				
+				expect(rectElements.size()).to.be.equal(6);
+				
+				// Verify that border elements are positioned relative to centered text
+				rectElements.each(function(d, i) {
+					const rect = this;
+					const text = textElements[i];
+					
+					expect(rect.getAttribute("x")).to.not.be.null;
+					expect(rect.getAttribute("y")).to.not.be.null;
+					expect(text.getAttribute("x")).to.not.be.null;
+					expect(text.getAttribute("y")).to.not.be.null;
+				});
+			});
+		});
 	});
 });

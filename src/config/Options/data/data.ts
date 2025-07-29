@@ -348,10 +348,17 @@ export default {
 	 * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
 	 * @property {object} [data.labels.rotate] Rotate label text. Specify degree value in a range of `0 ~ 360`.
 	 * - **NOTE:** Depend on rotate value, text position need to be adjusted manually(using `data.labels.position` option) to be shown nicely.
+	 * @property {boolean|object} [data.labels.border=false] Add border to data label text. NOTE: When set as `true`, styling aren't applied. Hence, need to set using `.bb-text-border` class.
+	 * @property {number|string|object} [data.labels.border.padding="3 5"] Border padding. Can be a single number, string or object with top, bottom, left, right properties.
+	 * @property {number} [data.labels.border.radius=10] Border radius value.
+	 * @property {number} [data.labels.border.strokeWidth=1] Border stroke width.
+	 * @property {string} [data.labels.border.stroke="#000"] Border stroke color.
+	 * @property {string} [data.labels.border.fill="none"] Border fill color.
 	 * @memberof Options
 	 * @type {object}
 	 * @default {}
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
+	 * @see [Demo: label border](https://naver.github.io/billboard.js/demo/#Data.DataLabelBorder)
 	 * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
 	 * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
 	 * @see [Demo: label multiline](https://naver.github.io/billboard.js/demo/#Data.DataLabelMultiline)
@@ -426,7 +433,28 @@ export default {
 	 *     },
 	 *
 	 * 	   // rotate degree for label text
-	 *     rotate: 90
+	 *     rotate: 90,
+	 *
+	 *     // add border to data label text
+	 *     // NOTE: When set as `true`, styling aren't applied. Hence, need to set using '.bb-text-border' class.
+	 *     // ex. ".bb-text-border { fill: red; stroke: #000; stroke-width: 2px; rx: 10px; ry: 10px; }"
+	 *     border: true,
+	 *
+	 *     // or set detailed border options
+	 *     border: {
+	 *        padding: 10,  // set all padding to 10
+	 *        padding: "5 10",  // set top and bottom padding to 5, left and right padding to 10
+	 *        padding: {  // specify each padding
+	 *           top: 3,
+	 *           bottom: 5,
+	 *           left: 10,
+	 *           right: 13
+	 *        },
+	 *        radius: 10,
+	 *        strokeWidth: 2,
+	 *        stroke: "#000",
+	 *        fill: "red"
+	 *     }
 	 *   }
 	 * }
 	 */
@@ -438,7 +466,19 @@ export default {
 			| number
 			| {[key: string]: number}
 			| {[key: string]: {x?: number, y?: number}},
-		rotate?: number
+		rotate?: number,
+		border?: boolean | {
+			padding?: number | string | {
+				top?: number,
+				bottom?: number,
+				left?: number,
+				right?: number
+			},
+			radius?: number,
+			strokeWidth?: number,
+			stroke?: string,
+			fill?: string
+		}
 	}>{},
 	data_labels_backgroundColors: <string | {[key: string]: string} | undefined>undefined,
 	data_labels_colors: <string | object | Function | undefined>undefined,
