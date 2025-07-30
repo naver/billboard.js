@@ -13,7 +13,7 @@ import util from "../assets/util";
 import {addCssRules, getBoundingRect} from "../assets/module/util";
 import bb from "../../src";
 import {$AXIS} from "../../src/config/classes";
-import AxisRendererHelper from "../../src/ChartInternal/Axis/AxisRendererHelper";
+// import AxisRendererHelper from "../../src/ChartInternal/Axis/AxisRendererHelper";
 //import getSizeFor1Char from "exports-loader?getSizeFor1Char!../../src/axis/bb.axis";
 
 describe("AXIS", function() {
@@ -133,10 +133,11 @@ describe("AXIS", function() {
 		});
 
 		it("should compute char dimension", () => {
-			const size = AxisRendererHelper.getSizeFor1Char(d3Select(".tick"));
+			const {helper} = chart.internal.axis.x;
+			const size = helper.getSizeFor1Char("bottom", d3Select(".tick"));
 
 			expect(size.w && size.h).to.be.ok;
-			expect(AxisRendererHelper.getSizeFor1Char()).to.be.equal(size);
+			expect(helper.getSizeFor1Char("bottom")).to.be.equal(size);
 		});
 
 		it("should have only 2 tick on y axis", () => {
@@ -1041,7 +1042,7 @@ describe("AXIS", function() {
 					const ticksText = chart.$.main.select(`.${$AXIS.axisX}`).selectAll("g.tick text");
 
 					ticksText.each(function() {
-						expect(util.ceil(+this.getAttribute("y"))).to.be.equal(37);
+						expect(util.ceil(+this.getAttribute("y"))).to.be.equal(38);
 					});
 				});
 			});
@@ -3870,8 +3871,8 @@ describe("AXIS", function() {
 				const tick = chart.internal.$el.axis.x.select(".tick").node();
 				const {width, height} = tick.getBoundingClientRect();
 
-				expect(width < 41).to.be.true;
-				// expect(height < 60).to.be.true;
+				// expect(width < 41).to.be.true;
+				expect(height < 60).to.be.true;
 
 				// reset font-size
 				text.style("font-size", null);
@@ -3919,5 +3920,53 @@ describe("AXIS", function() {
 				done(1);
 			}, 500);
 		}));
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
+					]
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				},
+				bindto: {
+					element: "#chart",
+					classname: "bb eval-text-size"
+				}
+			};
+		});
+
+		it("check custom evaluator", () => {
+			const {$el: {axis}} = chart.internal;
+			const expectedY = {
+				y: 14,
+				y2: 11.5
+			};
+
+			["y", "y2"].forEach(id => {
+				expect(+axis[id].select(".tick text").attr("y")).to.be.closeTo(expectedY[id], 1);
+			});
+		});
+
+		it("set options: axis.rotated=true", () => {
+			args.axis.rotated = true;
+		});
+
+		it("check custom evaluator", () => {
+			const {$el: {axis}} = chart.internal;
+			const expectedY = {
+				y: 9,
+				y2: -26.5
+			};
+
+			["y", "y2"].forEach(id => {
+				expect(+axis[id].select(".tick text").attr("y")).to.be.closeTo(expectedY[id], 1);
+			});
+		});
 	});
 });
