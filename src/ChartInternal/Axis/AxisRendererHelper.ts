@@ -11,6 +11,7 @@ export default class AxisRendererHelper {
 	private owner;
 	private config;
 	private scale;
+	private charSize = {};
 
 	constructor(owner) {
 		const scale = getScale();
@@ -30,17 +31,23 @@ export default class AxisRendererHelper {
 
 	/**
 	 * Compute a character dimension
+	 * @param {string} orient Axis orientation
 	 * @param {d3.selection} text SVG text selection
 	 * @param {boolean} memoize memoize the calculated size
 	 * @returns {{w: number, h: number}}
 	 * @private
 	 */
-	static getSizeFor1Char(text: d3Selection, memoize = true): {w: number, h: number} {
+	getSizeFor1Char(orient: "top" | "bottom" | "left" | "right", text: d3Selection,
+		memoize = true): {w: number, h: number} {
 		// default size for one character
 		const size = {
 			w: 5.5,
 			h: 11.5
 		};
+
+		if (this.charSize[orient] && memoize) {
+			return this.charSize[orient];
+		}
 
 		!text.empty() && text
 			.text("0")
@@ -57,9 +64,7 @@ export default class AxisRendererHelper {
 				}
 			});
 
-		if (memoize) {
-			this.getSizeFor1Char = () => size;
-		}
+		this.charSize[orient] = size;
 
 		return size;
 	}
