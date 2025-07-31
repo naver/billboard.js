@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.0-preview-nightly-20250730004732
+ * @version 3.17.0-preview-nightly-20250731004729
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -12938,6 +12938,7 @@ var apiX = {
 
 var AxisRendererHelper = /** @class */ (function () {
     function AxisRendererHelper(owner) {
+        this.charSize = {};
         var scale = getScale();
         var config = owner.config, params = owner.params;
         this.owner = owner;
@@ -12951,18 +12952,22 @@ var AxisRendererHelper = /** @class */ (function () {
     }
     /**
      * Compute a character dimension
+     * @param {string} orient Axis orientation
      * @param {d3.selection} text SVG text selection
      * @param {boolean} memoize memoize the calculated size
      * @returns {{w: number, h: number}}
      * @private
      */
-    AxisRendererHelper.getSizeFor1Char = function (text, memoize) {
+    AxisRendererHelper.prototype.getSizeFor1Char = function (orient, text, memoize) {
         if (memoize === void 0) { memoize = true; }
         // default size for one character
         var size = {
             w: 5.5,
             h: 11.5
         };
+        if (this.charSize[orient] && memoize) {
+            return this.charSize[orient];
+        }
         !text.empty() && text
             .text("0")
             .call(function (el) {
@@ -12977,9 +12982,7 @@ var AxisRendererHelper = /** @class */ (function () {
                 el.text("");
             }
         });
-        if (memoize) {
-            this.getSizeFor1Char = function () { return size; };
-        }
+        this.charSize[orient] = size;
         return size;
     };
     /**
@@ -13186,7 +13189,7 @@ var AxisRenderer = /** @class */ (function () {
                 tickShow.text && tickEnter.append("text");
                 var tickText = tick.select("text");
                 var counts_1 = [];
-                var sizeFor1Char_1;
+                var sizeFor1Char_1 = { w: 0, h: 0 };
                 if (isFunction(evalTextSize)) {
                     // set evalTextSize to dummy axis element to be used in .getMaxTickSize()
                     sizeFor1Char_1 = evalTextSize.bind(ctx.params.owner.api)(tickText.node(), id);
@@ -13194,8 +13197,8 @@ var AxisRenderer = /** @class */ (function () {
                         this.sizeFor1Char = sizeFor1Char_1;
                     }
                 }
-                if (!sizeFor1Char_1) {
-                    sizeFor1Char_1 = AxisRendererHelper.getSizeFor1Char(tickText, !!evalTextSize);
+                if (!sizeFor1Char_1 || sizeFor1Char_1.w === 0 || sizeFor1Char_1.h === 0) {
+                    sizeFor1Char_1 = ctx.helper.getSizeFor1Char(orient, tickText, !!evalTextSize);
                 }
                 var tspan = tickText
                     .selectAll("tspan")
@@ -13242,7 +13245,7 @@ var AxisRenderer = /** @class */ (function () {
                 var textUpdate = tick.select("text");
                 tickEnter.select("line").attr("".concat(axisPx, "2"), innerTickSize * sign);
                 tickEnter.select("text").attr(axisPx, tickLength * sign);
-                ctx.setTickLineTextPosition(lineUpdate, textUpdate);
+                ctx.setTickLineTextPosition(lineUpdate, textUpdate, sizeFor1Char_1);
                 // Append <title> for tooltip display
                 if (params.tickTitle) {
                     var title = textUpdate.select("title");
@@ -13323,12 +13326,15 @@ var AxisRenderer = /** @class */ (function () {
      * Set tick's line & text position
      * @param {d3.selection} lineUpdate Line selection
      * @param {d3.selection} textUpdate Text selection
+     * @param {object} sizeFor1Char Size for 1 char
      * @private
      */
-    AxisRenderer.prototype.setTickLineTextPosition = function (lineUpdate, textUpdate) {
+    AxisRenderer.prototype.setTickLineTextPosition = function (lineUpdate, textUpdate, sizeFor1Char) {
         var tickPos = this.getTickXY();
         var _a = this.config, innerTickSize = _a.innerTickSize, orient = _a.orient, tickLength = _a.tickLength, tickOffset = _a.tickOffset;
         var rotate = this.params.tickTextRotate;
+        var baseHeight = 6;
+        var charHeight = (sizeFor1Char.h / 2) - baseHeight;
         var textAnchorForText = function (r) {
             var value = ["start", "end"];
             orient === "top" && value.reverse();
@@ -13337,7 +13343,8 @@ var AxisRenderer = /** @class */ (function () {
         var textTransform = function (r) { return (r ? "rotate(".concat(r, ")") : null); };
         var yForText = function (r) {
             var r2 = r / (orient === "bottom" ? 15 : 23);
-            return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
+            var y = r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
+            return y;
         };
         var _b = this.params.owner.config, isRotated = _b.axis_rotated, inner = _b.axis_x_tick_text_inner;
         switch (orient) {
@@ -13368,7 +13375,7 @@ var AxisRenderer = /** @class */ (function () {
                     .attr("y2", -innerTickSize);
                 textUpdate
                     .attr("x", 0)
-                    .attr("y", -yForText(rotate) * 2)
+                    .attr("y", -(yForText(rotate) + charHeight + baseHeight))
                     .style("text-anchor", textAnchorForText(rotate))
                     .attr("transform", textTransform(rotate));
                 break;
@@ -13379,7 +13386,7 @@ var AxisRenderer = /** @class */ (function () {
                     .attr("y2", tickPos.y);
                 textUpdate
                     .attr("x", -tickLength)
-                    .attr("y", tickOffset)
+                    .attr("y", tickOffset + (isRotated ? charHeight / 4 : charHeight))
                     .style("text-anchor", "end");
                 break;
             case "right":
@@ -13388,7 +13395,7 @@ var AxisRenderer = /** @class */ (function () {
                     .attr("y2", 0);
                 textUpdate
                     .attr("x", tickLength)
-                    .attr("y", 0)
+                    .attr("y", charHeight)
                     .style("text-anchor", "start");
         }
     };
@@ -25060,7 +25067,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.17.0-preview-nightly-20250730004732
+ * @version 3.17.0-preview-nightly-20250731004729
  */
 var bb = {
     /**
@@ -25070,7 +25077,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.17.0-preview-nightly-20250730004732",
+    version: "3.17.0-preview-nightly-20250731004729",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

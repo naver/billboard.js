@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.0-preview-nightly-20250730004732
+ * @version 3.17.0-preview-nightly-20250731004729
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -40918,6 +40918,7 @@ class AxisRendererHelper {
     AxisRendererHelper_publicField(this, "owner");
     AxisRendererHelper_publicField(this, "config");
     AxisRendererHelper_publicField(this, "scale");
+    AxisRendererHelper_publicField(this, "charSize", {});
     const scale = getScale();
     const { config, params } = owner;
     this.owner = owner;
@@ -40930,16 +40931,20 @@ class AxisRendererHelper {
   }
   /**
    * Compute a character dimension
+   * @param {string} orient Axis orientation
    * @param {d3.selection} text SVG text selection
    * @param {boolean} memoize memoize the calculated size
    * @returns {{w: number, h: number}}
    * @private
    */
-  static getSizeFor1Char(text, memoize = true) {
+  getSizeFor1Char(orient, text, memoize = true) {
     const size = {
       w: 5.5,
       h: 11.5
     };
+    if (this.charSize[orient] && memoize) {
+      return this.charSize[orient];
+    }
     !text.empty() && text.text("0").call((el) => {
       try {
         const { width, height } = getBBox(el.node(), true);
@@ -40951,9 +40956,7 @@ class AxisRendererHelper {
         el.text("");
       }
     });
-    if (memoize) {
-      this.getSizeFor1Char = () => size;
-    }
+    this.charSize[orient] = size;
     return size;
   }
   /**
@@ -41124,15 +41127,15 @@ class AxisRenderer {
         tickShow.text && tickEnter.append("text");
         const tickText = tick.select("text");
         const counts = [];
-        let sizeFor1Char;
+        let sizeFor1Char = { w: 0, h: 0 };
         if (isFunction(evalTextSize)) {
           sizeFor1Char = evalTextSize.bind(ctx.params.owner.api)(tickText.node(), id);
           if (this.classList.contains($COMMON.dummy)) {
             this.sizeFor1Char = sizeFor1Char;
           }
         }
-        if (!sizeFor1Char) {
-          sizeFor1Char = AxisRendererHelper.getSizeFor1Char(tickText, !!evalTextSize);
+        if (!sizeFor1Char || sizeFor1Char.w === 0 || sizeFor1Char.h === 0) {
+          sizeFor1Char = ctx.helper.getSizeFor1Char(orient, tickText, !!evalTextSize);
         }
         let tspan = tickText.selectAll("tspan").data((d, index) => {
           const split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helper.textFormatted(d)) ? helper.textFormatted(d).concat() : [helper.textFormatted(d)];
@@ -41162,7 +41165,7 @@ class AxisRenderer {
         const textUpdate = tick.select("text");
         tickEnter.select("line").attr(`${axisPx}2`, innerTickSize * sign);
         tickEnter.select("text").attr(axisPx, tickLength * sign);
-        ctx.setTickLineTextPosition(lineUpdate, textUpdate);
+        ctx.setTickLineTextPosition(lineUpdate, textUpdate, sizeFor1Char);
         if (params.tickTitle) {
           const title = textUpdate.select("title");
           (title.empty() ? textUpdate.append("title") : title).text((index) => params.tickTitle[index]);
@@ -41231,12 +41234,15 @@ class AxisRenderer {
    * Set tick's line & text position
    * @param {d3.selection} lineUpdate Line selection
    * @param {d3.selection} textUpdate Text selection
+   * @param {object} sizeFor1Char Size for 1 char
    * @private
    */
-  setTickLineTextPosition(lineUpdate, textUpdate) {
+  setTickLineTextPosition(lineUpdate, textUpdate, sizeFor1Char) {
     const tickPos = this.getTickXY();
     const { innerTickSize, orient, tickLength, tickOffset } = this.config;
     const rotate = this.params.tickTextRotate;
+    const baseHeight = 6;
+    const charHeight = sizeFor1Char.h / 2 - baseHeight;
     const textAnchorForText = (r) => {
       const value = ["start", "end"];
       orient === "top" && value.reverse();
@@ -41245,7 +41251,8 @@ class AxisRenderer {
     const textTransform = (r) => r ? `rotate(${r})` : null;
     const yForText = (r) => {
       const r2 = r / (orient === "bottom" ? 15 : 23);
-      return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
+      const y = r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
+      return y;
     };
     const {
       config: {
@@ -41267,15 +41274,15 @@ class AxisRenderer {
         break;
       case "top":
         lineUpdate.attr("x2", 0).attr("y2", -innerTickSize);
-        textUpdate.attr("x", 0).attr("y", -yForText(rotate) * 2).style("text-anchor", textAnchorForText(rotate)).attr("transform", textTransform(rotate));
+        textUpdate.attr("x", 0).attr("y", -(yForText(rotate) + charHeight + baseHeight)).style("text-anchor", textAnchorForText(rotate)).attr("transform", textTransform(rotate));
         break;
       case "left":
         lineUpdate.attr("x2", -innerTickSize).attr("y1", tickPos.y).attr("y2", tickPos.y);
-        textUpdate.attr("x", -tickLength).attr("y", tickOffset).style("text-anchor", "end");
+        textUpdate.attr("x", -tickLength).attr("y", tickOffset + (isRotated ? charHeight / 4 : charHeight)).style("text-anchor", "end");
         break;
       case "right":
         lineUpdate.attr("x2", innerTickSize).attr("y2", 0);
-        textUpdate.attr("x", tickLength).attr("y", 0).style("text-anchor", "start");
+        textUpdate.attr("x", tickLength).attr("y", charHeight).style("text-anchor", "start");
     }
   }
   // this should be called only when category axis
@@ -51130,7 +51137,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.0-preview-nightly-20250730004732",
+  version: "3.17.0-preview-nightly-20250731004729",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
