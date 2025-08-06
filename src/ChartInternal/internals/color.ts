@@ -178,18 +178,18 @@ export default {
 
 	/**
 	 * Append data backgound color filter definition
-	 * @param {string|object} color Color string
+	 * @param {string|object|Function} color Color string, object, or function
 	 * @param {object} attr filter attribute
 	 * @private
 	 */
-	generateTextBGColorFilter(color: string | object, attr = {
+	generateTextBGColorFilter(color: string | {[key: string]: string} | Function, attr = {
 		x: 0,
 		y: 0,
 		width: 1,
 		height: 1
 	}): void {
 		const $$ = this;
-		const {$el, state} = $$;
+		const {$el: {defs}, state} = $$;
 
 		if (color) {
 			let ids: string[] = [];
@@ -198,6 +198,8 @@ export default {
 				ids.push("");
 			} else if (isObject(color)) {
 				ids = Object.keys(color);
+			} else if (isFunction(color)) {
+				ids = $$.mapToTargetIds();
 			}
 
 			ids.forEach(v => {
@@ -205,18 +207,21 @@ export default {
 					isString(color) ? $$.getTargetSelectorSuffix(color) : ""
 				}`;
 
-				$el.defs.append("filter")
-					.attr("x", attr.x)
-					.attr("y", attr.y)
-					.attr("width", attr.width)
-					.attr("height", attr.height)
-					.attr("id", id)
-					.html(
-						`<feFlood flood-color="${v === "" ? color : color[v]}" />
-						<feComposite in="SourceGraphic" />`
-					);
+				if (defs.select(`#${id}`).empty()) {
+					defs.append("filter")
+						.attr("x", attr.x)
+						.attr("y", attr.y)
+						.attr("width", attr.width)
+						.attr("height", attr.height)
+						.attr("id", id)
+						.html(
+							`<feFlood flood-color="${v === "" ? color : color[v] || ""}" />
+							<feComposite in="SourceGraphic" />`
+						);
+				}
 			});
 		}
+		// Note: For function type, filters will be created dynamically in updateTextBGColor
 	},
 
 	/**

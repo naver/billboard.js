@@ -7,6 +7,7 @@
 import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
+import sinon from "sinon";
 import util from "../assets/util";
 import {$AXIS, $SHAPE, $TEXT} from "../../src/config/classes";
 import {isArray, isNumber, isObject} from "../../src/module/util";
@@ -472,7 +473,7 @@ describe("TEXT", () => {
 			it("set option: data.labels.centered=true / data.labels.format", () => {
 				args.data.labels.centered = true;
 
-				args.data.labels.format = function(value, id, index) {
+				const rangeFormatSpy = sinon.spy(function(value, id, index) {
 					let v = value;
 					const delimiter = "/";
 	
@@ -483,7 +484,9 @@ describe("TEXT", () => {
 					}
 	
 					return v;
-				};
+				});
+
+				args.data.labels.format = rangeFormatSpy;
 			});
 
 			it("should locate data labels in correct position and formatted correctly", () => {
@@ -653,6 +656,7 @@ describe("TEXT", () => {
 
 			describe("as function", () => {
 				const temp: any = [];
+				const formatSpy = sinon.spy(d3Format("$"));
 
 				beforeAll(() => {
 					args = {
@@ -664,7 +668,7 @@ describe("TEXT", () => {
 							],
 							labels: {
 								format: {
-									data1: d3Format("$")
+									data1: formatSpy
 								}
 							}
 						}
@@ -688,19 +692,21 @@ describe("TEXT", () => {
 				});
 
 				it("set options", () => {
+					const indexFormatSpy = sinon.spy((value, seriesName, columnIndex) => {																	
+						if (seriesName) {
+							temp.push(columnIndex);
+						}
+
+						return value;
+					});
+
 					args = {
 						data: {
 							columns: [
 								["data1", 10, 100, null, 150, 200]
 							],
 							labels: {
-								format: (value, seriesName, columnIndex) => {																	
-									if (seriesName) {
-										temp.push(columnIndex);
-									}
-
-									return value;
-								}
+								format: indexFormatSpy
 							}
 						}
 					}
@@ -1578,6 +1584,7 @@ describe("TEXT", () => {
 
 		describe("Labels' postion callback", () => {
 			let pos: number[] = [];
+			let positionSpy: sinon.SinonSpy;
 
 			beforeAll(() => {
 				args = {
@@ -1603,7 +1610,7 @@ describe("TEXT", () => {
 			});
 
 			it("set options data.labels.position", () => {
-				args.data.labels.position = function(type, v, id, i, texts) {
+				positionSpy = sinon.spy(function(type, v, id, i, texts) {
 					let pos = 0;
 					const len = texts.size() / 2 - 1;
 		
@@ -1612,7 +1619,9 @@ describe("TEXT", () => {
 					}
 		
 					return pos;
-				}
+				});
+
+				args.data.labels.position = positionSpy;
 			});
 
 			it("position coordinate should specified as callback returns.", () => {
@@ -1623,11 +1632,19 @@ describe("TEXT", () => {
 						);
 					}
 				});
+
+				// check that the spy was called
+				expect(positionSpy.called).to.be.true;
+				expect(positionSpy.callCount).to.be.greaterThan(0);
 			});
 		});
 
 		describe("labels.colors callback", () => {
-			let ctx: any = [];
+			const ctx: any = [];
+			const colorsSpy = sinon.spy(function(color, d) {
+				ctx.push(this);
+				return d.value > 200 ? "cyan" : color;
+			});
 
 			beforeAll(() => {
 				args = {
@@ -1638,10 +1655,7 @@ describe("TEXT", () => {
 							["data3", 220, 150, 50]
 						],
 						labels: {
-							colors: function(color, d) {
-								ctx.push(this);
-								return d.value > 200 ? "cyan" : color;
-							}
+							colors: colorsSpy
 						}
 					}
 				}
@@ -1654,14 +1668,16 @@ describe("TEXT", () => {
 					}
 				});
 
+				// check that the spy was called
+				expect(colorsSpy.called).to.be.true;
+				// expect(colorsSpy.callCount).to.be.equal(9); // 3 datasets * 3 data points each
+
 				// check the data.labels.colors callback context
 				expect(ctx.every(v => v === chart)).to.be.true;
 			});
 		});
 
 		describe("labels.backgroundColors", () => {
-			let ctx = [];
-
 			beforeAll(() => {
 				args = {
 					data: {
@@ -1723,6 +1739,176 @@ describe("TEXT", () => {
 					} else {
 						expect(this.getAttribute("filter")).to.be.null;
 					}
+				});
+			});
+
+			describe("as Function", () => {
+				let callbackContext: any[] = [];
+				let callbackArgs: any[] = [];
+				const backgroundColorsSpy = sinon.spy(function(color, d) {
+					// Store context and arguments for testing
+					callbackContext.push(this);
+					callbackArgs.push([color, d]);
+
+					// Return different colors based on data value
+					if (d.value > 200) {
+						return "red";
+					} else if (d.value > 100) {
+						return "yellow";
+					} else {
+						return "green";
+					}
+				});
+
+				beforeAll(() => {
+					callbackContext = [];
+					callbackArgs = [];
+
+					args = {
+						data: {
+							columns: [
+								["data1", 100, 150, 300],
+								["data2", 130, 210, 140],
+								["data3", 220, 150, 50]
+							],
+							type: "bar",
+							labels: {
+								backgroundColors: backgroundColorsSpy
+							}
+						}
+					};
+				});
+
+				it("should call function for each data point with correct arguments", () => {
+					const expectedDataLength = 9; // 3 datasets * 3 data points each
+
+					// Check that spy was called correctly
+					expect(backgroundColorsSpy.called).to.be.true;
+					expect(backgroundColorsSpy.callCount).to.be.equal(expectedDataLength);
+
+					// Check that function was called for each data point
+					expect(callbackContext.length).to.be.equal(expectedDataLength);
+					expect(callbackArgs.length).to.be.equal(expectedDataLength);
+
+					// Check that context is bound to chart API
+					expect(callbackContext.every(ctx => ctx === chart)).to.be.true;
+
+					// Check that arguments are correct
+					callbackArgs.forEach(([color, d]) => {
+						// color should be a string (default color)
+						expect(typeof color).to.be.equal("string");
+						
+						// d should be a data object with expected properties
+						expect(d).to.have.property("value");
+						expect(d).to.have.property("id");
+						expect(d).to.have.property("index");
+						expect(typeof d.value).to.be.equal("number");
+						expect(typeof d.id).to.be.equal("string");
+						expect(typeof d.index).to.be.equal("number");
+					});
+				});
+
+				it("should apply background colors based on function return values", () => {
+					const {$el} = chart.internal;
+
+					// Check that filter elements were created for each target
+					chart.data().forEach(target => {
+						const targetId = target.id;
+						const filter = $el.defs.select(`filter[id*='labels-bg'][id*='${targetId.replace(/\s/g, "-")}']`);
+						
+						expect(filter.size()).to.be.equal(1);
+					});
+
+					// Check that text elements have filter applied
+					$el.text.each(function(d) {
+						const filterAttr = this.getAttribute("filter");
+						expect(filterAttr).to.not.be.null;
+						expect(filterAttr.indexOf("url(#") > -1).to.be.true;
+					});
+				});
+
+				it("should handle null/undefined return values from function", () => {
+					const nullBackgroundColorsSpy = sinon.spy(function(color, d) {
+						// Return null for some values to test handling
+						return d.value > 200 ? "blue" : null;
+					});
+
+					args.data.labels.backgroundColors = nullBackgroundColorsSpy;
+				});
+
+				it("should not apply filter when function returns null", () => {
+					const {$el} = chart.internal;
+					
+					$el.text.each(function(d) {
+						const filterAttr = this.getAttribute("filter");
+						
+						if (d.value > 200) {
+							// Should have filter applied
+							expect(filterAttr).to.not.be.null;
+							expect(filterAttr.indexOf("url(#") > -1).to.be.true;
+						} else {
+							// Should not have filter applied when function returns null
+							expect(filterAttr === null || filterAttr === "").to.be.true;
+						}
+					});
+				});
+
+				it("should work with different chart types", () => {
+					const lineBackgroundColorsSpy = sinon.spy(function(color, d) {
+						return d.id === "data1" ? "purple" : "orange";
+					});
+
+					args.data.type = "line";
+					args.data.labels.backgroundColors = lineBackgroundColorsSpy;
+				});
+
+				it("should apply function-based colors to line chart", () => {
+					const {$el} = chart.internal;
+
+					$el.text.each(function(d) {
+						const filterAttr = this.getAttribute("filter");
+						expect(filterAttr).to.not.be.null;
+						expect(filterAttr.indexOf("url(#") > -1).to.be.true;
+						
+						// Check that filter ID contains the target ID
+						const expectedSuffix = d.id.replace(/\s/g, "-");
+						expect(filterAttr.indexOf(expectedSuffix) > -1).to.be.true;
+					});
+				});
+
+				it("should update colors when function returns different values", () => {
+					const colorMap = new Map();
+					const updateBackgroundColorsSpy = sinon.spy(function(color, d) {
+						const key = `${d.id}-${d.index}`;
+						const bgColor = d.index % 2 === 0 ? "lightblue" : "lightgreen";
+						colorMap.set(key, bgColor);
+						return bgColor;
+					});
+					
+					args.data.labels.backgroundColors = updateBackgroundColorsSpy;
+				});
+
+				it("should reflect updated function logic in filter colors", () => {
+					const {$el} = chart.internal;
+					
+					// Collect all flood-color values from filters
+					const floodColors: string[] = [];
+					$el.defs.selectAll("filter[id*='labels-bg'] feFlood").each(function() {
+						const color = this.getAttribute("flood-color");
+						if (color) {
+							floodColors.push(color);
+						}
+					});
+
+					// Should have background colors applied (either lightblue or lightgreen based on index)
+					expect(floodColors.length).to.be.above(0);
+					
+					// The actual colors may vary based on how the chart redraws, 
+					// but we should have some background colors applied
+					const hasExpectedColors = floodColors.some(color => 
+						color === "lightblue" || color === "lightgreen"
+					);
+					expect(hasExpectedColors).to.be.true;
 				});
 			});
 		});

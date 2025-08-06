@@ -440,7 +440,7 @@ export default {
 		return targets.map(d => d.id);
 	},
 
-	mapToTargetIds(ids) {
+	mapToTargetIds(ids?: string[] | string): string[] {
 		const $$ = this;
 
 		return ids ? (isArray(ids) ? ids.concat() : [ids]) : $$.mapToIds($$.data.targets);

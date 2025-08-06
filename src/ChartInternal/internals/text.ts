@@ -329,23 +329,37 @@ export default {
 	/**
 	 * Update data label text background color
 	 * @param {object} d Data object
-	 * @param {object|string} option option object
+	 * @param {object|string|Function} option option object
 	 * @returns {string|null}
 	 * @private
 	 */
 	updateTextBGColor(d: IDataRow | IArcData, option): string | null {
 		const $$ = this;
-		const {$el} = $$;
+		const {$el: {defs}} = $$;
 		let color: string = "";
 
-		if (isString(option) || isObject(option)) {
+		if (option) {
 			const id = isString(option) ?
 				"" :
 				$$.getTargetSelectorSuffix("id" in d ? d.id : d.data.id);
-			const filter = $el.defs.select(["filter[id*='labels-bg", "']"].join(id));
+			const filter = defs.select(["filter[id*='labels-bg", "']"].join(id));
 
 			if (filter.size()) {
 				color = `url(#${filter.attr("id")})`;
+			}
+
+			if (isFunction(option)) {
+				$$.generateTextBGColorFilter(option);
+
+				// Get default color and call function
+				const defaultColor = $$.color(d);
+				const bgColor = option.bind($$.api)(defaultColor, d);
+
+				if (bgColor) {
+					filter.select("feFlood").attr("flood-color", bgColor);
+				} else {
+					color = "";
+				}
 			}
 		}
 
