@@ -206,6 +206,7 @@ export default {
 				const id = `${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(v)}${
 					isString(color) ? $$.getTargetSelectorSuffix(color) : ""
 				}`;
+				const colorValue = v === "" ? color : color?.[v] || "";
 
 				if (defs.select(`#${id}`).empty()) {
 					defs.append("filter")
@@ -215,7 +216,7 @@ export default {
 						.attr("height", attr.height)
 						.attr("id", id)
 						.html(
-							`<feFlood flood-color="${v === "" ? color : color[v] || ""}" />
+							`<feFlood flood-color="${colorValue}" />
 							<feComposite in="SourceGraphic" />`
 						);
 				}

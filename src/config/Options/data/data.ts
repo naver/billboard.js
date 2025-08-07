@@ -335,7 +335,7 @@ export default {
 	 *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
 	 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
 	 * @property {string|object|Function} [data.labels.backgroundColors] Set label text background colors.<br><br>
-	 * - **NOTE**: When function is set, background colors can be sepcified one color per dataset.
+	 * - **NOTE**: When function is set, background colors can be specified one color per dataset.
 	 *   - Within the function, the last returned color for dataset will be used.
 	 *   - Only can control set or unset background color for each values.
 	 * @property {string|object|Function} [data.labels.colors] Set label text colors.
