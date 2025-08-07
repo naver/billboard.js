@@ -3111,6 +3111,23 @@ var demos = {
 						}
 					}
 				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, -200, -100],
+							["data2", -50, 150, -150]
+						],
+						type: "bar",
+						labels: {
+							backgroundColors: function(color, d) {
+								return d.id === "data1" ? color : "green";
+							},
+							colors: "white"
+						}
+				  }
+				}
 			}
 		],
 		DataLabelFormat: {
