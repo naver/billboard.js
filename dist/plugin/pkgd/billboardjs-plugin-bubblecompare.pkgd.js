@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.0-preview-nightly-20250805004736
+ * @version 3.17.0-preview-nightly-20250808004734
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23028,7 +23028,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.17.0-preview-nightly-20250805004736");
+__publicField(Plugin, "version", "3.17.0-preview-nightly-20250808004734");
 
 ;// ./src/Plugin/bubblecompare/index.ts
 var bubblecompare_defProp = Object.defineProperty;

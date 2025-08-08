@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.0-preview-nightly-20250805004736
+ * @version 3.17.0-preview-nightly-20250808004734
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1710,7 +1710,10 @@ const $ZOOM = {
    *  - `i` is the index of the data series point where the label is shown.
    *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
    * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-   * @property {string|object} [data.labels.backgroundColors] Set label text background colors.
+   * @property {string|object|Function} [data.labels.backgroundColors] Set label text background colors.<br><br>
+   * - **NOTE**: When function is set, background colors can be specified one color per dataset.
+   *   - Within the function, the last returned color for dataset will be used.
+   *   - Only can control set or unset background color for each values.
    * @property {string|object|Function} [data.labels.colors] Set label text colors.
    * @property {object|Function} [data.labels.position] Set each dataset position, relative the original.<br><br>
    * When function is specified, will receives 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
@@ -1769,7 +1772,15 @@ const $ZOOM = {
    *     backgroundColors: {
    *          data1: "green",
    *          data2: "yellow"
-   *     }
+   *     },
+   *
+   *     // call back for label text background color
+   *     backgroundColors: function(color, d) {
+   *         // color: the default data label color string
+   *         // data: ex) {x: 0, value: 200, id: "data3", index: 0}
+   *         ....
+   *         return d.value > 200 ? "cyan" : "red";
+   *     },
    *
    *     // apply for all label texts
    *     colors: "red",
@@ -5113,7 +5124,7 @@ const schemeCategory10 = [
   },
   /**
    * Append data backgound color filter definition
-   * @param {string|object} color Color string
+   * @param {string|object|Function} color Color string, object, or function
    * @param {object} attr filter attribute
    * @private
    */
@@ -5124,20 +5135,25 @@ const schemeCategory10 = [
     height: 1
   }) {
     const $$ = this;
-    const { $el, state } = $$;
+    const { $el: { defs }, state } = $$;
     if (color) {
       let ids = [];
       if (isString(color)) {
         ids.push("");
       } else if (isObject(color)) {
         ids = Object.keys(color);
+      } else if (isFunction(color)) {
+        ids = $$.mapToTargetIds();
       }
       ids.forEach((v) => {
         const id = `${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(v)}${isString(color) ? $$.getTargetSelectorSuffix(color) : ""}`;
-        $el.defs.append("filter").attr("x", attr.x).attr("y", attr.y).attr("width", attr.width).attr("height", attr.height).attr("id", id).html(
-          `<feFlood flood-color="${v === "" ? color : color[v]}" />
-						<feComposite in="SourceGraphic" />`
-        );
+        const colorValue = v === "" ? color : (color == null ? void 0 : color[v]) || "";
+        if (defs.select(`#${id}`).empty()) {
+          defs.append("filter").attr("x", attr.x).attr("y", attr.y).attr("width", attr.width).attr("height", attr.height).attr("id", id).html(
+            `<feFlood flood-color="${colorValue}" />
+							<feComposite in="SourceGraphic" />`
+          );
+        }
       });
     }
   },
@@ -7209,19 +7225,29 @@ function updateTextBorder(text, pos, rectClass) {
   /**
    * Update data label text background color
    * @param {object} d Data object
-   * @param {object|string} option option object
+   * @param {object|string|Function} option option object
    * @returns {string|null}
    * @private
    */
   updateTextBGColor(d, option) {
     const $$ = this;
-    const { $el } = $$;
+    const { $el: { defs } } = $$;
     let color = "";
-    if (isString(option) || isObject(option)) {
+    if (option) {
       const id = isString(option) ? "" : $$.getTargetSelectorSuffix("id" in d ? d.id : d.data.id);
-      const filter = $el.defs.select(["filter[id*='labels-bg", "']"].join(id));
+      const filter = defs.select(["filter[id*='labels-bg", "']"].join(id));
       if (filter.size()) {
         color = `url(#${filter.attr("id")})`;
+      }
+      if (isFunction(option)) {
+        $$.generateTextBGColorFilter(option);
+        const defaultColor = $$.color(d);
+        const bgColor = option.bind($$.api)(defaultColor, d);
+        if (bgColor) {
+          filter.select("feFlood").attr("flood-color", bgColor);
+        } else {
+          color = "";
+        }
       }
     }
     return color || null;
@@ -22227,7 +22253,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.0-preview-nightly-20250805004736",
+  version: "3.17.0-preview-nightly-20250808004734",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

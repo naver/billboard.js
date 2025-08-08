@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.0-preview-nightly-20250805004736
+ * @version 3.17.0-preview-nightly-20250808004734
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -1583,7 +1583,10 @@ var data$2 = {
      *  - `i` is the index of the data series point where the label is shown.
      *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
      * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-     * @property {string|object} [data.labels.backgroundColors] Set label text background colors.
+     * @property {string|object|Function} [data.labels.backgroundColors] Set label text background colors.<br><br>
+     * - **NOTE**: When function is set, background colors can be specified one color per dataset.
+     *   - Within the function, the last returned color for dataset will be used.
+     *   - Only can control set or unset background color for each values.
      * @property {string|object|Function} [data.labels.colors] Set label text colors.
      * @property {object|Function} [data.labels.position] Set each dataset position, relative the original.<br><br>
      * When function is specified, will receives 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
@@ -1642,7 +1645,15 @@ var data$2 = {
      *     backgroundColors: {
      *          data1: "green",
      *          data2: "yellow"
-     *     }
+     *     },
+     *
+     *     // call back for label text background color
+     *     backgroundColors: function(color, d) {
+     *         // color: the default data label color string
+     *         // data: ex) {x: 0, value: 200, id: "data3", index: 0}
+     *         ....
+     *         return d.value > 200 ? "cyan" : "red";
+     *     },
      *
      *     // apply for all label texts
      *     colors: "red",
@@ -5679,7 +5690,7 @@ var color = {
     },
     /**
      * Append data backgound color filter definition
-     * @param {string|object} color Color string
+     * @param {string|object|Function} color Color string, object, or function
      * @param {object} attr filter attribute
      * @private
      */
@@ -5691,7 +5702,7 @@ var color = {
             height: 1
         }; }
         var $$ = this;
-        var $el = $$.$el, state = $$.state;
+        var defs = $$.$el.defs, state = $$.state;
         if (color) {
             var ids = [];
             if (isString(color)) {
@@ -5700,17 +5711,24 @@ var color = {
             else if (isObject(color)) {
                 ids = Object.keys(color);
             }
+            else if (isFunction(color)) {
+                ids = $$.mapToTargetIds();
+            }
             ids.forEach(function (v) {
                 var id = "".concat(state.datetimeId, "-labels-bg").concat($$.getTargetSelectorSuffix(v)).concat(isString(color) ? $$.getTargetSelectorSuffix(color) : "");
-                $el.defs.append("filter")
-                    .attr("x", attr.x)
-                    .attr("y", attr.y)
-                    .attr("width", attr.width)
-                    .attr("height", attr.height)
-                    .attr("id", id)
-                    .html("<feFlood flood-color=\"".concat(v === "" ? color : color[v], "\" />\n\t\t\t\t\t\t<feComposite in=\"SourceGraphic\" />"));
+                var colorValue = v === "" ? color : (color === null || color === void 0 ? void 0 : color[v]) || "";
+                if (defs.select("#".concat(id)).empty()) {
+                    defs.append("filter")
+                        .attr("x", attr.x)
+                        .attr("y", attr.y)
+                        .attr("width", attr.width)
+                        .attr("height", attr.height)
+                        .attr("id", id)
+                        .html("<feFlood flood-color=\"".concat(colorValue, "\" />\n\t\t\t\t\t\t\t<feComposite in=\"SourceGraphic\" />"));
+                }
             });
         }
+        // Note: For function type, filters will be created dynamically in updateTextBGColor
     },
     /**
      * Get data gradient color url
@@ -8124,21 +8142,33 @@ var text = {
     /**
      * Update data label text background color
      * @param {object} d Data object
-     * @param {object|string} option option object
+     * @param {object|string|Function} option option object
      * @returns {string|null}
      * @private
      */
     updateTextBGColor: function (d, option) {
         var $$ = this;
-        var $el = $$.$el;
+        var defs = $$.$el.defs;
         var color = "";
-        if (isString(option) || isObject(option)) {
+        if (option) {
             var id = isString(option) ?
                 "" :
                 $$.getTargetSelectorSuffix("id" in d ? d.id : d.data.id);
-            var filter = $el.defs.select(["filter[id*='labels-bg", "']"].join(id));
+            var filter = defs.select(["filter[id*='labels-bg", "']"].join(id));
             if (filter.size()) {
                 color = "url(#".concat(filter.attr("id"), ")");
+            }
+            if (isFunction(option)) {
+                $$.generateTextBGColorFilter(option);
+                // Get default color and call function
+                var defaultColor = $$.color(d);
+                var bgColor = option.bind($$.api)(defaultColor, d);
+                if (bgColor) {
+                    filter.select("feFlood").attr("flood-color", bgColor);
+                }
+                else {
+                    color = "";
+                }
             }
         }
         return color || null;
@@ -25067,7 +25097,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.17.0-preview-nightly-20250805004736
+ * @version 3.17.0-preview-nightly-20250808004734
  */
 var bb = {
     /**
@@ -25077,7 +25107,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.17.0-preview-nightly-20250805004736",
+    version: "3.17.0-preview-nightly-20250808004734",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
