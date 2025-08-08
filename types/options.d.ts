@@ -1159,8 +1159,13 @@ export interface Data {
 
 		/**
 		 * Set label text background colors.
+		 * - **NOTE**: When function is set, background colors can be sepcified one color per dataset.
+		 *   - Within the function, the last returned color for dataset will be used.
+		 *   - Only can control set or unset background color for each values.
 		 */
-		backgroundColors?: string | { [key: string]: string };
+		backgroundColors?: string |
+			{ [key: string]: string } |
+			((this: Chart, color: string, d: DataItem) => string);
 
 		/**
 		 * Set label text colors.

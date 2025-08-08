@@ -334,7 +334,10 @@ export default {
 	 *  - `i` is the index of the data series point where the label is shown.
 	 *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
 	 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-	 * @property {string|object} [data.labels.backgroundColors] Set label text background colors.
+	 * @property {string|object|Function} [data.labels.backgroundColors] Set label text background colors.<br><br>
+	 * - **NOTE**: When function is set, background colors can be specified one color per dataset.
+	 *   - Within the function, the last returned color for dataset will be used.
+	 *   - Only can control set or unset background color for each values.
 	 * @property {string|object|Function} [data.labels.colors] Set label text colors.
 	 * @property {object|Function} [data.labels.position] Set each dataset position, relative the original.<br><br>
 	 * When function is specified, will receives 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
@@ -393,7 +396,15 @@ export default {
 	 *     backgroundColors: {
 	 *          data1: "green",
 	 *          data2: "yellow"
-	 *     }
+	 *     },
+	 *
+	 *     // call back for label text background color
+	 *     backgroundColors: function(color, d) {
+	 *         // color: the default data label color string
+	 *         // data: ex) {x: 0, value: 200, id: "data3", index: 0}
+	 *         ....
+	 *         return d.value > 200 ? "cyan" : "red";
+	 *     },
 	 *
 	 *     // apply for all label texts
 	 *     colors: "red",
