@@ -949,7 +949,7 @@ describe("SHAPE GAUGE", () => {
 		});
 	});
 
-	describe("gauge label", () => {
+	describe.only("gauge label", () => {
 		type TPos = [number,number][];
 		let args: any = {
 			data: {
@@ -979,6 +979,7 @@ describe("SHAPE GAUGE", () => {
 			const currPos: TPos = [];
 
 			ctx.$.text.texts.each(function(v) {
+				console.log(this);
 				const pos = this.getAttribute("transform").split(",").map(util.parseNum);
 
 				currPos.push(pos);

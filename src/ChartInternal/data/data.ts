@@ -989,7 +989,7 @@ export default {
 	 * @returns {number} Ratio value
 	 * @private
 	 */
-	getRatio(type: string, d, asPercent = false): number {
+	getRatio(type: "arc" | "index" | "radar" | "bar" | "treemap", d, asPercent = false): number {
 		const $$ = this;
 		const {config, state} = $$;
 		const api = $$.api;

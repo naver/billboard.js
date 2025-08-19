@@ -16,6 +16,18 @@ export default {
 	 * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
 	 * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
 	 * @property {number} [pie.label.threshold=0.05] Set threshold ratio to show/hide labels.
+	 * @property {object|Function} [pie.label.image] Set image to be displayed next to the label text.<br><br>
+	 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+	 * The arguments are:<br>
+	 *  - `v` is the value of the data point where the label is shown.
+	 *  - `id` is the id of the data where the label is shown.
+	 *  - `i` is the index of the data series point where the label is shown.
+	 * @property {string} pie.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+	 * @property {number} pie.label.image.width Image width in pixels.
+	 * @property {number} pie.label.image.height Image height in pixels.
+	 * @property {object} [pie.label.image.pos] Image position relative to the label text.
+	 * @property {number} [pie.label.image.pos.x=0] x coordinate position, relative the original.
+	 * @property {number} [pie.label.image.pos.y=0] y coordinate position, relative the original.
 	 * @property {boolean|object} [pie.expand=true] Enable or disable expanding pie pieces.
 	 * @property {number} [pie.expand.rate=0.98] Set expand rate.
 	 * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
@@ -28,6 +40,7 @@ export default {
 	 * @see [Demo: innerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.InnerRadius)
 	 * @see [Demo: outerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.OuterRadius)
 	 * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#PieChartOptions.StartingAngle)
+	 * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#PieChartOptions.LabelImage)
 	 * @example
 	 *  pie: {
 	 *      label: {
@@ -49,7 +62,51 @@ export default {
 	 *              return ratio;
 	 *          },
 	 *          // or set ratio number
-	 *          ratio: 0.5
+	 *          ratio: 0.5,
+	 *
+	 *          // set image to be displayed next to the label text
+	 *          image: {
+	 *             url: "./sample.svg",
+	 *
+	 *             // use placeholder to dynamically set image URL based on data ID
+	 *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+	 *             width: 35,
+	 *             height: 35,
+	 *             pos: {
+	 *                x: 0,
+	 *                y: 0
+	 *             }
+	 *          },
+	 *
+	 *          // or use function to return image configuration dynamically
+	 *          image: function(v, id, i) {
+	 *             // Return different images based on value
+	 *             if (v > 500) {
+	 *                return {
+	 *                   url: "./high-value.svg",
+	 *                   width: 40,
+	 *                   height: 40,
+	 *                   pos: { x: 0, y: 0 }
+	 *                };
+	 *             } else if (v > 100) {
+	 *                return {
+	 *                   url: "./medium-value.svg",
+	 *                   width: 30,
+	 *                   height: 30,
+	 *                   pos: { x: 0, y: 0 }
+	 *                };
+	 *             } else if(v < 5) {
+	 *                // Return falsy value in case of don't want to show image
+	 *                return null;
+	 *             } else {
+	 *                return {
+	 *                   url: "./low-value.svg",
+	 *                   width: 20,
+	 *                   height: 20,
+	 *                   pos: { x: 0, y: 0 }
+	 *                };
+	 *             }
+	 *          }
 	 *      },
 	 *
 	 *      // disable expand transition for interaction
@@ -88,6 +145,16 @@ export default {
 	pie_label_format: <(() => number | string) | undefined>undefined,
 	pie_label_ratio: <(() => number) | undefined>undefined,
 	pie_label_threshold: 0.05,
+	pie_label_image: <
+		| {url: string, width: number, height: number, pos?: {x?: number, y?: number}}
+		| ((v: number, id: string, i: number) => {
+			url: string,
+			width: number,
+			height: number,
+			pos?: {x?: number, y?: number}
+		} | null)
+		| undefined
+	>undefined,
 	pie_expand: <boolean | {rate?: number, duration?: number}>{},
 	pie_expand_rate: 0.98,
 	pie_expand_duration: 50,

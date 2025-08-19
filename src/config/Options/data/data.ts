@@ -357,6 +357,18 @@ export default {
 	 * @property {number} [data.labels.border.strokeWidth=1] Border stroke width.
 	 * @property {string} [data.labels.border.stroke="#000"] Border stroke color.
 	 * @property {string} [data.labels.border.fill="none"] Border fill color.
+	 * @property {object|Function} [data.labels.image] Set image to be displayed next to the label text.<br><br>
+	 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+	 * The arguments are:<br>
+	 *  - `v` is the value of the data point where the label is shown.
+	 *  - `id` is the id of the data where the label is shown.
+	 *  - `i` is the index of the data series point where the label is shown.
+	 * @property {string} data.labels.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+	 * @property {number} data.labels.image.width Image width in pixels.
+	 * @property {number} data.labels.image.height Image height in pixels.
+	 * @property {object} [data.labels.image.pos] Image position relative to the label text.
+	 * @property {number} [data.labels.image.pos.x=0] x coordinate position, relative the original.
+	 * @property {number} [data.labels.image.pos.y=0] y coordinate position, relative the original.
 	 * @memberof Options
 	 * @type {object}
 	 * @default {}
@@ -364,6 +376,7 @@ export default {
 	 * @see [Demo: label border](https://naver.github.io/billboard.js/demo/#Data.DataLabelBorder)
 	 * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
 	 * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+	 * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#Data.DataLabelImage)
 	 * @see [Demo: label multiline](https://naver.github.io/billboard.js/demo/#Data.DataLabelMultiline)
 	 * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
 	 * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
@@ -465,6 +478,54 @@ export default {
 	 *        strokeWidth: 2,
 	 *        stroke: "#000",
 	 *        fill: "red"
+	 *     },
+	 *
+	 *     // set image to be displayed next to the label text
+	 *     image: {
+	 *        url: "./sample.svg",
+	 *
+	 *        // use placeholder to dynamically set image URL based on data ID
+	 *        url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+	 *        width: 35,
+	 *        height: 35,
+	 *        pos: {
+	 *           x: 0,
+	 *           y: 0
+	 *        }
+	 *     },
+	 *
+	 *     // or use function to return image configuration dynamically
+	 *     image: function(v, id, i) {
+	 *        // v is the value of the data point where the label is shown.
+	 *        // id is the id of the data where the label is shown.
+	 *        // i is the index of the data series point where the label is shown.
+	 *
+	 *        // Return different images based on value
+	 *        if (v > 500) {
+	 *           return {
+	 *              url: "./high-value.svg",
+	 *              width: 40,
+	 *              height: 40,
+	 *              pos: { x: 0, y: 0 }
+	 *           };
+	 *        } else if (v > 100) {
+	 *           return {
+	 *              url: "./medium-value.svg",
+	 *              width: 30,
+	 *              height: 30,
+	 *              pos: { x: 0, y: 0 }
+	 *           };
+	 *        } else if(v < 5) {
+	 *        	// Return falsy value in case of don't want to show image
+	 *           return null;
+	 *        } else {
+	 *           return {
+	 *              url: "./low-value.svg",
+	 *              width: 20,
+	 *              height: 20,
+	 *              pos: { x: 0, y: 0 }
+	 *           };
+	 *        }
 	 *     }
 	 *   }
 	 * }
@@ -489,11 +550,20 @@ export default {
 			strokeWidth?: number,
 			stroke?: string,
 			fill?: string
-		}
+		},
+		image?:
+			| {url: string, width: number, height: number, pos?: {x?: number, y?: number}}
+			| ((v: number, id: string, i: number) => {
+				url: string,
+				width: number,
+				height: number,
+				pos?: {x?: number, y?: number}
+			} | null)
 	}>{},
 	data_labels_backgroundColors: <string | {[key: string]: string} | undefined>undefined,
 	data_labels_colors: <string | object | Function | undefined>undefined,
 	data_labels_position: {},
+	data_labels_imgUrl: <string | Function | undefined>undefined,
 
 	/**
 	 * Hide each data when the chart appears.<br><br>
