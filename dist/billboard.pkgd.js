@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.0-preview-nightly-20250819004721
+ * @version 3.17.0-preview-nightly-20250827004717
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -1270,10 +1270,10 @@ var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 
 (store.versions || (store.versions = [])).push({
-  version: '3.45.0',
+  version: '3.45.1',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2025 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.45.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.45.1/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -51797,7 +51797,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.0-preview-nightly-20250819004721",
+  version: "3.17.0-preview-nightly-20250827004717",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
