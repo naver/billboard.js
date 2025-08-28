@@ -949,7 +949,7 @@ describe("SHAPE GAUGE", () => {
 		});
 	});
 
-	describe.only("gauge label", () => {
+	describe("gauge label", () => {
 		type TPos = [number,number][];
 		let args: any = {
 			data: {
