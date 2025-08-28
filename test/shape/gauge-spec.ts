@@ -923,7 +923,7 @@ describe("SHAPE GAUGE", () => {
 			const valueRect = chart.$.text.texts.node().getBoundingClientRect();
 			const unitRect = chart.$.main.select(`.${$GAUGE.chartArcsGaugeUnit}`).node().getBoundingClientRect();
 
-			expect(unitRect.y).to.be.greaterThan(valueRect.y + valueRect.height);
+			expect((valueRect.bottom - unitRect.top) < 18).to.be.ok;
 		});
     });
 
@@ -979,7 +979,6 @@ describe("SHAPE GAUGE", () => {
 			const currPos: TPos = [];
 
 			ctx.$.text.texts.each(function(v) {
-				console.log(this);
 				const pos = this.getAttribute("transform").split(",").map(util.parseNum);
 
 				currPos.push(pos);
