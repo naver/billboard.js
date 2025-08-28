@@ -20,6 +20,7 @@ import {
 	tplProcess
 } from "../../module/util";
 import type {IArcData, IArcDataRow, IData} from "../data/IData";
+import {meetsLabelThreshold, updateTextImage, updateTextImagePos} from "../internals/text.util";
 
 /**
  * Get radius functions
@@ -446,7 +447,9 @@ export default {
 				.merge(rangeText));
 
 			if ((!state.rendered || (state.rendered && !fixed)) && totalSum > 0) {
-				rangeText.attr("transform", (d, i) => $$.transformForArcLabel(pieData[i], true));
+				rangeText.attr("transform", function(d, i) {
+					return $$.transformForArcLabel(this, pieData[i], true);
+				});
 			}
 
 			rangeText.style("opacity",
@@ -456,36 +459,40 @@ export default {
 
 	/**
 	 * Set transform attributes to arc label text
+	 * @param {SVGTextElement} textNode Text node element
 	 * @param {object} d Data object
 	 * @param {boolean} forRange Weather is for ranged text option(arc.rangeText.values)
 	 * @returns {string} Translate attribute string
 	 * @private
 	 */
-	transformForArcLabel(d: IArcData, forRange = false): string {
+	transformForArcLabel(textNode: SVGTextElement, d: IArcData, forRange = false): string {
 		const $$ = this;
 		const {config, state: {radiusExpanded}} = $$;
 		const updated = $$.updateAngle(d, forRange);
+		const pos = {x: 0, y: 0};
 		let translate = "";
+		let ratio = 1;
 
 		if (updated) {
 			if (forRange || $$.hasMultiArcGauge()) {
 				const y1 = Math.sin(updated.endAngle - Math.PI / 2);
 				const rangeTextPosition = config.arc_rangeText_position;
-				let x = Math.cos(updated.endAngle - Math.PI / 2) *
+
+				pos.x = Math.cos(updated.endAngle - Math.PI / 2) *
 					(radiusExpanded + (forRange ? 5 : 25));
-				let y = y1 * (radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
+				pos.y = y1 * (radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
 
 				if (forRange && rangeTextPosition) {
 					const rangeValues = config.arc_rangeText_values;
-					const pos = isFunction(rangeTextPosition) ?
+					const position = isFunction(rangeTextPosition) ?
 						rangeTextPosition(rangeValues[d.index]) :
 						rangeTextPosition;
 
-					x += pos?.x ?? 0;
-					y += pos?.y ?? 0;
+					pos.x += position?.x ?? 0;
+					pos.y += position?.y ?? 0;
 				}
 
-				translate = `translate(${x},${y})`;
+				// translate = `translate(${x},${y})`;
 			} else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
 				let {outerRadius} = $$.getRadius(d);
 
@@ -497,7 +504,10 @@ export default {
 				const [x, y] = c.map(v => (isNaN(v) ? 0 : v));
 				const h = Math.sqrt(x * x + y * y);
 
-				let ratio = ["donut", "gauge", "pie", "polar"]
+				pos.x = x;
+				pos.y = y;
+
+				ratio = ["donut", "gauge", "pie", "polar"]
 					.filter($$.hasType.bind($$))
 					.map(v => config[`${v}_label_ratio`])?.[0];
 
@@ -511,9 +521,10 @@ export default {
 							0
 					);
 				}
-
-				translate = `translate(${x * ratio},${y * ratio})`;
 			}
+
+			updateTextImagePos.call($$, textNode, pos);
+			translate = `translate(${pos.x * ratio},${pos.y * ratio})`;
 		}
 
 		return translate;
@@ -541,13 +552,13 @@ export default {
 					const node = d3Select(this);
 					const updated = $$.updateAngle(d);
 					const ratio = $$.getRatio("arc", updated);
-					const isUnderThreshold = $$.meetsLabelThreshold(ratio,
+					const isUnderThreshold = meetsLabelThreshold.call($$, ratio,
 						["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))?.[0]);
 
 					if (isUnderThreshold) {
 						const {value} = updated || d;
 						const text = (
-							$$.getArcLabelFormat() || $$.defaultArcValueFormat
+							$$.getArcLabelConfig("format") || $$.defaultArcValueFormat
 						)(value, ratio, d.data.id).toString();
 
 						setTextValue(node, text, [-1, 1], hasGauge);
@@ -664,18 +675,22 @@ export default {
 			.some(v => $$.hasType(v) && config[`${v}_label_show`]);
 	},
 
-	getArcLabelFormat(): number | string {
+	getArcLabelConfig(name = "format"): number | string | Function | object {
 		const $$ = this;
 		const {config} = $$;
-		let format = v => v;
+		let fn = v => v;
 
 		["donut", "gauge", "pie", "polar"]
 			.filter($$.hasType.bind($$))
 			.forEach(v => {
-				format = config[`${v}_label_format`];
+				fn = config[`${v}_label_${name}`];
 			});
 
-		return isFunction(format) ? format.bind($$.api) : format;
+		if (name === "format") {
+			return isFunction(fn) ? fn.bind($$.api) : fn;
+		} else {
+			return fn;
+		}
 	},
 
 	updateTargetsForArc(targets: IData): void {
@@ -901,6 +916,7 @@ export default {
 		$$.hasType("gauge") && $$.redrawBackgroundArcs();
 
 		config.arc_needle_show && $$.redrawNeedle();
+
 		$$.redrawArcText(duration);
 		$$.redrawArcRangeText();
 	},
@@ -1187,12 +1203,18 @@ export default {
 				.style("opacity", "0")
 				.attr("class", d => ($$.isGaugeType(d.data) ? $GAUGE.gaugeValue : null))
 				.call($$.textForArcLabel.bind($$))
-				.attr("transform", d => $$.transformForArcLabel.bind($$)(d))
 				.style("font-size", d => (
 					$$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ?
 						`${Math.round(state.radius / 5)}px` :
 						null
-				))
+				));
+
+			updateTextImage.call($$);
+
+			text
+				.attr("transform", function(d) {
+					return $$.transformForArcLabel.bind($$)(this, d);
+				})
 				.transition()
 				.duration(duration)
 				.style("opacity",
