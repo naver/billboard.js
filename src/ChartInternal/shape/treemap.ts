@@ -17,6 +17,7 @@ import type {d3Selection} from "../../../types/types";
 import {$COMMON, $TREEMAP} from "../../config/classes";
 import {getRandom, isFunction} from "../../module/util";
 import type {IData, IDataRow, ITreemapData} from "../data/IData";
+import {meetsLabelThreshold} from "../internals/text.util";
 
 /**
  * Get treemap elements' position
@@ -300,12 +301,10 @@ export default {
 		const format = config.treemap_label_format;
 		const ratio = $$.getRatio("treemap", d);
 		const percentValue = (ratio * 100).toFixed(2);
-		const meetLabelThreshold = config.treemap_label_show && $$.meetsLabelThreshold(
-				ratio,
-				"treemap"
-			) ?
-			null :
-			"0";
+		const meetLabelThreshold =
+			config.treemap_label_show && meetsLabelThreshold.call($$, ratio, "treemap") ?
+				null :
+				"0";
 
 		return function(node) {
 			node.style("opacity", meetLabelThreshold);

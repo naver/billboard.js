@@ -1208,6 +1208,32 @@ var demos = {
 					}
 				}
 			},
+			{
+				options: {
+					title: {
+						text: "label with image & text",
+					},
+					padding: {
+						top: 10
+					},
+					data: {
+						columns: [
+							["data1", 50],
+							["data2", 120],
+							["data3", 90]
+						],
+						type: "treemap",
+						labels: {
+							image: {
+								url: "./assets/{=ID}.svg",
+								width: 40,
+								height: 40
+							},
+							centered: true
+						}
+					}
+				}
+			}
 		]
 	},
 	Axis: {
@@ -3157,6 +3183,92 @@ var demos = {
 				}
 			}
 		},
+		DataLabelImage: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 100, 200, 150, 300, 250],
+							["data2", 80, 180, 120, 280, 200]
+						],
+						type: "bar",
+						labels: {
+							colors: "#fff",
+							image: {
+								url: "./assets/data1.svg",
+								width: 30,
+								height: 30,
+								pos: {
+									y: -5
+								}
+							},
+							centered: true
+						}
+					},
+					bar: {
+						width: {
+							ratio: 0.6
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 120],
+							["data3", 90]
+						],
+						type: "treemap",
+						labels: {
+							colors: "#fff",
+							centered: true,
+							image: {
+								url: "./assets/{=ID}.svg",
+								width: 40,
+								height: 40
+							}
+						}
+
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250, 50, 100, 250],
+							["data2", 130, 100, 140, 200, 150, 50, 80, 70, 180]
+						],
+						type: "line",
+						labels: {
+							image: function(v) {						
+							if (v > 200) {
+							  return {
+								url: "./assets/data1.svg",
+								width: 30,
+								height: 30
+							  };
+							} else if (v > 100) {
+							  return {
+								url: "./assets/data2.svg",
+								width: 20,
+								height: 20
+							  };
+							} else {
+							  return {
+								url: "./assets/data3.svg",
+								width: 15,
+								height: 15
+							  };
+							}
+						  }
+						}
+					}
+				}
+			}
+		],
 		DataLabelMultiline: {
 			options: {
 				data: {
@@ -6332,6 +6444,27 @@ setTimeout(function() {
 				}
 			}
 		}],
+		LabelImage: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 90]
+					],
+					type: "donut"
+				},
+				donut: {
+					label: {
+						image: {
+							url: "./assets/{=ID}.svg",
+							width: 30,
+							height: 30
+						}
+					}
+				}
+			}
+		},
 		LabelRatio: {
 			options: {
 				data: {
@@ -6532,6 +6665,37 @@ setTimeout(function() {
 				}
 			},
 		],
+		GaugeLabelImage: {
+			options: {
+				size: {
+					height: 250
+				},
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 90]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					width: 80,
+					label: {
+						image: function(v, id, i) {
+						if (v < 50) {
+							return null;
+						} else {
+						  return {
+						    url: "./assets/{=ID}.svg",
+						    width: 40,
+						    height: 40
+						  };
+						}
+						}
+					}
+				}
+			}
+		},
 		GaugeLabelMultiline: {
 			options: {
 				data: {
@@ -7140,6 +7304,27 @@ setTimeout(function() {
 				}
 			}
 		},
+		LabelImage: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 90]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						image: {
+							url: "./assets/{=ID}.svg",
+							width: 40,
+							height: 40
+						}
+					}
+				}
+			}
+		},
 		LabelRatio: {
 			options: {
 				data: {
@@ -7447,6 +7632,33 @@ setTimeout(function() {
 				}
 			}
 		},
+		LabelImage: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 90]
+					],
+					type: "polar"
+				},
+				polar: {
+					label: {
+						image: function(v, id, i) {
+						if (v < 50) {
+							return null;
+						} else {
+						  return {
+						    url: "./assets/{=ID}.svg",
+						    width: 40,
+						    height: 40
+						  };
+						}
+						}
+					}
+				}
+			}
+		}
 	},
 	Boost: {
 		useCssRule: {
