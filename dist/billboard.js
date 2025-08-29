@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.0-preview-nightly-20250827004717
+ * @version 3.16.0-nightly-20250829004701
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -379,8 +379,9 @@ const $TEXT = {
   text: "bb-text",
   texts: "bb-texts",
   title: "bb-title",
-  TextOverlapping: "text-overlapping",
-  textBorderRect: "bb-text-border"
+  textBorderRect: "bb-text-border",
+  textLabelImage: "bb-text-label-image",
+  TextOverlapping: "text-overlapping"
 };
 const $TOOLTIP = {
   tooltip: "bb-tooltip",
@@ -1733,6 +1734,18 @@ const $ZOOM = {
    * @property {number} [data.labels.border.strokeWidth=1] Border stroke width.
    * @property {string} [data.labels.border.stroke="#000"] Border stroke color.
    * @property {string} [data.labels.border.fill="none"] Border fill color.
+   * @property {object|Function} [data.labels.image] Set image to be displayed next to the label text.<br><br>
+   * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+   * The arguments are:<br>
+   *  - `v` is the value of the data point where the label is shown.
+   *  - `id` is the id of the data where the label is shown.
+   *  - `i` is the index of the data series point where the label is shown.
+   * @property {string} data.labels.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+   * @property {number} data.labels.image.width Image width in pixels.
+   * @property {number} data.labels.image.height Image height in pixels.
+   * @property {object} [data.labels.image.pos] Image position relative to the label text.
+   * @property {number} [data.labels.image.pos.x=0] x coordinate position, relative the original.
+   * @property {number} [data.labels.image.pos.y=0] y coordinate position, relative the original.
    * @memberof Options
    * @type {object}
    * @default {}
@@ -1740,6 +1753,7 @@ const $ZOOM = {
    * @see [Demo: label border](https://naver.github.io/billboard.js/demo/#Data.DataLabelBorder)
    * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
    * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+   * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#Data.DataLabelImage)
    * @see [Demo: label multiline](https://naver.github.io/billboard.js/demo/#Data.DataLabelMultiline)
    * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
    * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
@@ -1841,6 +1855,54 @@ const $ZOOM = {
    *        strokeWidth: 2,
    *        stroke: "#000",
    *        fill: "red"
+   *     },
+   *
+   *     // set image to be displayed next to the label text
+   *     image: {
+   *        url: "./sample.svg",
+   *
+   *        // use placeholder to dynamically set image URL based on data ID
+   *        url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+   *        width: 35,
+   *        height: 35,
+   *        pos: {
+   *           x: 0,
+   *           y: 0
+   *        }
+   *     },
+   *
+   *     // or use function to return image configuration dynamically
+   *     image: function(v, id, i) {
+   *        // v is the value of the data point where the label is shown.
+   *        // id is the id of the data where the label is shown.
+   *        // i is the index of the data series point where the label is shown.
+   *
+   *        // Return different images based on value
+   *        if (v > 500) {
+   *           return {
+   *              url: "./high-value.svg",
+   *              width: 40,
+   *              height: 40,
+   *              pos: { x: 0, y: 0 }
+   *           };
+   *        } else if (v > 100) {
+   *           return {
+   *              url: "./medium-value.svg",
+   *              width: 30,
+   *              height: 30,
+   *              pos: { x: 0, y: 0 }
+   *           };
+   *        } else if(v < 5) {
+   *        	// Return falsy value in case of don't want to show image
+   *           return null;
+   *        } else {
+   *           return {
+   *              url: "./low-value.svg",
+   *              width: 20,
+   *              height: 20,
+   *              pos: { x: 0, y: 0 }
+   *           };
+   *        }
    *     }
    *   }
    * }
@@ -1849,6 +1911,7 @@ const $ZOOM = {
   data_labels_backgroundColors: void 0,
   data_labels_colors: void 0,
   data_labels_position: {},
+  data_labels_imgUrl: void 0,
   /**
    * Hide each data when the chart appears.<br><br>
    * If true specified, all of data will be hidden. If multiple ids specified as an array, those will be hidden.
@@ -7031,8 +7094,7 @@ function getScale(type = "linear", min, max) {
   }
 });
 
-;// ./src/ChartInternal/internals/text.ts
-
+;// ./src/ChartInternal/internals/text.util.ts
 
 
 
@@ -7122,13 +7184,104 @@ function updateTextBorder(text, pos, rectClass) {
     pos.x - (applyStyle ? borderPadding.left : 0) - (isRotated ? 0 : textRect.width / 2)
   ).attr("y", pos.y - (applyStyle ? borderPadding.top : 0) - textRect.height / 4 * 3.2);
 }
+function meetsLabelThreshold(ratio = 0, type) {
+  const $$ = this;
+  const { config } = $$;
+  const threshold = config[`${type}_label_threshold`] || 0;
+  return ratio >= threshold;
+}
+function updateTextImage() {
+  const $$ = this;
+  const { $el: { text }, config } = $$;
+  const isArc = $$.state.arcWidth;
+  if (isArc ? $$.getArcLabelConfig("image") : config.data_labels.image) {
+    text.filter(function() {
+      const prev = this.previousElementSibling;
+      if (prev) {
+        return prev.tagName !== "image" || !prev.classList.contains($TEXT.textLabelImage);
+      }
+      return true;
+    }).each(function(d) {
+      var _a, _b, _c, _d;
+      const { url, width, height, pos } = getDataLabelImgUrl.call($$, d);
+      if (url) {
+        const parentNode = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this.parentNode);
+        parentNode == null ? void 0 : parentNode.insert(
+          "image",
+          `${(_b = (_a = this.getAttribute("class")) == null ? void 0 : _a.replace(/(?:^(.)|\s)/g, ".$1")) != null ? _b : "text"}`
+        ).style("opacity", "0").attr("href", (d2) => tplProcess(url, {
+          ID: "id" in d2 ? d2.id : d2.data.id
+        })).attr("class", $TEXT.textLabelImage).style("pointer-events", "none").attr("width", width).attr("height", height).attr("transform", pos ? `translate(${(_c = pos.x) != null ? _c : 0} ${(_d = pos.y) != null ? _d : 0})` : null);
+      }
+    });
+  }
+}
+function getDataLabelImgUrl(d) {
+  var _a;
+  const $$ = this;
+  const { config, state } = $$;
+  const image = state.arcWidth ? $$.getArcLabelConfig("image") : config.data_labels.image;
+  if (isFunction(image)) {
+    return (_a = image.call($$.api, d.value, d.id, d.index)) != null ? _a : {
+      url: "",
+      width: 0,
+      height: 0,
+      pos: { x: 0, y: 0 }
+    };
+  } else if (image) {
+    const { url = "", width = 0, height = 0, pos } = image;
+    return {
+      url,
+      width,
+      height,
+      pos
+    };
+  }
+  return null;
+}
+function updateTextImagePos(textNode, pos) {
+  var _a;
+  const $$ = this;
+  const { config, state: { arcWidth, hasTreemap } } = $$;
+  const isRotated = config.axis_rotated;
+  const image = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(textNode.previousElementSibling);
+  const isShown = (textNode2) => {
+    var _a2;
+    const isShown2 = textNode2.style.opacity !== "0" && textNode2.style.fillOpacity !== "0";
+    return (arcWidth ? textNode2.textContent : isShown2) && ((_a2 = this.previousElementSibling) == null ? void 0 : _a2.tagName) !== "image";
+  };
+  if (!image.empty() && ((_a = image.node()) == null ? void 0 : _a.tagName) === "image") {
+    const textRect = getBoundingRect(textNode);
+    const w = +image.attr("width") / 2;
+    const h = +image.attr("height") / 2;
+    let x = pos.x - w;
+    let y = pos.y - h - textRect.height / 2;
+    if (isRotated) {
+      pos.x += w;
+    } else {
+      if (hasTreemap) {
+        x = -w;
+        y = -(h * 2 + textRect.height);
+      }
+      if (!($$.hasType("pie") || $$.hasType("polar"))) {
+        pos.y += h;
+      }
+    }
+    $$.$T(image).style("opacity", isShown(textNode) ? null : "0").attr("x", x).attr("y", y);
+  }
+}
+
+
+;// ./src/ChartInternal/internals/text.ts
+
+
+
+
+
 /* harmony default export */ var internals_text = ({
   opacityForText(d) {
     const $$ = this;
-    return $$.isBarType(d) && !$$.meetsLabelThreshold(
-      Math.abs($$.getRatio("bar", d)),
-      "bar"
-    ) ? "0" : $$.hasDataLabel ? null : "0";
+    return $$.isBarType(d) && !meetsLabelThreshold.call($$, Math.abs($$.getRatio("bar", d)), "bar") ? "0" : $$.hasDataLabel ? null : "0";
   },
   /**
    * Initializes the text
@@ -7198,6 +7351,7 @@ function updateTextBorder(text, pos, rectClass) {
         setTextValue(node, value);
       }
     });
+    updateTextImage.call($$);
   },
   updateTextColor(d) {
     const $$ = this;
@@ -7275,7 +7429,7 @@ function updateTextBorder(text, pos, rectClass) {
     ).style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$)).each(function(d, i) {
       const node = $T(
         hasTreemap && this.childElementCount ? this.parentNode : this,
-        !!(withTransition && this.getAttribute("x")),
+        !!(withTransition && (this.getAttribute("x") || this.getAttribute("transform"))),
         t
       );
       const isInverted = config[`axis_${axis == null ? void 0 : axis.getId(d.id)}_inverted`];
@@ -7287,6 +7441,7 @@ function updateTextBorder(text, pos, rectClass) {
         pos = setRotatePos.bind($$)(d, pos, anchorString, isRotated, isInverted);
         node.attr("text-anchor", anchorString);
       }
+      updateTextImagePos.call($$, this, pos);
       if (this.childElementCount || angle) {
         node.attr("transform", `translate(${pos.x} ${pos.y}) ${rotateString}`);
       } else {
@@ -7529,19 +7684,6 @@ function updateTextBorder(text, pos, rectClass) {
     $$.$el.arcs.selectAll(selector).each(function() {
       (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.selectAll)([this, this.previousSibling]).classed($TEXT.TextOverlapping, false);
     });
-  },
-  /**
-   * Check if meets the ratio to show data label text
-   * @param {number} ratio ratio to meet
-   * @param {string} type chart type
-   * @returns {boolean}
-   * @private
-   */
-  meetsLabelThreshold(ratio = 0, type) {
-    const $$ = this;
-    const { config } = $$;
-    const threshold = config[`${type}_label_threshold`] || 0;
-    return ratio >= threshold;
   }
 });
 
@@ -17694,6 +17836,7 @@ var arc_spreadProps = (a, b) => arc_defProps(a, arc_getOwnPropDescs(b));
 
 
 
+
 function getRadiusFn(expandRate = 0) {
   const $$ = this;
   const { config, state } = $$;
@@ -17984,7 +18127,9 @@ function getAttrTweenFn(fn) {
         return isFunction(format) ? format(range) : `${range}${isPercent ? "%" : ""}`;
       }).merge(rangeText));
       if ((!state.rendered || state.rendered && !fixed) && totalSum > 0) {
-        rangeText.attr("transform", (d, i) => $$.transformForArcLabel(pieData[i], true));
+        rangeText.attr("transform", function(d, i) {
+          return $$.transformForArcLabel(this, pieData[i], true);
+        });
       }
       rangeText.style(
         "opacity",
@@ -17994,30 +18139,32 @@ function getAttrTweenFn(fn) {
   },
   /**
    * Set transform attributes to arc label text
+   * @param {SVGTextElement} textNode Text node element
    * @param {object} d Data object
    * @param {boolean} forRange Weather is for ranged text option(arc.rangeText.values)
    * @returns {string} Translate attribute string
    * @private
    */
-  transformForArcLabel(d, forRange = false) {
+  transformForArcLabel(textNode, d, forRange = false) {
     var _a, _b, _c;
     const $$ = this;
     const { config, state: { radiusExpanded } } = $$;
     const updated = $$.updateAngle(d, forRange);
+    const pos = { x: 0, y: 0 };
     let translate = "";
+    let ratio = 1;
     if (updated) {
       if (forRange || $$.hasMultiArcGauge()) {
         const y1 = Math.sin(updated.endAngle - Math.PI / 2);
         const rangeTextPosition = config.arc_rangeText_position;
-        let x = Math.cos(updated.endAngle - Math.PI / 2) * (radiusExpanded + (forRange ? 5 : 25));
-        let y = y1 * (radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
+        pos.x = Math.cos(updated.endAngle - Math.PI / 2) * (radiusExpanded + (forRange ? 5 : 25));
+        pos.y = y1 * (radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
         if (forRange && rangeTextPosition) {
           const rangeValues = config.arc_rangeText_values;
-          const pos = isFunction(rangeTextPosition) ? rangeTextPosition(rangeValues[d.index]) : rangeTextPosition;
-          x += (_a = pos == null ? void 0 : pos.x) != null ? _a : 0;
-          y += (_b = pos == null ? void 0 : pos.y) != null ? _b : 0;
+          const position = isFunction(rangeTextPosition) ? rangeTextPosition(rangeValues[d.index]) : rangeTextPosition;
+          pos.x += (_a = position == null ? void 0 : position.x) != null ? _a : 0;
+          pos.y += (_b = position == null ? void 0 : position.y) != null ? _b : 0;
         }
-        translate = `translate(${x},${y})`;
       } else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
         let { outerRadius } = $$.getRadius(d);
         if ($$.hasType("polar")) {
@@ -18026,14 +18173,17 @@ function getAttrTweenFn(fn) {
         const c = this.svgArc.centroid(updated);
         const [x, y] = c.map((v) => isNaN(v) ? 0 : v);
         const h = Math.sqrt(x * x + y * y);
-        let ratio = (_c = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$)).map((v) => config[`${v}_label_ratio`])) == null ? void 0 : _c[0];
+        pos.x = x;
+        pos.y = y;
+        ratio = (_c = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$)).map((v) => config[`${v}_label_ratio`])) == null ? void 0 : _c[0];
         if (ratio) {
           ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, h) : ratio;
         } else {
           ratio = outerRadius && (h ? (36 / outerRadius > 0.375 ? 1.175 - 36 / outerRadius : 0.8) * outerRadius / h : 0);
         }
-        translate = `translate(${x * ratio},${y * ratio})`;
       }
+      updateTextImagePos.call($$, textNode, pos);
+      translate = `translate(${pos.x * ratio},${pos.y * ratio})`;
     }
     return translate;
   },
@@ -18054,13 +18204,14 @@ function getAttrTweenFn(fn) {
         const node = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
         const updated = $$.updateAngle(d);
         const ratio = $$.getRatio("arc", updated);
-        const isUnderThreshold = $$.meetsLabelThreshold(
+        const isUnderThreshold = meetsLabelThreshold.call(
+          $$,
           ratio,
           (_a = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))) == null ? void 0 : _a[0]
         );
         if (isUnderThreshold) {
           const { value } = updated || d;
-          const text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, d.data.id).toString();
+          const text = ($$.getArcLabelConfig("format") || $$.defaultArcValueFormat)(value, ratio, d.data.id).toString();
           setTextValue(node, text, [-1, 1], hasGauge);
         } else {
           node.text("");
@@ -18136,14 +18287,18 @@ function getAttrTweenFn(fn) {
     const { config } = $$;
     return ["donut", "gauge", "pie", "polar"].some((v) => $$.hasType(v) && config[`${v}_label_show`]);
   },
-  getArcLabelFormat() {
+  getArcLabelConfig(name = "format") {
     const $$ = this;
     const { config } = $$;
-    let format = (v) => v;
+    let fn = (v) => v;
     ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$)).forEach((v) => {
-      format = config[`${v}_label_format`];
+      fn = config[`${v}_label_${name}`];
     });
-    return isFunction(format) ? format.bind($$.api) : format;
+    if (name === "format") {
+      return isFunction(fn) ? fn.bind($$.api) : fn;
+    } else {
+      return fn;
+    }
   },
   updateTargetsForArc(targets) {
     const $$ = this;
@@ -18481,7 +18636,11 @@ function getAttrTweenFn(fn) {
     const hasMultiArcGauge = $$.hasMultiArcGauge();
     let text;
     if (!(hasGauge && $$.data.targets.length === 1 && config.gauge_title)) {
-      text = main.selectAll(`.${$ARC.chartArc}`).select("text").style("opacity", "0").attr("class", (d) => $$.isGaugeType(d.data) ? $GAUGE.gaugeValue : null).call($$.textForArcLabel.bind($$)).attr("transform", (d) => $$.transformForArcLabel.bind($$)(d)).style("font-size", (d) => $$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ? `${Math.round(state.radius / 5)}px` : null).transition().duration(duration).style(
+      text = main.selectAll(`.${$ARC.chartArc}`).select("text").style("opacity", "0").attr("class", (d) => $$.isGaugeType(d.data) ? $GAUGE.gaugeValue : null).call($$.textForArcLabel.bind($$)).style("font-size", (d) => $$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ? `${Math.round(state.radius / 5)}px` : null);
+      updateTextImage.call($$);
+      text.attr("transform", function(d) {
+        return $$.transformForArcLabel.bind($$)(this, d);
+      }).transition().duration(duration).style(
         "opacity",
         (d) => $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? null : "0"
       );
@@ -20690,6 +20849,7 @@ var external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_
 
 
 
+
 function position(group, root) {
   const $$ = this;
   const { scale: { x, y }, state: { width } } = $$;
@@ -20883,10 +21043,7 @@ function getHierachyData(data) {
     const format = config.treemap_label_format;
     const ratio = $$.getRatio("treemap", d);
     const percentValue = (ratio * 100).toFixed(2);
-    const meetLabelThreshold = config.treemap_label_show && $$.meetsLabelThreshold(
-      ratio,
-      "treemap"
-    ) ? null : "0";
+    const meetLabelThreshold = config.treemap_label_show && meetsLabelThreshold.call($$, ratio, "treemap") ? null : "0";
     return function(node) {
       node.style("opacity", meetLabelThreshold);
       return isFunction(format) ? format.bind($$.api)(value, ratio, id) : `${id}
@@ -21623,6 +21780,18 @@ ${percentValue}%`;
    * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
    * @property {number} [donut.label.threshold=0.05] Set threshold ratio to show/hide labels.
    * @property {number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
+   * @property {object|Function} [donut.label.image] Set image to be displayed next to the label text.<br><br>
+   * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+   * The arguments are:<br>
+   *  - `v` is the value of the data point where the label is shown.
+   *  - `id` is the id of the data where the label is shown.
+   *  - `i` is the index of the data series point where the label is shown.
+   * @property {string} donut.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+   * @property {number} donut.label.image.width Image width in pixels.
+   * @property {number} donut.label.image.height Image height in pixels.
+   * @property {object} [donut.label.image.pos] Image position relative to the label text.
+   * @property {number} [donut.label.image.pos.x=0] x coordinate position, relative the original.
+   * @property {number} [donut.label.image.pos.y=0] y coordinate position, relative the original.
    * @property {boolean} [donut.expand=true] Enable or disable expanding donut pieces.
    * @property {number} [donut.expand.rate=0.98] Set expand rate.
    * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
@@ -21632,6 +21801,16 @@ ${percentValue}%`;
    *    - When `arc.needle.show=true` is set, special template `{=NEEDLE_VALUE}` can be used inside the title text to show current needle value.
    * @property {number} [donut.padAngle=0] Set padding between data.
    * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
+   * @see [Demo: Corner Radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
+   * @see [Demo: Needle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutNeedle)
+   * @see [Demo: Range Text](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutRangeText)
+   * @see [Demo: Label Image](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelImage)
+   * @see [Demo: Label Ratio](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelRatio)
+   * @see [Demo: Multiline Label](https://naver.github.io/billboard.js/demo/#DonutChartOptions.MultilineLabel)
+   * @see [Demo: Multiline Title](https://naver.github.io/billboard.js/demo/#DonutChartOptions.MultilineTitle)
+   * @see [Demo: Pad Angle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.padAngle)
+   * @see [Demo: Starting Angle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.StartingAngle)
+   *
    * @example
    *  donut: {
    *      label: {
@@ -21653,7 +21832,51 @@ ${percentValue}%`;
    *          	return ratio;
    *          },
    *          // or set ratio number
-   *          ratio: 0.5
+   *          ratio: 0.5,
+   *
+   *          // set image to be displayed next to the label text
+   *          image: {
+   *             url: "./sample.svg",
+   *
+   *             // use placeholder to dynamically set image URL based on data ID
+   *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+   *             width: 35,
+   *             height: 35,
+   *             pos: {
+   *                x: 0,
+   *                y: 0
+   *             }
+   *          },
+   *
+   *          // or use function to return image configuration dynamically
+   *          image: function(v, id, i) {
+   *             // Return different images based on value
+   *             if (v > 500) {
+   *                return {
+   *                   url: "./high-value.svg",
+   *                   width: 40,
+   *                   height: 40,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if (v > 100) {
+   *                return {
+   *                   url: "./medium-value.svg",
+   *                   width: 30,
+   *                   height: 30,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if(v < 5) {
+   *                // Return falsy value in case of don't want to show image
+   *                return null;
+   *             } else {
+   *                return {
+   *                   url: "./low-value.svg",
+   *                   width: 20,
+   *                   height: 20,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             }
+   *          }
    *      },
    *
    *      // disable expand transition for interaction
@@ -21682,6 +21905,7 @@ ${percentValue}%`;
   donut_label_show: true,
   donut_label_format: void 0,
   donut_label_threshold: 0.05,
+  donut_label_image: void 0,
   donut_label_ratio: void 0,
   donut_width: void 0,
   donut_title: "",
@@ -21744,6 +21968,18 @@ ${percentValue}%`;
    * - id {string}: data's id value
    * @property {number|Function} [gauge.label.ratio=undefined] Set ratio of labels position.
    * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
+   * @property {object|Function} [gauge.label.image] Set image to be displayed next to the label text.<br><br>
+   * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+   * The arguments are:<br>
+   *  - `v` is the value of the data point where the label is shown.
+   *  - `id` is the id of the data where the label is shown.
+   *  - `i` is the index of the data series point where the label is shown.
+   * @property {string} gauge.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+   * @property {number} gauge.label.image.width Image width in pixels.
+   * @property {number} gauge.label.image.height Image height in pixels.
+   * @property {object} [gauge.label.image.pos] Image position relative to the label text.
+   * @property {number} [gauge.label.image.pos.x=0] x coordinate position, relative the original.
+   * @property {number} [gauge.label.image.pos.y=0] y coordinate position, relative the original.
    * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
    * @property {number} [gauge.expand.rate=0.98] Set expand rate.
    * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
@@ -21784,7 +22020,8 @@ ${percentValue}%`;
    * @see [Demo: enforceMinMax, min/max](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeMinMax)
    * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
    * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
-   * @see [Demo: labelRatio](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelRatio)
+   * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelImage)
+   * @see [Demo: label ratio](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelRatio)
    * @example
    *  gauge: {
    *      background: "#eee", // will set 'fill' css prop for '.bb-chart-arcs-background' classed element.
@@ -21812,7 +22049,51 @@ ${percentValue}%`;
    *              return ratio;
    *          },
    *          // or set ratio number
-   *          ratio: 0.5
+   *          ratio: 0.5,
+   *
+   *          // set image to be displayed next to the label text
+   *          image: {
+   *             url: "./sample.svg",
+   *
+   *             // use placeholder to dynamically set image URL based on data ID
+   *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+   *             width: 35,
+   *             height: 35,
+   *             pos: {
+   *                x: 0,
+   *                y: 0
+   *             }
+   *          },
+   *
+   *          // or use function to return image configuration dynamically
+   *          image: function(v, id, i) {
+   *             // Return different images based on value
+   *             if (v > 500) {
+   *                return {
+   *                   url: "./high-value.svg",
+   *                   width: 40,
+   *                   height: 40,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if (v > 100) {
+   *                return {
+   *                   url: "./medium-value.svg",
+   *                   width: 30,
+   *                   height: 30,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if(v < 5) {
+   *                // Return falsy value in case of don't want to show image
+   *                return null;
+   *             } else {
+   *                return {
+   *                   url: "./low-value.svg",
+   *                   width: 20,
+   *                   height: 20,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             }
+   *          }
    *      },
    *
    *      // disable expand transition for interaction
@@ -21855,6 +22136,7 @@ ${percentValue}%`;
   gauge_label_format: void 0,
   gauge_label_ratio: void 0,
   gauge_label_threshold: 0,
+  gauge_label_image: void 0,
   gauge_enforceMinMax: false,
   gauge_min: 0,
   gauge_max: 100,
@@ -21882,6 +22164,18 @@ ${percentValue}%`;
    * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
    * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
    * @property {number} [pie.label.threshold=0.05] Set threshold ratio to show/hide labels.
+   * @property {object|Function} [pie.label.image] Set image to be displayed next to the label text.<br><br>
+   * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+   * The arguments are:<br>
+   *  - `v` is the value of the data point where the label is shown.
+   *  - `id` is the id of the data where the label is shown.
+   *  - `i` is the index of the data series point where the label is shown.
+   * @property {string} pie.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+   * @property {number} pie.label.image.width Image width in pixels.
+   * @property {number} pie.label.image.height Image height in pixels.
+   * @property {object} [pie.label.image.pos] Image position relative to the label text.
+   * @property {number} [pie.label.image.pos.x=0] x coordinate position, relative the original.
+   * @property {number} [pie.label.image.pos.y=0] y coordinate position, relative the original.
    * @property {boolean|object} [pie.expand=true] Enable or disable expanding pie pieces.
    * @property {number} [pie.expand.rate=0.98] Set expand rate.
    * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
@@ -21894,6 +22188,7 @@ ${percentValue}%`;
    * @see [Demo: innerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.InnerRadius)
    * @see [Demo: outerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.OuterRadius)
    * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#PieChartOptions.StartingAngle)
+   * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#PieChartOptions.LabelImage)
    * @example
    *  pie: {
    *      label: {
@@ -21915,7 +22210,51 @@ ${percentValue}%`;
    *              return ratio;
    *          },
    *          // or set ratio number
-   *          ratio: 0.5
+   *          ratio: 0.5,
+   *
+   *          // set image to be displayed next to the label text
+   *          image: {
+   *             url: "./sample.svg",
+   *
+   *             // use placeholder to dynamically set image URL based on data ID
+   *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+   *             width: 35,
+   *             height: 35,
+   *             pos: {
+   *                x: 0,
+   *                y: 0
+   *             }
+   *          },
+   *
+   *          // or use function to return image configuration dynamically
+   *          image: function(v, id, i) {
+   *             // Return different images based on value
+   *             if (v > 500) {
+   *                return {
+   *                   url: "./high-value.svg",
+   *                   width: 40,
+   *                   height: 40,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if (v > 100) {
+   *                return {
+   *                   url: "./medium-value.svg",
+   *                   width: 30,
+   *                   height: 30,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if(v < 5) {
+   *                // Return falsy value in case of don't want to show image
+   *                return null;
+   *             } else {
+   *                return {
+   *                   url: "./low-value.svg",
+   *                   width: 20,
+   *                   height: 20,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             }
+   *          }
    *      },
    *
    *      // disable expand transition for interaction
@@ -21954,6 +22293,7 @@ ${percentValue}%`;
   pie_label_format: void 0,
   pie_label_ratio: void 0,
   pie_label_threshold: 0.05,
+  pie_label_image: void 0,
   pie_expand: {},
   pie_expand_rate: 0.98,
   pie_expand_duration: 50,
@@ -21976,6 +22316,18 @@ ${percentValue}%`;
    * @property {Function} [polar.label.format] Set formatter for the label on each polar piece.
    * @property {number} [polar.label.threshold=0.05] Set threshold ratio to show/hide labels.
    * @property {number|Function} [polar.label.ratio=undefined] Set ratio of labels position.
+   * @property {object|Function} [polar.label.image] Set image to be displayed next to the label text.<br><br>
+   * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+   * The arguments are:<br>
+   *  - `v` is the value of the data point where the label is shown.
+   *  - `id` is the id of the data where the label is shown.
+   *  - `i` is the index of the data series point where the label is shown.
+   * @property {string} polar.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+   * @property {number} polar.label.image.width Image width in pixels.
+   * @property {number} polar.label.image.height Image height in pixels.
+   * @property {object} [polar.label.image.pos] Image position relative to the label text.
+   * @property {number} [polar.label.image.pos.x=0] x coordinate position, relative the original.
+   * @property {number} [polar.label.image.pos.y=0] y coordinate position, relative the original.
    * @property {number} [polar.level.depth=3] Set the level depth.
    * @property {boolean} [polar.level.show=true] Show or hide level.
    * @property {string} [polar.level.text.backgroundColor="#fff"] Set label text's background color.
@@ -21985,6 +22337,7 @@ ${percentValue}%`;
    * @property {number} [polar.padding=0] Sets the gap between pie arcs.
    * @property {number} [polar.startingAngle=0] Set starting angle where data draws.
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.PolarChart)
+   * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#PolarChartOptions.LabelImage)
    * @example
    *  polar: {
    *      label: {
@@ -22006,7 +22359,51 @@ ${percentValue}%`;
    *              return ratio;
    *          },
    *          // or set ratio number
-   *          ratio: 0.5
+   *          ratio: 0.5,
+   *
+   *          // set image to be displayed next to the label text
+   *          image: {
+   *             url: "./sample.svg",
+   *
+   *             // use placeholder to dynamically set image URL based on data ID
+   *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+   *             width: 35,
+   *             height: 35,
+   *             pos: {
+   *                x: 0,
+   *                y: 0
+   *             }
+   *          },
+   *
+   *          // or use function to return image configuration dynamically
+   *          image: function(v, id, i) {
+   *             // Return different images based on value
+   *             if (v > 500) {
+   *                return {
+   *                   url: "./high-value.svg",
+   *                   width: 40,
+   *                   height: 40,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if (v > 100) {
+   *                return {
+   *                   url: "./medium-value.svg",
+   *                   width: 30,
+   *                   height: 30,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if(v < 5) {
+   *                // Return falsy value in case of don't want to show image
+   *                return null;
+   *             } else {
+   *                return {
+   *                   url: "./low-value.svg",
+   *                   width: 20,
+   *                   height: 20,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             }
+   *          }
    *      },
    *      level: {
    *          depth: 3,
@@ -22028,6 +22425,7 @@ ${percentValue}%`;
   polar_label_show: true,
   polar_label_format: void 0,
   polar_label_threshold: 0.05,
+  polar_label_image: void 0,
   polar_label_ratio: void 0,
   polar_level_depth: 3,
   polar_level_max: void 0,
@@ -22253,7 +22651,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.0-preview-nightly-20250827004717",
+  version: "3.16.0-nightly-20250829004701",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
