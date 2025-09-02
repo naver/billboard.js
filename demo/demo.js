@@ -1861,6 +1861,37 @@ var demos = {
 				}
 			}
 		},
+		TickInner: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 120, 80, 100],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						type: "line"
+					},
+					axis: {
+						x: {
+							tick: {
+								inner: true
+							}
+						},
+						y: {
+							tick: {
+								inner: true
+							}
+						},
+						y2: {
+							show: true,
+							tick: {
+								inner: true
+							}
+						}
+					}
+				}
+			}
+		],
 		RangeForYAxis: {
 			options: {
 				data: {

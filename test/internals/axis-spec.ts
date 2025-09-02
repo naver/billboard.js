@@ -2144,6 +2144,376 @@ describe("AXIS", function() {
 			});
 		});
 	});
+
+	describe("Axis tick.inner", () => {
+		describe("axis.x.tick.inner", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 50, 20, 10, 40, 15, 25]
+						]
+					},
+					axis: {
+						x: {
+							tick: {
+								inner: false
+							}
+						}
+					}
+				};
+			});
+
+			it("should not have inner x tick lines", () => {
+				chart.$.main.selectAll(`.${$AXIS.axisX} g.tick line`).each(function() {
+					const y2 = +d3Select(this).attr("y2");
+					
+					// tick lines should extend outward (positive y2 value)
+					expect(y2).to.be.above(0);
+				});
+			});
+
+			it("set options axis.x.tick.inner=true", () => {
+				args.axis.x.tick.inner = true;
+			});
+
+			it("should have inner x tick lines", () => {
+				chart.$.main.selectAll(`.${$AXIS.axisX} g.tick line`).each(function() {
+					const y2 = +d3Select(this).attr("y2");
+					
+					// tick lines should extend inward (negative y2 value)
+					expect(y2).to.be.below(0);
+				});
+			});
+		});
+
+		describe("axis.y.tick.inner", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 50, 20, 10, 40, 15, 25]
+						]
+					},
+					axis: {
+						y: {
+							tick: {
+								inner: false
+							}
+						}
+					}
+				};
+			});
+
+			it("should not have inner y tick lines", () => {
+				chart.$.main.selectAll(`.${$AXIS.axisY} g.tick line`).each(function() {
+					const x2 = +d3Select(this).attr("x2");
+					
+					// tick lines should extend outward (negative x2 value)
+					expect(x2).to.be.below(0);
+				});
+			});
+
+			it("set options axis.y.tick.inner=true", () => {
+				args.axis.y.tick.inner = true;
+			});
+
+			it("should have inner y tick lines", () => {
+				chart.$.main.selectAll(`.${$AXIS.axisY} g.tick line`).each(function() {
+					const x2 = +d3Select(this).attr("x2");
+					
+					// tick lines should extend inward (positive x2 value)
+					expect(x2).to.be.above(0);
+				});
+			});
+		});
+
+		describe("axis.y2.tick.inner", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 50, 20, 10, 40, 15, 25]
+						]
+					},
+					axis: {
+						y2: {
+							show: true,
+							tick: {
+								inner: false
+							}
+						}
+					}
+				};
+			});
+
+			it("should not have inner y2 tick lines", () => {
+				chart.$.main.selectAll(`.${$AXIS.axisY2} g.tick line`).each(function() {
+					const x2 = +d3Select(this).attr("x2");
+					
+					// tick lines should extend outward (positive x2 value)
+					expect(x2).to.be.above(0);
+				});
+			});
+
+			it("set options axis.y2.tick.inner=true", () => {
+				args.axis.y2.tick.inner = true;
+			});
+
+			it("should have inner y2 tick lines", () => {
+				chart.$.main.selectAll(`.${$AXIS.axisY2} g.tick line`).each(function() {
+					const x2 = +d3Select(this).attr("x2");
+					
+					// tick lines should extend inward (negative x2 value)
+					expect(x2).to.be.below(0);
+				});
+			});
+		});
+
+		describe("rotated axis with tick.inner", () => {
+			describe("axis.rotated=true, x.tick.inner", () => {
+				beforeAll(() => {
+					args = {
+						data: {
+							columns: [
+								["data1", 30, 200, 100, 400, 150, 250],
+								["data2", 50, 20, 10, 40, 15, 25]
+							]
+						},
+						axis: {
+							rotated: true,
+							x: {
+								tick: {
+									inner: false
+								}
+							}
+						}
+					};
+				});
+
+				it("should not have inner x tick lines when rotated", () => {
+					chart.$.main.selectAll(`.${$AXIS.axisX} g.tick line`).each(function() {
+						const x2 = +d3Select(this).attr("x2");
+						
+						// for rotated x axis, outer tick should have negative x2
+						expect(x2).to.be.below(0);
+					});
+				});
+
+				it("set options axis.x.tick.inner=true", () => {
+					args.axis.x.tick.inner = true;
+				});
+
+				it("should have inner x tick lines when rotated", () => {
+					chart.$.main.selectAll(`.${$AXIS.axisX} g.tick line`).each(function() {
+						const x2 = +d3Select(this).attr("x2");
+						
+						// for rotated x axis, inner tick should have positive x2
+						expect(x2).to.be.above(0);
+					});
+				});
+			});
+
+			describe("axis.rotated=true, y.tick.inner", () => {
+				beforeAll(() => {
+					args = {
+						data: {
+							columns: [
+								["data1", 30, 200, 100, 400, 150, 250],
+								["data2", 50, 20, 10, 40, 15, 25]
+							]
+						},
+						axis: {
+							rotated: true,
+							y: {
+								tick: {
+									inner: false
+								}
+							}
+						}
+					};
+				});
+
+				it("should not have inner y tick lines when rotated", () => {
+					chart.$.main.selectAll(`.${$AXIS.axisY} g.tick line`).each(function() {
+						const y2 = +d3Select(this).attr("y2");
+						
+						// for rotated y axis, outer tick should have positive y2
+						expect(y2).to.be.above(0);
+					});
+				});
+
+				it("set options axis.y.tick.inner=true", () => {
+					args.axis.y.tick.inner = true;
+				});
+
+				it("should have inner y tick lines when rotated", () => {
+					chart.$.main.selectAll(`.${$AXIS.axisY} g.tick line`).each(function() {
+						const y2 = +d3Select(this).attr("y2");
+						
+						// for rotated y axis, inner tick should have negative y2
+						expect(y2).to.be.below(0);
+					});
+				});
+			});
+
+			describe("axis.rotated=true, y2.tick.inner", () => {
+				beforeAll(() => {
+					args = {
+						data: {
+							columns: [
+								["data1", 30, 200, 100, 400, 150, 250],
+								["data2", 50, 20, 10, 40, 15, 25]
+							]
+						},
+						axis: {
+							rotated: true,
+							y2: {
+								show: true,
+								tick: {
+									inner: false
+								}
+							}
+						}
+					};
+				});
+
+				it("should not have inner y2 tick lines when rotated", () => {
+					chart.$.main.selectAll(`.${$AXIS.axisY2} g.tick line`).each(function() {
+						const y2 = +d3Select(this).attr("y2");
+						
+						// for rotated y2 axis, outer tick should have negative y2
+						expect(y2).to.be.below(0);
+					});
+				});
+
+				it("set options axis.y2.tick.inner=true", () => {
+					args.axis.y2.tick.inner = true;
+				});
+
+				it("should have inner y2 tick lines when rotated", () => {
+					chart.$.main.selectAll(`.${$AXIS.axisY2} g.tick line`).each(function() {
+						const y2 = +d3Select(this).attr("y2");
+						
+						// for rotated y2 axis, inner tick should have positive y2
+						expect(y2).to.be.above(0);
+					});
+				});
+			});
+
+			describe("axis.rotated=true, all axes with tick.inner", () => {
+				beforeAll(() => {
+					args = {
+						data: {
+							columns: [
+								["data1", 30, 200, 100, 400, 150, 250],
+								["data2", 50, 20, 10, 40, 15, 25]
+							]
+						},
+						axis: {
+							rotated: true,
+							x: {
+								tick: {
+									inner: true
+								}
+							},
+							y: {
+								tick: {
+									inner: true
+								}
+							},
+							y2: {
+								show: true,
+								tick: {
+									inner: true
+								}
+							}
+						}
+					};
+				});
+
+				it("should work correctly with all rotated axes having inner ticks", () => {
+					// x axis (rotated becomes vertical)
+					chart.$.main.selectAll(`.${$AXIS.axisX} g.tick line`).each(function() {
+						const x2 = +d3Select(this).attr("x2");
+						
+						// for rotated x axis, inner tick should have positive x2
+						expect(x2).to.be.above(0);
+					});
+
+					// y axis (rotated becomes horizontal)
+					chart.$.main.selectAll(`.${$AXIS.axisY} g.tick line`).each(function() {
+						const y2 = +d3Select(this).attr("y2");
+						
+						// for rotated y axis, inner tick should have negative y2
+						expect(y2).to.be.below(0);
+					});
+
+					// y2 axis (rotated becomes horizontal)
+					chart.$.main.selectAll(`.${$AXIS.axisY2} g.tick line`).each(function() {
+						const y2 = +d3Select(this).attr("y2");
+						
+						// for rotated y2 axis, inner tick should have positive y2
+						expect(y2).to.be.above(0);
+					});
+				});
+			});
+		});
+
+		describe("all axes with tick.inner", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 50, 20, 10, 40, 15, 25]
+						]
+					},
+					axis: {
+						x: {
+							tick: {
+								inner: true
+							}
+						},
+						y: {
+							tick: {
+								inner: true
+							}
+						},
+						y2: {
+							show: true,
+							tick: {
+								inner: true
+							}
+						}
+					}
+				};
+			});
+
+			it("should apply inner tick to all axes simultaneously", () => {
+				// x axis
+				chart.$.main.selectAll(`.${$AXIS.axisX} g.tick line`).each(function() {
+					const y2 = +d3Select(this).attr("y2");
+					expect(y2).to.be.below(0);
+				});
+
+				// y axis
+				chart.$.main.selectAll(`.${$AXIS.axisY} g.tick line`).each(function() {
+					const x2 = +d3Select(this).attr("x2");
+					expect(x2).to.be.above(0);
+				});
+
+				// y2 axis
+				chart.$.main.selectAll(`.${$AXIS.axisY2} g.tick line`).each(function() {
+					const x2 = +d3Select(this).attr("x2");
+					expect(x2).to.be.below(0);
+				});
+			});
+		});
+	});
 	
 	describe("y/y2 Axis inverted", () => {
 		beforeAll(() => {
