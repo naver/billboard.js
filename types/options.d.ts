@@ -1159,8 +1159,13 @@ export interface Data {
 
 		/**
 		 * Set label text background colors.
+		 * - **NOTE**: When function is set, background colors can be sepcified one color per dataset.
+		 *   - Within the function, the last returned color for dataset will be used.
+		 *   - Only can control set or unset background color for each values.
 		 */
-		backgroundColors?: string | { [key: string]: string };
+		backgroundColors?: string |
+			{ [key: string]: string } |
+			((this: Chart, color: string, d: DataItem) => string);
 
 		/**
 		 * Set label text colors.
@@ -1179,6 +1184,102 @@ export interface Data {
 		 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
 		 */
 		format?: FormatFunction | { [key: string]: FormatFunction };
+
+		/**
+		 * Set image URL to be displayed next to the label text.
+		 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return a string URL or null.<br><br>
+		 * The arguments are:<br>
+		 *  - `v` is the value of the data point where the label is shown.
+		 *  - `id` is the id of the data where the label is shown.
+		 *  - `i` is the index of the data series point where the label is shown.
+		 */
+		imgUrl?: string | ((this: Chart, v: number, id: string, i: number) => string | null);
+
+		/**
+		 * Set image to be displayed next to the label text.
+		 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+		 * The arguments are:<br>
+		 *  - `v` is the value of the data point where the label is shown.
+		 *  - `id` is the id of the data where the label is shown.
+		 *  - `i` is the index of the data series point where the label is shown.
+		 * @example
+		 * image: {
+		 *    url: "./sample.svg",
+		 *    // use placeholder to dynamically set image URL based on data ID
+		 *    url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+		 *    width: 35,
+		 *    height: 35,
+		 *    pos: {
+		 *       x: 0,
+		 *       y: 0
+		 *    }
+		 * }
+		 * 
+		 * // or use function to return image configuration dynamically
+		 * image: function(v, id, i) {
+		 *    // Return different images based on value
+		 *    if (v > 500) {
+		 *       return {
+		 *          url: "./high-value.svg",
+		 *          width: 40,
+		 *          height: 40,
+		 *          pos: { x: 0, y: 0 }
+		 *       };
+		 *    } else if (v > 100) {
+		 *       return {
+		 *          url: "./medium-value.svg",
+		 *          width: 30,
+		 *          height: 30,
+		 *          pos: { x: 0, y: 0 }
+		 *       };
+		 *    } else if(v < 5) {
+		 *       // Return null in case don't want to show image
+		 *       return null;
+		 *    } else {
+		 *       return {
+		 *          url: "./low-value.svg",
+		 *          width: 20,
+		 *          height: 20,
+		 *          pos: { x: 0, y: 0 }
+		 *       };
+		 *    }
+		 * }
+		 */
+		image?: {
+			/**
+			 * Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+			 */
+			url: string;
+			/**
+			 * Image width in pixels.
+			 */
+			width: number;
+			/**
+			 * Image height in pixels.
+			 */
+			height: number;
+			/**
+			 * Image position relative to the label text.
+			 */
+			pos?: {
+				/**
+				 * x coordinate position, relative the original.
+				 */
+				x?: number;
+				/**
+				 * y coordinate position, relative the original.
+				 */
+				y?: number;
+			};
+		} | ((this: Chart, v: number, id: string, i: number) => {
+			url: string;
+			width: number;
+			height: number;
+			pos?: {
+				x?: number;
+				y?: number;
+			};
+		} | null);
 
 		/**
 		 * Set each dataset position, relative the original.
@@ -1219,6 +1320,42 @@ export interface Data {
 		 * Rotate label text. Specify degree value in a range of `0 ~ 360`.
 		 */
 		rotate?: number;
+
+		/**
+		 * Add border to data label text.
+		 * NOTE: When set as `true`, styling aren't applied. Hence, need to set using `.bb-text-border` class.
+		 */
+		border?: boolean | {
+			/**
+			 * Border padding. Can be a single number, string or object with top, bottom, left, right properties.
+			 */
+			padding?: number | string | {
+				top?: number;
+				bottom?: number;
+				left?: number;
+				right?: number;
+			};
+
+			/**
+			 * Border radius value.
+			 */
+			radius?: number;
+
+			/**
+			 * Border stroke width.
+			 */
+			strokeWidth?: number;
+
+			/**
+			 * Border stroke color.
+			 */
+			stroke?: string;
+
+			/**
+			 * Border fill color.
+			 */
+			fill?: string;
+		};
 	};
 
 	/**

@@ -178,6 +178,8 @@ export const $TEXT = {
 	text: "bb-text",
 	texts: "bb-texts",
 	title: "bb-title",
+	textBorderRect: "bb-text-border",
+	textLabelImage: "bb-text-label-image",
 	TextOverlapping: "text-overlapping"
 };
 

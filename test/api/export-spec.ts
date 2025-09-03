@@ -201,9 +201,9 @@ describe("API export", () => {
 
 			// pattern for local: preserveFontStyle=true
 			[
-				"UwUQECoIlWYZu6qgABsKvys3LDFCAAGmYQNocKRKQAATAiIVlMehQgAKbHluxJ",
-				"bAOgeAH1QlUcTZOjJOFPV7zN3zDlq/tQUvMb1kYAjNcQLZROAGxBtNTf0oIXkACY",
-				"CZAACZAACZAABSCfARIgARIgARIgARLIMQIUgDkWcHaXBEiABEiABEiABCgA"
+				"BD7f3dolQSIIE6JjBYB3D9LAtz1h5CuB36FvSr0HWhgVj6PESehdq9fhvD",
+				"zPI9F/BFoRpBmbdjyc89MYSZDZHTWBmbtIJC1cdRp9xFmo93GKusODe44GcXn",
+				"7mj5wLZll4qBMfn4j3fMUMKCtHwIrdOT6uaNJu"
 			],
 			
 			// pattern for webdriverio
@@ -229,9 +229,13 @@ describe("API export", () => {
 
 			// pattern for CI: preserveFontStyle=true
 			[
-				"HQCFIBBzxD9azoBCsCmI2eHASZAARjg5NA1EqiDAAVgHfDYNJoEKACjmVdGVRsBCsDauLEVCQSdAAVg0",
-				"J8nNbCY0ESCDEBBoxYmamMDtzmzreKjrguRiROUrGTP2a6TVzIvbop1z5WLgpAP16E",
-				"VXtTm0WTFpt5X9gadzrcuXpjvfn2remIFuuW1WaWwZOm1Q7d0s1EBQDfVzLEuAcAcBXSh"
+				"ATh6xb5wFzqdedEkwF6TQB8CpTqAe6CGC6H3Q6+EBmJP89qDHDYTaN8q7wkyYG0m8BZYmx",
+				"GYdmVuXbFVidP90zNLmUE+bXECj4z82vTg5xDz7U9Gfu8PT444+ct/jX9p1281XXPglXLp+FeuOGS",
+				"P7bcvHKGWRcJkECdEaADWGcXlMMhgWoQeOXyCW4wWqQv9qSr3StnT+va0q09/GFqy752r5zlmW6Hei"
+			],
+			[
+				"qZzbE7syTcJEAUFG9elENOxYMbRK4NKqeiHMoZDASymyEBBET4I4TzBRFJsrsEeJUAQUEEgcitgii3QS5BDrMJ5Njp5",
+				"H8bPnTv343Uz4PoYKEdJAhLVAFBx7gZSFFNIoGgCF3d3d29RdCtsgARqgICqfjOdTp9YA0PhEEiABLIIRDUAdBhDf0URhQRIYEgEWIkESIAESKCuCUQ1AKzrk8bBkwAJkAAJkAAJkEAhBIJjGAAGJJiSAAmQAAmQAAmQQJ0QYABYJyeawyQBEiCBHgLckgAJkIBE9iEQnjsSIAESIAESIAESIIECCXAGsEBwUT6MvpMACZAACZAACdQ3AQaA9X3"
 			]
 		];
 

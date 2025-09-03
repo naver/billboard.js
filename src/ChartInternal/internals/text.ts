@@ -18,114 +18,22 @@ import {
 	setTextValue
 } from "../../module/util";
 import type {IArcData, IDataRow} from "../data/IData";
-
-type Coord = {x: number, y: number};
-type Anchor = "start" | "middle" | "end";
-
-/**
- * Get text-anchor according text.labels.rotate angle
- * @param {number} angle Angle value
- * @returns {string} Anchor string value
- * @private
- */
-function getRotateAnchor(angle: number): Anchor {
-	let anchor: Anchor = "middle";
-
-	if (angle > 0 && angle <= 170) {
-		anchor = "end";
-	} else if (angle > 190 && angle <= 360) {
-		anchor = "start";
-	}
-
-	return anchor;
-}
-
-/**
- * Set rotated position coordinate according text.labels.rotate angle
- * @param {object} d Data object
- * @param {object} pos Position object
- * @param {object} pos.x x coordinate
- * @param {object} pos.y y coordinate
- * @param {string} anchor string value
- * @param {boolean} isRotated If axis is rotated
- * @param {boolean} isInverted If axis is inverted
- * @returns {object} x, y coordinate
- * @private
- */
-function setRotatePos(
-	d: IDataRow,
-	pos: Coord,
-	anchor: Anchor,
-	isRotated: boolean,
-	isInverted: boolean
-): Coord {
-	const $$ = this;
-	const {value} = d;
-	const isCandlestickType = $$.isCandlestickType(d);
-	const isNegative = (isNumber(value) && value < 0) || (
-		isCandlestickType && !$$.getCandlestickData(d)?._isUp
-	);
-
-	let {x, y} = pos;
-	const gap = 4;
-	const doubleGap = gap * 2;
-
-	if (isRotated) {
-		if (anchor === "start") {
-			x += isNegative ? 0 : doubleGap;
-			y += gap;
-		} else if (anchor === "middle") {
-			x += doubleGap;
-			y -= doubleGap;
-		} else if (anchor === "end") {
-			isNegative && (x -= doubleGap);
-			y += gap;
-		}
-	} else {
-		if (anchor === "start") {
-			x += gap;
-			isNegative && (y += doubleGap * 2);
-		} else if (anchor === "middle") {
-			y -= doubleGap;
-		} else if (anchor === "end") {
-			x -= gap;
-			isNegative && (y += doubleGap * 2);
-		}
-
-		if (isInverted) {
-			y += isNegative ? -17 : (isCandlestickType ? 13 : 7);
-		}
-	}
-
-	return {x, y};
-}
-
-/**
- * Get data.labels.position value
- * @param {object} d Data object
- * @param {string} type x | y
- * @returns {number} Position value
- * @private
- */
-function getTextPos(d, type): number {
-	const position = this.config.data_labels_position;
-	const {id, index, value} = d;
-
-	return (
-		isFunction(position) ?
-			position.bind(this.api)(type, value, id, index, this.$el.text) :
-			(id in position ? position[id] : position)[type]
-	) ?? 0;
-}
+import {
+	getRotateAnchor,
+	getTextPos,
+	meetsLabelThreshold,
+	setRotatePos,
+	updateTextBorder,
+	updateTextImage,
+	updateTextImagePos
+} from "./text.util";
 
 export default {
 	opacityForText(d): null | "0" {
 		const $$ = this;
 
-		return $$.isBarType(d) && !$$.meetsLabelThreshold(
-				Math.abs($$.getRatio("bar", d)),
-				"bar"
-			) ?
+		return $$.isBarType(d) &&
+				!meetsLabelThreshold.call($$, Math.abs($$.getRatio("bar", d)), "bar") ?
 			"0" :
 			($$.hasDataLabel ? null : "0");
 	},
@@ -234,6 +142,9 @@ export default {
 					setTextValue(node, value);
 				}
 			});
+
+		// Add images if imgUrl is specified
+		updateTextImage.call($$);
 	},
 
 	updateTextColor(d): null | object | string {
@@ -272,23 +183,37 @@ export default {
 	/**
 	 * Update data label text background color
 	 * @param {object} d Data object
-	 * @param {object|string} option option object
+	 * @param {object|string|Function} option option object
 	 * @returns {string|null}
 	 * @private
 	 */
 	updateTextBGColor(d: IDataRow | IArcData, option): string | null {
 		const $$ = this;
-		const {$el} = $$;
+		const {$el: {defs}} = $$;
 		let color: string = "";
 
-		if (isString(option) || isObject(option)) {
+		if (option) {
 			const id = isString(option) ?
 				"" :
 				$$.getTargetSelectorSuffix("id" in d ? d.id : d.data.id);
-			const filter = $el.defs.select(["filter[id*='labels-bg", "']"].join(id));
+			const filter = defs.select(["filter[id*='labels-bg", "']"].join(id));
 
 			if (filter.size()) {
 				color = `url(#${filter.attr("id")})`;
+			}
+
+			if (isFunction(option)) {
+				$$.generateTextBGColorFilter(option);
+
+				// Get default color and call function
+				const defaultColor = $$.color(d);
+				const bgColor = option.bind($$.api)(defaultColor, d);
+
+				if (bgColor) {
+					filter.select("feFlood").attr("flood-color", bgColor);
+				} else {
+					color = "";
+				}
 			}
 		}
 
@@ -321,7 +246,8 @@ export default {
 			.each(function(d: IDataRow, i: number) {
 				// do not apply transition for newly added text elements
 				const node = $T(hasTreemap && this.childElementCount ? this.parentNode : this,
-					!!(withTransition && this.getAttribute("x")), t);
+					!!(withTransition &&
+						(this.getAttribute("x") || this.getAttribute("transform"))), t);
 				const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
 				let pos = {
 					x: getX.bind(this)(d, i),
@@ -333,12 +259,17 @@ export default {
 					node.attr("text-anchor", anchorString);
 				}
 
+				updateTextImagePos.call($$, this, pos);
+
 				// when is multiline
 				if (this.childElementCount || angle) {
 					node.attr("transform", `translate(${pos.x} ${pos.y}) ${rotateString}`);
 				} else {
 					node.attr("x", pos.x).attr("y", pos.y);
 				}
+
+				config.data_labels.border &&
+					updateTextBorder.call($$, node.node(), pos, `${$TEXT.textBorderRect}-${i}`);
 			});
 
 		// need to return 'true' as of being pushed to the redraw list
@@ -438,7 +369,7 @@ export default {
 	 * @returns {number} Position value
 	 * @private
 	 */
-	getCenteredTextPos(d, points, textElement, type: "x" | "y"): number {
+	getCenteredTextPos(d, points, textElement: SVGTextElement, type: "x" | "y"): number {
 		const $$ = this;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
@@ -658,21 +589,5 @@ export default {
 				d3SelectAll([this, this.previousSibling])
 					.classed($TEXT.TextOverlapping, false);
 			});
-	},
-
-	/**
-	 * Check if meets the ratio to show data label text
-	 * @param {number} ratio ratio to meet
-	 * @param {string} type chart type
-	 * @returns {boolean}
-	 * @private
-	 */
-	meetsLabelThreshold(ratio: number = 0,
-		type: "bar" | "donut" | "gauge" | "pie" | "polar" | "treemap"): boolean {
-		const $$ = this;
-		const {config} = $$;
-		const threshold = config[`${type}_label_threshold`] || 0;
-
-		return ratio >= threshold;
 	}
 };

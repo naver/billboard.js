@@ -1,43 +1,22 @@
-# [3.16.0-next.2](https://github.com/naver/billboard.js/compare/3.16.0-next.1...3.16.0-next.2) (2025-06-24)
-
-
-### Features
-
-* **axis:** Enhance axis.evalTextSize per axis ([7fa445e](https://github.com/naver/billboard.js/commit/7fa445e6fe8d3b9ae3d785fc199611809766067f)), closes [#4002](https://github.com/naver/billboard.js/issues/4002)
-
-# [3.16.0-next.1](https://github.com/naver/billboard.js/compare/3.15.0...3.16.0-next.1) (2025-06-16)
+# [3.16.0](https://github.com/naver/billboard.js/compare/3.15.1...3.16.0) (2025-06-27)
 
 
 ### Bug Fixes
 
-* **api:** Fix to return indexed categories ([55c17c6](https://github.com/naver/billboard.js/commit/55c17c6c99fcdaca0ba2a323506709ab3d44e41a)), closes [#3365](https://github.com/naver/billboard.js/issues/3365)
 * **area-range:** Fix line drawn when combining Area Range with regions ([4a86e55](https://github.com/naver/billboard.js/commit/4a86e559d8aff9bdbfb2c4723fe179d23c3d3275)), closes [#3982](https://github.com/naver/billboard.js/issues/3982) [#3983](https://github.com/naver/billboard.js/issues/3983)
 * **axis:** adjust tick generation logic for rotated axes ([67c54aa](https://github.com/naver/billboard.js/commit/67c54aa2203eda7e5c537bfda13af46f47c579be)), closes [#3991](https://github.com/naver/billboard.js/issues/3991)
-* **bar:** Fix stacking bar position on multiple xs ([216da62](https://github.com/naver/billboard.js/commit/216da626bf5e774575513122e0816f60a64f042a)), closes [#3372](https://github.com/naver/billboard.js/issues/3372)
-* **candlestick:** Fix rendering on rotated axis ([17f5058](https://github.com/naver/billboard.js/commit/17f5058a3a6b2acfd5c9ee9c4c9f1d13be102693)), closes [#3387](https://github.com/naver/billboard.js/issues/3387)
-* **clip:** Fix x axis hide on title.bottom ([beec1bb](https://github.com/naver/billboard.js/commit/beec1bbdf3f6962dad02ac775a2d13d3b2fbb8eb)), closes [#3364](https://github.com/naver/billboard.js/issues/3364)
 * **core:** Fix potential security vulnerability ([a114a31](https://github.com/naver/billboard.js/commit/a114a316f2a4b21918ce0815c3f520897673153e)), closes [#3975](https://github.com/naver/billboard.js/issues/3975)
 * **data:** Filter nullish data from rendering ([02939b8](https://github.com/naver/billboard.js/commit/02939b8bed7f6e871b04ee26b3b3ba171ef9436f)), closes [#3973](https://github.com/naver/billboard.js/issues/3973)
 * **domain:** handle NaN values in data label calculations ([bdd3589](https://github.com/naver/billboard.js/commit/bdd3589396744cfb6f19ce341a27a9666e699ed6)), closes [#3985](https://github.com/naver/billboard.js/issues/3985)
-* **option:** Fix inconsistency of padding ([0c1ce81](https://github.com/naver/billboard.js/commit/0c1ce8180122b51924077039d928bdbbf677ff87)), closes [#3426](https://github.com/naver/billboard.js/issues/3426)
-* **shape:** Fix circleY() undefined error ([f4ac3f1](https://github.com/naver/billboard.js/commit/f4ac3f1cb8e1f87c9bbd998ab66ff97b61080d51)), closes [#3388](https://github.com/naver/billboard.js/issues/3388)
-* **subchart, zoom:** Fix returning domain value ([90338ec](https://github.com/naver/billboard.js/commit/90338eced7c9545f2ceb443bebbd857ac58a674c)), closes [#3347](https://github.com/naver/billboard.js/issues/3347)
-* **subchart:** Fix handlebar position ([b897cbb](https://github.com/naver/billboard.js/commit/b897cbbcecc43f460566f2eb88fe9a5ee985bcaf)), closes [#3358](https://github.com/naver/billboard.js/issues/3358)
-* **title:** fix title text center align ([b254a61](https://github.com/naver/billboard.js/commit/b254a61533620bd7c55648499b1dd8cc22795336)), closes [#3363](https://github.com/naver/billboard.js/issues/3363)
-* **tooltip:** Fix tooltip.format.value call ([f7d587d](https://github.com/naver/billboard.js/commit/f7d587de26c6ceb026110328ef6d605f42fa563b)), closes [#3371](https://github.com/naver/billboard.js/issues/3371)
-* **tooltip:** Fix tootip display on tooltip.init ([98e6f8b](https://github.com/naver/billboard.js/commit/98e6f8b29d63544ba01fd37564fe2b40d9a04214)), closes [#3369](https://github.com/naver/billboard.js/issues/3369)
 * **types:** update type definitions for elements ([591f6a6](https://github.com/naver/billboard.js/commit/591f6a68f7f5398b63a567cdae6be45763e633cb)), closes [#3969](https://github.com/naver/billboard.js/issues/3969)
 * **zoom:** maintain zoom state during chart resize ([2da91de](https://github.com/naver/billboard.js/commit/2da91dec4b4be9be2c36791f196dba5662dd96b1)), closes [#3992](https://github.com/naver/billboard.js/issues/3992)
 
 
 ### Features
 
-* **api:** Intent to ship subchart method ([976f04a](https://github.com/naver/billboard.js/commit/976f04a93df40bb756bba87c0f0afa5411ac12ba)), closes [#3342](https://github.com/naver/billboard.js/issues/3342)
+* **axis:** Enhance axis.evalTextSize per axis ([7fa445e](https://github.com/naver/billboard.js/commit/7fa445e6fe8d3b9ae3d785fc199611809766067f)), closes [#4002](https://github.com/naver/billboard.js/issues/4002)
 * **axis:** Intent to ship axis' tick.culling.reverse ([1496d91](https://github.com/naver/billboard.js/commit/1496d911c4a3259e835301aff80f68d9b11ba5dc)), closes [#3967](https://github.com/naver/billboard.js/issues/3967)
 * **bar:** Intent to ship bar.connectLine ([7dd7200](https://github.com/naver/billboard.js/commit/7dd720014a7623fb63bba1c3de84c80b31373f5d)), closes [#3988](https://github.com/naver/billboard.js/issues/3988) [#4000](https://github.com/naver/billboard.js/issues/4000)
-* **module:** Support dual CJS/ESM package ([437c007](https://github.com/naver/billboard.js/commit/437c007eabc7c7f82ce35eb7f3a2f6bb44438409)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
-* **plugin:** Intent to ship TableView plugin ([215b611](https://github.com/naver/billboard.js/commit/215b611fe68ea37360e8939e9902d489aa502b75)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
-* **regions:** Intent to ship regions.label ([b4e3bc2](https://github.com/naver/billboard.js/commit/b4e3bc29f2e78d6547ce695f9ecc6aadf90c22a9)), closes [#3319](https://github.com/naver/billboard.js/issues/3319)
 
 ## [3.15.1](https://github.com/naver/billboard.js/compare/3.15.0...3.15.1) (2025-04-22)
 

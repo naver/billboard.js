@@ -141,7 +141,7 @@ export default class AxisRenderer {
 
 				const tickText = tick.select("text");
 				const counts: number[] = [];
-				let sizeFor1Char: {w: number, h: number} | undefined;
+				let sizeFor1Char = {w: 0, h: 0};
 
 				if (isFunction(evalTextSize)) {
 					// set evalTextSize to dummy axis element to be used in .getMaxTickSize()
@@ -152,8 +152,8 @@ export default class AxisRenderer {
 					}
 				}
 
-				if (!sizeFor1Char) {
-					sizeFor1Char = Helper.getSizeFor1Char(tickText, !!evalTextSize);
+				if (!sizeFor1Char || sizeFor1Char.w === 0 || sizeFor1Char.h === 0) {
+					sizeFor1Char = ctx.helper.getSizeFor1Char(orient, tickText, !!evalTextSize);
 				}
 
 				let tspan: d3Selection = tickText
@@ -216,7 +216,7 @@ export default class AxisRenderer {
 				tickEnter.select("line").attr(`${axisPx}2`, innerTickSize * sign);
 				tickEnter.select("text").attr(axisPx, tickLength * sign);
 
-				ctx.setTickLineTextPosition(lineUpdate, textUpdate);
+				ctx.setTickLineTextPosition(lineUpdate, textUpdate, sizeFor1Char);
 
 				// Append <title> for tooltip display
 				if (params.tickTitle) {
@@ -312,12 +312,16 @@ export default class AxisRenderer {
 	 * Set tick's line & text position
 	 * @param {d3.selection} lineUpdate Line selection
 	 * @param {d3.selection} textUpdate Text selection
+	 * @param {object} sizeFor1Char Size for 1 char
 	 * @private
 	 */
-	setTickLineTextPosition(lineUpdate, textUpdate): void {
+	setTickLineTextPosition(lineUpdate, textUpdate, sizeFor1Char): void {
 		const tickPos = this.getTickXY();
 		const {innerTickSize, orient, tickLength, tickOffset} = this.config;
+		const axisId = this.params.id;
 		const rotate = this.params.tickTextRotate;
+		const baseHeight = 6;
+		const charHeight = (sizeFor1Char.h / 2) - baseHeight;
 
 		const textAnchorForText = r => {
 			const value = ["start", "end"];
@@ -329,8 +333,9 @@ export default class AxisRenderer {
 		const textTransform = r => (r ? `rotate(${r})` : null);
 		const yForText = r => {
 			const r2 = r / (orient === "bottom" ? 15 : 23);
+			const y = r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
 
-			return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
+			return y;
 		};
 
 		const {
@@ -340,12 +345,14 @@ export default class AxisRenderer {
 			}
 		} = this.params.owner;
 
+		const tickLineInner = this.params.config[`axis_${axisId}_tick_inner`];
+
 		switch (orient) {
 			case "bottom":
 				lineUpdate
 					.attr("x1", tickPos.x)
 					.attr("x2", tickPos.x)
-					.attr("y2", this.getTickSize.bind(this));
+					.attr("y2", d => this.getTickSize.bind(this)(d) * (tickLineInner ? -1 : 1));
 
 				textUpdate
 					.attr("x", 0)
@@ -367,33 +374,33 @@ export default class AxisRenderer {
 			case "top":
 				lineUpdate
 					.attr("x2", 0)
-					.attr("y2", -innerTickSize);
+					.attr("y2", tickLineInner ? innerTickSize : -innerTickSize);
 
 				textUpdate
 					.attr("x", 0)
-					.attr("y", -yForText(rotate) * 2)
+					.attr("y", -(yForText(rotate) + charHeight + baseHeight))
 					.style("text-anchor", textAnchorForText(rotate))
 					.attr("transform", textTransform(rotate));
 				break;
 			case "left":
 				lineUpdate
-					.attr("x2", -innerTickSize)
+					.attr("x2", tickLineInner ? innerTickSize : -innerTickSize)
 					.attr("y1", tickPos.y)
 					.attr("y2", tickPos.y);
 
 				textUpdate
 					.attr("x", -tickLength)
-					.attr("y", tickOffset)
+					.attr("y", tickOffset + (isRotated ? charHeight / 4 : charHeight))
 					.style("text-anchor", "end");
 				break;
 			case "right":
 				lineUpdate
-					.attr("x2", innerTickSize)
+					.attr("x2", tickLineInner ? -innerTickSize : innerTickSize)
 					.attr("y2", 0);
 
 				textUpdate
 					.attr("x", tickLength)
-					.attr("y", 0)
+					.attr("y", charHeight)
 					.style("text-anchor", "start");
 		}
 	}

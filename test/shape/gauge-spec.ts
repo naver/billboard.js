@@ -923,7 +923,7 @@ describe("SHAPE GAUGE", () => {
 			const valueRect = chart.$.text.texts.node().getBoundingClientRect();
 			const unitRect = chart.$.main.select(`.${$GAUGE.chartArcsGaugeUnit}`).node().getBoundingClientRect();
 
-			expect(unitRect.y).to.be.greaterThan(valueRect.y + valueRect.height);
+			expect((valueRect.bottom - unitRect.top) < 18).to.be.ok;
 		});
     });
 

@@ -23,6 +23,18 @@ export default {
 	 * - id {string}: data's id value
 	 * @property {number|Function} [gauge.label.ratio=undefined] Set ratio of labels position.
 	 * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
+	 * @property {object|Function} [gauge.label.image] Set image to be displayed next to the label text.<br><br>
+	 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+	 * The arguments are:<br>
+	 *  - `v` is the value of the data point where the label is shown.
+	 *  - `id` is the id of the data where the label is shown.
+	 *  - `i` is the index of the data series point where the label is shown.
+	 * @property {string} gauge.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+	 * @property {number} gauge.label.image.width Image width in pixels.
+	 * @property {number} gauge.label.image.height Image height in pixels.
+	 * @property {object} [gauge.label.image.pos] Image position relative to the label text.
+	 * @property {number} [gauge.label.image.pos.x=0] x coordinate position, relative the original.
+	 * @property {number} [gauge.label.image.pos.y=0] y coordinate position, relative the original.
 	 * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
 	 * @property {number} [gauge.expand.rate=0.98] Set expand rate.
 	 * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
@@ -63,7 +75,8 @@ export default {
 	 * @see [Demo: enforceMinMax, min/max](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeMinMax)
 	 * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
 	 * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
-	 * @see [Demo: labelRatio](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelRatio)
+	 * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelImage)
+	 * @see [Demo: label ratio](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelRatio)
 	 * @example
 	 *  gauge: {
 	 *      background: "#eee", // will set 'fill' css prop for '.bb-chart-arcs-background' classed element.
@@ -91,7 +104,51 @@ export default {
 	 *              return ratio;
 	 *          },
 	 *          // or set ratio number
-	 *          ratio: 0.5
+	 *          ratio: 0.5,
+	 *
+	 *          // set image to be displayed next to the label text
+	 *          image: {
+	 *             url: "./sample.svg",
+	 *
+	 *             // use placeholder to dynamically set image URL based on data ID
+	 *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+	 *             width: 35,
+	 *             height: 35,
+	 *             pos: {
+	 *                x: 0,
+	 *                y: 0
+	 *             }
+	 *          },
+	 *
+	 *          // or use function to return image configuration dynamically
+	 *          image: function(v, id, i) {
+	 *             // Return different images based on value
+	 *             if (v > 500) {
+	 *                return {
+	 *                   url: "./high-value.svg",
+	 *                   width: 40,
+	 *                   height: 40,
+	 *                   pos: { x: 0, y: 0 }
+	 *                };
+	 *             } else if (v > 100) {
+	 *                return {
+	 *                   url: "./medium-value.svg",
+	 *                   width: 30,
+	 *                   height: 30,
+	 *                   pos: { x: 0, y: 0 }
+	 *                };
+	 *             } else if(v < 5) {
+	 *                // Return falsy value in case of don't want to show image
+	 *                return null;
+	 *             } else {
+	 *                return {
+	 *                   url: "./low-value.svg",
+	 *                   width: 20,
+	 *                   height: 20,
+	 *                   pos: { x: 0, y: 0 }
+	 *                };
+	 *             }
+	 *          }
 	 *      },
 	 *
 	 *      // disable expand transition for interaction
@@ -134,6 +191,16 @@ export default {
 	gauge_label_format: <(() => string) | undefined>undefined,
 	gauge_label_ratio: <(() => number) | undefined>undefined,
 	gauge_label_threshold: 0,
+	gauge_label_image: <
+		| {url: string, width: number, height: number, pos?: {x?: number, y?: number}}
+		| ((v: number, id: string, i: number) => {
+			url: string,
+			width: number,
+			height: number,
+			pos?: {x?: number, y?: number}
+		} | null)
+		| undefined
+	>undefined,
 	gauge_enforceMinMax: false,
 	gauge_min: 0,
 	gauge_max: 100,
