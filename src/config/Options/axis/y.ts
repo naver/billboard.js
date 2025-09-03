@@ -267,6 +267,23 @@ export default {
 	axis_y_tick_culling_reverse: false,
 
 	/**
+	 * Set the axis tick line to be positioned inside of the chart.
+	 * @name axis․y․tick․inner
+	 * @memberof Options
+	 * @type {boolean}
+	 * @default false
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.TickInner)
+	 * axis: {
+	 *   y: {
+	 *     tick: {
+	 *       inner: true
+	 *     }
+	 *   }
+	 * }
+	 */
+	axis_y_tick_inner: false,
+
+	/**
 	 * Show y axis outer tick.
 	 * @name axis․y․tick․outer
 	 * @memberof Options
