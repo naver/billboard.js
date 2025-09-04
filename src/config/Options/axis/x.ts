@@ -264,6 +264,24 @@ export default {
 	axis_x_tick_count: <number | undefined>undefined,
 
 	/**
+	 * Set the axis tick line to be positioned inside of the chart.
+	 * @name axis․x․tick․inner
+	 * @memberof Options
+	 * @type {boolean}
+	 * @default false
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.TickInner)
+	 * @example
+	 * axis: {
+	 *   x: {
+	 *     tick: {
+	 *       inner: true
+	 *     }
+	 *   }
+	 * }
+	 */
+	axis_x_tick_inner: false,
+
+	/**
 	 * Show or hide x axis tick line.
 	 * @name axis․x․tick․show
 	 * @memberof Options

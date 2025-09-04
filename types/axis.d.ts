@@ -326,6 +326,11 @@ export interface XTickConfiguration {
 	 */
 	show?: boolean;
 
+	/**
+	 * Set the axis tick line to be positioned inside of the chart.
+	 */
+	inner?: boolean;
+
 	text?: {
 		/**
 		 * Set the x Axis tick text's position relatively its original position
@@ -428,6 +433,11 @@ export interface YTickConfiguration {
 	 * Show or hide axis tick line.
 	 */
 	show?: boolean;
+
+	/**
+	 * Set the axis tick line to be positioned inside of the chart.
+	 */
+	inner?: boolean;
 
 	text?: {
 		/**

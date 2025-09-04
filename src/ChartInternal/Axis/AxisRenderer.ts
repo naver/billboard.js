@@ -318,6 +318,7 @@ export default class AxisRenderer {
 	setTickLineTextPosition(lineUpdate, textUpdate, sizeFor1Char): void {
 		const tickPos = this.getTickXY();
 		const {innerTickSize, orient, tickLength, tickOffset} = this.config;
+		const axisId = this.params.id;
 		const rotate = this.params.tickTextRotate;
 		const baseHeight = 6;
 		const charHeight = (sizeFor1Char.h / 2) - baseHeight;
@@ -344,12 +345,14 @@ export default class AxisRenderer {
 			}
 		} = this.params.owner;
 
+		const tickLineInner = this.params.config[`axis_${axisId}_tick_inner`];
+
 		switch (orient) {
 			case "bottom":
 				lineUpdate
 					.attr("x1", tickPos.x)
 					.attr("x2", tickPos.x)
-					.attr("y2", this.getTickSize.bind(this));
+					.attr("y2", d => this.getTickSize.bind(this)(d) * (tickLineInner ? -1 : 1));
 
 				textUpdate
 					.attr("x", 0)
@@ -371,7 +374,7 @@ export default class AxisRenderer {
 			case "top":
 				lineUpdate
 					.attr("x2", 0)
-					.attr("y2", -innerTickSize);
+					.attr("y2", tickLineInner ? innerTickSize : -innerTickSize);
 
 				textUpdate
 					.attr("x", 0)
@@ -381,7 +384,7 @@ export default class AxisRenderer {
 				break;
 			case "left":
 				lineUpdate
-					.attr("x2", -innerTickSize)
+					.attr("x2", tickLineInner ? innerTickSize : -innerTickSize)
 					.attr("y1", tickPos.y)
 					.attr("y2", tickPos.y);
 
@@ -392,7 +395,7 @@ export default class AxisRenderer {
 				break;
 			case "right":
 				lineUpdate
-					.attr("x2", innerTickSize)
+					.attr("x2", tickLineInner ? -innerTickSize : innerTickSize)
 					.attr("y2", 0);
 
 				textUpdate
