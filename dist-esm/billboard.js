@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.16.0-nightly-20250902004717
+ * @version 3.16.0-nightly-20250904004653
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -13539,8 +13539,10 @@ var AxisRenderer = /** @class */ (function () {
      * @private
      */
     AxisRenderer.prototype.setTickLineTextPosition = function (lineUpdate, textUpdate, sizeFor1Char) {
+        var _this = this;
         var tickPos = this.getTickXY();
         var _a = this.config, innerTickSize = _a.innerTickSize, orient = _a.orient, tickLength = _a.tickLength, tickOffset = _a.tickOffset;
+        var axisId = this.params.id;
         var rotate = this.params.tickTextRotate;
         var baseHeight = 6;
         var charHeight = (sizeFor1Char.h / 2) - baseHeight;
@@ -13556,12 +13558,13 @@ var AxisRenderer = /** @class */ (function () {
             return y;
         };
         var _b = this.params.owner.config, isRotated = _b.axis_rotated, inner = _b.axis_x_tick_text_inner;
+        var tickLineInner = this.params.config["axis_".concat(axisId, "_tick_inner")];
         switch (orient) {
             case "bottom":
                 lineUpdate
                     .attr("x1", tickPos.x)
                     .attr("x2", tickPos.x)
-                    .attr("y2", this.getTickSize.bind(this));
+                    .attr("y2", function (d) { return _this.getTickSize.bind(_this)(d) * (tickLineInner ? -1 : 1); });
                 textUpdate
                     .attr("x", 0)
                     .attr("y", yForText(rotate))
@@ -13581,7 +13584,7 @@ var AxisRenderer = /** @class */ (function () {
             case "top":
                 lineUpdate
                     .attr("x2", 0)
-                    .attr("y2", -innerTickSize);
+                    .attr("y2", tickLineInner ? innerTickSize : -innerTickSize);
                 textUpdate
                     .attr("x", 0)
                     .attr("y", -(yForText(rotate) + charHeight + baseHeight))
@@ -13590,7 +13593,7 @@ var AxisRenderer = /** @class */ (function () {
                 break;
             case "left":
                 lineUpdate
-                    .attr("x2", -innerTickSize)
+                    .attr("x2", tickLineInner ? innerTickSize : -innerTickSize)
                     .attr("y1", tickPos.y)
                     .attr("y2", tickPos.y);
                 textUpdate
@@ -13600,7 +13603,7 @@ var AxisRenderer = /** @class */ (function () {
                 break;
             case "right":
                 lineUpdate
-                    .attr("x2", innerTickSize)
+                    .attr("x2", tickLineInner ? -innerTickSize : innerTickSize)
                     .attr("y2", 0);
                 textUpdate
                     .attr("x", tickLength)
@@ -16542,6 +16545,23 @@ var x = {
      */
     axis_x_tick_count: undefined,
     /**
+     * Set the axis tick line to be positioned inside of the chart.
+     * @name axis․x․tick․inner
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.TickInner)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       inner: true
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_inner: false,
+    /**
      * Show or hide x axis tick line.
      * @name axis․x․tick․show
      * @memberof Options
@@ -17283,6 +17303,22 @@ var y = {
      */
     axis_y_tick_culling_reverse: false,
     /**
+     * Set the axis tick line to be positioned inside of the chart.
+     * @name axis․y․tick․inner
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.TickInner)
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       inner: true
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_inner: false,
+    /**
      * Show y axis outer tick.
      * @name axis․y․tick․outer
      * @memberof Options
@@ -17776,6 +17812,23 @@ var y2 = {
      * }
      */
     axis_y2_tick_culling_reverse: false,
+    /**
+     * Set the axis tick line to be positioned inside of the chart.
+     * @name axis․y2․tick․inner
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.TickInner)
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       inner: true
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_inner: false,
     /**
      * Show or hide y2 axis outer tick.
      * @name axis․y2․tick․outer
@@ -25535,7 +25588,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.16.0-nightly-20250902004717
+ * @version 3.16.0-nightly-20250904004653
  */
 var bb = {
     /**
@@ -25545,7 +25598,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.16.0-nightly-20250902004717",
+    version: "3.16.0-nightly-20250904004653",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

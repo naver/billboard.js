@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.16.0-nightly-20250902004717
+ * @version 3.16.0-nightly-20250904004653
  */
 /*-- Chart --*/
 .bb svg {
@@ -239,9 +239,6 @@ text.bb-chart-arcs-gauge-title {
   font-size: 2.7em;
 }
 
-.bb-chart-arcs {
-  /*-- Polar --*/
-}
 .bb-chart-arcs .bb-chart-arcs-background {
   fill: #e0e0e0;
   stroke: #fff;
@@ -255,6 +252,9 @@ text.bb-chart-arcs-gauge-title {
 }
 .bb-chart-arcs .bb-chart-arcs-gauge-min {
   fill: #777;
+}
+.bb-chart-arcs {
+  /*-- Polar --*/
 }
 .bb-chart-arcs .bb-levels circle {
   fill: none;
