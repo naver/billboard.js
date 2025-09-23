@@ -112,14 +112,14 @@ export default {
 			url(data.url, data.mimeType, data.headers, getDataKeyForJson(data.keys, config),
 				callback);
 		} else if (data.json) {
-			runWorker(useWorker, json, callback, [columns, rows])(
+			runWorker(data.json.length ? useWorker : false, json, callback, [columns, rows])(
 				data.json,
 				getDataKeyForJson(data.keys, config)
 			);
 		} else if (data.rows) {
-			runWorker(useWorker, rows, callback)(data.rows);
+			runWorker(data.rows.length ? useWorker : false, rows, callback)(data.rows);
 		} else if (data.columns) {
-			runWorker(useWorker, columns, callback)(data.columns);
+			runWorker(data.columns.length ? useWorker : false, columns, callback)(data.columns);
 		} else if (args.bindto) {
 			throw Error("url or json or rows or columns is required.");
 		}
