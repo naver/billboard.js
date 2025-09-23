@@ -20,6 +20,7 @@ export default {
 	 * - **NOTE:**
 	 *   - For now, only applies for data conversion at the initial time.
 	 *   - As of Web Worker's async nature, handling chart instance synchrously is not recommended.
+	 *   - When given data is empty, useWorker will be ignored.
 	 * @example
 	 *  boost: {
 	 *      useCssRule: true,
