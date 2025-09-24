@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.16.0-nightly-20250910004703
+ * @version 3.16.0-nightly-20250924004727
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -415,6 +415,7 @@ const $ZOOM = {
    * - **NOTE:**
    *   - For now, only applies for data conversion at the initial time.
    *   - As of Web Worker's async nature, handling chart instance synchrously is not recommended.
+   *   - When given data is empty, useWorker will be ignored.
    * @example
    *  boost: {
    *      useCssRule: true,
@@ -3712,14 +3713,14 @@ function setXS(ids, data, params) {
         callback
       );
     } else if (data.json) {
-      runWorker(useWorker, json, callback, [columns, rows])(
+      runWorker(data.json.length ? useWorker : false, json, callback, [columns, rows])(
         data.json,
         getDataKeyForJson(data.keys, config)
       );
     } else if (data.rows) {
-      runWorker(useWorker, rows, callback)(data.rows);
+      runWorker(data.rows.length ? useWorker : false, rows, callback)(data.rows);
     } else if (data.columns) {
-      runWorker(useWorker, columns, callback)(data.columns);
+      runWorker(data.columns.length ? useWorker : false, columns, callback)(data.columns);
     } else if (args.bindto) {
       throw Error("url or json or rows or columns is required.");
     }
@@ -22703,7 +22704,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.16.0-nightly-20250910004703",
+  version: "3.16.0-nightly-20250924004727",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
