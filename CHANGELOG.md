@@ -1,3 +1,19 @@
+# [3.17.0](https://github.com/naver/billboard.js/compare/3.16.0...3.17.0) (2025-09-24)
+
+
+### Bug Fixes
+
+* **axis:** Fix axis text position ([b9f491b](https://github.com/naver/billboard.js/commit/b9f491b78857695468f2f37b62ed4f3573e79c12)), closes [#4017](https://github.com/naver/billboard.js/issues/4017)
+* **worker:** Exclude empty data ran on Worker thread ([4fbc2e8](https://github.com/naver/billboard.js/commit/4fbc2e8d9c03ab45d4d0db625e6d0a52c7e20631)), closes [#4041](https://github.com/naver/billboard.js/issues/4041) [#4042](https://github.com/naver/billboard.js/issues/4042)
+
+
+### Features
+
+* **axis:** Intent to ship tick.inner ([db1de3e](https://github.com/naver/billboard.js/commit/db1de3e9cdcd5d67a7a4638946ada705f089eefe)), closes [#4033](https://github.com/naver/billboard.js/issues/4033)
+* **data:** Enhance data.labels.backgroundColors ran as function ([0211d19](https://github.com/naver/billboard.js/commit/0211d199c5da1097648ab4639ce6de019edeaef0)), closes [#4016](https://github.com/naver/billboard.js/issues/4016)
+* **label:** Intent to ship label border ([dd1d70e](https://github.com/naver/billboard.js/commit/dd1d70e88cdba20de4454fbde82518a1545696f2)), closes [#4021](https://github.com/naver/billboard.js/issues/4021)
+* **labels:** Intent to ship data.labels.image ([#4035](https://github.com/naver/billboard.js/issues/4035)) ([487548a](https://github.com/naver/billboard.js/commit/487548ad4ae15029fbe10c59a223de35ad2510bd))
+
 # [3.16.0](https://github.com/naver/billboard.js/compare/3.15.1...3.16.0) (2025-06-27)
 
 
