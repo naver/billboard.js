@@ -92,7 +92,7 @@ export default {
 	 */
 	convertData(args, callback: Function): void {
 		const {config} = this;
-		const useWorker = config.boost_useWorker;
+		const useWorker = d => d?.length && d[0]?.length ? config.boost_useWorker : false;
 		let data = args;
 
 		if (args.bindto) {
@@ -112,14 +112,14 @@ export default {
 			url(data.url, data.mimeType, data.headers, getDataKeyForJson(data.keys, config),
 				callback);
 		} else if (data.json) {
-			runWorker(data.json.length ? useWorker : false, json, callback, [columns, rows])(
+			runWorker(useWorker(data.json), json, callback, [columns, rows])(
 				data.json,
 				getDataKeyForJson(data.keys, config)
 			);
 		} else if (data.rows) {
-			runWorker(data.rows.length ? useWorker : false, rows, callback)(data.rows);
+			runWorker(useWorker(data.rows), rows, callback)(data.rows);
 		} else if (data.columns) {
-			runWorker(data.columns.length ? useWorker : false, columns, callback)(data.columns);
+			runWorker(useWorker(data.columns), columns, callback)(data.columns);
 		} else if (args.bindto) {
 			throw Error("url or json or rows or columns is required.");
 		}
