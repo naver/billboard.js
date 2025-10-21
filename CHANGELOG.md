@@ -1,3 +1,10 @@
+## [3.17.1](https://github.com/naver/billboard.js/compare/3.17.0...3.17.1) (2025-10-20)
+
+
+### Bug Fixes
+
+* **load:** Fix possible context loss  ([a40fd41](https://github.com/naver/billboard.js/commit/a40fd41a1fac6c5cbfe29438590c8831057049db)), closes [#4044](https://github.com/naver/billboard.js/issues/4044)
+
 # [3.17.0](https://github.com/naver/billboard.js/compare/3.16.0...3.17.0) (2025-09-24)
 
 

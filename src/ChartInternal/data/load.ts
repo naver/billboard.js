@@ -129,7 +129,7 @@ export default {
 			const data = args.data || d;
 
 			args.append && (data.__append__ = true);
-			data && $$.load($$.convertDataToTargets(data), args);
+			data && $$.load($$.convertDataToTargets.call($$, data), args);
 		});
 	},
 
