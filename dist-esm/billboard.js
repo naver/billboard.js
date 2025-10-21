@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.0-nightly-20251001004724
+ * @version 3.17.1-nightly-20251021004730
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -4069,7 +4069,7 @@ var dataConvert = {
      */
     convertData: function (args, callback) {
         var config = this.config;
-        var useWorker = config.boost_useWorker;
+        var useWorker = function (d) { var _a; return (d === null || d === void 0 ? void 0 : d.length) && ((_a = d[0]) === null || _a === void 0 ? void 0 : _a.length) ? config.boost_useWorker : false; };
         var data = args;
         if (args.bindto) {
             data = {};
@@ -4085,13 +4085,13 @@ var dataConvert = {
             url(data.url, data.mimeType, data.headers, getDataKeyForJson(data.keys, config), callback);
         }
         else if (data.json) {
-            runWorker(data.json.length ? useWorker : false, json, callback, [columns, rows])(data.json, getDataKeyForJson(data.keys, config));
+            runWorker(useWorker(data.json), json, callback, [columns, rows])(data.json, getDataKeyForJson(data.keys, config));
         }
         else if (data.rows) {
-            runWorker(data.rows.length ? useWorker : false, rows, callback)(data.rows);
+            runWorker(useWorker(data.rows), rows, callback)(data.rows);
         }
         else if (data.columns) {
-            runWorker(data.columns.length ? useWorker : false, columns, callback)(data.columns);
+            runWorker(useWorker(data.columns), columns, callback)(data.columns);
         }
         else if (args.bindto) {
             throw Error("url or json or rows or columns is required.");
@@ -5201,7 +5201,7 @@ var dataLoad = {
         $$.convertData(args, function (d) {
             var data = args.data || d;
             args.append && (data.__append__ = true);
-            data && $$.load($$.convertDataToTargets(data), args);
+            data && $$.load($$.convertDataToTargets.call($$, data), args);
         });
     },
     unload: function (rawTargetIds, customDoneCb) {
@@ -25589,7 +25589,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.17.0-nightly-20251001004724
+ * @version 3.17.1-nightly-20251021004730
  */
 var bb = {
     /**
@@ -25599,7 +25599,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.17.0-nightly-20251001004724",
+    version: "3.17.1-nightly-20251021004730",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

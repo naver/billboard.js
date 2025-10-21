@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.0-nightly-20251001004724
+ * @version 3.17.1-nightly-20251021004730
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3693,7 +3693,10 @@ function setXS(ids, data, params) {
    */
   convertData(args, callback) {
     const { config } = this;
-    const useWorker = config.boost_useWorker;
+    const useWorker = (d) => {
+      var _a;
+      return (d == null ? void 0 : d.length) && ((_a = d[0]) == null ? void 0 : _a.length) ? config.boost_useWorker : false;
+    };
     let data = args;
     if (args.bindto) {
       data = {};
@@ -3713,14 +3716,14 @@ function setXS(ids, data, params) {
         callback
       );
     } else if (data.json) {
-      runWorker(data.json.length ? useWorker : false, json, callback, [columns, rows])(
+      runWorker(useWorker(data.json), json, callback, [columns, rows])(
         data.json,
         getDataKeyForJson(data.keys, config)
       );
     } else if (data.rows) {
-      runWorker(data.rows.length ? useWorker : false, rows, callback)(data.rows);
+      runWorker(useWorker(data.rows), rows, callback)(data.rows);
     } else if (data.columns) {
-      runWorker(data.columns.length ? useWorker : false, columns, callback)(data.columns);
+      runWorker(useWorker(data.columns), columns, callback)(data.columns);
     } else if (args.bindto) {
       throw Error("url or json or rows or columns is required.");
     }
@@ -4712,7 +4715,7 @@ function callDone(fn, resizeAfter = false) {
     $$.convertData(args, (d) => {
       const data = args.data || d;
       args.append && (data.__append__ = true);
-      data && $$.load($$.convertDataToTargets(data), args);
+      data && $$.load($$.convertDataToTargets.call($$, data), args);
     });
   },
   unload(rawTargetIds, customDoneCb) {
@@ -22704,7 +22707,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.0-nightly-20251001004724",
+  version: "3.17.1-nightly-20251021004730",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.0-nightly-20251001004724
+ * @version 3.17.1-nightly-20251021004730
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1255,10 +1255,10 @@ var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 
 (store.versions || (store.versions = [])).push({
-  version: '3.45.1',
+  version: '3.46.0',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2014-2025 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.45.1/LICENSE',
+  copyright: '© 2014-2025 Denis Pushkarev (zloirock.ru), 2025 CoreJS Company (core-js.io)',
+  license: 'https://github.com/zloirock/core-js/blob/v3.46.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -11060,6 +11060,7 @@ $({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES, sham: !CORRECT_PR
 
 
 var $ = __webpack_require__(3);
+var createProperty = __webpack_require__(145);
 var getBuiltIn = __webpack_require__(23);
 var uncurryThis = __webpack_require__(14);
 var aCallable = __webpack_require__(30);
@@ -11093,7 +11094,7 @@ $({ target: 'Object', stat: true, forced: DOES_NOT_WORK_WITH_PRIMITIVES }, {
       // in some IE versions, `hasOwnProperty` returns incorrect result on integer keys
       // but since it's a `null` prototype object, we can safely use `in`
       if (key in obj) push(obj[key], value);
-      else obj[key] = [value];
+      else createProperty(obj, key, [value]);
     });
     return obj;
   }
@@ -23028,7 +23029,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.17.0-nightly-20251001004724");
+__publicField(Plugin, "version", "3.17.1-nightly-20251021004730");
 
 ;// ./src/Plugin/bubblecompare/index.ts
 var bubblecompare_defProp = Object.defineProperty;
