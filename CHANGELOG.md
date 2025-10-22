@@ -1,3 +1,10 @@
+## [3.17.2](https://github.com/naver/billboard.js/compare/3.17.1...3.17.2) (2025-10-22)
+
+
+### Bug Fixes
+
+* **worker:** Exclude empty data ran on Worker thread ([a2e0f6e](https://github.com/naver/billboard.js/commit/a2e0f6e640688a56cbd3c632fcbfb741f2555915)), closes [#4044](https://github.com/naver/billboard.js/issues/4044)
+
 ## [3.17.1](https://github.com/naver/billboard.js/compare/3.17.0...3.17.1) (2025-10-20)
 
 
