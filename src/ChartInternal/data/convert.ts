@@ -2,7 +2,15 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isArray, isDefined, isObject, isUndefined, isValue, notEmpty} from "../../module/util";
+import {
+	isArray,
+	isDefined,
+	isEmpty,
+	isObject,
+	isUndefined,
+	isValue,
+	notEmpty
+} from "../../module/util";
 import {runWorker} from "../../module/worker";
 import type {IData} from "../data/IData";
 import {columns, json, rows, url} from "./convert.helper";
@@ -92,7 +100,7 @@ export default {
 	 */
 	convertData(args, callback: Function): void {
 		const {config} = this;
-		const useWorker = d => d?.length && d[0]?.length ? config.boost_useWorker : false;
+		const useWorker = d => d?.length && !isEmpty(d[0]) ? config.boost_useWorker : false;
 		let data = args;
 
 		if (args.bindto) {

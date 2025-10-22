@@ -45,6 +45,7 @@ export {
 	isBoolean,
 	isDefined,
 	isEmpty,
+	isEmptyObject,
 	isFunction,
 	isNumber,
 	isObject,
@@ -77,10 +78,16 @@ const ceil10 = (v: number): number => Math.ceil(v / 10) * 10;
 const asHalfPixel = (n: number): number => Math.ceil(n) + 0.5;
 const diffDomain = (d: number[]): number => d[1] - d[0];
 const isObjectType = (v: unknown): v is Record<string | number, any> => typeof v === "object";
+const isEmptyObject = (obj: object): boolean => {
+	for (const x in obj) {
+		return false;
+	}
+	return true;
+};
 const isEmpty = (o: unknown): boolean => (
 	isUndefined(o) || o === null ||
 	(isString(o) && o.length === 0) ||
-	(isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0) ||
+	(isObjectType(o) && !(o instanceof Date) && isEmptyObject(o)) ||
 	(isNumber(o) && isNaN(o))
 );
 const notEmpty = (o: unknown): boolean => !isEmpty(o);
