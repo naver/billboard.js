@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.1-nightly-20251022004720
+ * @version 3.17.2-nightly-20251023004738
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -28221,7 +28221,13 @@ const ceil10 = (v) => Math.ceil(v / 10) * 10;
 const asHalfPixel = (n) => Math.ceil(n) + 0.5;
 const diffDomain = (d) => d[1] - d[0];
 const isObjectType = (v) => typeof v === "object";
-const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
+const isEmptyObject = (obj) => {
+  for (const x in obj) {
+    return false;
+  }
+  return true;
+};
+const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
 const notEmpty = (o) => !isEmpty(o);
 const isArray = (arr) => Array.isArray(arr);
 const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
@@ -29591,10 +29597,7 @@ function setXS(ids, data, params) {
    */
   convertData(args, callback) {
     const { config } = this;
-    const useWorker = (d) => {
-      var _a;
-      return (d == null ? void 0 : d.length) && ((_a = d[0]) == null ? void 0 : _a.length) ? config.boost_useWorker : false;
-    };
+    const useWorker = (d) => (d == null ? void 0 : d.length) && !isEmpty(d[0]) ? config.boost_useWorker : false;
     let data = args;
     if (args.bindto) {
       data = {};
@@ -52252,7 +52255,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.1-nightly-20251022004720",
+  version: "3.17.2-nightly-20251023004738",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

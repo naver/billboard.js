@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.1-nightly-20251022004720
+ * @version 3.17.2-nightly-20251023004738
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -204,7 +204,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.17.1-nightly-20251022004720";
+    Plugin.version = "3.17.2-nightly-20251023004738";
     return Plugin;
 }());
 

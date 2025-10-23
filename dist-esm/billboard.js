@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.1-nightly-20251022004720
+ * @version 3.17.2-nightly-20251023004738
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -2331,9 +2331,15 @@ var ceil10 = function (v) { return Math.ceil(v / 10) * 10; };
 var asHalfPixel = function (n) { return Math.ceil(n) + 0.5; };
 var diffDomain = function (d) { return d[1] - d[0]; };
 var isObjectType = function (v) { return typeof v === "object"; };
+var isEmptyObject = function (obj) {
+    for (var x in obj) {
+        return false;
+    }
+    return true;
+};
 var isEmpty = function (o) { return (isUndefined(o) || o === null ||
     (isString(o) && o.length === 0) ||
-    (isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0) ||
+    (isObjectType(o) && !(o instanceof Date) && isEmptyObject(o)) ||
     (isNumber(o) && isNaN(o))); };
 var notEmpty = function (o) { return !isEmpty(o); };
 /**
@@ -4069,7 +4075,7 @@ var dataConvert = {
      */
     convertData: function (args, callback) {
         var config = this.config;
-        var useWorker = function (d) { var _a; return (d === null || d === void 0 ? void 0 : d.length) && ((_a = d[0]) === null || _a === void 0 ? void 0 : _a.length) ? config.boost_useWorker : false; };
+        var useWorker = function (d) { return (d === null || d === void 0 ? void 0 : d.length) && !isEmpty(d[0]) ? config.boost_useWorker : false; };
         var data = args;
         if (args.bindto) {
             data = {};
@@ -25589,7 +25595,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.17.1-nightly-20251022004720
+ * @version 3.17.2-nightly-20251023004738
  */
 var bb = {
     /**
@@ -25599,7 +25605,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.17.1-nightly-20251022004720",
+    version: "3.17.2-nightly-20251023004738",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

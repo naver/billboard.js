@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.1-nightly-20251022004720
+ * @version 3.17.2-nightly-20251023004738
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -339,7 +339,13 @@ const ceil10 = (v) => Math.ceil(v / 10) * 10;
 const asHalfPixel = (n) => Math.ceil(n) + 0.5;
 const diffDomain = (d) => d[1] - d[0];
 const isObjectType = (v) => typeof v === "object";
-const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
+const isEmptyObject = (obj) => {
+  for (const x in obj) {
+    return false;
+  }
+  return true;
+};
+const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
 const notEmpty = (o) => !isEmpty(o);
 const isArray = (arr) => Array.isArray(arr);
 const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
@@ -841,7 +847,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.17.1-nightly-20251022004720");
+__publicField(Plugin, "version", "3.17.2-nightly-20251023004738");
 
 ;// ./src/Plugin/sparkline/Options.ts
 class Options {
