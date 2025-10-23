@@ -176,6 +176,107 @@ describe("BOOST", () => {
 			expect(config.boost_useWorker).to.be.true;
 		});
 
+		it("should not apply worker when data.columns is empty array even if useWorker=true", () => {
+			args.boost.useWorker = true;
+			args.data = {
+				columns: []
+			};
+
+			chart = util.generate(args);
+			const {config} = chart.internal;
+			
+			// Config should be true, but worker shouldn't be used due to empty data
+			expect(config.boost_useWorker).to.be.true;
+			
+			// Chart should still be generated successfully
+			expect(chart).to.not.be.undefined;
+			expect(chart.data().length).to.be.equal(0);
+		});
+
+		it("should not apply worker when data.json is empty array even if useWorker=true", () => {
+			args.boost.useWorker = true;
+			args.data = {
+				json: [],
+				keys: {x: "x", value: ["value1", "value2"]}
+			};
+
+			chart = util.generate(args);
+			const {config} = chart.internal;
+			
+			// Config should be true, but worker shouldn't be used due to empty data
+			expect(config.boost_useWorker).to.be.true;
+			
+			// Chart should still be generated successfully
+			expect(chart).to.not.be.undefined;
+			expect(chart.data().length).to.be.equal(0);
+		});
+
+		it("should not apply worker when data.rows is empty array even if useWorker=true", () => {
+			args.boost.useWorker = true;
+			args.data = {
+				rows: []
+			};
+
+			chart = util.generate(args);
+			const {config} = chart.internal;
+			
+			// Config should be true, but worker shouldn't be used due to empty data
+			expect(config.boost_useWorker).to.be.true;
+			
+			// Chart should still be generated successfully
+			expect(chart).to.not.be.undefined;
+			expect(chart.data().length).to.be.equal(0);
+		});
+
+		it("should not apply worker when data.json has empty first element even if useWorker=true", () => {
+			args.boost.useWorker = true;
+			args.data = {
+				json: [{}], // Empty object as first element
+				keys: {x: "x", value: ["value1", "value2"]}
+			};
+
+			chart = util.generate(args);
+			const {config} = chart.internal;
+			
+			// Config should be true, but worker shouldn't be used due to empty first element
+			expect(config.boost_useWorker).to.be.true;
+			
+			// Chart should still be generated successfully
+			expect(chart).to.not.be.undefined;
+		});
+
+		it("should not apply worker when data.rows has empty first element even if useWorker=true", () => {
+			args.boost.useWorker = true;
+			args.data = {
+				rows: [[]] // Empty array as first element
+			};
+
+			chart = util.generate(args);
+			const {config} = chart.internal;
+			
+			// Config should be true, but worker shouldn't be used due to empty first element
+			expect(config.boost_useWorker).to.be.true;
+			
+			// Chart should still be generated successfully
+			expect(chart).to.not.be.undefined;
+		});
+
+		it("should not apply worker when data.columns has empty first element even if useWorker=true", () => {
+			args.boost.useWorker = true;
+			args.data = {
+				columns: [[]] // Empty array as first element
+			};
+
+			chart = util.generate(args);
+			const {config} = chart.internal;
+			
+			// Config should be true, but worker shouldn't be used due to empty first element
+			expect(config.boost_useWorker).to.be.true;
+			
+			// Chart should still be generated successfully
+			expect(chart).to.not.be.undefined;
+		});
+
 		it("should work with synchronous processing when useWorker is disabled", () => {
 			args.boost.useWorker = false;
 			
