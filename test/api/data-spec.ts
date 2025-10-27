@@ -280,4 +280,278 @@ describe("API data", function() {
 			});
 		});
 	});
+
+	describe("data.colors() with gradient", () => {
+		let gradientChart;
+
+		it("should update gradient stop colors for area_linearGradient", () => new Promise(done => {
+			gradientChart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
+					],
+					type: "area",
+					colors: {
+						data1: "#ff0000",
+						data2: "#00ff00"
+					}
+				},
+				area: {
+					linearGradient: {
+						x: [0, 0],
+						y: [0, 1],
+						stops: [
+							[0, "#ff0000", 1],
+							[1, "#ff0000", 0]
+						]
+					}
+				},
+				onrendered: function() {
+					const defs = this.$.defs;
+					
+					// Check initial gradient stop colors
+					const gradientData1 = defs.select("[id$='-gradient-data1'] stop:first-child");
+					expect(toHex(gradientData1.attr("stop-color"))).to.be.equal("#ff0000");
+
+					// Update colors
+					this.data.colors({
+						data1: "#0000ff",
+						data2: "#ffff00"
+					});
+
+					setTimeout(() => {
+						// Check updated gradient stop colors
+						const updatedGradientData1 = defs.select("[id$='-gradient-data1'] stop:first-child");
+						expect(toHex(updatedGradientData1.attr("stop-color"))).to.be.equal("#0000ff");
+
+						// Check that both stops have been updated
+						const stops = defs.selectAll("[id$='-gradient-data1'] stop");
+						stops.each(function() {
+							expect(toHex(this.getAttribute("stop-color"))).to.be.equal("#0000ff");
+						});
+
+						gradientChart.destroy();
+						done(1);
+					}, 350);
+				}
+			});
+		}));
+
+		it("should update gradient stop colors for bar_linearGradient", () => new Promise(done => {
+			gradientChart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "bar",
+					colors: {
+						data1: "#ff0000"
+					}
+				},
+				bar: {
+					linearGradient: {
+						x: [0, 0],
+						y: [0, 1],
+						stops: [
+							[0, "#ff0000", 1],
+							[1, "#ff0000", 0]
+						]
+					}
+				},
+				onrendered: function() {
+					const defs = this.$.defs;
+					
+					// Check initial gradient stop colors
+					const gradientData1 = defs.select("[id$='-gradient-data1'] stop:first-child");
+					expect(toHex(gradientData1.attr("stop-color"))).to.be.equal("#ff0000");
+
+					// Update colors
+					this.data.colors({
+						data1: "#00ff00"
+					});
+
+					setTimeout(() => {
+						// Check updated gradient stop colors
+						const updatedGradientData1 = defs.select("[id$='-gradient-data1'] stop:first-child");
+						expect(toHex(updatedGradientData1.attr("stop-color"))).to.be.equal("#00ff00");
+
+						// Check that all stops have been updated
+						const stops = defs.selectAll("[id$='-gradient-data1'] stop");
+						stops.each(function() {
+							expect(toHex(this.getAttribute("stop-color"))).to.be.equal("#00ff00");
+						});
+
+						gradientChart.destroy();
+						done(1);
+					}, 350);
+				}
+			});
+		}));
+
+		it("should update gradient stop colors for point_radialGradient", () => new Promise(done => {
+			gradientChart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "scatter",
+					colors: {
+						data1: "#ff0000"
+					}
+				},
+				point: {
+					radialGradient: {
+						cx: 0.5,
+						cy: 0.5,
+						r: 0.5,
+						stops: [
+							[0, "#ff0000", 1],
+							[1, "#ff0000", 0]
+						]
+					}
+				},
+				onrendered: function() {
+					const defs = this.$.defs;
+					
+					// Check initial gradient stop colors
+					const gradientData1 = defs.select("[id$='-gradient-data1'] stop:first-child");
+					expect(toHex(gradientData1.attr("stop-color"))).to.be.equal("#ff0000");
+
+					// Update colors
+					this.data.colors({
+						data1: "#ffff00"
+					});
+
+					setTimeout(() => {
+						// Check updated gradient stop colors
+						const updatedGradientData1 = defs.select("[id$='-gradient-data1'] stop:first-child");
+						expect(toHex(updatedGradientData1.attr("stop-color"))).to.be.equal("#ffff00");
+
+						// Check that all stops have been updated
+						const stops = defs.selectAll("[id$='-gradient-data1'] stop");
+						stops.each(function() {
+							expect(toHex(this.getAttribute("stop-color"))).to.be.equal("#ffff00");
+						});
+
+						gradientChart.destroy();
+						done(1);
+					}, 350);
+				}
+			});
+		}));
+
+		it("should not update gradient stop colors when stops have different colors", () => new Promise(done => {
+			// Manually modify gradient after creation to have different colors
+			gradientChart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "area",
+					colors: {
+						data1: "#ff0000"
+					}
+				},
+				area: {
+					linearGradient: {
+						x: [0, 0],
+						y: [0, 1],
+						stops: [
+							[0, "#ff0000", 1],
+							[1, "#ff0000", 0]
+						]
+					}
+				},
+				onrendered: function() {
+					const defs = this.$.defs;
+					
+					// Manually set different colors for stops to simulate mixed gradient
+					// Using style instead of setAttribute since the code checks style.stopColor
+					const stops = defs.selectAll("[id$='-gradient-data1'] stop");
+					stops.nodes()[0].style.stopColor = "#ff0000";
+					stops.nodes()[1].style.stopColor = "#0000ff";
+
+					// Verify initial colors
+					const initialFirstColor = toHex(stops.nodes()[0].style.stopColor);
+					const initialLastColor = toHex(stops.nodes()[1].style.stopColor);
+					
+					expect(initialFirstColor).to.be.equal("#ff0000");
+					expect(initialLastColor).to.be.equal("#0000ff");
+
+					// Update colors
+					this.data.colors({
+						data1: "#00ff00"
+					});
+
+					setTimeout(() => {
+						// Check that gradient stops remain unchanged (different colors)
+						const updatedStops = defs.selectAll("[id$='-gradient-data1'] stop");
+						const updatedFirstColor = toHex(updatedStops.nodes()[0].style.stopColor);
+						const updatedLastColor = toHex(updatedStops.nodes()[1].style.stopColor);
+						
+						expect(updatedFirstColor).to.be.equal("#ff0000");
+						expect(updatedLastColor).to.be.equal("#0000ff");
+
+						gradientChart.destroy();
+						done(1);
+					}, 350);
+				}
+			});
+		}));
+
+		it("should update gradient stop colors for data id with spaces", () => new Promise(done => {
+			gradientChart = util.generate({
+				data: {
+					columns: [
+						["data 1", 30, 200, 100, 400, 150, 250],
+						["data 2", 50, 20, 10, 40, 15, 25]
+					],
+					type: "area",
+					colors: {
+						"data 1": "#ff0000",
+						"data 2": "#00ff00"
+					}
+				},
+				area: {
+					linearGradient: {
+						x: [0, 0],
+						y: [0, 1],
+						stops: [
+							[0, "#ff0000", 1],
+							[1, "#ff0000", 0]
+						]
+					}
+				},
+				onrendered: function() {
+					const defs = this.$.defs;
+					
+					// Check initial gradient stop colors for data id with spaces
+					const gradientData1 = defs.select("[id$='-gradient-data-1'] stop:first-child");
+					expect(toHex(gradientData1.attr("stop-color"))).to.be.equal("#ff0000");
+
+					// Update colors
+					this.data.colors({
+						"data 1": "#0000ff",
+						"data 2": "#ffff00"
+					});
+
+					setTimeout(() => {
+						// Check updated gradient stop colors
+						const updatedGradientData1 = defs.select("[id$='-gradient-data-1'] stop:first-child");
+						expect(toHex(updatedGradientData1.attr("stop-color"))).to.be.equal("#0000ff");
+
+						// Check that both stops have been updated
+						const stops = defs.selectAll("[id$='-gradient-data-1'] stop");
+						stops.each(function() {
+							expect(toHex(this.getAttribute("stop-color"))).to.be.equal("#0000ff");
+						});
+
+						gradientChart.destroy();
+						done(1);
+					}, 350);
+				}
+			});
+		}));
+	});
 });

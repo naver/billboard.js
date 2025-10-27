@@ -90,6 +90,8 @@ export default {
 		const $$ = this;
 		const {$el, config} = $$;
 		const ids: string[] = [];
+		const hasGradient = config.area_linearGradient || config.bar_linearGradient ||
+			config.point_radialGradient;
 
 		let pattern = notEmpty(config.color_pattern) ?
 			config.color_pattern :
@@ -125,13 +127,11 @@ export default {
 			// if callback function is provided
 			if (isFunction(colors[id])) {
 				color = colors[id].bind($$.api)(d);
-
-				// if specified, choose that color
 			} else if (colors[id]) {
+				// if specified, choose that color
 				color = colors[id];
-
-				// if not specified, choose from pattern
 			} else {
+				// if not specified, choose from pattern
 				if (ids.indexOf(id) < 0) {
 					ids.push(id);
 				}
@@ -143,7 +143,24 @@ export default {
 				colors[id] = color;
 			}
 
-			return isFunction(callback) ? callback.bind($$.api)(color, d) : color;
+			color = isFunction(callback) ? callback.call($$.api, color, d) : color;
+
+			if (hasGradient) {
+				const stop = $$.$el.defs.selectAll(
+					`[id$='-gradient${$$.getTargetSelectorSuffix(id)}'] stop`
+				);
+				let hasSameColor;
+
+				stop.each(function(d, i) {
+					hasSameColor = i === 0 ?
+						this.style.stopColor :
+						this.style.stopColor === hasSameColor;
+				});
+
+				hasSameColor === true && stop.attr("stop-color", color);
+			}
+
+			return color;
 		};
 	},
 
