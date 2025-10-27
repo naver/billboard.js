@@ -119,6 +119,7 @@ extend(data, {
 
 	/**
 	 * Get and set colors of the data loaded in the chart.
+	 * - **NOTE:** If gradient option is set, the color update will affect only gradient stops have the same color.
 	 * @function data․colors
 	 * @instance
 	 * @memberof Chart
