@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.2-nightly-20251023004738
+ * @version 3.17.2-nightly-20251028004720
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5139,6 +5139,7 @@ const schemeCategory10 = [
     const $$ = this;
     const { $el, config } = $$;
     const ids = [];
+    const hasGradient = config.area_linearGradient || config.bar_linearGradient || config.point_radialGradient;
     let pattern = notEmpty(config.color_pattern) ? config.color_pattern : (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleOrdinal)(getColorFromCss($el.chart) || schemeCategory10).range();
     const originalColorPattern = pattern;
     if (isFunction(config.color_tiles)) {
@@ -5169,7 +5170,18 @@ const schemeCategory10 = [
         color = isLine ? originalColorPattern[ids.indexOf(id) % originalColorPattern.length] : pattern[ids.indexOf(id) % pattern.length];
         colors[id] = color;
       }
-      return isFunction(callback) ? callback.bind($$.api)(color, d) : color;
+      color = isFunction(callback) ? callback.call($$.api, color, d) : color;
+      if (hasGradient) {
+        const stop = $$.$el.defs.selectAll(
+          `[id$='-gradient${$$.getTargetSelectorSuffix(id)}'] stop`
+        );
+        let hasSameColor;
+        stop.each(function(d2, i) {
+          hasSameColor = i === 0 ? this.style.stopColor : this.style.stopColor === hasSameColor;
+        });
+        hasSameColor === true && stop.attr("stop-color", color);
+      }
+      return color;
     };
   },
   generateLevelColor() {
@@ -9869,6 +9881,7 @@ extend(api_data_data, {
   },
   /**
    * Get and set colors of the data loaded in the chart.
+   * - **NOTE:** If gradient option is set, the color update will affect only gradient stops have the same color.
    * @function data․colors
    * @instance
    * @memberof Chart
@@ -22710,7 +22723,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.2-nightly-20251023004738",
+  version: "3.17.2-nightly-20251028004720",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

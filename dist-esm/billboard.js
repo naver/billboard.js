@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.2-nightly-20251023004738
+ * @version 3.17.2-nightly-20251028004720
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -5688,6 +5688,8 @@ var color = {
         var $$ = this;
         var $el = $$.$el, config = $$.config;
         var ids = [];
+        var hasGradient = config.area_linearGradient || config.bar_linearGradient ||
+            config.point_radialGradient;
         var pattern = notEmpty(config.color_pattern) ?
             config.color_pattern :
             scaleOrdinal(getColorFromCss($el.chart) || schemeCategory10).range();
@@ -5715,13 +5717,13 @@ var color = {
             // if callback function is provided
             if (isFunction(colors[id])) {
                 color = colors[id].bind($$.api)(d);
-                // if specified, choose that color
             }
             else if (colors[id]) {
+                // if specified, choose that color
                 color = colors[id];
-                // if not specified, choose from pattern
             }
             else {
+                // if not specified, choose from pattern
                 if (ids.indexOf(id) < 0) {
                     ids.push(id);
                 }
@@ -5730,7 +5732,18 @@ var color = {
                     pattern[ids.indexOf(id) % pattern.length];
                 colors[id] = color;
             }
-            return isFunction(callback) ? callback.bind($$.api)(color, d) : color;
+            color = isFunction(callback) ? callback.call($$.api, color, d) : color;
+            if (hasGradient) {
+                var stop_1 = $$.$el.defs.selectAll("[id$='-gradient".concat($$.getTargetSelectorSuffix(id), "'] stop"));
+                var hasSameColor_1;
+                stop_1.each(function (d, i) {
+                    hasSameColor_1 = i === 0 ?
+                        this.style.stopColor :
+                        this.style.stopColor === hasSameColor_1;
+                });
+                hasSameColor_1 === true && stop_1.attr("stop-color", color);
+            }
+            return color;
         };
     },
     generateLevelColor: function () {
@@ -11138,6 +11151,7 @@ extend(data, {
     },
     /**
      * Get and set colors of the data loaded in the chart.
+     * - **NOTE:** If gradient option is set, the color update will affect only gradient stops have the same color.
      * @function data․colors
      * @instance
      * @memberof Chart
@@ -25595,7 +25609,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.17.2-nightly-20251023004738
+ * @version 3.17.2-nightly-20251028004720
  */
 var bb = {
     /**
@@ -25605,7 +25619,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.17.2-nightly-20251023004738",
+    version: "3.17.2-nightly-20251028004720",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
