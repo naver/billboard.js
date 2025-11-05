@@ -156,13 +156,6 @@ export default {
 			return;
 		}
 
-		const targets = $el.svg.selectAll(targetIds.map(id => $$.selectorTarget(id)));
-
-		$T(targets)
-			.style("opacity", "0")
-			.remove()
-			.call(endall, done);
-
 		targetIds.forEach(id => {
 			const suffixId = $$.getTargetSelectorSuffix(id);
 
@@ -189,5 +182,12 @@ export default {
 
 		// Update current state chart type and elements list after redraw
 		$$.updateTypesElements();
+
+		const targets = $el.svg.selectAll(targetIds.map(id => $$.selectorTarget(id)));
+
+		$T(targets)
+			.style("opacity", "0")
+			.remove()
+			.call(endall, done);
 	}
 };
