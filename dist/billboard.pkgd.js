@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.2-nightly-20251028004720
+ * @version 3.17.2-nightly-20251106004729
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -30636,8 +30636,6 @@ function callDone(fn, resizeAfter = false) {
       done();
       return;
     }
-    const targets = $el.svg.selectAll(targetIds.map((id) => $$.selectorTarget(id)));
-    $T(targets).style("opacity", "0").remove().call(endall, done);
     targetIds.forEach((id) => {
       var _a2;
       const suffixId = $$.getTargetSelectorSuffix(id);
@@ -30651,6 +30649,8 @@ function callDone(fn, resizeAfter = false) {
     state.hasFunnel && $$.updateFunnel($$.data.targets);
     state.hasTreemap && $$.updateTargetsForTreemap($$.data.targets);
     $$.updateTypesElements();
+    const targets = $el.svg.selectAll(targetIds.map((id) => $$.selectorTarget(id)));
+    $T(targets).style("opacity", "0").remove().call(endall, done);
   }
 });
 
@@ -52268,7 +52268,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.2-nightly-20251028004720",
+  version: "3.17.2-nightly-20251106004729",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

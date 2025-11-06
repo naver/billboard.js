@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.2-nightly-20251028004720
+ * @version 3.17.2-nightly-20251106004729
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -5229,11 +5229,6 @@ var dataLoad = {
             done();
             return;
         }
-        var targets = $el.svg.selectAll(targetIds.map(function (id) { return $$.selectorTarget(id); }));
-        $T(targets)
-            .style("opacity", "0")
-            .remove()
-            .call(endall, done);
         targetIds.forEach(function (id) {
             var _a;
             var suffixId = $$.getTargetSelectorSuffix(id);
@@ -5254,6 +5249,11 @@ var dataLoad = {
         state.hasTreemap && $$.updateTargetsForTreemap($$.data.targets);
         // Update current state chart type and elements list after redraw
         $$.updateTypesElements();
+        var targets = $el.svg.selectAll(targetIds.map(function (id) { return $$.selectorTarget(id); }));
+        $T(targets)
+            .style("opacity", "0")
+            .remove()
+            .call(endall, done);
     }
 };
 
@@ -25609,7 +25609,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.17.2-nightly-20251028004720
+ * @version 3.17.2-nightly-20251106004729
  */
 var bb = {
     /**
@@ -25619,7 +25619,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.17.2-nightly-20251028004720",
+    version: "3.17.2-nightly-20251106004729",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
