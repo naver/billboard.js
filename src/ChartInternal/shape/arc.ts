@@ -1185,7 +1185,7 @@ export default {
 					$$.callOverOutForTouch(arcData);
 
 					isUndefined(id) ? unselectArc() : selectArc(this, arcData, id);
-				});
+				}, {passive: true});
 		}
 	},
 
