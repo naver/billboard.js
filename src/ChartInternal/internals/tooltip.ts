@@ -591,7 +591,6 @@ export default {
 			// hide tooltip
 			tooltip
 				.style("display", "none")
-				.style("visibility", "hidden") // for IE9
 				.datum(null);
 
 			callFn(config.tooltip_onhidden, api, selectedData);

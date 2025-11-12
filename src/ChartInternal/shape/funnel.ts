@@ -232,7 +232,7 @@ export default {
 						$$.showTooltip([data], event.target);
 						/^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
 					}
-				})
+				}, isTouch ? {passive: true} : undefined)
 				.on(isTouch ? "touchend" : "mouseout", event => {
 					const data = getTarget(event);
 

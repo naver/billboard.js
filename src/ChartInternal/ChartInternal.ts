@@ -423,7 +423,8 @@ export default class ChartInternal {
 
 			$el.svg
 				.on("click", onclick?.bind($$.api) || null)
-				.on(isTouch ? "touchstart" : "mouseenter", onover?.bind($$.api) || null)
+				.on(isTouch ? "touchstart" : "mouseenter", onover?.bind($$.api) || null,
+					isTouch ? {passive: true} : undefined)
 				.on(isTouch ? "touchend" : "mouseleave", onout?.bind($$.api) || null);
 		}
 
