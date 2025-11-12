@@ -373,11 +373,11 @@ export default {
 
 				$$.selectRectForSingle(svg.node(), index);
 				isMouse ? $$.setOverOut(true, index) : $$.callOverOutForTouch(index);
-			})
+			}, isMouse ? undefined : {passive: true})
 			.on("mouseout", isMouse ? hide : null);
 
 		if (!isMouse) {
-			svg.on("touchstart", hide);
+			svg.on("touchstart", hide, {passive: true});
 		}
 	},
 

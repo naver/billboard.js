@@ -125,6 +125,10 @@ export default {
 		const preventThreshold = (!isNaN(preventDefault) && preventDefault) || null;
 		let startPx;
 
+		// Determine passive option based on preventDefault setting
+		// If preventDefault is needed, passive must be false
+		const passiveOption = !isPrevented && preventThreshold === null;
+
 		const preventEvent = event => {
 			const eventType = event.type;
 			const touch = event.changedTouches[0];
@@ -156,7 +160,7 @@ export default {
 			.on("touchstart", event => {
 				state.event = event;
 				$$.updateEventRect();
-			})
+			}, {passive: passiveOption})
 			.on("touchstart.eventRect touchmove.eventRect", event => {
 				state.event = event;
 
@@ -174,7 +178,7 @@ export default {
 				} else {
 					unselectRect();
 				}
-			}, true)
+			}, {passive: passiveOption})
 			.on("touchend.eventRect", event => {
 				state.event = event;
 
@@ -183,7 +187,7 @@ export default {
 						state.cancelClick && (state.cancelClick = false);
 					}
 				}
-			}, true);
+			}, {passive: passiveOption});
 
 		svg.on("touchstart", event => {
 			state.event = event;
@@ -192,7 +196,7 @@ export default {
 			if (target && target !== eventRect.node()) {
 				unselectRect();
 			}
-		});
+		}, {passive: passiveOption});
 	},
 
 	/**
