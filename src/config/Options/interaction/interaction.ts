@@ -17,7 +17,8 @@ export default {
 	 * @property {boolean} [interaction.brighten=true] Make brighter for the selected area (ex. 'pie' type data selected area)
 	 * @property {boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
 	 * @property {boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
-	 * @property {boolean|number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
+	 * @property {boolean|number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.<br>
+	 * - **NOTE**: When `true` is set, touch events are bound with [`{passive: false}`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#using_passive_listeners) option.
 	 * @property {boolean} [interaction.onout=true] Enable or disable "onout" event.<br>
 	 * 		When is disabled, defocus(hiding tooltip, focused gridline, etc.) event won't work.
 	 * @see [Demo: touch.preventDefault](https://naver.github.io/billboard.js/demo/#Interaction.PreventScrollOnTouch)
