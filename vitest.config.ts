@@ -1,5 +1,6 @@
 import {resolve} from "node:path";
 import {defineConfig} from "vitest/config";
+import { playwright } from "@vitest/browser-playwright";
 
 export default defineConfig({
     optimizeDeps: {
@@ -8,7 +9,6 @@ export default defineConfig({
     css: {
         preprocessorOptions: {
             scss: {
-                api: "modern-compiler",
                 silenceDeprecations: ["legacy-js-api"]
             }        
         }
@@ -22,9 +22,8 @@ export default defineConfig({
             reporter: ["text-summary", "html", "lcovonly"],
             enabled: true,
             include: [
-                "src/**/**",
-            ],
-            extension: ["ts"]
+                `src/**/**.{ts, tsx}`,
+            ]
         },
         include: [
             "test/**/*-spec.ts"
@@ -42,7 +41,7 @@ export default defineConfig({
         pool: "threads",
         browser: {
             enabled: true,
-            provider: "playwright",
+            provider:  playwright(),
             headless: true,
             viewport: {
                 width: 800,
