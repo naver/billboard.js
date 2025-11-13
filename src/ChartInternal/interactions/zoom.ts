@@ -309,7 +309,7 @@ export default {
 
 	/**
 	 * Set zoom transform to event rect
-	 * @param {Function} x x Axis scale function
+	 * @param {function} x x Axis scale function
 	 * @param {Array} domain Domain value to be set
 	 * @private
 	 */

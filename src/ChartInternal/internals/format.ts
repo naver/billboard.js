@@ -32,7 +32,7 @@ export default {
 
 	/**
 	 * Get default value format function
-	 * @returns {Function} formatter function
+	 * @returns {function} formatter function
 	 * @private
 	 */
 	getDefaultValueFormat(): Function {

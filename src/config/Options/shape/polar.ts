@@ -13,10 +13,10 @@ export default {
 	 * @type {object}
 	 * @property {object} polar Polar object
 	 * @property {boolean} [polar.label.show=true] Show or hide label on each polar piece.
-	 * @property {Function} [polar.label.format] Set formatter for the label on each polar piece.
+	 * @property {function} [polar.label.format] Set formatter for the label on each polar piece.
 	 * @property {number} [polar.label.threshold=0.05] Set threshold ratio to show/hide labels.
-	 * @property {number|Function} [polar.label.ratio=undefined] Set ratio of labels position.
-	 * @property {object|Function} [polar.label.image] Set image to be displayed next to the label text.<br><br>
+	 * @property {number|function} [polar.label.ratio=undefined] Set ratio of labels position.
+	 * @property {object|function} [polar.label.image] Set image to be displayed next to the label text.<br><br>
 	 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
 	 * The arguments are:<br>
 	 *  - `v` is the value of the data point where the label is shown.
@@ -31,7 +31,7 @@ export default {
 	 * @property {number} [polar.level.depth=3] Set the level depth.
 	 * @property {boolean} [polar.level.show=true] Show or hide level.
 	 * @property {string} [polar.level.text.backgroundColor="#fff"] Set label text's background color.
-	 * @property {Function} [polar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
+	 * @property {function} [polar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
 	 * @property {boolean} [polar.level.text.show=true] Show or hide level text.
 	 * @property {number} [polar.padAngle=0] Set padding between data.
 	 * @property {number} [polar.padding=0] Sets the gap between pie arcs.

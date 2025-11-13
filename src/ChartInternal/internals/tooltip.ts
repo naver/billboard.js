@@ -99,9 +99,9 @@ export default {
 	/**
 	 * Returns the tooltip content(HTML string)
 	 * @param {object} d data
-	 * @param {Function} defaultTitleFormat Default title format
-	 * @param {Function} defaultValueFormat Default format for each data value in the tooltip.
-	 * @param {Function} color Color function
+	 * @param {function} defaultTitleFormat Default title format
+	 * @param {function} defaultValueFormat Default format for each data value in the tooltip.
+	 * @param {function} color Color function
 	 * @returns {string} html
 	 * @private
 	 */

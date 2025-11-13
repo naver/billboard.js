@@ -18,17 +18,17 @@ export default {
 	 *   - **NOTE:** The overlapped data points will be displayed as grouped even if set false.
 	 * @property {boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
 	 * @property {string} [tooltip.linked.name=""] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
-	 * @property {Function} [tooltip.format.title] Set format for the title of tooltip.<br>
+	 * @property {function} [tooltip.format.title] Set format for the title of tooltip.<br>
 	 *  Specified function receives x of the data point to show.
-	 * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
+	 * @property {function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
 	 *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
-	 * @property {Function} [tooltip.format.value] Set format for the value of each data value in tooltip. If undefined returned, the row of that value will be skipped to be called.
+	 * @property {function} [tooltip.format.value] Set format for the value of each data value in tooltip. If undefined returned, the row of that value will be skipped to be called.
 	 *  - Will pass following arguments to the given function:
 	 *    - `value {string}`: Value of the data point. If data row contains multiple or ranged(ex. candlestick, area range, etc.) value, formatter will be called as value length.
 	 *    - `ratio {number}`: Ratio of the data point in the `pie/donut/gauge` and `area/bar` when contains grouped data. Otherwise is `undefined`.
 	 *    - `id {string}`: id of the data point
 	 *    - `index {number}`: Index of the data point
-	 * @property {Function} [tooltip.position] Set custom position function for the tooltip.<br>
+	 * @property {function} [tooltip.position] Set custom position function for the tooltip.<br>
 	 *  This option can be used to modify the tooltip position by returning object that has top and left.
 	 *  - Will pass following arguments to the given function:
 	 *    - `data {Array}`: Current selected data array object.
@@ -36,7 +36,7 @@ export default {
 	 *    - `height {number}`: Height of tooltip.
 	 *    - `element {SVGElement}`: Tooltip event bound element
 	 *    - `pos {object}`: Current position of the tooltip.
-	 * @property {Function|object} [tooltip.contents] Set custom HTML for the tooltip.<br>
+	 * @property {function|object} [tooltip.contents] Set custom HTML for the tooltip.<br>
 	 *  If tooltip.grouped is true, data includes multiple data points.<br><br>
 	 *  Specified function receives `data` array and `defaultTitleFormat`, `defaultValueFormat` and `color` functions of the data point to show.
 	 *  - **Note:**
@@ -65,11 +65,11 @@ export default {
 	 * @property {boolean} [tooltip.init.show=false] Show tooltip at the initialization.
 	 * @property {number} [tooltip.init.x=0] Set x Axis index(or index for Arc(donut, gauge, pie) types) to be shown at the initialization.
 	 * @property {object} [tooltip.init.position] Set the position of tooltip at the initialization.
-	 * @property {Function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
-	 * @property {Function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
-	 * @property {Function} [tooltip.onshown] Set a callback that will be invoked after the tooltip is shown
-	 * @property {Function} [tooltip.onhidden] Set a callback that will be invoked after the tooltip is hidden.
-	 * @property {string|Function|null} [tooltip.order=null] Set tooltip data display order.<br><br>
+	 * @property {function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
+	 * @property {function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
+	 * @property {function} [tooltip.onshown] Set a callback that will be invoked after the tooltip is shown
+	 * @property {function} [tooltip.onhidden] Set a callback that will be invoked after the tooltip is hidden.
+	 * @property {string|function|null} [tooltip.order=null] Set tooltip data display order.<br><br>
 	 *  **Available Values:**
 	 *  - `desc`: In descending data value order
 	 *  - `asc`: In ascending data value order

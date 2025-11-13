@@ -159,7 +159,7 @@ export default {
 	 * This option works in the same way as axis.y.format.
 	 * @name axis․y2․tick․format
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * axis: {
@@ -291,7 +291,7 @@ export default {
 	 * Set y2 axis tick values manually.
 	 * @name axis․y2․tick․values
 	 * @memberof Options
-	 * @type {Array|Function}
+	 * @type {Array|function}
 	 * @default null
 	 * @example
 	 * axis: {

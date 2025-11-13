@@ -20,7 +20,7 @@ export default {
 	 * 	- sliceDice ([d3.treemapSliceDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSliceDice))
 	 * 	- squrify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
 	 * 	- resquarify ([d3.treemapResquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapResquarify))
-	 * @property {Function} [treemap.label.format] Set formatter for the label text.
+	 * @property {function} [treemap.label.format] Set formatter for the label text.
 	 * @property {number} [treemap.label.threshold=0.05] Set threshold ratio to show/hide labels text.
 	 * @property {number} [treemap.label.show=true] Show or hide label text.
 	 * @see [Demo: treemap](https://naver.github.io/billboard.js/demo/#Chart.TreemapChart)

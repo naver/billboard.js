@@ -95,7 +95,7 @@ export default {
 	/**
 	 * Convert data according its type
 	 * @param {object} args data object
-	 * @param {Function} [callback] callback for url(XHR) type loading
+	 * @param {function} [callback] callback for url(XHR) type loading
 	 * @private
 	 */
 	convertData(args, callback: Function): void {

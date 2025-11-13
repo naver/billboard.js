@@ -158,7 +158,7 @@ export default {
 
 	/**
 	 * Redraw function
-	 * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+	 * @param {function} drawFn Retuned functino from .generateDrawCandlestick()
 	 * @param {boolean} withTransition With or without transition
 	 * @param {boolean} isSub Subchart draw
 	 * @returns {Array}
@@ -180,7 +180,7 @@ export default {
 	/**
 	 * Get the curve interpolate
 	 * @param {Array} d Data object
-	 * @returns {Function}
+	 * @returns {function}
 	 * @private
 	 */
 	getCurve(d): Function {
@@ -282,8 +282,8 @@ export default {
 	/**
 	 * Set regions dasharray and get path
 	 * @param {Array} d Data object
-	 * @param {Function} x x scale function
-	 * @param {Function} y y scale function
+	 * @param {function} x x scale function
+	 * @param {function} y y scale function
 	 * @param {object} _regions regions to be set
 	 * @returns {stirng} Path string
 	 * @private

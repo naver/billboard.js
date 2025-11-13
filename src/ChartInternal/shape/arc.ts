@@ -120,8 +120,8 @@ function getRadiusFn(expandRate = 0) {
 
 /**
  * Get attrTween function to get interpolated value on transition
- * @param {Function} fn Arc function to execute
- * @returns {Function} attrTween function
+ * @param {function} fn Arc function to execute
+ * @returns {function} attrTween function
  * @private
  */
 function getAttrTweenFn(fn: (d: IArcData) => string) {
@@ -378,7 +378,7 @@ export default {
 	/**
 	 * Get expanded arc path function
 	 * @param {number} rate Expand rate
-	 * @returns {Function} Expanded arc path getter function
+	 * @returns {function} Expanded arc path getter function
 	 * @private
 	 */
 	getSvgArcExpanded(rate = 1): (d: IArcData) => string {

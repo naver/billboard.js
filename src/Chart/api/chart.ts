@@ -165,10 +165,10 @@ export default {
 	 * @instance
 	 * @memberof Chart
 	 * @param {string} name The option key name.
-	 * @param {*} [value] The value accepted for indicated option.
+	 * @param {string|number|boolean|object|Array} [value] The value accepted for indicated option.
 	 * @param {boolean} [redraw] Set to redraw with the new option changes.
 	 * - **NOTE:** Doesn't guarantee work in all circumstances. It can be applied for limited options only.
-	 * @returns {*}
+	 * @returns {string|number|boolean|object|Array} The option value or all options object
 	 * @example
 	 *
 	 * // Getter
