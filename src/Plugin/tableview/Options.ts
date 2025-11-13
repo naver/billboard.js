@@ -40,7 +40,7 @@ export default class Options {
 			 * Set category text format function.
 			 * @name categoryFormat
 			 * @memberof plugin-tableview
-			 * @type {Function}
+			 * @type {function}
 			 * @returns {string}
 			 * @default function(v) { // will return formatted value according x Axis type }}
 			 * @example

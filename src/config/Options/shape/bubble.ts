@@ -12,7 +12,7 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} bubble bubble object
-	 * @property {number|Function} [bubble.maxR=35] Set the max bubble radius value
+	 * @property {number|function} [bubble.maxR=35] Set the max bubble radius value
 	 * @property {boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
 	 * @example
 	 *  bubble: {

@@ -152,7 +152,7 @@ function json(json, keysParam) {
  * @param {string} mimeType MIME type string: json | csv | tsv
  * @param {object} headers Header object
  * @param {object} keys Key object
- * @param {Function} done Callback function
+ * @param {function} done Callback function
  * @private
  */
 function url(url: string, mimeType = "csv", headers: object, keys: object, done: Function): void {

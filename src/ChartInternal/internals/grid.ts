@@ -16,7 +16,7 @@ const getGridTextDx = d => (d.position === "start" ? 4 : (d.position === "middle
  * @param {boolean} isX Is x Axis
  * @param {number} width Width value
  * @param {number} height Height value
- * @returns {Function}
+ * @returns {function}
  * @private
  */
 function getGridTextX(isX, width, height): Function {

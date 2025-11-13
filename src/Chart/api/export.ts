@@ -231,7 +231,7 @@ export default {
 	 *   - Text element's position(especially "transformed") can't be preserved correctly according the page's layout condition.
 	 *   - If need to preserve accurate text position, embed the web font data within to the page and set `preserveFontStyle=false`.
 	 *     - Checkout the embed example: <a href="https://stackblitz.com/edit/zfbya9-8nf9nn?file=index.html">https://stackblitz.com/edit/zfbya9-8nf9nn?file=index.html</a>
-	 * @param {Function} [callback] The callback to be invoked when export is ready.
+	 * @param {function(string): void} [callback] The callback to be invoked when export is ready.
 	 * @returns {string} dataURI
 	 * @example
 	 *  chart.export();

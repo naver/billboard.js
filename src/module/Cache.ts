@@ -30,9 +30,9 @@ export default class Cache {
 	/**
 	 * Add cache
 	 * @param {string} key Cache key
-	 * @param {*} value Value to be stored
+	 * @param {string|number|boolean|object|Array|function|null|undefined} value Value to be stored
 	 * @param {boolean} isDataType Weather the cache is data typed '{id:'data', id_org: 'data', values: [{x:0, index:0,...}, ...]}'
-	 * @returns {*} Added data value
+	 * @returns {string|number|boolean|object|Array|function|null|undefined} Added data value
 	 * @private
 	 */
 	add(key: string, value, isDataType = false) {
@@ -54,7 +54,7 @@ export default class Cache {
 	 * Get cahce
 	 * @param {string|Array} key Cache key
 	 * @param {boolean} isDataType Weather the cache is data typed '{id:'data', id_org: 'data', values: [{x:0, index:0,...}, ...]}'
-	 * @returns {*}
+	 * @returns {string|number|boolean|object|Array|function|null} Cached value
 	 * @private
 	 */
 	get(key: string | string[], isDataType = false): any | null {

@@ -26,7 +26,7 @@ export default {
 	 * Converts data id value
 	 * @name data․idConverter
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default function(id) { return id; }
 	 * @example
 	 * data: {
@@ -212,7 +212,7 @@ export default {
 	 *  **NOTE**: order function, only works for Axis based types & Arc types, except `Radar` type.
 	 * @name data․order
 	 * @memberof Options
-	 * @type {string|Function|null}
+	 * @type {string|function|null}
 	 * @default desc
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataOrder)
 	 * @example
@@ -289,7 +289,7 @@ export default {
 	 * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
 	 * @name data․color
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataColor)
 	 * @example
@@ -326,7 +326,7 @@ export default {
 	 * @property {object} data Data object
 	 * @property {boolean} [data.labels=false] Show or hide labels on each data points
 	 * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
-	 * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
+	 * @property {function} [data.labels.format] Set formatter function for data labels.<br>
 	 * The formatter function receives 4 arguments such as `v, id, i, texts` and it **must return a string** (`\n` character will be used as line break) that will be shown as the label.<br><br>
 	 * The arguments are:<br>
 	 *  - `v` is the value of the data point where the label is shown.
@@ -334,12 +334,12 @@ export default {
 	 *  - `i` is the index of the data series point where the label is shown.
 	 *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
 	 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-	 * @property {string|object|Function} [data.labels.backgroundColors] Set label text background colors.<br><br>
+	 * @property {string|object|function} [data.labels.backgroundColors] Set label text background colors.<br><br>
 	 * - **NOTE**: When function is set, background colors can be specified one color per dataset.
 	 *   - Within the function, the last returned color for dataset will be used.
 	 *   - Only can control set or unset background color for each values.
-	 * @property {string|object|Function} [data.labels.colors] Set label text colors.
-	 * @property {object|Function} [data.labels.position] Set each dataset position, relative the original.<br><br>
+	 * @property {string|object|function} [data.labels.colors] Set label text colors.
+	 * @property {object|function} [data.labels.position] Set each dataset position, relative the original.<br><br>
 	 * When function is specified, will receives 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
 	 * The arguments are:<br>
 	 *  - `type` coordinate type string, which will be 'x' or 'y'.
@@ -357,7 +357,7 @@ export default {
 	 * @property {number} [data.labels.border.strokeWidth=1] Border stroke width.
 	 * @property {string} [data.labels.border.stroke="#000"] Border stroke color.
 	 * @property {string} [data.labels.border.fill="none"] Border fill color.
-	 * @property {object|Function} [data.labels.image] Set image to be displayed next to the label text.<br><br>
+	 * @property {object|function} [data.labels.image] Set image to be displayed next to the label text.<br><br>
 	 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
 	 * The arguments are:<br>
 	 *  - `v` is the value of the data point where the label is shown.
@@ -589,7 +589,7 @@ export default {
 	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
 	 * @name data․filter
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * data: {
@@ -611,7 +611,7 @@ export default {
 	 * - In this callback, `this` will be the Chart object.
 	 * @name data․onclick
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default function() {}
 	 * @example
 	 * data: {
@@ -632,7 +632,7 @@ export default {
 	 * - In this callback, `this` will be the Chart object.
 	 * @name data․onover
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default function() {}
 	 * @example
 	 * data: {
@@ -653,7 +653,7 @@ export default {
 	 * - In this callback, `this` will be the Chart object.
 	 * @name data․onout
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default function() {}
 	 * @example
 	 * data: {
@@ -671,7 +671,7 @@ export default {
 	 * The callback will receive shown data ids in array.
 	 * @name data․onshown
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 *  data: {
@@ -688,7 +688,7 @@ export default {
 	 * The callback will receive hidden data ids in array.
 	 * @name data․onhidden
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 *  data: {
@@ -705,7 +705,7 @@ export default {
 	 * - **NOTE:** For 'area-line-range', 'area-step-range' and 'area-spline-range', `mid` data will be taken for the comparison
 	 * @name data․onmin
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
 	 * @example
@@ -721,7 +721,7 @@ export default {
 	 * - **NOTE:** For 'area-line-range', 'area-step-range' and 'area-spline-range', `mid` data will be taken for the comparison
 	 * @name data․onmax
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
 	 * @example

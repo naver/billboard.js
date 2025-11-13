@@ -134,7 +134,7 @@ export default {
 
 	/**
 	 * Redraw function
-	 * @param {Function} drawFn Retuned function from .getDrawShape() => .generateDrawBar()
+	 * @param {function} drawFn Retuned function from .getDrawShape() => .generateDrawBar()
 	 * @param {boolean} withTransition With or without transition
 	 * @param {boolean} isSub Subchart draw
 	 * @returns {Array}
@@ -192,7 +192,7 @@ export default {
 	 * 		-------------------------
 	 * 			 0             1
 	 * @param {boolean} isSub If is for subchart
-	 * @returns {Function}
+	 * @returns {function}
 	 * @private
 	 */
 	generateDrawBar(barIndices, isSub?: boolean): (d: IBarData, i: number) => BarPath {

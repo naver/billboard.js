@@ -71,7 +71,7 @@ export default {
 
 	/**
 	 * Redraw function
-	 * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+	 * @param {function} drawFn Retuned functino from .generateDrawCandlestick()
 	 * @param {boolean} withTransition With or without transition
 	 * @param {boolean} isSub Subchart draw
 	 * @returns {Array}
@@ -94,7 +94,7 @@ export default {
 	 * Generate area path data
 	 * @param {object} areaIndices Indices
 	 * @param {boolean} isSub Weather is sub axis
-	 * @returns {Function}
+	 * @returns {function}
 	 * @private
 	 */
 	generateDrawArea(areaIndices: Indices, isSub?: boolean): (d: IData) => string {

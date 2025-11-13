@@ -183,7 +183,7 @@ export default {
 	/**
 	 * Update data label text background color
 	 * @param {object} d Data object
-	 * @param {object|string|Function} option option object
+	 * @param {object|string|function} option option object
 	 * @returns {string|null}
 	 * @private
 	 */
@@ -222,8 +222,8 @@ export default {
 
 	/**
 	 * Redraw chartText
-	 * @param {Function} getX Positioning function for x
-	 * @param {Function} getY Positioning function for y
+	 * @param {function} getX Positioning function for x
+	 * @param {function} getY Positioning function for y
 	 * @param {boolean} forFlow Weather is flow
 	 * @param {boolean} withTransition transition is enabled
 	 * @returns {Array}

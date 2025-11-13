@@ -13,10 +13,10 @@ export default {
 	 * @type {object}
 	 * @property {object} pie Pie object
 	 * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
-	 * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
-	 * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
+	 * @property {function} [pie.label.format] Set formatter for the label on each pie piece.
+	 * @property {number|function} [pie.label.ratio=undefined] Set ratio of labels position.
 	 * @property {number} [pie.label.threshold=0.05] Set threshold ratio to show/hide labels.
-	 * @property {object|Function} [pie.label.image] Set image to be displayed next to the label text.<br><br>
+	 * @property {object|function} [pie.label.image] Set image to be displayed next to the label text.<br><br>
 	 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
 	 * The arguments are:<br>
 	 *  - `v` is the value of the data point where the label is shown.
