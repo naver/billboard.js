@@ -149,7 +149,7 @@ export default {
 
 	/**
 	 * Return draggable selection function
-	 * @returns {Function}
+	 * @returns {function}
 	 * @private
 	 */
 	getDraggableSelection(): Function {

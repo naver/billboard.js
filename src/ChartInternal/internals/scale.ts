@@ -41,8 +41,8 @@ export default {
 	 * @param {number} min Min range value
 	 * @param {number} max Max range value
 	 * @param {Array} domain Domain value
-	 * @param {Function} offset The offset getter to be sum
-	 * @returns {Function} scale
+	 * @param {function} offset The offset getter to be sum
+	 * @returns {function} scale
 	 * @private
 	 */
 	getXScale(min: number, max: number, domain: number[], offset: Function) {
@@ -62,7 +62,7 @@ export default {
 	 * @param {number} min Min value
 	 * @param {number} max Max value
 	 * @param {Array} domain Domain value
-	 * @returns {Function} Scale function
+	 * @returns {function} Scale function
 	 * @private
 	 */
 	getYScale(id: "y" | "y2", min: number, max: number, domain: number[]): Function {
@@ -78,7 +78,7 @@ export default {
 	 * Get y Axis scale
 	 * @param {string} id Axis id
 	 * @param {boolean} isSub Weather is sub Axis
-	 * @returns {Function} Scale function
+	 * @returns {function} Scale function
 	 * @private
 	 */
 	getYScaleById(id: string, isSub = false): Function {
@@ -91,8 +91,8 @@ export default {
 	/**
 	 * Get customized x axis scale
 	 * @param {d3.scaleLinear|d3.scaleTime} scaleValue Scale function
-	 * @param {Function} offsetValue Offset getter to be sum
-	 * @returns {Function} Scale function
+	 * @param {function} offsetValue Offset getter to be sum
+	 * @returns {function} Scale function
 	 * @private
 	 */
 	getCustomizedXScale(scaleValue: Function | any, offsetValue): Function {

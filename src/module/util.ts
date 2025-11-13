@@ -113,8 +113,8 @@ const isObject = (obj: any): boolean => obj && !obj?.nodeType && isObjectType(ob
  * If default value is given, will return if given key value not found
  * @param {object} options Source object
  * @param {string} key Key value
- * @param {*} defaultValue Default value
- * @returns {*}
+ * @param {string|number|boolean|object|Array|function|null|undefined} defaultValue Default value
+ * @returns {string|number|boolean|object|Array|function|null|undefined} Option value or default value
  * @private
  */
 function getOption(options: object, key: string, defaultValue): any {
@@ -124,7 +124,7 @@ function getOption(options: object, key: string, defaultValue): any {
 /**
  * Check if value exist in the given object
  * @param {object} dict Target object to be checked
- * @param {*} value Value to be checked
+ * @param {string|number|boolean|object|Array|function|null|undefined} value Value to be checked
  * @returns {boolean}
  * @private
  */
@@ -138,9 +138,9 @@ function hasValue(dict: object, value: any): boolean {
 
 /**
  * Call function with arguments
- * @param {Function} fn Function to be called
- * @param {*} thisArg "this" value for fn
- * @param {*} args Arguments for fn
+ * @param {function} fn Function to be called
+ * @param {object|null|undefined} thisArg "this" value for fn
+ * @param {...(string|number|boolean|object|Array|function|null|undefined)} args Arguments for fn
  * @returns {boolean} true: fn is function, false: fn is not function
  * @private
  */
@@ -959,8 +959,8 @@ function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | n
 
 /**
  * Run function until given condition function return true
- * @param {Function} fn Function to be executed when condition is true
- * @param {Function} conditionFn Condition function to check if condition is true
+ * @param {function} fn Function to be executed when condition is true
+ * @param {function(): boolean} conditionFn Condition function to check if condition is true
  * @private
  */
 function runUntil(fn: Function, conditionFn: Function): void {

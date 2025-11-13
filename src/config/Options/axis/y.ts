@@ -172,7 +172,7 @@ export default {
 	 * This option accepts d3.format object as well as a function you define.
 	 * @name axis․y․tick․format
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * axis: {
@@ -304,7 +304,7 @@ export default {
 	 * Set y axis tick values manually.
 	 * @name axis․y․tick․values
 	 * @memberof Options
-	 * @type {Array|Function}
+	 * @type {Array|function}
 	 * @default null
 	 * @example
 	 * axis: {
@@ -447,7 +447,7 @@ export default {
 	 * @private
 	 * @type {object}
 	 * @property {object} time time object
-	 * @property {Function} [time.value] D3's time interval function (https://github.com/d3/d3-time#intervals)
+	 * @property {function} [time.value] D3's time interval function (https://github.com/d3/d3-time#intervals)
 	 * @example
 	 * axis: {
 	 *   y: {

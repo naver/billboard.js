@@ -16,7 +16,7 @@ export default {
 	 *   - Setting `false` or custom evaluator, highly recommended to memoize evaluated text dimension value to not degrade performance.
 	 * @name axis․evalTextSize
 	 * @memberof Options
-	 * @type {boolean|Function}
+	 * @type {boolean|function}
 	 * @default true
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.AxisEvalTextSize)
 	 * @example

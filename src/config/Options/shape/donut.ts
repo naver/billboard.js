@@ -13,10 +13,10 @@ export default {
 	 * @type {object}
 	 * @property {object} donut Donut object
 	 * @property {boolean} [donut.label.show=true] Show or hide label on each donut piece.
-	 * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
+	 * @property {function} [donut.label.format] Set formatter for the label on each donut piece.
 	 * @property {number} [donut.label.threshold=0.05] Set threshold ratio to show/hide labels.
-	 * @property {number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
-	 * @property {object|Function} [donut.label.image] Set image to be displayed next to the label text.<br><br>
+	 * @property {number|function} [donut.label.ratio=undefined] Set ratio of labels position.
+	 * @property {object|function} [donut.label.image] Set image to be displayed next to the label text.<br><br>
 	 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
 	 * The arguments are:<br>
 	 *  - `v` is the value of the data point where the label is shown.

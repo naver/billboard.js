@@ -13,8 +13,8 @@ export default {
 	 * @param {boolean} withShape Set shpes' prefix class
 	 * @param {string} selector CSS selector
 	 * @param {Array} props CSS props list
-	 * @param {Function} propsFn Function to retrieve value or determine for props
-	 * @returns {Function}
+	 * @param {function} propsFn Function to retrieve value or determine for props
+	 * @returns {function}
 	 * @private
 	 */
 	setCssRule(withShape: boolean, selector: string, props: string[], propsFn: Function): Function {
@@ -44,7 +44,7 @@ export default {
 
 	/**
 	 * Get style prop value
-	 * @param {Function|string} v Value
+	 * @param {function|string} v Value
 	 * @returns {string|null}
 	 * @private
 	 */

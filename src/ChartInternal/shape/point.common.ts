@@ -89,7 +89,7 @@ export default {
 
 	/**
 	 * Get generate point function
-	 * @returns {Function}
+	 * @returns {function}
 	 * @private
 	 */
 	generatePoint(): Function {

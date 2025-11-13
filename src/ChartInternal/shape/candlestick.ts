@@ -86,7 +86,7 @@ export default {
 	 * Get draw function
 	 * @param {object} indices Indice data
 	 * @param {boolean} isSub Subchart draw
-	 * @returns {Function}
+	 * @returns {function}
 	 * @private
 	 */
 	generateDrawCandlestick(indices, isSub) {
@@ -149,7 +149,7 @@ export default {
 	 * Generate shape drawing points
 	 * @param {object} indices Indice data
 	 * @param {boolean} isSub Subchart draw
-	 * @returns {Function}
+	 * @returns {function}
 	 */
 	generateGetCandlestickPoints(indices, isSub = false): (d, i) => number[][] {
 		const $$ = this;
@@ -203,7 +203,7 @@ export default {
 
 	/**
 	 * Redraw function
-	 * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+	 * @param {function} drawFn Retuned functino from .generateDrawCandlestick()
 	 * @param {boolean} withTransition With or without transition
 	 * @param {boolean} isSub Subchart draw
 	 * @returns {Array}

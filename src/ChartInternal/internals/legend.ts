@@ -671,7 +671,7 @@ export default {
 	 * @param {Array} targetIdz Data ids
 	 * @param {object} dimension Dimension object
 	 * @param {object} sizes Size object
-	 * @returns {Function} Update position function
+	 * @returns {function} Update position function
 	 * @private
 	 */
 	getUpdateLegendPositions(targetIdz, dimension, sizes) {
@@ -763,7 +763,7 @@ export default {
 	 * Generate legend item elements
 	 * @param {Array} targetIdz Data ids
 	 * @param {object} itemTileSize Item tile size {width, height}
-	 * @param {Function} updatePositions Update position function
+	 * @param {function} updatePositions Update position function
 	 * @param {object} posFn Position functions
 	 * @private
 	 */
