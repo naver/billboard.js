@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.2-nightly-20251106004729
+ * @version 3.17.2-nightly-20251113004727
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -2242,7 +2242,8 @@ var interaction$1 = {
      * @property {boolean} [interaction.brighten=true] Make brighter for the selected area (ex. 'pie' type data selected area)
      * @property {boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
      * @property {boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
-     * @property {boolean|number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
+     * @property {boolean|number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.<br>
+     * - **NOTE**: When `true` is set, touch events are bound with [`{passive: false}`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#using_passive_listeners) option.
      * @property {boolean} [interaction.onout=true] Enable or disable "onout" event.<br>
      * 		When is disabled, defocus(hiding tooltip, focused gridline, etc.) event won't work.
      * @see [Demo: touch.preventDefault](https://naver.github.io/billboard.js/demo/#Interaction.PreventScrollOnTouch)
@@ -9262,7 +9263,6 @@ var tooltip$1 = {
             // hide tooltip
             tooltip
                 .style("display", "none")
-                .style("visibility", "hidden") // for IE9
                 .datum(null);
             callFn(config.tooltip_onhidden, api, selectedData);
         }
@@ -10439,7 +10439,7 @@ var ChartInternal = /** @class */ (function () {
             var onclick_1 = config.onclick, onover = config.onover, onout = config.onout;
             $el.svg
                 .on("click", (onclick_1 === null || onclick_1 === void 0 ? void 0 : onclick_1.bind($$.api)) || null)
-                .on(isTouch ? "touchstart" : "mouseenter", (onover === null || onover === void 0 ? void 0 : onover.bind($$.api)) || null)
+                .on(isTouch ? "touchstart" : "mouseenter", (onover === null || onover === void 0 ? void 0 : onover.bind($$.api)) || null, isTouch ? { passive: true } : undefined)
                 .on(isTouch ? "touchend" : "mouseleave", (onout === null || onout === void 0 ? void 0 : onout.bind($$.api)) || null);
         }
         config.svg_classname && $el.svg.attr("class", config.svg_classname);
@@ -14754,6 +14754,9 @@ var eventrect = {
         var isPrevented = (isBoolean(preventDefault) && preventDefault) || false;
         var preventThreshold = (!isNaN(preventDefault) && preventDefault) || null;
         var startPx;
+        // Determine passive option based on preventDefault setting
+        // If preventDefault is needed, passive must be false
+        var passiveOption = !isPrevented && preventThreshold === null;
         var preventEvent = function (event) {
             var eventType = event.type;
             var touch = event.changedTouches[0];
@@ -14781,7 +14784,7 @@ var eventrect = {
             .on("touchstart", function (event) {
             state.event = event;
             $$.updateEventRect();
-        })
+        }, { passive: passiveOption })
             .on("touchstart.eventRect touchmove.eventRect", function (event) {
             state.event = event;
             if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
@@ -14796,7 +14799,7 @@ var eventrect = {
             else {
                 unselectRect();
             }
-        }, true)
+        }, { passive: passiveOption })
             .on("touchend.eventRect", function (event) {
             state.event = event;
             if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
@@ -14804,14 +14807,14 @@ var eventrect = {
                     state.cancelClick && (state.cancelClick = false);
                 }
             }
-        }, true);
+        }, { passive: passiveOption });
         svg.on("touchstart", function (event) {
             state.event = event;
             var target = event.target;
             if (target && target !== eventRect.node()) {
                 unselectRect();
             }
-        });
+        }, { passive: passiveOption });
     },
     /**
      * Update event rect size
@@ -19377,7 +19380,7 @@ var shapeArc = {
                 var id = (arcData === null || arcData === void 0 ? void 0 : arcData.id) || undefined;
                 $$.callOverOutForTouch(arcData);
                 isUndefined(id) ? unselectArc() : selectArc(this, arcData, id);
-            });
+            }, { passive: true });
         }
     },
     redrawArcText: function (duration) {
@@ -20400,7 +20403,7 @@ var shapeFunnel = {
                     $$.showTooltip([data], event.target);
                     /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
                 }
-            })
+            }, isTouch ? { passive: true } : undefined)
                 .on(isTouch ? "touchend" : "mouseout", function (event) {
                 var data = getTarget(event);
                 if (config.interaction_onout) {
@@ -21932,10 +21935,10 @@ var shapeRadar = {
             var index = $$.getDataIndexFromEvent(event);
             $$.selectRectForSingle(svg.node(), index);
             isMouse ? $$.setOverOut(true, index) : $$.callOverOutForTouch(index);
-        })
+        }, isMouse ? undefined : { passive: true })
             .on("mouseout", isMouse ? hide : null);
         if (!isMouse) {
-            svg.on("touchstart", hide);
+            svg.on("touchstart", hide, { passive: true });
         }
     },
     updateRadarShape: function () {
@@ -22074,7 +22077,7 @@ var shapeTreemap = {
                     $$.showTooltip([data], event.currentTarget);
                     /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
                 }
-            })
+            }, isTouch ? { passive: true } : undefined)
                 .on(isTouch ? "touchend" : "mouseout", function (event) {
                 var data = getTarget(event);
                 if (config.interaction_onout) {
@@ -25609,7 +25612,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.17.2-nightly-20251106004729
+ * @version 3.17.2-nightly-20251113004727
  */
 var bb = {
     /**
@@ -25619,7 +25622,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.17.2-nightly-20251106004729",
+    version: "3.17.2-nightly-20251113004727",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

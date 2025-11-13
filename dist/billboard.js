@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.2-nightly-20251106004729
+ * @version 3.17.2-nightly-20251113004727
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2366,7 +2366,8 @@ const $ZOOM = {
    * @property {boolean} [interaction.brighten=true] Make brighter for the selected area (ex. 'pie' type data selected area)
    * @property {boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
    * @property {boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
-   * @property {boolean|number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
+   * @property {boolean|number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.<br>
+   * - **NOTE**: When `true` is set, touch events are bound with [`{passive: false}`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#using_passive_listeners) option.
    * @property {boolean} [interaction.onout=true] Enable or disable "onout" event.<br>
    * 		When is disabled, defocus(hiding tooltip, focused gridline, etc.) event won't work.
    * @see [Demo: touch.preventDefault](https://naver.github.io/billboard.js/demo/#Interaction.PreventScrollOnTouch)
@@ -8176,7 +8177,7 @@ function getTextXPos(pos = "left", width) {
     if (tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
       const selectedData = JSON.parse((_a = tooltip.datum().current) != null ? _a : {});
       callFn(config.tooltip_onhide, api, selectedData);
-      tooltip.style("display", "none").style("visibility", "hidden").datum(null);
+      tooltip.style("display", "none").datum(null);
       callFn(config.tooltip_onhidden, api, selectedData);
     }
   },
@@ -9264,7 +9265,11 @@ class ChartInternal {
     if (hasInteraction && state.inputType) {
       const isTouch = state.inputType === "touch";
       const { onclick, onover, onout } = config;
-      $el.svg.on("click", (onclick == null ? void 0 : onclick.bind($$.api)) || null).on(isTouch ? "touchstart" : "mouseenter", (onover == null ? void 0 : onover.bind($$.api)) || null).on(isTouch ? "touchend" : "mouseleave", (onout == null ? void 0 : onout.bind($$.api)) || null);
+      $el.svg.on("click", (onclick == null ? void 0 : onclick.bind($$.api)) || null).on(
+        isTouch ? "touchstart" : "mouseenter",
+        (onover == null ? void 0 : onover.bind($$.api)) || null,
+        isTouch ? { passive: true } : void 0
+      ).on(isTouch ? "touchend" : "mouseleave", (onout == null ? void 0 : onout.bind($$.api)) || null);
     }
     config.svg_classname && $el.svg.attr("class", config.svg_classname);
     const hasColorPatterns = isFunction(config.color_tiles) && $$.patterns;
@@ -14494,6 +14499,7 @@ class Axis_Axis {
     const isPrevented = isBoolean(preventDefault) && preventDefault || false;
     const preventThreshold = !isNaN(preventDefault) && preventDefault || null;
     let startPx;
+    const passiveOption = !isPrevented && preventThreshold === null;
     const preventEvent = (event) => {
       const eventType = event.type;
       const touch = event.changedTouches[0];
@@ -14514,7 +14520,7 @@ class Axis_Axis {
     eventRect.on("touchstart", (event) => {
       state.event = event;
       $$.updateEventRect();
-    }).on("touchstart.eventRect touchmove.eventRect", (event) => {
+    }, { passive: passiveOption }).on("touchstart.eventRect touchmove.eventRect", (event) => {
       state.event = event;
       if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
         if (state.dragging || state.flowing || $$.hasArcType() || event.touches.length > 1) {
@@ -14525,21 +14531,21 @@ class Axis_Axis {
       } else {
         unselectRect();
       }
-    }, true).on("touchend.eventRect", (event) => {
+    }, { passive: passiveOption }).on("touchend.eventRect", (event) => {
       state.event = event;
       if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
         if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
           state.cancelClick && (state.cancelClick = false);
         }
       }
-    }, true);
+    }, { passive: passiveOption });
     svg.on("touchstart", (event) => {
       state.event = event;
       const { target } = event;
       if (target && target !== eventRect.node()) {
         unselectRect();
       }
-    });
+    }, { passive: passiveOption });
   },
   /**
    * Update event rect size
@@ -18698,7 +18704,7 @@ function getAttrTweenFn(fn) {
         const id = (arcData == null ? void 0 : arcData.id) || void 0;
         $$.callOverOutForTouch(arcData);
         isUndefined(id) ? unselectArc() : selectArc(this, arcData, id);
-      });
+      }, { passive: true });
     }
   },
   redrawArcText(duration) {
@@ -19594,7 +19600,7 @@ function updateRatio(data) {
           $$.showTooltip([data], event.target);
           /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
         }
-      }).on(isTouch ? "touchend" : "mouseout", (event) => {
+      }, isTouch ? { passive: true } : void 0).on(isTouch ? "touchend" : "mouseout", (event) => {
         const data = getTarget(event);
         if (config.interaction_onout) {
           $$.hideTooltip();
@@ -20879,9 +20885,9 @@ const cacheKeyTextWidth = KEY.radarTextWidth;
       const index = $$.getDataIndexFromEvent(event);
       $$.selectRectForSingle(svg.node(), index);
       isMouse ? $$.setOverOut(true, index) : $$.callOverOutForTouch(index);
-    }).on("mouseout", isMouse ? hide : null);
+    }, isMouse ? void 0 : { passive: true }).on("mouseout", isMouse ? hide : null);
     if (!isMouse) {
-      svg.on("touchstart", hide);
+      svg.on("touchstart", hide, { passive: true });
     }
   },
   updateRadarShape() {
@@ -20993,7 +20999,7 @@ function getHierachyData(data) {
           $$.showTooltip([data], event.currentTarget);
           /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
         }
-      }).on(isTouch ? "touchend" : "mouseout", (event) => {
+      }, isTouch ? { passive: true } : void 0).on(isTouch ? "touchend" : "mouseout", (event) => {
         const data = getTarget(event);
         if (config.interaction_onout) {
           $$.hideTooltip();
@@ -22723,7 +22729,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.2-nightly-20251106004729",
+  version: "3.17.2-nightly-20251113004727",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
