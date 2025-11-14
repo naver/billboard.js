@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.2-nightly-20251113004727
+ * @version 3.17.2-nightly-20251114004742
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -884,7 +884,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.17.2-nightly-20251113004727");
+__publicField(Plugin, "version", "3.17.2-nightly-20251114004742");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);
@@ -1114,7 +1114,7 @@ class Options {
        * Set the color of the color scale. This function receives a value between 0 and 1, and should return a color.
        * @name colors
        * @memberof plugin-stanford
-       * @type {Function}
+       * @type {function}
        * @default undefined
        * @example
        *   colors: d3.interpolateHslLong(
@@ -1162,7 +1162,7 @@ class Options {
        * @property {number} [scale.min=undefined] Minimum value of the color scale. Default: lowest value in epochs
        * @property {number} [scale.max=undefined] Maximum value of the color scale. Default: highest value in epochs
        * @property {number} [scale.width=20] Width of the color scale
-       * @property {string|Function} [scale.format=undefined] Format of the axis of the color scale. Use 'pow10' to format as powers of 10 or a custom function. Example: d3.format("d")
+       * @property {string|function} [scale.format=undefined] Format of the axis of the color scale. Use 'pow10' to format as powers of 10 or a custom function. Example: d3.format("d")
        * @example
        *  scale: {
        *    max: 10000,

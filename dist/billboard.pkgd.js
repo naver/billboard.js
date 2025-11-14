@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.2-nightly-20251113004727
+ * @version 3.17.2-nightly-20251114004742
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -24014,9 +24014,9 @@ const $ZOOM = {
    * @memberof Options
    * @type {object}
    * @property {object} color color object
-   * @property {string|object|Function} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
+   * @property {string|object|((this: Chart, d: DataItem) => string)} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
    * @property {Array|null} [color.pattern=[]] Set custom color pattern. Passing `null` will not set a color for these elements, which requires the usage of custom CSS-based theming to work.
-   * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
+   * @property {(this: Chart) => SVGPathElement[]} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
    *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
    *    ex. When color pattern value is `['red', '#fff']` and defined 2 patterns,then ids for pattern elements are:<br>
    *    - `bb-colorize-pattern-red`
@@ -24101,7 +24101,7 @@ const $ZOOM = {
    *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
    * @property {string|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
    * - **NOTE:** Should be used along with `legend.contents.template`.
-   * @property {string|Function} [legend.contents.template="<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>"] Set item's template.<br>
+   * @property {string|function} [legend.contents.template="<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>"] Set item's template.<br>
    *  - If set `string` value, within template the 'color' and 'title' can be replaced using template-like syntax string:
    *    - {=COLOR}: data color value
    *    - {=TITLE}: data title value
@@ -24135,13 +24135,13 @@ const $ZOOM = {
    *    - To return initial state(which all dataseries are showing), double click current focused legend item again.
    *      - for single click case, `click + altKey(Win)/optionKey(Mac OS)` to have same effect.
    *    - In this case, default `click` interaction will be disabled.
-   * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
+   * @property {function} [legend.item.onclick=undefined] Set click event handler to the legend item.
    *  - **NOTE:**
    *    - When set, default `click` interaction will be disabled.
    *    - When `interaction.dblclick=true` is set, will be called on double click.
-   * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
+   * @property {function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
    *  - **NOTE:** When set, default `mouseover` interaction will be disabled.
-   * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
+   * @property {function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
    *  - **NOTE:** When set, default `mouseout` interaction will be disabled.
    * @property {number} [legend.item.tile.width=10] Set width for 'rectangle' legend item tile element.
    * @property {number} [legend.item.tile.height=10] Set height for 'rectangle' legend item tile element.
@@ -24450,7 +24450,7 @@ const $ZOOM = {
    * Set a callback to execute when the chart is clicked.
    * @name onclick
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    * onclick: function(event) {
@@ -24464,7 +24464,7 @@ const $ZOOM = {
    * Set a callback to execute when mouse/touch enters the chart.
    * @name onover
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    * onover: function(event) {
@@ -24478,7 +24478,7 @@ const $ZOOM = {
    * Set a callback to execute when mouse/touch leaves the chart.
    * @name onout
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    * onout: function(event) {
@@ -24492,7 +24492,7 @@ const $ZOOM = {
    * Set a callback to execute when user resizes the screen.
    * @name onresize
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    * onresize: function() {
@@ -24505,7 +24505,7 @@ const $ZOOM = {
    * Set a callback to execute when screen resize finished.
    * @name onresized
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    * onresized: function() {
@@ -24518,7 +24518,7 @@ const $ZOOM = {
    * Set a callback to execute before the chart is initialized
    * @name onbeforeinit
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    * onbeforeinit: function() {
@@ -24531,7 +24531,7 @@ const $ZOOM = {
    * Set a callback to execute when the chart is initialized.
    * @name oninit
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    * oninit: function() {
@@ -24544,7 +24544,7 @@ const $ZOOM = {
    * Set a callback to execute after the chart is initialized
    * @name onafterinit
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    * onafterinit: function() {
@@ -24557,7 +24557,7 @@ const $ZOOM = {
    * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
    * @name onrendered
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    * onrendered: function() {
@@ -24741,17 +24741,17 @@ const $ZOOM = {
    *   - **NOTE:** The overlapped data points will be displayed as grouped even if set false.
    * @property {boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
    * @property {string} [tooltip.linked.name=""] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
-   * @property {Function} [tooltip.format.title] Set format for the title of tooltip.<br>
+   * @property {function} [tooltip.format.title] Set format for the title of tooltip.<br>
    *  Specified function receives x of the data point to show.
-   * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
+   * @property {function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
    *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
-   * @property {Function} [tooltip.format.value] Set format for the value of each data value in tooltip. If undefined returned, the row of that value will be skipped to be called.
+   * @property {function} [tooltip.format.value] Set format for the value of each data value in tooltip. If undefined returned, the row of that value will be skipped to be called.
    *  - Will pass following arguments to the given function:
    *    - `value {string}`: Value of the data point. If data row contains multiple or ranged(ex. candlestick, area range, etc.) value, formatter will be called as value length.
    *    - `ratio {number}`: Ratio of the data point in the `pie/donut/gauge` and `area/bar` when contains grouped data. Otherwise is `undefined`.
    *    - `id {string}`: id of the data point
    *    - `index {number}`: Index of the data point
-   * @property {Function} [tooltip.position] Set custom position function for the tooltip.<br>
+   * @property {function} [tooltip.position] Set custom position function for the tooltip.<br>
    *  This option can be used to modify the tooltip position by returning object that has top and left.
    *  - Will pass following arguments to the given function:
    *    - `data {Array}`: Current selected data array object.
@@ -24759,7 +24759,7 @@ const $ZOOM = {
    *    - `height {number}`: Height of tooltip.
    *    - `element {SVGElement}`: Tooltip event bound element
    *    - `pos {object}`: Current position of the tooltip.
-   * @property {Function|object} [tooltip.contents] Set custom HTML for the tooltip.<br>
+   * @property {function|object} [tooltip.contents] Set custom HTML for the tooltip.<br>
    *  If tooltip.grouped is true, data includes multiple data points.<br><br>
    *  Specified function receives `data` array and `defaultTitleFormat`, `defaultValueFormat` and `color` functions of the data point to show.
    *  - **Note:**
@@ -24788,11 +24788,11 @@ const $ZOOM = {
    * @property {boolean} [tooltip.init.show=false] Show tooltip at the initialization.
    * @property {number} [tooltip.init.x=0] Set x Axis index(or index for Arc(donut, gauge, pie) types) to be shown at the initialization.
    * @property {object} [tooltip.init.position] Set the position of tooltip at the initialization.
-   * @property {Function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
-   * @property {Function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
-   * @property {Function} [tooltip.onshown] Set a callback that will be invoked after the tooltip is shown
-   * @property {Function} [tooltip.onhidden] Set a callback that will be invoked after the tooltip is hidden.
-   * @property {string|Function|null} [tooltip.order=null] Set tooltip data display order.<br><br>
+   * @property {function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
+   * @property {function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
+   * @property {function} [tooltip.onshown] Set a callback that will be invoked after the tooltip is shown
+   * @property {function} [tooltip.onhidden] Set a callback that will be invoked after the tooltip is hidden.
+   * @property {string|function|null} [tooltip.order=null] Set tooltip data display order.<br><br>
    *  **Available Values:**
    *  - `desc`: In descending data value order
    *  - `asc`: In ascending data value order
@@ -24994,7 +24994,7 @@ const $ZOOM = {
    * Converts data id value
    * @name data․idConverter
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default function(id) { return id; }
    * @example
    * data: {
@@ -25175,7 +25175,7 @@ const $ZOOM = {
    *  **NOTE**: order function, only works for Axis based types & Arc types, except `Radar` type.
    * @name data․order
    * @memberof Options
-   * @type {string|Function|null}
+   * @type {string|function|null}
    * @default desc
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataOrder)
    * @example
@@ -25249,7 +25249,7 @@ const $ZOOM = {
    * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
    * @name data․color
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataColor)
    * @example
@@ -25284,7 +25284,7 @@ const $ZOOM = {
    * @property {object} data Data object
    * @property {boolean} [data.labels=false] Show or hide labels on each data points
    * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
-   * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
+   * @property {function} [data.labels.format] Set formatter function for data labels.<br>
    * The formatter function receives 4 arguments such as `v, id, i, texts` and it **must return a string** (`\n` character will be used as line break) that will be shown as the label.<br><br>
    * The arguments are:<br>
    *  - `v` is the value of the data point where the label is shown.
@@ -25292,12 +25292,12 @@ const $ZOOM = {
    *  - `i` is the index of the data series point where the label is shown.
    *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
    * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-   * @property {string|object|Function} [data.labels.backgroundColors] Set label text background colors.<br><br>
+   * @property {string|object|function} [data.labels.backgroundColors] Set label text background colors.<br><br>
    * - **NOTE**: When function is set, background colors can be specified one color per dataset.
    *   - Within the function, the last returned color for dataset will be used.
    *   - Only can control set or unset background color for each values.
-   * @property {string|object|Function} [data.labels.colors] Set label text colors.
-   * @property {object|Function} [data.labels.position] Set each dataset position, relative the original.<br><br>
+   * @property {string|object|function} [data.labels.colors] Set label text colors.
+   * @property {object|function} [data.labels.position] Set each dataset position, relative the original.<br><br>
    * When function is specified, will receives 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
    * The arguments are:<br>
    *  - `type` coordinate type string, which will be 'x' or 'y'.
@@ -25315,7 +25315,7 @@ const $ZOOM = {
    * @property {number} [data.labels.border.strokeWidth=1] Border stroke width.
    * @property {string} [data.labels.border.stroke="#000"] Border stroke color.
    * @property {string} [data.labels.border.fill="none"] Border fill color.
-   * @property {object|Function} [data.labels.image] Set image to be displayed next to the label text.<br><br>
+   * @property {object|function} [data.labels.image] Set image to be displayed next to the label text.<br><br>
    * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
    * The arguments are:<br>
    *  - `v` is the value of the data point where the label is shown.
@@ -25516,7 +25516,7 @@ const $ZOOM = {
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
    * @name data․filter
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    * data: {
@@ -25537,7 +25537,7 @@ const $ZOOM = {
    * - In this callback, `this` will be the Chart object.
    * @name data․onclick
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default function() {}
    * @example
    * data: {
@@ -25558,7 +25558,7 @@ const $ZOOM = {
    * - In this callback, `this` will be the Chart object.
    * @name data․onover
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default function() {}
    * @example
    * data: {
@@ -25579,7 +25579,7 @@ const $ZOOM = {
    * - In this callback, `this` will be the Chart object.
    * @name data․onout
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default function() {}
    * @example
    * data: {
@@ -25597,7 +25597,7 @@ const $ZOOM = {
    * The callback will receive shown data ids in array.
    * @name data․onshown
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    *  data: {
@@ -25613,7 +25613,7 @@ const $ZOOM = {
    * The callback will receive hidden data ids in array.
    * @name data․onhidden
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    *  data: {
@@ -25629,7 +25629,7 @@ const $ZOOM = {
    * - **NOTE:** For 'area-line-range', 'area-step-range' and 'area-spline-range', `mid` data will be taken for the comparison
    * @name data․onmin
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
    * @example
@@ -25644,7 +25644,7 @@ const $ZOOM = {
    * - **NOTE:** For 'area-line-range', 'area-step-range' and 'area-spline-range', `mid` data will be taken for the comparison
    * @name data․onmax
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
    * @example
@@ -28972,9 +28972,9 @@ class Cache {
   /**
    * Add cache
    * @param {string} key Cache key
-   * @param {*} value Value to be stored
+   * @param {string|number|boolean|object|Array|function|null|undefined} value Value to be stored
    * @param {boolean} isDataType Weather the cache is data typed '{id:'data', id_org: 'data', values: [{x:0, index:0,...}, ...]}'
-   * @returns {*} Added data value
+   * @returns {string|number|boolean|object|Array|function|null|undefined} Added data value
    * @private
    */
   add(key, value, isDataType = false) {
@@ -28993,7 +28993,7 @@ class Cache {
    * Get cahce
    * @param {string|Array} key Cache key
    * @param {boolean} isDataType Weather the cache is data typed '{id:'data', id_org: 'data', values: [{x:0, index:0,...}, ...]}'
-   * @returns {*}
+   * @returns {string|number|boolean|object|Array|function|null} Cached value
    * @private
    */
   get(key, isDataType = false) {
@@ -29593,7 +29593,7 @@ function setXS(ids, data, params) {
   /**
    * Convert data according its type
    * @param {object} args data object
-   * @param {Function} [callback] callback for url(XHR) type loading
+   * @param {function} [callback] callback for url(XHR) type loading
    * @private
    */
   convertData(args, callback) {
@@ -30172,7 +30172,7 @@ function setXS(ids, data, params) {
   /**
    * Get data.order compare function
    * @param {boolean} isReversed for Arc & Treemap type sort order needs to be reversed
-   * @returns {Function} compare function
+   * @returns {function} compare function
    * @private
    */
   getSortCompareFn(isReversed = false) {
@@ -30940,7 +30940,7 @@ function drag_defaultTouchable() {
   },
   /**
    * Return draggable selection function
-   * @returns {Function}
+   * @returns {function}
    * @private
    */
   getDraggableSelection() {
@@ -31414,7 +31414,7 @@ const schemeCategory10 = [
   },
   /**
    * Append data backgound color filter definition
-   * @param {string|object|Function} color Color string, object, or function
+   * @param {string|object|function} color Color string, object, or function
    * @param {object} attr filter attribute
    * @private
    */
@@ -31901,7 +31901,7 @@ function getFormat($$, typeValue, v) {
   },
   /**
    * Get default value format function
-   * @returns {Function} formatter function
+   * @returns {function} formatter function
    * @private
    */
   getDefaultValueFormat() {
@@ -32425,7 +32425,7 @@ function getFormattedText(id, formatted = true) {
    * @param {Array} targetIdz Data ids
    * @param {object} dimension Dimension object
    * @param {object} sizes Size object
-   * @returns {Function} Update position function
+   * @returns {function} Update position function
    * @private
    */
   getUpdateLegendPositions(targetIdz, dimension, sizes) {
@@ -32499,7 +32499,7 @@ function getFormattedText(id, formatted = true) {
    * Generate legend item elements
    * @param {Array} targetIdz Data ids
    * @param {object} itemTileSize Item tile size {width, height}
-   * @param {Function} updatePositions Update position function
+   * @param {function} updatePositions Update position function
    * @param {object} posFn Position functions
    * @private
    */
@@ -33757,8 +33757,8 @@ function getScale(type = "linear", min, max) {
    * @param {number} min Min range value
    * @param {number} max Max range value
    * @param {Array} domain Domain value
-   * @param {Function} offset The offset getter to be sum
-   * @returns {Function} scale
+   * @param {function} offset The offset getter to be sum
+   * @returns {function} scale
    * @private
    */
   getXScale(min, max, domain, offset) {
@@ -33775,7 +33775,7 @@ function getScale(type = "linear", min, max) {
    * @param {number} min Min value
    * @param {number} max Max value
    * @param {Array} domain Domain value
-   * @returns {Function} Scale function
+   * @returns {function} Scale function
    * @private
    */
   getYScale(id, min, max, domain) {
@@ -33788,7 +33788,7 @@ function getScale(type = "linear", min, max) {
    * Get y Axis scale
    * @param {string} id Axis id
    * @param {boolean} isSub Weather is sub Axis
-   * @returns {Function} Scale function
+   * @returns {function} Scale function
    * @private
    */
   getYScaleById(id, isSub = false) {
@@ -33800,8 +33800,8 @@ function getScale(type = "linear", min, max) {
   /**
    * Get customized x axis scale
    * @param {d3.scaleLinear|d3.scaleTime} scaleValue Scale function
-   * @param {Function} offsetValue Offset getter to be sum
-   * @returns {Function} Scale function
+   * @param {function} offsetValue Offset getter to be sum
+   * @returns {function} Scale function
    * @private
    */
   getCustomizedXScale(scaleValue, offsetValue) {
@@ -34251,8 +34251,8 @@ function getScale(type = "linear", min, max) {
    * @param {boolean} withShape Set shpes' prefix class
    * @param {string} selector CSS selector
    * @param {Array} props CSS props list
-   * @param {Function} propsFn Function to retrieve value or determine for props
-   * @returns {Function}
+   * @param {function} propsFn Function to retrieve value or determine for props
+   * @returns {function}
    * @private
    */
   setCssRule(withShape, selector, props, propsFn) {
@@ -34274,7 +34274,7 @@ function getScale(type = "linear", min, max) {
   },
   /**
    * Get style prop value
-   * @param {Function|string} v Value
+   * @param {function|string} v Value
    * @returns {string|null}
    * @private
    */
@@ -34576,7 +34576,7 @@ function updateTextImagePos(textNode, pos) {
   /**
    * Update data label text background color
    * @param {object} d Data object
-   * @param {object|string|Function} option option object
+   * @param {object|string|function} option option object
    * @returns {string|null}
    * @private
    */
@@ -34605,8 +34605,8 @@ function updateTextImagePos(textNode, pos) {
   },
   /**
    * Redraw chartText
-   * @param {Function} getX Positioning function for x
-   * @param {Function} getY Positioning function for y
+   * @param {function} getX Positioning function for x
+   * @param {function} getY Positioning function for y
    * @param {boolean} forFlow Weather is flow
    * @param {boolean} withTransition transition is enabled
    * @returns {Array}
@@ -34997,9 +34997,9 @@ function getTextXPos(pos = "left", width) {
   /**
    * Returns the tooltip content(HTML string)
    * @param {object} d data
-   * @param {Function} defaultTitleFormat Default title format
-   * @param {Function} defaultValueFormat Default format for each data value in the tooltip.
-   * @param {Function} color Color function
+   * @param {function} defaultTitleFormat Default title format
+   * @param {function} defaultValueFormat Default format for each data value in the tooltip.
+   * @param {function} color Color function
    * @returns {string} html
    * @private
    */
@@ -36710,7 +36710,7 @@ function getGroupedDataPointsFn(d) {
    * 	data2 data4   data2 data4
    * 	-------------------------
    * 		 0             1
-   * @param {Function} typeFilter Chart type filter function
+   * @param {function} typeFilter Chart type filter function
    * @returns {object} Indices object with its position
    */
   getShapeIndices(typeFilter) {
@@ -36855,7 +36855,7 @@ function getGroupedDataPointsFn(d) {
   },
   /**
    * Get Shape's offset data
-   * @param {Function} typeFilter Type filter function
+   * @param {function} typeFilter Type filter function
    * @returns {object}
    * @private
    */
@@ -37831,10 +37831,10 @@ function loadConfig(config) {
    * @instance
    * @memberof Chart
    * @param {string} name The option key name.
-   * @param {*} [value] The value accepted for indicated option.
+   * @param {string|number|boolean|object|Array} [value] The value accepted for indicated option.
    * @param {boolean} [redraw] Set to redraw with the new option changes.
    * - **NOTE:** Doesn't guarantee work in all circumstances. It can be applied for limited options only.
-   * @returns {*}
+   * @returns {string|number|boolean|object|Array} The option value or all options object
    * @example
    *
    * // Getter
@@ -38183,7 +38183,7 @@ function renderText(ctx, glyph) {
    *   - Text element's position(especially "transformed") can't be preserved correctly according the page's layout condition.
    *   - If need to preserve accurate text position, embed the web font data within to the page and set `preserveFontStyle=false`.
    *     - Checkout the embed example: <a href="https://stackblitz.com/edit/zfbya9-8nf9nn?file=index.html">https://stackblitz.com/edit/zfbya9-8nf9nn?file=index.html</a>
-   * @param {Function} [callback] The callback to be invoked when export is ready.
+   * @param {function(string): void} [callback] The callback to be invoked when export is ready.
    * @returns {string} dataURI
    * @example
    *  chart.export();
@@ -40204,7 +40204,7 @@ util_extend(zoom, {
   },
   /**
    * Set zoom transform to event rect
-   * @param {Function} x x Axis scale function
+   * @param {function} x x Axis scale function
    * @param {Array} domain Domain value to be set
    * @private
    */
@@ -40514,7 +40514,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
    * Returns the toggle method of the target
    * @param {object} that shape
    * @param {object} d Data object
-   * @returns {Function} toggle method
+   * @returns {function} toggle method
    * @private
    */
   getToggle(that, d) {
@@ -40613,7 +40613,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
    * The callback will receive d as an argument and it has some parameters like id, value, index. This callback should return boolean.
    * @name data․selection․isselectable
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default function() { return true; }
    * @example
    * data: {
@@ -40658,7 +40658,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
    * Set a callback for on data selection.
    * @name data․onselected
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default function() {}
    * @example
    * data: {
@@ -40675,7 +40675,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
    * Set a callback for on data un-selection.
    * @name data․onunselected
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default function() {}
    * @example
    * data: {
@@ -40705,11 +40705,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
    * @property {boolean} [subchart.showHandle=false] Show sub chart's handle.
    * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
    * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
-   * @property {Function|string} [subchart.axis.x.tick.format] Use custom format for x axis ticks - see [axis.x.tick.format](#.axis․x․tick․format) for details.
+   * @property {function|string} [subchart.axis.x.tick.format] Use custom format for x axis ticks - see [axis.x.tick.format](#.axis․x․tick․format) for details.
    * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
    * @property {Array} [subchart.init.range] Set initial selection domain range.
    * @property {number} [subchart.size.height] Change the height of the subchart.
-   * @property {Function} [subchart.onbrush] Set callback for brush event.<br>
+   * @property {function} [subchart.onbrush] Set callback for brush event.<br>
    *  Specified function receives the current zoomed x domain.
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)
    * @example
@@ -40778,14 +40778,14 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
    * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
    * @property {number|Date} [zoom.x.min] Set x Axis minimum zoom range
    * @property {number|Date} [zoom.x.max] Set x Axis maximum zoom range
-   * @property {Function} [zoom.onzoomstart=undefined] Set callback that is called when zooming starts.<br>
+   * @property {function} [zoom.onzoomstart=undefined] Set callback that is called when zooming starts.<br>
    *  Specified function receives the zoom event.
-   * @property {Function} [zoom.onzoom=undefined] Set callback that is called when the chart is zooming.<br>
+   * @property {function} [zoom.onzoom=undefined] Set callback that is called when the chart is zooming.<br>
    *  Specified function receives the zoomed domain.
-   * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
+   * @property {function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
    *  Specified function receives the zoomed domain.
    * @property {boolean|object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
-   * @property {Function} [zoom.resetButton.onclick] Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
+   * @property {function} [zoom.resetButton.onclick] Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
    * @property {string} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
    * @see [Demo:zoom](https://naver.github.io/billboard.js/demo/#Interaction.Zoom)
    * @see [Demo:drag zoom](https://naver.github.io/billboard.js/demo/#Interaction.DragZoom)
@@ -41790,7 +41790,7 @@ class AxisRendererHelper {
   /**
    * Get tick transform setter function
    * @param {string} id Axis id
-   * @returns {Function} transfrom setter function
+   * @returns {(selection: d3Selection, scale) => void} transfrom setter function
    * @private
    */
   getTickTransformSetter(id) {
@@ -43560,7 +43560,7 @@ const src_linear_linear = (t) => +t;
   /**
    * Generate flow
    * @param {object} args option object
-   * @returns {Function}
+   * @returns {function}
    * @private
    */
   generateFlow(args) {
@@ -44540,7 +44540,7 @@ function smoothLines(el, type) {
    * A function to format tick value. Format string is also available for timeseries data.
    * @name axis․x․tick․format
    * @memberof Options
-   * @type {Function|string}
+   * @type {function|string}
    * @default undefined
    * @see [D3's time specifier](https://d3js.org/d3-time-format#locale_format)
    * @example
@@ -44783,7 +44783,7 @@ function smoothLines(el, type) {
    * This option works with `timeseries` data and the x values will be parsed accoding to the type of the value and data.xFormat option.
    * @name axis․x․tick․values
    * @memberof Options
-   * @type {Array|Function}
+   * @type {Array|function}
    * @default null
    * @example
    * axis: {
@@ -45055,7 +45055,7 @@ function smoothLines(el, type) {
    * - **NOTE:** Specifying value, will limit the zoom scope selection within.
    * @name axis․x․extent
    * @memberof Options
-   * @type {Array|Function}
+   * @type {Array|function}
    * @default undefined
    * @example
    * axis: {
@@ -45321,7 +45321,7 @@ function smoothLines(el, type) {
    * This option accepts d3.format object as well as a function you define.
    * @name axis․y․tick․format
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    * axis: {
@@ -45446,7 +45446,7 @@ function smoothLines(el, type) {
    * Set y axis tick values manually.
    * @name axis․y․tick․values
    * @memberof Options
-   * @type {Array|Function}
+   * @type {Array|function}
    * @default null
    * @example
    * axis: {
@@ -45582,7 +45582,7 @@ function smoothLines(el, type) {
    * @private
    * @type {object}
    * @property {object} time time object
-   * @property {Function} [time.value] D3's time interval function (https://github.com/d3/d3-time#intervals)
+   * @property {function} [time.value] D3's time interval function (https://github.com/d3/d3-time#intervals)
    * @example
    * axis: {
    *   y: {
@@ -45826,7 +45826,7 @@ function smoothLines(el, type) {
    * This option works in the same way as axis.y.format.
    * @name axis․y2․tick․format
    * @memberof Options
-   * @type {Function}
+   * @type {function}
    * @default undefined
    * @example
    * axis: {
@@ -45951,7 +45951,7 @@ function smoothLines(el, type) {
    * Set y2 axis tick values manually.
    * @name axis․y2․tick․values
    * @memberof Options
-   * @type {Array|Function}
+   * @type {Array|function}
    * @default null
    * @example
    * axis: {
@@ -46186,7 +46186,7 @@ var axis_spreadValues = (a, b) => {
    *   - Setting `false` or custom evaluator, highly recommended to memoize evaluated text dimension value to not degrade performance.
    * @name axis․evalTextSize
    * @memberof Options
-   * @type {boolean|Function}
+   * @type {boolean|function}
    * @default true
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.AxisEvalTextSize)
    * @example
@@ -47122,7 +47122,7 @@ function getAttrTweenFn(fn) {
   /**
    * Get expanded arc path function
    * @param {number} rate Expand rate
-   * @returns {Function} Expanded arc path getter function
+   * @returns {function} Expanded arc path getter function
    * @private
    */
   getSvgArcExpanded(rate = 1) {
@@ -47881,7 +47881,7 @@ function point_y(p) {
   },
   /**
    * Redraw function
-   * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+   * @param {function} drawFn Retuned functino from .generateDrawCandlestick()
    * @param {boolean} withTransition With or without transition
    * @param {boolean} isSub Subchart draw
    * @returns {Array}
@@ -47901,7 +47901,7 @@ function point_y(p) {
    * Generate area path data
    * @param {object} areaIndices Indices
    * @param {boolean} isSub Weather is sub axis
-   * @returns {Function}
+   * @returns {function}
    * @private
    */
   generateDrawArea(areaIndices, isSub) {
@@ -48045,7 +48045,7 @@ function getConnectLineType(id) {
   },
   /**
    * Redraw function
-   * @param {Function} drawFn Retuned function from .getDrawShape() => .generateDrawBar()
+   * @param {function} drawFn Retuned function from .getDrawShape() => .generateDrawBar()
    * @param {boolean} withTransition With or without transition
    * @param {boolean} isSub Subchart draw
    * @returns {Array}
@@ -48092,7 +48092,7 @@ function getConnectLineType(id) {
    * 		-------------------------
    * 			 0             1
    * @param {boolean} isSub If is for subchart
-   * @returns {Function}
+   * @returns {function}
    * @private
    */
   generateDrawBar(barIndices, isSub) {
@@ -48387,7 +48387,7 @@ var candlestick_spreadValues = (a, b) => {
    * Get draw function
    * @param {object} indices Indice data
    * @param {boolean} isSub Subchart draw
-   * @returns {Function}
+   * @returns {function}
    * @private
    */
   generateDrawCandlestick(indices, isSub) {
@@ -48431,7 +48431,7 @@ var candlestick_spreadValues = (a, b) => {
    * Generate shape drawing points
    * @param {object} indices Indice data
    * @param {boolean} isSub Subchart draw
-   * @returns {Function}
+   * @returns {function}
    */
   generateGetCandlestickPoints(indices, isSub = false) {
     const $$ = this;
@@ -48477,7 +48477,7 @@ var candlestick_spreadValues = (a, b) => {
   },
   /**
    * Redraw function
-   * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+   * @param {function} drawFn Retuned functino from .generateDrawCandlestick()
    * @param {boolean} withTransition With or without transition
    * @param {boolean} isSub Subchart draw
    * @returns {Array}
@@ -48940,7 +48940,7 @@ function getRegions(d, _regions, isTimeSeries) {
   },
   /**
    * Redraw function
-   * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+   * @param {function} drawFn Retuned functino from .generateDrawCandlestick()
    * @param {boolean} withTransition With or without transition
    * @param {boolean} isSub Subchart draw
    * @returns {Array}
@@ -48957,7 +48957,7 @@ function getRegions(d, _regions, isTimeSeries) {
   /**
    * Get the curve interpolate
    * @param {Array} d Data object
-   * @returns {Function}
+   * @returns {function}
    * @private
    */
   getCurve(d) {
@@ -49027,8 +49027,8 @@ function getRegions(d, _regions, isTimeSeries) {
   /**
    * Set regions dasharray and get path
    * @param {Array} d Data object
-   * @param {Function} x x scale function
-   * @param {Function} y y scale function
+   * @param {function} x x scale function
+   * @param {function} y y scale function
    * @param {object} _regions regions to be set
    * @returns {stirng} Path string
    * @private
@@ -49625,7 +49625,7 @@ function insertPointInfoDefs(point, id) {
   },
   /**
    * Get generate point function
-   * @returns {Function}
+   * @returns {function}
    * @private
    */
   generatePoint() {
@@ -50555,7 +50555,7 @@ function getHierachyData(data) {
   },
   /**
    * Get tiling function
-   * @returns {Function}
+   * @returns {function}
    * @private
    */
   getTreemapTile() {
@@ -50656,7 +50656,7 @@ function getHierachyData(data) {
   /**
    * Get treemap data label format function
    * @param {object} d Data object
-   * @returns {Function}
+   * @returns {function}
    * @private
    */
   treemapDataLabelFormat(d) {
@@ -50684,7 +50684,7 @@ ${percentValue}%`;
    * @type {object}
    * @property {object} point Point object
    * @property {boolean} [point.show=true] Whether to show each point in line.
-   * @property {number|Function} [point.r=2.5] The radius size of each point.
+   * @property {number|function} [point.r=2.5] The radius size of each point.
    *  - **NOTE:** Disabled for 'bubble' type
    * @property {boolean|object} [point.radialGradient=false] Set the radial gradient on point.<br><br>
    * Or customize by giving below object value:
@@ -50701,7 +50701,7 @@ ${percentValue}%`;
    * - **NOTE:**
    * 	- `null` will make to not set inline 'opacity' css prop.
    * 	- when no value(or undefined) is set, it defaults to set opacity value according its chart types.
-   * @property {number|string|Function} [point.sensitivity=10] The senstivity value for interaction boundary.
+   * @property {number|string|function} [point.sensitivity=10] The senstivity value for interaction boundary.
    * - **Available Values:**
    *   - {number}: Absolute sensitivity value which is the distance from the data point in pixel.
    *   - "radius": sensitivity based on point's radius
@@ -50919,7 +50919,7 @@ ${percentValue}%`;
    * @property {number} [bar.radius] Set the radius of bar edge in pixel.
    * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
    * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
-   * @property {number|Function|object} [bar.width] Change the width of bar chart.
+   * @property {number|function|object} [bar.width] Change the width of bar chart.
    * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
    * - **NOTE:** Criteria for ratio.
    *   - When x ticks count is same with the data count, the baseline for ratio is the minimum interval value of x ticks.
@@ -51049,7 +51049,7 @@ ${percentValue}%`;
    * @memberof Options
    * @type {object}
    * @property {object} bubble bubble object
-   * @property {number|Function} [bubble.maxR=35] Set the max bubble radius value
+   * @property {number|function} [bubble.maxR=35] Set the max bubble radius value
    * @property {boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
    * @example
    *  bubble: {
@@ -51255,14 +51255,14 @@ ${percentValue}%`;
    * @memberof Options
    * @type {object}
    * @property {object} arc Arc object
-   * @property {number|Function} [arc.cornerRadius=0] Set corner radius of Arc(donut/gauge/pie/polar) shape.
+   * @property {number|function} [arc.cornerRadius=0] Set corner radius of Arc(donut/gauge/pie/polar) shape.
    *  - **NOTE:**
    * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
    * @property {number} [arc.cornerRadius.ratio=0] Set ratio relative of outer radius.
    * @property {object} [arc.needle] Set needle options.
    * @property {boolean} [arc.needle.show=false] Show or hide needle.
    * @property {string} [arc.needle.color] Set needle filled color.
-   * @property {Function} [arc.needle.path] Set custom needle path function.
+   * @property {function} [arc.needle.path] Set custom needle path function.
    *  - **NOTE:**
    *   - The path should be starting from 0,0 (which is center) to top center coordinate.
    *   - The function will receive, `length`{number} parameter which indicating the needle length in pixel relative to radius.
@@ -51287,7 +51287,7 @@ ${percentValue}%`;
    * - "absolute": Show absolute value
    * - "%": Show percentage value
    * @property {boolean} [arc.rangeText.fiexed=false] Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
-   * @property {Function} [arc.rangeText.format] Set format function for the range text.
+   * @property {function} [arc.rangeText.format] Set format function for the range text.
    * @property {number} [arc.rangeText.position] Set position function or object for the range text.
    * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
    * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#PieChartOptions.CornerRadius)
@@ -51400,10 +51400,10 @@ ${percentValue}%`;
    * @type {object}
    * @property {object} donut Donut object
    * @property {boolean} [donut.label.show=true] Show or hide label on each donut piece.
-   * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
+   * @property {function} [donut.label.format] Set formatter for the label on each donut piece.
    * @property {number} [donut.label.threshold=0.05] Set threshold ratio to show/hide labels.
-   * @property {number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
-   * @property {object|Function} [donut.label.image] Set image to be displayed next to the label text.<br><br>
+   * @property {number|function} [donut.label.ratio=undefined] Set ratio of labels position.
+   * @property {object|function} [donut.label.image] Set image to be displayed next to the label text.<br><br>
    * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
    * The arguments are:<br>
    *  - `v` is the value of the data point where the label is shown.
@@ -51583,15 +51583,15 @@ ${percentValue}%`;
    * @property {boolean} [gauge.background=""] Set background color. (The `.bb-chart-arcs-background` element)
    * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
    * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
-   * @property {Function} [gauge.label.extents] Set customized min/max label text.
-   * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.<br>
+   * @property {function} [gauge.label.extents] Set customized min/max label text.
+   * @property {function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.<br>
    * Will pass following arguments to the given function:
    * - value {number}: absolute value
    * - ratio {number}: value's ratio
    * - id {string}: data's id value
-   * @property {number|Function} [gauge.label.ratio=undefined] Set ratio of labels position.
+   * @property {number|function} [gauge.label.ratio=undefined] Set ratio of labels position.
    * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
-   * @property {object|Function} [gauge.label.image] Set image to be displayed next to the label text.<br><br>
+   * @property {object|function} [gauge.label.image] Set image to be displayed next to the label text.<br><br>
    * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
    * The arguments are:<br>
    *  - `v` is the value of the data point where the label is shown.
@@ -51784,10 +51784,10 @@ ${percentValue}%`;
    * @type {object}
    * @property {object} pie Pie object
    * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
-   * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
-   * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
+   * @property {function} [pie.label.format] Set formatter for the label on each pie piece.
+   * @property {number|function} [pie.label.ratio=undefined] Set ratio of labels position.
    * @property {number} [pie.label.threshold=0.05] Set threshold ratio to show/hide labels.
-   * @property {object|Function} [pie.label.image] Set image to be displayed next to the label text.<br><br>
+   * @property {object|function} [pie.label.image] Set image to be displayed next to the label text.<br><br>
    * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
    * The arguments are:<br>
    *  - `v` is the value of the data point where the label is shown.
@@ -51936,10 +51936,10 @@ ${percentValue}%`;
    * @type {object}
    * @property {object} polar Polar object
    * @property {boolean} [polar.label.show=true] Show or hide label on each polar piece.
-   * @property {Function} [polar.label.format] Set formatter for the label on each polar piece.
+   * @property {function} [polar.label.format] Set formatter for the label on each polar piece.
    * @property {number} [polar.label.threshold=0.05] Set threshold ratio to show/hide labels.
-   * @property {number|Function} [polar.label.ratio=undefined] Set ratio of labels position.
-   * @property {object|Function} [polar.label.image] Set image to be displayed next to the label text.<br><br>
+   * @property {number|function} [polar.label.ratio=undefined] Set ratio of labels position.
+   * @property {object|function} [polar.label.image] Set image to be displayed next to the label text.<br><br>
    * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
    * The arguments are:<br>
    *  - `v` is the value of the data point where the label is shown.
@@ -51954,7 +51954,7 @@ ${percentValue}%`;
    * @property {number} [polar.level.depth=3] Set the level depth.
    * @property {boolean} [polar.level.show=true] Show or hide level.
    * @property {string} [polar.level.text.backgroundColor="#fff"] Set label text's background color.
-   * @property {Function} [polar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
+   * @property {function} [polar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
    * @property {boolean} [polar.level.text.show=true] Show or hide level text.
    * @property {number} [polar.padAngle=0] Set padding between data.
    * @property {number} [polar.padding=0] Sets the gap between pie arcs.
@@ -52079,7 +52079,7 @@ ${percentValue}%`;
    * @property {boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
    * @property {number} [radar.level.depth=3] Set the level depth.
    * @property {boolean} [radar.level.show=true] Show or hide level.
-   * @property {Function} [radar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
+   * @property {function} [radar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
    * @property {boolean} [radar.level.text.show=true] Show or hide level text.
    * @property {number} [radar.size.ratio=0.87] Set size ratio.
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.RadarChart)
@@ -52147,7 +52147,7 @@ ${percentValue}%`;
    * 	- sliceDice ([d3.treemapSliceDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSliceDice))
    * 	- squrify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
    * 	- resquarify ([d3.treemapResquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapResquarify))
-   * @property {Function} [treemap.label.format] Set formatter for the label text.
+   * @property {function} [treemap.label.format] Set formatter for the label text.
    * @property {number} [treemap.label.threshold=0.05] Set threshold ratio to show/hide labels text.
    * @property {number} [treemap.label.show=true] Show or hide label text.
    * @see [Demo: treemap](https://naver.github.io/billboard.js/demo/#Chart.TreemapChart)
@@ -52274,7 +52274,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.2-nightly-20251113004727",
+  version: "3.17.2-nightly-20251114004742",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

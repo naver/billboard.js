@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.2-nightly-20251113004727
+ * @version 3.17.2-nightly-20251114004742
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -25732,7 +25732,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.17.2-nightly-20251113004727");
+__publicField(Plugin, "version", "3.17.2-nightly-20251114004742");
 
 ;// ./src/Plugin/tableview/const.ts
 
@@ -25803,7 +25803,7 @@ class Options {
        * Set category text format function.
        * @name categoryFormat
        * @memberof plugin-tableview
-       * @type {Function}
+       * @type {function}
        * @returns {string}
        * @default function(v) { // will return formatted value according x Axis type }}
        * @example
