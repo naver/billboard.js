@@ -620,7 +620,7 @@ export default {
 	/**
 	 * Get data.order compare function
 	 * @param {boolean} isReversed for Arc & Treemap type sort order needs to be reversed
-	 * @returns {Function} compare function
+	 * @returns {function} compare function
 	 * @private
 	 */
 	getSortCompareFn(isReversed = false): Function | null {

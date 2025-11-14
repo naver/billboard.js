@@ -26,7 +26,7 @@ export default {
 	 * @property {number} [bar.radius] Set the radius of bar edge in pixel.
 	 * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
 	 * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
-	 * @property {number|Function|object} [bar.width] Change the width of bar chart.
+	 * @property {number|function|object} [bar.width] Change the width of bar chart.
 	 * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
 	 * - **NOTE:** Criteria for ratio.
 	 *   - When x ticks count is same with the data count, the baseline for ratio is the minimum interval value of x ticks.

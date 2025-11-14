@@ -15,15 +15,15 @@ export default {
 	 * @property {boolean} [gauge.background=""] Set background color. (The `.bb-chart-arcs-background` element)
 	 * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
 	 * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
-	 * @property {Function} [gauge.label.extents] Set customized min/max label text.
-	 * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.<br>
+	 * @property {function} [gauge.label.extents] Set customized min/max label text.
+	 * @property {function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.<br>
 	 * Will pass following arguments to the given function:
 	 * - value {number}: absolute value
 	 * - ratio {number}: value's ratio
 	 * - id {string}: data's id value
-	 * @property {number|Function} [gauge.label.ratio=undefined] Set ratio of labels position.
+	 * @property {number|function} [gauge.label.ratio=undefined] Set ratio of labels position.
 	 * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
-	 * @property {object|Function} [gauge.label.image] Set image to be displayed next to the label text.<br><br>
+	 * @property {object|function} [gauge.label.image] Set image to be displayed next to the label text.<br><br>
 	 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
 	 * The arguments are:<br>
 	 *  - `v` is the value of the data point where the label is shown.

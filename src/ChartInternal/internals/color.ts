@@ -195,7 +195,7 @@ export default {
 
 	/**
 	 * Append data backgound color filter definition
-	 * @param {string|object|Function} color Color string, object, or function
+	 * @param {string|object|function} color Color string, object, or function
 	 * @param {object} attr filter attribute
 	 * @private
 	 */

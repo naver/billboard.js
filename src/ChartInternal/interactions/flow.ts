@@ -11,7 +11,7 @@ export default {
 	/**
 	 * Generate flow
 	 * @param {object} args option object
-	 * @returns {Function}
+	 * @returns {function}
 	 * @private
 	 */
 	generateFlow(args): Function {

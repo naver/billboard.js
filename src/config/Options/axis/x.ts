@@ -139,7 +139,7 @@ export default {
 	 * A function to format tick value. Format string is also available for timeseries data.
 	 * @name axis․x․tick․format
 	 * @memberof Options
-	 * @type {Function|string}
+	 * @type {function|string}
 	 * @default undefined
 	 * @see [D3's time specifier](https://d3js.org/d3-time-format#locale_format)
 	 * @example
@@ -394,7 +394,7 @@ export default {
 	 * This option works with `timeseries` data and the x values will be parsed accoding to the type of the value and data.xFormat option.
 	 * @name axis․x․tick․values
 	 * @memberof Options
-	 * @type {Array|Function}
+	 * @type {Array|function}
 	 * @default null
 	 * @example
 	 * axis: {
@@ -678,7 +678,7 @@ export default {
 	 * - **NOTE:** Specifying value, will limit the zoom scope selection within.
 	 * @name axis․x․extent
 	 * @memberof Options
-	 * @type {Array|Function}
+	 * @type {Array|function}
 	 * @default undefined
 	 * @example
 	 * axis: {

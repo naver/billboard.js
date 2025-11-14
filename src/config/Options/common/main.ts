@@ -203,7 +203,7 @@ export default {
 	 * Set a callback to execute when the chart is clicked.
 	 * @name onclick
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onclick: function(event) {
@@ -218,7 +218,7 @@ export default {
 	 * Set a callback to execute when mouse/touch enters the chart.
 	 * @name onover
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onover: function(event) {
@@ -233,7 +233,7 @@ export default {
 	 * Set a callback to execute when mouse/touch leaves the chart.
 	 * @name onout
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onout: function(event) {
@@ -248,7 +248,7 @@ export default {
 	 * Set a callback to execute when user resizes the screen.
 	 * @name onresize
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onresize: function() {
@@ -262,7 +262,7 @@ export default {
 	 * Set a callback to execute when screen resize finished.
 	 * @name onresized
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onresized: function() {
@@ -276,7 +276,7 @@ export default {
 	 * Set a callback to execute before the chart is initialized
 	 * @name onbeforeinit
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onbeforeinit: function() {
@@ -290,7 +290,7 @@ export default {
 	 * Set a callback to execute when the chart is initialized.
 	 * @name oninit
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * oninit: function() {
@@ -304,7 +304,7 @@ export default {
 	 * Set a callback to execute after the chart is initialized
 	 * @name onafterinit
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onafterinit: function() {
@@ -318,7 +318,7 @@ export default {
 	 * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
 	 * @name onrendered
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onrendered: function() {

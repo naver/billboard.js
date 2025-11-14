@@ -22,7 +22,7 @@ export default {
 	 * @property {boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
 	 * @property {number} [radar.level.depth=3] Set the level depth.
 	 * @property {boolean} [radar.level.show=true] Show or hide level.
-	 * @property {Function} [radar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
+	 * @property {function} [radar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
 	 * @property {boolean} [radar.level.text.show=true] Show or hide level text.
 	 * @property {number} [radar.size.ratio=0.87] Set size ratio.
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.RadarChart)

@@ -126,7 +126,7 @@ export default {
 	 * Returns the toggle method of the target
 	 * @param {object} that shape
 	 * @param {object} d Data object
-	 * @returns {Function} toggle method
+	 * @returns {function} toggle method
 	 * @private
 	 */
 	getToggle(that, d): Function {

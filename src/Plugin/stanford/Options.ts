@@ -17,7 +17,7 @@ export default class Options {
 			 * Set the color of the color scale. This function receives a value between 0 and 1, and should return a color.
 			 * @name colors
 			 * @memberof plugin-stanford
-			 * @type {Function}
+			 * @type {function}
 			 * @default undefined
 			 * @example
 			 *   colors: d3.interpolateHslLong(
@@ -68,7 +68,7 @@ export default class Options {
 			 * @property {number} [scale.min=undefined] Minimum value of the color scale. Default: lowest value in epochs
 			 * @property {number} [scale.max=undefined] Maximum value of the color scale. Default: highest value in epochs
 			 * @property {number} [scale.width=20] Width of the color scale
-			 * @property {string|Function} [scale.format=undefined] Format of the axis of the color scale. Use 'pow10' to format as powers of 10 or a custom function. Example: d3.format("d")
+			 * @property {string|function} [scale.format=undefined] Format of the axis of the color scale. Use 'pow10' to format as powers of 10 or a custom function. Example: d3.format("d")
 			 * @example
 			 *  scale: {
 			 *    max: 10000,

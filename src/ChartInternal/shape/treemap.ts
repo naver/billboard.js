@@ -158,7 +158,7 @@ export default {
 
 	/**
 	 * Get tiling function
-	 * @returns {Function}
+	 * @returns {function}
 	 * @private
 	 */
 	getTreemapTile() {
@@ -291,7 +291,7 @@ export default {
 	/**
 	 * Get treemap data label format function
 	 * @param {object} d Data object
-	 * @returns {Function}
+	 * @returns {function}
 	 * @private
 	 */
 	treemapDataLabelFormat(d: IDataRow): Function {

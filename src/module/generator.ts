@@ -50,7 +50,7 @@ type Transition = boolean | d3Transition;
 
 /**
  * Generate transition queue function
- * @returns {Function}
+ * @returns {function}
  * @private
  */
 export function generateWait() {
