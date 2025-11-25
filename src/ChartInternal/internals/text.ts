@@ -139,7 +139,7 @@ export default {
 				if (isNumber(value)) {
 					this.textContent = value;
 				} else {
-					setTextValue(node, value);
+					setTextValue(node, value, undefined, true);
 				}
 			});
 

@@ -551,6 +551,128 @@ describe("TEXT", () => {
 			});
 		});
 
+		describe("multiline data labels", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 100, 200, 150],
+							["data2", 80, 120, 90]
+						],
+						type: "bar",
+						labels: {
+							format: (v) => {
+								// Return multiline text with newline character
+								return `Value:\n${v}`;
+							}
+						}
+					}
+				};
+			});
+
+			it("should render multiline labels with tspan elements", () => {
+				const textElements = chart.$.main.selectAll(`.${$TEXT.texts} text.${$TEXT.text}`);
+				
+				expect(textElements.size()).to.be.greaterThan(0);
+
+				// Check that multiline labels have tspan elements
+				textElements.each(function() {
+					const text = d3Select(this);
+					const tspans = text.selectAll("tspan");
+					
+					// Multiline labels should have 2 tspan elements
+					expect(tspans.size()).to.be.equal(2);
+				});
+			});
+
+			it("should vertically center multiline labels", () => {
+				const textElements = chart.$.main.selectAll(`.${$TEXT.texts} text.${$TEXT.text}`);
+				
+				textElements.each(function() {
+					const text = d3Select(this);
+					const tspans = text.selectAll("tspan");
+					
+					// Check that first tspan has negative dy for centering
+					// When toMiddle is true, first tspan should have dy = -1 * (lines - 1) = -1em
+					const firstTspan = tspans.nodes()[0];
+					const firstDy = d3Select(firstTspan).attr("dy");
+					
+					expect(firstDy).to.be.equal("-1em");
+					
+					// Second tspan should have dy = 1em
+					const secondTspan = tspans.nodes()[1];
+					const secondDy = d3Select(secondTspan).attr("dy");
+					
+					expect(secondDy).to.be.equal("1em");
+				});
+			});
+
+			it("should have correct text content in tspan elements", () => {
+				const textElements = chart.$.main.selectAll(`.${$TEXT.texts} text.${$TEXT.text}`);
+				
+				textElements.each(function(d) {
+					const text = d3Select(this);
+					const tspans = text.selectAll("tspan");
+					const nodes = tspans.nodes() as Element[];
+					const firstLine = nodes[0]?.textContent;
+					const secondLine = nodes[1]?.textContent;
+					
+					// First line should be "Value:"
+					expect(firstLine).to.be.equal("Value:");
+					
+					// Second line should be the numeric value
+					expect(secondLine).to.match(/^\d+$/);
+				});
+			});
+
+			it("set options: three line labels", () => {
+				args.data.labels.format = (v, id, i) => {
+					return `Line1:\n${v}\nLine3`;
+				};
+			});
+
+			it("should render three-line labels with correct vertical centering", () => {
+				const textElements = chart.$.main.selectAll(`.${$TEXT.texts} text.${$TEXT.text}`);
+				
+				textElements.each(function() {
+					const text = d3Select(this);
+					const tspans = text.selectAll("tspan");
+					
+					// Three-line labels should have 3 tspan elements
+					expect(tspans.size()).to.be.equal(3);
+					
+					// Check dy values for vertical centering
+					// For 3 lines with toMiddle=true: first dy = -2em, others = 1em
+					const firstTspan = tspans.nodes()[0];
+					const firstDy = d3Select(firstTspan).attr("dy");
+					expect(firstDy).to.be.equal("-2em");
+					
+					// Second and third tspans should have dy = 1em
+					const secondTspan = tspans.nodes()[1];
+					const secondDy = d3Select(secondTspan).attr("dy");
+					expect(secondDy).to.be.equal("1em");
+					
+					const thirdTspan = tspans.nodes()[2];
+					const thirdDy = d3Select(thirdTspan).attr("dy");
+					expect(thirdDy).to.be.equal("1em");
+				});
+			});
+
+			it("should set x attribute to 0 for all tspan elements", () => {
+				const textElements = chart.$.main.selectAll(`.${$TEXT.texts} text.${$TEXT.text}`);
+				
+				textElements.each(function() {
+					const text = d3Select(this);
+					const tspans = text.selectAll("tspan");
+					
+					tspans.each(function() {
+						const tspan = d3Select(this);
+						expect(tspan.attr("x")).to.be.equal("0");
+					});
+				});
+			});
+		});
+
 		describe("on area chart", () => {
 			beforeAll(() => {
 				args = {
