@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.2-nightly-20251119004730
+ * @version 3.17.2-nightly-20251126004730
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -35052,7 +35052,7 @@ function updateTextImagePos(textNode, pos) {
       if (isNumber(value)) {
         this.textContent = value;
       } else {
-        setTextValue(node, value);
+        setTextValue(node, value, void 0, true);
       }
     });
     updateTextImage.call($$);
@@ -52781,7 +52781,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.2-nightly-20251119004730",
+  version: "3.17.2-nightly-20251126004730",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

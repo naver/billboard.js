@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.2-nightly-20251119004730
+ * @version 3.17.2-nightly-20251126004730
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -2436,7 +2436,7 @@ function sanitize(str) {
         str;
 }
 /**
- * Set text value. If there's multiline add nodes.
+ * Set text value. If there're multiline add nodes.
  * @param {d3Selection} node Text node
  * @param {string} text Text value string
  * @param {Array} dy dy value for multilined text
@@ -8318,7 +8318,7 @@ var text = {
                 this.textContent = value;
             }
             else {
-                setTextValue(node, value);
+                setTextValue(node, value, undefined, true);
             }
         });
         // Add images if imgUrl is specified
@@ -25612,7 +25612,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.17.2-nightly-20251119004730
+ * @version 3.17.2-nightly-20251126004730
  */
 var bb = {
     /**
@@ -25622,7 +25622,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.17.2-nightly-20251119004730",
+    version: "3.17.2-nightly-20251126004730",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
