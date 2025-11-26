@@ -188,7 +188,7 @@ function sanitize(str: string): string {
 }
 
 /**
- * Set text value. If there's multiline add nodes.
+ * Set text value. If there're multiline add nodes.
  * @param {d3Selection} node Text node
  * @param {string} text Text value string
  * @param {Array} dy dy value for multilined text
