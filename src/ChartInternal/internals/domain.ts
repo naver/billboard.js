@@ -87,8 +87,20 @@ export default {
 		const {axis, config, scale} = $$;
 		const pfx = `axis_${axisId}`;
 
+		// Check if stack normalization should be applied for this axis
 		if ($$.isStackNormalized()) {
-			return [0, 100];
+			// Get all data IDs that belong to this axis
+			const axisDataIds = targets
+				.filter(t => axis.getId(t.id) === axisId)
+				.map(t => t.id);
+
+			// Check if any of the axis data IDs are in groups
+			const hasGroupedData = axisDataIds.some(id => $$.isGrouped(id));
+
+			// Apply normalization only if this axis has grouped data
+			if (hasGroupedData) {
+				return [0, 100];
+			}
 		}
 
 		const isLog = scale?.[axisId] && scale[axisId].type === "log";
