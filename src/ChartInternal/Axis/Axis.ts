@@ -356,7 +356,7 @@ class Axis {
 		// Set tick
 		axis.tickFormat(
 			tickFormat || (
-				!isX && ($$.isStackNormalized() && (x => `${x}%`))
+				!isX && ($$.isStackNormalized() && $$.hasAxisGroupedData(id) && (x => `${x}%`))
 			)
 		);
 

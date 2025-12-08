@@ -3466,6 +3466,122 @@ var demos = {
 				}
 			}
 		],
+		DataStackNormalizedGroup: [
+			{
+				options: {
+					title: {
+						text: "Normalize per group - Multiple groups"
+					},
+					data: {
+						columns: [
+							["data1", 100, 200, 150, 300],
+							["data2", 200, 400, 350, 200],
+							["data3", 50, 100, 80, 120],
+							["data4", 150, 200, 220, 180]
+						],
+						type: "bar",
+						groups: [
+							["data1", "data2"],
+							["data3", "data4"]
+						],
+						stack: {
+							normalize: {
+								perGroup: true
+							}
+						}
+					},
+					axis: {
+						y: {
+							label: {
+								text: "Percentage (%)",
+								position: "outer-middle"
+							}
+						}
+					},
+					tooltip: {
+						format: {
+							title: function(x) { return "Index " + x; }
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Normalize per group - With non-grouped data"
+					},
+					data: {
+						columns: [
+							["data1", 100, 200, 150, 300],
+							["data2", 200, 400, 350, 200],
+							["data3", 50, 100, 80, 120]
+						],
+						type: "bar", 
+						types: {
+							"data3": "line"
+						},
+						groups: [
+							["data1", "data2"]
+						],
+						stack: {
+							normalize: {
+								perGroup: true
+							}
+						},
+						axes: {
+							data3: "y2"
+						}
+					},
+					axis: {
+						y: {
+							label: {
+								text: "Grouped: % | Non-grouped: Absolute",
+								position: "outer-middle"
+							}
+						},
+						y2: {
+							show: true
+						}
+					},
+					tooltip: {
+						format: {
+							title: function(x) { return "Index " + x; }
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Normalize per group - Area chart"
+					},
+					data: {
+						columns: [
+							["data1", 30, 280, 951, 400, 150],
+							["data2", 130, 357, 751, 400, 150],
+							["data3", 50, 100, 200, 150, 80],
+							["data4", 100, 200, 300, 250, 120]
+						],
+						types: {
+							data1: "area",
+							data2: "area",
+							data3: "bar",
+							data4: "bar",
+						},
+						groups: [
+							["data1", "data2"],
+							["data3", "data4"]
+						],
+						stack: {
+							normalize: {
+								perGroup: true
+							}
+						}
+					},
+					clipPath: false
+				}
+			}
+		],
 		DataXSort: [
 			{
 				options: {
