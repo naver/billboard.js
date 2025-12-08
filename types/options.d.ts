@@ -1456,8 +1456,21 @@ export interface Data {
 		 * - NOTE: For stacking, 'data.groups' option should be set
 		 *  - y Axis will be set in percentage value (0 ~ 100%)
 		 *  - Must have postive values
+		 *  - Data not in any group will not be normalized when using perGroup option
+		 * 
+		 * When boolean:
+		 *  - true: Normalize all grouped data together (all groups combined to 0-100%)
+		 * 
+		 * When object with perGroup:
+		 *  - perGroup: true - Normalize each group independently (each group becomes 0-100%)
+		 *    Data not in any group will display with their original values.
+		 *    If non-grouped data shares the same axis (e.g., y), it will be
+		 *    displayed on the 0-100 absolute scale. To display original values,
+		 *    assign them to a separate axis (e.g., y2).
 		 */
-		normalize?: boolean;
+		normalize?: boolean | {
+			perGroup?: boolean;
+		};
 	};
 
 	/**
