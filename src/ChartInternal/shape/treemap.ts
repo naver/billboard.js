@@ -291,12 +291,12 @@ export default {
 	/**
 	 * Get treemap data label format function
 	 * @param {object} d Data object
-	 * @returns {function}
+	 * @returns {function} Label formatter function
 	 * @private
 	 */
 	treemapDataLabelFormat(d: IDataRow): Function {
 		const $$ = this;
-		const {config} = $$;
+		const {$el: {treemap}, config, scale: {x, y}} = $$;
 		const {id, value} = d;
 		const format = config.treemap_label_format;
 		const ratio = $$.getRatio("treemap", d);
@@ -306,11 +306,25 @@ export default {
 				null :
 				"0";
 
+		// Get treemap dimensions for the specific data
+		const treemapNode = treemap.selectAll("g")
+			.filter(node => node.data.id === id)
+			.datum();
+
+		let width = 0;
+		let height = 0;
+
+		if (treemapNode) {
+			const {x0, x1, y0, y1} = treemapNode;
+			width = x(x1) - x(x0);
+			height = y(y1) - y(y0);
+		}
+
 		return function(node) {
 			node.style("opacity", meetLabelThreshold);
 
 			return isFunction(format) ?
-				format.bind($$.api)(value, ratio, id) :
+				format.bind($$.api)(value, ratio, id, {width, height}) :
 				`${id}\n${percentValue}%`;
 		};
 	}
