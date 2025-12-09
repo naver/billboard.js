@@ -1142,7 +1142,7 @@ export interface TreemapOptions {
 		/**
 		 * Set formatter for the label.
 		 */
-		format?: (this: Chart, value: number, ratio: number, id: string) => string;
+		format?: (this: Chart, value: number, ratio: number, id: string, size: {width: number, height: number}) => string;
 
 		/**
 		 * Set threshold ratio to show/hide labels.
