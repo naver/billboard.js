@@ -20,7 +20,12 @@ export default {
 	 * 	- sliceDice ([d3.treemapSliceDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSliceDice))
 	 * 	- squrify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
 	 * 	- resquarify ([d3.treemapResquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapResquarify))
-	 * @property {function} [treemap.label.format] Set formatter for the label text.
+	 * @property {function} [treemap.label.format] Set formatter for the label text.<br>
+	 * - **Arguments:**
+	 *   - `value {number}`: Data value
+	 *   - `ratio {number}`: The `ratio` of how much space this tile occupies relative to the total area (0~1)
+	 *   - `id {string}`: Data id
+	 *   - `size {object}`: Tile size `{width, height}` in pixels
 	 * @property {number} [treemap.label.threshold=0.05] Set threshold ratio to show/hide labels text.
 	 * @property {number} [treemap.label.show=true] Show or hide label text.
 	 * @see [Demo: treemap](https://naver.github.io/billboard.js/demo/#Chart.TreemapChart)
@@ -34,7 +39,8 @@ export default {
 	 *          show: false,
 	 *
 	 *          // set label text formatter
-	 *          format: function(value, ratio, id) {
+	 *          format: function(value, ratio, id, size) {
+	 *              // size: {width, height} - tile size in pixels
 	 *              return d3.format("$")(value);
 	 *
 	 *              // to multiline, return with '\n' character
