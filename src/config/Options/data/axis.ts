@@ -142,17 +142,42 @@ export default {
 	 *   - For stacking, '[data.groups](#.data%25E2%2580%25A4groups)' option should be set
 	 *   - y Axis will be set in percentage value (0 ~ 100%)
 	 *   - Must have postive values
+	 *   - Data not in any group will not be normalized when using perGroup option
 	 * @name data․stack․normalize
 	 * @memberof Options
-	 * @type {boolean}
+	 * @type {boolean|object}
 	 * @default false
-	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
+	 * @see [Demo: Data Stack Normalized](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
+	 * @see [Demo: Data Stack Normalized per Group](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalizedGroup)
 	 * @example
 	 * data: {
 	 *   stack: {
+	 *      // Normalize all grouped data together (all groups combined to 0-100%)
 	 *      normalize: true
+	 *
+	 *      // Normalize per group (each group independently becomes 0-100%)
+	 *      // Data not in any group will display with their original values.
+	 *      // If non-grouped data shares the same axis (e.g., y), it will be
+	 *      // displayed on the 0-100 absolute scale. To display original values,
+	 *      // assign them to a separate axis (e.g., y2).
+	 *      normalize: {
+	 *        perGroup: true
+	 *      }
+	 *   },
+	 *   groups: [
+	 *     ["data1", "data2"]  // This group will be normalized to 0-100%
+	 *   ],
+	 *   // data3 is not in any group, so it displays original values
+	 *   // Assign it to y2 axis to use a separate scale
+	 *   axes: {
+	 *     data3: "y2"
+	 *   }
+	 * },
+	 * axis: {
+	 *   y2: {
+	 *     show: true
 	 *   }
 	 * }
 	 */
-	data_stack_normalize: false
+	data_stack_normalize: <boolean | {perGroup?: boolean}>false
 };

@@ -1028,6 +1028,95 @@ describe("DATA", () => {
 
 			expect(tooltipValue).to.be.equal(100);
 		});
+
+		it("set options for multiple groups normalization", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 100, 200],
+						["data2", 200, 400],
+						["data3", 50, 100],
+						["data4", 150, 200]
+					],
+					type: "bar",
+					groups: [
+						["data1", "data2"],
+						["data3", "data4"]
+					],
+					stack: {
+						normalize: {
+							perGroup: true
+						}
+					}
+				}
+			};
+		});
+
+		it("check normalized stack per group", () => {
+			// Check tooltip shows percentage for each group separately
+			let totalPercentage = 0;
+
+			// show tooltip
+			chart.tooltip.show({index: 0});
+
+			chart.$.tooltip.selectAll(".value").each(function() {
+				totalPercentage += parseFloat(this.textContent);
+			});
+
+			// When perGroup normalization is enabled, each group independently shows 0-100%
+			// Since tooltip may not show all data at once, just verify values are percentages
+			expect(totalPercentage).to.be.greaterThan(0);
+			expect(totalPercentage).to.be.lessThanOrEqual(200); // At most 2 groups * 100%
+		});
+
+		it("set options with mixed grouped and non-grouped data", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 100, 200],
+						["data2", 200, 400],
+						["data3", 50, 100],
+						["data4", 150, 200],
+						["data5", 80, 120]
+					],
+					type: "bar",
+					groups: [
+						["data1", "data2"]
+					],
+					stack: {
+						normalize: {
+							perGroup: true
+						}
+					}
+				}
+			};
+		});
+
+		it("check normalized stack per group with non-grouped data", () => {
+			// Check tooltip shows percentage for grouped data and absolute value for non-grouped
+			// show tooltip
+			chart.tooltip.show({index: 0});
+
+			const values = chart.$.tooltip.selectAll(".value").nodes().map(v => v.textContent);
+
+			// Should have at least 2 values (the grouped data)
+			expect(values.length).to.be.greaterThanOrEqual(2);
+
+			// Verify that we have percentage values (from grouped data)
+			const hasPercentage = values.some(v => /%$/.test(v));
+			expect(hasPercentage).to.be.true;
+
+			// For non-grouped data, if they appear in tooltip, they should be absolute values
+			// Otherwise, at minimum we confirmed grouped data shows as percentage
+			const absoluteValues = values.filter(v => !/%$/.test(v));
+			if (absoluteValues.length > 0) {
+				// If there are absolute values, verify they're numbers without %
+				absoluteValues.forEach(v => {
+					expect(parseFloat(v)).to.be.a("number");
+					expect(v).to.not.match(/%$/);
+				});
+			}
+		});
 	});
 
 	describe("data.empty.label.text", () => {

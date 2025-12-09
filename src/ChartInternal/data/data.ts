@@ -46,7 +46,26 @@ export default {
 	isStackNormalized(): boolean {
 		const {config} = this;
 
-		return !!(config.data_stack_normalize && config.data_groups.length);
+		return !!(
+			(config.data_stack_normalize === true ||
+				isObjectType(config.data_stack_normalize)) &&
+			config.data_groups.length
+		);
+	},
+
+	/**
+	 * Check if stack normalization should be applied per group
+	 * @returns {boolean}
+	 * @private
+	 */
+	isStackNormalizedPerGroup(): boolean {
+		const {config} = this;
+
+		return !!(
+			isObjectType(config.data_stack_normalize) &&
+			config.data_stack_normalize?.perGroup &&
+			config.data_groups.length
+		);
 	},
 
 	/**
@@ -59,6 +78,26 @@ export default {
 		const groups = this.config.data_groups;
 
 		return id ? groups.some(v => v.indexOf(id) >= 0 && v.length > 1) : groups.length > 0;
+	},
+
+	/**
+	 * Check if the given axis has any grouped data
+	 * @param {string} axisId Axis ID (e.g., "y", "y2")
+	 * @returns {boolean} true if axis has grouped data
+	 * @private
+	 */
+	hasAxisGroupedData(axisId: "y" | "y2"): boolean {
+		const $$ = this;
+		const {axis} = $$;
+		const targets = $$.data.targets;
+
+		// Get all data IDs that belong to this axis
+		const axisDataIds = targets
+			.filter(t => axis.getId(t.id) === axisId)
+			.map(t => t.id);
+
+		// Check if any of the axis data IDs are in groups
+		return axisDataIds.some(id => $$.isGrouped(id));
 	},
 
 	getXKey(id) {
@@ -325,18 +364,37 @@ export default {
 
 	/**
 	 * Get sum of data per index
+	 * @param {string} targetId Target ID to get total for (only for normalized stack per group)
 	 * @private
 	 * @returns {Array}
 	 */
-	getTotalPerIndex() {
+	getTotalPerIndex(targetId?: string) {
 		const $$ = this;
-		const cacheKey = KEY.dataTotalPerIndex;
+		const {config} = $$;
+		const cacheKey = targetId ? `${KEY.dataTotalPerIndex}-${targetId}` : KEY.dataTotalPerIndex;
 		let sum = $$.cache.get(cacheKey);
 
 		if (($$.config.data_groups.length || $$.isStackNormalized()) && !sum) {
 			sum = [];
 
-			$$.data.targets.forEach(row => {
+			// When normalize per group is enabled and targetId is provided,
+			// only sum data within the same group
+			let {targets} = $$.data;
+
+			if ($$.isStackNormalizedPerGroup() && targetId) {
+				// Find which group the target belongs to
+				const group = config.data_groups.find(g => g.indexOf(targetId) >= 0);
+
+				if (group) {
+					// Only sum targets in the same group
+					targets = targets.filter(t => group.indexOf(t.id) >= 0);
+				} else {
+					// If target is not in any group, return null to indicate no normalization
+					return null;
+				}
+			}
+
+			targets.forEach(row => {
 				row.values.forEach((v, i) => {
 					if (!sum[i]) {
 						sum[i] = 0;
@@ -345,6 +403,8 @@ export default {
 					sum[i] += ~~v.value;
 				});
 			});
+
+			$$.cache.add(cacheKey, sum);
 		}
 
 		return sum;
@@ -489,7 +549,7 @@ export default {
 	},
 
 	/**
-	 * Add to the state target Ids
+	 * Add to thetarget Ids
 	 * @param {string} type State's prop name
 	 * @param {Array|string} targetIds Target ids array
 	 * @private
@@ -1014,16 +1074,39 @@ export default {
 				}
 			} else if (type === "index") {
 				const dataValues = api.data.values.bind(api);
-				let total = this.getTotalPerIndex();
+				const {hiddenTargetIds} = state;
 
-				if (state.hiddenTargetIds.length) {
-					let hiddenSum = dataValues(state.hiddenTargetIds, false);
+				// For normalized stack per group, get total per group
+				let total = this.getTotalPerIndex(
+					$$.isStackNormalizedPerGroup() ? d.id : undefined
+				);
 
-					if (hiddenSum.length) {
-						hiddenSum = hiddenSum
-							.reduce((acc, curr) => acc.map((v, i) => ~~v + curr[i]));
+				// If total is null, the data is not in any group - don't normalize
+				if (total === null) {
+					return ratio;
+				}
 
-						total = total.map((v, i) => v - hiddenSum[i]);
+				if (hiddenTargetIds.length) {
+					// When normalized per group, only subtract hidden data from the same group
+					let hiddenIds = hiddenTargetIds;
+
+					if ($$.isStackNormalizedPerGroup() && d.id) {
+						const group = config.data_groups.find(g => g.indexOf(d.id) >= 0);
+						if (group) {
+							// Only consider hidden IDs in the same group
+							hiddenIds = hiddenIds.filter(id => group.indexOf(id) >= 0);
+						}
+					}
+
+					if (hiddenIds.length) {
+						let hiddenSum = dataValues(hiddenIds, false);
+
+						if (hiddenSum.length) {
+							hiddenSum = hiddenSum
+								.reduce((acc, curr) => acc.map((v, i) => ~~v + curr[i]));
+
+							total = total.map((v, i) => v - hiddenSum[i]);
+						}
 					}
 				}
 
