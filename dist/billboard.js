@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.2-nightly-20251202004731
+ * @version 3.17.2-nightly-20251209004728
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3846,7 +3846,17 @@ function setXS(ids, data, params) {
   },
   isStackNormalized() {
     const { config } = this;
-    return !!(config.data_stack_normalize && config.data_groups.length);
+    return !!((config.data_stack_normalize === true || isObjectType(config.data_stack_normalize)) && config.data_groups.length);
+  },
+  /**
+   * Check if stack normalization should be applied per group
+   * @returns {boolean}
+   * @private
+   */
+  isStackNormalizedPerGroup() {
+    var _a;
+    const { config } = this;
+    return !!(isObjectType(config.data_stack_normalize) && ((_a = config.data_stack_normalize) == null ? void 0 : _a.perGroup) && config.data_groups.length);
   },
   /**
    * Check if given id is grouped data or has grouped data
@@ -3857,6 +3867,19 @@ function setXS(ids, data, params) {
   isGrouped(id) {
     const groups = this.config.data_groups;
     return id ? groups.some((v) => v.indexOf(id) >= 0 && v.length > 1) : groups.length > 0;
+  },
+  /**
+   * Check if the given axis has any grouped data
+   * @param {string} axisId Axis ID (e.g., "y", "y2")
+   * @returns {boolean} true if axis has grouped data
+   * @private
+   */
+  hasAxisGroupedData(axisId) {
+    const $$ = this;
+    const { axis } = $$;
+    const targets = $$.data.targets;
+    const axisDataIds = targets.filter((t) => axis.getId(t.id) === axisId).map((t) => t.id);
+    return axisDataIds.some((id) => $$.isGrouped(id));
   },
   getXKey(id) {
     const $$ = this;
@@ -4049,16 +4072,27 @@ function setXS(ids, data, params) {
   },
   /**
    * Get sum of data per index
+   * @param {string} targetId Target ID to get total for (only for normalized stack per group)
    * @private
    * @returns {Array}
    */
-  getTotalPerIndex() {
+  getTotalPerIndex(targetId) {
     const $$ = this;
-    const cacheKey = KEY.dataTotalPerIndex;
+    const { config } = $$;
+    const cacheKey = targetId ? `${KEY.dataTotalPerIndex}-${targetId}` : KEY.dataTotalPerIndex;
     let sum = $$.cache.get(cacheKey);
     if (($$.config.data_groups.length || $$.isStackNormalized()) && !sum) {
       sum = [];
-      $$.data.targets.forEach((row) => {
+      let { targets } = $$.data;
+      if ($$.isStackNormalizedPerGroup() && targetId) {
+        const group = config.data_groups.find((g) => g.indexOf(targetId) >= 0);
+        if (group) {
+          targets = targets.filter((t) => group.indexOf(t.id) >= 0);
+        } else {
+          return null;
+        }
+      }
+      targets.forEach((row) => {
         row.values.forEach((v, i) => {
           if (!sum[i]) {
             sum[i] = 0;
@@ -4066,6 +4100,7 @@ function setXS(ids, data, params) {
           sum[i] += ~~v.value;
         });
       });
+      $$.cache.add(cacheKey, sum);
     }
     return sum;
   },
@@ -4176,7 +4211,7 @@ function setXS(ids, data, params) {
     return sortValue(xs);
   },
   /**
-   * Add to the state target Ids
+   * Add to thetarget Ids
    * @param {string} type State's prop name
    * @param {Array|string} targetIds Target ids array
    * @private
@@ -4556,12 +4591,27 @@ function setXS(ids, data, params) {
         }
       } else if (type === "index") {
         const dataValues = api.data.values.bind(api);
-        let total = this.getTotalPerIndex();
-        if (state.hiddenTargetIds.length) {
-          let hiddenSum = dataValues(state.hiddenTargetIds, false);
-          if (hiddenSum.length) {
-            hiddenSum = hiddenSum.reduce((acc, curr) => acc.map((v, i) => ~~v + curr[i]));
-            total = total.map((v, i) => v - hiddenSum[i]);
+        const { hiddenTargetIds } = state;
+        let total = this.getTotalPerIndex(
+          $$.isStackNormalizedPerGroup() ? d.id : void 0
+        );
+        if (total === null) {
+          return ratio;
+        }
+        if (hiddenTargetIds.length) {
+          let hiddenIds = hiddenTargetIds;
+          if ($$.isStackNormalizedPerGroup() && d.id) {
+            const group = config.data_groups.find((g) => g.indexOf(d.id) >= 0);
+            if (group) {
+              hiddenIds = hiddenIds.filter((id) => group.indexOf(id) >= 0);
+            }
+          }
+          if (hiddenIds.length) {
+            let hiddenSum = dataValues(hiddenIds, false);
+            if (hiddenSum.length) {
+              hiddenSum = hiddenSum.reduce((acc, curr) => acc.map((v, i) => ~~v + curr[i]));
+              total = total.map((v, i) => v - hiddenSum[i]);
+            }
           }
         }
         const divisor = total[d.index];
@@ -5376,7 +5426,11 @@ const schemeCategory10 = [
     const { axis, config, scale } = $$;
     const pfx = `axis_${axisId}`;
     if ($$.isStackNormalized()) {
-      return [0, 100];
+      const axisDataIds = targets.filter((t) => axis.getId(t.id) === axisId).map((t) => t.id);
+      const hasGroupedData = axisDataIds.some((id) => $$.isGrouped(id));
+      if (hasGroupedData) {
+        return [0, 100];
+      }
     }
     const isLog = (scale == null ? void 0 : scale[axisId]) && scale[axisId].type === "log";
     const targetsByAxisId = targets.filter((t) => axis.getId(t.id) === axisId);
@@ -7836,9 +7890,16 @@ function getTextXPos(pos = "left", width) {
     });
     const titleFormat = (...arg) => sanitize((titleFn || defaultTitleFormat)(...arg));
     const nameFormat = (...arg) => sanitize((nameFn || ((name) => name))(...arg));
-    const valueFormat = (...arg) => {
-      const fn = valueFn || (state.hasTreemap || $$.isStackNormalized() ? (v, ratio) => `${(ratio * 100).toFixed(2)}%` : defaultValueFormat);
-      return sanitize(fn(...arg));
+    const valueFormat = (v, ratio, id, index) => {
+      let fn = valueFn;
+      if (!fn) {
+        if (state.hasTreemap || $$.isStackNormalized() && (!$$.isStackNormalizedPerGroup() || $$.isGrouped(id))) {
+          fn = (v2, ratio2) => `${(ratio2 * 100).toFixed(2)}%`;
+        } else {
+          fn = defaultValueFormat;
+        }
+      }
+      return sanitize(fn(v, ratio, id, index));
     };
     const order = config.tooltip_order;
     const getRowValue = (row2) => $$.axis && $$.isBubbleZType(row2) ? $$.getBubbleZData(row2.value, "z") : $$.getBaseValue(row2);
@@ -13871,7 +13932,7 @@ class Axis_Axis {
     }
     tickValues && axis.tickValues(tickValues);
     axis.tickFormat(
-      tickFormat || !isX && ($$.isStackNormalized() && ((x) => `${x}%`))
+      tickFormat || !isX && ($$.isStackNormalized() && $$.hasAxisGroupedData(id) && ((x) => `${x}%`))
     );
     if (isCategory) {
       axis.tickCentered(config.axis_x_tick_centered);
@@ -17829,15 +17890,40 @@ var axis_spreadValues = (a, b) => {
    *   - For stacking, '[data.groups](#.data%25E2%2580%25A4groups)' option should be set
    *   - y Axis will be set in percentage value (0 ~ 100%)
    *   - Must have postive values
+   *   - Data not in any group will not be normalized when using perGroup option
    * @name data․stack․normalize
    * @memberof Options
-   * @type {boolean}
+   * @type {boolean|object}
    * @default false
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
+   * @see [Demo: Data Stack Normalized](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
+   * @see [Demo: Data Stack Normalized per Group](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalizedGroup)
    * @example
    * data: {
    *   stack: {
+   *      // Normalize all grouped data together (all groups combined to 0-100%)
    *      normalize: true
+   *
+   *      // Normalize per group (each group independently becomes 0-100%)
+   *      // Data not in any group will display with their original values.
+   *      // If non-grouped data shares the same axis (e.g., y), it will be
+   *      // displayed on the 0-100 absolute scale. To display original values,
+   *      // assign them to a separate axis (e.g., y2).
+   *      normalize: {
+   *        perGroup: true
+   *      }
+   *   },
+   *   groups: [
+   *     ["data1", "data2"]  // This group will be normalized to 0-100%
+   *   ],
+   *   // data3 is not in any group, so it displays original values
+   *   // Assign it to y2 axis to use a separate scale
+   *   axes: {
+   *     data3: "y2"
+   *   }
+   * },
+   * axis: {
+   *   y2: {
+   *     show: true
    *   }
    * }
    */
@@ -22729,7 +22815,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.2-nightly-20251202004731",
+  version: "3.17.2-nightly-20251209004728",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
