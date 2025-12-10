@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.2-nightly-20251209004728
+ * @version 3.17.2-nightly-20251210004734
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -51249,20 +51249,28 @@ function getHierachyData(data) {
   /**
    * Get treemap data label format function
    * @param {object} d Data object
-   * @returns {function}
+   * @returns {function} Label formatter function
    * @private
    */
   treemapDataLabelFormat(d) {
     const $$ = this;
-    const { config } = $$;
+    const { $el: { treemap }, config, scale: { x, y } } = $$;
     const { id, value } = d;
     const format = config.treemap_label_format;
     const ratio = $$.getRatio("treemap", d);
     const percentValue = (ratio * 100).toFixed(2);
     const meetLabelThreshold = config.treemap_label_show && meetsLabelThreshold.call($$, ratio, "treemap") ? null : "0";
+    const treemapNode = treemap.selectAll("g").filter((node) => node.data.id === id).datum();
+    let width = 0;
+    let height = 0;
+    if (treemapNode) {
+      const { x0, x1, y0, y1 } = treemapNode;
+      width = x(x1) - x(x0);
+      height = y(y1) - y(y0);
+    }
     return function(node) {
       node.style("opacity", meetLabelThreshold);
-      return isFunction(format) ? format.bind($$.api)(value, ratio, id) : `${id}
+      return isFunction(format) ? format.bind($$.api)(value, ratio, id, { width, height }) : `${id}
 ${percentValue}%`;
     };
   }
@@ -52740,7 +52748,12 @@ ${percentValue}%`;
    * 	- sliceDice ([d3.treemapSliceDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSliceDice))
    * 	- squrify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
    * 	- resquarify ([d3.treemapResquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapResquarify))
-   * @property {function} [treemap.label.format] Set formatter for the label text.
+   * @property {function} [treemap.label.format] Set formatter for the label text.<br>
+   * - **Arguments:**
+   *   - `value {number}`: Data value
+   *   - `ratio {number}`: The `ratio` of how much space this tile occupies relative to the total area (0~1)
+   *   - `id {string}`: Data id
+   *   - `size {object}`: Tile size `{width, height}` in pixels
    * @property {number} [treemap.label.threshold=0.05] Set threshold ratio to show/hide labels text.
    * @property {number} [treemap.label.show=true] Show or hide label text.
    * @see [Demo: treemap](https://naver.github.io/billboard.js/demo/#Chart.TreemapChart)
@@ -52754,7 +52767,8 @@ ${percentValue}%`;
    *          show: false,
    *
    *          // set label text formatter
-   *          format: function(value, ratio, id) {
+   *          format: function(value, ratio, id, size) {
+   *              // size: {width, height} - tile size in pixels
    *              return d3.format("$")(value);
    *
    *              // to multiline, return with '\n' character
@@ -52867,7 +52881,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.2-nightly-20251209004728",
+  version: "3.17.2-nightly-20251210004734",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

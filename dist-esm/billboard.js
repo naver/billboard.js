@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.2-nightly-20251209004728
+ * @version 3.17.2-nightly-20251210004734
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -22310,12 +22310,12 @@ var shapeTreemap = {
     /**
      * Get treemap data label format function
      * @param {object} d Data object
-     * @returns {function}
+     * @returns {function} Label formatter function
      * @private
      */
     treemapDataLabelFormat: function (d) {
         var $$ = this;
-        var config = $$.config;
+        var treemap = $$.$el.treemap, config = $$.config, _a = $$.scale, x = _a.x, y = _a.y;
         var id = d.id, value = d.value;
         var format = config.treemap_label_format;
         var ratio = $$.getRatio("treemap", d);
@@ -22323,10 +22323,21 @@ var shapeTreemap = {
         var meetLabelThreshold = config.treemap_label_show && meetsLabelThreshold.call($$, ratio, "treemap") ?
             null :
             "0";
+        // Get treemap dimensions for the specific data
+        var treemapNode = treemap.selectAll("g")
+            .filter(function (node) { return node.data.id === id; })
+            .datum();
+        var width = 0;
+        var height = 0;
+        if (treemapNode) {
+            var x0 = treemapNode.x0, x1 = treemapNode.x1, y0 = treemapNode.y0, y1 = treemapNode.y1;
+            width = x(x1) - x(x0);
+            height = y(y1) - y(y0);
+        }
         return function (node) {
             node.style("opacity", meetLabelThreshold);
             return isFunction(format) ?
-                format.bind($$.api)(value, ratio, id) :
+                format.bind($$.api)(value, ratio, id, { width: width, height: height }) :
                 "".concat(id, "\n").concat(percentValue, "%");
         };
     }
@@ -23896,7 +23907,12 @@ var optTreemap = {
      * 	- sliceDice ([d3.treemapSliceDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSliceDice))
      * 	- squrify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
      * 	- resquarify ([d3.treemapResquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapResquarify))
-     * @property {function} [treemap.label.format] Set formatter for the label text.
+     * @property {function} [treemap.label.format] Set formatter for the label text.<br>
+     * - **Arguments:**
+     *   - `value {number}`: Data value
+     *   - `ratio {number}`: The `ratio` of how much space this tile occupies relative to the total area (0~1)
+     *   - `id {string}`: Data id
+     *   - `size {object}`: Tile size `{width, height}` in pixels
      * @property {number} [treemap.label.threshold=0.05] Set threshold ratio to show/hide labels text.
      * @property {number} [treemap.label.show=true] Show or hide label text.
      * @see [Demo: treemap](https://naver.github.io/billboard.js/demo/#Chart.TreemapChart)
@@ -23910,7 +23926,8 @@ var optTreemap = {
      *          show: false,
      *
      *          // set label text formatter
-     *          format: function(value, ratio, id) {
+     *          format: function(value, ratio, id, size) {
+     *              // size: {width, height} - tile size in pixels
      *              return d3.format("$")(value);
      *
      *              // to multiline, return with '\n' character
@@ -25718,7 +25735,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.17.2-nightly-20251209004728
+ * @version 3.17.2-nightly-20251210004734
  */
 var bb = {
     /**
@@ -25728,7 +25745,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.17.2-nightly-20251209004728",
+    version: "3.17.2-nightly-20251210004734",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
