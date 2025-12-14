@@ -6184,7 +6184,7 @@ d3.select(".chart_area")
 							var g = pattern
 								.append("g")
 								.style("fill", fillColor || "#000")
-								.style("opactiy", opacity || "0.2");
+								.style("opacity", opacity || "0.2");
 
 							g
 								.append("circle")

@@ -286,7 +286,7 @@ var billboardDemo = {
 				.then(function() {
 					ctx.showCopyMsg();
 				}, function(e) {
-					console.error("An error occured:", errMsg);
+					console.error("An error occurred:", errMsg);
 				});
 		} else {
 			var textArea = document.createElement("textarea");
@@ -322,7 +322,7 @@ var billboardDemo = {
 				document.execCommand("copy");
 				ctx.showCopyMsg();
 			} catch (e) {
-				console.error("An error occured:", errMsg);
+				console.error("An error occurred:", errMsg);
 			}
 
 			document.body.removeChild(textArea);

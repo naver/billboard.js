@@ -42,7 +42,7 @@ export default {
 	 *         	}
 	 *      },
 	 *      color: {
-	 *  	  	// spcify bearish color
+	 *  	  	// specify bearish color
 	 *  	  	down: "red",
 	 *
 	 *  	  	// or specify color per dataset

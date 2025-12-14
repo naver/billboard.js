@@ -38,7 +38,7 @@ export default {
 
 	/**
 	 * Force to redraw.
-	 * - **NOTE:** When zoom/subchart is used, the zoomed state will be resetted.
+	 * - **NOTE:** When zoom/subchart is used, the zoomed state will be reset.
 	 * @function flush
 	 * @instance
 	 * @memberof Chart

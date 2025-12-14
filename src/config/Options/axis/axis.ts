@@ -85,11 +85,11 @@ export default {
 	 * axis: {
 	 *     tooltip: true, // default background color is
 	 *
-	 *     // set backgound color for axis tooltip texts
+	 *     // set background color for axis tooltip texts
 	 *     tooltip: {
 	 *          backgroundColor: "red",
 	 *
-	 *          // set differenct backround colors per axes
+	 *          // set different background colors per axes
 	 *          // NOTE: In this case, only specified axes tooltip will appear.
 	 *          backgroundColor: {
 	 *               x: "green",

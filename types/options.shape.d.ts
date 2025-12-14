@@ -216,7 +216,7 @@ export interface BarOptions {
 	};
 
 	/**
-	 * The senstivity offset value for interaction boundary.
+	 * The sensitivity offset value for interaction boundary.
 	 */
 	sensitivity?: number;
 

@@ -17,7 +17,7 @@ export default {
 	 * @example
 	 *  bubble: {
 	 *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.
-	 *      // And the lesser will have radius relatively from tha max value.
+	 *      // And the lesser will have radius relatively from the max value.
 	 *      maxR: 50,
 	 *
 	 *      // or set radius callback

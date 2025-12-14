@@ -192,7 +192,7 @@ export default {
 	 * - `true`: the ticks will be culled, then only limited tick text will be shown.<br>
 	 *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.y.tick.culling.lines=false`.
 	 * - `false`: all of ticks will be shown.<br><br>
-	 * The number of ticks to be shown can be chaned by `axis.y.tick.culling.max`.
+	 * The number of ticks to be shown can be changed by `axis.y.tick.culling.max`.
 	 * @name axis․y․tick․culling
 	 * @memberof Options
 	 * @type {boolean}
