@@ -2401,7 +2401,7 @@ var demos = {
 			]
 		},
 		XAxisTickTimeseries: {
-			description: "Drag over chart area and checkout the x Axis tick text label",
+			description: "Drag over the chart area and check out the x Axis tick text label",
 			options: {
 				data: {
 					x: "x",
