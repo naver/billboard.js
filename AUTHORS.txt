@@ -70,3 +70,4 @@ Sergiu Statache <sergiu.statache@trisoft.ro>
 vlaforet <vlaforet@users.noreply.github.com>
 Alan Hamlett <alan.hamlett@gmail.com>
 Allen, Brad <BAllen+cvent@cvent.com>
+Seong Min Park <https://github.com/notoriousmango>
