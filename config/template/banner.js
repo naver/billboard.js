@@ -15,7 +15,7 @@ const banner = {
 	packaged: [
 		"",
 		"",
-		`All-in-one packaged file for ease use of '${pkg.name}' with dependant d3.js modules & polyfills.`,
+		`All-in-one packaged file for ease use of '${pkg.name}' with dependent d3.js modules & polyfills.`,
 		`- ${
 			Object.entries(pkg.dependencies).map(v => v.join(" "))
 				.join("\r\n- ")

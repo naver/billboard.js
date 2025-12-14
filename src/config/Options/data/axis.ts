@@ -26,7 +26,7 @@ export default {
 	data_xs: {},
 
 	/**
-	 * Set a format specifier to parse string specifed as x.
+	 * Set a format specifier to parse string specified as x.
 	 * @name data․xFormat
 	 * @memberof Options
 	 * @type {string}
@@ -77,7 +77,7 @@ export default {
 	 *   x: "x",
 	 *   columns: [
 	 *     // The line graph will start to be drawn following the x axis sequence
-	 *     // Below data, wil start drawing x=1: 200, x=2: 300, x=3: 100
+	 *     // Below data, will start drawing x=1: 200, x=2: 300, x=3: 100
 	 *     ["x", 3, 1, 2],
 	 *     ["data1", 100, 200, 300]
 	 *   ]
@@ -141,7 +141,7 @@ export default {
 	 * - **NOTE:**
 	 *   - For stacking, '[data.groups](#.data%25E2%2580%25A4groups)' option should be set
 	 *   - y Axis will be set in percentage value (0 ~ 100%)
-	 *   - Must have postive values
+	 *   - Must have positive values
 	 *   - Data not in any group will not be normalized when using perGroup option
 	 * @name data․stack․normalize
 	 * @memberof Options

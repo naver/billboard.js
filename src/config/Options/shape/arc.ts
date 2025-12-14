@@ -43,7 +43,7 @@ export default {
 	 * @property {string} [arc.rangeText.unit="absolute"] Specify the range text unit.
 	 * - "absolute": Show absolute value
 	 * - "%": Show percentage value
-	 * @property {boolean} [arc.rangeText.fiexed=false] Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
+	 * @property {boolean} [arc.rangeText.fixed=false] Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
 	 * @property {function} [arc.rangeText.format] Set format function for the range text.
 	 * @property {number} [arc.rangeText.position] Set position function or object for the range text.
 	 * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)

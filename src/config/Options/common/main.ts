@@ -108,7 +108,7 @@ export default {
 
 	/**
 	 * The padding of the chart element.
-	 * - **NOTE:** for more information, see the "[`Understanding padding`](https://github.com/naver/billboard.js/wiki/Understanding-padding)"" wiki documentaion.
+	 * - **NOTE:** for more information, see the "[`Understanding padding`](https://github.com/naver/billboard.js/wiki/Understanding-padding)"" wiki documentation.
 	 * @name padding
 	 * @memberof Options
 	 * @type {object}
@@ -367,7 +367,7 @@ export default {
 	 * - **NOTE**:
 	 *   - Enabled by default when bind element's visibility is hidden.
 	 *   - When set to `false`, will initialize the chart regardless the bind element's visibility state, but in this case chart can't be guaranteed to be rendered properly.
-	 * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
+	 * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visibility` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
 	 * @example
 	 *  render: {
@@ -389,7 +389,7 @@ export default {
 	 *  document.getElementById('chart').style.display = 'block';  // (b)
 	 *
 	 * @example
-	 * 	// chart won't be rendered and not observing bind element's visiblity changes
+	 * 	// chart won't be rendered and not observing bind element's visibility changes
 	 *  var chart = bb.generate({
 	 *     render: {
 	 *          lazy: true,
@@ -416,7 +416,7 @@ export default {
 	 * - `[start] {number|Date|string}`: Start position of the region. If not set, the start will be the edge of the chart.
 	 * - `[end] {number|Date|string}`: End position of the region. If not set, the end will be the edge of the chart.
 	 * - `[class] {string}`: Class value to apply to the region.
-	 * - `[label] {object}` Lable text option.
+	 * - `[label] {object}` Label text option.
 	 *   - `text {string}`: Text value.
 	 *   - `x {number}`: x Position.
 	 *   - `y {number}`: y Position.
