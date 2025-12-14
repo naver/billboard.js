@@ -402,10 +402,10 @@ export default {
 	 *     // align text to center of the 'bar' shape (works only for 'bar' type)
 	 *     centered: true,
 	 *
-	 *     // apply backgound color for label texts
+	 *     // apply background color for label texts
 	 *     backgroundColors: "red",
 	 *
-	 *     // set differenct backround colors per dataset
+	 *     // set different background colors per dataset
 	 *     backgroundColors: {
 	 *          data1: "green",
 	 *          data2: "yellow"

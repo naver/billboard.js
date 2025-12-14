@@ -23,7 +23,7 @@ const bb = {
 
 	/**
 	 * Generate chart
-	 * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
+	 * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
 	 *   - Unused option value is given.
 	 *     - ex) For `data.type="pie"` option, setting 'axis' option can cause unexpected generation error.
 	 *   - Insufficient value is given for certain option used.

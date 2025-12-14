@@ -30,7 +30,7 @@ export default {
 	 *   - If json specified, keys is required as well as data.json.
 	 * 	 - If tab isn't visible(by evaluating `document.hidden`), will not be executed to prevent unnecessary work.
 	 * @example
-	 * // 2 data points will be apprended to the tail and popped from the head.
+	 * // 2 data points will be appended to the tail and popped from the head.
 	 * // After that, 4 data points will be appended and no data points will be poppoed.
 	 * chart.flow({
 	 *  columns: [

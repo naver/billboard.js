@@ -239,7 +239,7 @@ export interface XTickConfiguration {
 	 * - `true`: the ticks will be culled, then only limited tick text will be shown.
 	 *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.x.tick.culling.lines=false`.
 	 * - `false`: all of ticks will be shown.
-	 * The number of ticks to be shown can be chaned by `axis.x.tick.culling.max`.
+	 * The number of ticks to be shown can be changed by `axis.x.tick.culling.max`.
 	 */
 	culling?: boolean | {
 		/**
@@ -276,7 +276,7 @@ export interface XTickConfiguration {
 	/**
 	 * Set the x values of ticks manually.
 	 * If this option is provided, the position of the ticks will be determined based on those values.
-	 * This option works with timeseries data and the x values will be parsed accoding to the type of the value and data.xFormat option.
+	 * This option works with timeseries data and the x values will be parsed according to the type of the value and data.xFormat option.
 	 */
 	values?: Array<number|string> | ((this: Chart) => number[]);
 
@@ -403,7 +403,7 @@ export interface YTickConfiguration {
 	 * - `true`: the ticks will be culled, then only limited tick text will be shown.
 	 *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.[y|y2].tick.culling.lines=false`.
 	 * - `false`: all of ticks will be shown.
-	 * The number of ticks to be shown can be chaned by `axis.[y|y2].tick.culling.max`.
+	 * The number of ticks to be shown can be changed by `axis.[y|y2].tick.culling.max`.
 	 */
 	culling?: boolean | {
 		/**

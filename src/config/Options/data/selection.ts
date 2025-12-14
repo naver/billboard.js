@@ -69,7 +69,7 @@ export default {
 
 	/**
 	 * Set multiple data points selection enabled.<br><br>
-	 * If this option set true, multile data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
+	 * If this option set true, multiple data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
 	 * @name data․selection․multiple
 	 * @memberof Options
 	 * @type {boolean}

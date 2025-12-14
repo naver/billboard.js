@@ -134,7 +134,7 @@ export default {
 	 *              width: 15,
 	 *              height: 15
 	 *
-	 *              // radis is only applicable for 'circle' legend type
+	 *              // radius is only applicable for 'circle' legend type
 	 *              r: 10
 	 *          }
 	 *      },
