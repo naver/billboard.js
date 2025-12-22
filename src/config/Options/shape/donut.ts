@@ -16,6 +16,17 @@ export default {
 	 * @property {function} [donut.label.format] Set formatter for the label on each donut piece.
 	 * @property {number} [donut.label.threshold=0.05] Set threshold ratio to show/hide labels.
 	 * @property {number|function} [donut.label.ratio=undefined] Set ratio of labels position.
+	 * @property {boolean|object} [donut.label.line=false] Enable label with lines (displayed outside with connector lines).
+	 *  - `true`: Enable label with lines with default settings
+	 *  - `false`: Labels are displayed inside the donut slices (default behavior).
+	 *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
+	 * @property {boolean} [donut.label.line.show=true] Show or hide connector lines.
+	 * @property {number} [donut.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
+	 * @property {boolean|function} [donut.label.line.text=true] Show text at the end of the connector line (outside the shape).
+	 *  - `true`: show data "id" text
+	 *  - `false`: use default formatter(label.format) to show text
+	 *  - `function(value, ratio, id)`: Custom formatter function for the text.
+	 *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
 	 * @property {object|function} [donut.label.image] Set image to be displayed next to the label text.<br><br>
 	 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
 	 * The arguments are:<br>
@@ -41,6 +52,7 @@ export default {
 	 * @see [Demo: Needle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutNeedle)
 	 * @see [Demo: Range Text](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutRangeText)
 	 * @see [Demo: Label Image](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelImage)
+	 * @see [Demo: Label Line](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelLine)
 	 * @see [Demo: Label Ratio](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelRatio)
 	 * @see [Demo: Multiline Label](https://naver.github.io/billboard.js/demo/#DonutChartOptions.MultilineLabel)
 	 * @see [Demo: Multiline Title](https://naver.github.io/billboard.js/demo/#DonutChartOptions.MultilineTitle)
@@ -69,6 +81,20 @@ export default {
 	 *          },
 	 *          // or set ratio number
 	 *          ratio: 0.5,
+	 *
+	 *          // Enable label with lines (displayed outside with connector lines)
+	 *          line: false,  // default - labels inside
+	 *          line: true,   // enable label with lines with default settings
+	 *          line: {       // enable label with lines with custom settings
+	 *             show: true,
+	 *             distance: 20,  // horizontal line distance in pixels
+	 *
+	 *             // show text at the end of connector line (outside the shape)
+	 *             text: true,  // use default formatter
+	 *             text: function(value, ratio, id) {  // custom formatter
+	 *                 return d3.format(".1%")(ratio);
+	 *             }
+	 *          },
 	 *
 	 *          // set image to be displayed next to the label text
 	 *          image: {
@@ -141,6 +167,11 @@ export default {
 	donut_label_show: true,
 	donut_label_format: <(() => number | string) | undefined>undefined,
 	donut_label_threshold: 0.05,
+	donut_label_line: <boolean | {
+		show?: boolean,
+		distance?: number,
+		text?: boolean | ((value: number, ratio: number, id: string) => string)
+	}>false,
 	donut_label_image: <
 		| {url: string, width: number, height: number, pos?: {x?: number, y?: number}}
 		| ((v: number, id: string, i: number) => {

@@ -48,6 +48,9 @@ export interface IArcData {
 	startAngle: number;
 	endAngle: number;
 	value: number | null;
+
+	/** Temporary cache for arc label optimization (used between textForArcLabel and redrawArcLabelLines) */
+	_cache?: {updated: IArcData, ratio: number, meetsThreshold: boolean};
 }
 
 export interface IBarData extends IDataRow {
