@@ -10,7 +10,7 @@ import type {ChartTypes, d3Selection} from "../../../../types/types";
 export default {
 	/**
 	 * Specify the key of x values in the data.<br><br>
-	 * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
+	 * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on a category axis, the values of the data on the key will be used for category names.
 	 * @name data․x
 	 * @memberof Options
 	 * @type {string}
@@ -200,8 +200,8 @@ export default {
 
 	/**
 	 *  This option changes the order of stacking data and pieces of pie/donut.
-	 *  - If `null` specified, it will be the order the data loaded.
-	 *  - If function specified, it will be used as [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)<br><br>
+	 *  - If `null` specified, it will be the order in which the data is loaded.
+	 *  - If a function is specified, it will be used as [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)<br><br>
 	 *
 	 *  **Available Values:**
 	 *  - `desc`: In descending order
@@ -209,7 +209,7 @@ export default {
 	 *  - `null`: It keeps the data load order
 	 *  - `function(data1, data2) { ... }`: Array.sort compareFunction
 	 *
-	 *  **NOTE**: order function, only works for Axis based types & Arc types, except `Radar` type.
+	 *  **NOTE**: order function only works for Axis based types & Arc types, except `Radar` type.
 	 * @name data․order
 	 * @memberof Options
 	 * @type {string|function|null}
@@ -269,7 +269,7 @@ export default {
 	/**
 	 * Set how zero value will be treated on groups.<br>
 	 * Possible values:
-	 * - `zero`: 0 will be positioned at absolute axis zero point.
+	 * - `zero`: 0 will be positioned at the absolute axis zero point.
 	 * - `positive`: 0 will be positioned at the top of a stack.
 	 * - `negative`: 0 will be positioned at the bottom of a stack.
 	 * @name data․groupsZeroAs
@@ -286,7 +286,7 @@ export default {
 
 	/**
 	 * Set color converter function.<br><br>
-	 * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
+	 * This option should be a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
 	 * @name data․color
 	 * @memberof Options
 	 * @type {function}
@@ -324,7 +324,7 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} data Data object
-	 * @property {boolean} [data.labels=false] Show or hide labels on each data points
+	 * @property {boolean} [data.labels=false] Show or hide labels on each data point
 	 * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
 	 * @property {function} [data.labels.format] Set formatter function for data labels.<br>
 	 * The formatter function receives 4 arguments such as `v, id, i, texts` and it **must return a string** (`\n` character will be used as line break) that will be shown as the label.<br><br>
@@ -332,33 +332,33 @@ export default {
 	 *  - `v` is the value of the data point where the label is shown.
 	 *  - `id` is the id of the data where the label is shown.
 	 *  - `i` is the index of the data series point where the label is shown.
-	 *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
+	 *  - `texts` is an array of whole corresponding data series' text labels.<br><br>
 	 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
 	 * @property {string|object|function} [data.labels.backgroundColors] Set label text background colors.<br><br>
-	 * - **NOTE**: When function is set, background colors can be specified one color per dataset.
+	 * - **NOTE**: When a function is set, background colors can be specified one color per dataset.
 	 *   - Within the function, the last returned color for dataset will be used.
 	 *   - Only can control set or unset background color for each values.
 	 * @property {string|object|function} [data.labels.colors] Set label text colors.
-	 * @property {object|function} [data.labels.position] Set each dataset position, relative the original.<br><br>
-	 * When function is specified, will receives 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
+	 * @property {object|function} [data.labels.position] Set each dataset position, relative to the original.<br><br>
+	 * When a function is specified, it will receive 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
 	 * The arguments are:<br>
 	 *  - `type` coordinate type string, which will be 'x' or 'y'.
 	 *  - `v` is the value of the data point where the label is shown.
 	 *  - `id` is the id of the data where the label is shown.
 	 *  - `i` is the index of the data series point where the label is shown.
-	 *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
-	 * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
-	 * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
+	 *  - `texts` is an array of whole corresponding data series' text labels.<br><br>
+	 * @property {number} [data.labels.position.x=0] x coordinate position, relative to the original.
+	 * @property {number} [data.labels.position.y=0] y coordinate position, relative to the original.
 	 * @property {object} [data.labels.rotate] Rotate label text. Specify degree value in a range of `0 ~ 360`.
-	 * - **NOTE:** Depend on rotate value, text position need to be adjusted manually(using `data.labels.position` option) to be shown nicely.
-	 * @property {boolean|object} [data.labels.border=false] Add border to data label text. NOTE: When set as `true`, styling aren't applied. Hence, need to set using `.bb-text-border` class.
+	 * - **NOTE:** Depending on the rotate value, the text position needs to be adjusted manually(using `data.labels.position` option) to be shown nicely.
+	 * @property {boolean|object} [data.labels.border=false] Add border to data label text. NOTE: When set as `true`, styling isn't applied. Hence, you need to set it using `.bb-text-border` class.
 	 * @property {number|string|object} [data.labels.border.padding="3 5"] Border padding. Can be a single number, string or object with top, bottom, left, right properties.
 	 * @property {number} [data.labels.border.radius=10] Border radius value.
 	 * @property {number} [data.labels.border.strokeWidth=1] Border stroke width.
 	 * @property {string} [data.labels.border.stroke="#000"] Border stroke color.
 	 * @property {string} [data.labels.border.fill="none"] Border fill color.
 	 * @property {object|function} [data.labels.image] Set image to be displayed next to the label text.<br><br>
-	 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+	 * When a function is specified, it will receive 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
 	 * The arguments are:<br>
 	 *  - `v` is the value of the data point where the label is shown.
 	 *  - `id` is the id of the data where the label is shown.
@@ -367,8 +367,8 @@ export default {
 	 * @property {number} data.labels.image.width Image width in pixels.
 	 * @property {number} data.labels.image.height Image height in pixels.
 	 * @property {object} [data.labels.image.pos] Image position relative to the label text.
-	 * @property {number} [data.labels.image.pos.x=0] x coordinate position, relative the original.
-	 * @property {number} [data.labels.image.pos.y=0] y coordinate position, relative the original.
+	 * @property {number} [data.labels.image.pos.x=0] x coordinate position, relative to the original.
+	 * @property {number} [data.labels.image.pos.y=0] y coordinate position, relative to the original.
 	 * @memberof Options
 	 * @type {object}
 	 * @default {}
@@ -402,10 +402,10 @@ export default {
 	 *     // align text to center of the 'bar' shape (works only for 'bar' type)
 	 *     centered: true,
 	 *
-	 *     // apply backgound color for label texts
+	 *     // apply background color for label texts
 	 *     backgroundColors: "red",
 	 *
-	 *     // set differenct backround colors per dataset
+	 *     // set different background colors per dataset
 	 *     backgroundColors: {
 	 *          data1: "green",
 	 *          data2: "yellow"
@@ -516,7 +516,7 @@ export default {
 	 *              pos: { x: 0, y: 0 }
 	 *           };
 	 *        } else if(v < 5) {
-	 *        	// Return falsy value in case of don't want to show image
+	 *        	// Return falsy value in case you don't want to show image
 	 *           return null;
 	 *        } else {
 	 *           return {
@@ -567,7 +567,7 @@ export default {
 
 	/**
 	 * Hide each data when the chart appears.<br><br>
-	 * If true specified, all of data will be hidden. If multiple ids specified as an array, those will be hidden.
+	 * If true is specified, all of data will be hidden. If multiple ids are specified as an array, those will be hidden.
 	 * @name data․hide
 	 * @memberof Options
 	 * @type {boolean|Array}
@@ -605,7 +605,7 @@ export default {
 
 	/**
 	 * Set a callback for click event on each data point.<br><br>
-	 * This callback will be called when each data point clicked and will receive `d` and element as the arguments.
+	 * This callback will be called when each data point is clicked and will receive `d` and element as the arguments.
 	 * - `d` is the data clicked and element is the element clicked.
 	 * - `element` is the current interacting svg element.
 	 * - In this callback, `this` will be the Chart object.
@@ -626,7 +626,7 @@ export default {
 
 	/**
 	 * Set a callback for mouse/touch over event on each data point.<br><br>
-	 * This callback will be called when mouse cursor or via touch moves onto each data point and will receive `d` and `element` as the argument.
+	 * This callback will be called when the mouse cursor or touch moves onto each data point and will receive `d` and `element` as the argument.
 	 * - `d` is the data where mouse cursor moves onto.
 	 * - `element` is the current interacting svg element.
 	 * - In this callback, `this` will be the Chart object.
@@ -647,7 +647,7 @@ export default {
 
 	/**
 	 * Set a callback for mouse/touch out event on each data point.<br><br>
-	 * This callback will be called when mouse cursor or via touch moves out each data point and will receive `d` as the argument.
+	 * This callback will be called when the mouse cursor or touch moves out each data point and will receive `d` as the argument.
 	 * - `d` is the data where mouse cursor moves out.
 	 * - `element` is the current interacting svg element.
 	 * - In this callback, `this` will be the Chart object.
@@ -733,7 +733,7 @@ export default {
 	data_onmax: <Function | undefined>undefined,
 
 	/**
-	 * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
+	 * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as most browsers will block XMLHTTPRequests.
 	 * @name data․url
 	 * @memberof Options
 	 * @type {string}
@@ -864,7 +864,7 @@ export default {
 	 *   }
 	 * }
 	 *
-	 * // for 'canlestick' type, data should contain:
+	 * // for 'candlestick' type, data should contain:
 	 * // - an array of [open, high, low, close, volume(optional)] data following the order
 	 * // - or an object with 'open', 'high', 'low', 'close' and 'value'(optional) key value
 	 * data: {
@@ -940,7 +940,7 @@ export default {
 	 *   type: "bubble"
 	 * }
 	 *
-	 * // for 'canlestick' type, data should contain:
+	 * // for 'candlestick' type, data should contain:
 	 * // - an array of [open, high, low, close, volume(optional)] data following the order
 	 * // - or an object with 'open', 'high', 'low', 'close' and 'value'(optional) key value
 	 * data: {

@@ -13,7 +13,7 @@ import {extend, parseDate} from "../../module/util";
  * @function subchart
  * @instance
  * @memberof Chart
- * @param {Array} domainValue If domain range is given, the subchart will be seleted to the given domain. If no argument is given, the current subchart selection domain will be returned.
+ * @param {Array} domainValue If domain range is given, the subchart will be selected to the given domain. If no argument is given, the current subchart selection domain will be returned.
  * @returns {Array} domain value in array
  * @example
  *  // Specify domain for subchart selection
@@ -23,7 +23,7 @@ import {extend, parseDate} from "../../module/util";
  *  // Domain value may not be exact returning approximately values.
  *  chart.subchart();
  */
-// NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
+// NOTE: declared function assigning to variable to prevent duplicated method generation in JSDoc.
 const subchart = function<T = TDomain[]>(domainValue?: T): T | undefined {
 	const $$ = this.internal;
 	const {axis, brush, config, scale: {x, subX}, state} = $$;
@@ -134,7 +134,7 @@ extend(subchart, {
 	},
 
 	/**
-	 * Toggle the visiblity of subchart
+	 * Toggle the visibility of subchart
 	 * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
 	 * @function subchart․toggle
 	 * @instance

@@ -64,7 +64,7 @@ extend(data, {
 	 * @function data․values
 	 * @instance
 	 * @memberof Chart
-	 * @param {string|Array|null} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
+	 * @param {string|Array|null} targetIds This API returns the values of specified target. If this argument is not given, null will be returned
 	 * @param {boolean} [flat=true] Get flatten values
 	 * @returns {Array} Data values
 	 * @example
