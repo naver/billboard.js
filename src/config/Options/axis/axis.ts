@@ -13,7 +13,7 @@ export default {
 	/**
 	 * Setup the way to evaluate tick text size.
 	 * - **NOTE:**
-	 *   - Setting `false` or custom evaluator, highly recommended to memoize evaluated text dimension value to not degrade performance.
+	 *   - When setting `false` or a custom evaluator, it is highly recommended to memoize evaluated text dimension value to not degrade performance.
 	 * @name axis․evalTextSize
 	 * @memberof Options
 	 * @type {boolean|function}
@@ -22,7 +22,7 @@ export default {
 	 * @example
 	 * axis: {
 	 *   // will evaluate getting text size every time.
-	 *   evalTextSize: false.
+	 *   evalTextSize: false,
 	 *
 	 *   // set a custom evaluator
 	 *   evalTextSize: function(textElement, axisId) {
@@ -71,8 +71,8 @@ export default {
 	 * Set axis tooltip.
 	 * - **NOTE:**
 	 *   - When enabled, will disable default focus grid line.
-	 *   - For `timeseries` x Axis, tootlip will be formatted using x Axis' tick format.
-	 *   - For `category` x Axis, tootlip will be displaying scales' value text.
+	 *   - For `timeseries` x Axis, tooltip will be formatted using x Axis' tick format.
+	 *   - For `category` x Axis, tooltip will be displaying scales' value text.
 	 * @name axis․tooltip
 	 * @memberof Options
 	 * @type {boolean}
