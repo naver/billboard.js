@@ -1,4 +1,4 @@
-## How to start developing billboard.js?
+## How to start developing billboard.js
 
 For anyone interested in developing billboard.js, follow the instructions below.
 > Required Node.js version: `10.10.0+`
@@ -30,7 +30,7 @@ $ yarn
 
 #### 3. Build
 
-Use npm script to build billboard.js
+Use npm scripts to build billboard.js
 
 ```bash
 # Run webpack-dev-server for development
@@ -51,7 +51,7 @@ Two folders will be created after the build is completed.
 ### Linting
 
 To maintain the same code style and quality, we adopted [ESLint](https://eslint.org/). The [rules](https://github.com/naver/eslint-config-naver/tree/master/rules) are based on the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript) with some modifications.
-Setup your editor for check or run the below command for linting.
+Setup your editor for checking or run the command below for linting.
 
 ```bash
 $ npm run lint
@@ -59,7 +59,7 @@ $ npm run lint
 
 ### Test
 
-Once you created a branch and finished the development, you must perform a test with `npm test` command before the push to a remote repository.
+Once you have created a branch and finished the development, you must perform tests with `npm test` command before pushing to a remote repository.
 
 ```bash
 $ npm test
@@ -68,4 +68,4 @@ Running the `npm test` command will start [Mocha](https://mochajs.org/) tests vi
 
 ## Bug Report
 
-If you find a bug, please report to us by posting [issues](https://github.com/naver/billboard.js/issues) on GitHub.
+If you find a bug, please report it to us by posting [issues](https://github.com/naver/billboard.js/issues) on GitHub.
