@@ -38,7 +38,7 @@ export default {
 
 	/**
 	 * Force to redraw.
-	 * - **NOTE:** When zoom/subchart is used, the zoomed state will be resetted.
+	 * - **NOTE:** When zoom/subchart is used, the zoomed state will be reset.
 	 * @function flush
 	 * @instance
 	 * @memberof Chart
@@ -160,14 +160,14 @@ export default {
 	 * Get or set config option value.
 	 * - **NOTE**
 	 *  - The option key name must be specified as the last level.
-	 *  - when no argument is given, will return all specified generation options object only. (will exclude any other options not specified at the initialization)
+	 *  - When no argument is given, it will return all specified generation options object only. (will exclude any other options not specified at the initialization)
 	 * @function config
 	 * @instance
 	 * @memberof Chart
 	 * @param {string} name The option key name.
 	 * @param {string|number|boolean|object|Array} [value] The value accepted for indicated option.
 	 * @param {boolean} [redraw] Set to redraw with the new option changes.
-	 * - **NOTE:** Doesn't guarantee work in all circumstances. It can be applied for limited options only.
+	 * - **NOTE:** Doesn't guarantee to work in all circumstances. It can be applied for limited options only.
 	 * @returns {string|number|boolean|object|Array} The option value or all options object
 	 * @example
 	 *

@@ -11,7 +11,7 @@ $ npm install billboard.js @billboard.js/react
 
 ## How to use
 
-> ℹ️ The component will create a `<div>` element and append it to the parent element and [`bindto`](https://naver.github.io/billboard.js/release/latest/doc/Options.html#.bindto) option is not supported in this case.
+> ℹ️ The component will create a `<div>` element and append it to the parent element; the [`bindto`](https://naver.github.io/billboard.js/release/latest/doc/Options.html#.bindto) option is not supported in this case.
 
 ### Basic Usage
 
@@ -59,7 +59,7 @@ function App() {
             ...
         }}
 
-        /* When class name doesn't contains `bb`,
+        /* When the class name doesn't contain `bb`,
            then you also need to update the default CSS to be rendered correctly. */
         className={"bb my-classname"}
     />;
@@ -102,7 +102,7 @@ export function App(props: IChartOptions) {
     const chartComponent = useRef<IChart>(null);
 
     // when chart "type" is passed from props, chart types need to be initialized separately.
-    // in this scenario, can't be "tree-shaken" only used chart type modules.
+    // in this scenario, only used chart type modules can't be "tree-shaken".
     Chart[props.data.type]();
 
     useEffect(() => {

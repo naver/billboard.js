@@ -37,7 +37,7 @@ export default {
 	 *      // <g class='bb-areas'> will be positioned behind the line <g class='bb-lines'> in stacking order
 	 *      front: false,
 	 *
-	 *      // will generate follwing linearGradient:
+	 *      // will generate following linearGradient:
 	 *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
 	 *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
 	 *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>

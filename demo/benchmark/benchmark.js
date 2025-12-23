@@ -74,7 +74,7 @@ window.bench = {
     },
     generate: function(type) {
         if (!window.bb) {
-            alert("Select the desired version fisrt.");
+            alert("Select the desired version first.");
             this.$el.version.focus();
 
             return;

@@ -108,7 +108,7 @@ export default {
 	 *          //   yAxis: Current y Axis position value or function(the value is given for axis based chart type only)
 	 *          // }
 	 *
-	 *          // yAxis will work differently per data lenghts
+	 *          // yAxis will work differently per data lengths
 	 *          // - a) Single data: `yAxis` will return `number` value
 	 *          // - b) Multiple data: `yAxis` will return a function with property value
 	 *
@@ -119,8 +119,8 @@ export default {
 	 *          // b) Multiple data:
 	 *          // Get y coordinate of value 500, where 'data1' scales(y or y2).
 	 *          // When 'data.axes' option is used, data can bound to different axes.
-	 *          // - when "data.axes={data1: 'y'}", wil return y value from y axis scale.
-	 *          // - when "data.axes={data1: 'y2'}", wil return y value from y2 axis scale.
+	 *          // - when "data.axes={data1: 'y'}", will return y value from y axis scale.
+	 *          // - when "data.axes={data1: 'y2'}", will return y value from y2 axis scale.
 	 *          pos.yAxis(500, "data1"); // will return y coordinate value of data1
 	 *
 	 *          pos.yAxis(500); // get y coordinate with value of 500, using y axis scale

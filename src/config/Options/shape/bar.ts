@@ -25,7 +25,7 @@ export default {
 	 * @property {number} [bar.padding=0] The padding pixel value between each bar.
 	 * @property {number} [bar.radius] Set the radius of bar edge in pixel.
 	 * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
-	 * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
+	 * @property {number} [bar.sensitivity=2] The sensitivity offset value for interaction boundary.
 	 * @property {number|function|object} [bar.width] Change the width of bar chart.
 	 * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
 	 * - **NOTE:** Criteria for ratio.
@@ -53,12 +53,12 @@ export default {
 	 *      // make bar shape to be positioned over the other shape elements
 	 *      front: true,
 	 *
-	 *      // remove nullish data on bar indices postions
+	 *      // remove nullish data on bar indices positions
 	 *      indices: {
 	 *          removeNull: true
 	 *      },
 	 *
-	 *      // will generate follwing linearGradient:
+	 *      // will generate following linearGradient:
 	 *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
 	 *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
 	 *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>

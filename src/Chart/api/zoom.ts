@@ -32,7 +32,7 @@ import {extend, getMinMax, isDefined, isObject, parseDate} from "../../module/ut
  *  // Domain value may not be exact returning approximately values.
  *  chart.zoom();
  */
-// NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
+// NOTE: declared function assigning to variable to prevent duplicated method generation in JSDoc.
 const zoom = function<T = TDomainRange>(domainValue?: T): T | undefined {
 	const $$ = this.internal;
 	const {axis, config, org, scale, state} = $$;
