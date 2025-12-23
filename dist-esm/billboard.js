@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.2-nightly-20251218004719
+ * @version 3.17.2-nightly-20251223004729
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -499,7 +499,7 @@ var legend$2 = {
      *              width: 15,
      *              height: 15
      *
-     *              // radis is only applicable for 'circle' legend type
+     *              // radius is only applicable for 'circle' legend type
      *              r: 10
      *          }
      *      },
@@ -547,14 +547,14 @@ var legend$2 = {
 var main = {
     /**
      * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.<br>
-     * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).
-     * - **NOTE:** In case of element doesn't exist or not specified, will add a `<div>` element to the body.
+     * If another chart is already set, it will be replaced with the new one (only one chart can be set in one element).
+     * - **NOTE:** In case the element doesn't exist or not specified, will add a `<div>` element to the body.
      * @name bindto
      * @memberof Options
      * @property {string|HTMLElement|d3.selection|object} [bindto="#chart"] Specify the element where chart will be drawn.
      * @property {string|HTMLElement|d3.selection} bindto.element="#chart" Specify the element where chart will be drawn.
      * @property {string} [bindto.classname=bb] Specify the class name of bind element.<br>
-     *     **NOTE:** When class name isn't `bb`, then you also need to update the default CSS to be rendered correctly.
+     *     **NOTE:** When the class name isn't `bb`, then you also need to update the default CSS to be rendered correctly.
      * @default #chart
      * @example
      * bindto: "#myContainer"
@@ -595,8 +595,8 @@ var main = {
     /**
      * Set 'clip-path' attribute for chart element
      * - **NOTE:**
-     *  > When is false, chart node element is positioned after the axis node in DOM tree hierarchy.
-     *  > Is to make chart element positioned over axis element.
+     *  > When false, chart node element is positioned after the axis node in DOM tree hierarchy.
+     *  > This is to make the chart element positioned over axis element.
      * @name clipPath
      * @memberof Options
      * @type {boolean}
@@ -622,7 +622,7 @@ var main = {
     svg_classname: undefined,
     /**
      * The desired size of the chart element.
-     * If value is not specified, the width of the chart will be calculated by the size of the parent element it's appended to.
+     * If the value is not specified, the width of the chart will be calculated by the size of the parent element it's appended to.
      * @name size
      * @memberof Options
      * @type {object}
@@ -640,13 +640,13 @@ var main = {
     size_height: undefined,
     /**
      * The padding of the chart element.
-     * - **NOTE:** for more information, see the "[`Understanding padding`](https://github.com/naver/billboard.js/wiki/Understanding-padding)"" wiki documentaion.
+     * - **NOTE:** for more information, see the "[`Understanding padding`](https://github.com/naver/billboard.js/wiki/Understanding-padding)" wiki documentation.
      * @name padding
      * @memberof Options
      * @type {object}
      * @property {object|boolean} [padding=true] Set padding of chart, and accepts object or boolean type.
      * - `Object`: Specify each side's padding.
-     * - `false`: Remove padding completely and make shape to fully occupy the container element.
+     * - `false`: Remove padding completely and make the shape fully occupy the container element.
      *   - In this case, axes and subchart will be hidden.
      *   - To adjust some padding from this state, use `axis.[x|y].padding` option.
      * @property {string} [padding.mode] padding mode
@@ -837,7 +837,7 @@ var main = {
      */
     onafterinit: undefined,
     /**
-     * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
+     * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawn.
      * @name onrendered
      * @memberof Options
      * @type {function}
@@ -851,7 +851,7 @@ var main = {
     onrendered: undefined,
     /**
      * Set duration of transition (in milliseconds) for chart animation.<br><br>
-     * - **NOTE:** If `0 `or `null` set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
+     * - **NOTE:** If `0` or `null` is set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
      * @name transition
      * @memberof Options
      * @type {object}
@@ -882,11 +882,11 @@ var main = {
      * @memberof Options
      * @type {object}
      * @property {object} [render] render object
-     * @property {boolean} [render.lazy=true] Make to not render at initialization.
+     * @property {boolean} [render.lazy=true] Make it not render at initialization.
      * - **NOTE**:
      *   - Enabled by default when bind element's visibility is hidden.
      *   - When set to `false`, will initialize the chart regardless the bind element's visibility state, but in this case chart can't be guaranteed to be rendered properly.
-     * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
+     * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visibility` inline css property or class value) & render when it is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
      * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
      * @example
      *  render: {
@@ -908,7 +908,7 @@ var main = {
      *  document.getElementById('chart').style.display = 'block';  // (b)
      *
      * @example
-     * 	// chart won't be rendered and not observing bind element's visiblity changes
+     * 	// chart won't be rendered and not observing bind element's visibility changes
      *  var chart = bb.generate({
      *     render: {
      *          lazy: true,
@@ -934,7 +934,7 @@ var main = {
      * - `[start] {number|Date|string}`: Start position of the region. If not set, the start will be the edge of the chart.
      * - `[end] {number|Date|string}`: End position of the region. If not set, the end will be the edge of the chart.
      * - `[class] {string}`: Class value to apply to the region.
-     * - `[label] {object}` Lable text option.
+     * - `[label] {object}` Label text option.
      *   - `text {string}`: Text value.
      *   - `x {number}`: x Position.
      *   - `y {number}`: y Position.
@@ -1126,7 +1126,7 @@ var tooltip$2 = {
      *          //   yAxis: Current y Axis position value or function(the value is given for axis based chart type only)
      *          // }
      *
-     *          // yAxis will work differently per data lenghts
+     *          // yAxis will work differently per data lengths
      *          // - a) Single data: `yAxis` will return `number` value
      *          // - b) Multiple data: `yAxis` will return a function with property value
      *
@@ -1137,8 +1137,8 @@ var tooltip$2 = {
      *          // b) Multiple data:
      *          // Get y coordinate of value 500, where 'data1' scales(y or y2).
      *          // When 'data.axes' option is used, data can bound to different axes.
-     *          // - when "data.axes={data1: 'y'}", wil return y value from y axis scale.
-     *          // - when "data.axes={data1: 'y2'}", wil return y value from y2 axis scale.
+     *          // - when "data.axes={data1: 'y'}", will return y value from y axis scale.
+     *          // - when "data.axes={data1: 'y2'}", will return y value from y2 axis scale.
      *          pos.yAxis(500, "data1"); // will return y coordinate value of data1
      *
      *          pos.yAxis(500); // get y coordinate with value of 500, using y axis scale
@@ -1272,7 +1272,7 @@ var tooltip$2 = {
 var data$2 = {
     /**
      * Specify the key of x values in the data.<br><br>
-     * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
+     * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on a category axis, the values of the data on the key will be used for category names.
      * @name data․x
      * @memberof Options
      * @type {string}
@@ -1456,8 +1456,8 @@ var data$2 = {
     data_types: {},
     /**
      *  This option changes the order of stacking data and pieces of pie/donut.
-     *  - If `null` specified, it will be the order the data loaded.
-     *  - If function specified, it will be used as [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)<br><br>
+     *  - If `null` specified, it will be the order in which the data is loaded.
+     *  - If a function is specified, it will be used as [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)<br><br>
      *
      *  **Available Values:**
      *  - `desc`: In descending order
@@ -1465,7 +1465,7 @@ var data$2 = {
      *  - `null`: It keeps the data load order
      *  - `function(data1, data2) { ... }`: Array.sort compareFunction
      *
-     *  **NOTE**: order function, only works for Axis based types & Arc types, except `Radar` type.
+     *  **NOTE**: order function only works for Axis based types & Arc types, except `Radar` type.
      * @name data․order
      * @memberof Options
      * @type {string|function|null}
@@ -1523,7 +1523,7 @@ var data$2 = {
     /**
      * Set how zero value will be treated on groups.<br>
      * Possible values:
-     * - `zero`: 0 will be positioned at absolute axis zero point.
+     * - `zero`: 0 will be positioned at the absolute axis zero point.
      * - `positive`: 0 will be positioned at the top of a stack.
      * - `negative`: 0 will be positioned at the bottom of a stack.
      * @name data․groupsZeroAs
@@ -1539,7 +1539,7 @@ var data$2 = {
     data_groupsZeroAs: "positive",
     /**
      * Set color converter function.<br><br>
-     * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
+     * This option should be a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
      * @name data․color
      * @memberof Options
      * @type {function}
@@ -1575,7 +1575,7 @@ var data$2 = {
      * @memberof Options
      * @type {object}
      * @property {object} data Data object
-     * @property {boolean} [data.labels=false] Show or hide labels on each data points
+     * @property {boolean} [data.labels=false] Show or hide labels on each data point
      * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
      * @property {function} [data.labels.format] Set formatter function for data labels.<br>
      * The formatter function receives 4 arguments such as `v, id, i, texts` and it **must return a string** (`\n` character will be used as line break) that will be shown as the label.<br><br>
@@ -1583,33 +1583,33 @@ var data$2 = {
      *  - `v` is the value of the data point where the label is shown.
      *  - `id` is the id of the data where the label is shown.
      *  - `i` is the index of the data series point where the label is shown.
-     *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
+     *  - `texts` is an array of whole corresponding data series' text labels.<br><br>
      * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
      * @property {string|object|function} [data.labels.backgroundColors] Set label text background colors.<br><br>
-     * - **NOTE**: When function is set, background colors can be specified one color per dataset.
+     * - **NOTE**: When a function is set, background colors can be specified one color per dataset.
      *   - Within the function, the last returned color for dataset will be used.
      *   - Only can control set or unset background color for each values.
      * @property {string|object|function} [data.labels.colors] Set label text colors.
-     * @property {object|function} [data.labels.position] Set each dataset position, relative the original.<br><br>
-     * When function is specified, will receives 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
+     * @property {object|function} [data.labels.position] Set each dataset position, relative to the original.<br><br>
+     * When a function is specified, it will receive 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
      * The arguments are:<br>
      *  - `type` coordinate type string, which will be 'x' or 'y'.
      *  - `v` is the value of the data point where the label is shown.
      *  - `id` is the id of the data where the label is shown.
      *  - `i` is the index of the data series point where the label is shown.
-     *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
-     * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
-     * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
+     *  - `texts` is an array of whole corresponding data series' text labels.<br><br>
+     * @property {number} [data.labels.position.x=0] x coordinate position, relative to the original.
+     * @property {number} [data.labels.position.y=0] y coordinate position, relative to the original.
      * @property {object} [data.labels.rotate] Rotate label text. Specify degree value in a range of `0 ~ 360`.
-     * - **NOTE:** Depend on rotate value, text position need to be adjusted manually(using `data.labels.position` option) to be shown nicely.
-     * @property {boolean|object} [data.labels.border=false] Add border to data label text. NOTE: When set as `true`, styling aren't applied. Hence, need to set using `.bb-text-border` class.
+     * - **NOTE:** Depending on the rotate value, the text position needs to be adjusted manually(using `data.labels.position` option) to be shown nicely.
+     * @property {boolean|object} [data.labels.border=false] Add border to data label text. NOTE: When set as `true`, styling isn't applied. Hence, you need to set it using `.bb-text-border` class.
      * @property {number|string|object} [data.labels.border.padding="3 5"] Border padding. Can be a single number, string or object with top, bottom, left, right properties.
      * @property {number} [data.labels.border.radius=10] Border radius value.
      * @property {number} [data.labels.border.strokeWidth=1] Border stroke width.
      * @property {string} [data.labels.border.stroke="#000"] Border stroke color.
      * @property {string} [data.labels.border.fill="none"] Border fill color.
      * @property {object|function} [data.labels.image] Set image to be displayed next to the label text.<br><br>
-     * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+     * When a function is specified, it will receive 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
      * The arguments are:<br>
      *  - `v` is the value of the data point where the label is shown.
      *  - `id` is the id of the data where the label is shown.
@@ -1618,8 +1618,8 @@ var data$2 = {
      * @property {number} data.labels.image.width Image width in pixels.
      * @property {number} data.labels.image.height Image height in pixels.
      * @property {object} [data.labels.image.pos] Image position relative to the label text.
-     * @property {number} [data.labels.image.pos.x=0] x coordinate position, relative the original.
-     * @property {number} [data.labels.image.pos.y=0] y coordinate position, relative the original.
+     * @property {number} [data.labels.image.pos.x=0] x coordinate position, relative to the original.
+     * @property {number} [data.labels.image.pos.y=0] y coordinate position, relative to the original.
      * @memberof Options
      * @type {object}
      * @default {}
@@ -1653,10 +1653,10 @@ var data$2 = {
      *     // align text to center of the 'bar' shape (works only for 'bar' type)
      *     centered: true,
      *
-     *     // apply backgound color for label texts
+     *     // apply background color for label texts
      *     backgroundColors: "red",
      *
-     *     // set differenct backround colors per dataset
+     *     // set different background colors per dataset
      *     backgroundColors: {
      *          data1: "green",
      *          data2: "yellow"
@@ -1767,7 +1767,7 @@ var data$2 = {
      *              pos: { x: 0, y: 0 }
      *           };
      *        } else if(v < 5) {
-     *        	// Return falsy value in case of don't want to show image
+     *        	// Return falsy value in case you don't want to show image
      *           return null;
      *        } else {
      *           return {
@@ -1788,7 +1788,7 @@ var data$2 = {
     data_labels_imgUrl: undefined,
     /**
      * Hide each data when the chart appears.<br><br>
-     * If true specified, all of data will be hidden. If multiple ids specified as an array, those will be hidden.
+     * If true is specified, all of data will be hidden. If multiple ids are specified as an array, those will be hidden.
      * @name data․hide
      * @memberof Options
      * @type {boolean|Array}
@@ -1824,7 +1824,7 @@ var data$2 = {
     data_filter: undefined,
     /**
      * Set a callback for click event on each data point.<br><br>
-     * This callback will be called when each data point clicked and will receive `d` and element as the arguments.
+     * This callback will be called when each data point is clicked and will receive `d` and element as the arguments.
      * - `d` is the data clicked and element is the element clicked.
      * - `element` is the current interacting svg element.
      * - In this callback, `this` will be the Chart object.
@@ -1844,7 +1844,7 @@ var data$2 = {
     data_onclick: function () { },
     /**
      * Set a callback for mouse/touch over event on each data point.<br><br>
-     * This callback will be called when mouse cursor or via touch moves onto each data point and will receive `d` and `element` as the argument.
+     * This callback will be called when the mouse cursor or touch moves onto each data point and will receive `d` and `element` as the argument.
      * - `d` is the data where mouse cursor moves onto.
      * - `element` is the current interacting svg element.
      * - In this callback, `this` will be the Chart object.
@@ -1864,7 +1864,7 @@ var data$2 = {
     data_onover: function () { },
     /**
      * Set a callback for mouse/touch out event on each data point.<br><br>
-     * This callback will be called when mouse cursor or via touch moves out each data point and will receive `d` as the argument.
+     * This callback will be called when the mouse cursor or touch moves out each data point and will receive `d` as the argument.
      * - `d` is the data where mouse cursor moves out.
      * - `element` is the current interacting svg element.
      * - In this callback, `this` will be the Chart object.
@@ -1945,7 +1945,7 @@ var data$2 = {
      */
     data_onmax: undefined,
     /**
-     * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
+     * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as most browsers will block XMLHTTPRequests.
      * @name data․url
      * @memberof Options
      * @type {string}
@@ -2073,7 +2073,7 @@ var data$2 = {
      *   }
      * }
      *
-     * // for 'canlestick' type, data should contain:
+     * // for 'candlestick' type, data should contain:
      * // - an array of [open, high, low, close, volume(optional)] data following the order
      * // - or an object with 'open', 'high', 'low', 'close' and 'value'(optional) key value
      * data: {
@@ -2148,7 +2148,7 @@ var data$2 = {
      *   type: "bubble"
      * }
      *
-     * // for 'canlestick' type, data should contain:
+     * // for 'candlestick' type, data should contain:
      * // - an array of [open, high, low, close, volume(optional)] data following the order
      * // - or an object with 'open', 'high', 'low', 'close' and 'value'(optional) key value
      * data: {
@@ -10951,7 +10951,7 @@ var apiChart = {
     },
     /**
      * Force to redraw.
-     * - **NOTE:** When zoom/subchart is used, the zoomed state will be resetted.
+     * - **NOTE:** When zoom/subchart is used, the zoomed state will be reset.
      * @function flush
      * @instance
      * @memberof Chart
@@ -11059,14 +11059,14 @@ var apiChart = {
      * Get or set config option value.
      * - **NOTE**
      *  - The option key name must be specified as the last level.
-     *  - when no argument is given, will return all specified generation options object only. (will exclude any other options not specified at the initialization)
+     *  - When no argument is given, it will return all specified generation options object only. (will exclude any other options not specified at the initialization)
      * @function config
      * @instance
      * @memberof Chart
      * @param {string} name The option key name.
      * @param {string|number|boolean|object|Array} [value] The value accepted for indicated option.
      * @param {boolean} [redraw] Set to redraw with the new option changes.
-     * - **NOTE:** Doesn't guarantee work in all circumstances. It can be applied for limited options only.
+     * - **NOTE:** Doesn't guarantee to work in all circumstances. It can be applied for limited options only.
      * @returns {string|number|boolean|object|Array} The option value or all options object
      * @example
      *
@@ -11185,7 +11185,7 @@ extend(data, {
      * @function data․values
      * @instance
      * @memberof Chart
-     * @param {string|Array|null} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
+     * @param {string|Array|null} targetIds This API returns the values of specified target. If this argument is not given, null will be returned
      * @param {boolean} [flat=true] Get flatten values
      * @returns {Array} Data values
      * @example
@@ -11741,7 +11741,7 @@ var apiLoad = {
      *    | categories | Array | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
      *    | classes | Object | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
      *    | colors | Object | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
-     *    | data | Obejct | Data objects to be loaded. Checkout the example. |
+     *    | data | Object | Data objects to be loaded. Checkout the example. |
      *    | done | Function | The specified function will be called after data loaded.|
      *    | headers | string |  Set request header if loading via `data.url`.<br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
      *    | keys | Object |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
@@ -11800,7 +11800,7 @@ var apiLoad = {
      *
      * chart.load({
      *   columns: [
-     *     // when existing chart has `x` value, should provide correponding 'x' value.
+     *     // when existing chart has `x` value, should provide corresponding 'x' value.
      *     // with 'append' option, the 'data1' will have `[36,30,24,37]`.
      *     ["x", "2021-02-01T08:00:00"],
      *     ["data1", 37]
@@ -11901,7 +11901,7 @@ var apiLoad = {
      *  | key | Type | Description |
      *  | --- | --- | --- |
      *  | ids | String &vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
-     *  | done | Fuction | Callback after data is unloaded. |
+     *  | done | Function | Callback after data is unloaded. |
      *  | resizeAfter | boolean | Resize after the unload. Default value is `false`.<br>- This option won't call `onresize` neither `onresized`.<br>- When set to 'true', will call `.flush(true)` at the end of unload. |
      * @example
      *  // Unload data2 and data3
@@ -12088,7 +12088,7 @@ var tooltip = {
      *
      * @example
      *  // show the 2nd x Axis coordinate tooltip
-     *  // for Arc(gauge, donut & pie) and radar type, approch showing tooltip by using "index" number.
+     *  // for Arc(gauge, donut & pie) and radar type, approach showing tooltip by using "index" number.
      *  chart.tooltip.show({
      *    index: 1
      *  });
@@ -12232,7 +12232,7 @@ var apiTooltip = { tooltip: tooltip };
  * @property {d3.selection} $.needle Needle element
  *  - **NOTE:**
  *    - The element will have `bb-needle` as class name.
- *    - Will provide speical helper `.updateHelper(value: number, updateConfig: boolean)` method to facilitate needle position update.
+ *    - Will provide special helper `.updateHelper(value: number, updateConfig: boolean)` method to facilitate needle position update.
  * @property {d3.selection} $.tooltip Tooltip element
  * @property {d3.selection} $.legend Legend element
  * @property {d3.selection} $.title Title element
@@ -12661,7 +12661,7 @@ var apiFlow = {
      *   - If json specified, keys is required as well as data.json.
      * 	 - If tab isn't visible(by evaluating `document.hidden`), will not be executed to prevent unnecessary work.
      * @example
-     * // 2 data points will be apprended to the tail and popped from the head.
+     * // 2 data points will be appended to the tail and popped from the head.
      * // After that, 4 data points will be appended and no data points will be poppoed.
      * chart.flow({
      *  columns: [
@@ -16560,7 +16560,7 @@ var x = {
      * - `true`: the ticks will be culled, then only limited tick text will be shown.<br>
      *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.x.tick.culling.lines=false`.
      * - `false`: all of ticks will be shown.<br><br>
-     * The number of ticks to be shown can be chaned by `axis.x.tick.culling.max`.
+     * The number of ticks to be shown can be changed by `axis.x.tick.culling.max`.
      * @name axis․x․tick․culling
      * @memberof Options
      * @type {boolean}
@@ -16771,7 +16771,7 @@ var x = {
     /**
      * Set the x values of ticks manually.<br><br>
      * If this option is provided, the position of the ticks will be determined based on those values.<br>
-     * This option works with `timeseries` data and the x values will be parsed accoding to the type of the value and data.xFormat option.
+     * This option works with `timeseries` data and the x values will be parsed according to the type of the value and data.xFormat option.
      * @name axis․x․tick․values
      * @memberof Options
      * @type {Array|function}
@@ -16995,7 +16995,7 @@ var x = {
      *     - **timeseries:** Numeric time value
      *       ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
      *   - If want values to be treated as pixels, specify `unit:"px"`.
-     *     - The pixel value will be convered based on the scale values. Hence can not reflect accurate padding result.
+     *     - The pixel value will be converted based on the scale values. Hence can not reflect accurate padding result.
      * @name axis․x․padding
      * @memberof Options
      * @type {object|number}
@@ -17337,7 +17337,7 @@ var y = {
      * - `true`: the ticks will be culled, then only limited tick text will be shown.<br>
      *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.y.tick.culling.lines=false`.
      * - `false`: all of ticks will be shown.<br><br>
-     * The number of ticks to be shown can be chaned by `axis.y.tick.culling.max`.
+     * The number of ticks to be shown can be changed by `axis.y.tick.culling.max`.
      * @name axis․y․tick․culling
      * @memberof Options
      * @type {boolean}
@@ -17847,7 +17847,7 @@ var y2 = {
      * - `true`: the ticks will be culled, then only limited tick text will be shown.<br>
      *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.y2.tick.culling.lines=false`.
      * - `false`: all of ticks will be shown.<br><br>
-     * The number of ticks to be shown can be chaned by `axis.y2.tick.culling.max`.
+     * The number of ticks to be shown can be changed by `axis.y2.tick.culling.max`.
      * @name axis․y2․tick․culling
      * @memberof Options
      * @type {boolean}
@@ -18169,7 +18169,7 @@ var optAxis = __assign(__assign(__assign({
     /**
      * Setup the way to evaluate tick text size.
      * - **NOTE:**
-     *   - Setting `false` or custom evaluator, highly recommended to memoize evaluated text dimension value to not degrade performance.
+     *   - When setting `false` or a custom evaluator, it is highly recommended to memoize evaluated text dimension value to not degrade performance.
      * @name axis․evalTextSize
      * @memberof Options
      * @type {boolean|function}
@@ -18178,7 +18178,7 @@ var optAxis = __assign(__assign(__assign({
      * @example
      * axis: {
      *   // will evaluate getting text size every time.
-     *   evalTextSize: false.
+     *   evalTextSize: false,
      *
      *   // set a custom evaluator
      *   evalTextSize: function(textElement, axisId) {
@@ -18222,8 +18222,8 @@ var optAxis = __assign(__assign(__assign({
      * Set axis tooltip.
      * - **NOTE:**
      *   - When enabled, will disable default focus grid line.
-     *   - For `timeseries` x Axis, tootlip will be formatted using x Axis' tick format.
-     *   - For `category` x Axis, tootlip will be displaying scales' value text.
+     *   - For `timeseries` x Axis, tooltip will be formatted using x Axis' tick format.
+     *   - For `category` x Axis, tooltip will be displaying scales' value text.
      * @name axis․tooltip
      * @memberof Options
      * @type {boolean}
@@ -18236,11 +18236,11 @@ var optAxis = __assign(__assign(__assign({
      * axis: {
      *     tooltip: true, // default background color is
      *
-     *     // set backgound color for axis tooltip texts
+     *     // set background color for axis tooltip texts
      *     tooltip: {
      *          backgroundColor: "red",
      *
-     *          // set differenct backround colors per axes
+     *          // set different background colors per axes
      *          // NOTE: In this case, only specified axes tooltip will appear.
      *          backgroundColor: {
      *               x: "green",
@@ -18345,7 +18345,7 @@ var optDataAxis = {
      */
     data_xs: {},
     /**
-     * Set a format specifier to parse string specifed as x.
+     * Set a format specifier to parse string specified as x.
      * @name data․xFormat
      * @memberof Options
      * @type {string}
@@ -18394,7 +18394,7 @@ var optDataAxis = {
      *   x: "x",
      *   columns: [
      *     // The line graph will start to be drawn following the x axis sequence
-     *     // Below data, wil start drawing x=1: 200, x=2: 300, x=3: 100
+     *     // Below data, will start drawing x=1: 200, x=2: 300, x=3: 100
      *     ["x", 3, 1, 2],
      *     ["data1", 100, 200, 300]
      *   ]
@@ -18455,7 +18455,7 @@ var optDataAxis = {
      * - **NOTE:**
      *   - For stacking, '[data.groups](#.data%25E2%2580%25A4groups)' option should be set
      *   - y Axis will be set in percentage value (0 ~ 100%)
-     *   - Must have postive values
+     *   - Must have positive values
      *   - Data not in any group will not be normalized when using perGroup option
      * @name data․stack․normalize
      * @memberof Options
@@ -22371,7 +22371,7 @@ var optPoint = {
      * - **NOTE:**
      * 	- `null` will make to not set inline 'opacity' css prop.
      * 	- when no value(or undefined) is set, it defaults to set opacity value according its chart types.
-     * @property {number|string|function} [point.sensitivity=10] The senstivity value for interaction boundary.
+     * @property {number|string|function} [point.sensitivity=10] The sensitivity value for interaction boundary.
      * - **Available Values:**
      *   - {number}: Absolute sensitivity value which is the distance from the data point in pixel.
      *   - "radius": sensitivity based on point's radius
@@ -22418,7 +22418,7 @@ var optPoint = {
      *          return r;
      *      },
      *
-     *      // will generate follwing radialGradient:
+     *      // will generate following radialGradient:
      *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/radialGradient
      *      // <radualGradient cx="0.3" cy="0.3" r="0.7">
      *      //    <stop offset="0.1" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
@@ -22540,7 +22540,7 @@ var optArea = {
      *      // <g class='bb-areas'> will be positioned behind the line <g class='bb-lines'> in stacking order
      *      front: false,
      *
-     *      // will generate follwing linearGradient:
+     *      // will generate following linearGradient:
      *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
      *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
      *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
@@ -22600,7 +22600,7 @@ var optBar = {
      * @property {number} [bar.padding=0] The padding pixel value between each bar.
      * @property {number} [bar.radius] Set the radius of bar edge in pixel.
      * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
-     * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
+     * @property {number} [bar.sensitivity=2] The sensitivity offset value for interaction boundary.
      * @property {number|function|object} [bar.width] Change the width of bar chart.
      * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
      * - **NOTE:** Criteria for ratio.
@@ -22628,12 +22628,12 @@ var optBar = {
      *      // make bar shape to be positioned over the other shape elements
      *      front: true,
      *
-     *      // remove nullish data on bar indices postions
+     *      // remove nullish data on bar indices positions
      *      indices: {
      *          removeNull: true
      *      },
      *
-     *      // will generate follwing linearGradient:
+     *      // will generate following linearGradient:
      *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
      *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
      *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
@@ -22742,7 +22742,7 @@ var optBubble = {
      * @example
      *  bubble: {
      *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.
-     *      // And the lesser will have radius relatively from tha max value.
+     *      // And the lesser will have radius relatively from the max value.
      *      maxR: 50,
      *
      *      // or set radius callback
@@ -22802,7 +22802,7 @@ var optCandlestick = {
      *         	}
      *      },
      *      color: {
-     *  	  	// spcify bearish color
+     *  	  	// specify bearish color
      *  	  	down: "red",
      *
      *  	  	// or specify color per dataset
@@ -22861,7 +22861,7 @@ var optLine = {
      *      // hide all data points ('point.show=false' also has similar effect)
      *      point: false,
      *
-     *      // show data points for only indicated datas
+     *      // show data points for only indicated data
      *      point: [
      *          "data1", "data3"
      *      ],
@@ -22902,7 +22902,7 @@ var optScatter = {
      *      // hide all data points ('point.show=false' also has similar effect)
      *      point: false,
      *
-     *      // show data points for only indicated datas
+     *      // show data points for only indicated data
      *      point: [
      *          "data1", "data3"
      *      ],
@@ -23004,7 +23004,7 @@ var optArc = {
      * @property {string} [arc.rangeText.unit="absolute"] Specify the range text unit.
      * - "absolute": Show absolute value
      * - "%": Show percentage value
-     * @property {boolean} [arc.rangeText.fiexed=false] Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
+     * @property {boolean} [arc.rangeText.fixed=false] Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
      * @property {function} [arc.rangeText.format] Set format function for the range text.
      * @property {number} [arc.rangeText.position] Set position function or object for the range text.
      * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
@@ -24141,7 +24141,7 @@ var apiSelection = {
  * @function subchart
  * @instance
  * @memberof Chart
- * @param {Array} domainValue If domain range is given, the subchart will be seleted to the given domain. If no argument is given, the current subchart selection domain will be returned.
+ * @param {Array} domainValue If domain range is given, the subchart will be selected to the given domain. If no argument is given, the current subchart selection domain will be returned.
  * @returns {Array} domain value in array
  * @example
  *  // Specify domain for subchart selection
@@ -24151,7 +24151,7 @@ var apiSelection = {
  *  // Domain value may not be exact returning approximately values.
  *  chart.subchart();
  */
-// NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
+// NOTE: declared function assigning to variable to prevent duplicated method generation in JSDoc.
 var subchart$1 = function (domainValue) {
     var _a;
     var $$ = this.internal;
@@ -24240,7 +24240,7 @@ extend(subchart$1, {
         }
     },
     /**
-     * Toggle the visiblity of subchart
+     * Toggle the visibility of subchart
      * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
      * @function subchart․toggle
      * @instance
@@ -24304,7 +24304,7 @@ var apiSubchart = {
  *  // Domain value may not be exact returning approximately values.
  *  chart.zoom();
  */
-// NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
+// NOTE: declared function assigning to variable to prevent duplicated method generation in JSDoc.
 var zoom$1 = function (domainValue) {
     var _a;
     var $$ = this.internal;
@@ -25482,7 +25482,7 @@ var optDataSelection = {
     data_selection_isselectable: function () { return true; },
     /**
      * Set multiple data points selection enabled.<br><br>
-     * If this option set true, multile data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
+     * If this option set true, multiple data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
      * @name data․selection․multiple
      * @memberof Options
      * @type {boolean}
@@ -25735,7 +25735,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.17.2-nightly-20251218004719
+ * @version 3.17.2-nightly-20251223004729
  */
 var bb = {
     /**
@@ -25745,10 +25745,10 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.17.2-nightly-20251218004719",
+    version: "3.17.2-nightly-20251223004729",
     /**
      * Generate chart
-     * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
+     * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
      *   - Unused option value is given.
      *     - ex) For `data.type="pie"` option, setting 'axis' option can cause unexpected generation error.
      *   - Insufficient value is given for certain option used.
