@@ -477,7 +477,13 @@ export default {
 		if ($$.isBarType(closest.id) || dist < $$.getPointSensitivity(closest)) {
 			$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", "pointer");
 
-			if (triggerEvent && !state.mouseover) {
+			if (
+				triggerEvent && (
+					!state.mouseover ||
+					state.mouseover.x !== closest.x ||
+					state.mouseover.id !== closest.id
+				)
+			) {
 				config.data_onover.call($$.api, closest);
 				state.mouseover = closest;
 			}
