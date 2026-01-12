@@ -465,4 +465,194 @@ describe("INTERACTION: touch", () => {
 			expect(hasPassiveTrue).to.be.true;
 		});
 	});
+
+	describe("data.onover callback in touch events", () => {
+		const onoverSpy = sinon.spy();
+		
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 100, 200, 300, 400],
+						["data2", 10, 20, 30, 40]
+					],
+					type: "line",
+					onover: onoverSpy
+				},
+				interaction: {
+					inputType: {
+						touch: true
+					}
+				}
+			};
+		});
+
+		afterEach(() => {
+			onoverSpy.resetHistory();
+		});
+
+		it("should call data.onover callback when touching different data points", () => {
+			const eventRect = chart.$.svg.select(".bb-event-rect").node();
+			const circles1 = chart.$.main.selectAll(".bb-circles-data1 .bb-circle").nodes();
+			const circles2 = chart.$.main.selectAll(".bb-circles-data2 .bb-circle").nodes();
+
+			// Get circle centers for more accurate touch positions
+			const getCircleCenter = (circle) => {
+				const rect = circle.getBoundingClientRect();
+				return {
+					x: rect.left + rect.width / 2,
+					y: rect.top + rect.height / 2
+				};
+			};
+
+			const pos1 = getCircleCenter(circles1[0]);
+			const pos2 = getCircleCenter(circles1[1]);
+			const pos3 = getCircleCenter(circles2[0]);
+
+			// Touch first data point of data1 (index 0)
+			let touch = new Touch({
+				identifier: 1,
+				target: eventRect,
+				clientX: pos1.x,
+				clientY: pos1.y
+			});
+
+			eventRect.dispatchEvent(new TouchEvent("touchmove", {
+				cancelable: true,
+				bubbles: true,
+				touches: [touch],
+				targetTouches: [touch],
+				changedTouches: [touch]
+			}));
+
+			// Verify callback was called and check which data was detected
+			expect(onoverSpy.callCount).to.be.greaterThan(0);
+			const firstCall = onoverSpy.getCall(onoverSpy.callCount - 1).args[0];
+			const firstCallId = firstCall.id;
+			const firstCallIndex = firstCall.index;
+			
+			const countAfterFirst = onoverSpy.callCount;
+
+			// Touch second data point of data1 (index 1)
+			touch = new Touch({
+				identifier: 1,
+				target: eventRect,
+				clientX: pos2.x,
+				clientY: pos2.y
+			});
+
+			eventRect.dispatchEvent(new TouchEvent("touchmove", {
+				cancelable: true,
+				bubbles: true,
+				touches: [touch],
+				targetTouches: [touch],
+				changedTouches: [touch]
+			}));
+
+			expect(onoverSpy.callCount).to.be.greaterThan(countAfterFirst);
+			const secondCall = onoverSpy.getCall(onoverSpy.callCount - 1).args[0];
+			// Should be different from first call
+			expect(secondCall.id !== firstCallId || secondCall.index !== firstCallIndex).to.be.true;
+			
+			const countAfterSecond = onoverSpy.callCount;
+
+			// Touch first data point of data2 (index 0)
+			touch = new Touch({
+				identifier: 1,
+				target: eventRect,
+				clientX: pos3.x,
+				clientY: pos3.y
+			});
+
+			eventRect.dispatchEvent(new TouchEvent("touchmove", {
+				cancelable: true,
+				bubbles: true,
+				touches: [touch],
+				targetTouches: [touch],
+				changedTouches: [touch]
+			}));
+
+			expect(onoverSpy.callCount).to.be.greaterThan(countAfterSecond);
+			const thirdCall = onoverSpy.getCall(onoverSpy.callCount - 1).args[0];
+			// Should be different from second call
+			expect(thirdCall.id !== secondCall.id || thirdCall.index !== secondCall.index).to.be.true;
+		});
+
+		it("should call data.onover only once when touching the same data point multiple times", () => {
+			const eventRect = chart.$.svg.select(".bb-event-rect").node();
+			const circles = chart.$.main.selectAll(".bb-circles-data1 .bb-circle").nodes();
+
+			// Get circle center for more accurate touch position
+			const getCircleCenter = (circle) => {
+				const rect = circle.getBoundingClientRect();
+				return {
+					x: rect.left + rect.width / 2,
+					y: rect.top + rect.height / 2
+				};
+			};
+
+			const pos = getCircleCenter(circles[0]);
+
+			// Touch first data point
+			let touch = new Touch({
+				identifier: 1,
+				target: eventRect,
+				clientX: pos.x,
+				clientY: pos.y
+			});
+
+			eventRect.dispatchEvent(new TouchEvent("touchmove", {
+				cancelable: true,
+				bubbles: true,
+				touches: [touch],
+				targetTouches: [touch],
+				changedTouches: [touch]
+			}));
+
+			// First touch may trigger onover (possibly multiple times due to event handler setup)
+			expect(onoverSpy.callCount).to.be.greaterThan(0);
+			expect(onoverSpy.getCall(0).args[0].id).to.be.equal("data1");
+			expect(onoverSpy.getCall(0).args[0].index).to.be.equal(0);
+			
+			const initialCallCount = onoverSpy.callCount;
+
+			// Touch same data point again
+			touch = new Touch({
+				identifier: 1,
+				target: eventRect,
+				clientX: pos.x,
+				clientY: pos.y
+			});
+
+			eventRect.dispatchEvent(new TouchEvent("touchmove", {
+				cancelable: true,
+				bubbles: true,
+				touches: [touch],
+				targetTouches: [touch],
+				changedTouches: [touch]
+			}));
+
+			// Callback should not be called again for the same data point
+			expect(onoverSpy.callCount).to.be.equal(initialCallCount);
+
+			// Touch same data point third time
+			touch = new Touch({
+				identifier: 1,
+				target: eventRect,
+				clientX: pos.x,
+				clientY: pos.y
+			});
+
+			eventRect.dispatchEvent(new TouchEvent("touchmove", {
+				cancelable: true,
+				bubbles: true,
+				touches: [touch],
+				targetTouches: [touch],
+				changedTouches: [touch]
+			}));
+
+			// Callback should still not be called again
+			expect(onoverSpy.callCount).to.be.equal(initialCallCount);
+		});
+	});
 });
