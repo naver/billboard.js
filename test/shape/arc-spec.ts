@@ -905,5 +905,41 @@ describe("SHAPE ARC", () => {
 				}
 			});			
 		}));
+
+		it("should render correctly with padAngle and fractional values < 1", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["A", 0.42],
+						["B", 0.28],
+						["C", 0.28]
+					],
+					type: "donut"
+				},
+				donut: {
+					padAngle: 0.03
+				}
+			});
+
+			setTimeout(() => {
+				const arcs = chart.$.arc.selectAll(`.${$ARC.arc}`);
+				
+				expect(arcs.size()).to.be.equal(3);
+				
+				// Check that all arcs have valid paths (not "M 0 0")
+				arcs.each(function(d) {
+					const path = this.getAttribute("d");
+					expect(path).to.not.equal("M 0 0");
+					expect(path).to.not.be.null;
+					
+					// Check that ratio is calculated correctly (not Infinity)
+					const ratio = chart.internal.getRatio("arc", d);
+					expect(ratio).to.be.finite;
+					expect(ratio).to.be.above(0);
+				});
+				
+				done(1);
+			}, 300);
+		}));
 	});
 });
