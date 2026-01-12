@@ -423,7 +423,7 @@ export default {
 
 		if (!isNumber(total)) {
 			total = $$.data.targets.reduce((acc, t) => {
-				return acc + t.values.reduce((sum, v) => sum + ~~v.value, 0);
+				return acc + t.values.reduce((sum, v) => sum + (v.value ?? 0), 0);
 			}, 0);
 
 			$$.cache.add(cacheKey, total);
