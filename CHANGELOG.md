@@ -12,6 +12,13 @@
 
 * **all:** Enforce on security vulnerability ([c69320a](https://github.com/naver/billboard.js/commit/c69320a25b6a2539809bcd74a3cc13deed80d8a3)), closes [#4078](https://github.com/naver/billboard.js/issues/4078)
 
+## [3.17.3](https://github.com/naver/billboard.js/compare/3.17.2...3.17.3) (2026-01-13)
+
+
+### Bug Fixes
+
+* **all:** Enforce on security vulnerability ([c69320a](https://github.com/naver/billboard.js/commit/c69320a25b6a2539809bcd74a3cc13deed80d8a3)), closes [#4078](https://github.com/naver/billboard.js/issues/4078)
+
 ## [3.17.2](https://github.com/naver/billboard.js/compare/3.17.1...3.17.2) (2025-10-22)
 
 
