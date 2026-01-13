@@ -142,15 +142,12 @@ export default class TableView extends Plugin {
 			}</tr>`;
 		});
 
-		const rx = /(<\/?(script|img)[^>]*>|<[^>]+><\/[^>]+>)/ig;
-		const r = tplProcess(tpl.body, {
+		element.innerHTML = tplProcess(tpl.body, {
 			...config,
 			title: config.title || $$.config.title_text || "",
 			thead,
 			tbody
-		}).replace(rx, "");
-
-		element.innerHTML = r;
+		});
 	}
 
 	$redraw(): void {

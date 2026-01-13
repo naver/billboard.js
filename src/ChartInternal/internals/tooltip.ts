@@ -524,12 +524,12 @@ export default {
 
 			// set tooltip content
 			tooltip
-				.html($$.getTooltipHTML(
+				.html(sanitize($$.getTooltipHTML(
 					selectedData, // data
 					$$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$), // defaultTitleFormat
 					$$.getDefaultValueFormat(), // defaultValueFormat
 					$$.color // color
-				))
+				)))
 				.style("display", null)
 				.style("visibility", null) // for IE9
 				.datum(datum = {
