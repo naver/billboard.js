@@ -834,5 +834,57 @@ describe("SHAPE POINT", () => {
 			});
 		});
 	});
+
+	describe("XSS prevention", () => {
+		describe("point.pattern with malicious SVG", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250]
+						]
+					},
+					point: {
+						pattern: [
+							"<polygon points='2.5 0 0 5 5 5' onclick='alert(1)'></polygon>"
+						]
+					}
+				};
+			});
+
+			it("should sanitize event handlers from custom point SVG", () => {
+				const {$el} = chart.internal;
+				const defsHtml = $el.defs.html();
+
+				expect(defsHtml).to.not.include("onclick");
+			});
+
+			it("set options: point.pattern with script tag", () => {
+				args.point.pattern = [
+					"<g><script>alert(1)</script><polygon points='2.5 0 0 5 5 5'></polygon></g>"
+				];
+			});
+
+			it("should sanitize script tags from custom point SVG", () => {
+				const {$el} = chart.internal;
+				const defsHtml = $el.defs.html();
+
+				expect(defsHtml).to.not.include("<script>");
+				expect(defsHtml).to.not.include("</script>");
+			});
+
+			it("set options: point.pattern with onload event", () => {
+				args.point.pattern = [
+					"<svg onload='alert(1)'><polygon points='2.5 0 0 5 5 5'></polygon></svg>"
+				];
+			});
+
+			it("should sanitize onload event from custom point SVG", () => {
+				const {$el} = chart.internal;
+				const defsHtml = $el.defs.html();
+
+				expect(defsHtml).to.not.include("onload");
+			});
+		});
+	});
 });
-0

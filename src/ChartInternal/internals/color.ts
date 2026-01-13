@@ -8,7 +8,7 @@ import {d3Selection} from "../../../types";
 import {$ARC, $COLOR, $SHAPE} from "../../config/classes";
 import {document} from "../../module/browser";
 import {KEY} from "../../module/Cache";
-import {isFunction, isObject, isString, notEmpty} from "../../module/util";
+import {isFunction, isObject, isString, notEmpty, sanitize} from "../../module/util";
 import type {IArcData, IDataRow} from "../data/IData";
 
 /**
@@ -223,7 +223,7 @@ export default {
 				const id = `${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(v)}${
 					isString(color) ? $$.getTargetSelectorSuffix(color) : ""
 				}`;
-				const colorValue = v === "" ? color : color?.[v] || "";
+				const colorValue = sanitize(v === "" ? color : color?.[v] || "");
 
 				if (defs.select(`#${id}`).empty()) {
 					defs.append("filter")
@@ -232,10 +232,8 @@ export default {
 						.attr("width", attr.width)
 						.attr("height", attr.height)
 						.attr("id", id)
-						.html(
-							`<feFlood flood-color="${colorValue}" />
-							<feComposite in="SourceGraphic" />`
-						);
+						.html(`<feFlood flood-color="${colorValue}" />
+							<feComposite in="SourceGraphic" />`);
 				}
 			});
 		}

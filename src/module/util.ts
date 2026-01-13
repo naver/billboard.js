@@ -175,16 +175,34 @@ function endall(transition, cb: Function): void {
 	}
 }
 
+// Sanitize regular expressions (compiled once for performance)
+const dangerousTags =
+	"script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|svg|math";
+const sanitizeRx = {
+	tags: new RegExp(
+		`<(${dangerousTags})[\\s\\S]*?>[\\s\\S]*?<\\/\\1>|<(${dangerousTags})[^>]*\\/?>`,
+		"gi"
+	),
+	eventHandlers: /\s*on\w+\s*=\s*["'][^"']*["']|\s*on\w+\s*=\s*[^\s>]+/gi,
+	dangerousUrls:
+		/(href|src|action|formaction|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript):[^"'\s>]*/gi
+};
+
 /**
- * Replace tag sign to html entity
+ * Sanitize HTML string to prevent XSS attacks
  * @param {string} str Target string value
- * @returns {string}
+ * @returns {string} Sanitized string with dangerous elements removed
  * @private
  */
 function sanitize(str: string): string {
-	return isString(str) ?
-		str.replace(/<(script|img)?/ig, "&lt;").replace(/(script)?>/ig, "&gt;") :
-		str;
+	if (!isString(str) || !str || str.indexOf("<") === -1) {
+		return str;
+	}
+
+	return str
+		.replace(sanitizeRx.tags, "")
+		.replace(sanitizeRx.eventHandlers, "")
+		.replace(sanitizeRx.dangerousUrls, "$1=\"\"");
 }
 
 /**
@@ -817,7 +835,7 @@ function tplProcess(tpl: string, data: object): string {
 		res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
 	}
 
-	return res;
+	return sanitize(res);
 }
 
 /**
