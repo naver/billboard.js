@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.2-nightly-20260110004727
+ * @version 3.17.2-nightly-20260113004722
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -4537,7 +4537,7 @@ var data$1 = {
         var total = $$.cache.get(cacheKey);
         if (!isNumber(total)) {
             total = $$.data.targets.reduce(function (acc, t) {
-                return acc + t.values.reduce(function (sum, v) { return sum + ~~v.value; }, 0);
+                return acc + t.values.reduce(function (sum, v) { var _a; return sum + ((_a = v.value) !== null && _a !== void 0 ? _a : 0); }, 0);
             }, 0);
             $$.cache.add(cacheKey, total);
         }
@@ -15133,7 +15133,9 @@ var eventrect = {
         // Show cursor as pointer if point is close to mouse position
         if ($$.isBarType(closest.id) || dist < $$.getPointSensitivity(closest)) {
             $$.$el.svg.select(".".concat($EVENT.eventRect)).style("cursor", "pointer");
-            if (triggerEvent && !state.mouseover) {
+            if (triggerEvent && (!state.mouseover ||
+                state.mouseover.x !== closest.x ||
+                state.mouseover.id !== closest.id)) {
                 config.data_onover.call($$.api, closest);
                 state.mouseover = closest;
             }
@@ -25735,7 +25737,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.17.2-nightly-20260110004727
+ * @version 3.17.2-nightly-20260113004722
  */
 var bb = {
     /**
@@ -25745,7 +25747,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.17.2-nightly-20260110004727",
+    version: "3.17.2-nightly-20260113004722",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

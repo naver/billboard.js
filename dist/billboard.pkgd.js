@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.2-nightly-20260110004727
+ * @version 3.17.2-nightly-20260113004722
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -30521,7 +30521,10 @@ function setXS(ids, data, params) {
     let total = $$.cache.get(cacheKey);
     if (!isNumber(total)) {
       total = $$.data.targets.reduce((acc, t) => {
-        return acc + t.values.reduce((sum, v) => sum + ~~v.value, 0);
+        return acc + t.values.reduce((sum, v) => {
+          var _a;
+          return sum + ((_a = v.value) != null ? _a : 0);
+        }, 0);
       }, 0);
       $$.cache.add(cacheKey, total);
     }
@@ -43955,7 +43958,7 @@ class Axis_Axis {
     const dist = $$.dist(closest, mouse);
     if ($$.isBarType(closest.id) || dist < $$.getPointSensitivity(closest)) {
       $$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", "pointer");
-      if (triggerEvent && !state.mouseover) {
+      if (triggerEvent && (!state.mouseover || state.mouseover.x !== closest.x || state.mouseover.id !== closest.id)) {
         config.data_onover.call($$.api, closest);
         state.mouseover = closest;
       }
@@ -52881,7 +52884,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.2-nightly-20260110004727",
+  version: "3.17.2-nightly-20260113004722",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
