@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.2-nightly-20260113004722
+ * @version 3.17.3-nightly-20260114004802
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -28764,8 +28764,20 @@ function endall(transition, cb) {
     transition.call(end);
   }
 }
+const dangerousTags = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|svg|math";
+const sanitizeRx = {
+  tags: new RegExp(
+    `<(${dangerousTags})[\\s\\S]*?>[\\s\\S]*?<\\/\\1>|<(${dangerousTags})[^>]*\\/?>`,
+    "gi"
+  ),
+  eventHandlers: /\s*on\w+\s*=\s*["'][^"']*["']|\s*on\w+\s*=\s*[^\s>]+/gi,
+  dangerousUrls: /(href|src|action|formaction|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript):[^"'\s>]*/gi
+};
 function sanitize(str) {
-  return isString(str) ? str.replace(/<(script|img)?/ig, "&lt;").replace(/(script)?>/ig, "&gt;") : str;
+  if (!isString(str) || !str || str.indexOf("<") === -1) {
+    return str;
+  }
+  return str.replace(sanitizeRx.tags, "").replace(sanitizeRx.eventHandlers, "").replace(sanitizeRx.dangerousUrls, '$1=""');
 }
 function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
   if (!node || !isString(text)) {
@@ -29077,7 +29089,7 @@ function tplProcess(tpl, data) {
   for (const x in data) {
     res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
   }
-  return res;
+  return sanitize(res);
 }
 function parseDate(date) {
   var _a;
@@ -31997,12 +32009,10 @@ const schemeCategory10 = [
       }
       ids.forEach((v) => {
         const id = `${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(v)}${isString(color) ? $$.getTargetSelectorSuffix(color) : ""}`;
-        const colorValue = v === "" ? color : (color == null ? void 0 : color[v]) || "";
+        const colorValue = sanitize(v === "" ? color : (color == null ? void 0 : color[v]) || "");
         if (defs.select(`#${id}`).empty()) {
-          defs.append("filter").attr("x", attr.x).attr("y", attr.y).attr("width", attr.width).attr("height", attr.height).attr("id", id).html(
-            `<feFlood flood-color="${colorValue}" />
-							<feComposite in="SourceGraphic" />`
-          );
+          defs.append("filter").attr("x", attr.x).attr("y", attr.y).attr("width", attr.width).attr("height", attr.height).attr("id", id).html(`<feFlood flood-color="${colorValue}" />
+							<feComposite in="SourceGraphic" />`);
         }
       });
     }
@@ -32606,7 +32616,7 @@ function getFormattedText(id, formatted = true) {
       const ids = [];
       let html = "";
       targets.forEach((v) => {
-        const content = isFunction(template) ? template.bind($$.api)(v, $$.color(v), $$.api.data(v)[0].values) : tplProcess(template, {
+        const content = isFunction(template) ? sanitize(template.call($$.api, v, $$.color(v), $$.api.data(v)[0].values)) : tplProcess(template, {
           COLOR: $$.color(v),
           TITLE: v
         });
@@ -35872,7 +35882,7 @@ function getTextXPos(pos = "left", width) {
     if (!datum || datum.current !== dataStr) {
       const { index, x } = selectedData.concat().sort()[0];
       callFn(config.tooltip_onshow, $$.api, selectedData);
-      tooltip.html($$.getTooltipHTML(
+      tooltip.html(sanitize($$.getTooltipHTML(
         selectedData,
         // data
         $$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$),
@@ -35881,7 +35891,7 @@ function getTextXPos(pos = "left", width) {
         // defaultValueFormat
         $$.color
         // color
-      )).style("display", null).style("visibility", null).datum(datum = {
+      ))).style("display", null).style("visibility", null).datum(datum = {
         index,
         x,
         current: dataStr,
@@ -50176,7 +50186,7 @@ function insertPointInfoDefs(point, id) {
       target.setAttribute(name, from.getAttribute(name));
     }
   };
-  const doc = new DOMParser().parseFromString(point, "image/svg+xml");
+  const doc = new DOMParser().parseFromString(sanitize(point), "image/svg+xml");
   const node = doc.documentElement;
   const clone = browser_doc.createElementNS(namespaces.svg, node.nodeName.toLowerCase());
   clone.id = id;
@@ -50186,7 +50196,7 @@ function insertPointInfoDefs(point, id) {
   if ((_a = node.childNodes) == null ? void 0 : _a.length) {
     const parent = src_select(clone);
     if ("innerHTML" in clone) {
-      parent.html(node.innerHTML);
+      parent.html(sanitize(node.innerHTML));
     } else {
       toArray(node.childNodes).forEach((v) => {
         copyAttr(v, parent.append(v.tagName).node());
@@ -50242,7 +50252,7 @@ function insertPointInfoDefs(point, id) {
           const pointId = $$.getDefsPointId(id);
           const defsPoint = $el.defs.select(`#${pointId}`);
           if (defsPoint.size() < 1) {
-            insertPointInfoDefs.bind($$)(point, pointId);
+            insertPointInfoDefs.call($$, point, pointId);
           }
           if (method === "create") {
             return (_b = $$.custom) == null ? void 0 : _b.create.bind(context)(element, pointId, ...args);
@@ -52884,7 +52894,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.2-nightly-20260113004722",
+  version: "3.17.3-nightly-20260114004802",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

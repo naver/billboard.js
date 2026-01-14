@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.2-nightly-20260113004722
+ * @version 3.17.3-nightly-20260114004802
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -2424,16 +2424,27 @@ function endall(transition, cb) {
         transition.call(end);
     }
 }
+// Sanitize regular expressions (compiled once for performance)
+var dangerousTags = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|svg|math";
+var sanitizeRx = {
+    tags: new RegExp("<(".concat(dangerousTags, ")[\\s\\S]*?>[\\s\\S]*?<\\/\\1>|<(").concat(dangerousTags, ")[^>]*\\/?>"), "gi"),
+    eventHandlers: /\s*on\w+\s*=\s*["'][^"']*["']|\s*on\w+\s*=\s*[^\s>]+/gi,
+    dangerousUrls: /(href|src|action|formaction|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript):[^"'\s>]*/gi
+};
 /**
- * Replace tag sign to html entity
+ * Sanitize HTML string to prevent XSS attacks
  * @param {string} str Target string value
- * @returns {string}
+ * @returns {string} Sanitized string with dangerous elements removed
  * @private
  */
 function sanitize(str) {
-    return isString(str) ?
-        str.replace(/<(script|img)?/ig, "&lt;").replace(/(script)?>/ig, "&gt;") :
-        str;
+    if (!isString(str) || !str || str.indexOf("<") === -1) {
+        return str;
+    }
+    return str
+        .replace(sanitizeRx.tags, "")
+        .replace(sanitizeRx.eventHandlers, "")
+        .replace(sanitizeRx.dangerousUrls, "$1=\"\"");
 }
 /**
  * Set text value. If there're multiline add nodes.
@@ -2987,7 +2998,7 @@ function tplProcess(tpl, data) {
     for (var x in data) {
         res = res.replace(new RegExp("{=".concat(x, "}"), "g"), data[x]);
     }
-    return res;
+    return sanitize(res);
 }
 /**
  * Get parsed date value
@@ -5866,7 +5877,7 @@ var color = {
             }
             ids.forEach(function (v) {
                 var id = "".concat(state.datetimeId, "-labels-bg").concat($$.getTargetSelectorSuffix(v)).concat(isString(color) ? $$.getTargetSelectorSuffix(color) : "");
-                var colorValue = v === "" ? color : (color === null || color === void 0 ? void 0 : color[v]) || "";
+                var colorValue = sanitize(v === "" ? color : (color === null || color === void 0 ? void 0 : color[v]) || "");
                 if (defs.select("#".concat(id)).empty()) {
                     defs.append("filter")
                         .attr("x", attr.x)
@@ -6564,7 +6575,7 @@ var legend$1 = {
             var html_1 = "";
             targets.forEach(function (v) {
                 var content = isFunction(template) ?
-                    template.bind($$.api)(v, $$.color(v), $$.api.data(v)[0].values) :
+                    sanitize(template.call($$.api, v, $$.color(v), $$.api.data(v)[0].values)) :
                     tplProcess(template, {
                         COLOR: $$.color(v),
                         TITLE: v
@@ -9289,11 +9300,11 @@ var tooltip$1 = {
             callFn(config.tooltip_onshow, $$.api, selectedData);
             // set tooltip content
             tooltip
-                .html($$.getTooltipHTML(selectedData, // data
+                .html(sanitize($$.getTooltipHTML(selectedData, // data
             $$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$), // defaultTitleFormat
             $$.getDefaultValueFormat(), // defaultValueFormat
             $$.color // color
-            ))
+            )))
                 .style("display", null)
                 .style("visibility", null) // for IE9
                 .datum(datum = {
@@ -21567,7 +21578,7 @@ function insertPointInfoDefs(point, id) {
             target.setAttribute(name_1, from.getAttribute(name_1));
         }
     };
-    var doc$1 = new DOMParser().parseFromString(point, "image/svg+xml");
+    var doc$1 = new DOMParser().parseFromString(sanitize(point), "image/svg+xml");
     var node = doc$1.documentElement;
     var clone = doc.createElementNS(namespaces.svg, node.nodeName.toLowerCase());
     clone.id = id;
@@ -21577,7 +21588,7 @@ function insertPointInfoDefs(point, id) {
     if ((_a = node.childNodes) === null || _a === void 0 ? void 0 : _a.length) {
         var parent_1 = select(clone);
         if ("innerHTML" in clone) {
-            parent_1.html(node.innerHTML);
+            parent_1.html(sanitize(node.innerHTML));
         }
         else {
             toArray(node.childNodes).forEach(function (v) {
@@ -21639,7 +21650,7 @@ var shapePointCommon = {
                     var pointId = $$.getDefsPointId(id);
                     var defsPoint = $el.defs.select("#".concat(pointId));
                     if (defsPoint.size() < 1) {
-                        insertPointInfoDefs.bind($$)(point, pointId);
+                        insertPointInfoDefs.call($$, point, pointId);
                     }
                     if (method === "create") {
                         return (_b = $$.custom) === null || _b === void 0 ? void 0 : _b.create.bind(context).apply(void 0, __spreadArray([element, pointId], args, false));
@@ -25737,7 +25748,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.17.2-nightly-20260113004722
+ * @version 3.17.3-nightly-20260114004802
  */
 var bb = {
     /**
@@ -25747,7 +25758,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.17.2-nightly-20260113004722",
+    version: "3.17.3-nightly-20260114004802",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

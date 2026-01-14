@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.2-nightly-20260113004722
+ * @version 3.17.3-nightly-20260114004802
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -29213,8 +29213,20 @@ function endall(transition, cb) {
     transition.call(end);
   }
 }
+const dangerousTags = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|svg|math";
+const sanitizeRx = {
+  tags: new RegExp(
+    `<(${dangerousTags})[\\s\\S]*?>[\\s\\S]*?<\\/\\1>|<(${dangerousTags})[^>]*\\/?>`,
+    "gi"
+  ),
+  eventHandlers: /\s*on\w+\s*=\s*["'][^"']*["']|\s*on\w+\s*=\s*[^\s>]+/gi,
+  dangerousUrls: /(href|src|action|formaction|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript):[^"'\s>]*/gi
+};
 function sanitize(str) {
-  return isString(str) ? str.replace(/<(script|img)?/ig, "&lt;").replace(/(script)?>/ig, "&gt;") : str;
+  if (!isString(str) || !str || str.indexOf("<") === -1) {
+    return str;
+  }
+  return str.replace(sanitizeRx.tags, "").replace(sanitizeRx.eventHandlers, "").replace(sanitizeRx.dangerousUrls, '$1=""');
 }
 function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
   if (!node || !isString(text)) {
@@ -29526,7 +29538,7 @@ function tplProcess(tpl, data) {
   for (const x in data) {
     res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
   }
-  return res;
+  return sanitize(res);
 }
 function parseDate(date) {
   var _a;
@@ -29686,7 +29698,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.17.2-nightly-20260113004722");
+__publicField(Plugin, "version", "3.17.3-nightly-20260114004802");
 
 ;// ./src/Plugin/textoverlap/Options.ts
 class Options {

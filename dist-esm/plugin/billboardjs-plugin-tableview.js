@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.2-nightly-20260113004722
+ * @version 3.17.3-nightly-20260114004802
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -75,9 +75,32 @@ function getGlobal() {
 var win = getGlobal();
 var doc = win === null || win === void 0 ? void 0 : win.document;
 
+var isString = function (v) { return typeof v === "string"; };
 var isNumber = function (v) { return typeof v === "number"; };
 var isDefined = function (v) { return typeof v !== "undefined"; };
 var isObjectType = function (v) { return typeof v === "object"; };
+// Sanitize regular expressions (compiled once for performance)
+var dangerousTags = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|svg|math";
+var sanitizeRx = {
+    tags: new RegExp("<(".concat(dangerousTags, ")[\\s\\S]*?>[\\s\\S]*?<\\/\\1>|<(").concat(dangerousTags, ")[^>]*\\/?>"), "gi"),
+    eventHandlers: /\s*on\w+\s*=\s*["'][^"']*["']|\s*on\w+\s*=\s*[^\s>]+/gi,
+    dangerousUrls: /(href|src|action|formaction|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript):[^"'\s>]*/gi
+};
+/**
+ * Sanitize HTML string to prevent XSS attacks
+ * @param {string} str Target string value
+ * @returns {string} Sanitized string with dangerous elements removed
+ * @private
+ */
+function sanitize(str) {
+    if (!isString(str) || !str || str.indexOf("<") === -1) {
+        return str;
+    }
+    return str
+        .replace(sanitizeRx.tags, "")
+        .replace(sanitizeRx.eventHandlers, "")
+        .replace(sanitizeRx.dangerousUrls, "$1=\"\"");
+}
 // emulate event
 ({
     mouse: (function () {
@@ -121,7 +144,7 @@ function tplProcess(tpl, data) {
     for (var x in data) {
         res = res.replace(new RegExp("{=".concat(x, "}"), "g"), data[x]);
     }
-    return res;
+    return sanitize(res);
 }
 
 /**
@@ -217,7 +240,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.17.2-nightly-20260113004722";
+    Plugin.version = "3.17.3-nightly-20260114004802";
     return Plugin;
 }());
 
@@ -465,9 +488,7 @@ var TableView = /** @class */ (function (_super) {
                 });
             }).join(""), "</tr>");
         });
-        var rx = /(<\/?(script|img)[^>]*>|<[^>]+><\/[^>]+>)/ig;
-        var r = tplProcess(tpl.body, __assign(__assign({}, config), { title: config.title || $$.config.title_text || "", thead: thead, tbody: tbody })).replace(rx, "");
-        element.innerHTML = r;
+        element.innerHTML = tplProcess(tpl.body, __assign(__assign({}, config), { title: config.title || $$.config.title_text || "", thead: thead, tbody: tbody }));
     };
     TableView.prototype.$redraw = function () {
         var state = this.$$.state;
