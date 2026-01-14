@@ -183,7 +183,8 @@ describe("UTIL", function() {
 			expect(sanitize("<link rel='stylesheet'/>")).to.be.equal("");
 			expect(sanitize("<meta charset='utf-8'/>")).to.be.equal("");
 			expect(sanitize("<base href='evil'/>")).to.be.equal("");
-			expect(sanitize("<svg onload='alert(1)'></svg>")).to.be.equal("");
+			// SVG is allowed but event handlers are removed
+			expect(sanitize("<svg onload='alert(1)'></svg>")).to.be.equal("<svg></svg>");
 			expect(sanitize("<math><mi>x</mi></math>")).to.be.equal("");
 		});
 
@@ -215,6 +216,19 @@ describe("UTIL", function() {
 			expect(sanitize("<span class='test'>text</span>")).to.be.equal("<span class='test'>text</span>");
 			expect(sanitize("<p>paragraph</p>")).to.be.equal("<p>paragraph</p>");
 			expect(sanitize("<a href='https://safe.com'>link</a>")).to.be.equal("<a href='https://safe.com'>link</a>");
+		});
+
+		it("should prevent nested tag bypass attacks", () => {
+			// Pattern: <scri<script></script>pt> becomes <script> after first pass
+			expect(sanitize("<scri<script></script>pt>alert(1)</script>")).to.not.include("script");
+			expect(sanitize("<scr<script>x</script>ipt>alert(2)</script>")).to.not.include("script");
+
+			// Nested iframe bypass
+			expect(sanitize("<ifr<script></script>ame src='evil.com'></iframe>")).to.not.include("iframe");
+			expect(sanitize("<if<iframe></iframe>rame src='x'></iframe>")).to.not.include("iframe");
+
+			// Multiple levels of nesting
+			expect(sanitize("<scr<scr<script></script>ipt></script>ipt>alert(3)</script>")).to.not.include("script");
 		});
 	});
 
