@@ -6700,6 +6700,28 @@ setTimeout(function() {
 					padAngle: 0.1
 				}
 			}
+		},
+		LabelLine: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 50],
+						["data4", 80]
+					],
+					type: "donut"
+				},
+				donut: {
+					title: "Label Line",
+					label: {
+						format: function(value, ratio, id) {
+							return value + "\n(" + (ratio * 100).toFixed(0) + "%)";
+						},
+						line: true
+					}
+				}
+			}
 		}
 	},
 	GaugeChartOptions: {
@@ -7302,6 +7324,35 @@ setTimeout(function() {
 				];
 			}
 		},
+		LabelLine: {
+			options: {
+				size: {
+					height: 250
+				},
+				data: {
+					columns: [
+						["Google Cloud", 120],
+						["Microsoft\nAzure", 40],
+						["AWS", 130]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					label: {
+						format: function(value, ratio, id) {
+							return value + "%";
+						},
+						line: {
+							show: true,
+							distance: 25,
+							text: true
+						}
+					},
+					min: 0,
+					max: 100
+				}
+			}
+		}
 	},
 	LineChartOptions: {
 		HidePoints: {
@@ -7593,7 +7644,33 @@ setTimeout(function() {
 					startingAngle: 1
 				}
 			}
-		}		
+		},
+		LabelLine: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 75],
+						["data4", 45],
+						["data5", 60]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						format: function(value, ratio, id) {
+							return (ratio * 100).toFixed(1) + "%";
+						},
+						line: {
+							show: true,
+							distance: 30,
+							text: true
+						}
+					}
+				}
+			}
+		}
 	},
 	RadarChartOptions: {
 		RadarAxis: {
@@ -7805,7 +7882,42 @@ setTimeout(function() {
 					}
 				}
 			}
+		},
+	LabelLine: {
+		options: {
+			data: {
+				columns: [
+					["Samsung\nElectronics\nKorea\nAsia", 60],
+					["Apple Inc", 80],
+					["Google Cloud", 120],
+					["Microsoft Azure", 40],
+					["Amazon\nWeb\nServices", 30],
+					["Meta\nPlatforms", 20],
+					["Netflix Streaming", 90],
+					["Netflix Korea", 90]
+				],
+				type: "polar"
+			},
+			polar: {
+				level: {
+					depth: 4,  
+					max: 120
+				},
+				label: {
+					format: function(value, ratio, id) {
+						return value;
+					},
+					line: {
+						show: true,
+						distance: 15,
+						text: function(value, ratio, id) {
+							return id + "\n" + (ratio * 100).toFixed(1) + "%";
+						}
+					}
+				}
+			}
 		}
+	}
 	},
 	Boost: {
 		useCssRule: {
