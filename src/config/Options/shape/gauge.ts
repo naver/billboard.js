@@ -23,6 +23,18 @@ export default {
 	 * - id {string}: data's id value
 	 * @property {number|function} [gauge.label.ratio=undefined] Set ratio of labels position.
 	 * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
+	 * @property {boolean|object} [gauge.label.line=false] Enable label with lines (displayed outside with connector lines).
+	 *  - **NOTE:** Only applicable for single gauge (not for `gauge.type="multi"`).
+	 *  - `true`: Enable label with lines with default settings
+	 *  - `false`: Labels are displayed inside the gauge (default behavior).
+	 *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
+	 * @property {boolean} [gauge.label.line.show=true] Show or hide connector lines.
+	 * @property {number} [gauge.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
+	 * @property {boolean|function} [gauge.label.line.text=true] Show text at the end of the connector line (outside the shape).
+	 *  - `true`: show data "id" text
+	 *  - `false`: use default formatter(label.format) to show text
+	 *  - `function(value, ratio, id)`: Custom formatter function for the text.
+	 *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
 	 * @property {object|function} [gauge.label.image] Set image to be displayed next to the label text.<br><br>
 	 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
 	 * The arguments are:<br>
@@ -76,6 +88,7 @@ export default {
 	 * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
 	 * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
 	 * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelImage)
+	 * @see [Demo: label line](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelLine)
 	 * @see [Demo: label ratio](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelRatio)
 	 * @example
 	 *  gauge: {
@@ -97,6 +110,20 @@ export default {
 	 *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
 	 *          // if data value is below than 0.1, text label will be hidden.
 	 *          threshold: 0.1,
+	 *
+	 *          // Enable label with lines (displayed outside with connector lines)
+	 *          // NOTE: Only works with single gauge (not gauge.type="multi")
+	 *          line: true,   // enable label with lines with default settings
+	 *          line: {       // enable label with lines with custom settings
+	 *              show: true,      // enable lines (default: true when line is enabled)
+	 *              distance: 30,    // distance of horizontal line in pixels (default: 20)
+	 *
+	 *              // show text at the end of connector line (outside the shape)
+	 *              text: true,  // use default formatter
+	 *              text: function(value, ratio, id) {  // custom formatter
+	 *                  return d3.format(".1%")(ratio);
+	 *              }
+	 *          },
 	 *
 	 *          // set ratio callback. Should return ratio value
 	 *          ratio: function(d, radius, h) {
@@ -191,6 +218,11 @@ export default {
 	gauge_label_format: <(() => string) | undefined>undefined,
 	gauge_label_ratio: <(() => number) | undefined>undefined,
 	gauge_label_threshold: 0,
+	gauge_label_line: <boolean | {
+		show?: boolean,
+		distance?: number,
+		text?: boolean | ((value: number, ratio: number, id: string) => string)
+	}>false,
 	gauge_label_image: <
 		| {url: string, width: number, height: number, pos?: {x?: number, y?: number}}
 		| ((v: number, id: string, i: number) => {

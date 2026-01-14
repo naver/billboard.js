@@ -48,6 +48,21 @@
 		fill: #fff;
 		font-size: 13px;
 	}
+
+	/* Connector line base styles */
+	.bb-arc-label-line {
+		fill: none;
+		stroke-width: 1px;
+		pointer-events: none;
+	}
+
+	.bb-arc-label-line {
+		stroke: #7f7f7f;
+	}
+
+	> text.bb-arc-label-line-text {
+		fill: #000;
+	}
 }
 
 /*-- Funnel --*/
