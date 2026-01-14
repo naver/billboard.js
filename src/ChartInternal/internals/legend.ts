@@ -13,6 +13,7 @@ import {
 	isEmpty,
 	isFunction,
 	notEmpty,
+	sanitize,
 	tplProcess
 } from "../../module/util";
 
@@ -143,7 +144,7 @@ export default {
 
 			targets.forEach(v => {
 				const content = isFunction(template) ?
-					template.bind($$.api)(v, $$.color(v), $$.api.data(v)[0].values) :
+					sanitize(template.call($$.api, v, $$.color(v), $$.api.data(v)[0].values)) :
 					tplProcess(template, {
 						COLOR: $$.color(v),
 						TITLE: v

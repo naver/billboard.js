@@ -1008,4 +1008,82 @@ describe("LEGEND", () => {
 			expect(legend.select("title").text()).to.be.equal("Name Detailed");
 		});
 	});
+
+	describe("XSS prevention", () => {
+		describe("legend.contents.template as function", () => {
+			let legendElement: HTMLElement;
+
+			beforeAll(() => {
+				legendElement = document.createElement("div");
+				legendElement.id = "legend-xss-test";
+				document.body.appendChild(legendElement);
+
+				args = {
+					data: {
+						columns: [
+							["data1", 100],
+							["data2", 200]
+						]
+					},
+					legend: {
+						contents: {
+							bindto: "#legend-xss-test",
+							template: function(id, color, values) {
+								return `<span onclick="alert(1)" style="color:${color}"><script>alert('${id}')</script>${id}</span>`;
+							}
+						}
+					}
+				};
+			});
+
+			afterAll(() => {
+				legendElement.parentNode?.removeChild(legendElement);
+			});
+
+			it("should sanitize malicious content from template function", () => {
+				const html = legendElement.innerHTML;
+
+				expect(html).to.not.include("<script>");
+				expect(html).to.not.include("</script>");
+				expect(html).to.not.include("onclick");
+				expect(html).to.include("data1");
+				expect(html).to.include("data2");
+			});
+		});
+
+		describe("legend.contents.template as string with tplProcess", () => {
+			let legendElement: HTMLElement;
+
+			beforeAll(() => {
+				legendElement = document.createElement("div");
+				legendElement.id = "legend-xss-test2";
+				document.body.appendChild(legendElement);
+
+				args = {
+					data: {
+						columns: [
+							["<script>alert(1)</script>", 100]
+						]
+					},
+					legend: {
+						contents: {
+							bindto: "#legend-xss-test2",
+							template: "<span style='background:{=COLOR}'>{=TITLE}</span>"
+						}
+					}
+				};
+			});
+
+			afterAll(() => {
+				legendElement.parentNode?.removeChild(legendElement);
+			});
+
+			it("should sanitize malicious data id in template", () => {
+				const html = legendElement.innerHTML;
+
+				expect(html).to.not.include("<script>");
+				expect(html).to.not.include("</script>");
+			});
+		});
+	});
 });

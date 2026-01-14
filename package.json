@@ -1,6 +1,6 @@
 {
 	"name": "billboard.js",
-	"version": "3.17.2",
+	"version": "3.17.3",
 	"description": "Re-usable easy interface JavaScript chart library, based on D3 v4+",
 	"homepage": "https://naver.github.io/billboard.js/",
 	"main": "dist/billboard.js",
@@ -46,7 +46,7 @@
 		"jsdoc": "node ./config/jsdoc.js",
 		"jsdoc:cmd": "jsdoc -c jsdoc.json",
 		"lint-staged": "lint-staged --config ./config/.lintstagedrc.json",
-		"prepare": "husky install"
+		"prepare": "husky"
 	},
 	"sideEffects": [
 		"dist/**/*.css",
@@ -54,7 +54,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/naver/billboard.js"
+		"url": "git+https://github.com/naver/billboard.js.git"
 	},
 	"bugs": {
 		"url": "https://github.com/naver/billboard.js/issues"
