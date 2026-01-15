@@ -38,13 +38,33 @@ export default {
 	 *          // show or hide label text
 	 *          show: false,
 	 *
-	 *          // set label text formatter
+	 *          // Example 1: Format with currency
 	 *          format: function(value, ratio, id, size) {
 	 *              // size: {width, height} - tile size in pixels
 	 *              return d3.format("$")(value);
+	 *          },
 	 *
-	 *              // to multiline, return with '\n' character
-	 *              // return value +"%\nLine1\n2Line2";
+	 *          // Example 2: Show different content based on tile size
+	 *          format: function(value, ratio, id, size) {
+	 *              if (size.width > 100 && size.height > 50) {
+	 *                  return `${id}\n${d3.format("$")(value)}\n(${(ratio * 100).toFixed(1)}%)`;
+	 *              } else if (size.width > 50) {
+	 *                  return `${id}\n${d3.format("$")(value)}`;
+	 *              } else {
+	 *                  return d3.format("$")(value);
+	 *              }
+	 *          },
+	 *
+	 *          // Example 3: Include tile dimensions in label
+	 *          format: function(value, ratio, id, size) {
+	 *              return `${id}\n${value}\n${size.width.toFixed(0)}x${size.height.toFixed(0)}px`;
+	 *          },
+	 *
+	 *          // Example 4: Conditional formatting based on ratio
+	 *          format: function(value, ratio, id, size) {
+	 *              return ratio > 0.1 ?
+	 *                  `${id}\n${value} (${(ratio * 100).toFixed(1)}%)` :
+	 *                  value;
 	 *          },
 	 *
 	 *          // set ratio number

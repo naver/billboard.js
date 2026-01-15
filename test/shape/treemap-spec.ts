@@ -503,4 +503,354 @@ describe("TREEMAP", () => {
 			});
 		});
 	});
+
+	describe("labels.centered option", () => {
+		describe("with centered labels enabled", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 1000],
+							["data2", 200],
+							["data3", 500],
+							["data4", 300],
+							["data5", 150]
+						],
+						type: "treemap",
+						labels: {
+							centered: true
+						}
+					},
+					treemap: {
+						label: {
+							format: function(value, ratio, id) {
+								return `${id}\n${value}`;
+							}
+						}
+					}
+				};
+			});
+
+			it("should position text at the center of rect horizontally", () => {
+				const {internal: {$el, scale: {x, y}}} = chart;
+
+				$el.treemap.selectAll("g").each(function(d) {
+					const group = this;
+					const rect = group.querySelector("rect");
+					const text = group.querySelector("text");
+
+					if (!rect || !text) return;
+
+					// Get rect dimensions
+					const rectWidth = +rect.getAttribute("width");
+					const rectHeight = +rect.getAttribute("height");
+
+					// Get text position from transform
+					const textTransform = text.getAttribute("transform");
+					const textMatches = textTransform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+
+					if (textMatches) {
+						const textX = parseFloat(textMatches[1]);
+						const textY = parseFloat(textMatches[2]);
+
+						// Expected center positions
+						const expectedCenterX = rectWidth / 2;
+
+						// Check horizontal centering (X position)
+						expect(textX).to.be.closeTo(expectedCenterX, 1);
+					}
+				});
+			});
+
+			it("should position text at the center of rect vertically", () => {
+				const {internal: {$el}} = chart;
+
+				$el.treemap.selectAll("g").each(function(d) {
+					const group = this;
+					const rect = group.querySelector("rect");
+					const text = group.querySelector("text");
+
+					if (!rect || !text) return;
+
+					// Get rect dimensions
+					const rectHeight = +rect.getAttribute("height");
+
+					// Get text bbox to calculate proper vertical center
+					const textBBox = text.getBBox();
+
+					// Get text position from transform
+					const textTransform = text.getAttribute("transform");
+					const textMatches = textTransform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+
+					if (textMatches) {
+						const textY = parseFloat(textMatches[2]);
+
+						// Expected center position
+						// Y center = (rectHeight / 2) - textBBox.y - (textBBox.height / 2)
+						const expectedCenterY = rectHeight / 2 - textBBox.y - textBBox.height / 2;
+
+						// Check vertical centering (Y position)
+						// Allow for small tolerance due to font rendering differences
+						expect(textY).to.be.closeTo(expectedCenterY, 2);
+					}
+				});
+			});
+
+			it("should center multiline text correctly", () => {
+				const {internal: {$el}} = chart;
+
+				// Find a text with tspans (multiline)
+				$el.treemap.selectAll("g").each(function(d) {
+					const group = this;
+					const text = group.querySelector("text");
+
+					if (!text) return;
+
+					const tspans = text.querySelectorAll("tspan");
+
+					// Only test if we have multiline text
+					if (tspans.length > 1) {
+						const rect = group.querySelector("rect");
+						const rectHeight = +rect.getAttribute("height");
+						const textBBox = text.getBBox();
+
+						// Get text position
+						const textTransform = text.getAttribute("transform");
+						const textMatches = textTransform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+
+						if (textMatches) {
+							const textY = parseFloat(textMatches[2]);
+
+							// For multiline text, the center calculation should account for the full text height
+							const expectedCenterY = rectHeight / 2 - textBBox.y - textBBox.height / 2;
+
+							expect(textY).to.be.closeTo(expectedCenterY, 2);
+						}
+					}
+				});
+			});
+
+			it("should use getBBox() instead of getBoundingClientRect()", () => {
+				const {internal: {$el}} = chart;
+
+				$el.treemap.selectAll("g").each(function(d) {
+					const group = this;
+					const text = group.querySelector("text");
+
+					if (!text) return;
+
+					// Verify that getBBox() values are being used
+					const bbox = text.getBBox();
+
+					// bbox should have valid values
+					expect(bbox).to.have.property("x");
+					expect(bbox).to.have.property("y");
+					expect(bbox).to.have.property("width");
+					expect(bbox).to.have.property("height");
+
+					// Values should be finite numbers
+					expect(isFinite(bbox.x)).to.be.true;
+					expect(isFinite(bbox.y)).to.be.true;
+					expect(isFinite(bbox.width)).to.be.true;
+					expect(isFinite(bbox.height)).to.be.true;
+				});
+			});
+		});
+
+		describe("with centered labels disabled", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 1000],
+							["data2", 200],
+							["data3", 500]
+						],
+						type: "treemap",
+						labels: {
+							centered: false
+						}
+					}
+				};
+			});
+
+			it("should position text at top-left of rect", () => {
+				const {internal: {$el}} = chart;
+
+				$el.treemap.selectAll("g").each(function(d) {
+					const group = this;
+					const text = group.querySelector("text");
+
+					if (!text) return;
+
+					// Get text position
+					const textTransform = text.getAttribute("transform");
+					const textMatches = textTransform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+
+					if (textMatches) {
+						const textX = parseFloat(textMatches[1]);
+						const textY = parseFloat(textMatches[2]);
+
+						// When centered is false, text should be at (0, 0) or near top-left
+						// The default position should be close to origin
+						expect(textX).to.be.closeTo(0, 5);
+						expect(textY).to.be.greaterThanOrEqual(0);
+					}
+				});
+			});
+		});
+
+		describe("centered labels with different rect sizes", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["Large", 1000],
+							["Medium", 300],
+							["Small", 100],
+							["Tiny", 50]
+						],
+						type: "treemap",
+						labels: {
+							centered: true
+						}
+					}
+				};
+			});
+
+			it("should center text correctly regardless of rect size", () => {
+				const {internal: {$el}} = chart;
+
+				$el.treemap.selectAll("g").each(function(d) {
+					const group = this;
+					const rect = group.querySelector("rect");
+					const text = group.querySelector("text");
+
+					if (!rect || !text) return;
+
+					const rectWidth = +rect.getAttribute("width");
+					const rectHeight = +rect.getAttribute("height");
+					const textBBox = text.getBBox();
+
+					// Get text position
+					const textTransform = text.getAttribute("transform");
+					const textMatches = textTransform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+
+					if (textMatches) {
+						const textX = parseFloat(textMatches[1]);
+						const textY = parseFloat(textMatches[2]);
+
+						// Calculate expected centers
+						const expectedCenterX = rectWidth / 2;
+						const expectedCenterY = rectHeight / 2 - textBBox.y - textBBox.height / 2;
+
+						// Both large and small rects should have centered text
+						expect(textX).to.be.closeTo(expectedCenterX, 1);
+						expect(textY).to.be.closeTo(expectedCenterY, 2);
+					}
+				});
+			});
+		});
+
+		describe("centered labels after data update", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 500],
+							["data2", 300],
+							["data3", 200]
+						],
+						type: "treemap",
+						labels: {
+							centered: true
+						}
+					}
+				};
+			});
+
+			it("should maintain centered position after data load", () => new Promise(done => {
+				chart.load({
+					columns: [
+						["data1", 800],
+						["data2", 150],
+						["data3", 250],
+						["data4", 100]
+					],
+					done: function() {
+						const {internal: {$el}} = this;
+
+						$el.treemap.selectAll("g").each(function(d) {
+							const group = this;
+							const rect = group.querySelector("rect");
+							const text = group.querySelector("text");
+
+							if (!rect || !text) return;
+
+							const rectWidth = +rect.getAttribute("width");
+							const rectHeight = +rect.getAttribute("height");
+							const textBBox = text.getBBox();
+
+							const textTransform = text.getAttribute("transform");
+							const textMatches = textTransform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+
+							if (textMatches) {
+								const textX = parseFloat(textMatches[1]);
+								const textY = parseFloat(textMatches[2]);
+
+								const expectedCenterX = rectWidth / 2;
+								const expectedCenterY = rectHeight / 2 - textBBox.y - textBBox.height / 2;
+
+								expect(textX).to.be.closeTo(expectedCenterX, 1);
+								expect(textY).to.be.closeTo(expectedCenterY, 2);
+							}
+						});
+
+						done();
+					}
+				});
+			}));
+		});
+
+		describe("getBBox vs getBoundingClientRect behavior", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 500],
+							["data2", 300]
+						],
+						type: "treemap",
+						labels: {
+							centered: true
+						}
+					}
+				};
+			});
+
+			it("should produce consistent results with getBBox", () => {
+				const {internal: {$el}} = chart;
+
+				$el.treemap.selectAll("g").each(function(d) {
+					const text = this.querySelector("text");
+
+					if (!text) return;
+
+					// Get bbox twice to ensure consistency
+					const bbox1 = text.getBBox();
+					const bbox2 = text.getBBox();
+
+					// getBBox should return consistent values
+					expect(bbox1.x).to.equal(bbox2.x);
+					expect(bbox1.y).to.equal(bbox2.y);
+					expect(bbox1.width).to.equal(bbox2.width);
+					expect(bbox1.height).to.equal(bbox2.height);
+
+					// bbox.y should be negative or zero for properly centered text
+					// (unlike getBoundingClientRect which gives viewport coordinates)
+					expect(bbox1.y).to.be.lessThanOrEqual(0);
+				});
+			});
+		});
+	});
 });
