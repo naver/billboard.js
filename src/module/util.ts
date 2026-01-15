@@ -175,21 +175,23 @@ function endall(transition, cb: Function): void {
 	}
 }
 
-// Sanitize regular expressions (compiled once for performance)
-const dangerousTags =
-	"script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|svg|math";
+// Sanitize patterns (blacklist approach with repeated application)
+const DANGEROUS_TAGS =
+	"script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
 const sanitizeRx = {
 	tags: new RegExp(
-		`<(${dangerousTags})[\\s\\S]*?>[\\s\\S]*?<\\/\\1>|<(${dangerousTags})[^>]*\\/?>`,
+		`<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
 		"gi"
 	),
-	eventHandlers: /\s*on\w+\s*=\s*["'][^"']*["']|\s*on\w+\s*=\s*[^\s>]+/gi,
-	dangerousUrls:
-		/(href|src|action|formaction|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript):[^"'\s>]*/gi
+	// Handles: whitespace, slash, quotes before event handlers (e.g., <img/onerror=...>, <img src="x"onerror=...>)
+	eventHandlers: /[\s/"']+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
+	// Handles: javascript/data/vbscript URIs with optional whitespace/newlines between protocol and colon
+	dangerousURIs: /(href|src|action|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript)\s*:/gi
 };
 
 /**
  * Sanitize HTML string to prevent XSS attacks
+ * Uses blacklist approach with repeated application to prevent nested tag bypass
  * @param {string} str Target string value
  * @returns {string} Sanitized string with dangerous elements removed
  * @private
@@ -199,10 +201,19 @@ function sanitize(str: string): string {
 		return str;
 	}
 
-	return str
-		.replace(sanitizeRx.tags, "")
-		.replace(sanitizeRx.eventHandlers, "")
-		.replace(sanitizeRx.dangerousUrls, "$1=\"\"");
+	let result = str;
+	let prev: string;
+
+	// Repeat until no more changes (prevents nested tag attacks like <scri<script>pt>)
+	do {
+		prev = result;
+		result = result
+			.replace(sanitizeRx.tags, "")
+			.replace(sanitizeRx.eventHandlers, "")
+			.replace(sanitizeRx.dangerousURIs, "$1=\"\"");
+	} while (result !== prev);
+
+	return result;
 }
 
 /**

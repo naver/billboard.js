@@ -1,3 +1,10 @@
+## [3.17.4](https://github.com/naver/billboard.js/compare/3.17.3...3.17.4) (2026-01-14)
+
+
+### Bug Fixes
+
+* **all:** Enforce script sanitization ([ffd9f6f](https://github.com/naver/billboard.js/commit/ffd9f6f8a8baabe0e001cf28319b2f5a5480a866)), closes [#4078](https://github.com/naver/billboard.js/issues/4078)
+
 ## [3.17.3](https://github.com/naver/billboard.js/compare/3.17.2...3.17.3) (2026-01-13)
 
 
