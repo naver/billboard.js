@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.3-nightly-20260114004802
+ * @version 3.17.4-nightly-20260115004723
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -119,6 +119,7 @@ const $COMMON = {
 const $ARC = {
   arc: "bb-arc",
   arcLabelLine: "bb-arc-label-line",
+  arcLabelLineText: "bb-arc-label-line-text",
   arcRange: "bb-arc-range",
   arcs: "bb-arcs",
   chartArc: "bb-chart-arc",
@@ -374,20 +375,28 @@ function endall(transition, cb) {
     transition.call(end);
   }
 }
-const dangerousTags = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|svg|math";
+const DANGEROUS_TAGS = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
 const sanitizeRx = {
   tags: new RegExp(
-    `<(${dangerousTags})[\\s\\S]*?>[\\s\\S]*?<\\/\\1>|<(${dangerousTags})[^>]*\\/?>`,
+    `<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
     "gi"
   ),
-  eventHandlers: /\s*on\w+\s*=\s*["'][^"']*["']|\s*on\w+\s*=\s*[^\s>]+/gi,
-  dangerousUrls: /(href|src|action|formaction|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript):[^"'\s>]*/gi
+  // Handles: whitespace, slash, quotes before event handlers (e.g., <img/onerror=...>, <img src="x"onerror=...>)
+  eventHandlers: /[\s/"']+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
+  // Handles: javascript/data/vbscript URIs with optional whitespace/newlines between protocol and colon
+  dangerousURIs: /(href|src|action|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript)\s*:/gi
 };
 function sanitize(str) {
   if (!isString(str) || !str || str.indexOf("<") === -1) {
     return str;
   }
-  return str.replace(sanitizeRx.tags, "").replace(sanitizeRx.eventHandlers, "").replace(sanitizeRx.dangerousUrls, '$1=""');
+  let result = str;
+  let prev;
+  do {
+    prev = result;
+    result = result.replace(sanitizeRx.tags, "").replace(sanitizeRx.eventHandlers, "").replace(sanitizeRx.dangerousURIs, '$1=""');
+  } while (result !== prev);
+  return result;
 }
 function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
   if (!node || !isString(text)) {
@@ -859,7 +868,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.17.3-nightly-20260114004802");
+__publicField(Plugin, "version", "3.17.4-nightly-20260115004723");
 
 ;// ./src/Plugin/sparkline/Options.ts
 class Options {

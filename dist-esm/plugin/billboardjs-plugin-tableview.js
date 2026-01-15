@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.3-nightly-20260114004802
+ * @version 3.17.4-nightly-20260115004723
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -79,15 +79,18 @@ var isString = function (v) { return typeof v === "string"; };
 var isNumber = function (v) { return typeof v === "number"; };
 var isDefined = function (v) { return typeof v !== "undefined"; };
 var isObjectType = function (v) { return typeof v === "object"; };
-// Sanitize regular expressions (compiled once for performance)
-var dangerousTags = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|svg|math";
+// Sanitize patterns (blacklist approach with repeated application)
+var DANGEROUS_TAGS = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
 var sanitizeRx = {
-    tags: new RegExp("<(".concat(dangerousTags, ")[\\s\\S]*?>[\\s\\S]*?<\\/\\1>|<(").concat(dangerousTags, ")[^>]*\\/?>"), "gi"),
-    eventHandlers: /\s*on\w+\s*=\s*["'][^"']*["']|\s*on\w+\s*=\s*[^\s>]+/gi,
-    dangerousUrls: /(href|src|action|formaction|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript):[^"'\s>]*/gi
+    tags: new RegExp("<(".concat(DANGEROUS_TAGS, ")\\b[\\s\\S]*?>([\\s\\S]*?<\\/(").concat(DANGEROUS_TAGS, ")\\s*>)?"), "gi"),
+    // Handles: whitespace, slash, quotes before event handlers (e.g., <img/onerror=...>, <img src="x"onerror=...>)
+    eventHandlers: /[\s/"']+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
+    // Handles: javascript/data/vbscript URIs with optional whitespace/newlines between protocol and colon
+    dangerousURIs: /(href|src|action|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript)\s*:/gi
 };
 /**
  * Sanitize HTML string to prevent XSS attacks
+ * Uses blacklist approach with repeated application to prevent nested tag bypass
  * @param {string} str Target string value
  * @returns {string} Sanitized string with dangerous elements removed
  * @private
@@ -96,10 +99,17 @@ function sanitize(str) {
     if (!isString(str) || !str || str.indexOf("<") === -1) {
         return str;
     }
-    return str
-        .replace(sanitizeRx.tags, "")
-        .replace(sanitizeRx.eventHandlers, "")
-        .replace(sanitizeRx.dangerousUrls, "$1=\"\"");
+    var result = str;
+    var prev;
+    // Repeat until no more changes (prevents nested tag attacks like <scri<script>pt>)
+    do {
+        prev = result;
+        result = result
+            .replace(sanitizeRx.tags, "")
+            .replace(sanitizeRx.eventHandlers, "")
+            .replace(sanitizeRx.dangerousURIs, "$1=\"\"");
+    } while (result !== prev);
+    return result;
 }
 // emulate event
 ({
@@ -240,7 +250,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.17.3-nightly-20260114004802";
+    Plugin.version = "3.17.4-nightly-20260115004723";
     return Plugin;
 }());
 

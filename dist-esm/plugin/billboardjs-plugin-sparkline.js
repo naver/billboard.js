@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.3-nightly-20260114004802
+ * @version 3.17.4-nightly-20260115004723
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -71,6 +71,7 @@ var $COMMON = {
 var $ARC = {
     arc: "bb-arc",
     arcLabelLine: "bb-arc-label-line",
+    arcLabelLineText: "bb-arc-label-line-text",
     arcRange: "bb-arc-range",
     arcs: "bb-arcs",
     chartArc: "bb-chart-arc",
@@ -376,7 +377,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.17.3-nightly-20260114004802";
+    Plugin.version = "3.17.4-nightly-20260115004723";
     return Plugin;
 }());
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.3-nightly-20260114004802
+ * @version 3.17.4-nightly-20260115004723
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -241,6 +241,7 @@ const $COMMON = {
 const $ARC = {
   arc: "bb-arc",
   arcLabelLine: "bb-arc-label-line",
+  arcLabelLineText: "bb-arc-label-line-text",
   arcRange: "bb-arc-range",
   arcs: "bb-arcs",
   chartArc: "bb-chart-arc",
@@ -2495,20 +2496,28 @@ function endall(transition, cb) {
     transition.call(end);
   }
 }
-const dangerousTags = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|svg|math";
+const DANGEROUS_TAGS = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
 const sanitizeRx = {
   tags: new RegExp(
-    `<(${dangerousTags})[\\s\\S]*?>[\\s\\S]*?<\\/\\1>|<(${dangerousTags})[^>]*\\/?>`,
+    `<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
     "gi"
   ),
-  eventHandlers: /\s*on\w+\s*=\s*["'][^"']*["']|\s*on\w+\s*=\s*[^\s>]+/gi,
-  dangerousUrls: /(href|src|action|formaction|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript):[^"'\s>]*/gi
+  // Handles: whitespace, slash, quotes before event handlers (e.g., <img/onerror=...>, <img src="x"onerror=...>)
+  eventHandlers: /[\s/"']+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
+  // Handles: javascript/data/vbscript URIs with optional whitespace/newlines between protocol and colon
+  dangerousURIs: /(href|src|action|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript)\s*:/gi
 };
 function sanitize(str) {
   if (!isString(str) || !str || str.indexOf("<") === -1) {
     return str;
   }
-  return str.replace(sanitizeRx.tags, "").replace(sanitizeRx.eventHandlers, "").replace(sanitizeRx.dangerousUrls, '$1=""');
+  let result = str;
+  let prev;
+  do {
+    prev = result;
+    result = result.replace(sanitizeRx.tags, "").replace(sanitizeRx.eventHandlers, "").replace(sanitizeRx.dangerousURIs, '$1=""');
+  } while (result !== prev);
+  return result;
 }
 function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
   if (!node || !isString(text)) {
@@ -17987,6 +17996,156 @@ const options = {
 
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
 var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(13);
+;// ./src/ChartInternal/internals/text.arc.ts
+
+
+
+
+const BREAK_POINT_OFFSET = 15;
+const DEFAULT_LINE_DISTANCE = 20;
+const TEXT_VERTICAL_OFFSET = 0.35;
+function getArcType(excludeMultiGauge = false) {
+  const $$ = this;
+  return ["donut", "pie", "polar", "gauge"].find(
+    (type) => $$.hasType(type) && !(type === "gauge" && excludeMultiGauge && $$.hasMultiArcGauge())
+  );
+}
+function getConfig() {
+  const $$ = this;
+  const { config } = $$;
+  const chartType = getArcType.call($$, true);
+  const lineConfig = chartType && config[`${chartType}_label_line`];
+  const isValidConfig = isObjectType(lineConfig);
+  const defaultFormatter = (value, ratio, id) => id;
+  const line = {
+    show: lineConfig === true || isValidConfig && (lineConfig == null ? void 0 : lineConfig.show) !== false,
+    distance: isValidConfig && (lineConfig == null ? void 0 : lineConfig.distance) || DEFAULT_LINE_DISTANCE
+  };
+  if (lineConfig === true) {
+    return {
+      chartType,
+      line,
+      text: { formatter: defaultFormatter }
+    };
+  }
+  if (!isValidConfig) {
+    return {
+      chartType,
+      line: { show: false, distance: DEFAULT_LINE_DISTANCE },
+      text: { formatter: null }
+    };
+  }
+  let formatter = defaultFormatter;
+  if (isFunction(lineConfig.text)) {
+    formatter = lineConfig.text;
+  } else if (lineConfig.text === false) {
+    formatter = null;
+  }
+  return {
+    chartType,
+    line,
+    text: { formatter }
+  };
+}
+function getLinePosition(d, lineDistance) {
+  const $$ = this;
+  const { state } = $$;
+  const updated = $$.updateAngle(d);
+  if (!updated) {
+    return null;
+  }
+  let { outerRadius } = $$.getRadius(d);
+  let arcOuterRadius = outerRadius;
+  if ($$.hasType("polar")) {
+    arcOuterRadius = $$.getPolarOuterRadius(d, outerRadius);
+    outerRadius = state.radius;
+  }
+  let midAngle = (updated.startAngle + updated.endAngle) / 2;
+  const isFullCircleArc = Math.abs(updated.endAngle - updated.startAngle - 2 * Math.PI) < 0.01;
+  if (isFullCircleArc) {
+    midAngle = Math.PI / 2;
+  }
+  const sinAngle = Math.sin(midAngle);
+  const cosAngle = -Math.cos(midAngle);
+  const startPoint = {
+    x: sinAngle * arcOuterRadius,
+    y: cosAngle * arcOuterRadius
+  };
+  const breakRadius = outerRadius + BREAK_POINT_OFFSET;
+  const breakPoint = {
+    x: sinAngle * breakRadius,
+    y: cosAngle * breakRadius
+  };
+  const isRight = sinAngle >= 0;
+  const endPoint = {
+    x: breakPoint.x + lineDistance * (isRight ? 1 : -1),
+    y: breakPoint.y
+  };
+  return { startPoint, breakPoint, endPoint, isRight, midAngle };
+}
+function isLabelWithLine() {
+  return getConfig.call(this).line.show;
+}
+function redrawArcLabelLines(duration) {
+  const $$ = this;
+  const { $el: { arcs }, $T } = $$;
+  const { line: lineConfig, text: textConfig, chartType } = getConfig.call($$);
+  const lineDistance = lineConfig.distance;
+  const hasGauge = chartType === "gauge";
+  let cachedFontSize = null;
+  arcs.selectAll(`.${$ARC.chartArc}`).each(function(d) {
+    var _a, _b, _c;
+    const g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
+    const linePos = getLinePosition.call($$, d, lineDistance);
+    const { ratio, meetsThreshold, updated } = (_a = d._cache) != null ? _a : {};
+    if (!updated || !linePos) {
+      return;
+    }
+    const isVisible = $$.isTargetToShow(d.data.id) && meetsThreshold;
+    const { startPoint, breakPoint, endPoint, isRight } = linePos;
+    const points = `${startPoint.x},${startPoint.y} ${breakPoint.x},${breakPoint.y} ${endPoint.x},${endPoint.y}`;
+    if (lineConfig.show) {
+      let line = g.select(`.${$ARC.arcLabelLine}`);
+      if (line.empty()) {
+        line = g.append("polyline").attr("class", $ARC.arcLabelLine);
+      }
+      $T(line, duration).attr("points", points).style("stroke", $$.color(d.data)).style("opacity", isVisible ? null : "0");
+    }
+    let labelLineText = g.select(`.${$ARC.arcLabelLineText}`);
+    if (labelLineText.empty()) {
+      labelLineText = g.append("text").attr("class", $ARC.arcLabelLineText).style("pointer-events", "none");
+    }
+    if (isVisible) {
+      const { value } = updated;
+      const { id } = d.data;
+      const text = ((_c = (_b = textConfig.formatter) != null ? _b : $$.getArcLabelConfig("format")) != null ? _c : $$.defaultArcValueFormat)(value, ratio, id).toString();
+      setTextValue(labelLineText, text, [-1, 1], hasGauge);
+      const pos = {
+        x: endPoint.x + 5 * (isRight ? 1 : -1),
+        // 5: label offset from endpoint
+        y: endPoint.y
+      };
+      labelLineText.style("text-anchor", isRight ? "start" : "end");
+      const textNode = labelLineText.node();
+      const tspanNodes = textNode == null ? void 0 : textNode.querySelectorAll("tspan");
+      if (cachedFontSize === null) {
+        cachedFontSize = parseFloat(win.getComputedStyle(textNode).fontSize) || 12;
+      }
+      if (tspanNodes && tspanNodes.length > 1) {
+        const lineCount = tspanNodes.length;
+        const offsetY = (lineCount - 1) * 1.2 / 2;
+        pos.y += (-offsetY + TEXT_VERTICAL_OFFSET) * cachedFontSize;
+      } else {
+        pos.y += TEXT_VERTICAL_OFFSET * cachedFontSize;
+      }
+      $T(labelLineText, duration).attr("transform", `translate(${pos.x},${pos.y})`).style("opacity", null).style("fill", $$.updateTextColor.bind($$)(d));
+    } else {
+      $T(labelLineText, duration).style("opacity", "0");
+    }
+  });
+}
+
+
 ;// ./src/ChartInternal/shape/arc.ts
 var arc_defProp = Object.defineProperty;
 var arc_defProps = Object.defineProperties;
@@ -18014,6 +18173,62 @@ var arc_spreadProps = (a, b) => arc_defProps(a, arc_getOwnPropDescs(b));
 
 
 
+
+function arc_getArcType($$) {
+  return ["donut", "pie", "polar", "gauge"].find((type) => $$.hasType(type));
+}
+function calculateRangeOrGaugePosition($$, d, updated, forRange) {
+  var _a, _b;
+  const { config, state: { radiusExpanded } } = $$;
+  const angle = updated.endAngle - Math.PI / 2;
+  const sinAngle = Math.sin(angle);
+  const pos = {
+    x: Math.cos(angle) * (radiusExpanded + (forRange ? 5 : 25)),
+    // 5: range offset, 25: gauge offset
+    y: sinAngle * (radiusExpanded + 15 - Math.abs(sinAngle * 10)) + 3
+    // 10: y factor, 3: y offset
+  };
+  if (forRange) {
+    const rangeTextPosition = config.arc_rangeText_position;
+    if (rangeTextPosition) {
+      const rangeValues = config.arc_rangeText_values;
+      const position = isFunction(rangeTextPosition) ? rangeTextPosition(rangeValues[d.index]) : rangeTextPosition;
+      pos.x += (_a = position == null ? void 0 : position.x) != null ? _a : 0;
+      pos.y += (_b = position == null ? void 0 : position.y) != null ? _b : 0;
+    }
+  }
+  return pos;
+}
+function calculateLabelRatio($$, d, outerRadius, distance) {
+  const { config } = $$;
+  const chartType = arc_getArcType($$);
+  let ratio = chartType ? config[`${chartType}_label_ratio`] : void 0;
+  if (ratio) {
+    ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, distance) : ratio;
+  } else {
+    const LABEL_MIN_SIZE = 36;
+    const LABEL_RATIO_THRESHOLD = 0.375;
+    const LABEL_RATIO_BASE = 1.175;
+    const LABEL_RATIO_LARGE = 0.8;
+    const labelSpaceRatio = LABEL_MIN_SIZE / outerRadius;
+    const isSmallChart = labelSpaceRatio > LABEL_RATIO_THRESHOLD;
+    ratio = outerRadius && distance ? (isSmallChart ? LABEL_RATIO_BASE - labelSpaceRatio : LABEL_RATIO_LARGE) * outerRadius / distance : 0;
+  }
+  return ratio;
+}
+function calculateStandardArcPosition($$, d, updated) {
+  let { outerRadius } = $$.getRadius(d);
+  if ($$.hasType("polar")) {
+    outerRadius = $$.getPolarOuterRadius(d, outerRadius);
+  }
+  const [x, y] = $$.svgArc.centroid(updated).map((v) => isNaN(v) ? 0 : v);
+  const distance = Math.sqrt(x * x + y * y);
+  const ratio = calculateLabelRatio($$, d, outerRadius, distance);
+  return {
+    pos: { x, y },
+    ratio
+  };
+}
 function getRadiusFn(expandRate = 0) {
   const $$ = this;
   const { config, state } = $$;
@@ -18121,7 +18336,9 @@ function getAttrTweenFn(fn) {
     const padding = config[`${dataType}_padding`];
     const w = config.gauge_width || config.donut_width;
     const gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length * config.gauge_arcs_minWidth;
-    state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * ($$.hasMultiArcGauge() && config.gauge_label_show ? 0.85 : 1);
+    const LABEL_RADIUS_RATIO = 0.85;
+    const labelWithLineRatio = isLabelWithLine.call($$) ? LABEL_RADIUS_RATIO : 1;
+    state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * ($$.hasMultiArcGauge() && config.gauge_label_show ? LABEL_RADIUS_RATIO : labelWithLineRatio);
     state.radius = state.radiusExpanded * 0.95;
     state.innerRadiusRatio = w ? (state.radius - w) / state.radius : 0.6;
     state.gaugeArcWidth = w || (gaugeArcWidth <= state.radius - state.innerRadius ? state.radius - state.innerRadius : gaugeArcWidth <= state.radius ? gaugeArcWidth : state.radius);
@@ -18323,46 +18540,24 @@ function getAttrTweenFn(fn) {
    * @private
    */
   transformForArcLabel(textNode, d, forRange = false) {
-    var _a, _b, _c;
     const $$ = this;
-    const { config, state: { radiusExpanded } } = $$;
     const updated = $$.updateAngle(d, forRange);
-    const pos = { x: 0, y: 0 };
-    let translate = "";
-    let ratio = 1;
-    if (updated) {
-      if (forRange || $$.hasMultiArcGauge()) {
-        const y1 = Math.sin(updated.endAngle - Math.PI / 2);
-        const rangeTextPosition = config.arc_rangeText_position;
-        pos.x = Math.cos(updated.endAngle - Math.PI / 2) * (radiusExpanded + (forRange ? 5 : 25));
-        pos.y = y1 * (radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
-        if (forRange && rangeTextPosition) {
-          const rangeValues = config.arc_rangeText_values;
-          const position = isFunction(rangeTextPosition) ? rangeTextPosition(rangeValues[d.index]) : rangeTextPosition;
-          pos.x += (_a = position == null ? void 0 : position.x) != null ? _a : 0;
-          pos.y += (_b = position == null ? void 0 : position.y) != null ? _b : 0;
-        }
-      } else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
-        let { outerRadius } = $$.getRadius(d);
-        if ($$.hasType("polar")) {
-          outerRadius = $$.getPolarOuterRadius(d, outerRadius);
-        }
-        const c = this.svgArc.centroid(updated);
-        const [x, y] = c.map((v) => isNaN(v) ? 0 : v);
-        const h = Math.sqrt(x * x + y * y);
-        pos.x = x;
-        pos.y = y;
-        ratio = (_c = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$)).map((v) => config[`${v}_label_ratio`])) == null ? void 0 : _c[0];
-        if (ratio) {
-          ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, h) : ratio;
-        } else {
-          ratio = outerRadius && (h ? (36 / outerRadius > 0.375 ? 1.175 - 36 / outerRadius : 0.8) * outerRadius / h : 0);
-        }
-      }
-      updateTextImagePos.call($$, textNode, pos);
-      translate = `translate(${pos.x * ratio},${pos.y * ratio})`;
+    if (!updated) {
+      return "";
     }
-    return translate;
+    let pos;
+    let ratio = 1;
+    if (forRange || $$.hasMultiArcGauge()) {
+      pos = calculateRangeOrGaugePosition($$, d, updated, forRange);
+    } else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
+      const result = calculateStandardArcPosition($$, d, updated);
+      pos = result.pos;
+      ratio = result.ratio;
+    } else {
+      return "";
+    }
+    updateTextImagePos.call($$, textNode, pos);
+    return `translate(${pos.x * ratio},${pos.y * ratio})`;
   },
   convertToArcData(d) {
     return this.addName({
@@ -18373,20 +18568,18 @@ function getAttrTweenFn(fn) {
     });
   },
   textForArcLabel(selection) {
+    var _a;
     const $$ = this;
     const hasGauge = $$.hasType("gauge");
+    const chartType = (_a = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))) == null ? void 0 : _a[0];
     if ($$.shouldShowArcLabel()) {
       selection.style("fill", $$.updateTextColor.bind($$)).attr("filter", (d) => $$.updateTextBGColor.bind($$)(d, $$.config.data_labels_backgroundColors)).each(function(d) {
-        var _a;
         const node = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
         const updated = $$.updateAngle(d);
         const ratio = $$.getRatio("arc", updated);
-        const isUnderThreshold = meetsLabelThreshold.call(
-          $$,
-          ratio,
-          (_a = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))) == null ? void 0 : _a[0]
-        );
-        if (isUnderThreshold) {
+        const meetsThreshold = meetsLabelThreshold.call($$, ratio, chartType);
+        d._cache = { updated, ratio, meetsThreshold };
+        if (meetsThreshold) {
           const { value } = updated || d;
           const text = ($$.getArcLabelConfig("format") || $$.defaultArcValueFormat)(value, ratio, d.data.id).toString();
           setTextValue(node, text, [-1, 1], hasGauge);
@@ -18493,7 +18686,7 @@ function getAttrTweenFn(fn) {
       ])
     );
     mainPieEnter.append("g").attr("class", classArcs).merge(mainPieUpdate);
-    mainPieEnter.append("text").attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em").style("opacity", "0").style("text-anchor", $$.getStylePropValue("middle")).style("pointer-events", $$.getStylePropValue("none"));
+    mainPieEnter.append("text").attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : null).style("opacity", "0").style("text-anchor", $$.getStylePropValue("middle")).style("pointer-events", $$.getStylePropValue("none"));
     $el.text = chartArcs.selectAll(`.${$COMMON.target} text`);
   },
   initArc() {
@@ -18833,6 +19026,7 @@ function getAttrTweenFn(fn) {
         !isFullCircle && arcs.select(`.${$GAUGE.chartArcsGaugeMax}`).attr("dx", `${state.innerRadius + (state.radius - state.innerRadius) / 2}px`).attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, true));
       }
     }
+    isLabelWithLine.call($$) && redrawArcLabelLines.call($$, duration);
   },
   /**
    * Get Arc element by id or index
@@ -21965,6 +22159,17 @@ ${percentValue}%`;
    * @property {function} [donut.label.format] Set formatter for the label on each donut piece.
    * @property {number} [donut.label.threshold=0.05] Set threshold ratio to show/hide labels.
    * @property {number|function} [donut.label.ratio=undefined] Set ratio of labels position.
+   * @property {boolean|object} [donut.label.line=false] Enable label with lines (displayed outside with connector lines).
+   *  - `true`: Enable label with lines with default settings
+   *  - `false`: Labels are displayed inside the donut slices (default behavior).
+   *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
+   * @property {boolean} [donut.label.line.show=true] Show or hide connector lines.
+   * @property {number} [donut.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
+   * @property {boolean|function} [donut.label.line.text=true] Show text at the end of the connector line (outside the shape).
+   *  - `true`: show data "id" text
+   *  - `false`: use default formatter(label.format) to show text
+   *  - `function(value, ratio, id)`: Custom formatter function for the text.
+   *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
    * @property {object|function} [donut.label.image] Set image to be displayed next to the label text.<br><br>
    * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
    * The arguments are:<br>
@@ -21990,6 +22195,7 @@ ${percentValue}%`;
    * @see [Demo: Needle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutNeedle)
    * @see [Demo: Range Text](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutRangeText)
    * @see [Demo: Label Image](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelImage)
+   * @see [Demo: Label Line](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelLine)
    * @see [Demo: Label Ratio](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelRatio)
    * @see [Demo: Multiline Label](https://naver.github.io/billboard.js/demo/#DonutChartOptions.MultilineLabel)
    * @see [Demo: Multiline Title](https://naver.github.io/billboard.js/demo/#DonutChartOptions.MultilineTitle)
@@ -22018,6 +22224,20 @@ ${percentValue}%`;
    *          },
    *          // or set ratio number
    *          ratio: 0.5,
+   *
+   *          // Enable label with lines (displayed outside with connector lines)
+   *          line: false,  // default - labels inside
+   *          line: true,   // enable label with lines with default settings
+   *          line: {       // enable label with lines with custom settings
+   *             show: true,
+   *             distance: 20,  // horizontal line distance in pixels
+   *
+   *             // show text at the end of connector line (outside the shape)
+   *             text: true,  // use default formatter
+   *             text: function(value, ratio, id) {  // custom formatter
+   *                 return d3.format(".1%")(ratio);
+   *             }
+   *          },
    *
    *          // set image to be displayed next to the label text
    *          image: {
@@ -22090,6 +22310,7 @@ ${percentValue}%`;
   donut_label_show: true,
   donut_label_format: void 0,
   donut_label_threshold: 0.05,
+  donut_label_line: false,
   donut_label_image: void 0,
   donut_label_ratio: void 0,
   donut_width: void 0,
@@ -22153,6 +22374,18 @@ ${percentValue}%`;
    * - id {string}: data's id value
    * @property {number|function} [gauge.label.ratio=undefined] Set ratio of labels position.
    * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
+   * @property {boolean|object} [gauge.label.line=false] Enable label with lines (displayed outside with connector lines).
+   *  - **NOTE:** Only applicable for single gauge (not for `gauge.type="multi"`).
+   *  - `true`: Enable label with lines with default settings
+   *  - `false`: Labels are displayed inside the gauge (default behavior).
+   *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
+   * @property {boolean} [gauge.label.line.show=true] Show or hide connector lines.
+   * @property {number} [gauge.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
+   * @property {boolean|function} [gauge.label.line.text=true] Show text at the end of the connector line (outside the shape).
+   *  - `true`: show data "id" text
+   *  - `false`: use default formatter(label.format) to show text
+   *  - `function(value, ratio, id)`: Custom formatter function for the text.
+   *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
    * @property {object|function} [gauge.label.image] Set image to be displayed next to the label text.<br><br>
    * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
    * The arguments are:<br>
@@ -22206,6 +22439,7 @@ ${percentValue}%`;
    * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
    * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
    * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelImage)
+   * @see [Demo: label line](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelLine)
    * @see [Demo: label ratio](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelRatio)
    * @example
    *  gauge: {
@@ -22227,6 +22461,20 @@ ${percentValue}%`;
    *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
    *          // if data value is below than 0.1, text label will be hidden.
    *          threshold: 0.1,
+   *
+   *          // Enable label with lines (displayed outside with connector lines)
+   *          // NOTE: Only works with single gauge (not gauge.type="multi")
+   *          line: true,   // enable label with lines with default settings
+   *          line: {       // enable label with lines with custom settings
+   *              show: true,      // enable lines (default: true when line is enabled)
+   *              distance: 30,    // distance of horizontal line in pixels (default: 20)
+   *
+   *              // show text at the end of connector line (outside the shape)
+   *              text: true,  // use default formatter
+   *              text: function(value, ratio, id) {  // custom formatter
+   *                  return d3.format(".1%")(ratio);
+   *              }
+   *          },
    *
    *          // set ratio callback. Should return ratio value
    *          ratio: function(d, radius, h) {
@@ -22321,6 +22569,7 @@ ${percentValue}%`;
   gauge_label_format: void 0,
   gauge_label_ratio: void 0,
   gauge_label_threshold: 0,
+  gauge_label_line: false,
   gauge_label_image: void 0,
   gauge_enforceMinMax: false,
   gauge_min: 0,
@@ -22349,6 +22598,17 @@ ${percentValue}%`;
    * @property {function} [pie.label.format] Set formatter for the label on each pie piece.
    * @property {number|function} [pie.label.ratio=undefined] Set ratio of labels position.
    * @property {number} [pie.label.threshold=0.05] Set threshold ratio to show/hide labels.
+   * @property {boolean|object} [pie.label.line=false] Enable label with lines (displayed outside with connector lines).
+   *  - `true`: Enable label with lines with default settings
+   *  - `false`: Labels are displayed inside the pie slices (default behavior).
+   *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
+   * @property {boolean} [pie.label.line.show=true] Show or hide connector lines.
+   * @property {number} [pie.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
+   * @property {boolean|function} [pie.label.line.text=true] Show text at the end of the connector line (outside the shape).
+   *  - `true`: show data "id" text
+   *  - `false`: use default formatter(label.format) to show text
+   *  - `function(value, ratio, id)`: Custom formatter function for the text.
+   *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
    * @property {object|function} [pie.label.image] Set image to be displayed next to the label text.<br><br>
    * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
    * The arguments are:<br>
@@ -22374,6 +22634,7 @@ ${percentValue}%`;
    * @see [Demo: outerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.OuterRadius)
    * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#PieChartOptions.StartingAngle)
    * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#PieChartOptions.LabelImage)
+   * @see [Demo: label line](https://naver.github.io/billboard.js/demo/#PieChartOptions.LabelLine)
    * @example
    *  pie: {
    *      label: {
@@ -22396,6 +22657,20 @@ ${percentValue}%`;
    *          },
    *          // or set ratio number
    *          ratio: 0.5,
+   *
+   *          // Enable label with lines (displayed outside with connector lines)
+   *          line: false,  // default - labels inside
+   *          line: true,   // enable label with lines with default settings
+   *          line: {       // enable label with lines with custom settings
+   *             show: true,
+   *             distance: 20,  // horizontal line distance in pixels
+   *
+   *             // show text at the end of connector line (outside the shape)
+   *             text: true,  // use default formatter
+   *             text: function(value, ratio, id) {  // custom formatter
+   *                 return d3.format(".1%")(ratio);
+   *             }
+   *          },
    *
    *          // set image to be displayed next to the label text
    *          image: {
@@ -22478,6 +22753,7 @@ ${percentValue}%`;
   pie_label_format: void 0,
   pie_label_ratio: void 0,
   pie_label_threshold: 0.05,
+  pie_label_line: false,
   pie_label_image: void 0,
   pie_expand: {},
   pie_expand_rate: 0.98,
@@ -22501,6 +22777,17 @@ ${percentValue}%`;
    * @property {function} [polar.label.format] Set formatter for the label on each polar piece.
    * @property {number} [polar.label.threshold=0.05] Set threshold ratio to show/hide labels.
    * @property {number|function} [polar.label.ratio=undefined] Set ratio of labels position.
+   * @property {boolean|object} [polar.label.line=false] Enable label with lines (displayed outside with connector lines).
+   *  - `true`: Enable label with lines with default settings
+   *  - `false`: Labels are displayed inside the polar slices (default behavior).
+   *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
+   * @property {boolean} [polar.label.line.show=true] Show or hide connector lines.
+   * @property {number} [polar.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
+   * @property {boolean|function} [polar.label.line.text=true] Show text at the end of the connector line (outside the shape).
+   *  - `true`: show data "id" text
+   *  - `false`: use default formatter(label.format) to show text
+   *  - `function(value, ratio, id)`: Custom formatter function for the text.
+   *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
    * @property {object|function} [polar.label.image] Set image to be displayed next to the label text.<br><br>
    * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
    * The arguments are:<br>
@@ -22523,6 +22810,7 @@ ${percentValue}%`;
    * @property {number} [polar.startingAngle=0] Set starting angle where data draws.
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.PolarChart)
    * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#PolarChartOptions.LabelImage)
+   * @see [Demo: label line](https://naver.github.io/billboard.js/demo/#PolarChartOptions.LabelLine)
    * @example
    *  polar: {
    *      label: {
@@ -22545,6 +22833,20 @@ ${percentValue}%`;
    *          },
    *          // or set ratio number
    *          ratio: 0.5,
+   *
+   *          // Enable label with lines (displayed outside with connector lines)
+   *          line: false,  // default - labels inside
+   *          line: true,   // enable label with lines with default settings
+   *          line: {       // enable label with lines with custom settings
+   *             show: true,
+   *             distance: 20,  // horizontal line distance in pixels
+   *
+   *             // show text at the end of connector line (outside the shape)
+   *             text: true,  // use default formatter
+   *             text: function(value, ratio, id) {  // custom formatter
+   *                 return d3.format(".1%")(ratio);
+   *             }
+   *          },
    *
    *          // set image to be displayed next to the label text
    *          image: {
@@ -22610,6 +22912,7 @@ ${percentValue}%`;
   polar_label_show: true,
   polar_label_format: void 0,
   polar_label_threshold: 0.05,
+  polar_label_line: false,
   polar_label_image: void 0,
   polar_label_ratio: void 0,
   polar_level_depth: 3,
@@ -22842,7 +23145,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.3-nightly-20260114004802",
+  version: "3.17.4-nightly-20260115004723",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
