@@ -139,7 +139,7 @@ export default {
 	 * A function to format tick value. Format string is also available for timeseries data.
 	 * @name axis․x․tick․format
 	 * @memberof Options
-	 * @type {Function|string}
+	 * @type {function|string}
 	 * @default undefined
 	 * @see [D3's time specifier](https://d3js.org/d3-time-format#locale_format)
 	 * @example
@@ -169,7 +169,7 @@ export default {
 	 * - `true`: the ticks will be culled, then only limited tick text will be shown.<br>
 	 *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.x.tick.culling.lines=false`.
 	 * - `false`: all of ticks will be shown.<br><br>
-	 * The number of ticks to be shown can be chaned by `axis.x.tick.culling.max`.
+	 * The number of ticks to be shown can be changed by `axis.x.tick.culling.max`.
 	 * @name axis․x․tick․culling
 	 * @memberof Options
 	 * @type {boolean}
@@ -391,10 +391,10 @@ export default {
 	/**
 	 * Set the x values of ticks manually.<br><br>
 	 * If this option is provided, the position of the ticks will be determined based on those values.<br>
-	 * This option works with `timeseries` data and the x values will be parsed accoding to the type of the value and data.xFormat option.
+	 * This option works with `timeseries` data and the x values will be parsed according to the type of the value and data.xFormat option.
 	 * @name axis․x․tick․values
 	 * @memberof Options
-	 * @type {Array|Function}
+	 * @type {Array|function}
 	 * @default null
 	 * @example
 	 * axis: {
@@ -625,7 +625,7 @@ export default {
 	 *     - **timeseries:** Numeric time value
 	 *       ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
 	 *   - If want values to be treated as pixels, specify `unit:"px"`.
-	 *     - The pixel value will be convered based on the scale values. Hence can not reflect accurate padding result.
+	 *     - The pixel value will be converted based on the scale values. Hence can not reflect accurate padding result.
 	 * @name axis․x․padding
 	 * @memberof Options
 	 * @type {object|number}
@@ -678,7 +678,7 @@ export default {
 	 * - **NOTE:** Specifying value, will limit the zoom scope selection within.
 	 * @name axis․x․extent
 	 * @memberof Options
-	 * @type {Array|Function}
+	 * @type {Array|function}
 	 * @default undefined
 	 * @example
 	 * axis: {

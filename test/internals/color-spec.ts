@@ -464,4 +464,43 @@ describe("COLOR", () => {
 			});
 		});
 	});
+
+	describe("XSS prevention", () => {
+		describe("data.labels.backgroundColors", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100]
+						],
+						labels: {
+							backgroundColors: "<script>alert(1)</script>red"
+						}
+					}
+				};
+			});
+
+			it("should sanitize malicious backgroundColors value", () => {
+				const filter = chart.internal.$el.defs.select("filter");
+				const filterHtml = filter.html();
+
+				expect(filterHtml).to.not.include("<script>");
+				expect(filterHtml).to.not.include("</script>");
+			});
+
+			it("set options: backgroundColors with script tag in object value", () => {
+				args.data.labels.backgroundColors = {
+					data1: "<script>alert(1)</script>blue"
+				};
+			});
+
+			it("should sanitize script tag in object backgroundColors value", () => {
+				const filter = chart.internal.$el.defs.select("filter");
+				const filterHtml = filter.html();
+
+				expect(filterHtml).to.not.include("<script>");
+				expect(filterHtml).to.not.include("</script>");
+			});
+		});
+	});
 });

@@ -7,7 +7,7 @@ import {endall} from "../../module/util";
 
 /**
  * Call done callback with resize after transition
- * @param {Function} fn Callback function
+ * @param {function} fn Callback function
  * @param {boolean} resizeAfter Weather to resize chart after the load
  * @private
  */
@@ -129,7 +129,7 @@ export default {
 			const data = args.data || d;
 
 			args.append && (data.__append__ = true);
-			data && $$.load($$.convertDataToTargets(data), args);
+			data && $$.load($$.convertDataToTargets.call($$, data), args);
 		});
 	},
 
@@ -155,13 +155,6 @@ export default {
 			done();
 			return;
 		}
-
-		const targets = $el.svg.selectAll(targetIds.map(id => $$.selectorTarget(id)));
-
-		$T(targets)
-			.style("opacity", "0")
-			.remove()
-			.call(endall, done);
 
 		targetIds.forEach(id => {
 			const suffixId = $$.getTargetSelectorSuffix(id);
@@ -189,5 +182,12 @@ export default {
 
 		// Update current state chart type and elements list after redraw
 		$$.updateTypesElements();
+
+		const targets = $el.svg.selectAll(targetIds.map(id => $$.selectorTarget(id)));
+
+		$T(targets)
+			.style("opacity", "0")
+			.remove()
+			.call(endall, done);
 	}
 };

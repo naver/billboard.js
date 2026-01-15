@@ -13,10 +13,21 @@ export default {
 	 * @type {object}
 	 * @property {object} polar Polar object
 	 * @property {boolean} [polar.label.show=true] Show or hide label on each polar piece.
-	 * @property {Function} [polar.label.format] Set formatter for the label on each polar piece.
+	 * @property {function} [polar.label.format] Set formatter for the label on each polar piece.
 	 * @property {number} [polar.label.threshold=0.05] Set threshold ratio to show/hide labels.
-	 * @property {number|Function} [polar.label.ratio=undefined] Set ratio of labels position.
-	 * @property {object|Function} [polar.label.image] Set image to be displayed next to the label text.<br><br>
+	 * @property {number|function} [polar.label.ratio=undefined] Set ratio of labels position.
+	 * @property {boolean|object} [polar.label.line=false] Enable label with lines (displayed outside with connector lines).
+	 *  - `true`: Enable label with lines with default settings
+	 *  - `false`: Labels are displayed inside the polar slices (default behavior).
+	 *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
+	 * @property {boolean} [polar.label.line.show=true] Show or hide connector lines.
+	 * @property {number} [polar.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
+	 * @property {boolean|function} [polar.label.line.text=true] Show text at the end of the connector line (outside the shape).
+	 *  - `true`: show data "id" text
+	 *  - `false`: use default formatter(label.format) to show text
+	 *  - `function(value, ratio, id)`: Custom formatter function for the text.
+	 *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
+	 * @property {object|function} [polar.label.image] Set image to be displayed next to the label text.<br><br>
 	 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
 	 * The arguments are:<br>
 	 *  - `v` is the value of the data point where the label is shown.
@@ -31,13 +42,14 @@ export default {
 	 * @property {number} [polar.level.depth=3] Set the level depth.
 	 * @property {boolean} [polar.level.show=true] Show or hide level.
 	 * @property {string} [polar.level.text.backgroundColor="#fff"] Set label text's background color.
-	 * @property {Function} [polar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
+	 * @property {function} [polar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
 	 * @property {boolean} [polar.level.text.show=true] Show or hide level text.
 	 * @property {number} [polar.padAngle=0] Set padding between data.
 	 * @property {number} [polar.padding=0] Sets the gap between pie arcs.
 	 * @property {number} [polar.startingAngle=0] Set starting angle where data draws.
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.PolarChart)
 	 * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#PolarChartOptions.LabelImage)
+	 * @see [Demo: label line](https://naver.github.io/billboard.js/demo/#PolarChartOptions.LabelLine)
 	 * @example
 	 *  polar: {
 	 *      label: {
@@ -60,6 +72,20 @@ export default {
 	 *          },
 	 *          // or set ratio number
 	 *          ratio: 0.5,
+	 *
+	 *          // Enable label with lines (displayed outside with connector lines)
+	 *          line: false,  // default - labels inside
+	 *          line: true,   // enable label with lines with default settings
+	 *          line: {       // enable label with lines with custom settings
+	 *             show: true,
+	 *             distance: 20,  // horizontal line distance in pixels
+	 *
+	 *             // show text at the end of connector line (outside the shape)
+	 *             text: true,  // use default formatter
+	 *             text: function(value, ratio, id) {  // custom formatter
+	 *                 return d3.format(".1%")(ratio);
+	 *             }
+	 *          },
 	 *
 	 *          // set image to be displayed next to the label text
 	 *          image: {
@@ -125,6 +151,11 @@ export default {
 	polar_label_show: true,
 	polar_label_format: <(() => number | string) | undefined>undefined,
 	polar_label_threshold: 0.05,
+	polar_label_line: <boolean | {
+		show?: boolean,
+		distance?: number,
+		text?: boolean | ((value: number, ratio: number, id: string) => string)
+	}>false,
 	polar_label_image: <
 		| {url: string, width: number, height: number, pos?: {x?: number, y?: number}}
 		| ((v: number, id: string, i: number) => {

@@ -10,14 +10,14 @@ import type {RegionOptions} from "../../../../types/options";
 export default {
 	/**
 	 * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.<br>
-	 * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).
-	 * - **NOTE:** In case of element doesn't exist or not specified, will add a `<div>` element to the body.
+	 * If another chart is already set, it will be replaced with the new one (only one chart can be set in one element).
+	 * - **NOTE:** In case the element doesn't exist or not specified, will add a `<div>` element to the body.
 	 * @name bindto
 	 * @memberof Options
 	 * @property {string|HTMLElement|d3.selection|object} [bindto="#chart"] Specify the element where chart will be drawn.
 	 * @property {string|HTMLElement|d3.selection} bindto.element="#chart" Specify the element where chart will be drawn.
 	 * @property {string} [bindto.classname=bb] Specify the class name of bind element.<br>
-	 *     **NOTE:** When class name isn't `bb`, then you also need to update the default CSS to be rendered correctly.
+	 *     **NOTE:** When the class name isn't `bb`, then you also need to update the default CSS to be rendered correctly.
 	 * @default #chart
 	 * @example
 	 * bindto: "#myContainer"
@@ -60,8 +60,8 @@ export default {
 	/**
 	 * Set 'clip-path' attribute for chart element
 	 * - **NOTE:**
-	 *  > When is false, chart node element is positioned after the axis node in DOM tree hierarchy.
-	 *  > Is to make chart element positioned over axis element.
+	 *  > When false, chart node element is positioned after the axis node in DOM tree hierarchy.
+	 *  > This is to make the chart element positioned over axis element.
 	 * @name clipPath
 	 * @memberof Options
 	 * @type {boolean}
@@ -89,7 +89,7 @@ export default {
 
 	/**
 	 * The desired size of the chart element.
-	 * If value is not specified, the width of the chart will be calculated by the size of the parent element it's appended to.
+	 * If the value is not specified, the width of the chart will be calculated by the size of the parent element it's appended to.
 	 * @name size
 	 * @memberof Options
 	 * @type {object}
@@ -108,13 +108,13 @@ export default {
 
 	/**
 	 * The padding of the chart element.
-	 * - **NOTE:** for more information, see the "[`Understanding padding`](https://github.com/naver/billboard.js/wiki/Understanding-padding)"" wiki documentaion.
+	 * - **NOTE:** for more information, see the "[`Understanding padding`](https://github.com/naver/billboard.js/wiki/Understanding-padding)" wiki documentation.
 	 * @name padding
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object|boolean} [padding=true] Set padding of chart, and accepts object or boolean type.
 	 * - `Object`: Specify each side's padding.
-	 * - `false`: Remove padding completely and make shape to fully occupy the container element.
+	 * - `false`: Remove padding completely and make the shape fully occupy the container element.
 	 *   - In this case, axes and subchart will be hidden.
 	 *   - To adjust some padding from this state, use `axis.[x|y].padding` option.
 	 * @property {string} [padding.mode] padding mode
@@ -203,7 +203,7 @@ export default {
 	 * Set a callback to execute when the chart is clicked.
 	 * @name onclick
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onclick: function(event) {
@@ -218,7 +218,7 @@ export default {
 	 * Set a callback to execute when mouse/touch enters the chart.
 	 * @name onover
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onover: function(event) {
@@ -233,7 +233,7 @@ export default {
 	 * Set a callback to execute when mouse/touch leaves the chart.
 	 * @name onout
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onout: function(event) {
@@ -248,7 +248,7 @@ export default {
 	 * Set a callback to execute when user resizes the screen.
 	 * @name onresize
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onresize: function() {
@@ -262,7 +262,7 @@ export default {
 	 * Set a callback to execute when screen resize finished.
 	 * @name onresized
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onresized: function() {
@@ -276,7 +276,7 @@ export default {
 	 * Set a callback to execute before the chart is initialized
 	 * @name onbeforeinit
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onbeforeinit: function() {
@@ -290,7 +290,7 @@ export default {
 	 * Set a callback to execute when the chart is initialized.
 	 * @name oninit
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * oninit: function() {
@@ -304,7 +304,7 @@ export default {
 	 * Set a callback to execute after the chart is initialized
 	 * @name onafterinit
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onafterinit: function() {
@@ -315,10 +315,10 @@ export default {
 	onafterinit: <(() => void) | undefined>undefined,
 
 	/**
-	 * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
+	 * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawn.
 	 * @name onrendered
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default undefined
 	 * @example
 	 * onrendered: function() {
@@ -330,7 +330,7 @@ export default {
 
 	/**
 	 * Set duration of transition (in milliseconds) for chart animation.<br><br>
-	 * - **NOTE:** If `0 `or `null` set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
+	 * - **NOTE:** If `0` or `null` is set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
 	 * @name transition
 	 * @memberof Options
 	 * @type {object}
@@ -363,11 +363,11 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} [render] render object
-	 * @property {boolean} [render.lazy=true] Make to not render at initialization.
+	 * @property {boolean} [render.lazy=true] Make it not render at initialization.
 	 * - **NOTE**:
 	 *   - Enabled by default when bind element's visibility is hidden.
 	 *   - When set to `false`, will initialize the chart regardless the bind element's visibility state, but in this case chart can't be guaranteed to be rendered properly.
-	 * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
+	 * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visibility` inline css property or class value) & render when it is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
 	 * @example
 	 *  render: {
@@ -389,7 +389,7 @@ export default {
 	 *  document.getElementById('chart').style.display = 'block';  // (b)
 	 *
 	 * @example
-	 * 	// chart won't be rendered and not observing bind element's visiblity changes
+	 * 	// chart won't be rendered and not observing bind element's visibility changes
 	 *  var chart = bb.generate({
 	 *     render: {
 	 *          lazy: true,
@@ -416,7 +416,7 @@ export default {
 	 * - `[start] {number|Date|string}`: Start position of the region. If not set, the start will be the edge of the chart.
 	 * - `[end] {number|Date|string}`: End position of the region. If not set, the end will be the edge of the chart.
 	 * - `[class] {string}`: Class value to apply to the region.
-	 * - `[label] {object}` Lable text option.
+	 * - `[label] {object}` Label text option.
 	 *   - `text {string}`: Text value.
 	 *   - `x {number}`: x Position.
 	 *   - `y {number}`: y Position.

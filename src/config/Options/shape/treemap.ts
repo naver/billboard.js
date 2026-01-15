@@ -20,7 +20,12 @@ export default {
 	 * 	- sliceDice ([d3.treemapSliceDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSliceDice))
 	 * 	- squrify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
 	 * 	- resquarify ([d3.treemapResquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapResquarify))
-	 * @property {Function} [treemap.label.format] Set formatter for the label text.
+	 * @property {function} [treemap.label.format] Set formatter for the label text.<br>
+	 * - **Arguments:**
+	 *   - `value {number}`: Data value
+	 *   - `ratio {number}`: The `ratio` of how much space this tile occupies relative to the total area (0~1)
+	 *   - `id {string}`: Data id
+	 *   - `size {object}`: Tile size `{width, height}` in pixels
 	 * @property {number} [treemap.label.threshold=0.05] Set threshold ratio to show/hide labels text.
 	 * @property {number} [treemap.label.show=true] Show or hide label text.
 	 * @see [Demo: treemap](https://naver.github.io/billboard.js/demo/#Chart.TreemapChart)
@@ -33,12 +38,33 @@ export default {
 	 *          // show or hide label text
 	 *          show: false,
 	 *
-	 *          // set label text formatter
-	 *          format: function(value, ratio, id) {
+	 *          // Example 1: Format with currency
+	 *          format: function(value, ratio, id, size) {
+	 *              // size: {width, height} - tile size in pixels
 	 *              return d3.format("$")(value);
+	 *          },
 	 *
-	 *              // to multiline, return with '\n' character
-	 *              // return value +"%\nLine1\n2Line2";
+	 *          // Example 2: Show different content based on tile size
+	 *          format: function(value, ratio, id, size) {
+	 *              if (size.width > 100 && size.height > 50) {
+	 *                  return `${id}\n${d3.format("$")(value)}\n(${(ratio * 100).toFixed(1)}%)`;
+	 *              } else if (size.width > 50) {
+	 *                  return `${id}\n${d3.format("$")(value)}`;
+	 *              } else {
+	 *                  return d3.format("$")(value);
+	 *              }
+	 *          },
+	 *
+	 *          // Example 3: Include tile dimensions in label
+	 *          format: function(value, ratio, id, size) {
+	 *              return `${id}\n${value}\n${size.width.toFixed(0)}x${size.height.toFixed(0)}px`;
+	 *          },
+	 *
+	 *          // Example 4: Conditional formatting based on ratio
+	 *          format: function(value, ratio, id, size) {
+	 *              return ratio > 0.1 ?
+	 *                  `${id}\n${value} (${(ratio * 100).toFixed(1)}%)` :
+	 *                  value;
 	 *          },
 	 *
 	 *          // set ratio number

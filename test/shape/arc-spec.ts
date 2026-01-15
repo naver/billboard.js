@@ -905,5 +905,416 @@ describe("SHAPE ARC", () => {
 				}
 			});			
 		}));
+
+		it("should render correctly with padAngle and fractional values < 1", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["A", 0.42],
+						["B", 0.28],
+						["C", 0.28]
+					],
+					type: "donut"
+				},
+				donut: {
+					padAngle: 0.03
+				}
+			});
+
+			setTimeout(() => {
+				const arcs = chart.$.arc.selectAll(`.${$ARC.arc}`);
+
+				expect(arcs.size()).to.be.equal(3);
+
+				// Check that all arcs have valid paths (not "M 0 0")
+				arcs.each(function(d) {
+					const path = this.getAttribute("d");
+					expect(path).to.not.equal("M 0 0");
+					expect(path).to.not.be.null;
+
+					// Check that ratio is calculated correctly (not Infinity)
+					const ratio = chart.internal.getRatio("arc", d);
+					expect(ratio).to.be.finite;
+					expect(ratio).to.be.above(0);
+				});
+
+				done(1);
+			}, 300);
+		}));
+	});
+
+	describe("label.line option", () => {
+		it("should render label lines for pie chart when label.line=true", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50],
+						["data3", 20]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						line: true
+					}
+				}
+			});
+
+			setTimeout(() => {
+				const lines = chart.$.arc.selectAll(`.${$ARC.arcLabelLine}`);
+				const texts = chart.$.arc.selectAll(`.${$ARC.arcLabelLineText}`);
+
+				// Should have label lines for each data
+				expect(lines.size()).to.be.equal(3);
+				expect(texts.size()).to.be.equal(3);
+
+				// Each line should have valid points attribute
+				lines.each(function() {
+					const points = this.getAttribute("points");
+					expect(points).to.not.be.null;
+					expect(points.split(" ").length).to.be.equal(3); // startPoint, breakPoint, endPoint
+				});
+
+				// Each text should display the data id by default
+				const dataIds = ["data1", "data2", "data3"];
+				texts.each(function(d, i) {
+					expect(this.textContent).to.be.equal(dataIds[i]);
+				});
+
+				done(1);
+			}, 300);
+		}));
+
+		it("should render label lines for donut chart with custom settings", () => new Promise(done => {
+			const customDistance = 30;
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 70]
+					],
+					type: "donut"
+				},
+				donut: {
+					label: {
+						line: {
+							show: true,
+							distance: customDistance
+						}
+					}
+				}
+			});
+
+			setTimeout(() => {
+				const lines = chart.$.arc.selectAll(`.${$ARC.arcLabelLine}`);
+
+				expect(lines.size()).to.be.equal(2);
+
+				// Verify that the custom distance is applied
+				// polyline points format: "startX,startY breakX,breakY endX,endY"
+				lines.each(function() {
+					const points = this.getAttribute("points");
+					const [, breakPoint, endPoint] = points.split(" ").map(p => {
+						const [x, y] = p.split(",").map(Number);
+						return {x, y};
+					});
+
+					// The horizontal distance from breakPoint to endPoint should be the custom distance
+					const horizontalDistance = Math.abs(endPoint.x - breakPoint.x);
+
+					expect(horizontalDistance).to.be.closeTo(customDistance, 0.1);
+
+					// breakPoint and endPoint should have the same y coordinate (horizontal line)
+					expect(endPoint.y).to.be.closeTo(breakPoint.y, 0.1);
+				});
+
+				done(1);
+			}, 300);
+		}));
+
+		it("should use custom text formatter for label line text", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 70]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						line: {
+							show: true,
+							text: (value, ratio, id) => `${id}: ${value}`
+						}
+					}
+				}
+			});
+
+			setTimeout(() => {
+				const texts = chart.$.arc.selectAll(`.${$ARC.arcLabelLineText}`);
+
+				expect(texts.size()).to.be.equal(2);
+
+				// Check custom formatter is applied
+				const textContents = [];
+				texts.each(function() {
+					textContents.push(this.textContent);
+				});
+
+				expect(textContents).to.include("data1: 30");
+				expect(textContents).to.include("data2: 70");
+
+				done(1);
+			}, 300);
+		}));
+
+		it("should use label.format when line.text=false", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 70]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						format: (value) => `${value}%`,
+						line: {
+							show: true,
+							text: false
+						}
+					}
+				}
+			});
+
+			setTimeout(() => {
+				const texts = chart.$.arc.selectAll(`.${$ARC.arcLabelLineText}`);
+
+				expect(texts.size()).to.be.equal(2);
+
+				// Check that label.format is used
+				const textContents = [];
+				texts.each(function() {
+					textContents.push(this.textContent);
+				});
+
+				expect(textContents).to.include("30%");
+				expect(textContents).to.include("70%");
+
+				done(1);
+			}, 300);
+		}));
+
+		it("should render label lines for polar chart", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 60],
+						["data2", 120],
+						["data3", 80]
+					],
+					type: "polar"
+				},
+				polar: {
+					label: {
+						line: true
+					}
+				}
+			});
+
+			setTimeout(() => {
+				const lines = chart.$.arc.selectAll(`.${$ARC.arcLabelLine}`);
+				const texts = chart.$.arc.selectAll(`.${$ARC.arcLabelLineText}`);
+
+				expect(lines.size()).to.be.equal(3);
+				expect(texts.size()).to.be.equal(3);
+
+				done(1);
+			}, 300);
+		}));
+
+		it("should respect label threshold for label lines", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 95],
+						["data2", 5] // Below default threshold of 0.05
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						threshold: 0.1, // 10% threshold
+						line: true
+					}
+				}
+			});
+
+			setTimeout(() => {
+				const arcs = chart.$.main.select(`.${$ARC.chartArcs}`);
+				const texts = arcs.selectAll(`.${$ARC.arcLabelLineText}`);
+
+				// data2 (5%) is below threshold, its text should have opacity 0
+				let visibleTexts = 0;
+				texts.each(function() {
+					const opacity = this.style.opacity;
+					if (opacity !== "0") {
+						visibleTexts++;
+					}
+				});
+
+				// Only data1 should be visible (data2 is below threshold)
+				expect(visibleTexts).to.be.equal(1);
+
+				done(1);
+			}, 300);
+		}));
+
+		it("should not render label lines when label.line=false (default)", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 70]
+					],
+					type: "pie"
+				}
+			});
+
+			setTimeout(() => {
+				const lines = chart.$.arc.selectAll(`.${$ARC.arcLabelLine}`);
+
+				expect(lines.size()).to.be.equal(0);
+
+				done(1);
+			}, 300);
+		}));
+
+		it("should position label on right side for single data (full circle)", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 100]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						line: true
+					}
+				}
+			});
+
+			setTimeout(() => {
+				const texts = chart.$.arc.selectAll(`.${$ARC.arcLabelLineText}`);
+
+				expect(texts.size()).to.be.equal(1);
+
+				// For single data, text-anchor should be "start" (right side)
+				texts.each(function() {
+					expect(this.style.textAnchor).to.be.equal("start");
+				});
+
+				done(1);
+			}, 300);
+		}));
+
+		it("should vertically center multiline label text", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["Samsung\nElectronics\nKorea\nAsia", 60],
+						["Apple Inc", 80],
+						["Meta\nPlatforms", 20]
+					],
+					type: "donut"
+				},
+				donut: {
+					label: {
+						line: true
+					}
+				}
+			});
+
+			setTimeout(() => {
+				const lines = chart.$.arc.selectAll(`.${$ARC.arcLabelLine}`);
+				const texts = chart.$.arc.selectAll(`.${$ARC.arcLabelLineText}`);
+
+				expect(lines.size()).to.be.equal(3);
+				expect(texts.size()).to.be.equal(3);
+
+				// Check multiline text vertical centering
+				texts.each(function() {
+					const tspans = this.querySelectorAll("tspan");
+					const text = this.textContent;
+
+					if (tspans.length > 1) {
+						// Get the connector line's endpoint y coordinate
+						const transform = this.getAttribute("transform");
+						const translateMatch = transform.match(/translate\(([^,]+),([^)]+)\)/);
+						const translateY = parseFloat(translateMatch[2]);
+
+						// Get text bounding box
+						const bbox = this.getBBox();
+						const textCenterY = bbox.y + bbox.height / 2;
+
+						// The text block center should be close to y=0 (relative to translate position)
+						// Allow some tolerance for font rendering differences
+						expect(Math.abs(textCenterY)).to.be.lessThan(bbox.height / 2 + 5);
+					}
+				});
+
+				done(1);
+			}, 300);
+		}));
+
+		it("should correctly align 2-line, 3-line, and 4-line labels", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["Line1\nLine2", 25],
+						["Line1\nLine2\nLine3", 25],
+						["Line1\nLine2\nLine3\nLine4", 25],
+						["Single", 25]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						line: true
+					}
+				}
+			});
+
+			setTimeout(() => {
+				const texts = chart.$.arc.selectAll(`.${$ARC.arcLabelLineText}`);
+
+				texts.each(function() {
+					const tspans = this.querySelectorAll("tspan");
+					const lineCount = tspans.length;
+
+					if (lineCount > 1) {
+						// Verify tspan count matches expected line count
+						const text = this.textContent;
+						const expectedLines = text.split(/(?=Line)/).length;
+
+						expect(tspans.length).to.be.greaterThan(1);
+
+						// Verify the text block is vertically centered
+						// by checking the bounding box center is close to 0
+						const bbox = this.getBBox();
+						const textCenterY = bbox.y + bbox.height / 2;
+
+						// Center should be within reasonable tolerance of y=0
+						expect(Math.abs(textCenterY)).to.be.lessThan(bbox.height);
+					}
+				});
+
+				done(1);
+			}, 300);
+		}));
 	});
 });

@@ -13,10 +13,21 @@ export default {
 	 * @type {object}
 	 * @property {object} pie Pie object
 	 * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
-	 * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
-	 * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
+	 * @property {function} [pie.label.format] Set formatter for the label on each pie piece.
+	 * @property {number|function} [pie.label.ratio=undefined] Set ratio of labels position.
 	 * @property {number} [pie.label.threshold=0.05] Set threshold ratio to show/hide labels.
-	 * @property {object|Function} [pie.label.image] Set image to be displayed next to the label text.<br><br>
+	 * @property {boolean|object} [pie.label.line=false] Enable label with lines (displayed outside with connector lines).
+	 *  - `true`: Enable label with lines with default settings
+	 *  - `false`: Labels are displayed inside the pie slices (default behavior).
+	 *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
+	 * @property {boolean} [pie.label.line.show=true] Show or hide connector lines.
+	 * @property {number} [pie.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
+	 * @property {boolean|function} [pie.label.line.text=true] Show text at the end of the connector line (outside the shape).
+	 *  - `true`: show data "id" text
+	 *  - `false`: use default formatter(label.format) to show text
+	 *  - `function(value, ratio, id)`: Custom formatter function for the text.
+	 *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
+	 * @property {object|function} [pie.label.image] Set image to be displayed next to the label text.<br><br>
 	 * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
 	 * The arguments are:<br>
 	 *  - `v` is the value of the data point where the label is shown.
@@ -41,6 +52,7 @@ export default {
 	 * @see [Demo: outerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.OuterRadius)
 	 * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#PieChartOptions.StartingAngle)
 	 * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#PieChartOptions.LabelImage)
+	 * @see [Demo: label line](https://naver.github.io/billboard.js/demo/#PieChartOptions.LabelLine)
 	 * @example
 	 *  pie: {
 	 *      label: {
@@ -63,6 +75,20 @@ export default {
 	 *          },
 	 *          // or set ratio number
 	 *          ratio: 0.5,
+	 *
+	 *          // Enable label with lines (displayed outside with connector lines)
+	 *          line: false,  // default - labels inside
+	 *          line: true,   // enable label with lines with default settings
+	 *          line: {       // enable label with lines with custom settings
+	 *             show: true,
+	 *             distance: 20,  // horizontal line distance in pixels
+	 *
+	 *             // show text at the end of connector line (outside the shape)
+	 *             text: true,  // use default formatter
+	 *             text: function(value, ratio, id) {  // custom formatter
+	 *                 return d3.format(".1%")(ratio);
+	 *             }
+	 *          },
 	 *
 	 *          // set image to be displayed next to the label text
 	 *          image: {
@@ -145,6 +171,11 @@ export default {
 	pie_label_format: <(() => number | string) | undefined>undefined,
 	pie_label_ratio: <(() => number) | undefined>undefined,
 	pie_label_threshold: 0.05,
+	pie_label_line: <boolean | {
+		show?: boolean,
+		distance?: number,
+		text?: boolean | ((value: number, ratio: number, id: string) => string)
+	}>false,
 	pie_label_image: <
 		| {url: string, width: number, height: number, pos?: {x?: number, y?: number}}
 		| ((v: number, id: string, i: number) => {

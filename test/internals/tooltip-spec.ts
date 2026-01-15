@@ -1592,4 +1592,85 @@ describe("TOOLTIP", function() {
 			).to.not.throw;
 		});
 	});
+
+	describe("XSS prevention", () => {
+		describe("tooltip.contents", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100],
+							["data2", 130, 100, 140]
+						]
+					},
+					tooltip: {
+						contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
+							return `<div onclick="alert(1)"><script>alert('xss')</script>Value: ${d[0].value}</div>`;
+						}
+					}
+				};
+			});
+
+			it("should sanitize malicious tooltip contents", () => {
+				chart.tooltip.show({index: 1});
+
+				const tooltipHtml = chart.$.tooltip.html();
+
+				expect(tooltipHtml).to.not.include("<script>");
+				expect(tooltipHtml).to.not.include("</script>");
+				expect(tooltipHtml).to.not.include("onclick");
+				expect(tooltipHtml).to.include("Value:");
+			});
+		});
+
+		describe("tooltip with malicious data name", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["<script>alert(1)</script>data", 30, 200, 100]
+						]
+					}
+				};
+			});
+
+			it("should sanitize malicious data id in tooltip", () => {
+				chart.tooltip.show({index: 1});
+
+				const tooltipHtml = chart.$.tooltip.html();
+
+				expect(tooltipHtml).to.not.include("<script>");
+				expect(tooltipHtml).to.not.include("</script>");
+			});
+		});
+
+		describe("tooltip.format.title with XSS", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100]
+						]
+					},
+					tooltip: {
+						format: {
+							title: function(x) {
+								return `<iframe src="javascript:alert(1)"></iframe>Title ${x}`;
+							}
+						}
+					}
+				};
+			});
+
+			it("should sanitize malicious title format", () => {
+				chart.tooltip.show({index: 1});
+
+				const tooltipHtml = chart.$.tooltip.html();
+
+				expect(tooltipHtml).to.not.include("<iframe");
+				expect(tooltipHtml).to.not.include("javascript:");
+				expect(tooltipHtml).to.include("Title");
+			});
+		});
+	});
 });

@@ -5,6 +5,30 @@
 import {DataItem, GaugeTypes} from "./types";
 import {Chart} from "./chart";
 
+/**
+ * Label line configuration for arc chart types (donut, pie, polar, gauge).
+ * Enable labels to be displayed outside the shape with connector lines.
+ */
+export interface LabelLineOptions {
+	/**
+	 * Show or hide connector lines.
+	 */
+	show?: boolean;
+
+	/**
+	 * Set the distance of the horizontal part of the connector line in pixels.
+	 */
+	distance?: number;
+
+	/**
+	 * Show text at the end of the connector line (outside the shape).
+	 * - `true`: show data "id" text
+	 * - `false`: use default formatter (label.format) to show text
+	 * - `function(value, ratio, id)`: Custom formatter function for the text.
+	 */
+	text?: boolean | ((this: Chart, value: number, ratio: number, id: string) => string);
+}
+
 export interface ArcOptions {
 	/**
 	 *  Set corner radius of Arc(donut/gauge/pie/polar) shape.
@@ -216,7 +240,7 @@ export interface BarOptions {
 	};
 
 	/**
-	 * The senstivity offset value for interaction boundary.
+	 * The sensitivity offset value for interaction boundary.
 	 */
 	sensitivity?: number;
 
@@ -328,6 +352,14 @@ export interface DonutOptions {
 		 * Set threshold ratio to show/hide labels.
 		 */
 		threshold?: number;
+
+		/**
+		 * Enable label with lines (displayed outside with connector lines).
+		 * - `true`: Enable label with lines with default settings
+		 * - `false`: Labels are displayed inside the donut slices (default behavior)
+		 * - `LabelLineOptions`: Enable with custom settings
+		 */
+		line?: boolean | LabelLineOptions;
 
 		/**
 		 * Set image to be displayed next to the label text.
@@ -497,6 +529,15 @@ export interface GaugeOptions {
 		 * Set threshold ratio to show/hide labels.
 		 */
 		threshold?: number;
+
+		/**
+		 * Enable label with lines (displayed outside with connector lines).
+		 * - `true`: Enable label with lines with default settings
+		 * - `false`: Labels are displayed inside the gauge (default behavior)
+		 * - `LabelLineOptions`: Enable with custom settings
+		 * - **NOTE:** Not available for multi gauge type.
+		 */
+		line?: boolean | LabelLineOptions;
 
 		/**
 		 * Set image to be displayed next to the label text.
@@ -701,6 +742,14 @@ export interface PieOptions {
 		ratio?: ((this: Chart, d: DataItem, radius: number, h: number) => void) | number;
 
 		/**
+		 * Enable label with lines (displayed outside with connector lines).
+		 * - `true`: Enable label with lines with default settings
+		 * - `false`: Labels are displayed inside the pie slices (default behavior)
+		 * - `LabelLineOptions`: Enable with custom settings
+		 */
+		line?: boolean | LabelLineOptions;
+
+		/**
 		 * Set image to be displayed next to the label text.
 		 * @example
 		 * image: {
@@ -842,6 +891,14 @@ export interface PolarOptions {
 		 * Set ratio of labels position.
 		 */
 		ratio?: ((this: Chart, d: DataItem, radius: number, h: number) => void) | number;
+
+		/**
+		 * Enable label with lines (displayed outside with connector lines).
+		 * - `true`: Enable label with lines with default settings
+		 * - `false`: Labels are displayed inside the polar slices (default behavior)
+		 * - `LabelLineOptions`: Enable with custom settings
+		 */
+		line?: boolean | LabelLineOptions;
 
 		/**
 		 * Set image to be displayed next to the label text.
@@ -1142,7 +1199,7 @@ export interface TreemapOptions {
 		/**
 		 * Set formatter for the label.
 		 */
-		format?: (this: Chart, value: number, ratio: number, id: string) => string;
+		format?: (this: Chart, value: number, ratio: number, id: string, size: {width: number, height: number}) => string;
 
 		/**
 		 * Set threshold ratio to show/hide labels.

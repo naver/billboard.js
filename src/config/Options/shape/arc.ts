@@ -12,14 +12,14 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} arc Arc object
-	 * @property {number|Function} [arc.cornerRadius=0] Set corner radius of Arc(donut/gauge/pie/polar) shape.
+	 * @property {number|function} [arc.cornerRadius=0] Set corner radius of Arc(donut/gauge/pie/polar) shape.
 	 *  - **NOTE:**
 	 * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
 	 * @property {number} [arc.cornerRadius.ratio=0] Set ratio relative of outer radius.
 	 * @property {object} [arc.needle] Set needle options.
 	 * @property {boolean} [arc.needle.show=false] Show or hide needle.
 	 * @property {string} [arc.needle.color] Set needle filled color.
-	 * @property {Function} [arc.needle.path] Set custom needle path function.
+	 * @property {function} [arc.needle.path] Set custom needle path function.
 	 *  - **NOTE:**
 	 *   - The path should be starting from 0,0 (which is center) to top center coordinate.
 	 *   - The function will receive, `length`{number} parameter which indicating the needle length in pixel relative to radius.
@@ -43,8 +43,8 @@ export default {
 	 * @property {string} [arc.rangeText.unit="absolute"] Specify the range text unit.
 	 * - "absolute": Show absolute value
 	 * - "%": Show percentage value
-	 * @property {boolean} [arc.rangeText.fiexed=false] Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
-	 * @property {Function} [arc.rangeText.format] Set format function for the range text.
+	 * @property {boolean} [arc.rangeText.fixed=false] Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
+	 * @property {function} [arc.rangeText.format] Set format function for the range text.
 	 * @property {number} [arc.rangeText.position] Set position function or object for the range text.
 	 * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
 	 * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#PieChartOptions.CornerRadius)

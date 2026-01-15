@@ -35,7 +35,7 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on [
   - [billboard.js 3.0 release: D3.js v6 support & new candlestick type!](https://netil.medium.com/billboard-js-3-0-release-d3-js-v6-support-new-candlestick-type-9bd74af6a753)
 
 ## Questions?
-If you have any questions, checkout the previous posts or create a new one at:
+If you have any questions, check out the previous posts or create a new one at:
 - [Stack Overflow: billboard.js tagged posts](https://stackoverflow.com/questions/tagged/billboard.js)
 - [Issue with 'question' label](https://github.com/naver/billboard.js/issues?utf8=%E2%9C%93&q=label%3Aquestion)
 
@@ -89,7 +89,7 @@ You can download the compressed files for production
 
 ### Themes
 > [!NOTE]
-> If you want apply themes, simply load one of the theme css file provided instead of the default css file.
+> If you want to apply themes, simply load one of the theme css files provided instead of the default css file.
 > - [Screenshot Preview](https://github.com/naver/billboard.js/wiki/Themes)
 
 
@@ -121,14 +121,14 @@ You can download the compressed files for production
 ### Nightly version
 
 Nightly version is the latest build from the master branch.
-With nightly, you can try upcoming changes prior the official release.
+With nightly, you can try upcoming changes prior to the official release.
 
 - https://github.com/naver/billboard.js/tree/nightly/dist
 
 > [!NOTE]
 > The version info will be given as the build datetime: `x.x.x-nightly-yyyymmddhhmmss`
 
-There're two ways to install from `nightly` branch directly.
+There are two ways to install from the `nightly` branch directly.
 ```js
 // Specify on 'package.json' file
 "dependencies": {
@@ -142,9 +142,9 @@ There're two ways to install from `nightly` branch directly.
 $ npm install git+https://github.com/naver/billboard.js.git#nightly --save
 ```
 
-### Next(Release Canditate) version
+### Next (Release Candidate) version
 
-Next version is the 'release candidate' build, prior the latest official release.
+Next version is the 'release candidate' build, prior to the latest official release.
 
 ```sh
 # Run install command from shell
@@ -176,9 +176,9 @@ If you want to use 'billboard.js' without installation, load files directly from
 > [!IMPORTANT]
 > - Basically will work on all SVG and ES6+ supported browsers.
 > - <sup>*</sup>Notes for legacy browsers:
->   - Recommended to use `packaged` build or construct your own build following [`How to bundle for legacy browsers?`](https://github.com/naver/billboard.js/wiki/How-to-bundle-for-legacy-browsers%3F) instruction.
->   - D3.js dropped the support of legacy browsers since [v6](https://observablehq.com/@d3/d3v6-migration-guide).
->   - The support isn't fully guaranteed.
+>   - Recommended to use the `packaged` build or construct your own build following [`How to bundle for legacy browsers?`](https://github.com/naver/billboard.js/wiki/How-to-bundle-for-legacy-browsers%3F) instructions.
+>   - D3.js has dropped support for legacy browsers since [v6](https://observablehq.com/@d3/d3v6-migration-guide).
+>   - Support isn't fully guaranteed.
 
 
 ## Dependency by version
@@ -206,7 +206,7 @@ Load billboard.js after D3.js.
     <script src="$YOUR_PATH/billboard.pkgd.js"></script>
 ```
 
-or use importing ESM.
+or by importing ESM.
 > [!TIP]
 > 📌 Also check: [How to load as ESM directly from the browser?](https://github.com/naver/billboard.js/wiki/How-to-load-as-ESM-directly-from-the-browser%3F)
 
@@ -227,8 +227,8 @@ import "billboard.js/dist/theme/insight.css"
 ```
 
 > [!NOTE]
-> - For migration from C3.js, checkout the [migration guide](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F).
-> - If has an issue bundling for legacy browsers, checkout "[How to bundle for legacy browsers?](https://github.com/naver/billboard.js/wiki/How-to-bundle-for-legacy-browsers%3F)".
+> - For migration from C3.js, check out the [migration guide](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F).
+> - If you have an issue bundling for legacy browsers, check out "[How to bundle for legacy browsers?](https://github.com/naver/billboard.js/wiki/How-to-bundle-for-legacy-browsers%3F)".
 
 ## Basic usage example
 

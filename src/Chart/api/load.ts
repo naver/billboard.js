@@ -32,7 +32,7 @@ export default {
 	 *    | categories | Array | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
 	 *    | classes | Object | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
 	 *    | colors | Object | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
-	 *    | data | Obejct | Data objects to be loaded. Checkout the example. |
+	 *    | data | Object | Data objects to be loaded. Checkout the example. |
 	 *    | done | Function | The specified function will be called after data loaded.|
 	 *    | headers | string |  Set request header if loading via `data.url`.<br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
 	 *    | keys | Object |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
@@ -91,7 +91,7 @@ export default {
 	 *
 	 * chart.load({
 	 *   columns: [
-	 *     // when existing chart has `x` value, should provide correponding 'x' value.
+	 *     // when existing chart has `x` value, should provide corresponding 'x' value.
 	 *     // with 'append' option, the 'data1' will have `[36,30,24,37]`.
 	 *     ["x", "2021-02-01T08:00:00"],
 	 *     ["data1", 37]
@@ -199,7 +199,7 @@ export default {
 	 *  | key | Type | Description |
 	 *  | --- | --- | --- |
 	 *  | ids | String &vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
-	 *  | done | Fuction | Callback after data is unloaded. |
+	 *  | done | Function | Callback after data is unloaded. |
 	 *  | resizeAfter | boolean | Resize after the unload. Default value is `false`.<br>- This option won't call `onresize` neither `onresized`.<br>- When set to 'true', will call `.flush(true)` at the end of unload. |
 	 * @example
 	 *  // Unload data2 and data3

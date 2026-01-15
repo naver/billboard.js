@@ -15,7 +15,7 @@ export default {
 	 * @type {object}
 	 * @property {object} point Point object
 	 * @property {boolean} [point.show=true] Whether to show each point in line.
-	 * @property {number|Function} [point.r=2.5] The radius size of each point.
+	 * @property {number|function} [point.r=2.5] The radius size of each point.
 	 *  - **NOTE:** Disabled for 'bubble' type
 	 * @property {boolean|object} [point.radialGradient=false] Set the radial gradient on point.<br><br>
 	 * Or customize by giving below object value:
@@ -32,7 +32,7 @@ export default {
 	 * - **NOTE:**
 	 * 	- `null` will make to not set inline 'opacity' css prop.
 	 * 	- when no value(or undefined) is set, it defaults to set opacity value according its chart types.
-	 * @property {number|string|Function} [point.sensitivity=10] The senstivity value for interaction boundary.
+	 * @property {number|string|function} [point.sensitivity=10] The sensitivity value for interaction boundary.
 	 * - **Available Values:**
 	 *   - {number}: Absolute sensitivity value which is the distance from the data point in pixel.
 	 *   - "radius": sensitivity based on point's radius
@@ -79,7 +79,7 @@ export default {
 	 *          return r;
 	 *      },
 	 *
-	 *      // will generate follwing radialGradient:
+	 *      // will generate following radialGradient:
 	 *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/radialGradient
 	 *      // <radualGradient cx="0.3" cy="0.3" r="0.7">
 	 *      //    <stop offset="0.1" stop-color="$DATA_COLOR" stop-opacity="1"></stop>

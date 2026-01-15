@@ -4,7 +4,7 @@
  */
 import {namespaces as d3Namespaces, select as d3Select} from "d3-selection";
 import {document} from "../../module/browser";
-import {isFunction, isObjectType, notEmpty, toArray} from "../../module/util";
+import {isFunction, isObjectType, notEmpty, sanitize, toArray} from "../../module/util";
 
 /**
  * Check if point draw methods are valid
@@ -34,7 +34,7 @@ function insertPointInfoDefs(point: string, id: string): void {
 		}
 	};
 
-	const doc = new DOMParser().parseFromString(point, "image/svg+xml");
+	const doc = new DOMParser().parseFromString(sanitize(point), "image/svg+xml");
 	const node = doc.documentElement;
 	const clone = document.createElementNS(d3Namespaces.svg, node.nodeName.toLowerCase());
 
@@ -48,7 +48,7 @@ function insertPointInfoDefs(point: string, id: string): void {
 		const parent = d3Select(clone);
 
 		if ("innerHTML" in clone) {
-			parent.html(node.innerHTML);
+			parent.html(sanitize(node.innerHTML));
 		} else {
 			toArray(node.childNodes).forEach(v => {
 				copyAttr(v, parent.append(v.tagName).node());
@@ -89,7 +89,7 @@ export default {
 
 	/**
 	 * Get generate point function
-	 * @returns {Function}
+	 * @returns {function}
 	 * @private
 	 */
 	generatePoint(): Function {
@@ -114,7 +114,7 @@ export default {
 					const defsPoint = $el.defs.select(`#${pointId}`);
 
 					if (defsPoint.size() < 1) {
-						insertPointInfoDefs.bind($$)(point, pointId);
+						insertPointInfoDefs.call($$, point, pointId);
 					}
 
 					if (method === "create") {

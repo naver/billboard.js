@@ -374,7 +374,7 @@ export interface ChartOptions {
 		lazy?: boolean;
 
 		/**
-		 * Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+).
+		 * Observe bind element's visibility(`display` or `visibility` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+).
 		 * When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
 		 */
 		observe?: boolean;
@@ -911,7 +911,7 @@ export interface PointOptions {
 	};
 
 	/**
-	 * The senstivity value for interaction boundary.
+	 * The sensitivity value for interaction boundary.
 	 *
 	 * - **Available Values:**
 	 *   - {number}: Absolute sensitivity value which is the distance from the data point in pixel.
@@ -1085,7 +1085,7 @@ export interface Data {
 	xs?: { [key: string]: string };
 
 	/**
-	 * Set a format to parse string specifed as x.
+	 * Set a format to parse string specified as x.
 	 * Default is %Y-%m-%d
 	 */
 	xFormat?: string;
@@ -1159,7 +1159,7 @@ export interface Data {
 
 		/**
 		 * Set label text background colors.
-		 * - **NOTE**: When function is set, background colors can be sepcified one color per dataset.
+		 * - **NOTE**: When function is set, background colors can be specified one color per dataset.
 		 *   - Within the function, the last returned color for dataset will be used.
 		 *   - Only can control set or unset background color for each values.
 		 */
@@ -1361,7 +1361,7 @@ export interface Data {
 	/**
 	 * Define the order of the data.
 	 * This option changes the order of stacking the data and pieces of pie/donut. If null specified, it will be the order the data loaded.
-	 * If function specified, it will be used to sort the data and it will recieve the data as argument.
+	 * If function specified, it will be used to sort the data and it will receive the data as argument.
 	 *
 	 * - Available Values: desc, asc, function (data1, data2) { ... }, null
 	 * **NOTE**: order function, only works for Axis based types & Arc types, except `Radar` type.
@@ -1419,7 +1419,7 @@ export interface Data {
 
 		/**
 		 * Set multiple data points selection enabled.
-		 * If this option set true, multile data points can have the selected state at the same time.
+		 * If this option set true, multiple data points can have the selected state at the same time.
 		 * If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
 		 */
 		multiple?: boolean;
@@ -1455,9 +1455,22 @@ export interface Data {
 		 * Set the stacking to be normalized
 		 * - NOTE: For stacking, 'data.groups' option should be set
 		 *  - y Axis will be set in percentage value (0 ~ 100%)
-		 *  - Must have postive values
+		 *  - Must have positive values
+		 *  - Data not in any group will not be normalized when using perGroup option
+		 * 
+		 * When boolean:
+		 *  - true: Normalize all grouped data together (all groups combined to 0-100%)
+		 * 
+		 * When object with perGroup:
+		 *  - perGroup: true - Normalize each group independently (each group becomes 0-100%)
+		 *    Data not in any group will display with their original values.
+		 *    If non-grouped data shares the same axis (e.g., y), it will be
+		 *    displayed on the 0-100 absolute scale. To display original values,
+		 *    assign them to a separate axis (e.g., y2).
 		 */
-		normalize?: boolean;
+		normalize?: boolean | {
+			perGroup?: boolean;
+		};
 	};
 
 	/**

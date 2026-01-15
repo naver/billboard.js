@@ -13,16 +13,16 @@ export default {
 	/**
 	 * Setup the way to evaluate tick text size.
 	 * - **NOTE:**
-	 *   - Setting `false` or custom evaluator, highly recommended to memoize evaluated text dimension value to not degrade performance.
+	 *   - When setting `false` or a custom evaluator, it is highly recommended to memoize evaluated text dimension value to not degrade performance.
 	 * @name axis․evalTextSize
 	 * @memberof Options
-	 * @type {boolean|Function}
+	 * @type {boolean|function}
 	 * @default true
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.AxisEvalTextSize)
 	 * @example
 	 * axis: {
 	 *   // will evaluate getting text size every time.
-	 *   evalTextSize: false.
+	 *   evalTextSize: false,
 	 *
 	 *   // set a custom evaluator
 	 *   evalTextSize: function(textElement, axisId) {
@@ -71,8 +71,8 @@ export default {
 	 * Set axis tooltip.
 	 * - **NOTE:**
 	 *   - When enabled, will disable default focus grid line.
-	 *   - For `timeseries` x Axis, tootlip will be formatted using x Axis' tick format.
-	 *   - For `category` x Axis, tootlip will be displaying scales' value text.
+	 *   - For `timeseries` x Axis, tooltip will be formatted using x Axis' tick format.
+	 *   - For `category` x Axis, tooltip will be displaying scales' value text.
 	 * @name axis․tooltip
 	 * @memberof Options
 	 * @type {boolean}
@@ -85,11 +85,11 @@ export default {
 	 * axis: {
 	 *     tooltip: true, // default background color is
 	 *
-	 *     // set backgound color for axis tooltip texts
+	 *     // set background color for axis tooltip texts
 	 *     tooltip: {
 	 *          backgroundColor: "red",
 	 *
-	 *          // set differenct backround colors per axes
+	 *          // set different background colors per axes
 	 *          // NOTE: In this case, only specified axes tooltip will appear.
 	 *          backgroundColor: {
 	 *               x: "green",

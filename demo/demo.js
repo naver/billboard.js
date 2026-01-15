@@ -2401,7 +2401,7 @@ var demos = {
 			]
 		},
 		XAxisTickTimeseries: {
-			description: "Drag over chart area and checkout the x Axis tick text label",
+			description: "Drag over the chart area and check out the x Axis tick text label",
 			options: {
 				data: {
 					x: "x",
@@ -3466,6 +3466,122 @@ var demos = {
 				}
 			}
 		],
+		DataStackNormalizedGroup: [
+			{
+				options: {
+					title: {
+						text: "Normalize per group - Multiple groups"
+					},
+					data: {
+						columns: [
+							["data1", 100, 200, 150, 300],
+							["data2", 200, 400, 350, 200],
+							["data3", 50, 100, 80, 120],
+							["data4", 150, 200, 220, 180]
+						],
+						type: "bar",
+						groups: [
+							["data1", "data2"],
+							["data3", "data4"]
+						],
+						stack: {
+							normalize: {
+								perGroup: true
+							}
+						}
+					},
+					axis: {
+						y: {
+							label: {
+								text: "Percentage (%)",
+								position: "outer-middle"
+							}
+						}
+					},
+					tooltip: {
+						format: {
+							title: function(x) { return "Index " + x; }
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Normalize per group - With non-grouped data"
+					},
+					data: {
+						columns: [
+							["data1", 100, 200, 150, 300],
+							["data2", 200, 400, 350, 200],
+							["data3", 50, 100, 80, 120]
+						],
+						type: "bar", 
+						types: {
+							"data3": "line"
+						},
+						groups: [
+							["data1", "data2"]
+						],
+						stack: {
+							normalize: {
+								perGroup: true
+							}
+						},
+						axes: {
+							data3: "y2"
+						}
+					},
+					axis: {
+						y: {
+							label: {
+								text: "Grouped: % | Non-grouped: Absolute",
+								position: "outer-middle"
+							}
+						},
+						y2: {
+							show: true
+						}
+					},
+					tooltip: {
+						format: {
+							title: function(x) { return "Index " + x; }
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Normalize per group - Area chart"
+					},
+					data: {
+						columns: [
+							["data1", 30, 280, 951, 400, 150],
+							["data2", 130, 357, 751, 400, 150],
+							["data3", 50, 100, 200, 150, 80],
+							["data4", 100, 200, 300, 250, 120]
+						],
+						types: {
+							data1: "area",
+							data2: "area",
+							data3: "bar",
+							data4: "bar",
+						},
+						groups: [
+							["data1", "data2"],
+							["data3", "data4"]
+						],
+						stack: {
+							normalize: {
+								perGroup: true
+							}
+						}
+					},
+					clipPath: false
+				}
+			}
+		],
 		DataXSort: [
 			{
 				options: {
@@ -3749,7 +3865,7 @@ var demos = {
 			}
 		},
 		SubChart: {
-			description: "Drag over subchart area to zoom main chart.<br>When is zoomed, try dragging zoom selection element or expand it dragging each edge(left/right)",
+			description: "Drag over the subchart area to zoom the main chart.<br>When zoomed, try dragging the zoom selection element or expand it by dragging each edge (left/right)",
 			options: {
 				data: {
 					columns: [
@@ -3764,7 +3880,7 @@ var demos = {
 			}
 		},
 		Zoom: {
-			description: "For zoom, move mouse wheel(desktop) or pinch(mobile) over chart area.<br>When is zoomed, navigate with dragging it.",
+			description: "For zooming, move the mouse wheel (desktop) or pinch (mobile) over the chart area.<br>When zoomed, navigate by dragging it.",
 			options: {
 				data: {
 					columns: [
@@ -3778,7 +3894,7 @@ var demos = {
 			}
 		},
 		DragZoom: {
-			description: "Drag over chart area",
+			description: "Drag over the chart area",
 			options: {
 				data: {
 					columns: [
@@ -3854,7 +3970,7 @@ d3.select(".chart_area")
 		},
 		LegendFormat: [
 			{
-				description: "Stay hovering on each of legend items to see full data name text.",
+				description: "Hover over each legend item to see the full data name text.",
 				options: {
 					data: {
 						columns: [
@@ -3899,7 +4015,7 @@ d3.select(".chart_area")
 		],
 		LegendItemInteraction: [
 			{
-				description: "<b>Single click + AltKey(Win)/optionKey(Mac)</b><br>or <b>Double click</b> legend item to show/hide data series",
+				description: "<b>Single click + AltKey (Win) / OptionKey (Mac)</b><br>or <b>Double click</b> a legend item to show/hide the data series",
 				options: {
 					title: {
 						text: "Single click"
@@ -4099,7 +4215,7 @@ d3.select(".chart_area")
 
 	Plugins: {
 		StanfordDiagram: {
-			description: "Must load or import plugin before the use.",
+			description: "Must load or import the plugin before use.",
 			options: {
 				data: {
 					x: "HPE",
@@ -4247,7 +4363,7 @@ d3.select(".chart_area")
 			]
 		},
 		TextOverlap: {
-			description: "Prevents data label texts overlap using <a href='https://en.wikipedia.org/wiki/Voronoi_diagram' target='_new'>Voronoi layout</a>.<br>Must load or import plugin before the use.",
+			description: "Prevents data label texts overlap using <a href='https://en.wikipedia.org/wiki/Voronoi_diagram' target='_new'>Voronoi layout</a>.<br>Must load or import the plugin before use.",
 			options: {
 				data: {
 					columns: [
@@ -4279,7 +4395,7 @@ d3.select(".chart_area")
 			}
 		},
 		BubbleCompare: {
-			description: "Compare data 3-dimensional ways: x-axis, y-axis &s bubble-size.<br>&rarr; <b>Value x:</b> population density / <b>Value y:</b> Area / <b>Value z:</b> population.<br><br>Must load or import plugin before the use.",
+			description: "Compare data 3-dimensional ways: x-axis, y-axis & bubble-size.<br>&rarr; <b>Value x:</b> population density / <b>Value y:</b> Area / <b>Value z:</b> population.<br><br>Must load or import the plugin before use.",
 			options: {
 				data: {
 					"type": "bubble",
@@ -4323,7 +4439,7 @@ d3.select(".chart_area")
 			}
 		},
 		TableView: {
-			description: "Generates table view for bound dataset.<br>Must load or import plugin before the use.",
+			description: "Generates table view for bound dataset.<br>Must load or import the plugin before use.",
 			options: {
 				data: {
 					x: "x",
@@ -4356,7 +4472,7 @@ d3.select(".chart_area")
 			}
 		},
 		Sparkline: {
-			description: "Generates multiple tiny charts from single instance.<br>Must load or import plugin before the use.",
+			description: "Generates multiple tiny charts from single instance.<br>Must load or import the plugin before use.",
 			options: {
 				size: {
 					width: 150,
@@ -4535,7 +4651,7 @@ d3.select(".chart_area")
 			}
 		},
 		FocusOnly: {
-			description: "Data point is displayed only when is hovered.",
+			description: "Data points are displayed only when hovered.",
 			options: {
 				data: {
 					columns: [
@@ -6068,7 +6184,7 @@ d3.select(".chart_area")
 							var g = pattern
 								.append("g")
 								.style("fill", fillColor || "#000")
-								.style("opactiy", opacity || "0.2");
+								.style("opacity", opacity || "0.2");
 
 							g
 								.append("circle")
@@ -6582,6 +6698,28 @@ setTimeout(function() {
 				donut: {
 					title: "Title Text",
 					padAngle: 0.1
+				}
+			}
+		},
+		LabelLine: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 50],
+						["data4", 80]
+					],
+					type: "donut"
+				},
+				donut: {
+					title: "Label Line",
+					label: {
+						format: function(value, ratio, id) {
+							return value + "\n(" + (ratio * 100).toFixed(0) + "%)";
+						},
+						line: true
+					}
 				}
 			}
 		}
@@ -7186,6 +7324,35 @@ setTimeout(function() {
 				];
 			}
 		},
+		LabelLine: {
+			options: {
+				size: {
+					height: 250
+				},
+				data: {
+					columns: [
+						["Google Cloud", 120],
+						["Microsoft\nAzure", 40],
+						["AWS", 130]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					label: {
+						format: function(value, ratio, id) {
+							return value + "%";
+						},
+						line: {
+							show: true,
+							distance: 25,
+							text: true
+						}
+					},
+					min: 0,
+					max: 100
+				}
+			}
+		}
 	},
 	LineChartOptions: {
 		HidePoints: {
@@ -7477,7 +7644,33 @@ setTimeout(function() {
 					startingAngle: 1
 				}
 			}
-		}		
+		},
+		LabelLine: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 75],
+						["data4", 45],
+						["data5", 60]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						format: function(value, ratio, id) {
+							return (ratio * 100).toFixed(1) + "%";
+						},
+						line: {
+							show: true,
+							distance: 30,
+							text: true
+						}
+					}
+				}
+			}
+		}
 	},
 	RadarChartOptions: {
 		RadarAxis: {
@@ -7689,11 +7882,46 @@ setTimeout(function() {
 					}
 				}
 			}
+		},
+	LabelLine: {
+		options: {
+			data: {
+				columns: [
+					["Samsung\nElectronics\nKorea\nAsia", 60],
+					["Apple Inc", 80],
+					["Google Cloud", 120],
+					["Microsoft Azure", 40],
+					["Amazon\nWeb\nServices", 30],
+					["Meta\nPlatforms", 20],
+					["Netflix Streaming", 90],
+					["Netflix Korea", 90]
+				],
+				type: "polar"
+			},
+			polar: {
+				level: {
+					depth: 4,  
+					max: 120
+				},
+				label: {
+					format: function(value, ratio, id) {
+						return value;
+					},
+					line: {
+						show: true,
+						distance: 15,
+						text: function(value, ratio, id) {
+							return id + "\n" + (ratio * 100).toFixed(1) + "%";
+						}
+					}
+				}
+			}
 		}
+	}
 	},
 	Boost: {
 		useCssRule: {
-			description: "Each data point's color styles are set by CSS rule, not as inlined styles.<br>*Checkout from devtools.",
+			description: "Each data point's color styles are set by CSS rules, not as inline styles.<br>*Check out via devtools.",
 			options: {
 				boost: {
 					useCssRule: true

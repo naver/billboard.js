@@ -148,7 +148,7 @@ describe("PLUGIN: TABLE-VIEW", () => {
 		});
 
 		it("set options", () => {
-			pluginArgs.categoryTitle = "<img src=''>MyCategory";
+			pluginArgs.categoryTitle = "<img onload='alert(1)' src=''>MyCategory";
 			pluginArgs.title = '<SCRIPT >alert(1)<\/SCRIPT>어쩌고 저쩌고222';
 		});
 
@@ -156,7 +156,7 @@ describe("PLUGIN: TABLE-VIEW", () => {
 			const table = document.querySelector(`table.${pluginArgs.class}`) as HTMLTableElement;
 
 			expect(table.querySelector("caption")?.innerHTML).to.not.include("script");
-			expect(table.querySelector("thead th")?.innerHTML).to.not.include("img");
+			expect(table.querySelector("thead th")?.innerHTML).to.not.include("onload");
 		});
 	});
 

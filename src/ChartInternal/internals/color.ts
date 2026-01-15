@@ -8,7 +8,7 @@ import {d3Selection} from "../../../types";
 import {$ARC, $COLOR, $SHAPE} from "../../config/classes";
 import {document} from "../../module/browser";
 import {KEY} from "../../module/Cache";
-import {isFunction, isObject, isString, notEmpty} from "../../module/util";
+import {isFunction, isObject, isString, notEmpty, sanitize} from "../../module/util";
 import type {IArcData, IDataRow} from "../data/IData";
 
 /**
@@ -90,6 +90,8 @@ export default {
 		const $$ = this;
 		const {$el, config} = $$;
 		const ids: string[] = [];
+		const hasGradient = config.area_linearGradient || config.bar_linearGradient ||
+			config.point_radialGradient;
 
 		let pattern = notEmpty(config.color_pattern) ?
 			config.color_pattern :
@@ -125,13 +127,11 @@ export default {
 			// if callback function is provided
 			if (isFunction(colors[id])) {
 				color = colors[id].bind($$.api)(d);
-
-				// if specified, choose that color
 			} else if (colors[id]) {
+				// if specified, choose that color
 				color = colors[id];
-
-				// if not specified, choose from pattern
 			} else {
+				// if not specified, choose from pattern
 				if (ids.indexOf(id) < 0) {
 					ids.push(id);
 				}
@@ -143,7 +143,24 @@ export default {
 				colors[id] = color;
 			}
 
-			return isFunction(callback) ? callback.bind($$.api)(color, d) : color;
+			color = isFunction(callback) ? callback.call($$.api, color, d) : color;
+
+			if (hasGradient) {
+				const stop = $$.$el.defs.selectAll(
+					`[id$='-gradient${$$.getTargetSelectorSuffix(id)}'] stop`
+				);
+				let hasSameColor;
+
+				stop.each(function(d, i) {
+					hasSameColor = i === 0 ?
+						this.style.stopColor :
+						this.style.stopColor === hasSameColor;
+				});
+
+				hasSameColor === true && stop.attr("stop-color", color);
+			}
+
+			return color;
 		};
 	},
 
@@ -178,7 +195,7 @@ export default {
 
 	/**
 	 * Append data backgound color filter definition
-	 * @param {string|object|Function} color Color string, object, or function
+	 * @param {string|object|function} color Color string, object, or function
 	 * @param {object} attr filter attribute
 	 * @private
 	 */
@@ -206,7 +223,7 @@ export default {
 				const id = `${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(v)}${
 					isString(color) ? $$.getTargetSelectorSuffix(color) : ""
 				}`;
-				const colorValue = v === "" ? color : color?.[v] || "";
+				const colorValue = sanitize(v === "" ? color : color?.[v] || "");
 
 				if (defs.select(`#${id}`).empty()) {
 					defs.append("filter")
@@ -215,10 +232,8 @@ export default {
 						.attr("width", attr.width)
 						.attr("height", attr.height)
 						.attr("id", id)
-						.html(
-							`<feFlood flood-color="${colorValue}" />
-							<feComposite in="SourceGraphic" />`
-						);
+						.html(`<feFlood flood-color="${colorValue}" />
+							<feComposite in="SourceGraphic" />`);
 				}
 			});
 		}

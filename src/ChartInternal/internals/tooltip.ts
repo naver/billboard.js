@@ -99,9 +99,9 @@ export default {
 	/**
 	 * Returns the tooltip content(HTML string)
 	 * @param {object} d data
-	 * @param {Function} defaultTitleFormat Default title format
-	 * @param {Function} defaultValueFormat Default format for each data value in the tooltip.
-	 * @param {Function} color Color function
+	 * @param {function} defaultTitleFormat Default title format
+	 * @param {function} defaultValueFormat Default format for each data value in the tooltip.
+	 * @param {function} color Color function
 	 * @returns {string} html
 	 * @private
 	 */
@@ -119,14 +119,23 @@ export default {
 		// determine fotmatter function with sanitization
 		const titleFormat = (...arg) => sanitize((titleFn || defaultTitleFormat)(...arg));
 		const nameFormat = (...arg) => sanitize((nameFn || (name => name))(...arg));
-		const valueFormat = (...arg) => {
-			const fn = valueFn || (
-				state.hasTreemap || $$.isStackNormalized() ?
-					(v, ratio) => `${(ratio * 100).toFixed(2)}%` :
-					defaultValueFormat
-			);
+		const valueFormat = (v, ratio, id, index) => {
+			let fn = valueFn;
 
-			return sanitize(fn(...arg));
+			if (!fn) {
+				// For normalize per group, only show percentage for data in groups
+				if (
+					state.hasTreemap ||
+					($$.isStackNormalized() &&
+						(!$$.isStackNormalizedPerGroup() || $$.isGrouped(id)))
+				) {
+					fn = (v, ratio) => `${(ratio * 100).toFixed(2)}%`;
+				} else {
+					fn = defaultValueFormat;
+				}
+			}
+
+			return sanitize(fn(v, ratio, id, index));
 		};
 
 		const order = config.tooltip_order;
@@ -207,9 +216,9 @@ export default {
 
 			if ($$.isAreaRangeType(row)) {
 				const [high, low] = ["high", "low"].map(v =>
-					valueFormat($$.getRangedData(row, v), ...param)
+					valueFormat($$.getRangedData(row, v), ...param as [number, string, number])
 				);
-				const mid = valueFormat(getRowValue(row), ...param);
+				const mid = valueFormat(getRowValue(row), ...param as [number, string, number]);
 
 				value = `<b>Mid:</b> ${mid} <b>High:</b> ${high} <b>Low:</b> ${low}`;
 			} else if ($$.isCandlestickType(row)) {
@@ -220,7 +229,7 @@ export default {
 						return value ?
 							valueFormat(
 								$$.getRangedData(row, v, "candlestick"),
-								...param
+								...param as [number, string, number]
 							) :
 							undefined;
 					});
@@ -234,7 +243,7 @@ export default {
 
 				value = `${valueFormat(rangeValue, undefined, id, index)}`;
 			} else {
-				value = valueFormat(getRowValue(row), ...param);
+				value = valueFormat(getRowValue(row), ...param as [number, string, number]);
 			}
 
 			if (value !== undefined) {
@@ -524,12 +533,12 @@ export default {
 
 			// set tooltip content
 			tooltip
-				.html($$.getTooltipHTML(
+				.html(sanitize($$.getTooltipHTML(
 					selectedData, // data
 					$$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$), // defaultTitleFormat
 					$$.getDefaultValueFormat(), // defaultValueFormat
 					$$.color // color
-				))
+				)))
 				.style("display", null)
 				.style("visibility", null) // for IE9
 				.datum(datum = {
@@ -591,7 +600,6 @@ export default {
 			// hide tooltip
 			tooltip
 				.style("display", "none")
-				.style("visibility", "hidden") // for IE9
 				.datum(null);
 
 			callFn(config.tooltip_onhidden, api, selectedData);

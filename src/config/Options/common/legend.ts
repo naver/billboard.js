@@ -17,7 +17,7 @@ export default {
 	 *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
 	 * @property {string|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
 	 * - **NOTE:** Should be used along with `legend.contents.template`.
-	 * @property {string|Function} [legend.contents.template="<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>"] Set item's template.<br>
+	 * @property {string|function} [legend.contents.template="<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>"] Set item's template.<br>
 	 *  - If set `string` value, within template the 'color' and 'title' can be replaced using template-like syntax string:
 	 *    - {=COLOR}: data color value
 	 *    - {=TITLE}: data title value
@@ -51,13 +51,13 @@ export default {
 	 *    - To return initial state(which all dataseries are showing), double click current focused legend item again.
 	 *      - for single click case, `click + altKey(Win)/optionKey(Mac OS)` to have same effect.
 	 *    - In this case, default `click` interaction will be disabled.
-	 * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
+	 * @property {function} [legend.item.onclick=undefined] Set click event handler to the legend item.
 	 *  - **NOTE:**
 	 *    - When set, default `click` interaction will be disabled.
 	 *    - When `interaction.dblclick=true` is set, will be called on double click.
-	 * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
+	 * @property {function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
 	 *  - **NOTE:** When set, default `mouseover` interaction will be disabled.
-	 * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
+	 * @property {function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
 	 *  - **NOTE:** When set, default `mouseout` interaction will be disabled.
 	 * @property {number} [legend.item.tile.width=10] Set width for 'rectangle' legend item tile element.
 	 * @property {number} [legend.item.tile.height=10] Set height for 'rectangle' legend item tile element.
@@ -134,7 +134,7 @@ export default {
 	 *              width: 15,
 	 *              height: 15
 	 *
-	 *              // radis is only applicable for 'circle' legend type
+	 *              // radius is only applicable for 'circle' legend type
 	 *              r: 10
 	 *          }
 	 *      },

@@ -6,6 +6,7 @@
 import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
+import sinon from "sinon";
 import {$AREA, $AXIS, $COMMON, $CIRCLE, $EVENT, $LEGEND, $LINE} from "../../src/config/classes";
 import util from "../assets/util";
 
@@ -1271,6 +1272,59 @@ describe("API load", function() {
 							done(1);
 						}
 					});
+				}
+			});
+		}));
+	});
+
+	describe("Unload callback sequence with transition duration 0", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
+					],
+					empty: {
+						label: {
+							text: "No Data"
+						}
+					}
+				},
+				transition: {
+					duration: 0
+				}
+			};
+		});
+
+		it("should show 'No Data' text after unload callback when transition.duration=0", () => new Promise(done => {
+			const doneSpy = sinon.spy();
+			const {$el} = chart.internal;
+
+			// Verify "No Data" text is not visible initially
+			let emptyText = $el.main.select("text.bb-text.bb-empty");
+			expect(emptyText.empty() || emptyText.style("display") === "none").to.be.true;
+
+			// when
+			chart.unload({
+				ids: ["data1", "data2"],
+				done() {
+					doneSpy();
+					
+					// Check if "No Data" text is visible after unload callback
+					// This tests the fix where unload callback should run after data are unloaded
+					const {$el} = this.internal;
+					const emptyText = $el.main.select("text.bb-text.bb-empty");
+					
+					expect(doneSpy.calledOnce).to.be.true;
+					expect(emptyText.empty()).to.be.false;
+					expect(emptyText.text()).to.be.equal("No Data");
+					expect(emptyText.style("display")).to.not.equal("none");
+					
+					// Verify that all data has been unloaded
+					expect(this.data().length).to.be.equal(0);
+					
+					done(1);
 				}
 			});
 		}));

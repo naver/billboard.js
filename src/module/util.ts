@@ -45,6 +45,7 @@ export {
 	isBoolean,
 	isDefined,
 	isEmpty,
+	isEmptyObject,
 	isFunction,
 	isNumber,
 	isObject,
@@ -77,10 +78,16 @@ const ceil10 = (v: number): number => Math.ceil(v / 10) * 10;
 const asHalfPixel = (n: number): number => Math.ceil(n) + 0.5;
 const diffDomain = (d: number[]): number => d[1] - d[0];
 const isObjectType = (v: unknown): v is Record<string | number, any> => typeof v === "object";
+const isEmptyObject = (obj: object): boolean => {
+	for (const x in obj) {
+		return false;
+	}
+	return true;
+};
 const isEmpty = (o: unknown): boolean => (
 	isUndefined(o) || o === null ||
 	(isString(o) && o.length === 0) ||
-	(isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0) ||
+	(isObjectType(o) && !(o instanceof Date) && isEmptyObject(o)) ||
 	(isNumber(o) && isNaN(o))
 );
 const notEmpty = (o: unknown): boolean => !isEmpty(o);
@@ -106,8 +113,8 @@ const isObject = (obj: any): boolean => obj && !obj?.nodeType && isObjectType(ob
  * If default value is given, will return if given key value not found
  * @param {object} options Source object
  * @param {string} key Key value
- * @param {*} defaultValue Default value
- * @returns {*}
+ * @param {string|number|boolean|object|Array|function|null|undefined} defaultValue Default value
+ * @returns {string|number|boolean|object|Array|function|null|undefined} Option value or default value
  * @private
  */
 function getOption(options: object, key: string, defaultValue): any {
@@ -117,7 +124,7 @@ function getOption(options: object, key: string, defaultValue): any {
 /**
  * Check if value exist in the given object
  * @param {object} dict Target object to be checked
- * @param {*} value Value to be checked
+ * @param {string|number|boolean|object|Array|function|null|undefined} value Value to be checked
  * @returns {boolean}
  * @private
  */
@@ -131,9 +138,9 @@ function hasValue(dict: object, value: any): boolean {
 
 /**
  * Call function with arguments
- * @param {Function} fn Function to be called
- * @param {*} thisArg "this" value for fn
- * @param {*} args Arguments for fn
+ * @param {function} fn Function to be called
+ * @param {object|null|undefined} thisArg "this" value for fn
+ * @param {...(string|number|boolean|object|Array|function|null|undefined)} args Arguments for fn
  * @returns {boolean} true: fn is function, false: fn is not function
  * @private
  */
@@ -168,20 +175,49 @@ function endall(transition, cb: Function): void {
 	}
 }
 
+// Sanitize patterns (blacklist approach with repeated application)
+const DANGEROUS_TAGS =
+	"script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
+const sanitizeRx = {
+	tags: new RegExp(
+		`<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
+		"gi"
+	),
+	// Handles: whitespace, slash, quotes before event handlers (e.g., <img/onerror=...>, <img src="x"onerror=...>)
+	eventHandlers: /[\s/"']+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
+	// Handles: javascript/data/vbscript URIs with optional whitespace/newlines between protocol and colon
+	dangerousURIs: /(href|src|action|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript)\s*:/gi
+};
+
 /**
- * Replace tag sign to html entity
+ * Sanitize HTML string to prevent XSS attacks
+ * Uses blacklist approach with repeated application to prevent nested tag bypass
  * @param {string} str Target string value
- * @returns {string}
+ * @returns {string} Sanitized string with dangerous elements removed
  * @private
  */
 function sanitize(str: string): string {
-	return isString(str) ?
-		str.replace(/<(script|img)?/ig, "&lt;").replace(/(script)?>/ig, "&gt;") :
-		str;
+	if (!isString(str) || !str || str.indexOf("<") === -1) {
+		return str;
+	}
+
+	let result = str;
+	let prev: string;
+
+	// Repeat until no more changes (prevents nested tag attacks like <scri<script>pt>)
+	do {
+		prev = result;
+		result = result
+			.replace(sanitizeRx.tags, "")
+			.replace(sanitizeRx.eventHandlers, "")
+			.replace(sanitizeRx.dangerousURIs, "$1=\"\"");
+	} while (result !== prev);
+
+	return result;
 }
 
 /**
- * Set text value. If there's multiline add nodes.
+ * Set text value. If there're multiline add nodes.
  * @param {d3Selection} node Text node
  * @param {string} text Text value string
  * @param {Array} dy dy value for multilined text
@@ -810,7 +846,7 @@ function tplProcess(tpl: string, data: object): string {
 		res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
 	}
 
-	return res;
+	return sanitize(res);
 }
 
 /**
@@ -934,8 +970,8 @@ function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | n
 
 /**
  * Run function until given condition function return true
- * @param {Function} fn Function to be executed when condition is true
- * @param {Function} conditionFn Condition function to check if condition is true
+ * @param {function} fn Function to be executed when condition is true
+ * @param {function(): boolean} conditionFn Condition function to check if condition is true
  * @private
  */
 function runUntil(fn: Function, conditionFn: Function): void {

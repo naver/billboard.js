@@ -45,7 +45,7 @@ import type {IDataIndice, IDataRow, TIndices} from "../data/IData";
  * Get grouped data point function for y coordinate
  * - Note: Grouped(stacking) works only for line and bar types
  * @param {object} d data vlaue
- * @returns {Function|undefined}
+ * @returns {function|undefined}
  * @private
  */
 function getGroupedDataPointsFn(d) {
@@ -128,7 +128,7 @@ export default {
 	 * 	data2 data4   data2 data4
 	 * 	-------------------------
 	 * 		 0             1
-	 * @param {Function} typeFilter Chart type filter function
+	 * @param {function} typeFilter Chart type filter function
 	 * @returns {object} Indices object with its position
 	 */
 	getShapeIndices(typeFilter): TIndices {
@@ -318,7 +318,7 @@ export default {
 
 	/**
 	 * Get Shape's offset data
-	 * @param {Function} typeFilter Type filter function
+	 * @param {function} typeFilter Type filter function
 	 * @returns {object}
 	 * @private
 	 */

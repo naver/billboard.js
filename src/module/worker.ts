@@ -9,7 +9,7 @@ const blob = {};
 
 /**
  * Get Object URL
- * @param {Function} fn Function to be executed in worker
+ * @param {function} fn Function to be executed in worker
  * @param {Array} depsFn Dependency functions to run given function(fn).
  * @returns {string}
  * @private
@@ -56,8 +56,8 @@ export function getWorker(src) {
 /**
  * Create and run on Web Worker
  * @param {boolean} useWorker Use Web Worker
- * @param {Function} fn Function to be executed in worker
- * @param {Function} callback Callback function to receive result from worker
+ * @param {function} fn Function to be executed in worker
+ * @param {function} callback Callback function to receive result from worker
  * @param {Array} depsFn Dependency functions to run given function(fn).
  * @returns {object}
  * @example

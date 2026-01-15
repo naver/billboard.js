@@ -42,7 +42,7 @@ import apiTooltip from "./api/tooltip";
  * @property {d3.selection} $.needle Needle element
  *  - **NOTE:**
  *    - The element will have `bb-needle` as class name.
- *    - Will provide speical helper `.updateHelper(value: number, updateConfig: boolean)` method to facilitate needle position update.
+ *    - Will provide special helper `.updateHelper(value: number, updateConfig: boolean)` method to facilitate needle position update.
  * @property {d3.selection} $.tooltip Tooltip element
  * @property {d3.selection} $.legend Legend element
  * @property {d3.selection} $.title Title element

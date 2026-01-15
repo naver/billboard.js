@@ -20,7 +20,133 @@ import {
 	tplProcess
 } from "../../module/util";
 import type {IArcData, IArcDataRow, IData} from "../data/IData";
+import {isLabelWithLine, redrawArcLabelLines} from "../internals/text.arc";
 import {meetsLabelThreshold, updateTextImage, updateTextImagePos} from "../internals/text.util";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ChartInternalThis = any;
+
+/**
+ * Get the first matching arc chart type
+ * @param {ChartInternalThis} $$ ChartInternal context
+ * @returns {string|undefined} Chart type or undefined
+ * @private
+ */
+function getArcType($$: ChartInternalThis): string | undefined {
+	return ["donut", "pie", "polar", "gauge"].find(type => $$.hasType(type));
+}
+
+/**
+ * Calculate position for range text or multi-arc gauge labels
+ * @param {ChartInternalThis} $$ ChartInternal context
+ * @param {IArcData} d Data object
+ * @param {IArcData} updated Updated angle data
+ * @param {boolean} forRange Whether is for ranged text option
+ * @returns {object} Position object {x, y}
+ * @private
+ */
+function calculateRangeOrGaugePosition(
+	$$: ChartInternalThis,
+	d: IArcData,
+	updated: IArcData,
+	forRange: boolean
+): {x: number, y: number} {
+	const {config, state: {radiusExpanded}} = $$;
+	const angle = updated.endAngle - Math.PI / 2;
+	const sinAngle = Math.sin(angle);
+	const pos = {
+		x: Math.cos(angle) * (radiusExpanded + (forRange ? 5 : 25)), // 5: range offset, 25: gauge offset
+		y: sinAngle * (radiusExpanded + 15 - Math.abs(sinAngle * 10)) + 3 // 10: y factor, 3: y offset
+	};
+
+	if (forRange) {
+		const rangeTextPosition = config.arc_rangeText_position;
+
+		if (rangeTextPosition) {
+			const rangeValues = config.arc_rangeText_values;
+			const position = isFunction(rangeTextPosition) ?
+				rangeTextPosition(rangeValues[d.index]) :
+				rangeTextPosition;
+
+			pos.x += position?.x ?? 0;
+			pos.y += position?.y ?? 0;
+		}
+	}
+
+	return pos;
+}
+
+/**
+ * Calculate label ratio for standard arc types
+ * @param {ChartInternalThis} $$ ChartInternal context
+ * @param {IArcData} d Data object
+ * @param {number} outerRadius Outer radius value
+ * @param {number} distance Distance from center
+ * @returns {number} Calculated ratio
+ * @private
+ */
+function calculateLabelRatio(
+	$$: ChartInternalThis,
+	d: IArcData,
+	outerRadius: number,
+	distance: number
+): number {
+	const {config} = $$;
+	const chartType = getArcType($$);
+	let ratio = chartType ? config[`${chartType}_label_ratio`] : undefined;
+
+	if (ratio) {
+		ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, distance) : ratio;
+	} else {
+		// Label positioning constants
+		const LABEL_MIN_SIZE = 36; // Minimum space needed for label text (pixels)
+		const LABEL_RATIO_THRESHOLD = 0.375; // Threshold ratio (3/8) to determine "small chart"
+		const LABEL_RATIO_BASE = 1.175; // Base ratio for dynamic positioning on small charts
+		const LABEL_RATIO_LARGE = 0.8; // Fixed ratio for large charts (80% position)
+
+		// Calculate ratio based on chart size
+		// For small charts (label space > 37.5% of radius), position labels closer to center
+		// For large charts, use fixed 80% position
+		const labelSpaceRatio = LABEL_MIN_SIZE / outerRadius;
+		const isSmallChart = labelSpaceRatio > LABEL_RATIO_THRESHOLD;
+
+		ratio = outerRadius && distance ?
+			(isSmallChart ? LABEL_RATIO_BASE - labelSpaceRatio : LABEL_RATIO_LARGE) * outerRadius /
+			distance :
+			0;
+	}
+
+	return ratio;
+}
+
+/**
+ * Calculate position for standard arc label (donut, pie, polar)
+ * @param {ChartInternalThis} $$ ChartInternal context
+ * @param {IArcData} d Data object
+ * @param {IArcData} updated Updated angle data
+ * @returns {object} Object with pos {x, y} and ratio
+ * @private
+ */
+function calculateStandardArcPosition(
+	$$: ChartInternalThis,
+	d: IArcData,
+	updated: IArcData
+): {pos: {x: number, y: number}, ratio: number} {
+	let {outerRadius} = $$.getRadius(d);
+
+	if ($$.hasType("polar")) {
+		outerRadius = $$.getPolarOuterRadius(d, outerRadius);
+	}
+
+	const [x, y] = $$.svgArc.centroid(updated).map((v: number) => (isNaN(v) ? 0 : v));
+	const distance = Math.sqrt(x * x + y * y);
+	const ratio = calculateLabelRatio($$, d, outerRadius, distance);
+
+	return {
+		pos: {x, y},
+		ratio
+	};
+}
 
 /**
  * Get radius functions
@@ -120,8 +246,8 @@ function getRadiusFn(expandRate = 0) {
 
 /**
  * Get attrTween function to get interpolated value on transition
- * @param {Function} fn Arc function to execute
- * @returns {Function} attrTween function
+ * @param {function} fn Arc function to execute
+ * @returns {function} attrTween function
  * @private
  */
 function getAttrTweenFn(fn: (d: IArcData) => string) {
@@ -179,9 +305,17 @@ export default {
 		const gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length *
 			config.gauge_arcs_minWidth;
 
+		// Radius reduction ratio when labels are present
+		const LABEL_RADIUS_RATIO = 0.85;
+
+		// Reduce radius for label with lines to make room for external labels
+		const labelWithLineRatio = isLabelWithLine.call($$) ? LABEL_RADIUS_RATIO : 1;
+
 		// determine radius
 		state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * (
-			$$.hasMultiArcGauge() && config.gauge_label_show ? 0.85 : 1
+			$$.hasMultiArcGauge() && config.gauge_label_show ?
+				LABEL_RADIUS_RATIO :
+				labelWithLineRatio
 		);
 
 		state.radius = state.radiusExpanded * 0.95;
@@ -278,7 +412,7 @@ export default {
 	 * @returns {object|null} Updated angle data
 	 * @private
 	 */
-	updateAngle(dValue: IArcData, forRange = false) {
+	updateAngle(dValue: IArcData, forRange = false): IArcData | null {
 		const $$ = this;
 		const {config, state} = $$;
 		const hasGauge = forRange && $$.hasType("gauge");
@@ -378,7 +512,7 @@ export default {
 	/**
 	 * Get expanded arc path function
 	 * @param {number} rate Expand rate
-	 * @returns {Function} Expanded arc path getter function
+	 * @returns {function} Expanded arc path getter function
 	 * @private
 	 */
 	getSvgArcExpanded(rate = 1): (d: IArcData) => string {
@@ -467,67 +601,30 @@ export default {
 	 */
 	transformForArcLabel(textNode: SVGTextElement, d: IArcData, forRange = false): string {
 		const $$ = this;
-		const {config, state: {radiusExpanded}} = $$;
 		const updated = $$.updateAngle(d, forRange);
-		const pos = {x: 0, y: 0};
-		let translate = "";
-		let ratio = 1;
 
-		if (updated) {
-			if (forRange || $$.hasMultiArcGauge()) {
-				const y1 = Math.sin(updated.endAngle - Math.PI / 2);
-				const rangeTextPosition = config.arc_rangeText_position;
-
-				pos.x = Math.cos(updated.endAngle - Math.PI / 2) *
-					(radiusExpanded + (forRange ? 5 : 25));
-				pos.y = y1 * (radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
-
-				if (forRange && rangeTextPosition) {
-					const rangeValues = config.arc_rangeText_values;
-					const position = isFunction(rangeTextPosition) ?
-						rangeTextPosition(rangeValues[d.index]) :
-						rangeTextPosition;
-
-					pos.x += position?.x ?? 0;
-					pos.y += position?.y ?? 0;
-				}
-
-				// translate = `translate(${x},${y})`;
-			} else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
-				let {outerRadius} = $$.getRadius(d);
-
-				if ($$.hasType("polar")) {
-					outerRadius = $$.getPolarOuterRadius(d, outerRadius);
-				}
-
-				const c = this.svgArc.centroid(updated);
-				const [x, y] = c.map(v => (isNaN(v) ? 0 : v));
-				const h = Math.sqrt(x * x + y * y);
-
-				pos.x = x;
-				pos.y = y;
-
-				ratio = ["donut", "gauge", "pie", "polar"]
-					.filter($$.hasType.bind($$))
-					.map(v => config[`${v}_label_ratio`])?.[0];
-
-				if (ratio) {
-					ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, h) : ratio;
-				} else {
-					ratio = outerRadius && (
-						h ?
-							(36 / outerRadius > 0.375 ? 1.175 - 36 / outerRadius : 0.8) *
-							outerRadius / h :
-							0
-					);
-				}
-			}
-
-			updateTextImagePos.call($$, textNode, pos);
-			translate = `translate(${pos.x * ratio},${pos.y * ratio})`;
+		if (!updated) {
+			return "";
 		}
 
-		return translate;
+		let pos: {x: number, y: number};
+		let ratio = 1;
+
+		// Handle range text or multi-arc gauge labels
+		if (forRange || $$.hasMultiArcGauge()) {
+			pos = calculateRangeOrGaugePosition($$, d, updated, forRange);
+		} // Handle standard arc types (donut, pie, polar)
+		else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
+			const result = calculateStandardArcPosition($$, d, updated);
+
+			pos = result.pos;
+			ratio = result.ratio;
+		} else {
+			return "";
+		}
+
+		updateTextImagePos.call($$, textNode, pos);
+		return `translate(${pos.x * ratio},${pos.y * ratio})`;
 	},
 
 	convertToArcData(d: IArcData | IArcDataRow): object {
@@ -542,6 +639,7 @@ export default {
 	textForArcLabel(selection: d3Selection): void {
 		const $$ = this;
 		const hasGauge = $$.hasType("gauge");
+		const chartType = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))?.[0];
 
 		if ($$.shouldShowArcLabel()) {
 			selection
@@ -552,10 +650,12 @@ export default {
 					const node = d3Select(this);
 					const updated = $$.updateAngle(d);
 					const ratio = $$.getRatio("arc", updated);
-					const isUnderThreshold = meetsLabelThreshold.call($$, ratio,
-						["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))?.[0]);
+					const meetsThreshold = meetsLabelThreshold.call($$, ratio, chartType);
 
-					if (isUnderThreshold) {
+					// Cache calculated values for reuse in redrawArcLabelLines
+					d._cache = {updated, ratio, meetsThreshold};
+
+					if (meetsThreshold) {
 						const {value} = updated || d;
 						const text = (
 							$$.getArcLabelConfig("format") || $$.defaultArcValueFormat
@@ -721,7 +821,7 @@ export default {
 			.merge(mainPieUpdate);
 
 		mainPieEnter.append("text")
-			.attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em")
+			.attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : null)
 			.style("opacity", "0")
 			.style("text-anchor", $$.getStylePropValue("middle"))
 			.style("pointer-events", $$.getStylePropValue("none"));
@@ -1185,7 +1285,7 @@ export default {
 					$$.callOverOutForTouch(arcData);
 
 					isUndefined(id) ? unselectArc() : selectArc(this, arcData, id);
-				});
+				}, {passive: true});
 		}
 	},
 
@@ -1253,6 +1353,9 @@ export default {
 					.text($$.textForGaugeMinMax(config.gauge_max, true));
 			}
 		}
+
+		// Render connector lines for label with lines
+		isLabelWithLine.call($$) && redrawArcLabelLines.call($$, duration);
 	},
 
 	/**

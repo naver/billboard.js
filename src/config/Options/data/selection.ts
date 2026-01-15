@@ -56,7 +56,7 @@ export default {
 	 * The callback will receive d as an argument and it has some parameters like id, value, index. This callback should return boolean.
 	 * @name data․selection․isselectable
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default function() { return true; }
 	 * @example
 	 * data: {
@@ -69,7 +69,7 @@ export default {
 
 	/**
 	 * Set multiple data points selection enabled.<br><br>
-	 * If this option set true, multile data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
+	 * If this option set true, multiple data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
 	 * @name data․selection․multiple
 	 * @memberof Options
 	 * @type {boolean}
@@ -104,7 +104,7 @@ export default {
 	 * Set a callback for on data selection.
 	 * @name data․onselected
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default function() {}
 	 * @example
 	 * data: {
@@ -121,7 +121,7 @@ export default {
 	 * Set a callback for on data un-selection.
 	 * @name data․onunselected
 	 * @memberof Options
-	 * @type {Function}
+	 * @type {function}
 	 * @default function() {}
 	 * @example
 	 * data: {

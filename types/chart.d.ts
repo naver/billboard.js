@@ -143,7 +143,7 @@ export interface Chart {
 
 		/**
 		 * Get values of the data loaded in the chart.
-		 * @param targetIds This API returns the values of specified target. If this argument is not given, null will be retruned.
+		 * @param targetIds This API returns the values of specified target. If this argument is not given, null will be returned.
 		 */
 		values(targetIds?: ArrayOrString): number[];
 
@@ -263,7 +263,7 @@ export interface Chart {
 	subchart: {
 		/**
 		 * Select subchart by giving x domain range.
-		 * @param domain If domain range is given, the subchart will be seleted to the given domain. If no argument is given, the current subchart selection domain will be returned.
+		 * @param domain If domain range is given, the subchart will be selected to the given domain. If no argument is given, the current subchart selection domain will be returned.
 		 */
 		(domain?: Array<Date|number|string>): Array<Date|number>;
 
@@ -394,7 +394,7 @@ export interface Chart {
 	 * - If no argument is given, all of targets will be toggles.
 	 * - If ids given, the data that has specified target id will be unloaded. ids should be String or Array.
 	 * - If ids is not specified, all data will be unloaded.
-	 * - If done given, the specified function will be called after data loded.
+	 * - If done given, the specified function will be called after data loaded.
 	 *
 	 * - NOTE:
 	 *   - If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.
@@ -510,7 +510,7 @@ export interface Chart {
 
 	/**
 	 * Force to redraw.
-	 * - **NOTE:** When zoom/subchart is used, the zoomed state will be resetted.
+	 * - **NOTE:** When zoom/subchart is used, the zoomed state will be reset.
 	 * @param soft For soft redraw.
 	 */
 	flush(soft?: boolean): void;

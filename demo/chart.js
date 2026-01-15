@@ -68,7 +68,10 @@ var billboardDemo = {
 		});
 
 		window.addEventListener("hashchange", function() {
-			location.hash && ctx.showDemo(location.hash);
+			if (location.hash) {
+				ctx.destroyChart();
+				ctx.showDemo(location.hash);
+			}
 		});
 
 		this.$code.addEventListener("keydown", function(e) {
@@ -193,23 +196,14 @@ var billboardDemo = {
 	},
 
 	/**
-	 * Generate chart demo
-	 * @param {String} type
-	 * @param {String} key
-	 * @returns {boolean}
+	 * Destroy chart
+	 * @param {Array} inst
 	 */
-	generate: function(type, key) {
-		var inst = bb.instance;
-		var typeData = demos[type][key];
-		var isArray = typeData && typeData.constructor === Array;
-		var hasPlugin = /plugin/i.test(type);
-		var pluginName = key.replace(/Diagram/, "").toLowerCase() || "";
-		var camelize = function(s) {
-			return s.replace(/-./g, function(x) { return x.toUpperCase()[1] });
-		}
-		var self = this;
+	destroyChart: function() {
+		var inst = new WeakRef(bb.instance.concat());
+		bb.instance.splice(0, bb.instance.length);
 
-		inst.length && inst.forEach(function (c) {
+		inst.deref()?.forEach(function (c) {
 			var timer = c.timer;
 			var el = c.$.chart;
 
@@ -222,7 +216,23 @@ var billboardDemo = {
 				c.destroy();
 			}
 		});
+	},
 
+	/**
+	 * Generate chart demo
+	 * @param {String} type
+	 * @param {String} key
+	 * @returns {boolean}
+	 */
+	generate: function(type, key) {
+		var typeData = demos[type][key];
+		var isArray = typeData && typeData.constructor === Array;
+		var hasPlugin = /plugin/i.test(type);
+		var pluginName = key.replace(/Diagram/, "").toLowerCase() || "";
+		var camelize = function(s) {
+			return s.replace(/-./g, function(x) { return x.toUpperCase()[1] });
+		}
+		var self = this;
 		var code = {
 			markup: [],
 			data: [],
@@ -276,7 +286,7 @@ var billboardDemo = {
 				.then(function() {
 					ctx.showCopyMsg();
 				}, function(e) {
-					console.error("An error occured:", errMsg);
+					console.error("An error occurred:", errMsg);
 				});
 		} else {
 			var textArea = document.createElement("textarea");
@@ -312,7 +322,7 @@ var billboardDemo = {
 				document.execCommand("copy");
 				ctx.showCopyMsg();
 			} catch (e) {
-				console.error("An error occured:", errMsg);
+				console.error("An error occurred:", errMsg);
 			}
 
 			document.body.removeChild(textArea);
