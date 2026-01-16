@@ -196,9 +196,8 @@ function redrawArcLabelLines(duration: number): void {
 	const {$el: {arcs}, $T} = $$;
 
 	// Get config once and reuse (avoid N+1 calls)
-	const {line: lineConfig, text: textConfig, chartType} = getConfig.call($$);
+	const {line: lineConfig, text: textConfig} = getConfig.call($$);
 	const lineDistance = lineConfig.distance;
-	const hasGauge = chartType === "gauge";
 
 	// Cache fontSize from first text element to avoid repeated getComputedStyle calls
 	let cachedFontSize: number | null = null;
@@ -256,7 +255,7 @@ function redrawArcLabelLines(duration: number): void {
 					$$.defaultArcValueFormat
 			)(value, ratio, id).toString();
 
-			setTextValue(labelLineText, text, [-1, 1], hasGauge);
+			setTextValue(labelLineText, text, [-1, 1], false);
 
 			// Position the text at the end of the connector line (outside)
 			const pos = {
@@ -277,11 +276,15 @@ function redrawArcLabelLines(duration: number): void {
 			}
 
 			if (tspanNodes && tspanNodes.length > 1) {
-				// Multiline: adjust for line count
+				// Multiline: adjust for vertical centering
+				// With setTextValue(text, [-1, 1], false):
+				// - 1st line at -1em, 2nd at 0em, 3rd at 1em, 4th at 2em, ...
+				// - Center of text block = (-1 + (lineCount - 2)) / 2 = (lineCount - 3) / 2
+				// - To center at y=0, shift by negative of center
 				const lineCount = tspanNodes.length;
-				const offsetY = ((lineCount - 1) * 1.2) / 2;
+				const centerOffset = (lineCount - 3) / 2;
 
-				pos.y += (-offsetY + TEXT_VERTICAL_OFFSET) * cachedFontSize;
+				pos.y += (-centerOffset + TEXT_VERTICAL_OFFSET) * cachedFontSize;
 			} else {
 				// Single line: apply base vertical offset
 				pos.y += TEXT_VERTICAL_OFFSET * cachedFontSize;

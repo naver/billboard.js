@@ -8,6 +8,7 @@ import {$COMMON, $TEXT} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {
 	capitalize,
+	getBBox,
 	getBoundingRect,
 	getRandom,
 	getTranslation,
@@ -377,7 +378,7 @@ export default {
 		const isTreemapType = $$.isTreemapType(d);
 
 		if (config.data_labels.centered && (isBarType || isTreemapType)) {
-			const rect = getBoundingRect(textElement);
+			const rect = getBBox(textElement);
 
 			if (isBarType) {
 				const isPositive = $$.getRangedData(d, null, "bar") >= 0;
@@ -401,8 +402,8 @@ export default {
 				}
 			} else if (isTreemapType) {
 				return type === "x" ?
-					(points[1][0] - points[0][0]) / 2 :
-					(points[1][1] - points[0][1]) / 2 + (rect.height / 2);
+					(points[1][0] - points[0][0]) / 2 : // X: Move to horizontal center of rect
+					(points[1][1] - points[0][1]) / 2 - rect.y - rect.height / 2; // Y: Calculate true vertical center
 			}
 		}
 

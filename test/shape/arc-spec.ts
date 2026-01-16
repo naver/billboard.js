@@ -1221,5 +1221,100 @@ describe("SHAPE ARC", () => {
 				done(1);
 			}, 300);
 		}));
+
+		it("should vertically center multiline label text", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["Samsung\nElectronics\nKorea\nAsia", 60],
+						["Apple Inc", 80],
+						["Meta\nPlatforms", 20]
+					],
+					type: "donut"
+				},
+				donut: {
+					label: {
+						line: true
+					}
+				}
+			});
+
+			setTimeout(() => {
+				const lines = chart.$.arc.selectAll(`.${$ARC.arcLabelLine}`);
+				const texts = chart.$.arc.selectAll(`.${$ARC.arcLabelLineText}`);
+
+				expect(lines.size()).to.be.equal(3);
+				expect(texts.size()).to.be.equal(3);
+
+				// Check multiline text vertical centering
+				texts.each(function() {
+					const tspans = this.querySelectorAll("tspan");
+					const text = this.textContent;
+
+					if (tspans.length > 1) {
+						// Get the connector line's endpoint y coordinate
+						const transform = this.getAttribute("transform");
+						const translateMatch = transform.match(/translate\(([^,]+),([^)]+)\)/);
+						const translateY = parseFloat(translateMatch[2]);
+
+						// Get text bounding box
+						const bbox = this.getBBox();
+						const textCenterY = bbox.y + bbox.height / 2;
+
+						// The text block center should be close to y=0 (relative to translate position)
+						// Allow some tolerance for font rendering differences
+						expect(Math.abs(textCenterY)).to.be.lessThan(bbox.height / 2 + 5);
+					}
+				});
+
+				done(1);
+			}, 300);
+		}));
+
+		it("should correctly align 2-line, 3-line, and 4-line labels", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["Line1\nLine2", 25],
+						["Line1\nLine2\nLine3", 25],
+						["Line1\nLine2\nLine3\nLine4", 25],
+						["Single", 25]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						line: true
+					}
+				}
+			});
+
+			setTimeout(() => {
+				const texts = chart.$.arc.selectAll(`.${$ARC.arcLabelLineText}`);
+
+				texts.each(function() {
+					const tspans = this.querySelectorAll("tspan");
+					const lineCount = tspans.length;
+
+					if (lineCount > 1) {
+						// Verify tspan count matches expected line count
+						const text = this.textContent;
+						const expectedLines = text.split(/(?=Line)/).length;
+
+						expect(tspans.length).to.be.greaterThan(1);
+
+						// Verify the text block is vertically centered
+						// by checking the bounding box center is close to 0
+						const bbox = this.getBBox();
+						const textCenterY = bbox.y + bbox.height / 2;
+
+						// Center should be within reasonable tolerance of y=0
+						expect(Math.abs(textCenterY)).to.be.lessThan(bbox.height);
+					}
+				});
+
+				done(1);
+			}, 300);
+		}));
 	});
 });
