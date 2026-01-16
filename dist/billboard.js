@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.4-nightly-20260115004723
+ * @version 3.17.4-nightly-20260116004724
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -7619,7 +7619,7 @@ function updateTextImagePos(textNode, pos) {
     const isBarType = $$.isBarType(d);
     const isTreemapType = $$.isTreemapType(d);
     if (config.data_labels.centered && (isBarType || isTreemapType)) {
-      const rect = getBoundingRect(textElement);
+      const rect = getBBox(textElement);
       if (isBarType) {
         const isPositive = $$.getRangedData(d, null, "bar") >= 0;
         if (isRotated) {
@@ -7630,7 +7630,10 @@ function updateTextImagePos(textNode, pos) {
           return isPositive ? h : -h - 2;
         }
       } else if (isTreemapType) {
-        return type === "x" ? (points[1][0] - points[0][0]) / 2 : (points[1][1] - points[0][1]) / 2 + rect.height / 2;
+        return type === "x" ? (points[1][0] - points[0][0]) / 2 : (
+          // X: Move to horizontal center of rect
+          (points[1][1] - points[0][1]) / 2 - rect.y - rect.height / 2
+        );
       }
     }
     return 0;
@@ -18089,9 +18092,8 @@ function isLabelWithLine() {
 function redrawArcLabelLines(duration) {
   const $$ = this;
   const { $el: { arcs }, $T } = $$;
-  const { line: lineConfig, text: textConfig, chartType } = getConfig.call($$);
+  const { line: lineConfig, text: textConfig } = getConfig.call($$);
   const lineDistance = lineConfig.distance;
-  const hasGauge = chartType === "gauge";
   let cachedFontSize = null;
   arcs.selectAll(`.${$ARC.chartArc}`).each(function(d) {
     var _a, _b, _c;
@@ -18119,7 +18121,7 @@ function redrawArcLabelLines(duration) {
       const { value } = updated;
       const { id } = d.data;
       const text = ((_c = (_b = textConfig.formatter) != null ? _b : $$.getArcLabelConfig("format")) != null ? _c : $$.defaultArcValueFormat)(value, ratio, id).toString();
-      setTextValue(labelLineText, text, [-1, 1], hasGauge);
+      setTextValue(labelLineText, text, [-1, 1], false);
       const pos = {
         x: endPoint.x + 5 * (isRight ? 1 : -1),
         // 5: label offset from endpoint
@@ -18133,8 +18135,8 @@ function redrawArcLabelLines(duration) {
       }
       if (tspanNodes && tspanNodes.length > 1) {
         const lineCount = tspanNodes.length;
-        const offsetY = (lineCount - 1) * 1.2 / 2;
-        pos.y += (-offsetY + TEXT_VERTICAL_OFFSET) * cachedFontSize;
+        const centerOffset = (lineCount - 3) / 2;
+        pos.y += (-centerOffset + TEXT_VERTICAL_OFFSET) * cachedFontSize;
       } else {
         pos.y += TEXT_VERTICAL_OFFSET * cachedFontSize;
       }
@@ -23030,13 +23032,33 @@ ${percentValue}%`;
    *          // show or hide label text
    *          show: false,
    *
-   *          // set label text formatter
+   *          // Example 1: Format with currency
    *          format: function(value, ratio, id, size) {
    *              // size: {width, height} - tile size in pixels
    *              return d3.format("$")(value);
+   *          },
    *
-   *              // to multiline, return with '\n' character
-   *              // return value +"%\nLine1\n2Line2";
+   *          // Example 2: Show different content based on tile size
+   *          format: function(value, ratio, id, size) {
+   *              if (size.width > 100 && size.height > 50) {
+   *                  return `${id}\n${d3.format("$")(value)}\n(${(ratio * 100).toFixed(1)}%)`;
+   *              } else if (size.width > 50) {
+   *                  return `${id}\n${d3.format("$")(value)}`;
+   *              } else {
+   *                  return d3.format("$")(value);
+   *              }
+   *          },
+   *
+   *          // Example 3: Include tile dimensions in label
+   *          format: function(value, ratio, id, size) {
+   *              return `${id}\n${value}\n${size.width.toFixed(0)}x${size.height.toFixed(0)}px`;
+   *          },
+   *
+   *          // Example 4: Conditional formatting based on ratio
+   *          format: function(value, ratio, id, size) {
+   *              return ratio > 0.1 ?
+   *                  `${id}\n${value} (${(ratio * 100).toFixed(1)}%)` :
+   *                  value;
    *          },
    *
    *          // set ratio number
@@ -23145,7 +23167,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.4-nightly-20260115004723",
+  version: "3.17.4-nightly-20260116004724",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.4-nightly-20260115004723
+ * @version 3.17.4-nightly-20260116004724
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -8620,7 +8620,7 @@ var text = {
         var isBarType = $$.isBarType(d);
         var isTreemapType = $$.isTreemapType(d);
         if (config.data_labels.centered && (isBarType || isTreemapType)) {
-            var rect = getBoundingRect(textElement);
+            var rect = getBBox(textElement);
             if (isBarType) {
                 var isPositive = $$.getRangedData(d, null, "bar") >= 0;
                 if (isRotated) {
@@ -8638,8 +8638,8 @@ var text = {
             }
             else if (isTreemapType) {
                 return type === "x" ?
-                    (points[1][0] - points[0][0]) / 2 :
-                    (points[1][1] - points[0][1]) / 2 + (rect.height / 2);
+                    (points[1][0] - points[0][0]) / 2 : // X: Move to horizontal center of rect
+                    (points[1][1] - points[0][1]) / 2 - rect.y - rect.height / 2; // Y: Calculate true vertical center
             }
         }
         return 0;
@@ -18700,9 +18700,8 @@ function redrawArcLabelLines(duration) {
     var $$ = this;
     var arcs = $$.$el.arcs, $T = $$.$T;
     // Get config once and reuse (avoid N+1 calls)
-    var _a = getConfig.call($$), lineConfig = _a.line, textConfig = _a.text, chartType = _a.chartType;
+    var _a = getConfig.call($$), lineConfig = _a.line, textConfig = _a.text;
     var lineDistance = lineConfig.distance;
-    var hasGauge = chartType === "gauge";
     // Cache fontSize from first text element to avoid repeated getComputedStyle calls
     var cachedFontSize = null;
     arcs.selectAll(".".concat($ARC.chartArc)).each(function (d) {
@@ -18742,7 +18741,7 @@ function redrawArcLabelLines(duration) {
             var id = d.data.id;
             // Get formatted text
             var text = ((_c = (_b = textConfig.formatter) !== null && _b !== void 0 ? _b : $$.getArcLabelConfig("format")) !== null && _c !== void 0 ? _c : $$.defaultArcValueFormat)(value, ratio, id).toString();
-            setTextValue(labelLineText, text, [-1, 1], hasGauge);
+            setTextValue(labelLineText, text, [-1, 1], false);
             // Position the text at the end of the connector line (outside)
             var pos = {
                 x: endPoint.x + (5 * (isRight ? 1 : -1)), // 5: label offset from endpoint
@@ -18758,10 +18757,14 @@ function redrawArcLabelLines(duration) {
                 cachedFontSize = parseFloat(win.getComputedStyle(textNode).fontSize) || 12;
             }
             if (tspanNodes && tspanNodes.length > 1) {
-                // Multiline: adjust for line count
+                // Multiline: adjust for vertical centering
+                // With setTextValue(text, [-1, 1], false):
+                // - 1st line at -1em, 2nd at 0em, 3rd at 1em, 4th at 2em, ...
+                // - Center of text block = (-1 + (lineCount - 2)) / 2 = (lineCount - 3) / 2
+                // - To center at y=0, shift by negative of center
                 var lineCount = tspanNodes.length;
-                var offsetY = ((lineCount - 1) * 1.2) / 2;
-                pos.y += (-offsetY + TEXT_VERTICAL_OFFSET) * cachedFontSize;
+                var centerOffset = (lineCount - 3) / 2;
+                pos.y += (-centerOffset + TEXT_VERTICAL_OFFSET) * cachedFontSize;
             }
             else {
                 // Single line: apply base vertical offset
@@ -24361,13 +24364,33 @@ var optTreemap = {
      *          // show or hide label text
      *          show: false,
      *
-     *          // set label text formatter
+     *          // Example 1: Format with currency
      *          format: function(value, ratio, id, size) {
      *              // size: {width, height} - tile size in pixels
      *              return d3.format("$")(value);
+     *          },
      *
-     *              // to multiline, return with '\n' character
-     *              // return value +"%\nLine1\n2Line2";
+     *          // Example 2: Show different content based on tile size
+     *          format: function(value, ratio, id, size) {
+     *              if (size.width > 100 && size.height > 50) {
+     *                  return `${id}\n${d3.format("$")(value)}\n(${(ratio * 100).toFixed(1)}%)`;
+     *              } else if (size.width > 50) {
+     *                  return `${id}\n${d3.format("$")(value)}`;
+     *              } else {
+     *                  return d3.format("$")(value);
+     *              }
+     *          },
+     *
+     *          // Example 3: Include tile dimensions in label
+     *          format: function(value, ratio, id, size) {
+     *              return `${id}\n${value}\n${size.width.toFixed(0)}x${size.height.toFixed(0)}px`;
+     *          },
+     *
+     *          // Example 4: Conditional formatting based on ratio
+     *          format: function(value, ratio, id, size) {
+     *              return ratio > 0.1 ?
+     *                  `${id}\n${value} (${(ratio * 100).toFixed(1)}%)` :
+     *                  value;
      *          },
      *
      *          // set ratio number
@@ -26171,7 +26194,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.17.4-nightly-20260115004723
+ * @version 3.17.4-nightly-20260116004724
  */
 var bb = {
     /**
@@ -26181,7 +26204,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.17.4-nightly-20260115004723",
+    version: "3.17.4-nightly-20260116004724",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
