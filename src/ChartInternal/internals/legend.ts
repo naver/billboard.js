@@ -14,16 +14,18 @@ import {
 	isFunction,
 	notEmpty,
 	sanitize,
+	toMap,
 	tplProcess
 } from "../../module/util";
 
 /**
  * Get color string for given data id
+ * Internal helper used only within this file
  * @param {string} id Data id
  * @returns {string} Color string
  * @private
  */
-function getLegendColor(id: string): string {
+function _getLegendColor(id: string): string {
 	const $$ = this;
 	const data = $$.getDataById(id);
 	const color = $$.levelColor ? $$.levelColor(data.values[0].value) : $$.color(data);
@@ -33,11 +35,13 @@ function getLegendColor(id: string): string {
 
 /**
  * Get formatted text value
+ * Internal helper used only within this file
  * @param {string} id Legend text id
  * @param {boolean} formatted Whether or not to format the text
  * @returns {string} Formatted legend text
+ * @private
  */
-function getFormattedText<T = string>(id: T, formatted = true): T {
+function _getFormattedText<T = string>(id: T, formatted = true): T {
 	const {config} = this;
 	let text = config.data_names[id] ?? id;
 
@@ -46,6 +50,36 @@ function getFormattedText<T = string>(id: T, formatted = true): T {
 	}
 
 	return text;
+}
+
+/**
+ * Build a Map of legend items for fast O(1) lookup by ID
+ * Internal helper used only within this file
+ * @param {object} $$ ChartInternal context
+ * @param {d3.selection} legendItems D3 selection of legend items
+ * @private
+ */
+function _buildLegendItemMap($$, legendItems): void {
+	if (!legendItems || legendItems.empty()) {
+		return;
+	}
+
+	// Convert D3 selection to array of [id, node] pairs
+	const items: Array<{id: string, node: HTMLElement}> = [];
+
+	legendItems.each(function(id) {
+		items.push({id, node: this});
+	});
+
+	// Create Map for O(1) lookups using toMap utility
+	const itemMap = toMap(
+		items,
+		item => item.id,
+		item => item.node
+	);
+
+	// Cache the map
+	$$.cache.add(KEY.legendItemMap, itemMap);
 }
 
 export default {
@@ -261,11 +295,17 @@ export default {
 	 * @private
 	 */
 	updateLegendItemColor(id: string, color: string): void {
-		const {legend} = this.$el;
+		const $$ = this;
+		const {legend} = $$.$el;
 
 		if (legend) {
-			legend.select(`.${$LEGEND.legendItem}-${id} line`)
-				.style("stroke", color);
+			// Use cached Map lookup for O(1) performance
+			const legendItem = $$.getLegendItemById(id);
+
+			if (legendItem) {
+				d3Select(legendItem).select("line")
+					.style("stroke", color);
+			}
 		}
 	},
 
@@ -534,6 +574,31 @@ export default {
 			!item.empty() && item.on("click mouseout mouseover") &&
 				item.style("cursor", $$.getStylePropValue("pointer"));
 		}
+
+		// Build legend item map for O(1) lookup
+		_buildLegendItemMap($$, item);
+	},
+
+	/**
+	 * Get legend item node by ID using cached Map for O(1) lookup
+	 * Falls back to D3 selection if map is not available
+	 * @param {string} id Data ID
+	 * @returns {HTMLElement | null} Legend item node
+	 * @private
+	 */
+	getLegendItemById(id: string): HTMLElement | null {
+		const $$ = this;
+		const itemMap = $$.cache.get(KEY.legendItemMap);
+
+		if (itemMap && itemMap instanceof Map) {
+			return itemMap.get(id) || null;
+		}
+
+		// Fallback to D3 selection (slower)
+		const item = $$.$el.legend?.selectAll(`.${$LEGEND.legendItem}`)
+			.filter(d => d === id);
+
+		return item?.node() || null;
 	},
 
 	/**
@@ -628,12 +693,12 @@ export default {
 		if (config.legend_tooltip) {
 			legend.selectAll("title")
 				.data(targetIdz)
-				.text(id => getFormattedText.bind($$)(id, false));
+				.text(id => _getFormattedText.bind($$)(id, false));
 		}
 
 		const texts = legend.selectAll("text")
 			.data(targetIdz)
-			.text(id => getFormattedText.bind($$)(id)) // MEMO: needed for update
+			.text(id => _getFormattedText.bind($$)(id)) // MEMO: needed for update
 			.each(function(id, i) {
 				updatePositions(this, id, i);
 			});
@@ -791,7 +856,7 @@ export default {
 		}
 
 		l.append("text")
-			.text(id => getFormattedText.bind($$)(id))
+			.text(id => _getFormattedText.bind($$)(id))
 			.each(function(id, i) {
 				updatePositions(this, id, i);
 			})
@@ -825,7 +890,7 @@ export default {
 					("hasValidPointType" in $$) && $$.hasValidPointType(point) ? point : "use");
 			})
 				.attr("class", $LEGEND.legendItemPoint)
-				.style("fill", getLegendColor.bind($$))
+				.style("fill", _getLegendColor.bind($$))
 				.style("pointer-events", $$.getStylePropValue("none"))
 				.attr("href", (data, idx, selection) => {
 					const node = selection[idx];
@@ -837,13 +902,13 @@ export default {
 		} else {
 			l.append(isRectangle ? "line" : legendType)
 				.attr("class", $LEGEND.legendItemTile)
-				.style("stroke", getLegendColor.bind($$))
+				.style("stroke", _getLegendColor.bind($$))
 				.style("pointer-events", $$.getStylePropValue("none"))
 				.call(selection => {
 					if (legendType === "circle") {
 						selection
 							.attr("r", legendItemR)
-							.style("fill", getLegendColor.bind($$))
+							.style("fill", _getLegendColor.bind($$))
 							.attr("cx", isLegendRightOrInset ? posFn.x2Tile : pos)
 							.attr("cy", isLegendRightOrInset ? pos : posFn.yTile);
 					} else if (isRectangle) {
@@ -916,7 +981,7 @@ export default {
 				.data(targetIdz);
 
 			$T(tiles, withTransition)
-				.style("stroke", getLegendColor.bind($$))
+				.style("stroke", _getLegendColor.bind($$))
 				.call(selection => {
 					if (legendType === "circle") {
 						selection

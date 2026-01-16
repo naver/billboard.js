@@ -46,6 +46,12 @@ export default class State {
 			// for data CSS rule index (used when boost.useCssRule is true)
 			cssRule: {},
 
+			// Data loading state (used in scale calculation)
+			loading: <"append" | "load" | undefined>undefined,
+
+			// Zoom/subchart domain (different from current.domain which is for rendering)
+			domain: <number[] | undefined>undefined,
+
 			current: {
 				// current domain value. Assigned when is zoom is called
 				domain: undefined,
@@ -162,7 +168,11 @@ export default class State {
 				x2: <number | null>null,
 				y1: <number | null>null,
 				y2: <number | null>null
-			}
+			},
+
+			// RAF batching for zoom/drag interactions
+			pendingRaf: <number | null>null,
+			rafBatchQueue: <Array<() => void>>[]
 		};
 	}
 }

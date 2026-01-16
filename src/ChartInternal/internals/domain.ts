@@ -14,7 +14,8 @@ import {
 	isValue,
 	notEmpty,
 	parseDate,
-	sortValue
+	sortValue,
+	toSet
 } from "../../module/util";
 import type {IData, TDomainRange} from "../data/IData";
 
@@ -26,19 +27,23 @@ export default {
 
 		const dataGroups = config.data_groups;
 		const ids = $$.mapToIds(targets);
+		const idsSet = toSet(ids); // O(1) lookup instead of O(n) indexOf
 		const ys = $$.getValuesAsIdKeyed(targets);
 
 		if (dataGroups.length > 0) {
 			const hasValue = $$[`has${isMin ? "Negative" : "Positive"}ValueInTargets`](targets);
 
+			// Pre-compute axis IDs for O(1) lookup instead of repeated axis.getId() calls
+			const axisIdMap = new Map(ids.map(id => [id, axis.getId(id)]));
+
 			dataGroups.forEach(groupIds => {
 				// Determine baseId
 				const idsInGroup = groupIds
-					.filter(v => ids.indexOf(v) >= 0);
+					.filter(v => idsSet.has(v));
 
 				if (idsInGroup.length) {
 					const baseId = idsInGroup[0];
-					const baseAxisId = axis.getId(baseId);
+					const baseAxisId = axisIdMap.get(baseId);
 
 					// Initialize base value. Set to 0 if not match with the condition
 					if (hasValue && ys[baseId]) {
@@ -50,7 +55,7 @@ export default {
 						.filter((v, i) => i > 0)
 						.forEach(id => {
 							if (ys[id]) {
-								const axisId = axis.getId(id);
+								const axisId = axisIdMap.get(id);
 
 								ys[id].forEach((v, i) => {
 									const val = +v;

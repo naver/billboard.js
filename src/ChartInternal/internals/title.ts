@@ -12,7 +12,7 @@ import {isNumber, setTextValue} from "../../module/util";
  * @returns {string|number} text-anchor value or position in pixel
  * @private
  */
-function getTextXPos(pos = "left", width?: number | any): number | "start" | "middle" | "end" {
+function _getTextXPos(pos = "left", width?: number | any): number | "start" | "middle" | "end" {
 	const isNum = isNumber(width);
 	let position;
 
@@ -41,7 +41,7 @@ export default {
 
 			const text = $el.title
 				.append("text")
-				.style("text-anchor", getTextXPos(config.title_position))
+				.style("text-anchor", _getTextXPos(config.title_position))
 				.attr("class", $TEXT.title);
 
 			setTextValue(text, config.title_text, [0.3, 1.5]);
@@ -57,7 +57,7 @@ export default {
 		const {config, state: {current}, $el: {title}} = $$;
 
 		if (title) {
-			const x = getTextXPos(config.title_position, current.width);
+			const x = _getTextXPos(config.title_position, current.width);
 			const y = (config.title_padding.top || 0) +
 				$$.getTextRect($$.$el.title, $TEXT.title).height;
 

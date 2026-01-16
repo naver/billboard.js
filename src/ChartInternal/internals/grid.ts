@@ -8,8 +8,8 @@ import {$AXIS, $COMMON, $FOCUS, $GRID} from "../../config/classes";
 import {getPointer, isArray, isValue} from "../../module/util";
 
 // Grid position and text anchor helpers
-const getGridTextAnchor = d => isValue(d.position) || "end";
-const getGridTextDx = d => (d.position === "start" ? 4 : (d.position === "middle" ? 0 : -4));
+const _getGridTextAnchor = d => isValue(d.position) || "end";
+const _getGridTextDx = d => (d.position === "start" ? 4 : (d.position === "middle" ? 0 : -4));
 
 /**
  * Get grid text x value getter function
@@ -19,7 +19,7 @@ const getGridTextDx = d => (d.position === "start" ? 4 : (d.position === "middle
  * @returns {function}
  * @private
  */
-function getGridTextX(isX, width, height): Function {
+function _getGridTextX(isX, width, height): Function {
 	return d => {
 		let x = isX ? 0 : width;
 
@@ -39,7 +39,7 @@ function getGridTextX(isX, width, height): Function {
  * @param {string} type Type
  * @private
  */
-function smoothLines(el, type: string): void {
+function _smoothLines(el, type: string): void {
 	if (type === "grid") {
 		el.each(function() {
 			const g = d3Select(this);
@@ -159,7 +159,7 @@ export default {
 			.attr("y1", isRotated ? 0 : pos)
 			.attr("y2", isRotated ? state.height : pos);
 
-		smoothLines(grid.y, "grid");
+		_smoothLines(grid.y, "grid");
 	},
 
 	updateGrid() {
@@ -218,12 +218,12 @@ export default {
 		$T(lines
 			.attr("class", d => `${$GRID[`${type}gridLine`]} ${d.class || ""}`.trim())
 			.select("text")
-			.attr("text-anchor", getGridTextAnchor)
+			.attr("text-anchor", _getGridTextAnchor)
 			.attr("transform",
 				() => (isX ?
 					(isRotated ? null : "rotate(-90)") :
 					(isRotated ? "rotate(-90)" : null)))
-			.attr("dx", getGridTextDx)
+			.attr("dx", _getGridTextDx)
 			.attr("dy", -5))
 			.text(function(d) {
 				return d.text ?? this.remove();
@@ -256,7 +256,7 @@ export default {
 			.attr("y2", isRotated ? xv : height);
 
 		xTexts = $T(xTexts, withTransition)
-			.attr("x", getGridTextX(!isRotated, width, height))
+			.attr("x", _getGridTextX(!isRotated, width, height))
 			.attr("y", xv);
 
 		yLines = $T(yLines, withTransition)
@@ -266,7 +266,7 @@ export default {
 			.attr("y2", isRotated ? height : yv);
 
 		yTexts = $T(yTexts, withTransition)
-			.attr("x", getGridTextX(isRotated, width, height))
+			.attr("x", _getGridTextX(isRotated, width, height))
 			.attr("y", yv);
 
 		return [
@@ -455,7 +455,7 @@ export default {
 					.forEach((v, i) => el.attr(v, xy[i]));
 			});
 
-		smoothLines(focusEl, "grid");
+		_smoothLines(focusEl, "grid");
 		$$.showCircleFocus?.(data);
 	},
 

@@ -12,7 +12,7 @@ import {isFunction, isObjectType, notEmpty, sanitize, toArray} from "../../modul
  * @returns {boolean}
  * @private
  */
-function hasValidPointDrawMethods(point: string): boolean {
+function _hasValidPointDrawMethods(point: string): boolean {
 	return isObjectType(point) &&
 		isFunction(point.create) && isFunction(point.update);
 }
@@ -23,7 +23,7 @@ function hasValidPointDrawMethods(point: string): boolean {
  * @param {string} id Point id
  * @private
  */
-function insertPointInfoDefs(point: string, id: string): void {
+function _insertPointInfoDefs(point: string, id: string): void {
 	const $$ = this;
 	const copyAttr = (from, target) => {
 		const attribs = from.attributes;
@@ -109,12 +109,12 @@ export default {
 
 				if ($$.hasValidPointType(point)) {
 					point = $$[point];
-				} else if (!hasValidPointDrawMethods(point || config.point_type)) {
+				} else if (!_hasValidPointDrawMethods(point || config.point_type)) {
 					const pointId = $$.getDefsPointId(id);
 					const defsPoint = $el.defs.select(`#${pointId}`);
 
 					if (defsPoint.size() < 1) {
-						insertPointInfoDefs.call($$, point, pointId);
+						_insertPointInfoDefs.call($$, point, pointId);
 					}
 
 					if (method === "create") {

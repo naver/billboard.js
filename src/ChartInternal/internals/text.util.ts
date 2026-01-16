@@ -10,6 +10,7 @@ import {
 	isFunction,
 	isNumber,
 	parseShorthand,
+	toMap,
 	tplProcess
 } from "../../module/util";
 import type {IArcData, IData, IDataRow} from "../data/IData";
@@ -309,7 +310,25 @@ function updateTextImagePos(textNode: SVGTextElement, pos: {x: number, y: number
 	}
 }
 
+/**
+ * Batch getBBox() calls to avoid layout thrashing
+ * Collects all bbox calculations in a single read phase
+ * @param {SVGTextElement[]} elements Array of text elements
+ * @returns {Map<SVGTextElement, DOMRect>} Map of element to bbox
+ * @private
+ */
+function batchGetBBox(elements: SVGTextElement[]): Map<SVGTextElement, DOMRect> {
+	// Single read phase - batch all getBBox calls together
+	// This prevents layout thrashing by avoiding interleaved reads/writes
+	return toMap(
+		elements,
+		element => element,
+		element => getBBox(element)
+	);
+}
+
 export {
+	batchGetBBox,
 	getRotateAnchor,
 	getTextPos,
 	meetsLabelThreshold,
