@@ -57,9 +57,12 @@ export const {
 	parseShorthand,
 	runUntil,
 	sanitize,
+	scheduleRAFUpdate,
 	setTextValue,
 	sortValue,
 	toArray,
+	toMap,
+	toSet,
 	tplProcess
 } = orgUtil;
 

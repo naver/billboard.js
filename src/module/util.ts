@@ -8,65 +8,6 @@ import {pointer as d3Pointer} from "d3-selection";
 import type {d3Selection} from "../../types/types";
 import {document, requestAnimationFrame, window} from "./browser";
 
-export {
-	addCssRules,
-	asHalfPixel,
-	brushEmpty,
-	callFn,
-	camelize,
-	capitalize,
-	ceil10,
-	convertInputType,
-	deepClone,
-	diffDomain,
-	emulateEvent,
-	endall,
-	extend,
-	findIndex,
-	getBBox,
-	getBoundingRect,
-	getBrushSelection,
-	getCssRules,
-	getMinMax,
-	getOption,
-	getPathBox,
-	getPointer,
-	getRandom,
-	getRange,
-	getRectSegList,
-	getScrollPosition,
-	getTransformCTM,
-	getTranslation,
-	getUnique,
-	hasStyle,
-	hasValue,
-	hasViewBox,
-	isArray,
-	isBoolean,
-	isDefined,
-	isEmpty,
-	isEmptyObject,
-	isFunction,
-	isNumber,
-	isObject,
-	isObjectType,
-	isString,
-	isTabVisible,
-	isUndefined,
-	isValue,
-	mergeArray,
-	mergeObj,
-	notEmpty,
-	parseDate,
-	parseShorthand,
-	runUntil,
-	sanitize,
-	setTextValue,
-	sortValue,
-	toArray,
-	tplProcess
-};
-
 const isValue = (v: any): boolean => v || v === 0;
 const isFunction = (v: unknown): v is (...args: any[]) => any => typeof v === "function";
 const isString = (v: unknown): v is string => typeof v === "string";
@@ -343,16 +284,20 @@ function getBrushSelection(ctx) {
 	return selection;
 }
 
+// ====================================
+// Internal Helper (Not Exported)
+// ====================================
+
 /**
- * Get boundingClientRect.
- * Cache the evaluated value once it was called.
+ * Get boundingClientRect or BBox with caching.
+ * Internal helper for getBoundingRect() and getBBox()
  * @param {boolean} relativeViewport Relative to viewport - true: will use .getBoundingClientRect(), false: will use .getBBox()
  * @param {SVGElement} node Target element
  * @param {boolean} forceEval Force evaluation
  * @returns {object}
  * @private
  */
-function getRect(
+function _getRect(
 	relativeViewport: boolean,
 	node: SVGElement & Partial<{rect: DOMRect | SVGRect}>,
 	forceEval = false
@@ -373,6 +318,26 @@ function getRect(
 }
 
 /**
+ * Internal helper to iterate over array items and invoke a callback for each valid item
+ * @param {Array} items Array to iterate
+ * @param {function} callback Callback function (item, index) => void
+ * @private
+ */
+function _forEachValidItem<T>(items: T[], callback: (item: T, index: number) => void): void {
+	for (let i = 0; i < items.length; i++) {
+		const item = items[i];
+
+		if (item) {
+			callback(item, i);
+		}
+	}
+}
+
+// ====================================
+// Exported
+// ====================================
+
+/**
  * Get boundingClientRect.
  * @param {SVGElement} node Target element
  * @param {boolean} forceEval Force evaluation
@@ -380,7 +345,7 @@ function getRect(
  * @private
  */
 function getBoundingRect(node, forceEval = false) {
-	return getRect(true, node, forceEval);
+	return _getRect(true, node, forceEval);
 }
 
 /**
@@ -391,7 +356,7 @@ function getBoundingRect(node, forceEval = false) {
  * @private
  */
 function getBBox(node, forceEval = false) {
-	return getRect(false, node, forceEval);
+	return _getRect(false, node, forceEval);
 }
 
 /**
@@ -1006,3 +971,139 @@ function parseShorthand(
 
 	return {top: a, right: b, bottom: c, left: d};
 }
+
+/**
+ * Schedule a RAF update to batch multiple redraw requests
+ * Manages a RAF state object to intelligently batch rapid updates while ensuring
+ * immediate execution for the first call (for test compatibility)
+ * @param {object} rafState RAF state object with pendingRaf property
+ * @param {number|null} rafState.pendingRaf ID of pending RAF or null
+ * @param {function} callback Function to execute in RAF
+ * @returns {void}
+ * @private
+ */
+function scheduleRAFUpdate(rafState: {pendingRaf: number | null}, callback: () => void): void {
+	// If there's already a pending RAF, we're in a rapid update scenario
+	// Cancel it and schedule a new one to batch the updates
+	if (rafState.pendingRaf !== null) {
+		window.cancelAnimationFrame(rafState.pendingRaf);
+
+		// Schedule new RAF
+		rafState.pendingRaf = window.requestAnimationFrame(() => {
+			rafState.pendingRaf = null;
+			callback();
+		});
+	} else {
+		// First call - execute immediately for test compatibility
+		// But set pending RAF to detect rapid consecutive calls
+		rafState.pendingRaf = window.requestAnimationFrame(() => {
+			rafState.pendingRaf = null;
+		});
+
+		callback();
+	}
+}
+
+/**
+ * Convert an array to a Set by applying a key extractor
+ * @param {Array} items Array of items to convert to Set
+ * @param {function} keyFn Function to extract key from each item (item, index) => key. Defaults to identity function
+ * @returns {Set} Set with extracted keys
+ * @private
+ */
+function toSet<T, K = T>(
+	items: T[],
+	keyFn: (item: T, index: number) => K = (item => item as unknown as K)
+): Set<K> {
+	const set = new Set<K>();
+
+	_forEachValidItem(items, (item, i) => {
+		set.add(keyFn(item, i));
+	});
+
+	return set;
+}
+
+/**
+ * Convert an array to a Map by applying key and value extractors
+ * @param {Array} items Array of items to convert to Map
+ * @param {function} keyFn Function to extract key from each item (item, index) => key
+ * @param {function} valueFn Function to extract value from each item (item, index) => value. Defaults to identity function
+ * @returns {Map} Map with extracted keys and values
+ * @private
+ */
+function toMap<T, K, V = T>(
+	items: T[],
+	keyFn: (item: T, index: number) => K,
+	valueFn: (item: T, index: number) => V = (item => item as unknown as V)
+): Map<K, V> {
+	const map = new Map<K, V>();
+
+	_forEachValidItem(items, (item, i) => {
+		map.set(keyFn(item, i), valueFn(item, i));
+	});
+
+	return map;
+}
+
+export {
+	addCssRules,
+	asHalfPixel,
+	brushEmpty,
+	callFn,
+	camelize,
+	capitalize,
+	ceil10,
+	convertInputType,
+	deepClone,
+	diffDomain,
+	emulateEvent,
+	endall,
+	extend,
+	findIndex,
+	getBBox,
+	getBoundingRect,
+	getBrushSelection,
+	getCssRules,
+	getMinMax,
+	getOption,
+	getPathBox,
+	getPointer,
+	getRandom,
+	getRange,
+	getRectSegList,
+	getScrollPosition,
+	getTransformCTM,
+	getTranslation,
+	getUnique,
+	hasStyle,
+	hasValue,
+	hasViewBox,
+	isArray,
+	isBoolean,
+	isDefined,
+	isEmpty,
+	isEmptyObject,
+	isFunction,
+	isNumber,
+	isObject,
+	isObjectType,
+	isString,
+	isTabVisible,
+	isUndefined,
+	isValue,
+	mergeArray,
+	mergeObj,
+	notEmpty,
+	parseDate,
+	parseShorthand,
+	runUntil,
+	sanitize,
+	scheduleRAFUpdate,
+	setTextValue,
+	sortValue,
+	toArray,
+	toMap,
+	toSet,
+	tplProcess
+};

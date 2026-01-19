@@ -29,7 +29,7 @@ import {
  * @returns {number}
  * @private
  */
-function getPosition(isClockwise: boolean, type: "x" | "y", edge: number, pos: number,
+function _getPosition(isClockwise: boolean, type: "x" | "y", edge: number, pos: number,
 	range: number, ratio: number): number {
 	const index = isClockwise && pos > 0 ? edge - pos : pos;
 	const r = 2 * Math.PI;
@@ -105,7 +105,7 @@ export default {
 		const isClockwise = config.radar_direction_clockwise;
 
 		const pos = toArray(type).map(v =>
-			getPosition(
+			_getPosition(
 				isClockwise,
 				v,
 				edge,

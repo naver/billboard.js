@@ -20,7 +20,7 @@ import type {IArcData, IDataRow} from "../data/IData";
  * @returns {{id: string, node: SVGPatternElement}}
  * @private
  */
-const colorizePattern = (pattern, color, id: string) => {
+const _colorizePattern = (pattern, color, id: string) => {
 	const node = d3Select(pattern.cloneNode(true));
 
 	node
@@ -43,7 +43,7 @@ const colorizePattern = (pattern, color, id: string) => {
  * @returns {Array}
  * @private
  */
-function getColorFromCss(element: d3Selection): string[] {
+function _getColorFromCss(element: d3Selection): string[] {
 	const cacheKey = KEY.colorPattern;
 	const {body} = document;
 	let pattern = body[cacheKey];
@@ -95,7 +95,7 @@ export default {
 
 		let pattern = notEmpty(config.color_pattern) ?
 			config.color_pattern :
-			d3ScaleOrdinal(getColorFromCss($el.chart) || schemeCategory10).range();
+			d3ScaleOrdinal(_getColorFromCss($el.chart) || schemeCategory10).range();
 
 		const originalColorPattern = pattern;
 
@@ -107,7 +107,7 @@ export default {
 				const color = p.replace(/[#\(\)\s,]/g, "");
 				const id = `${$$.state.datetimeId}-pattern-${color}-${index}`;
 
-				return colorizePattern(tiles[index % tiles.length], p, id);
+				return _colorizePattern(tiles[index % tiles.length], p, id);
 			});
 
 			pattern = colorizedPatterns.map(p => `url(#${p.id})`);

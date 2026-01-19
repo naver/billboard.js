@@ -16,7 +16,7 @@ type TSizeCurrent = Pick<TSize, "width" | "height">;
  * @returns {object} size object
  * @private
  */
-function getSize(checkNeck = false): TSize {
+function _getSize(checkNeck = false): TSize {
 	const $$ = this;
 	const {config, state: {current: {width, height}}} = $$;
 	const padding = $$.getCurrentPadding();
@@ -30,7 +30,7 @@ function getSize(checkNeck = false): TSize {
 
 	// determine if container width to not be less than neck width
 	if (checkNeck) {
-		const {width: neckWidth, height: neckHeight} = getNecklSize.call($$, {
+		const {width: neckWidth, height: neckHeight} = _getNeckSize.call($$, {
 			width: size.width,
 			height: size.height
 		});
@@ -54,7 +54,7 @@ function getSize(checkNeck = false): TSize {
  * @returns {object} size object
  * @private
  */
-function getNecklSize(current: TSizeCurrent) {
+function _getNeckSize(current: TSizeCurrent) {
 	const $$ = this;
 	const {config} = $$;
 	let width = config.funnel_neck_width;
@@ -82,9 +82,9 @@ function getNecklSize(current: TSizeCurrent) {
  * @returns {Array} Coordinate points
  * @private
  */
-function getCoord(d: IFunnelData[]) {
+function _getCoord(d: IFunnelData[]) {
 	const $$ = this;
-	const {top, left, width} = getSize.call($$, true);
+	const {top, left, width} = _getSize.call($$, true);
 	const coords: number[][][] = [];
 
 	d.forEach((d, i) => {
@@ -114,10 +114,10 @@ function getCoord(d: IFunnelData[]) {
  * @returns {string} path
  * @private
  */
-function getClipPath(forBackground = false): string {
+function _getClipPath(forBackground = false): string {
 	const $$ = this;
-	const {width, height, top, left} = getSize.call($$, true);
-	const neck = getNecklSize.call($$, {width, height});
+	const {width, height, top, left} = _getSize.call($$, true);
+	const neck = _getNeckSize.call($$, {width, height});
 	const leftX = (width - neck.width) / 2;
 	const rightX = (width + neck.width) / 2;
 	const bodyHeigth = height - neck.height;
@@ -148,7 +148,7 @@ function getClipPath(forBackground = false): string {
  * @returns {Array}
  * @private
  */
-function getFunnelData(d: IData[]): IFunnelData[] {
+function _getFunnelData(d: IData[]): IFunnelData[] {
 	const $$ = this;
 	const {config} = $$;
 	const data: IFunnelData[] = d.map(d => ({
@@ -160,7 +160,7 @@ function getFunnelData(d: IData[]): IFunnelData[] {
 		data.sort($$.getSortCompareFn.bind($$)(true));
 	}
 
-	return updateRatio.call($$, data);
+	return _updateRatio.call($$, data);
 }
 
 /**
@@ -169,9 +169,9 @@ function getFunnelData(d: IData[]): IFunnelData[] {
  * @returns {Array} Updated data object
  * @private
  */
-function updateRatio(data: IFunnelData[]): IFunnelData[] {
+function _updateRatio(data: IFunnelData[]): IFunnelData[] {
 	const $$ = this;
-	const {height} = getSize.call($$);
+	const {height} = _getSize.call($$);
 	const total = $$.getTotalDataSum(true);
 
 	data.forEach(d => {
@@ -259,7 +259,7 @@ export default {
 			$$.initFunnel();
 		}
 
-		const targets = getFunnelData.call($$, t.filter($$.isFunnelType.bind($$)));
+		const targets = _getFunnelData.call($$, t.filter($$.isFunnelType.bind($$)));
 
 		const mainFunnelUpdate = funnel
 			.selectAll(`.${$FUNNEL.chartFunnel}`)
@@ -305,7 +305,7 @@ export default {
 		const $$ = this;
 		const {$el: {funnel}} = $$;
 		const targets = $$.filterTargetsToShow(funnel.path);
-		const {top, left, right} = getSize.call($$);
+		const {top, left, right} = _getSize.call($$);
 		const center = (left - right) / 2;
 		const points = {};
 		let accumulatedHeight = top ?? 0;
@@ -328,11 +328,11 @@ export default {
 		const $$ = this;
 		const {$T, $el: {funnel}} = $$;
 		const targets = $$.filterTargetsToShow(funnel.path);
-		const coords = getCoord.call($$, updateRatio.call($$, targets.data()));
+		const coords = _getCoord.call($$, _updateRatio.call($$, targets.data()));
 
 		// set neck path
-		funnel.attr("clip-path", `path('${getClipPath.bind($$)()}')`);
-		funnel.background.attr("d", getClipPath.call($$, true));
+		funnel.attr("clip-path", `path('${_getClipPath.bind($$)()}')`);
+		funnel.background.attr("d", _getClipPath.call($$, true));
 
 		$T(targets)
 			.attr("d", (d, i) => `M${coords[i].join("L")}z`)

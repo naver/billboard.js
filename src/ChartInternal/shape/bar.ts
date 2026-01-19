@@ -17,8 +17,9 @@ type BarPath = (string | BarConnectLine)[];
  * Get the type of connect line for bar chart
  * @param {string} id Data id
  * @returns {string|null} Connect line type or null if not applicable
+ * @private
  */
-function getConnectLineType(id: string): string | null {
+function _getConnectLineType(id: string): string | null {
 	const connectLine = this.config.bar_connectLine;
 	const type = connectLine?.[id] || connectLine;
 
@@ -78,7 +79,7 @@ export default {
 
 				// add bar connect line
 				selection.each(function(d) {
-					if (getConnectLineType.call($$, d.id)) {
+					if (_getConnectLineType.call($$, d.id)) {
 						d3Select(this).append("path")
 							.attr("class", $BAR.barConnectLine);
 					}
@@ -149,7 +150,7 @@ export default {
 			$$.$T(bar, withTransition, getRandom())
 				.attr("d", function(d, i, arr) {
 					const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
-					const connectLineType = getConnectLineType.call($$, d.id);
+					const connectLineType = _getConnectLineType.call($$, d.id);
 
 					// for bar.coonectLine option
 					if (path.length > 1) {
@@ -288,7 +289,7 @@ export default {
 
 			const coords: BarPath = [`M${points[0][indexX]},${points[0][indexY]}${path}z`];
 
-			if (getConnectLineType.call($$, d.id)) {
+			if (_getConnectLineType.call($$, d.id)) {
 				coords.push(isRotated ?
 					{
 						x: points[0][indexX],
