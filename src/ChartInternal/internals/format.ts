@@ -13,7 +13,7 @@ import {isArray, isFunction, isObject, isObjectType, isValue} from "../../module
  * @returns {number | string}
  * @private
  */
-function getFormat($$, typeValue: AxisType, v: number): number | string {
+function _getFormat($$, typeValue: AxisType, v: number): number | string {
 	const {config} = $$;
 	const type = `axis_${typeValue}_tick_format`;
 	const format = config[type] ? config[type] : $$.defaultValueFormat;
@@ -23,11 +23,11 @@ function getFormat($$, typeValue: AxisType, v: number): number | string {
 
 export default {
 	yFormat(v: number): number | string {
-		return getFormat(this, "y", v);
+		return _getFormat(this, "y", v);
 	},
 
 	y2Format(v: number): number | string {
-		return getFormat(this, "y2", v);
+		return _getFormat(this, "y2", v);
 	},
 
 	/**

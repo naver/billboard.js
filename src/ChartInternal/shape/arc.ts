@@ -32,7 +32,7 @@ type ChartInternalThis = any;
  * @returns {string|undefined} Chart type or undefined
  * @private
  */
-function getArcType($$: ChartInternalThis): string | undefined {
+function _getArcType($$: ChartInternalThis): string | undefined {
 	return ["donut", "pie", "polar", "gauge"].find(type => $$.hasType(type));
 }
 
@@ -45,7 +45,7 @@ function getArcType($$: ChartInternalThis): string | undefined {
  * @returns {object} Position object {x, y}
  * @private
  */
-function calculateRangeOrGaugePosition(
+function _calculateRangeOrGaugePosition(
 	$$: ChartInternalThis,
 	d: IArcData,
 	updated: IArcData,
@@ -85,14 +85,14 @@ function calculateRangeOrGaugePosition(
  * @returns {number} Calculated ratio
  * @private
  */
-function calculateLabelRatio(
+function _calculateLabelRatio(
 	$$: ChartInternalThis,
 	d: IArcData,
 	outerRadius: number,
 	distance: number
 ): number {
 	const {config} = $$;
-	const chartType = getArcType($$);
+	const chartType = _getArcType($$);
 	let ratio = chartType ? config[`${chartType}_label_ratio`] : undefined;
 
 	if (ratio) {
@@ -127,7 +127,7 @@ function calculateLabelRatio(
  * @returns {object} Object with pos {x, y} and ratio
  * @private
  */
-function calculateStandardArcPosition(
+function _calculateStandardArcPosition(
 	$$: ChartInternalThis,
 	d: IArcData,
 	updated: IArcData
@@ -140,7 +140,7 @@ function calculateStandardArcPosition(
 
 	const [x, y] = $$.svgArc.centroid(updated).map((v: number) => (isNaN(v) ? 0 : v));
 	const distance = Math.sqrt(x * x + y * y);
-	const ratio = calculateLabelRatio($$, d, outerRadius, distance);
+	const ratio = _calculateLabelRatio($$, d, outerRadius, distance);
 
 	return {
 		pos: {x, y},
@@ -156,7 +156,7 @@ function calculateStandardArcPosition(
  * @returns {object} radius functions
  * @private
  */
-function getRadiusFn(expandRate = 0) {
+function _getRadiusFn(expandRate = 0) {
 	const $$ = this;
 	const {config, state} = $$;
 	const hasMultiArcGauge = $$.hasMultiArcGauge();
@@ -250,7 +250,7 @@ function getRadiusFn(expandRate = 0) {
  * @returns {function} attrTween function
  * @private
  */
-function getAttrTweenFn(fn: (d: IArcData) => string) {
+function _getAttrTweenFn(fn: (d: IArcData) => string) {
 	return function(d: IArcData): (t: number) => string {
 		const getAngleKeyValue = ({startAngle = 0, endAngle = 0, padAngle = 0}) => ({
 			startAngle,
@@ -481,7 +481,7 @@ export default {
 
 	getSvgArc(): Function {
 		const $$ = this;
-		const {inner, outer, corner} = getRadiusFn.call($$);
+		const {inner, outer, corner} = _getRadiusFn.call($$);
 
 		const arc = d3Arc()
 			.innerRadius(inner)
@@ -517,7 +517,7 @@ export default {
 	 */
 	getSvgArcExpanded(rate = 1): (d: IArcData) => string {
 		const $$ = this;
-		const {inner, outer, corner} = getRadiusFn.call($$, rate);
+		const {inner, outer, corner} = _getRadiusFn.call($$, rate);
 
 		const arc = d3Arc()
 			.innerRadius(inner)
@@ -612,10 +612,10 @@ export default {
 
 		// Handle range text or multi-arc gauge labels
 		if (forRange || $$.hasMultiArcGauge()) {
-			pos = calculateRangeOrGaugePosition($$, d, updated, forRange);
+			pos = _calculateRangeOrGaugePosition($$, d, updated, forRange);
 		} // Handle standard arc types (donut, pie, polar)
 		else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
-			const result = calculateStandardArcPosition($$, d, updated);
+			const result = _calculateStandardArcPosition($$, d, updated);
 
 			pos = result.pos;
 			ratio = result.ratio;
@@ -704,10 +704,10 @@ export default {
 					// @ts-ignore
 					.transition()
 					.duration(expandDuration)
-					.attrTween("d", getAttrTweenFn($$.svgArcExpanded.bind($$)))
+					.attrTween("d", _getAttrTweenFn($$.svgArcExpanded.bind($$)))
 					.transition()
 					.duration(expandDuration * 2)
-					.attrTween("d", getAttrTweenFn(svgArcExpandedSub.bind($$)));
+					.attrTween("d", _getAttrTweenFn(svgArcExpandedSub.bind($$)));
 			});
 	},
 
@@ -725,7 +725,7 @@ export default {
 			.selectAll("path")
 			.transition()
 			.duration(d => $$.getExpandConfig(d.data.id, "duration"))
-			.attrTween("d", getAttrTweenFn($$.svgArc.bind($$)));
+			.attrTween("d", _getAttrTweenFn($$.svgArc.bind($$)));
 
 		svg.selectAll(`${$ARC.arc}`)
 			.style("opacity", null);

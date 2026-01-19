@@ -529,7 +529,33 @@ export default {
 	filterTargetsToShow(targets?) {
 		const $$ = this;
 
-		return (targets || $$.data.targets).filter(t => $$.isTargetToShow(t.id));
+		// When called without arguments, use caching
+		if (!targets) {
+			const {cache, data, state} = $$;
+			const cacheKey = KEY.filteredTargets;
+			const visibilityChecksum = state.hiddenTargetIds.join(",");
+			const storedChecksum = cache.get(KEY.visibilityChecksum);
+
+			// Invalidate cache if visibility changed
+			if (visibilityChecksum !== storedChecksum) {
+				cache.remove(cacheKey);
+				cache.add(KEY.visibilityChecksum, visibilityChecksum);
+			}
+
+			// Return cached result if available
+			if (cache.has(cacheKey)) {
+				return cache.get(cacheKey);
+			}
+
+			// Compute and cache result (store the filtered array)
+			const filtered = data.targets.filter(t => $$.isTargetToShow(t.id));
+			cache.add(cacheKey, filtered);
+
+			return filtered;
+		}
+
+		// When called with custom targets, don't cache
+		return targets.filter(t => $$.isTargetToShow(t.id));
 	},
 
 	mapTargetsToUniqueXs(targets) {
@@ -607,6 +633,9 @@ export default {
 				.map(v => (isString(v) ? v : +v)) :
 			null;
 
+		// Create xIndexMap for O(1) lookup instead of O(n) indexOf in getIndexByX
+		const xIndexMap = xs ? new Map(xs.map((x, i) => [x, i])) : null;
+
 		targets.forEach(t => {
 			const data: any[] = [];
 
@@ -629,8 +658,14 @@ export default {
 					} else if ($$.isBubbleZType(v)) {
 						data.push(hasAxis && $$.getBubbleZData(value, "y"));
 					} else {
-						if (isMultipleX) {
-							data[$$.getIndexByX(v.x, xs)] = value;
+						if (isMultipleX && xIndexMap) {
+							// Use Map for O(1) lookup instead of getIndexByX which uses indexOf
+							const xKey = isString(v.x) ? v.x : +v.x;
+							const index = xIndexMap.get(xKey);
+
+							if (index !== undefined) {
+								data[index as number] = value;
+							}
 						} else {
 							data.push(value);
 						}

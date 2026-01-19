@@ -9,7 +9,8 @@ import {
 	isObject,
 	isUndefined,
 	isValue,
-	notEmpty
+	notEmpty,
+	toSet
 } from "../../module/util";
 import {runWorker} from "../../module/worker";
 import type {IData} from "../data/IData";
@@ -22,7 +23,7 @@ import {columns, json, rows, url} from "./convert.helper";
  * @returns {string} Data key
  * @private
  */
-function getDataKeyForJson(keysParam, config) {
+function _getDataKeyForJson(keysParam, config) {
 	const keys = keysParam || config?.data_keys;
 
 	if (keys?.x) {
@@ -44,7 +45,7 @@ function getDataKeyForJson(keysParam, config) {
  * @param {boolean} params.customX Whether the x is custom
  * @private
  */
-function setXS(
+function _setXS(
 	ids: string[],
 	data: {[key: string]: number | null}[],
 	params: {appendXs, xs, categorized: boolean, timeSeries: boolean, customX: boolean}
@@ -117,12 +118,12 @@ export default {
 		}
 
 		if (data.url && callback) {
-			url(data.url, data.mimeType, data.headers, getDataKeyForJson(data.keys, config),
+			url(data.url, data.mimeType, data.headers, _getDataKeyForJson(data.keys, config),
 				callback);
 		} else if (data.json) {
 			runWorker(useWorker(data.json), json, callback, [columns, rows])(
 				data.json,
-				getDataKeyForJson(data.keys, config)
+				_getDataKeyForJson(data.keys, config)
 			);
 		} else if (data.rows) {
 			runWorker(useWorker(data.rows), rows, callback)(data.rows);
@@ -169,7 +170,7 @@ export default {
 		};
 
 		// save x for update data by load when custom x and bb.x API
-		setXS.bind($$)(ids, data, params);
+		_setXS.bind($$)(ids, data, params);
 
 		// convert to target
 		const targets = ids.map((id, index) => {
@@ -177,7 +178,7 @@ export default {
 			const xKey = $$.getXKey(id);
 			const isCategory = params.customX && params.categorized;
 			const hasCategory = isCategory && (() => {
-				const categorySet = new Set(config.axis_x_categories);
+				const categorySet = toSet(config.axis_x_categories);
 				return data.every(v => categorySet.has(v.x));
 			})();
 

@@ -25,7 +25,7 @@ import {getScale} from "../internals/scale";
  * @returns {object} Stroke dasharray style value and its length
  * @private
  */
-function getStrokeDashArray(start: number, end: number, pattern: [number, number],
+function _getStrokeDashArray(start: number, end: number, pattern: [number, number],
 	isLastX = false): {dash: string, length: number} {
 	const dash = start ? [start, 0] : pattern;
 
@@ -56,7 +56,7 @@ function getStrokeDashArray(start: number, end: number, pattern: [number, number
  * @returns {object} Regions data
  * @private
  */
-function getRegions(d, _regions, isTimeSeries) {
+function _getRegions(d, _regions, isTimeSeries) {
 	const $$ = this;
 	const regions: {start: number | string, end: number | string, style: string}[] = [];
 	const dasharray = "2 2"; // default value
@@ -138,8 +138,7 @@ export default {
 		const {format: {extraLineClasses}, $el, $T} = $$;
 		const $root = isSub ? $el.subchart : $el;
 
-		const line = $root.main
-			.selectAll(`.${$LINE.lines}`)
+		const line = $root.main.selectAll(`.${$LINE.lines}`)
 			.selectAll(`.${$LINE.line}`)
 			.data($$.lineData.bind($$));
 
@@ -294,7 +293,7 @@ export default {
 		const isRotated = config.axis_rotated;
 		const isTimeSeries = $$.axis.isTimeSeries();
 		const dasharray = "2 2"; // default value
-		const regions = getRegions.bind($$)(d, _regions, isTimeSeries);
+		const regions = _getRegions.bind($$)(d, _regions, isTimeSeries);
 
 		// when contains null data, can't apply style dashed
 		const hasNullDataValue = $$.hasNullDataValue(d);
@@ -430,7 +429,7 @@ export default {
 					const startLength = getLength(tempNode, path);
 					const endLength = getLength(tempNode, path += `L${points[1].join(",")}`);
 
-					const strokeDashArray = getStrokeDashArray(
+					const strokeDashArray = _getStrokeDashArray(
 						startLength - dashArray.lastLength,
 						endLength - dashArray.lastLength,
 						style,
