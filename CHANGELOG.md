@@ -1,3 +1,10 @@
+# [3.18.0-next.2](https://github.com/naver/billboard.js/compare/3.18.0-next.1...3.18.0-next.2) (2026-01-19)
+
+
+### Bug Fixes
+
+* **util:** update sanitization function ([#4085](https://github.com/naver/billboard.js/issues/4085)) ([49e079c](https://github.com/naver/billboard.js/commit/49e079cdd466fc8ba7ab208988181e5b7a5f336b)), closes [#4078](https://github.com/naver/billboard.js/issues/4078)
+
 # [3.18.0-next.1](https://github.com/naver/billboard.js/compare/3.17.4...3.18.0-next.1) (2026-01-15)
 
 
