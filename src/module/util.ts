@@ -8,6 +8,148 @@ import {pointer as d3Pointer} from "d3-selection";
 import type {d3Selection} from "../../types/types";
 import {document, requestAnimationFrame, window} from "./browser";
 
+// ====================================
+// Internal Helper (Not Exported)
+// ====================================
+
+/**
+ * Get boundingClientRect or BBox with caching.
+ * Internal helper for getBoundingRect() and getBBox()
+ * @param {boolean} relativeViewport Relative to viewport - true: will use .getBoundingClientRect(), false: will use .getBBox()
+ * @param {SVGElement} node Target element
+ * @param {boolean} forceEval Force evaluation
+ * @returns {object}
+ * @private
+ */
+function _getRect(
+	relativeViewport: boolean,
+	node: SVGElement & Partial<{rect: DOMRect | SVGRect}>,
+	forceEval = false
+): DOMRect | SVGRect {
+	const _ = n => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+
+	if (forceEval) {
+		return _(node);
+	} else {
+		// will cache the value if the element is not a SVGElement or the width is not set
+		const needEvaluate = !("rect" in node) || (
+			"rect" in node && node.hasAttribute("width") &&
+			node.rect!.width !== +(node.getAttribute("width") || 0)
+		);
+
+		return needEvaluate ? (node.rect = _(node)) : node.rect!;
+	}
+}
+
+/**
+ * Internal helper to iterate over array items and invoke a callback for each valid item
+ * @param {Array} items Array to iterate
+ * @param {function} callback Callback function (item, index) => void
+ * @private
+ */
+function _forEachValidItem<T>(items: T[], callback: (item: T, index: number) => void): void {
+	for (let i = 0; i < items.length; i++) {
+		const item = items[i];
+
+		if (item) {
+			callback(item, i);
+		}
+	}
+}
+
+/**
+ * Private sanitization utilities
+ * Encapsulates all XSS prevention patterns and helper functions
+ * @private
+ */
+const _sanitize = (() => {
+	const DANGEROUS_TAGS =
+		"script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
+
+	// HTML entity character code map (for decoding)
+	const ENTITY_MAP = {
+		quot: 34,
+		amp: 38,
+		apos: 39,
+		lt: 60,
+		gt: 62,
+		nbsp: 160,
+		iexcl: 161,
+		cent: 162,
+		pound: 163,
+		curren: 164,
+		yen: 165
+	};
+
+	// Angle bracket codes (< and >) - never decode these to prevent tag bypass
+	const LT_CODE = 60;
+	const GT_CODE = 62;
+
+	// Maximum sanitization iterations to prevent infinite loops
+	const MAX_ITERATIONS = 10;
+
+	// Regular expressions (compiled once for performance)
+	const rx = {
+		tags: new RegExp(
+			`<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
+			"gi"
+		),
+		htmlEntity: /&#x([0-9a-f]+);?|&#([0-9]+);?|&([a-z]+);/gi,
+		// eslint-disable-next-line no-control-regex
+		controlChar: /[\x00-\x1F\x7F]/g,
+		eventHandler:
+			/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)|on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi,
+		dangerousUri: /(href|src|action|xlink:href)\s*=\s*(['"`]?)([^'"`>\s]*)\2/gi,
+		dangerousProtocol: /^(javascript|data|vbscript):/
+	};
+
+	return {
+		ENTITY_MAP,
+		LT_CODE,
+		GT_CODE,
+		MAX_ITERATIONS,
+		rx,
+
+		/**
+		 * Decode HTML entities to prevent bypass attacks
+		 * @param {string} str String with potential HTML entities
+		 * @returns {string} Decoded string
+		 */
+		decodeEntities(str: string): string {
+			return str.replace(rx.htmlEntity, (match, hex, dec, named) => {
+				const code = hex ?
+					parseInt(hex, 16) :
+					dec ?
+					parseInt(dec, 10) :
+					named ?
+					ENTITY_MAP[named.toLowerCase()] || 0 :
+					0;
+
+				// Never decode angle brackets to prevent tag bypass
+				return code && code !== LT_CODE && code !== GT_CODE ?
+					String.fromCharCode(code) :
+					match;
+			});
+		},
+
+		/**
+		 * Remove dangerous URI protocols from attribute values
+		 * @param {string} str String to sanitize
+		 * @returns {string} Sanitized string
+		 */
+		removeDangerousUris(str: string): string {
+			return str.replace(rx.dangerousUri, (match, attr, quote, value) => {
+				const normalized = value.toLowerCase().replace(/\s/g, "");
+				return rx.dangerousProtocol.test(normalized) ? `${attr}=${quote}${quote}` : match;
+			});
+		}
+	};
+})();
+
+// ====================================
+// Exported
+// ====================================
+
 const isValue = (v: any): boolean => v || v === 0;
 const isFunction = (v: unknown): v is (...args: any[]) => any => typeof v === "function";
 const isString = (v: unknown): v is string => typeof v === "string";
@@ -116,42 +258,43 @@ function endall(transition, cb: Function): void {
 	}
 }
 
-// Sanitize patterns (blacklist approach with repeated application)
-const DANGEROUS_TAGS =
-	"script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
-const sanitizeRx = {
-	tags: new RegExp(
-		`<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
-		"gi"
-	),
-	// Handles: whitespace, slash, quotes before event handlers (e.g., <img/onerror=...>, <img src="x"onerror=...>)
-	eventHandlers: /[\s/"']+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
-	// Handles: javascript/data/vbscript URIs with optional whitespace/newlines between protocol and colon
-	dangerousURIs: /(href|src|action|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript)\s*:/gi
-};
-
 /**
  * Sanitize HTML string to prevent XSS attacks
  * Uses blacklist approach with repeated application to prevent nested tag bypass
+ * Handles encoded characters (HTML entities, Unicode escapes) to prevent bypass attacks
  * @param {string} str Target string value
  * @returns {string} Sanitized string with dangerous elements removed
  * @private
  */
 function sanitize(str: string): string {
+	// Early return for non-string, empty string, or string without HTML
 	if (!isString(str) || !str || str.indexOf("<") === -1) {
 		return str;
 	}
 
 	let result = str;
 	let prev: string;
+	let iterations = 0;
 
 	// Repeat until no more changes (prevents nested tag attacks like <scri<script>pt>)
 	do {
 		prev = result;
-		result = result
-			.replace(sanitizeRx.tags, "")
-			.replace(sanitizeRx.eventHandlers, "")
-			.replace(sanitizeRx.dangerousURIs, "$1=\"\"");
+
+		// 1. Decode HTML entities to prevent bypass (e.g., jav&#x0A;ascript:)
+		// 2. Remove control characters (NULL, tab, newline, etc.)
+		// 3. Remove dangerous tags (script, iframe, etc.)
+		result = _sanitize.decodeEntities(result)
+			.replace(_sanitize.rx.controlChar, "")
+			.replace(_sanitize.rx.tags, "")
+			.replace(_sanitize.rx.eventHandler, ""); // 4. Remove event handlers
+
+		// 5. Remove dangerous URIs (javascript:, data:, vbscript:)
+		result = _sanitize.removeDangerousUris(result);
+
+		// Safety check to prevent infinite loops
+		if (++iterations >= _sanitize.MAX_ITERATIONS) {
+			break;
+		}
 	} while (result !== prev);
 
 	return result;
@@ -250,7 +393,7 @@ function getPathBox(
  * @returns {Array} [x, y] Coordinates x, y array
  * @private
  */
-function getPointer(event, element?: SVGElement): number[] {
+function getPointer(event, element?: HTMLElement | SVGElement): number[] {
 	const touches = event &&
 		(event.touches || (event.sourceEvent && event.sourceEvent.touches))?.[0];
 	let pointer = [0, 0];
@@ -283,59 +426,6 @@ function getBrushSelection(ctx) {
 
 	return selection;
 }
-
-// ====================================
-// Internal Helper (Not Exported)
-// ====================================
-
-/**
- * Get boundingClientRect or BBox with caching.
- * Internal helper for getBoundingRect() and getBBox()
- * @param {boolean} relativeViewport Relative to viewport - true: will use .getBoundingClientRect(), false: will use .getBBox()
- * @param {SVGElement} node Target element
- * @param {boolean} forceEval Force evaluation
- * @returns {object}
- * @private
- */
-function _getRect(
-	relativeViewport: boolean,
-	node: SVGElement & Partial<{rect: DOMRect | SVGRect}>,
-	forceEval = false
-): DOMRect | SVGRect {
-	const _ = n => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
-
-	if (forceEval) {
-		return _(node);
-	} else {
-		// will cache the value if the element is not a SVGElement or the width is not set
-		const needEvaluate = !("rect" in node) || (
-			"rect" in node && node.hasAttribute("width") &&
-			node.rect!.width !== +(node.getAttribute("width") || 0)
-		);
-
-		return needEvaluate ? (node.rect = _(node)) : node.rect!;
-	}
-}
-
-/**
- * Internal helper to iterate over array items and invoke a callback for each valid item
- * @param {Array} items Array to iterate
- * @param {function} callback Callback function (item, index) => void
- * @private
- */
-function _forEachValidItem<T>(items: T[], callback: (item: T, index: number) => void): void {
-	for (let i = 0; i < items.length; i++) {
-		const item = items[i];
-
-		if (item) {
-			callback(item, i);
-		}
-	}
-}
-
-// ====================================
-// Exported
-// ====================================
 
 /**
  * Get boundingClientRect.

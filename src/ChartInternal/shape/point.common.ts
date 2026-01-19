@@ -67,6 +67,8 @@ export default {
 	 * @private
 	 */
 	hasValidPointType(type?: string): boolean {
+		// For point.pattern, allow additional SVG shape tags (polygon, ellipse, use)
+		// These will be sanitized before use
 		return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
 	},
 
@@ -88,6 +90,22 @@ export default {
 	},
 
 	/**
+	 * Get validated point pattern array
+	 * @returns {Array} Array of point types
+	 * @private
+	 */
+	getValidPointPattern(): string[] {
+		const {config} = this;
+
+		// Ensure point_type is restricted to 'circle' or 'rectangle' only
+		const validPointType = /^(circle|rect(angle)?)$/i.test(config.point_type) ?
+			config.point_type :
+			"circle";
+
+		return notEmpty(config.point_pattern) ? config.point_pattern : [validPointType];
+	},
+
+	/**
 	 * Get generate point function
 	 * @returns {function}
 	 * @private
@@ -96,7 +114,7 @@ export default {
 		const $$ = this;
 		const {$el, config} = $$;
 		const ids: string[] = [];
-		const pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
+		const pattern = $$.getValidPointPattern();
 
 		return function(method, context, ...args) {
 			return function(d) {
