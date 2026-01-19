@@ -12,7 +12,6 @@ import {
 	isDefined,
 	isEmpty,
 	isFunction,
-	notEmpty,
 	sanitize,
 	toMap,
 	tplProcess
@@ -872,12 +871,9 @@ export default {
 
 		if (usePoint) {
 			const ids: string[] = [];
+			const pattern = $$.getValidPointPattern();
 
 			l.append(d => {
-				const pattern = notEmpty(config.point_pattern) ?
-					config.point_pattern :
-					[config.point_type];
-
 				ids.indexOf(d) === -1 && ids.push(d);
 
 				let point = pattern[ids.indexOf(d) % pattern.length];

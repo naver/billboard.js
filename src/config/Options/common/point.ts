@@ -59,6 +59,7 @@ export default {
 	 *   - This is an `experimental` feature and can have some unexpected behaviors.
 	 *   - If chart has 'bubble' type, only circle can be used.
 	 *   - For IE, non circle point expansions are not supported due to lack of transform support.
+	 *   - While basic XSS sanitization is applied, if you're allowing user-provided chart options in a service exposed to other users, you should implement additional security measures to prevent sophisticated XSS attacks.
 	 * - **Available Values:**
 	 *   - circle
 	 *   - rectangle

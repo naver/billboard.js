@@ -58,6 +58,7 @@ export default {
 	 *    - **{=COLOR}**: data color.
 	 *    - **{=NAME}**: data id value.
 	 *    - **{=VALUE}**: data value.
+	 *  - **NOTE:** While basic XSS sanitization is applied, if you're allowing user-provided chart options in a service exposed to other users, you should implement additional security measures to prevent sophisticated XSS attacks.
 	 * @property {object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
 	 *  - **NOTE:** It should contain `{ key: Array, ... }` value
 	 *    - 'key' name is used as substitution within template as '{=KEY}'
