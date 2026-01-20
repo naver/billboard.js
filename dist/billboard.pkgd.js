@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.4-nightly-20260116004724
+ * @version 3.17.4-nightly-20260120004728
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -24617,6 +24617,7 @@ const $ZOOM = {
    *   - title {string}: data's id value
    *   - color {string}: color string
    *   - data {Array}: data array
+   *  - **NOTE:** While basic XSS sanitization is applied, if you're allowing user-provided chart options in a service exposed to other users, you should implement additional security measures to prevent sophisticated XSS attacks.
    * @property {string} [legend.position=bottom] Change the position of legend.<br>
    *  Available values are: `bottom`, `right` and `inset` are supported.
    * @property {object} [legend.inset={anchor: 'top-left',x: 10,y: 0,step: undefined}] Change inset legend attributes.<br>
@@ -25289,6 +25290,7 @@ const $ZOOM = {
    *    - **{=COLOR}**: data color.
    *    - **{=NAME}**: data id value.
    *    - **{=VALUE}**: data value.
+   *  - **NOTE:** While basic XSS sanitization is applied, if you're allowing user-provided chart options in a service exposed to other users, you should implement additional security measures to prevent sophisticated XSS attacks.
    * @property {object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
    *  - **NOTE:** It should contain `{ key: Array, ... }` value
    *    - 'key' name is used as substitution within template as '{=KEY}'
@@ -28718,7 +28720,83 @@ var util_spreadValues = (a, b) => {
 
 
 
-
+function _getRect(relativeViewport, node, forceEval = false) {
+  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+  if (forceEval) {
+    return _(node);
+  } else {
+    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
+    return needEvaluate ? node.rect = _(node) : node.rect;
+  }
+}
+function _forEachValidItem(items, callback) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item) {
+      callback(item, i);
+    }
+  }
+}
+const _sanitize = (() => {
+  const DANGEROUS_TAGS = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
+  const ENTITY_MAP = {
+    quot: 34,
+    amp: 38,
+    apos: 39,
+    lt: 60,
+    gt: 62,
+    nbsp: 160,
+    iexcl: 161,
+    cent: 162,
+    pound: 163,
+    curren: 164,
+    yen: 165
+  };
+  const LT_CODE = 60;
+  const GT_CODE = 62;
+  const MAX_ITERATIONS = 10;
+  const rx = {
+    tags: new RegExp(
+      `<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
+      "gi"
+    ),
+    htmlEntity: /&#x([0-9a-f]+);?|&#([0-9]+);?|&([a-z]+);/gi,
+    // eslint-disable-next-line no-control-regex
+    controlChar: /[\x00-\x1F\x7F]/g,
+    eventHandler: /\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)|on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi,
+    dangerousUri: /(href|src|action|xlink:href)\s*=\s*(['"`]?)([^'"`>\s]*)\2/gi,
+    dangerousProtocol: /^(javascript|data|vbscript):/
+  };
+  return {
+    ENTITY_MAP,
+    LT_CODE,
+    GT_CODE,
+    MAX_ITERATIONS,
+    rx,
+    /**
+     * Decode HTML entities to prevent bypass attacks
+     * @param {string} str String with potential HTML entities
+     * @returns {string} Decoded string
+     */
+    decodeEntities(str) {
+      return str.replace(rx.htmlEntity, (match, hex, dec, named) => {
+        const code = hex ? parseInt(hex, 16) : dec ? parseInt(dec, 10) : named ? ENTITY_MAP[named.toLowerCase()] || 0 : 0;
+        return code && code !== LT_CODE && code !== GT_CODE ? String.fromCharCode(code) : match;
+      });
+    },
+    /**
+     * Remove dangerous URI protocols from attribute values
+     * @param {string} str String to sanitize
+     * @returns {string} Sanitized string
+     */
+    removeDangerousUris(str) {
+      return str.replace(rx.dangerousUri, (match, attr, quote, value) => {
+        const normalized = value.toLowerCase().replace(/\s/g, "");
+        return rx.dangerousProtocol.test(normalized) ? `${attr}=${quote}${quote}` : match;
+      });
+    }
+  };
+})();
 const isValue = (v) => v || v === 0;
 const isFunction = (v) => typeof v === "function";
 const isString = (v) => typeof v === "string";
@@ -28765,26 +28843,20 @@ function endall(transition, cb) {
     transition.call(end);
   }
 }
-const DANGEROUS_TAGS = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
-const sanitizeRx = {
-  tags: new RegExp(
-    `<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
-    "gi"
-  ),
-  // Handles: whitespace, slash, quotes before event handlers (e.g., <img/onerror=...>, <img src="x"onerror=...>)
-  eventHandlers: /[\s/"']+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
-  // Handles: javascript/data/vbscript URIs with optional whitespace/newlines between protocol and colon
-  dangerousURIs: /(href|src|action|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript)\s*:/gi
-};
 function sanitize(str) {
   if (!isString(str) || !str || str.indexOf("<") === -1) {
     return str;
   }
   let result = str;
   let prev;
+  let iterations = 0;
   do {
     prev = result;
-    result = result.replace(sanitizeRx.tags, "").replace(sanitizeRx.eventHandlers, "").replace(sanitizeRx.dangerousURIs, '$1=""');
+    result = _sanitize.decodeEntities(result).replace(_sanitize.rx.controlChar, "").replace(_sanitize.rx.tags, "").replace(_sanitize.rx.eventHandler, "");
+    result = _sanitize.removeDangerousUris(result);
+    if (++iterations >= _sanitize.MAX_ITERATIONS) {
+      break;
+    }
   } while (result !== prev);
   return result;
 }
@@ -28852,20 +28924,11 @@ function getBrushSelection(ctx) {
   }
   return selection;
 }
-function getRect(relativeViewport, node, forceEval = false) {
-  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
-  if (forceEval) {
-    return _(node);
-  } else {
-    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
-    return needEvaluate ? node.rect = _(node) : node.rect;
-  }
-}
 function getBoundingRect(node, forceEval = false) {
-  return getRect(true, node, forceEval);
+  return _getRect(true, node, forceEval);
 }
 function getBBox(node, forceEval = false) {
-  return getRect(false, node, forceEval);
+  return _getRect(false, node, forceEval);
 }
 function getRandom(asStr = true, min = 0, max = 1e4) {
   const crpt = win.crypto || win.msCrypto;
@@ -29177,6 +29240,35 @@ function parseShorthand(value) {
   const [a, b = a, c = a, d = b] = values;
   return { top: a, right: b, bottom: c, left: d };
 }
+function scheduleRAFUpdate(rafState, callback) {
+  if (rafState.pendingRaf !== null) {
+    win.cancelAnimationFrame(rafState.pendingRaf);
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+      callback();
+    });
+  } else {
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+    });
+    callback();
+  }
+}
+function toSet(items, keyFn = ((item) => item)) {
+  const set = /* @__PURE__ */ new Set();
+  _forEachValidItem(items, (item, i) => {
+    set.add(keyFn(item, i));
+  });
+  return set;
+}
+function toMap(items, keyFn, valueFn = ((item) => item)) {
+  const map = /* @__PURE__ */ new Map();
+  _forEachValidItem(items, (item, i) => {
+    map.set(keyFn(item, i), valueFn(item, i));
+  });
+  return map;
+}
+
 
 ;// ./src/config/Options/Options.ts
 var Options_defProp = Object.defineProperty;
@@ -29339,6 +29431,10 @@ class State {
       hasTreemap: false,
       // for data CSS rule index (used when boost.useCssRule is true)
       cssRule: {},
+      // Data loading state (used in scale calculation)
+      loading: void 0,
+      // Zoom/subchart domain (different from current.domain which is for rendering)
+      domain: void 0,
       current: {
         // current domain value. Assigned when is zoom is called
         domain: void 0,
@@ -29452,7 +29548,10 @@ class State {
         x2: null,
         y1: null,
         y2: null
-      }
+      },
+      // RAF batching for zoom/drag interactions
+      pendingRaf: null,
+      rafBatchQueue: []
     };
   }
 }
@@ -29486,12 +29585,18 @@ const KEY = {
   dataMinMax: "$dataMinMax",
   dataTotalSum: "$dataTotalSum",
   dataTotalPerIndex: "$totalPerIndex",
+  domainMinMax: "$domainMinMax",
+  filteredTargets: "$filteredTargets",
+  filteredNullish: "$filteredNullish",
+  visibilityChecksum: "visibilityChecksum",
   legendItemTextBox: "legendItemTextBox",
+  legendItemMap: "$legendItemMap",
   radarPoints: "$radarPoints",
   radarTextWidth: "$radarTextWidth",
   setOverOut: "setOverOut",
   callOverOutForTouch: "callOverOutForTouch",
-  textRect: "textRect"
+  textRect: "textRect",
+  shapeOffset: "$shapeOffset"
 };
 class Cache {
   constructor() {
@@ -29537,6 +29642,23 @@ class Cache {
       const value = this.cache[key];
       return isValue(value) ? value : null;
     }
+  }
+  /**
+   * Check if cache key exists
+   * @param {string} key Cache key
+   * @returns {boolean} True if key exists in cache
+   * @private
+   */
+  has(key) {
+    return key in this.cache && this.cache[key] !== null;
+  }
+  /**
+   * Get all cache keys
+   * @returns {string[]} Array of cache keys
+   * @private
+   */
+  getKeys() {
+    return Object.keys(this.cache);
   }
   /**
    * Reset cached data
@@ -30081,14 +30203,14 @@ function convert_helper_tsv(tsv2) {
 
 
 
-function getDataKeyForJson(keysParam, config) {
+function _getDataKeyForJson(keysParam, config) {
   const keys = keysParam || (config == null ? void 0 : config.data_keys);
   if (keys == null ? void 0 : keys.x) {
     config.data_x = keys.x;
   }
   return keys;
 }
-function setXS(ids, data, params) {
+function _setXS(ids, data, params) {
   const $$ = this;
   const { config } = $$;
   let xsData;
@@ -30142,13 +30264,13 @@ function setXS(ids, data, params) {
         data.url,
         data.mimeType,
         data.headers,
-        getDataKeyForJson(data.keys, config),
+        _getDataKeyForJson(data.keys, config),
         callback
       );
     } else if (data.json) {
       runWorker(useWorker(data.json), json, callback, [columns, rows])(
         data.json,
-        getDataKeyForJson(data.keys, config)
+        _getDataKeyForJson(data.keys, config)
       );
     } else if (data.rows) {
       runWorker(useWorker(data.rows), rows, callback)(data.rows);
@@ -30186,13 +30308,13 @@ function setXS(ids, data, params) {
       timeSeries: axis == null ? void 0 : axis.isTimeSeries(),
       customX: axis == null ? void 0 : axis.isCustomX()
     };
-    setXS.bind($$)(ids, data, params);
+    _setXS.bind($$)(ids, data, params);
     const targets = ids.map((id, index) => {
       const convertedId = config.data_idConverter.bind($$.api)(id);
       const xKey = $$.getXKey(id);
       const isCategory = params.customX && params.categorized;
       const hasCategory = isCategory && (() => {
-        const categorySet = new Set(config.axis_x_categories);
+        const categorySet = toSet(config.axis_x_categories);
         return data.every((v) => categorySet.has(v.x));
       })();
       const isDataAppend = data.__append__;
@@ -30625,7 +30747,23 @@ function setXS(ids, data, params) {
   },
   filterTargetsToShow(targets) {
     const $$ = this;
-    return (targets || $$.data.targets).filter((t) => $$.isTargetToShow(t.id));
+    if (!targets) {
+      const { cache, data, state } = $$;
+      const cacheKey = KEY.filteredTargets;
+      const visibilityChecksum = state.hiddenTargetIds.join(",");
+      const storedChecksum = cache.get(KEY.visibilityChecksum);
+      if (visibilityChecksum !== storedChecksum) {
+        cache.remove(cacheKey);
+        cache.add(KEY.visibilityChecksum, visibilityChecksum);
+      }
+      if (cache.has(cacheKey)) {
+        return cache.get(cacheKey);
+      }
+      const filtered = data.targets.filter((t) => $$.isTargetToShow(t.id));
+      cache.add(cacheKey, filtered);
+      return filtered;
+    }
+    return targets.filter((t) => $$.isTargetToShow(t.id));
   },
   mapTargetsToUniqueXs(targets) {
     const $$ = this;
@@ -30684,6 +30822,7 @@ function setXS(ids, data, params) {
     const ys = {};
     const isMultipleX = $$.isMultipleX();
     const xs = isMultipleX ? $$.mapTargetsToUniqueXs(targets).map((v) => isString(v) ? v : +v) : null;
+    const xIndexMap = xs ? new Map(xs.map((x, i) => [x, i])) : null;
     targets.forEach((t) => {
       const data = [];
       t.values.filter(({ value }) => isValue(value) || value === null).forEach((v) => {
@@ -30698,8 +30837,12 @@ function setXS(ids, data, params) {
         } else if ($$.isBubbleZType(v)) {
           data.push(hasAxis && $$.getBubbleZData(value, "y"));
         } else {
-          if (isMultipleX) {
-            data[$$.getIndexByX(v.x, xs)] = value;
+          if (isMultipleX && xIndexMap) {
+            const xKey = isString(v.x) ? v.x : +v.x;
+            const index = xIndexMap.get(xKey);
+            if (index !== void 0) {
+              data[index] = value;
+            }
           } else {
             data.push(value);
           }
@@ -31888,7 +32031,7 @@ function ordinal() {
 
 
 
-const colorizePattern = (pattern, color, id) => {
+const _colorizePattern = (pattern, color, id) => {
   const node = src_select(pattern.cloneNode(true));
   node.attr("id", id).insert("rect", ":first-child").attr("width", node.attr("width")).attr("height", node.attr("height")).style("fill", color);
   return {
@@ -31896,7 +32039,7 @@ const colorizePattern = (pattern, color, id) => {
     node: node.node()
   };
 };
-function getColorFromCss(element) {
+function _getColorFromCss(element) {
   const cacheKey = KEY.colorPattern;
   const { body } = browser_doc;
   let pattern = body[cacheKey];
@@ -31929,14 +32072,14 @@ const schemeCategory10 = [
     const { $el, config } = $$;
     const ids = [];
     const hasGradient = config.area_linearGradient || config.bar_linearGradient || config.point_radialGradient;
-    let pattern = notEmpty(config.color_pattern) ? config.color_pattern : ordinal(getColorFromCss($el.chart) || schemeCategory10).range();
+    let pattern = notEmpty(config.color_pattern) ? config.color_pattern : ordinal(_getColorFromCss($el.chart) || schemeCategory10).range();
     const originalColorPattern = pattern;
     if (isFunction(config.color_tiles)) {
       const tiles = config.color_tiles.bind($$.api)();
       const colorizedPatterns = pattern.map((p, index) => {
         const color = p.replace(/[#\(\)\s,]/g, "");
         const id = `${$$.state.datetimeId}-pattern-${color}-${index}`;
-        return colorizePattern(tiles[index % tiles.length], p, id);
+        return _colorizePattern(tiles[index % tiles.length], p, id);
       });
       pattern = colorizedPatterns.map((p) => `url(#${p.id})`);
       $$.patterns = colorizedPatterns;
@@ -32119,20 +32262,22 @@ const schemeCategory10 = [
     const isMin = type === "min";
     const dataGroups = config.data_groups;
     const ids = $$.mapToIds(targets);
+    const idsSet = toSet(ids);
     const ys = $$.getValuesAsIdKeyed(targets);
     if (dataGroups.length > 0) {
       const hasValue = $$[`has${isMin ? "Negative" : "Positive"}ValueInTargets`](targets);
+      const axisIdMap = new Map(ids.map((id) => [id, axis.getId(id)]));
       dataGroups.forEach((groupIds) => {
-        const idsInGroup = groupIds.filter((v) => ids.indexOf(v) >= 0);
+        const idsInGroup = groupIds.filter((v) => idsSet.has(v));
         if (idsInGroup.length) {
           const baseId = idsInGroup[0];
-          const baseAxisId = axis.getId(baseId);
+          const baseAxisId = axisIdMap.get(baseId);
           if (hasValue && ys[baseId]) {
             ys[baseId] = ys[baseId].map((v) => (isMin ? v < 0 : v > 0) ? v : 0);
           }
           idsInGroup.filter((v, i) => i > 0).forEach((id) => {
             if (ys[id]) {
-              const axisId = axis.getId(id);
+              const axisId = axisIdMap.get(id);
               ys[id].forEach((v, i) => {
                 const val = +v;
                 const meetCondition = isMin ? val > 0 : val < 0;
@@ -32469,7 +32614,7 @@ const schemeCategory10 = [
 
 ;// ./src/ChartInternal/internals/format.ts
 
-function getFormat($$, typeValue, v) {
+function _getFormat($$, typeValue, v) {
   const { config } = $$;
   const type = `axis_${typeValue}_tick_format`;
   const format = config[type] ? config[type] : $$.defaultValueFormat;
@@ -32477,10 +32622,10 @@ function getFormat($$, typeValue, v) {
 }
 /* harmony default export */ var format = ({
   yFormat(v) {
-    return getFormat(this, "y", v);
+    return _getFormat(this, "y", v);
   },
   y2Format(v) {
-    return getFormat(this, "y2", v);
+    return _getFormat(this, "y2", v);
   },
   /**
    * Get default value format function
@@ -32538,13 +32683,13 @@ function getFormat($$, typeValue, v) {
 
 
 
-function getLegendColor(id) {
+function _getLegendColor(id) {
   const $$ = this;
   const data = $$.getDataById(id);
   const color = $$.levelColor ? $$.levelColor(data.values[0].value) : $$.color(data);
   return color;
 }
-function getFormattedText(id, formatted = true) {
+function _getFormattedText(id, formatted = true) {
   var _a;
   const { config } = this;
   let text = (_a = config.data_names[id]) != null ? _a : id;
@@ -32552,6 +32697,21 @@ function getFormattedText(id, formatted = true) {
     text = config.legend_format(text, id !== text ? id : void 0);
   }
   return text;
+}
+function _buildLegendItemMap($$, legendItems) {
+  if (!legendItems || legendItems.empty()) {
+    return;
+  }
+  const items = [];
+  legendItems.each(function(id) {
+    items.push({ id, node: this });
+  });
+  const itemMap = toMap(
+    items,
+    (item) => item.id,
+    (item) => item.node
+  );
+  $$.cache.add(KEY.legendItemMap, itemMap);
 }
 /* harmony default export */ var internals_legend = ({
   /**
@@ -32711,9 +32871,13 @@ function getFormattedText(id, formatted = true) {
    * @private
    */
   updateLegendItemColor(id, color) {
-    const { legend } = this.$el;
+    const $$ = this;
+    const { legend } = $$.$el;
     if (legend) {
-      legend.select(`.${$LEGEND.legendItem}-${id} line`).style("stroke", color);
+      const legendItem = $$.getLegendItemById(id);
+      if (legendItem) {
+        src_select(legendItem).select("line").style("stroke", color);
+      }
     }
   },
   /**
@@ -32914,6 +33078,24 @@ function getFormattedText(id, formatted = true) {
       } : null);
       !item.empty() && item.on("click mouseout mouseover") && item.style("cursor", $$.getStylePropValue("pointer"));
     }
+    _buildLegendItemMap($$, item);
+  },
+  /**
+   * Get legend item node by ID using cached Map for O(1) lookup
+   * Falls back to D3 selection if map is not available
+   * @param {string} id Data ID
+   * @returns {HTMLElement | null} Legend item node
+   * @private
+   */
+  getLegendItemById(id) {
+    var _a;
+    const $$ = this;
+    const itemMap = $$.cache.get(KEY.legendItemMap);
+    if (itemMap && itemMap instanceof Map) {
+      return itemMap.get(id) || null;
+    }
+    const item = (_a = $$.$el.legend) == null ? void 0 : _a.selectAll(`.${$LEGEND.legendItem}`).filter((d) => d === id);
+    return (item == null ? void 0 : item.node()) || null;
   },
   /**
    * Update the legend
@@ -32987,9 +33169,9 @@ function getFormattedText(id, formatted = true) {
       background = legend.insert("g", `.${$LEGEND.legendItem}`).attr("class", $LEGEND.legendBackground).append("rect");
     }
     if (config.legend_tooltip) {
-      legend.selectAll("title").data(targetIdz).text((id) => getFormattedText.bind($$)(id, false));
+      legend.selectAll("title").data(targetIdz).text((id) => _getFormattedText.bind($$)(id, false));
     }
-    const texts = legend.selectAll("text").data(targetIdz).text((id) => getFormattedText.bind($$)(id)).each(function(id, i) {
+    const texts = legend.selectAll("text").data(targetIdz).text((id) => _getFormattedText.bind($$)(id)).each(function(id, i) {
       updatePositions(this, id, i);
     });
     $T(texts, withTransition).attr("x", posFn.xText).attr("y", posFn.yText);
@@ -33100,14 +33282,14 @@ function getFormattedText(id, formatted = true) {
     if (config.legend_tooltip) {
       l.append("title").text((id) => id);
     }
-    l.append("text").text((id) => getFormattedText.bind($$)(id)).each(function(id, i) {
+    l.append("text").text((id) => _getFormattedText.bind($$)(id)).each(function(id, i) {
       updatePositions(this, id, i);
     }).style("pointer-events", $$.getStylePropValue("none")).attr("x", isLegendRightOrInset ? posFn.xText : pos).attr("y", isLegendRightOrInset ? pos : posFn.yText);
     l.append("rect").attr("class", $LEGEND.legendItemEvent).style("fill-opacity", $$.getStylePropValue("0")).attr("x", isLegendRightOrInset ? posFn.xRect : pos).attr("y", isLegendRightOrInset ? pos : posFn.yRect);
     if (usePoint) {
       const ids = [];
+      const pattern = $$.getValidPointPattern();
       l.append((d) => {
-        const pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
         ids.indexOf(d) === -1 && ids.push(d);
         let point = pattern[ids.indexOf(d) % pattern.length];
         if (point === "rectangle") {
@@ -33117,16 +33299,16 @@ function getFormattedText(id, formatted = true) {
           namespaces.svg,
           "hasValidPointType" in $$ && $$.hasValidPointType(point) ? point : "use"
         );
-      }).attr("class", $LEGEND.legendItemPoint).style("fill", getLegendColor.bind($$)).style("pointer-events", $$.getStylePropValue("none")).attr("href", (data, idx, selection) => {
+      }).attr("class", $LEGEND.legendItemPoint).style("fill", _getLegendColor.bind($$)).style("pointer-events", $$.getStylePropValue("none")).attr("href", (data, idx, selection) => {
         const node = selection[idx];
         const nodeName = node.nodeName.toLowerCase();
         const id = $$.getTargetSelectorSuffix(data);
         return nodeName === "use" ? `#${state.datetimeId}-point${id}` : void 0;
       });
     } else {
-      l.append(isRectangle ? "line" : legendType).attr("class", $LEGEND.legendItemTile).style("stroke", getLegendColor.bind($$)).style("pointer-events", $$.getStylePropValue("none")).call((selection) => {
+      l.append(isRectangle ? "line" : legendType).attr("class", $LEGEND.legendItemTile).style("stroke", _getLegendColor.bind($$)).style("pointer-events", $$.getStylePropValue("none")).call((selection) => {
         if (legendType === "circle") {
-          selection.attr("r", legendItemR).style("fill", getLegendColor.bind($$)).attr("cx", isLegendRightOrInset ? posFn.x2Tile : pos).attr("cy", isLegendRightOrInset ? pos : posFn.yTile);
+          selection.attr("r", legendItemR).style("fill", _getLegendColor.bind($$)).attr("cx", isLegendRightOrInset ? posFn.x2Tile : pos).attr("cy", isLegendRightOrInset ? pos : posFn.yTile);
         } else if (isRectangle) {
           selection.attr("stroke-width", itemTileSize.height).attr("x1", isLegendRightOrInset ? posFn.x1Tile : pos).attr("y1", isLegendRightOrInset ? pos : posFn.yTile).attr("x2", isLegendRightOrInset ? posFn.x2Tile : pos).attr("y2", isLegendRightOrInset ? pos : posFn.yTile);
         }
@@ -33175,7 +33357,7 @@ function getFormattedText(id, formatted = true) {
       });
     } else {
       const tiles = legend.selectAll(`.${$LEGEND.legendItemTile}`).data(targetIdz);
-      $T(tiles, withTransition).style("stroke", getLegendColor.bind($$)).call((selection) => {
+      $T(tiles, withTransition).style("stroke", _getLegendColor.bind($$)).call((selection) => {
         if (legendType === "circle") {
           selection.attr("cx", (d) => {
             const x2 = posFn.x2Tile(d);
@@ -35050,6 +35232,13 @@ function updateTextImagePos(textNode, pos) {
     $$.$T(image).style("opacity", isShown(textNode) ? null : "0").attr("x", x).attr("y", y);
   }
 }
+function batchGetBBox(elements) {
+  return toMap(
+    elements,
+    (element) => element,
+    (element) => getBBox(element)
+  );
+}
 
 
 ;// ./src/ChartInternal/internals/text.ts
@@ -35203,10 +35392,23 @@ function updateTextImagePos(textNode, pos) {
     const angle = config.data_labels.rotate;
     const anchorString = getRotateAnchor(angle);
     const rotateString = angle ? `rotate(${angle})` : "";
+    let bboxCache = /* @__PURE__ */ new Map();
+    if (config.data_labels.centered) {
+      const elementsToMeasure = [];
+      $$.$el.text.each(function(d) {
+        if ($$.isBarType(d) || $$.isTreemapType(d)) {
+          elementsToMeasure.push(this);
+        }
+      });
+      if (elementsToMeasure.length > 0) {
+        bboxCache = batchGetBBox(elementsToMeasure);
+      }
+    }
     $$.$el.text.style("fill", $$.getStylePropValue($$.updateTextColor)).attr(
       "filter",
       (d) => $$.updateTextBGColor.bind($$)(d, config.data_labels_backgroundColors)
     ).style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$)).each(function(d, i) {
+      const cachedBbox = bboxCache.get(this);
       const node = $T(
         hasTreemap && this.childElementCount ? this.parentNode : this,
         !!(withTransition && (this.getAttribute("x") || this.getAttribute("transform"))),
@@ -35214,8 +35416,8 @@ function updateTextImagePos(textNode, pos) {
       );
       const isInverted = config[`axis_${axis == null ? void 0 : axis.getId(d.id)}_inverted`];
       let pos = {
-        x: getX.bind(this)(d, i),
-        y: getY.bind(this)(d, i)
+        x: getX.bind(this)(d, i, cachedBbox),
+        y: getY.bind(this)(d, i, cachedBbox)
       };
       if (angle) {
         pos = setRotatePos.bind($$)(d, pos, anchorString, isRotated, isInverted);
@@ -35293,17 +35495,18 @@ function updateTextImagePos(textNode, pos) {
    * @param {Array} points Data points position
    * @param {HTMLElement} textElement Data label text element
    * @param {string} type 'x' or 'y'
+   * @param {DOMRect} cachedBbox Optional cached bounding box (from getBBox batching)
    * @returns {number} Position value
    * @private
    */
-  getCenteredTextPos(d, points, textElement, type) {
+  getCenteredTextPos(d, points, textElement, type, cachedBbox) {
     const $$ = this;
     const { config } = $$;
     const isRotated = config.axis_rotated;
     const isBarType = $$.isBarType(d);
     const isTreemapType = $$.isTreemapType(d);
     if (config.data_labels.centered && (isBarType || isTreemapType)) {
-      const rect = getBBox(textElement);
+      const rect = cachedBbox || getBBox(textElement);
       if (isBarType) {
         const isPositive = $$.getRangedData(d, null, "bar") >= 0;
         if (isRotated) {
@@ -35327,10 +35530,11 @@ function updateTextImagePos(textNode, pos) {
    * @param {object} points Data points position
    * @param {object} d Data object
    * @param {HTMLElement} textElement Data label text element
+   * @param {DOMRect} cachedBbox Optional cached bounding box (from getBBox batching)
    * @returns {number} x coordinate
    * @private
    */
-  getXForText(points, d, textElement) {
+  getXForText(points, d, textElement, cachedBbox) {
     var _a;
     const $$ = this;
     const { config } = $$;
@@ -35364,7 +35568,7 @@ function updateTextImagePos(textNode, pos) {
       }
     }
     if (isRotated || isTreemapType) {
-      xPos += $$.getCenteredTextPos(d, points, textElement, "x");
+      xPos += $$.getCenteredTextPos(d, points, textElement, "x", cachedBbox);
     }
     return xPos + getTextPos.call(this, d, "x");
   },
@@ -35373,10 +35577,11 @@ function updateTextImagePos(textNode, pos) {
    * @param {object} points Data points position
    * @param {object} d Data object
    * @param {HTMLElement} textElement Data label text element
+   * @param {DOMRect} cachedBbox Optional cached bounding box (from getBBox batching)
    * @returns {number} y coordinate
    * @private
    */
-  getYForText(points, d, textElement) {
+  getYForText(points, d, textElement, cachedBbox) {
     const $$ = this;
     const { axis, config, state } = $$;
     const isRotated = config.axis_rotated;
@@ -35429,7 +35634,7 @@ function updateTextImagePos(textNode, pos) {
       }
     }
     if (!isRotated || isTreemapType) {
-      yPos += $$.getCenteredTextPos(d, points, textElement, "y");
+      yPos += $$.getCenteredTextPos(d, points, textElement, "y", cachedBbox);
     }
     return yPos + getTextPos.call(this, d, "y");
   },
@@ -35473,7 +35678,7 @@ function updateTextImagePos(textNode, pos) {
 ;// ./src/ChartInternal/internals/title.ts
 
 
-function getTextXPos(pos = "left", width) {
+function _getTextXPos(pos = "left", width) {
   const isNum = isNumber(width);
   let position;
   if (pos.indexOf("center") > -1) {
@@ -35495,7 +35700,7 @@ function getTextXPos(pos = "left", width) {
     const { config, $el } = $$;
     if (config.title_text) {
       $el.title = $el.svg.append("g");
-      const text = $el.title.append("text").style("text-anchor", getTextXPos(config.title_position)).attr("class", $TEXT.title);
+      const text = $el.title.append("text").style("text-anchor", _getTextXPos(config.title_position)).attr("class", $TEXT.title);
       setTextValue(text, config.title_text, [0.3, 1.5]);
     }
   },
@@ -35507,7 +35712,7 @@ function getTextXPos(pos = "left", width) {
     const $$ = this;
     const { config, state: { current }, $el: { title } } = $$;
     if (title) {
-      const x = getTextXPos(config.title_position, current.width);
+      const x = _getTextXPos(config.title_position, current.width);
       const y = (config.title_padding.top || 0) + $$.getTextRect($$.$el.title, $TEXT.title).height;
       title.attr("transform", `translate(${x}, ${y})`);
     }
@@ -37245,7 +37450,8 @@ function stepAfter(context) {
 
 
 
-function getGroupedDataPointsFn(d) {
+
+function _getGroupedDataPointsFn(d) {
   const $$ = this;
   let fn;
   if ($$.isLineType(d)) {
@@ -37457,6 +37663,12 @@ function getGroupedDataPointsFn(d) {
     const targets = $$.orderTargets(
       $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))
     );
+    const targetIds = targets.map((t) => t.id).join("_");
+    const cacheKey = `${KEY.shapeOffset}_${targetIds}`;
+    const cachedData = $$.cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
     const isStackNormalized = $$.isStackNormalized();
     const shapeOffsetTargets = targets.map((target) => {
       let rowValues = target.values;
@@ -37481,7 +37693,9 @@ function getGroupedDataPointsFn(d) {
       out[id] = index;
       return out;
     }, {});
-    return { indexMapByTargetId, shapeOffsetTargets };
+    const result = { indexMapByTargetId, shapeOffsetTargets };
+    $$.cache.add(cacheKey, result);
+    return result;
   },
   getShapeOffset(typeFilter, indices, isSub) {
     const $$ = this;
@@ -37535,7 +37749,7 @@ function getGroupedDataPointsFn(d) {
     const id = d.id;
     let points;
     if ($$.isGrouped(id)) {
-      points = getGroupedDataPointsFn.bind($$)(d);
+      points = _getGroupedDataPointsFn.bind($$)(d);
     }
     return points ? points(d, i)[0][1] : $$.getYScaleById(id)($$.getBaseValue(d));
   },
@@ -40670,9 +40884,6 @@ util_extend(zoom, {
           transform_identity.translate(tX, tY).scale(transform.k)
         );
       }
-      if (!$$.state.xTickOffset) {
-        $$.state.xTickOffset = $$.axis.x.tickOffset();
-      }
       scale.zoom = $$.getCustomizedXScale(newScale);
       $$.axis.x.scale(scale.zoom);
       if (rescale) {
@@ -40713,7 +40924,6 @@ util_extend(zoom, {
    * @private
    */
   onZoom(event) {
-    var _a;
     const $$ = this;
     const { config, scale, state, org } = $$;
     const { sourceEvent } = event;
@@ -40733,19 +40943,24 @@ util_extend(zoom, {
     }
     $$.zoom.updateTransformScale(transform, config.zoom_type === "wheel" && sourceEvent);
     const doTransition = config.transition_duration > 0 && !config.subchart_show && (state.dragging || isUnZoom || !event.sourceEvent);
-    $$.redraw({
-      withTransition: doTransition,
-      withY: config.zoom_rescale,
-      withSubchart: false,
-      withEventRect: false,
-      withDimension: false
-    });
-    $$.state.cancelClick = isMousemove;
-    !isUnZoom && callFn(
-      config.zoom_onzoom,
-      $$.api,
-      (_a = $$.state.domain) != null ? _a : $$.zoom.getDomain()
-    );
+    const useRAF = sourceEvent && isMousemove && config.zoom_type !== "wheel";
+    const executeRedraw = () => {
+      var _a;
+      $$.redraw({
+        withTransition: doTransition,
+        withY: config.zoom_rescale,
+        withSubchart: false,
+        withEventRect: false,
+        withDimension: false
+      });
+      $$.state.cancelClick = isMousemove;
+      !isUnZoom && callFn(
+        config.zoom_onzoom,
+        $$.api,
+        (_a = $$.state.domain) != null ? _a : $$.zoom.getDomain()
+      );
+    };
+    useRAF ? scheduleRAFUpdate($$.state, executeRedraw) : executeRedraw();
   },
   /**
    * 'end' event listener
@@ -40938,31 +41153,37 @@ util_extend(zoom, {
     const maxX = Math.max(sx, mx);
     const minY = isSelectionGrouped ? state.margin.top : Math.min(sy, my);
     const maxY = isSelectionGrouped ? state.height : Math.max(sy, my);
-    main.select(`.${$DRAG.dragarea}`).attr("x", minX).attr("y", minY).attr("width", maxX - minX).attr("height", maxY - minY);
-    main.selectAll(`.${$SHAPE.shapes}`).selectAll(`.${$SHAPE.shape}`).filter((d) => isSelectable == null ? void 0 : isSelectable.bind($$.api)(d)).each(function(d, i) {
-      const shape = src_select(this);
-      const isSelected = shape.classed($SELECT.SELECTED);
-      const isIncluded = shape.classed($DRAG.INCLUDED);
-      let isWithin = false;
-      let toggle;
-      if (shape.classed($CIRCLE.circle)) {
-        const x = +shape.attr("cx") * 1;
-        const y = +shape.attr("cy") * 1;
-        toggle = $$.togglePoint;
-        isWithin = minX < x && x < maxX && minY < y && y < maxY;
-      } else if (shape.classed($BAR.bar)) {
-        const { x, y, width, height } = getPathBox(this);
-        toggle = $$.togglePath;
-        isWithin = !(maxX < x || x + width < minX) && !(maxY < y || y + height < minY);
-      } else {
+    const executeDrag = () => {
+      if (!$$ || !$$.$el || !$$.$el.main) {
         return;
       }
-      if (isWithin ^ isIncluded) {
-        shape.classed($DRAG.INCLUDED, !isIncluded);
-        shape.classed($SELECT.SELECTED, !isSelected);
-        toggle.call($$, !isSelected, shape, d, i);
-      }
-    });
+      main.select(`.${$DRAG.dragarea}`).attr("x", minX).attr("y", minY).attr("width", maxX - minX).attr("height", maxY - minY);
+      main.selectAll(`.${$SHAPE.shapes}`).selectAll(`.${$SHAPE.shape}`).filter((d) => isSelectable == null ? void 0 : isSelectable.bind($$.api)(d)).each(function(d, i) {
+        const shape = src_select(this);
+        const isSelected = shape.classed($SELECT.SELECTED);
+        const isIncluded = shape.classed($DRAG.INCLUDED);
+        let isWithin = false;
+        let toggle;
+        if (shape.classed($CIRCLE.circle)) {
+          const x = +shape.attr("cx") * 1;
+          const y = +shape.attr("cy") * 1;
+          toggle = $$.togglePoint;
+          isWithin = minX < x && x < maxX && minY < y && y < maxY;
+        } else if (shape.classed($BAR.bar)) {
+          const { x, y, width, height } = getPathBox(this);
+          toggle = $$.togglePath;
+          isWithin = !(maxX < x || x + width < minX) && !(maxY < y || y + height < minY);
+        } else {
+          return;
+        }
+        if (isWithin ^ isIncluded) {
+          shape.classed($DRAG.INCLUDED, !isIncluded);
+          shape.classed($SELECT.SELECTED, !isSelected);
+          toggle.call($$, !isSelected, shape, d, i);
+        }
+      });
+    };
+    scheduleRAFUpdate($$.state, executeDrag);
   },
   /**
    * Called when the drag starts.
@@ -44423,9 +44644,9 @@ const src_linear_linear = (t) => +t;
 
 
 
-const getGridTextAnchor = (d) => isValue(d.position) || "end";
-const getGridTextDx = (d) => d.position === "start" ? 4 : d.position === "middle" ? 0 : -4;
-function getGridTextX(isX, width, height) {
+const _getGridTextAnchor = (d) => isValue(d.position) || "end";
+const _getGridTextDx = (d) => d.position === "start" ? 4 : d.position === "middle" ? 0 : -4;
+function _getGridTextX(isX, width, height) {
   return (d) => {
     let x = isX ? 0 : width;
     if (d.position === "start") {
@@ -44436,7 +44657,7 @@ function getGridTextX(isX, width, height) {
     return x;
   };
 }
-function smoothLines(el, type) {
+function _smoothLines(el, type) {
   if (type === "grid") {
     el.each(function() {
       const g = src_select(this);
@@ -44507,7 +44728,7 @@ function smoothLines(el, type) {
     grid.y.exit().remove();
     grid.y = grid.y.enter().append("line").attr("class", $GRID.ygrid).merge(grid.y);
     grid.y.attr("x1", isRotated ? pos : 0).attr("x2", isRotated ? pos : state.width).attr("y1", isRotated ? 0 : pos).attr("y2", isRotated ? state.height : pos);
-    smoothLines(grid.y, "grid");
+    _smoothLines(grid.y, "grid");
   },
   updateGrid() {
     const $$ = this;
@@ -44540,10 +44761,10 @@ function smoothLines(el, type) {
         g.append("text").style("opacity", "0");
       }
     });
-    $T(lines.attr("class", (d) => `${$GRID[`${type}gridLine`]} ${d.class || ""}`.trim()).select("text").attr("text-anchor", getGridTextAnchor).attr(
+    $T(lines.attr("class", (d) => `${$GRID[`${type}gridLine`]} ${d.class || ""}`.trim()).select("text").attr("text-anchor", _getGridTextAnchor).attr(
       "transform",
       () => isX ? isRotated ? null : "rotate(-90)" : isRotated ? "rotate(-90)" : null
-    ).attr("dx", getGridTextDx).attr("dy", -5)).text(function(d) {
+    ).attr("dx", _getGridTextDx).attr("dy", -5)).text(function(d) {
       var _a;
       return (_a = d.text) != null ? _a : this.remove();
     });
@@ -44564,9 +44785,9 @@ function smoothLines(el, type) {
     let yLines = gridLines.y.select("line");
     let yTexts = gridLines.y.select("text");
     xLines = $T(xLines, withTransition).attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? width : xv).attr("y1", isRotated ? xv : 0).attr("y2", isRotated ? xv : height);
-    xTexts = $T(xTexts, withTransition).attr("x", getGridTextX(!isRotated, width, height)).attr("y", xv);
+    xTexts = $T(xTexts, withTransition).attr("x", _getGridTextX(!isRotated, width, height)).attr("y", xv);
     yLines = $T(yLines, withTransition).attr("x1", isRotated ? yv : 0).attr("x2", isRotated ? yv : width).attr("y1", isRotated ? 0 : yv).attr("y2", isRotated ? height : yv);
-    yTexts = $T(yTexts, withTransition).attr("x", getGridTextX(isRotated, width, height)).attr("y", yv);
+    yTexts = $T(yTexts, withTransition).attr("x", _getGridTextX(isRotated, width, height)).attr("y", yv);
     return [
       xLines.style("opacity", null),
       xTexts.style("opacity", null),
@@ -44693,7 +44914,7 @@ function smoothLines(el, type) {
       }
       ["x1", "y1", "x2", "y2"].forEach((v, i) => el.attr(v, xy[i]));
     });
-    smoothLines(focusEl, "grid");
+    _smoothLines(focusEl, "grid");
     (_a = $$.showCircleFocus) == null ? void 0 : _a.call($$, data);
   },
   hideGridFocus() {
@@ -47644,10 +47865,10 @@ var arc_spreadProps = (a, b) => arc_defProps(a, arc_getOwnPropDescs(b));
 
 
 
-function arc_getArcType($$) {
+function _getArcType($$) {
   return ["donut", "pie", "polar", "gauge"].find((type) => $$.hasType(type));
 }
-function calculateRangeOrGaugePosition($$, d, updated, forRange) {
+function _calculateRangeOrGaugePosition($$, d, updated, forRange) {
   var _a, _b;
   const { config, state: { radiusExpanded } } = $$;
   const angle = updated.endAngle - Math.PI / 2;
@@ -47669,9 +47890,9 @@ function calculateRangeOrGaugePosition($$, d, updated, forRange) {
   }
   return pos;
 }
-function calculateLabelRatio($$, d, outerRadius, distance) {
+function _calculateLabelRatio($$, d, outerRadius, distance) {
   const { config } = $$;
-  const chartType = arc_getArcType($$);
+  const chartType = _getArcType($$);
   let ratio = chartType ? config[`${chartType}_label_ratio`] : void 0;
   if (ratio) {
     ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, distance) : ratio;
@@ -47686,20 +47907,20 @@ function calculateLabelRatio($$, d, outerRadius, distance) {
   }
   return ratio;
 }
-function calculateStandardArcPosition($$, d, updated) {
+function _calculateStandardArcPosition($$, d, updated) {
   let { outerRadius } = $$.getRadius(d);
   if ($$.hasType("polar")) {
     outerRadius = $$.getPolarOuterRadius(d, outerRadius);
   }
   const [x, y] = $$.svgArc.centroid(updated).map((v) => isNaN(v) ? 0 : v);
   const distance = Math.sqrt(x * x + y * y);
-  const ratio = calculateLabelRatio($$, d, outerRadius, distance);
+  const ratio = _calculateLabelRatio($$, d, outerRadius, distance);
   return {
     pos: { x, y },
     ratio
   };
 }
-function getRadiusFn(expandRate = 0) {
+function _getRadiusFn(expandRate = 0) {
   const $$ = this;
   const { config, state } = $$;
   const hasMultiArcGauge = $$.hasMultiArcGauge();
@@ -47767,7 +47988,7 @@ function getRadiusFn(expandRate = 0) {
     }
   };
 }
-function getAttrTweenFn(fn) {
+function _getAttrTweenFn(fn) {
   return function(d) {
     const getAngleKeyValue = ({ startAngle = 0, endAngle = 0, padAngle = 0 }) => ({
       startAngle,
@@ -47926,7 +48147,7 @@ function getAttrTweenFn(fn) {
   },
   getSvgArc() {
     const $$ = this;
-    const { inner, outer, corner } = getRadiusFn.call($$);
+    const { inner, outer, corner } = _getRadiusFn.call($$);
     const arc = src_arc().innerRadius(inner).outerRadius(outer);
     const newArc = function(d, withoutUpdate) {
       var _a;
@@ -47952,7 +48173,7 @@ function getAttrTweenFn(fn) {
    */
   getSvgArcExpanded(rate = 1) {
     const $$ = this;
-    const { inner, outer, corner } = getRadiusFn.call($$, rate);
+    const { inner, outer, corner } = _getRadiusFn.call($$, rate);
     const arc = src_arc().innerRadius(inner).outerRadius(outer);
     return (d) => {
       const updated = $$.updateAngle(d);
@@ -48018,9 +48239,9 @@ function getAttrTweenFn(fn) {
     let pos;
     let ratio = 1;
     if (forRange || $$.hasMultiArcGauge()) {
-      pos = calculateRangeOrGaugePosition($$, d, updated, forRange);
+      pos = _calculateRangeOrGaugePosition($$, d, updated, forRange);
     } else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
-      const result = calculateStandardArcPosition($$, d, updated);
+      const result = _calculateStandardArcPosition($$, d, updated);
       pos = result.pos;
       ratio = result.ratio;
     } else {
@@ -48080,7 +48301,7 @@ function getAttrTweenFn(fn) {
       const svgArcExpandedSub = $$.getSvgArcExpanded(
         $$.getExpandConfig(d.data.id, "rate")
       );
-      src_select(this).selectAll("path").transition().duration(expandDuration).attrTween("d", getAttrTweenFn($$.svgArcExpanded.bind($$))).transition().duration(expandDuration * 2).attrTween("d", getAttrTweenFn(svgArcExpandedSub.bind($$)));
+      src_select(this).selectAll("path").transition().duration(expandDuration).attrTween("d", _getAttrTweenFn($$.svgArcExpanded.bind($$))).transition().duration(expandDuration * 2).attrTween("d", _getAttrTweenFn(svgArcExpandedSub.bind($$)));
     });
   },
   unexpandArc(targetIds) {
@@ -48090,7 +48311,7 @@ function getAttrTweenFn(fn) {
       return;
     }
     const newTargetIds = $$.mapToTargetIds(targetIds);
-    svg.selectAll($$.selectorTargets(newTargetIds, `.${$ARC.chartArc}`)).selectAll("path").transition().duration((d) => $$.getExpandConfig(d.data.id, "duration")).attrTween("d", getAttrTweenFn($$.svgArc.bind($$)));
+    svg.selectAll($$.selectorTargets(newTargetIds, `.${$ARC.chartArc}`)).selectAll("path").transition().duration((d) => $$.getExpandConfig(d.data.id, "duration")).attrTween("d", _getAttrTweenFn($$.svgArc.bind($$)));
     svg.selectAll(`${$ARC.arc}`).style("opacity", null);
   },
   /**
@@ -48777,7 +48998,7 @@ function point_y(p) {
 
 
 
-function getConnectLineType(id) {
+function _getConnectLineType(id) {
   const connectLine = this.config.bar_connectLine;
   const type = (connectLine == null ? void 0 : connectLine[id]) || connectLine;
   return /^(start|end)\-(start|end)$/.test(type) ? type : null;
@@ -48810,7 +49031,7 @@ function getConnectLineType(id) {
     }).call((selection) => {
       $$.setCssRule(true, ` .${$BAR.bar}`, ["fill"], $$.color)(selection);
       selection.each(function(d) {
-        if (getConnectLineType.call($$, d.id)) {
+        if (_getConnectLineType.call($$, d.id)) {
           src_select(this).append("path").attr("class", $BAR.barConnectLine);
         }
       });
@@ -48860,7 +49081,7 @@ function getConnectLineType(id) {
     return [
       $$.$T(bar, withTransition, getRandom()).attr("d", function(d, i, arr) {
         const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
-        const connectLineType = getConnectLineType.call($$, d.id);
+        const connectLineType = _getConnectLineType.call($$, d.id);
         if (path.length > 1) {
           barPath.push(path[1]);
           if (i === arr.length - 1) {
@@ -48952,7 +49173,7 @@ function getConnectLineType(id) {
       }
       const path = isRotated ? `H${pos} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${points[3][indexX]}` : `V${pos} ${pathRadius[0]}H${points[2][indexX] - radius} ${pathRadius[1]}V${points[3][indexY]}`;
       const coords = [`M${points[0][indexX]},${points[0][indexY]}${path}z`];
-      if (getConnectLineType.call($$, d.id)) {
+      if (_getConnectLineType.call($$, d.id)) {
         coords.push(isRotated ? {
           x: points[0][indexX],
           y: points[0][indexY],
@@ -49341,7 +49562,7 @@ var funnel_spreadValues = (a, b) => {
 
 
 
-function getSize(checkNeck = false) {
+function _getSize(checkNeck = false) {
   const $$ = this;
   const { config, state: { current: { width, height } } } = $$;
   const padding = $$.getCurrentPadding();
@@ -49350,7 +49571,7 @@ function getSize(checkNeck = false) {
     height: height - (config.legend_show ? $$.getLegendHeight() + 10 : 0) - (padding.top + padding.bottom)
   }, padding);
   if (checkNeck) {
-    const { width: neckWidth, height: neckHeight } = getNecklSize.call($$, {
+    const { width: neckWidth, height: neckHeight } = _getNeckSize.call($$, {
       width: size.width,
       height: size.height
     });
@@ -49363,7 +49584,7 @@ function getSize(checkNeck = false) {
   }
   return size;
 }
-function getNecklSize(current) {
+function _getNeckSize(current) {
   const $$ = this;
   const { config } = $$;
   let width = config.funnel_neck_width;
@@ -49380,9 +49601,9 @@ function getNecklSize(current) {
     height
   };
 }
-function getCoord(d) {
+function _getCoord(d) {
   const $$ = this;
-  const { top, left, width } = getSize.call($$, true);
+  const { top, left, width } = _getSize.call($$, true);
   const coords = [];
   d.forEach((d2, i) => {
     const { ratio } = d2;
@@ -49402,10 +49623,10 @@ function getCoord(d) {
   });
   return coords;
 }
-function getClipPath(forBackground = false) {
+function _getClipPath(forBackground = false) {
   const $$ = this;
-  const { width, height, top, left } = getSize.call($$, true);
-  const neck = getNecklSize.call($$, { width, height });
+  const { width, height, top, left } = _getSize.call($$, true);
+  const neck = _getNeckSize.call($$, { width, height });
   const leftX = (width - neck.width) / 2;
   const rightX = (width + neck.width) / 2;
   const bodyHeigth = height - neck.height;
@@ -49433,7 +49654,7 @@ function getClipPath(forBackground = false) {
   }
   return `M${coords.join("L")}z`;
 }
-function getFunnelData(d) {
+function _getFunnelData(d) {
   const $$ = this;
   const { config } = $$;
   const data = d.map((d2) => ({
@@ -49443,11 +49664,11 @@ function getFunnelData(d) {
   if (config.data_order) {
     data.sort($$.getSortCompareFn.bind($$)(true));
   }
-  return updateRatio.call($$, data);
+  return _updateRatio.call($$, data);
 }
-function updateRatio(data) {
+function _updateRatio(data) {
   const $$ = this;
-  const { height } = getSize.call($$);
+  const { height } = _getSize.call($$);
   const total = $$.getTotalDataSum(true);
   data.forEach((d) => {
     d.ratio = d.value / total * height;
@@ -49513,7 +49734,7 @@ function updateRatio(data) {
     if (!funnel) {
       $$.initFunnel();
     }
-    const targets = getFunnelData.call($$, t.filter($$.isFunnelType.bind($$)));
+    const targets = _getFunnelData.call($$, t.filter($$.isFunnelType.bind($$)));
     const mainFunnelUpdate = funnel.selectAll(`.${$FUNNEL.chartFunnel}`).data($$.filterNullish(targets));
     mainFunnelUpdate.exit().remove();
     const mainFunnelEnter = mainFunnelUpdate.enter().insert("g", `.${$FUNNEL.funnelBackground}`);
@@ -49540,7 +49761,7 @@ function updateRatio(data) {
     const $$ = this;
     const { $el: { funnel } } = $$;
     const targets = $$.filterTargetsToShow(funnel.path);
-    const { top, left, right } = getSize.call($$);
+    const { top, left, right } = _getSize.call($$);
     const center = (left - right) / 2;
     const points = {};
     let accumulatedHeight = top != null ? top : 0;
@@ -49561,9 +49782,9 @@ function updateRatio(data) {
     const $$ = this;
     const { $T, $el: { funnel } } = $$;
     const targets = $$.filterTargetsToShow(funnel.path);
-    const coords = getCoord.call($$, updateRatio.call($$, targets.data()));
-    funnel.attr("clip-path", `path('${getClipPath.bind($$)()}')`);
-    funnel.background.attr("d", getClipPath.call($$, true));
+    const coords = _getCoord.call($$, _updateRatio.call($$, targets.data()));
+    funnel.attr("clip-path", `path('${_getClipPath.bind($$)()}')`);
+    funnel.background.attr("d", _getClipPath.call($$, true));
     $T(targets).attr("d", (d, i) => `M${coords[i].join("L")}z`).style("opacity", "1");
     funnel.selectAll("g").style("opacity", null);
   }
@@ -49671,7 +49892,7 @@ var line_spreadProps = (a, b) => line_defProps(a, line_getOwnPropDescs(b));
 
 
 
-function getStrokeDashArray(start, end, pattern, isLastX = false) {
+function _getStrokeDashArray(start, end, pattern, isLastX = false) {
   const dash = start ? [start, 0] : pattern;
   for (let i = start ? start : pattern.reduce((a, c) => a + c); i <= end; ) {
     pattern.forEach((v) => {
@@ -49687,7 +49908,7 @@ function getStrokeDashArray(start, end, pattern, isLastX = false) {
     length: dash.reduce((a, b) => a + b, 0)
   };
 }
-function getRegions(d, _regions, isTimeSeries) {
+function _getRegions(d, _regions, isTimeSeries) {
   const $$ = this;
   const regions = [];
   const dasharray = "2 2";
@@ -49841,7 +50062,7 @@ function getRegions(d, _regions, isTimeSeries) {
     const isRotated = config.axis_rotated;
     const isTimeSeries = $$.axis.isTimeSeries();
     const dasharray = "2 2";
-    const regions = getRegions.bind($$)(d, _regions, isTimeSeries);
+    const regions = _getRegions.bind($$)(d, _regions, isTimeSeries);
     const hasNullDataValue = $$.hasNullDataValue(d);
     let xp;
     let yp;
@@ -49937,7 +50158,7 @@ function getRegions(d, _regions, isTimeSeries) {
           isRotated && points.forEach((v) => v.reverse());
           const startLength = getLength(tempNode, path);
           const endLength = getLength(tempNode, path += `L${points[1].join(",")}`);
-          const strokeDashArray = getStrokeDashArray(
+          const strokeDashArray = _getStrokeDashArray(
             startLength - dashArray.lastLength,
             endLength - dashArray.lastLength,
             style,
@@ -50369,10 +50590,10 @@ const getTransitionName = () => getRandom();
 
 
 
-function hasValidPointDrawMethods(point) {
+function _hasValidPointDrawMethods(point) {
   return isObjectType(point) && isFunction(point.create) && isFunction(point.update);
 }
-function insertPointInfoDefs(point, id) {
+function _insertPointInfoDefs(point, id) {
   var _a;
   const $$ = this;
   const copyAttr = (from, target) => {
@@ -50426,6 +50647,16 @@ function insertPointInfoDefs(point, id) {
     return `${datetimeId}-point${id}`;
   },
   /**
+   * Get validated point pattern array
+   * @returns {Array} Array of point types
+   * @private
+   */
+  getValidPointPattern() {
+    const { config } = this;
+    const validPointType = /^(circle|rect(angle)?)$/i.test(config.point_type) ? config.point_type : "circle";
+    return notEmpty(config.point_pattern) ? config.point_pattern : [validPointType];
+  },
+  /**
    * Get generate point function
    * @returns {function}
    * @private
@@ -50434,7 +50665,7 @@ function insertPointInfoDefs(point, id) {
     const $$ = this;
     const { $el, config } = $$;
     const ids = [];
-    const pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
+    const pattern = $$.getValidPointPattern();
     return function(method, context, ...args) {
       return function(d) {
         var _a, _b, _c, _d;
@@ -50444,11 +50675,11 @@ function insertPointInfoDefs(point, id) {
         let point = pattern[ids.indexOf(id) % pattern.length];
         if ($$.hasValidPointType(point)) {
           point = $$[point];
-        } else if (!hasValidPointDrawMethods(point || config.point_type)) {
+        } else if (!_hasValidPointDrawMethods(point || config.point_type)) {
           const pointId = $$.getDefsPointId(id);
           const defsPoint = $el.defs.select(`#${pointId}`);
           if (defsPoint.size() < 1) {
-            insertPointInfoDefs.call($$, point, pointId);
+            _insertPointInfoDefs.call($$, point, pointId);
           }
           if (method === "create") {
             return (_b = $$.custom) == null ? void 0 : _b.create.bind(context)(element, pointId, ...args);
@@ -50550,7 +50781,7 @@ function getDataMax($$) {
 
 
 
-function getPosition(isClockwise, type, edge, pos, range, ratio) {
+function _getPosition(isClockwise, type, edge, pos, range, ratio) {
   const index = isClockwise && pos > 0 ? edge - pos : pos;
   const r = 2 * Math.PI;
   const func = type === "x" ? Math.sin : Math.cos;
@@ -50599,7 +50830,7 @@ const cacheKeyTextWidth = KEY.radarTextWidth;
     const edge = config.axis_x_categories.length;
     const isClockwise = config.radar_direction_clockwise;
     const pos = toArray(type).map(
-      (v) => getPosition(
+      (v) => _getPosition(
         isClockwise,
         v,
         edge,
@@ -51538,6 +51769,7 @@ ${percentValue}%`;
    *   - This is an `experimental` feature and can have some unexpected behaviors.
    *   - If chart has 'bubble' type, only circle can be used.
    *   - For IE, non circle point expansions are not supported due to lack of transform support.
+   *   - While basic XSS sanitization is applied, if you're allowing user-provided chart options in a service exposed to other users, you should implement additional security measures to prevent sophisticated XSS attacks.
    * - **Available Values:**
    *   - circle
    *   - rectangle
@@ -53219,7 +53451,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.17.4-nightly-20260116004724",
+  version: "3.17.4-nightly-20260120004728",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

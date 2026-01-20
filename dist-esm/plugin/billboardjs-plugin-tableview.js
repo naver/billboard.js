@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.4-nightly-20260116004724
+ * @version 3.17.4-nightly-20260120004728
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -75,39 +75,117 @@ function getGlobal() {
 var win = getGlobal();
 var doc = win === null || win === void 0 ? void 0 : win.document;
 
+/**
+ * Private sanitization utilities
+ * Encapsulates all XSS prevention patterns and helper functions
+ * @private
+ */
+var _sanitize = (function () {
+    var DANGEROUS_TAGS = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
+    // HTML entity character code map (for decoding)
+    var ENTITY_MAP = {
+        quot: 34,
+        amp: 38,
+        apos: 39,
+        lt: 60,
+        gt: 62,
+        nbsp: 160,
+        iexcl: 161,
+        cent: 162,
+        pound: 163,
+        curren: 164,
+        yen: 165
+    };
+    // Angle bracket codes (< and >) - never decode these to prevent tag bypass
+    var LT_CODE = 60;
+    var GT_CODE = 62;
+    // Maximum sanitization iterations to prevent infinite loops
+    var MAX_ITERATIONS = 10;
+    // Regular expressions (compiled once for performance)
+    var rx = {
+        tags: new RegExp("<(".concat(DANGEROUS_TAGS, ")\\b[\\s\\S]*?>([\\s\\S]*?<\\/(").concat(DANGEROUS_TAGS, ")\\s*>)?"), "gi"),
+        htmlEntity: /&#x([0-9a-f]+);?|&#([0-9]+);?|&([a-z]+);/gi,
+        // eslint-disable-next-line no-control-regex
+        controlChar: /[\x00-\x1F\x7F]/g,
+        eventHandler: /\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)|on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi,
+        dangerousUri: /(href|src|action|xlink:href)\s*=\s*(['"`]?)([^'"`>\s]*)\2/gi,
+        dangerousProtocol: /^(javascript|data|vbscript):/
+    };
+    return {
+        ENTITY_MAP: ENTITY_MAP,
+        LT_CODE: LT_CODE,
+        GT_CODE: GT_CODE,
+        MAX_ITERATIONS: MAX_ITERATIONS,
+        rx: rx,
+        /**
+         * Decode HTML entities to prevent bypass attacks
+         * @param {string} str String with potential HTML entities
+         * @returns {string} Decoded string
+         */
+        decodeEntities: function (str) {
+            return str.replace(rx.htmlEntity, function (match, hex, dec, named) {
+                var code = hex ?
+                    parseInt(hex, 16) :
+                    dec ?
+                        parseInt(dec, 10) :
+                        named ?
+                            ENTITY_MAP[named.toLowerCase()] || 0 :
+                            0;
+                // Never decode angle brackets to prevent tag bypass
+                return code && code !== LT_CODE && code !== GT_CODE ?
+                    String.fromCharCode(code) :
+                    match;
+            });
+        },
+        /**
+         * Remove dangerous URI protocols from attribute values
+         * @param {string} str String to sanitize
+         * @returns {string} Sanitized string
+         */
+        removeDangerousUris: function (str) {
+            return str.replace(rx.dangerousUri, function (match, attr, quote, value) {
+                var normalized = value.toLowerCase().replace(/\s/g, "");
+                return rx.dangerousProtocol.test(normalized) ? "".concat(attr, "=").concat(quote).concat(quote) : match;
+            });
+        }
+    };
+})();
 var isString = function (v) { return typeof v === "string"; };
 var isNumber = function (v) { return typeof v === "number"; };
 var isDefined = function (v) { return typeof v !== "undefined"; };
 var isObjectType = function (v) { return typeof v === "object"; };
-// Sanitize patterns (blacklist approach with repeated application)
-var DANGEROUS_TAGS = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
-var sanitizeRx = {
-    tags: new RegExp("<(".concat(DANGEROUS_TAGS, ")\\b[\\s\\S]*?>([\\s\\S]*?<\\/(").concat(DANGEROUS_TAGS, ")\\s*>)?"), "gi"),
-    // Handles: whitespace, slash, quotes before event handlers (e.g., <img/onerror=...>, <img src="x"onerror=...>)
-    eventHandlers: /[\s/"']+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
-    // Handles: javascript/data/vbscript URIs with optional whitespace/newlines between protocol and colon
-    dangerousURIs: /(href|src|action|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript)\s*:/gi
-};
 /**
  * Sanitize HTML string to prevent XSS attacks
  * Uses blacklist approach with repeated application to prevent nested tag bypass
+ * Handles encoded characters (HTML entities, Unicode escapes) to prevent bypass attacks
  * @param {string} str Target string value
  * @returns {string} Sanitized string with dangerous elements removed
  * @private
  */
 function sanitize(str) {
+    // Early return for non-string, empty string, or string without HTML
     if (!isString(str) || !str || str.indexOf("<") === -1) {
         return str;
     }
     var result = str;
     var prev;
+    var iterations = 0;
     // Repeat until no more changes (prevents nested tag attacks like <scri<script>pt>)
     do {
         prev = result;
-        result = result
-            .replace(sanitizeRx.tags, "")
-            .replace(sanitizeRx.eventHandlers, "")
-            .replace(sanitizeRx.dangerousURIs, "$1=\"\"");
+        // 1. Decode HTML entities to prevent bypass (e.g., jav&#x0A;ascript:)
+        // 2. Remove control characters (NULL, tab, newline, etc.)
+        // 3. Remove dangerous tags (script, iframe, etc.)
+        result = _sanitize.decodeEntities(result)
+            .replace(_sanitize.rx.controlChar, "")
+            .replace(_sanitize.rx.tags, "")
+            .replace(_sanitize.rx.eventHandler, ""); // 4. Remove event handlers
+        // 5. Remove dangerous URIs (javascript:, data:, vbscript:)
+        result = _sanitize.removeDangerousUris(result);
+        // Safety check to prevent infinite loops
+        if (++iterations >= _sanitize.MAX_ITERATIONS) {
+            break;
+        }
     } while (result !== prev);
     return result;
 }
@@ -250,7 +328,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.17.4-nightly-20260116004724";
+    Plugin.version = "3.17.4-nightly-20260120004728";
     return Plugin;
 }());
 

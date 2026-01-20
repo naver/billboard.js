@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.4-nightly-20260116004724
+ * @version 3.17.4-nightly-20260120004728
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -26816,7 +26816,83 @@ var util_spreadValues = (a, b) => {
 
 
 
-
+function _getRect(relativeViewport, node, forceEval = false) {
+  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+  if (forceEval) {
+    return _(node);
+  } else {
+    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
+    return needEvaluate ? node.rect = _(node) : node.rect;
+  }
+}
+function _forEachValidItem(items, callback) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item) {
+      callback(item, i);
+    }
+  }
+}
+const _sanitize = (() => {
+  const DANGEROUS_TAGS = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
+  const ENTITY_MAP = {
+    quot: 34,
+    amp: 38,
+    apos: 39,
+    lt: 60,
+    gt: 62,
+    nbsp: 160,
+    iexcl: 161,
+    cent: 162,
+    pound: 163,
+    curren: 164,
+    yen: 165
+  };
+  const LT_CODE = 60;
+  const GT_CODE = 62;
+  const MAX_ITERATIONS = 10;
+  const rx = {
+    tags: new RegExp(
+      `<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
+      "gi"
+    ),
+    htmlEntity: /&#x([0-9a-f]+);?|&#([0-9]+);?|&([a-z]+);/gi,
+    // eslint-disable-next-line no-control-regex
+    controlChar: /[\x00-\x1F\x7F]/g,
+    eventHandler: /\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)|on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi,
+    dangerousUri: /(href|src|action|xlink:href)\s*=\s*(['"`]?)([^'"`>\s]*)\2/gi,
+    dangerousProtocol: /^(javascript|data|vbscript):/
+  };
+  return {
+    ENTITY_MAP,
+    LT_CODE,
+    GT_CODE,
+    MAX_ITERATIONS,
+    rx,
+    /**
+     * Decode HTML entities to prevent bypass attacks
+     * @param {string} str String with potential HTML entities
+     * @returns {string} Decoded string
+     */
+    decodeEntities(str) {
+      return str.replace(rx.htmlEntity, (match, hex, dec, named) => {
+        const code = hex ? parseInt(hex, 16) : dec ? parseInt(dec, 10) : named ? ENTITY_MAP[named.toLowerCase()] || 0 : 0;
+        return code && code !== LT_CODE && code !== GT_CODE ? String.fromCharCode(code) : match;
+      });
+    },
+    /**
+     * Remove dangerous URI protocols from attribute values
+     * @param {string} str String to sanitize
+     * @returns {string} Sanitized string
+     */
+    removeDangerousUris(str) {
+      return str.replace(rx.dangerousUri, (match, attr, quote, value) => {
+        const normalized = value.toLowerCase().replace(/\s/g, "");
+        return rx.dangerousProtocol.test(normalized) ? `${attr}=${quote}${quote}` : match;
+      });
+    }
+  };
+})();
 const isValue = (v) => v || v === 0;
 const isFunction = (v) => typeof v === "function";
 const isString = (v) => typeof v === "string";
@@ -26863,26 +26939,20 @@ function endall(transition, cb) {
     transition.call(end);
   }
 }
-const DANGEROUS_TAGS = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
-const sanitizeRx = {
-  tags: new RegExp(
-    `<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
-    "gi"
-  ),
-  // Handles: whitespace, slash, quotes before event handlers (e.g., <img/onerror=...>, <img src="x"onerror=...>)
-  eventHandlers: /[\s/"']+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
-  // Handles: javascript/data/vbscript URIs with optional whitespace/newlines between protocol and colon
-  dangerousURIs: /(href|src|action|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript)\s*:/gi
-};
 function sanitize(str) {
   if (!isString(str) || !str || str.indexOf("<") === -1) {
     return str;
   }
   let result = str;
   let prev;
+  let iterations = 0;
   do {
     prev = result;
-    result = result.replace(sanitizeRx.tags, "").replace(sanitizeRx.eventHandlers, "").replace(sanitizeRx.dangerousURIs, '$1=""');
+    result = _sanitize.decodeEntities(result).replace(_sanitize.rx.controlChar, "").replace(_sanitize.rx.tags, "").replace(_sanitize.rx.eventHandler, "");
+    result = _sanitize.removeDangerousUris(result);
+    if (++iterations >= _sanitize.MAX_ITERATIONS) {
+      break;
+    }
   } while (result !== prev);
   return result;
 }
@@ -26950,20 +27020,11 @@ function getBrushSelection(ctx) {
   }
   return selection;
 }
-function getRect(relativeViewport, node, forceEval = false) {
-  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
-  if (forceEval) {
-    return _(node);
-  } else {
-    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
-    return needEvaluate ? node.rect = _(node) : node.rect;
-  }
-}
 function getBoundingRect(node, forceEval = false) {
-  return getRect(true, node, forceEval);
+  return _getRect(true, node, forceEval);
 }
 function getBBox(node, forceEval = false) {
-  return getRect(false, node, forceEval);
+  return _getRect(false, node, forceEval);
 }
 function getRandom(asStr = true, min = 0, max = 1e4) {
   const crpt = win.crypto || win.msCrypto;
@@ -27275,6 +27336,35 @@ function parseShorthand(value) {
   const [a, b = a, c = a, d = b] = values;
   return { top: a, right: b, bottom: c, left: d };
 }
+function scheduleRAFUpdate(rafState, callback) {
+  if (rafState.pendingRaf !== null) {
+    win.cancelAnimationFrame(rafState.pendingRaf);
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+      callback();
+    });
+  } else {
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+    });
+    callback();
+  }
+}
+function toSet(items, keyFn = ((item) => item)) {
+  const set = /* @__PURE__ */ new Set();
+  _forEachValidItem(items, (item, i) => {
+    set.add(keyFn(item, i));
+  });
+  return set;
+}
+function toMap(items, keyFn, valueFn = ((item) => item)) {
+  const map = /* @__PURE__ */ new Map();
+  _forEachValidItem(items, (item, i) => {
+    map.set(keyFn(item, i), valueFn(item, i));
+  });
+  return map;
+}
+
 
 ;// ./src/config/config.ts
 
@@ -27356,7 +27446,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.17.4-nightly-20260116004724");
+__publicField(Plugin, "version", "3.17.4-nightly-20260120004728");
 
 ;// ./node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {
