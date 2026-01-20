@@ -25,6 +25,7 @@ import {
 } from "d3-shape";
 import type {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
+import {KEY} from "../../module/Cache";
 import {
 	capitalize,
 	getBBox,
@@ -48,7 +49,7 @@ import type {IDataIndice, IDataRow, TIndices} from "../data/IData";
  * @returns {function|undefined}
  * @private
  */
-function getGroupedDataPointsFn(d) {
+function _getGroupedDataPointsFn(d) {
 	const $$ = this;
 	let fn;
 
@@ -327,6 +328,18 @@ export default {
 		const targets = $$.orderTargets(
 			$$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))
 		);
+
+		// Create cache key based on target IDs
+		const targetIds = targets.map(t => t.id).join("_");
+		const cacheKey = `${KEY.shapeOffset}_${targetIds}`;
+
+		// Check if result is already cached
+		const cachedData = $$.cache.get(cacheKey);
+
+		if (cachedData) {
+			return cachedData;
+		}
+
 		const isStackNormalized = $$.isStackNormalized();
 
 		const shapeOffsetTargets = targets.map(target => {
@@ -358,7 +371,12 @@ export default {
 			return out;
 		}, {});
 
-		return {indexMapByTargetId, shapeOffsetTargets};
+		const result = {indexMapByTargetId, shapeOffsetTargets};
+
+		// Cache the result
+		$$.cache.add(cacheKey, result);
+
+		return result;
 	},
 
 	getShapeOffset(typeFilter, indices, isSub?: boolean): Function {
@@ -435,7 +453,7 @@ export default {
 		let points;
 
 		if ($$.isGrouped(id)) {
-			points = getGroupedDataPointsFn.bind($$)(d);
+			points = _getGroupedDataPointsFn.bind($$)(d);
 		}
 
 		return points ? points(d, i)[0][1] : $$.getYScaleById(id)($$.getBaseValue(d));

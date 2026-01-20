@@ -10,7 +10,7 @@ import {
 } from "d3-zoom";
 import {$COMMON, $ZOOM} from "../../config/classes";
 import {window} from "../../module/browser";
-import {callFn, diffDomain, getPointer, isFunction} from "../../module/util";
+import {callFn, diffDomain, getPointer, isFunction, scheduleRAFUpdate} from "../../module/util";
 
 export default {
 	/**
@@ -120,10 +120,6 @@ export default {
 					d3ZoomIdentity.translate(tX, tY).scale(transform.k));
 			}
 
-			if (!$$.state.xTickOffset) {
-				$$.state.xTickOffset = $$.axis.x.tickOffset();
-			}
-
 			scale.zoom = $$.getCustomizedXScale(newScale);
 			$$.axis.x.scale(scale.zoom);
 
@@ -216,22 +212,30 @@ export default {
 				state.dragging || isUnZoom || !event.sourceEvent
 			);
 
-		$$.redraw({
-			withTransition: doTransition,
-			withY: config.zoom_rescale,
-			withSubchart: false,
-			withEventRect: false,
-			withDimension: false
-		});
+		// Use RAF batching for continuous drag zoom events only
+		// Wheel zoom and API calls need synchronous execution for correct behavior and tests
+		const useRAF = sourceEvent && isMousemove && config.zoom_type !== "wheel";
 
-		$$.state.cancelClick = isMousemove;
+		const executeRedraw = () => {
+			$$.redraw({
+				withTransition: doTransition,
+				withY: config.zoom_rescale,
+				withSubchart: false,
+				withEventRect: false,
+				withDimension: false
+			});
 
-		// do not call event cb when is .unzoom() is called
-		!isUnZoom && callFn(
-			config.zoom_onzoom,
-			$$.api,
-			$$.state.domain ?? $$.zoom.getDomain()
-		);
+			$$.state.cancelClick = isMousemove;
+
+			// do not call event cb when is .unzoom() is called
+			!isUnZoom && callFn(
+				config.zoom_onzoom,
+				$$.api,
+				$$.state.domain ?? $$.zoom.getDomain()
+			);
+		};
+
+		useRAF ? scheduleRAFUpdate($$.state, executeRedraw) : executeRedraw();
 	},
 
 	/**

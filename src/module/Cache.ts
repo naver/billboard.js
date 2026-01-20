@@ -16,12 +16,18 @@ export const KEY = {
 	dataMinMax: "$dataMinMax",
 	dataTotalSum: "$dataTotalSum",
 	dataTotalPerIndex: "$totalPerIndex",
+	domainMinMax: "$domainMinMax",
+	filteredTargets: "$filteredTargets",
+	filteredNullish: "$filteredNullish",
+	visibilityChecksum: "visibilityChecksum",
 	legendItemTextBox: "legendItemTextBox",
+	legendItemMap: "$legendItemMap",
 	radarPoints: "$radarPoints",
 	radarTextWidth: "$radarTextWidth",
 	setOverOut: "setOverOut",
 	callOverOutForTouch: "callOverOutForTouch",
-	textRect: "textRect"
+	textRect: "textRect",
+	shapeOffset: "$shapeOffset"
 };
 
 export default class Cache {
@@ -74,6 +80,25 @@ export default class Cache {
 
 			return isValue(value) ? value : null;
 		}
+	}
+
+	/**
+	 * Check if cache key exists
+	 * @param {string} key Cache key
+	 * @returns {boolean} True if key exists in cache
+	 * @private
+	 */
+	has(key: string): boolean {
+		return key in this.cache && this.cache[key] !== null;
+	}
+
+	/**
+	 * Get all cache keys
+	 * @returns {string[]} Array of cache keys
+	 * @private
+	 */
+	getKeys(): string[] {
+		return Object.keys(this.cache);
 	}
 
 	/**

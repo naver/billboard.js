@@ -12,7 +12,7 @@ import {isFunction, isObjectType, notEmpty, sanitize, toArray} from "../../modul
  * @returns {boolean}
  * @private
  */
-function hasValidPointDrawMethods(point: string): boolean {
+function _hasValidPointDrawMethods(point: string): boolean {
 	return isObjectType(point) &&
 		isFunction(point.create) && isFunction(point.update);
 }
@@ -23,7 +23,7 @@ function hasValidPointDrawMethods(point: string): boolean {
  * @param {string} id Point id
  * @private
  */
-function insertPointInfoDefs(point: string, id: string): void {
+function _insertPointInfoDefs(point: string, id: string): void {
 	const $$ = this;
 	const copyAttr = (from, target) => {
 		const attribs = from.attributes;
@@ -67,6 +67,8 @@ export default {
 	 * @private
 	 */
 	hasValidPointType(type?: string): boolean {
+		// For point.pattern, allow additional SVG shape tags (polygon, ellipse, use)
+		// These will be sanitized before use
 		return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
 	},
 
@@ -88,6 +90,22 @@ export default {
 	},
 
 	/**
+	 * Get validated point pattern array
+	 * @returns {Array} Array of point types
+	 * @private
+	 */
+	getValidPointPattern(): string[] {
+		const {config} = this;
+
+		// Ensure point_type is restricted to 'circle' or 'rectangle' only
+		const validPointType = /^(circle|rect(angle)?)$/i.test(config.point_type) ?
+			config.point_type :
+			"circle";
+
+		return notEmpty(config.point_pattern) ? config.point_pattern : [validPointType];
+	},
+
+	/**
 	 * Get generate point function
 	 * @returns {function}
 	 * @private
@@ -96,7 +114,7 @@ export default {
 		const $$ = this;
 		const {$el, config} = $$;
 		const ids: string[] = [];
-		const pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
+		const pattern = $$.getValidPointPattern();
 
 		return function(method, context, ...args) {
 			return function(d) {
@@ -109,12 +127,12 @@ export default {
 
 				if ($$.hasValidPointType(point)) {
 					point = $$[point];
-				} else if (!hasValidPointDrawMethods(point || config.point_type)) {
+				} else if (!_hasValidPointDrawMethods(point || config.point_type)) {
 					const pointId = $$.getDefsPointId(id);
 					const defsPoint = $el.defs.select(`#${pointId}`);
 
 					if (defsPoint.size() < 1) {
-						insertPointInfoDefs.call($$, point, pointId);
+						_insertPointInfoDefs.call($$, point, pointId);
 					}
 
 					if (method === "create") {

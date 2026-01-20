@@ -25,6 +25,7 @@ export default {
 	 *   - title {string}: data's id value
 	 *   - color {string}: color string
 	 *   - data {Array}: data array
+	 *  - **NOTE:** While basic XSS sanitization is applied, if you're allowing user-provided chart options in a service exposed to other users, you should implement additional security measures to prevent sophisticated XSS attacks.
 	 * @property {string} [legend.position=bottom] Change the position of legend.<br>
 	 *  Available values are: `bottom`, `right` and `inset` are supported.
 	 * @property {object} [legend.inset={anchor: 'top-left',x: 10,y: 0,step: undefined}] Change inset legend attributes.<br>

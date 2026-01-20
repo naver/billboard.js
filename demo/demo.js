@@ -7904,9 +7904,7 @@ setTimeout(function() {
 					max: 120
 				},
 				label: {
-					format: function(value, ratio, id) {
-						return value;
-					},
+					format: () => "",
 					line: {
 						show: true,
 						distance: 15,
