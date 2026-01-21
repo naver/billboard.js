@@ -85,21 +85,20 @@ const _sanitize = (() => {
 	const LT_CODE = 60;
 	const GT_CODE = 62;
 
-	// Maximum sanitization iterations to prevent infinite loops
-	const MAX_ITERATIONS = 10;
-
 	// Regular expressions (compiled once for performance)
 	const rx = {
 		tags: new RegExp(
 			`<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
 			"gi"
 		),
+		// Closing tags only (e.g., </script>) - can break out of existing script context
+		closingTags: new RegExp(`<\\/(${DANGEROUS_TAGS})\\s*>`, "gi"),
 		htmlEntity: /&#x([0-9a-f]+);?|&#([0-9]+);?|&([a-z]+);/gi,
 		// eslint-disable-next-line no-control-regex
 		controlChar: /[\x00-\x1F\x7F]/g,
-		eventHandler:
-			/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)|on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi,
-		dangerousUri: /(href|src|action|xlink:href)\s*=\s*(['"`]?)([^'"`>\s]*)\2/gi,
+		eventHandler: /\s*on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi,
+		// Separate patterns for each quote type to properly capture attribute values
+		dangerousUri: /(href|src|action|xlink:href)\s*=\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`|([^\s>]+))/gi,
 		dangerousProtocol: /^(javascript|data|vbscript):/
 	};
 
@@ -107,7 +106,6 @@ const _sanitize = (() => {
 		ENTITY_MAP,
 		LT_CODE,
 		GT_CODE,
-		MAX_ITERATIONS,
 		rx,
 
 		/**
@@ -138,8 +136,12 @@ const _sanitize = (() => {
 		 * @returns {string} Sanitized string
 		 */
 		removeDangerousUris(str: string): string {
-			return str.replace(rx.dangerousUri, (match, attr, quote, value) => {
+			return str.replace(rx.dangerousUri, (match, attr, dq, sq, bt, uq) => {
+				// Get value from whichever quote group matched (double, single, backtick, or unquoted)
+				const value = dq ?? sq ?? bt ?? uq ?? "";
+				const quote = dq !== undefined ? '"' : sq !== undefined ? "'" : bt !== undefined ? "`" : "";
 				const normalized = value.toLowerCase().replace(/\s/g, "");
+
 				return rx.dangerousProtocol.test(normalized) ? `${attr}=${quote}${quote}` : match;
 			});
 		}
@@ -274,27 +276,19 @@ function sanitize(str: string): string {
 
 	let result = str;
 	let prev: string;
-	let iterations = 0;
 
 	// Repeat until no more changes (prevents nested tag attacks like <scri<script>pt>)
 	do {
 		prev = result;
 
-		// 1. Decode HTML entities to prevent bypass (e.g., jav&#x0A;ascript:)
-		// 2. Remove control characters (NULL, tab, newline, etc.)
-		// 3. Remove dangerous tags (script, iframe, etc.)
-		result = _sanitize.decodeEntities(result)
-			.replace(_sanitize.rx.controlChar, "")
-			.replace(_sanitize.rx.tags, "")
-			.replace(_sanitize.rx.eventHandler, ""); // 4. Remove event handlers
+		result = _sanitize.decodeEntities(result) // Decode HTML entities to prevent bypass (e.g., jav&#x0A;ascript:)
+			.replace(_sanitize.rx.controlChar, "") // Remove control characters (NULL, tab, newline, etc.)
+			.replace(_sanitize.rx.tags, "") // Remove dangerous tags (script, iframe, etc.)
+			.replace(_sanitize.rx.closingTags, "") // Remove orphan closing tags (</script>, etc.)
+			.replace(_sanitize.rx.eventHandler, ""); // Remove event handlers
 
-		// 5. Remove dangerous URIs (javascript:, data:, vbscript:)
+		// Remove dangerous URIs (javascript:, data:, vbscript:)
 		result = _sanitize.removeDangerousUris(result);
-
-		// Safety check to prevent infinite loops
-		if (++iterations >= _sanitize.MAX_ITERATIONS) {
-			break;
-		}
 	} while (result !== prev);
 
 	return result;

@@ -200,6 +200,17 @@ describe("UTIL", function() {
 			expect(sanitize("<a href=\"javascript:void(0)\">link</a>")).to.not.include("javascript:");
 			expect(sanitize("<img src='data:text/html,<script>alert(1)</script>'/>")).to.not.include("data:");
 			expect(sanitize("<a href='vbscript:alert(1)'>link</a>")).to.not.include("vbscript:");
+
+			// Whitespace bypass patterns
+			expect(sanitize("<a href='javascript: alert(1)'>click</a>")).to.not.include("javascript:");
+			expect(sanitize("<a href='javascript:\talert(1)'>click</a>")).to.not.include("javascript:");
+
+			// Mixed quote bypass patterns
+			expect(sanitize(`<a href="javascript:alert('1')">click</a>`)).to.not.include("javascript:");
+			expect(sanitize(`<a href='javascript:alert("1")'>click</a>`)).to.not.include("javascript:");
+
+			// Deeply nested entity encoding bypass (10+ levels of &amp;)
+			expect(sanitize("<a href='j&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#x61;vascript:alert(1)'>click</a>")).to.not.include("javascript:");
 		});
 
 		it("should handle mixed dangerous content", () => {
@@ -216,6 +227,18 @@ describe("UTIL", function() {
 			expect(sanitize("<span class='test'>text</span>")).to.be.equal("<span class='test'>text</span>");
 			expect(sanitize("<p>paragraph</p>")).to.be.equal("<p>paragraph</p>");
 			expect(sanitize("<a href='https://safe.com'>link</a>")).to.be.equal("<a href='https://safe.com'>link</a>");
+		});
+
+		it("should remove orphan closing tags", () => {
+			// Closing tags can break out of existing script context
+			expect(sanitize("</script>")).to.be.equal("");
+			expect(sanitize("</SCRIPT>")).to.be.equal("");
+			expect(sanitize("</script  >")).to.be.equal("");
+			expect(sanitize("text</script>more")).to.be.equal("textmore");
+			expect(sanitize("</iframe></style></object>")).to.be.equal("");
+
+			// Script injection via closing tag
+			expect(sanitize(`</script><script>alert("XSS");</script>`)).to.not.include("script");
 		});
 
 		it("should prevent nested tag bypass attacks", () => {
@@ -421,8 +444,15 @@ describe("UTIL", function() {
 			// Event handlers should be removed
 			expect(polyglotResult).to.not.include("onload=");
 			expect(polyglotResult).to.not.include("onmouseover=");
-			// The main dangerous content (event handlers) is removed, making the payload harmless
-			// Note: Closing tags without opening tags may remain but are harmless in HTML
+
+			// Repeated event handler obfuscation attack
+			const repeatedOnfocus = `<x/ooooooooooonfocus=""nfocus=""nfocus=""nfocus=""nfocus=""nfocus=""nfocus=""nfocus=""nfocus=""nfocus=""nfocus="alert(window.origin)"contenteditable autofocus />`;
+			const onfocusResult = sanitize(repeatedOnfocus);
+			expect(onfocusResult).to.not.include("onfocus");
+			expect(onfocusResult).to.not.include("alert");
+
+			// Script context breakout attack
+			expect(sanitize(`</script><script>alert("XSS");</script>`)).to.not.include("script");
 		});
 	});
 
