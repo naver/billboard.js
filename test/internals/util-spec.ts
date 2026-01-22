@@ -158,34 +158,35 @@ describe("UTIL", function() {
 			expect(sanitize("no tags here")).to.be.equal("no tags here");
 		});
 
-		it("should remove script tags", () => {
-			expect(sanitize("<script>alert(1)</script>")).to.be.equal("");
-			expect(sanitize("<SCRIPT>alert(1)</SCRIPT>")).to.be.equal("");
-			expect(sanitize("before<script>alert(1)</script>after")).to.be.equal("beforeafter");
-			expect(sanitize("<script src='evil.js'></script>")).to.be.equal("");
-			expect(sanitize("<script/>")).to.be.equal("");
+		it("should escape script tags", () => {
+			expect(sanitize("<script>alert(1)</script>")).to.not.include("<script");
+			expect(sanitize("<SCRIPT>alert(1)</SCRIPT>")).to.not.include("<script");
+			expect(sanitize("before<script>alert(1)</script>after")).to.include("before");
+			expect(sanitize("before<script>alert(1)</script>after")).to.include("after");
+			expect(sanitize("<script src='evil.js'></script>")).to.not.include("<script");
+			expect(sanitize("<script/>")).to.not.include("<script");
 		});
 
-		it("should remove iframe tags", () => {
-			expect(sanitize("<iframe src='evil.com'></iframe>")).to.be.equal("");
-			expect(sanitize("<iframe/>")).to.be.equal("");
+		it("should escape iframe tags", () => {
+			expect(sanitize("<iframe src='evil.com'></iframe>")).to.not.include("<iframe");
+			expect(sanitize("<iframe/>")).to.not.include("<iframe");
 		});
 
-		it("should remove dangerous tags", () => {
-			expect(sanitize("<object data='evil'></object>")).to.be.equal("");
-			expect(sanitize("<embed src='evil'/>")).to.be.equal("");
-			expect(sanitize("<form action='evil'></form>")).to.be.equal("");
-			expect(sanitize("<input type='text'/>")).to.be.equal("");
-			expect(sanitize("<button>click</button>")).to.be.equal("");
-			expect(sanitize("<textarea>text</textarea>")).to.be.equal("");
-			expect(sanitize("<select><option>opt</option></select>")).to.be.equal("");
-			expect(sanitize("<style>.evil{}</style>")).to.be.equal("");
-			expect(sanitize("<link rel='stylesheet'/>")).to.be.equal("");
-			expect(sanitize("<meta charset='utf-8'/>")).to.be.equal("");
-			expect(sanitize("<base href='evil'/>")).to.be.equal("");
+		it("should escape dangerous tags", () => {
+			expect(sanitize("<object data='evil'></object>")).to.not.include("<object");
+			expect(sanitize("<embed src='evil'/>")).to.not.include("<embed");
+			expect(sanitize("<form action='evil'></form>")).to.not.include("<form");
+			expect(sanitize("<input type='text'/>")).to.not.include("<input");
+			expect(sanitize("<button>click</button>")).to.not.include("<button");
+			expect(sanitize("<textarea>text</textarea>")).to.not.include("<textarea");
+			expect(sanitize("<select><option>opt</option></select>")).to.not.include("<select");
+			expect(sanitize("<style>.evil{}</style>")).to.not.include("<style");
+			expect(sanitize("<link rel='stylesheet'/>")).to.not.include("<link");
+			expect(sanitize("<meta charset='utf-8'/>")).to.not.include("<meta");
+			expect(sanitize("<base href='evil'/>")).to.not.include("<base");
 			// SVG is allowed but event handlers are removed
 			expect(sanitize("<svg onload='alert(1)'></svg>")).to.be.equal("<svg></svg>");
-			expect(sanitize("<math><mi>x</mi></math>")).to.be.equal("");
+			expect(sanitize("<math><mi>x</mi></math>")).to.not.include("<math");
 		});
 
 		it("should remove event handlers", () => {
@@ -202,11 +203,31 @@ describe("UTIL", function() {
 			expect(sanitize("<a href='vbscript:alert(1)'>link</a>")).to.not.include("vbscript:");
 		});
 
+		it("should block HTML entity bypass attacks in URLs", () => {
+			// Named entity bypass: &colon; for ":"
+			expect(sanitize("<a href='javascript&colon;alert(1)'>click</a>")).to.not.include("href");
+
+			// Named entity bypass: &NewLine; for newline character
+			expect(sanitize("<a href='java&NewLine;script:alert(1)'>click</a>")).to.not.include("href");
+
+			// Named entity bypass: &Tab; for tab character
+			expect(sanitize("<a href='java&Tab;script:alert(1)'>click</a>")).to.not.include("href");
+
+			// Numeric entity bypass: &#58; for ":"
+			expect(sanitize("<a href='javascript&#58;alert(1)'>click</a>")).to.not.include("href");
+
+			// Hex entity bypass: &#x3a; for ":"
+			expect(sanitize("<a href='javascript&#x3a;alert(1)'>click</a>")).to.not.include("href");
+
+			// Mixed case entity bypass
+			expect(sanitize("<a href='javascript&COLON;alert(1)'>click</a>")).to.not.include("href");
+		});
+
 		it("should handle mixed dangerous content", () => {
 			const input = "<div onclick='alert(1)'><script>evil()</script>safe content</div>";
 			const result = sanitize(input);
 
-			expect(result).to.not.include("script");
+			expect(result).to.not.include("<script");
 			expect(result).to.not.include("onclick");
 			expect(result).to.include("safe content");
 		});
@@ -219,16 +240,17 @@ describe("UTIL", function() {
 		});
 
 		it("should prevent nested tag bypass attacks", () => {
-			// Pattern: <scri<script></script>pt> becomes <script> after first pass
-			expect(sanitize("<scri<script></script>pt>alert(1)</script>")).to.not.include("script");
-			expect(sanitize("<scr<script>x</script>ipt>alert(2)</script>")).to.not.include("script");
+			// Escape approach prevents nested attacks by escaping '<'
+			// After sanitization, no executable <script> tags remain
+			expect(sanitize("<scri<script></script>pt>alert(1)</script>")).to.not.include("<script");
+			expect(sanitize("<scr<script>x</script>ipt>alert(2)</script>")).to.not.include("<script");
 
 			// Nested iframe bypass
-			expect(sanitize("<ifr<script></script>ame src='evil.com'></iframe>")).to.not.include("iframe");
-			expect(sanitize("<if<iframe></iframe>rame src='x'></iframe>")).to.not.include("iframe");
+			expect(sanitize("<ifr<script></script>ame src='evil.com'></iframe>")).to.not.include("<iframe");
+			expect(sanitize("<if<iframe></iframe>rame src='x'></iframe>")).to.not.include("<iframe");
 
 			// Multiple levels of nesting
-			expect(sanitize("<scr<scr<script></script>ipt></script>ipt>alert(3)</script>")).to.not.include("script");
+			expect(sanitize("<scr<scr<script></script>ipt></script>ipt>alert(3)</script>")).to.not.include("<script");
 		});
 	});
 

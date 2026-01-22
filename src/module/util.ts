@@ -7,6 +7,7 @@ import {brushSelection as d3BrushSelection} from "d3-brush";
 import {pointer as d3Pointer} from "d3-selection";
 import type {d3Selection} from "../../types/types";
 import {document, requestAnimationFrame, window} from "./browser";
+import {sanitize} from "./sanitize";
 
 export {
 	addCssRules,
@@ -173,47 +174,6 @@ function endall(transition, cb: Function): void {
 		++n;
 		transition.call(end);
 	}
-}
-
-// Sanitize patterns (blacklist approach with repeated application)
-const DANGEROUS_TAGS =
-	"script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
-const sanitizeRx = {
-	tags: new RegExp(
-		`<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
-		"gi"
-	),
-	// Handles: whitespace, slash, quotes before event handlers (e.g., <img/onerror=...>, <img src="x"onerror=...>)
-	eventHandlers: /[\s/"']+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
-	// Handles: javascript/data/vbscript URIs with optional whitespace/newlines between protocol and colon
-	dangerousURIs: /(href|src|action|xlink:href)\s*=\s*["']?\s*(javascript|data|vbscript)\s*:/gi
-};
-
-/**
- * Sanitize HTML string to prevent XSS attacks
- * Uses blacklist approach with repeated application to prevent nested tag bypass
- * @param {string} str Target string value
- * @returns {string} Sanitized string with dangerous elements removed
- * @private
- */
-function sanitize(str: string): string {
-	if (!isString(str) || !str || str.indexOf("<") === -1) {
-		return str;
-	}
-
-	let result = str;
-	let prev: string;
-
-	// Repeat until no more changes (prevents nested tag attacks like <scri<script>pt>)
-	do {
-		prev = result;
-		result = result
-			.replace(sanitizeRx.tags, "")
-			.replace(sanitizeRx.eventHandlers, "")
-			.replace(sanitizeRx.dangerousURIs, "$1=\"\"");
-	} while (result !== prev);
-
-	return result;
 }
 
 /**

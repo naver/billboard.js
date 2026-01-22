@@ -59,6 +59,7 @@ export default {
 	 *   - This is an `experimental` feature and can have some unexpected behaviors.
 	 *   - If chart has 'bubble' type, only circle can be used.
 	 *   - For IE, non circle point expansions are not supported due to lack of transform support.
+	 *   - Only common SVG tags are allowed to prevent XSS attacks. If creating charts from user input, it is recommended to sanitize input values to avoid potential vulnerabilities.
 	 * - **Available Values:**
 	 *   - circle
 	 *   - rectangle
