@@ -91,9 +91,11 @@ export default {
 		const $$ = this;
 		const {api, config} = $$;
 
-		return isFunction(config.tooltip_contents) ?
-			config.tooltip_contents.bind(api)(...args) :
-			$$.getTooltipContent(...args);
+		return sanitize(
+			isFunction(config.tooltip_contents) ?
+				config.tooltip_contents.bind(api)(...args) :
+				$$.getTooltipContent(...args)
+		);
 	},
 
 	/**
@@ -116,9 +118,9 @@ export default {
 			return isFunction(fn) ? fn.bind(api) : fn;
 		});
 
-		// determine fotmatter function with sanitization
-		const titleFormat = (...arg) => sanitize((titleFn || defaultTitleFormat)(...arg));
-		const nameFormat = (...arg) => sanitize((nameFn || (name => name))(...arg));
+		// determine formatter function
+		const titleFormat = (...arg) => (titleFn || defaultTitleFormat)(...arg);
+		const nameFormat = (...arg) => (nameFn || (name => name))(...arg);
 		const valueFormat = (v, ratio, id, index) => {
 			let fn = valueFn;
 
@@ -135,7 +137,7 @@ export default {
 				}
 			}
 
-			return sanitize(fn(v, ratio, id, index));
+			return fn(v, ratio, id, index);
 		};
 
 		const order = config.tooltip_order;
@@ -533,12 +535,12 @@ export default {
 
 			// set tooltip content
 			tooltip
-				.html(sanitize($$.getTooltipHTML(
+				.html($$.getTooltipHTML(
 					selectedData, // data
 					$$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$), // defaultTitleFormat
 					$$.getDefaultValueFormat(), // defaultValueFormat
 					$$.color // color
-				)))
+				))
 				.style("display", null)
 				.style("visibility", null) // for IE9
 				.datum(datum = {

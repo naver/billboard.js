@@ -18,6 +18,7 @@ export default {
 	 * @property {string|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
 	 * - **NOTE:** Should be used along with `legend.contents.template`.
 	 * @property {string|function} [legend.contents.template="<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>"] Set item's template.<br>
+	 *  - **NOTE:** Only common HTML tags are allowed to prevent XSS attacks. If creating charts from user input, it is recommended to sanitize input values to avoid potential vulnerabilities.
 	 *  - If set `string` value, within template the 'color' and 'title' can be replaced using template-like syntax string:
 	 *    - {=COLOR}: data color value
 	 *    - {=TITLE}: data title value
