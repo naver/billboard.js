@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.4-nightly-20260120004728
+ * @version 3.17.4-nightly-20260122004731
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -193,24 +193,25 @@ const _sanitize = (() => {
   };
   const LT_CODE = 60;
   const GT_CODE = 62;
-  const MAX_ITERATIONS = 10;
   const rx = {
     tags: new RegExp(
       `<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
       "gi"
     ),
+    // Closing tags only (e.g., <\/script>) - can break out of existing script context
+    closingTags: new RegExp(`<\\/(${DANGEROUS_TAGS})\\s*>`, "gi"),
     htmlEntity: /&#x([0-9a-f]+);?|&#([0-9]+);?|&([a-z]+);/gi,
     // eslint-disable-next-line no-control-regex
     controlChar: /[\x00-\x1F\x7F]/g,
-    eventHandler: /\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)|on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi,
-    dangerousUri: /(href|src|action|xlink:href)\s*=\s*(['"`]?)([^'"`>\s]*)\2/gi,
+    eventHandler: /\s*on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi,
+    // Separate patterns for each quote type to properly capture attribute values
+    dangerousUri: /(href|src|action|xlink:href)\s*=\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`|([^\s>]+))/gi,
     dangerousProtocol: /^(javascript|data|vbscript):/
   };
   return {
     ENTITY_MAP,
     LT_CODE,
     GT_CODE,
-    MAX_ITERATIONS,
     rx,
     /**
      * Decode HTML entities to prevent bypass attacks
@@ -229,7 +230,10 @@ const _sanitize = (() => {
      * @returns {string} Sanitized string
      */
     removeDangerousUris(str) {
-      return str.replace(rx.dangerousUri, (match, attr, quote, value) => {
+      return str.replace(rx.dangerousUri, (match, attr, dq, sq, bt, uq) => {
+        var _a, _b, _c;
+        const value = (_c = (_b = (_a = dq != null ? dq : sq) != null ? _a : bt) != null ? _b : uq) != null ? _c : "";
+        const quote = dq !== void 0 ? '"' : sq !== void 0 ? "'" : bt !== void 0 ? "`" : "";
         const normalized = value.toLowerCase().replace(/\s/g, "");
         return rx.dangerousProtocol.test(normalized) ? `${attr}=${quote}${quote}` : match;
       });
@@ -288,14 +292,10 @@ function sanitize(str) {
   }
   let result = str;
   let prev;
-  let iterations = 0;
   do {
     prev = result;
-    result = _sanitize.decodeEntities(result).replace(_sanitize.rx.controlChar, "").replace(_sanitize.rx.tags, "").replace(_sanitize.rx.eventHandler, "");
+    result = _sanitize.decodeEntities(result).replace(_sanitize.rx.controlChar, "").replace(_sanitize.rx.tags, "").replace(_sanitize.rx.closingTags, "").replace(_sanitize.rx.eventHandler, "");
     result = _sanitize.removeDangerousUris(result);
-    if (++iterations >= _sanitize.MAX_ITERATIONS) {
-      break;
-    }
   } while (result !== prev);
   return result;
 }
@@ -789,7 +789,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.17.4-nightly-20260120004728");
+__publicField(Plugin, "version", "3.17.4-nightly-20260122004731");
 
 ;// ./src/Plugin/textoverlap/Options.ts
 class Options {

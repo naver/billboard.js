@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.4-nightly-20260120004728
+ * @version 3.17.4-nightly-20260122004731
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -99,23 +99,23 @@ var _sanitize = (function () {
     // Angle bracket codes (< and >) - never decode these to prevent tag bypass
     var LT_CODE = 60;
     var GT_CODE = 62;
-    // Maximum sanitization iterations to prevent infinite loops
-    var MAX_ITERATIONS = 10;
     // Regular expressions (compiled once for performance)
     var rx = {
         tags: new RegExp("<(".concat(DANGEROUS_TAGS, ")\\b[\\s\\S]*?>([\\s\\S]*?<\\/(").concat(DANGEROUS_TAGS, ")\\s*>)?"), "gi"),
+        // Closing tags only (e.g., </script>) - can break out of existing script context
+        closingTags: new RegExp("<\\/(".concat(DANGEROUS_TAGS, ")\\s*>"), "gi"),
         htmlEntity: /&#x([0-9a-f]+);?|&#([0-9]+);?|&([a-z]+);/gi,
         // eslint-disable-next-line no-control-regex
         controlChar: /[\x00-\x1F\x7F]/g,
-        eventHandler: /\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)|on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi,
-        dangerousUri: /(href|src|action|xlink:href)\s*=\s*(['"`]?)([^'"`>\s]*)\2/gi,
+        eventHandler: /\s*on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi,
+        // Separate patterns for each quote type to properly capture attribute values
+        dangerousUri: /(href|src|action|xlink:href)\s*=\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`|([^\s>]+))/gi,
         dangerousProtocol: /^(javascript|data|vbscript):/
     };
     return {
         ENTITY_MAP: ENTITY_MAP,
         LT_CODE: LT_CODE,
         GT_CODE: GT_CODE,
-        MAX_ITERATIONS: MAX_ITERATIONS,
         rx: rx,
         /**
          * Decode HTML entities to prevent bypass attacks
@@ -143,7 +143,11 @@ var _sanitize = (function () {
          * @returns {string} Sanitized string
          */
         removeDangerousUris: function (str) {
-            return str.replace(rx.dangerousUri, function (match, attr, quote, value) {
+            return str.replace(rx.dangerousUri, function (match, attr, dq, sq, bt, uq) {
+                var _a, _b, _c;
+                // Get value from whichever quote group matched (double, single, backtick, or unquoted)
+                var value = (_c = (_b = (_a = dq !== null && dq !== void 0 ? dq : sq) !== null && _a !== void 0 ? _a : bt) !== null && _b !== void 0 ? _b : uq) !== null && _c !== void 0 ? _c : "";
+                var quote = dq !== undefined ? '"' : sq !== undefined ? "'" : bt !== undefined ? "`" : "";
                 var normalized = value.toLowerCase().replace(/\s/g, "");
                 return rx.dangerousProtocol.test(normalized) ? "".concat(attr, "=").concat(quote).concat(quote) : match;
             });
@@ -169,23 +173,16 @@ function sanitize(str) {
     }
     var result = str;
     var prev;
-    var iterations = 0;
     // Repeat until no more changes (prevents nested tag attacks like <scri<script>pt>)
     do {
         prev = result;
-        // 1. Decode HTML entities to prevent bypass (e.g., jav&#x0A;ascript:)
-        // 2. Remove control characters (NULL, tab, newline, etc.)
-        // 3. Remove dangerous tags (script, iframe, etc.)
-        result = _sanitize.decodeEntities(result)
-            .replace(_sanitize.rx.controlChar, "")
-            .replace(_sanitize.rx.tags, "")
-            .replace(_sanitize.rx.eventHandler, ""); // 4. Remove event handlers
-        // 5. Remove dangerous URIs (javascript:, data:, vbscript:)
+        result = _sanitize.decodeEntities(result) // Decode HTML entities to prevent bypass (e.g., jav&#x0A;ascript:)
+            .replace(_sanitize.rx.controlChar, "") // Remove control characters (NULL, tab, newline, etc.)
+            .replace(_sanitize.rx.tags, "") // Remove dangerous tags (script, iframe, etc.)
+            .replace(_sanitize.rx.closingTags, "") // Remove orphan closing tags (</script>, etc.)
+            .replace(_sanitize.rx.eventHandler, ""); // Remove event handlers
+        // Remove dangerous URIs (javascript:, data:, vbscript:)
         result = _sanitize.removeDangerousUris(result);
-        // Safety check to prevent infinite loops
-        if (++iterations >= _sanitize.MAX_ITERATIONS) {
-            break;
-        }
     } while (result !== prev);
     return result;
 }
@@ -328,7 +325,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.17.4-nightly-20260120004728";
+    Plugin.version = "3.17.4-nightly-20260122004731";
     return Plugin;
 }());
 
