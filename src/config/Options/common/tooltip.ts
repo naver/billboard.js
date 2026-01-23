@@ -40,6 +40,7 @@ export default {
 	 *  If tooltip.grouped is true, data includes multiple data points.<br><br>
 	 *  Specified function receives `data` array and `defaultTitleFormat`, `defaultValueFormat` and `color` functions of the data point to show.
 	 *  - **Note:**
+	 *    - Only common HTML tags are allowed to prevent XSS attacks. If creating charts from user input, it is recommended to sanitize input values to avoid potential vulnerabilities.<br><br>
 	 *    - defaultTitleFormat:
 	 *      - if `axis.x.tick.format` option will be used if set.
 	 *      - otherwise, will return function based on tick format type(category, timeseries).
@@ -49,7 +50,8 @@ export default {
 	 * 	    - otherwise, will parse value and return as number.
 	 * @property {string|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
 	 *  - **NOTE:** When is specified, will not be updating tooltip's position.
-	 * @property {string} [tooltip.contents.template=undefined] Set tooltip's template.<br><br>
+	 * @property {string} [tooltip.contents.template=undefined] Set tooltip's template.
+	 *  - **NOTE:** Only common HTML tags are allowed to prevent XSS attacks. If creating charts from user input, it is recommended to sanitize input values to avoid potential vulnerabilities.<br><br>
 	 *  Within template, below syntax will be replaced using template-like syntax string:
 	 *    - **{{ ... }}**: the doubly curly brackets indicate loop block for data rows.
 	 *    - **{=CLASS_TOOLTIP}**: default tooltip class name `bb-tooltip`.

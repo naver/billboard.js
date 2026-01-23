@@ -7,6 +7,7 @@ import {brushSelection as d3BrushSelection} from "d3-brush";
 import {pointer as d3Pointer} from "d3-selection";
 import type {d3Selection} from "../../types/types";
 import {document, requestAnimationFrame, window} from "./browser";
+import {sanitize} from "./sanitize";
 
 // ====================================
 // Internal Helper (Not Exported)
@@ -56,97 +57,6 @@ function _forEachValidItem<T>(items: T[], callback: (item: T, index: number) => 
 		}
 	}
 }
-
-/**
- * Private sanitization utilities
- * Encapsulates all XSS prevention patterns and helper functions
- * @private
- */
-const _sanitize = (() => {
-	const DANGEROUS_TAGS =
-		"script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
-
-	// HTML entity character code map (for decoding)
-	const ENTITY_MAP = {
-		quot: 34,
-		amp: 38,
-		apos: 39,
-		lt: 60,
-		gt: 62,
-		nbsp: 160,
-		iexcl: 161,
-		cent: 162,
-		pound: 163,
-		curren: 164,
-		yen: 165
-	};
-
-	// Angle bracket codes (< and >) - never decode these to prevent tag bypass
-	const LT_CODE = 60;
-	const GT_CODE = 62;
-
-	// Regular expressions (compiled once for performance)
-	const rx = {
-		tags: new RegExp(
-			`<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
-			"gi"
-		),
-		// Closing tags only (e.g., </script>) - can break out of existing script context
-		closingTags: new RegExp(`<\\/(${DANGEROUS_TAGS})\\s*>`, "gi"),
-		htmlEntity: /&#x([0-9a-f]+);?|&#([0-9]+);?|&([a-z]+);/gi,
-		// eslint-disable-next-line no-control-regex
-		controlChar: /[\x00-\x1F\x7F]/g,
-		eventHandler: /\s*on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi,
-		// Separate patterns for each quote type to properly capture attribute values
-		dangerousUri: /(href|src|action|xlink:href)\s*=\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`|([^\s>]+))/gi,
-		dangerousProtocol: /^(javascript|data|vbscript):/
-	};
-
-	return {
-		ENTITY_MAP,
-		LT_CODE,
-		GT_CODE,
-		rx,
-
-		/**
-		 * Decode HTML entities to prevent bypass attacks
-		 * @param {string} str String with potential HTML entities
-		 * @returns {string} Decoded string
-		 */
-		decodeEntities(str: string): string {
-			return str.replace(rx.htmlEntity, (match, hex, dec, named) => {
-				const code = hex ?
-					parseInt(hex, 16) :
-					dec ?
-					parseInt(dec, 10) :
-					named ?
-					ENTITY_MAP[named.toLowerCase()] || 0 :
-					0;
-
-				// Never decode angle brackets to prevent tag bypass
-				return code && code !== LT_CODE && code !== GT_CODE ?
-					String.fromCharCode(code) :
-					match;
-			});
-		},
-
-		/**
-		 * Remove dangerous URI protocols from attribute values
-		 * @param {string} str String to sanitize
-		 * @returns {string} Sanitized string
-		 */
-		removeDangerousUris(str: string): string {
-			return str.replace(rx.dangerousUri, (match, attr, dq, sq, bt, uq) => {
-				// Get value from whichever quote group matched (double, single, backtick, or unquoted)
-				const value = dq ?? sq ?? bt ?? uq ?? "";
-				const quote = dq !== undefined ? '"' : sq !== undefined ? "'" : bt !== undefined ? "`" : "";
-				const normalized = value.toLowerCase().replace(/\s/g, "");
-
-				return rx.dangerousProtocol.test(normalized) ? `${attr}=${quote}${quote}` : match;
-			});
-		}
-	};
-})();
 
 // ====================================
 // Exported
@@ -258,40 +168,6 @@ function endall(transition, cb: Function): void {
 		++n;
 		transition.call(end);
 	}
-}
-
-/**
- * Sanitize HTML string to prevent XSS attacks
- * Uses blacklist approach with repeated application to prevent nested tag bypass
- * Handles encoded characters (HTML entities, Unicode escapes) to prevent bypass attacks
- * @param {string} str Target string value
- * @returns {string} Sanitized string with dangerous elements removed
- * @private
- */
-function sanitize(str: string): string {
-	// Early return for non-string, empty string, or string without HTML
-	if (!isString(str) || !str || str.indexOf("<") === -1) {
-		return str;
-	}
-
-	let result = str;
-	let prev: string;
-
-	// Repeat until no more changes (prevents nested tag attacks like <scri<script>pt>)
-	do {
-		prev = result;
-
-		result = _sanitize.decodeEntities(result) // Decode HTML entities to prevent bypass (e.g., jav&#x0A;ascript:)
-			.replace(_sanitize.rx.controlChar, "") // Remove control characters (NULL, tab, newline, etc.)
-			.replace(_sanitize.rx.tags, "") // Remove dangerous tags (script, iframe, etc.)
-			.replace(_sanitize.rx.closingTags, "") // Remove orphan closing tags (</script>, etc.)
-			.replace(_sanitize.rx.eventHandler, ""); // Remove event handlers
-
-		// Remove dangerous URIs (javascript:, data:, vbscript:)
-		result = _sanitize.removeDangerousUris(result);
-	} while (result !== prev);
-
-	return result;
 }
 
 /**
