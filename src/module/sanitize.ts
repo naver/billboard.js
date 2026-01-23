@@ -275,31 +275,63 @@ function sanitizeStyleValue(style: string): string | null {
 	return style;
 }
 
+// Lookup table for encoding dangerous characters in attribute values
+const ATTR_ENCODE_MAP: Record<string, string> = {
+	"\"": "&quot;",
+	"'": "&#39;",
+	"`": "&#96;"
+};
+const ATTR_ENCODE_REGEX = /["'`]/g;
+
+/**
+ * Encode dangerous characters in attribute values to HTML entities
+ * This prevents attribute injection attacks where quotes/backticks break out of the attribute context
+ * @param {string} value Attribute value
+ * @returns {string} Encoded value
+ * @private
+ */
+function encodeAttrValue(value: string): string {
+	return value.replace(ATTR_ENCODE_REGEX, char => ATTR_ENCODE_MAP[char]);
+}
+
 /**
  * Sanitize attribute value using whitelist approach
  * @param {string} name Attribute name
  * @param {string} value Attribute value
- * @returns {string|null} Original value if safe, null if should be removed
+ * @param {boolean} wasUnquoted Whether the value was originally unquoted
+ * @returns {string|null} Sanitized value if safe, null if should be removed
  * @private
  */
-function sanitizeAttrValue(name: string, value: string): string | null {
+function sanitizeAttrValue(name: string, value: string, wasUnquoted: boolean = false):
+	| string
+	| null {
 	// Check URI attributes with whitelist
 	if (URI_ATTRS.has(name)) {
-		return isSafeURI(value) ? value : null;
+		if (!isSafeURI(value)) {
+			return null;
+		}
+		// Encode dangerous characters in URI values to prevent attribute injection
+		return wasUnquoted ? encodeAttrValue(value) : value;
 	}
 
 	// Check style attribute
 	if (name === "style") {
-		return sanitizeStyleValue(value);
+		const sanitizedStyle = sanitizeStyleValue(value);
+		if (sanitizedStyle === null) {
+			return null;
+		}
+		// Encode dangerous characters in style values
+		return wasUnquoted ? encodeAttrValue(sanitizedStyle) : sanitizedStyle;
 	}
 
-	// For other attributes, just check for embedded event handlers
+	// For other attributes, check for embedded event handlers
 	const decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
 	if (/\bon\w+=/.test(decoded)) {
 		return null;
 	}
 
-	return value;
+	// Encode dangerous characters to prevent attribute injection
+	return wasUnquoted ? encodeAttrValue(value) : value;
 }
 
 /**
@@ -386,7 +418,8 @@ function sanitizeTag(fullTag: string): string {
 		}
 
 		if (ALLOWED_ATTRS.has(attrName)) {
-			const sanitizedValue = sanitizeAttrValue(attrName, attrValue);
+			const wasUnquoted = unquotedValue !== undefined;
+			const sanitizedValue = sanitizeAttrValue(attrName, attrValue, wasUnquoted);
 			if (sanitizedValue !== null) {
 				allowedAttrs.push(`${attrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
 			}
