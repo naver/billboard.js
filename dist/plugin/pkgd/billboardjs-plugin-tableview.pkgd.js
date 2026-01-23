@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.4-nightly-20260122004731
+ * @version 3.17.4-nightly-20260123004741
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -25914,6 +25914,291 @@ const [
 ] = getFallback(win);
 
 
+;// ./src/module/sanitize.ts
+const ALLOWED_TAGS = /* @__PURE__ */ new Set([
+  // HTML tags for tooltip/legend templates
+  "span",
+  "div",
+  "p",
+  "br",
+  "b",
+  "i",
+  "em",
+  "strong",
+  "u",
+  "s",
+  "sub",
+  "sup",
+  "ul",
+  "ol",
+  "li",
+  "dl",
+  "dt",
+  "dd",
+  "table",
+  "thead",
+  "tbody",
+  "tfoot",
+  "tr",
+  "th",
+  "td",
+  "caption",
+  "colgroup",
+  "col",
+  "hr",
+  "pre",
+  "code",
+  "blockquote",
+  "a",
+  "img",
+  // SVG tags for point patterns
+  "svg",
+  "g",
+  "path",
+  "circle",
+  "ellipse",
+  "rect",
+  "line",
+  "polyline",
+  "polygon",
+  "text",
+  "tspan",
+  "textPath",
+  "use",
+  "defs",
+  "symbol",
+  "clipPath",
+  "mask",
+  "linearGradient",
+  "radialGradient",
+  "stop",
+  "pattern",
+  "marker",
+  "title",
+  "desc"
+]);
+const ALLOWED_ATTRS = /* @__PURE__ */ new Set([
+  // Common attributes
+  "class",
+  "id",
+  "style",
+  "title",
+  "lang",
+  "dir",
+  // HTML specific
+  "href",
+  "src",
+  "alt",
+  "width",
+  "height",
+  "colspan",
+  "rowspan",
+  "scope",
+  "headers",
+  // SVG presentation attributes
+  "d",
+  "points",
+  "x",
+  "y",
+  "x1",
+  "x2",
+  "y1",
+  "y2",
+  "cx",
+  "cy",
+  "r",
+  "rx",
+  "ry",
+  "dx",
+  "dy",
+  "viewBox",
+  "preserveAspectRatio",
+  "transform",
+  "fill",
+  "fill-opacity",
+  "fill-rule",
+  "stroke",
+  "stroke-width",
+  "stroke-opacity",
+  "stroke-linecap",
+  "stroke-linejoin",
+  "stroke-dasharray",
+  "stroke-dashoffset",
+  "opacity",
+  "clip-path",
+  "clip-rule",
+  "mask",
+  "font-family",
+  "font-size",
+  "font-weight",
+  "font-style",
+  "text-anchor",
+  "dominant-baseline",
+  "offset",
+  "stop-color",
+  "stop-opacity",
+  "gradientUnits",
+  "gradientTransform",
+  "spreadMethod",
+  "patternUnits",
+  "patternTransform",
+  "marker-start",
+  "marker-mid",
+  "marker-end",
+  "markerWidth",
+  "markerHeight",
+  "refX",
+  "refY",
+  "xlink:href"
+]);
+const ALLOWED_URI_PROTOCOLS = /* @__PURE__ */ new Set([
+  "http:",
+  "https:",
+  "mailto:"
+]);
+const URI_ATTRS = /* @__PURE__ */ new Set(["href", "src", "xlink:href"]);
+const TAG_NAME_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9]*)/;
+const CLOSING_TAG_REGEX = /^<\/([a-zA-Z][a-zA-Z0-9]*)\s*>$/;
+const OPENING_TAG_REGEX = /^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)(\/?)>$/;
+const ATTR_REGEX = /([a-zA-Z][\w:-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
+const URL_IN_STYLE_REGEX = /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi;
+const DANGEROUS_CSS_PATTERNS = [
+  "expression(",
+  "behavior:",
+  "binding:",
+  "@import",
+  "@charset",
+  "-moz-binding:"
+];
+function decodeHTMLEntities(str) {
+  return str.replace(/&colon;/gi, ":").replace(/&newline;/gi, "\n").replace(/&tab;/gi, "	").replace(/&nbsp;/gi, " ").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&apos;/gi, "'").replace(/&#(\d+);/gi, (_, code) => String.fromCharCode(parseInt(code, 10))).replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
+}
+function isSafeURI(uri) {
+  const decoded = decodeHTMLEntities(uri).trim();
+  const normalized = decoded.replace(/[\s\u0000-\u001f]/g, "").toLowerCase();
+  if (!normalized || normalized.startsWith("#")) {
+    return true;
+  }
+  if (normalized.startsWith("/") || normalized.startsWith("./") || normalized.startsWith("../") || !normalized.includes(":")) {
+    return true;
+  }
+  const colonIndex = normalized.indexOf(":");
+  if (colonIndex > 0) {
+    const protocol = normalized.substring(0, colonIndex + 1);
+    return ALLOWED_URI_PROTOCOLS.has(protocol);
+  }
+  return false;
+}
+function sanitizeStyleValue(style) {
+  const decoded = decodeHTMLEntities(style);
+  const cleaned = decoded.replace(/[\u0000-\u001f]/g, "");
+  URL_IN_STYLE_REGEX.lastIndex = 0;
+  let match;
+  while ((match = URL_IN_STYLE_REGEX.exec(cleaned)) !== null) {
+    if (!isSafeURI(match[1])) {
+      return null;
+    }
+  }
+  const normalizedLower = cleaned.toLowerCase().replace(/\s/g, "");
+  for (const pattern of DANGEROUS_CSS_PATTERNS) {
+    if (normalizedLower.includes(pattern)) {
+      return null;
+    }
+  }
+  return style;
+}
+function sanitizeAttrValue(name, value) {
+  if (URI_ATTRS.has(name)) {
+    return isSafeURI(value) ? value : null;
+  }
+  if (name === "style") {
+    return sanitizeStyleValue(value);
+  }
+  const decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
+  if (/\bon\w+=/.test(decoded)) {
+    return null;
+  }
+  return value;
+}
+function extractTagName(tag) {
+  const match = tag.match(TAG_NAME_REGEX);
+  return match ? match[1].toLowerCase() : null;
+}
+function isAllowedTag(tag) {
+  const tagName = extractTagName(tag);
+  return tagName !== null && ALLOWED_TAGS.has(tagName);
+}
+function sanitizeTag(fullTag) {
+  const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
+  if (closingMatch) {
+    return `</${closingMatch[1].toLowerCase()}>`;
+  }
+  const openingMatch = fullTag.match(OPENING_TAG_REGEX);
+  if (!openingMatch) {
+    return "";
+  }
+  const [, tagName, attrString, selfClose] = openingMatch;
+  const lowerTagName = tagName.toLowerCase();
+  const allowedAttrs = [];
+  ATTR_REGEX.lastIndex = 0;
+  let attrMatch;
+  while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
+    const attrName = attrMatch[1].toLowerCase();
+    const doubleQuotedValue = attrMatch[2];
+    const singleQuotedValue = attrMatch[3];
+    const unquotedValue = attrMatch[4];
+    if (attrName.startsWith("on")) {
+      continue;
+    }
+    let attrValue;
+    let quoteChar;
+    if (doubleQuotedValue !== void 0) {
+      attrValue = doubleQuotedValue;
+      quoteChar = '"';
+    } else if (singleQuotedValue !== void 0) {
+      attrValue = singleQuotedValue;
+      quoteChar = "'";
+    } else if (unquotedValue !== void 0) {
+      attrValue = unquotedValue;
+      quoteChar = '"';
+    } else {
+      if (ALLOWED_ATTRS.has(attrName)) {
+        allowedAttrs.push(attrName);
+      }
+      continue;
+    }
+    if (ALLOWED_ATTRS.has(attrName)) {
+      const sanitizedValue = sanitizeAttrValue(attrName, attrValue);
+      if (sanitizedValue !== null) {
+        allowedAttrs.push(`${attrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
+      }
+    }
+  }
+  const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
+  const selfCloseStr = selfClose ? "/>" : ">";
+  return `<${lowerTagName}${attrsStr}${selfCloseStr}`;
+}
+function sanitize(str) {
+  if (typeof str !== "string" || !str || str.indexOf("<") === -1) {
+    return str;
+  }
+  return str.replace(
+    /<\/?[^>]*>|[^<>\s]+>/g,
+    (match) => {
+      if (match.startsWith("<!--")) {
+        return "";
+      }
+      if (!match.startsWith("<")) {
+        return match.slice(0, -1) + "&gt;";
+      }
+      if (isAllowedTag(match)) {
+        return sanitizeTag(match);
+      }
+      return match.replace(/</g, "&lt;");
+    }
+  );
+}
+
 ;// ./src/module/util.ts
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
@@ -25934,6 +26219,7 @@ var __spreadValues = (a, b) => {
 
 
 
+
 function _getRect(relativeViewport, node, forceEval = false) {
   const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
   if (forceEval) {
@@ -25951,70 +26237,6 @@ function _forEachValidItem(items, callback) {
     }
   }
 }
-const _sanitize = (() => {
-  const DANGEROUS_TAGS = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
-  const ENTITY_MAP = {
-    quot: 34,
-    amp: 38,
-    apos: 39,
-    lt: 60,
-    gt: 62,
-    nbsp: 160,
-    iexcl: 161,
-    cent: 162,
-    pound: 163,
-    curren: 164,
-    yen: 165
-  };
-  const LT_CODE = 60;
-  const GT_CODE = 62;
-  const rx = {
-    tags: new RegExp(
-      `<(${DANGEROUS_TAGS})\\b[\\s\\S]*?>([\\s\\S]*?<\\/(${DANGEROUS_TAGS})\\s*>)?`,
-      "gi"
-    ),
-    // Closing tags only (e.g., <\/script>) - can break out of existing script context
-    closingTags: new RegExp(`<\\/(${DANGEROUS_TAGS})\\s*>`, "gi"),
-    htmlEntity: /&#x([0-9a-f]+);?|&#([0-9]+);?|&([a-z]+);/gi,
-    // eslint-disable-next-line no-control-regex
-    controlChar: /[\x00-\x1F\x7F]/g,
-    eventHandler: /\s*on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi,
-    // Separate patterns for each quote type to properly capture attribute values
-    dangerousUri: /(href|src|action|xlink:href)\s*=\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`|([^\s>]+))/gi,
-    dangerousProtocol: /^(javascript|data|vbscript):/
-  };
-  return {
-    ENTITY_MAP,
-    LT_CODE,
-    GT_CODE,
-    rx,
-    /**
-     * Decode HTML entities to prevent bypass attacks
-     * @param {string} str String with potential HTML entities
-     * @returns {string} Decoded string
-     */
-    decodeEntities(str) {
-      return str.replace(rx.htmlEntity, (match, hex, dec, named) => {
-        const code = hex ? parseInt(hex, 16) : dec ? parseInt(dec, 10) : named ? ENTITY_MAP[named.toLowerCase()] || 0 : 0;
-        return code && code !== LT_CODE && code !== GT_CODE ? String.fromCharCode(code) : match;
-      });
-    },
-    /**
-     * Remove dangerous URI protocols from attribute values
-     * @param {string} str String to sanitize
-     * @returns {string} Sanitized string
-     */
-    removeDangerousUris(str) {
-      return str.replace(rx.dangerousUri, (match, attr, dq, sq, bt, uq) => {
-        var _a, _b, _c;
-        const value = (_c = (_b = (_a = dq != null ? dq : sq) != null ? _a : bt) != null ? _b : uq) != null ? _c : "";
-        const quote = dq !== void 0 ? '"' : sq !== void 0 ? "'" : bt !== void 0 ? "`" : "";
-        const normalized = value.toLowerCase().replace(/\s/g, "");
-        return rx.dangerousProtocol.test(normalized) ? `${attr}=${quote}${quote}` : match;
-      });
-    }
-  };
-})();
 const isValue = (v) => v || v === 0;
 const isFunction = (v) => typeof v === "function";
 const isString = (v) => typeof v === "string";
@@ -26060,19 +26282,6 @@ function endall(transition, cb) {
     ++n;
     transition.call(end);
   }
-}
-function sanitize(str) {
-  if (!isString(str) || !str || str.indexOf("<") === -1) {
-    return str;
-  }
-  let result = str;
-  let prev;
-  do {
-    prev = result;
-    result = _sanitize.decodeEntities(result).replace(_sanitize.rx.controlChar, "").replace(_sanitize.rx.tags, "").replace(_sanitize.rx.closingTags, "").replace(_sanitize.rx.eventHandler, "");
-    result = _sanitize.removeDangerousUris(result);
-  } while (result !== prev);
-  return result;
 }
 function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
   if (!node || !isString(text)) {
@@ -26564,7 +26773,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.17.4-nightly-20260122004731");
+__publicField(Plugin, "version", "3.17.4-nightly-20260123004741");
 
 ;// ./src/Plugin/tableview/const.ts
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.4-nightly-20260122004731
+ * @version 3.17.4-nightly-20260123004741
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -76,116 +76,403 @@ var win = getGlobal();
 var doc = win === null || win === void 0 ? void 0 : win.document;
 
 /**
- * Private sanitization utilities
- * Encapsulates all XSS prevention patterns and helper functions
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+/**
+ * HTML/SVG Sanitization module
+ * Pure whitelist approach - only explicitly allowed tags, attributes, and protocols pass through
+ */
+// Whitelist of allowed HTML/SVG tags
+var ALLOWED_TAGS = new Set([
+    // HTML tags for tooltip/legend templates
+    "span",
+    "div",
+    "p",
+    "br",
+    "b",
+    "i",
+    "em",
+    "strong",
+    "u",
+    "s",
+    "sub",
+    "sup",
+    "ul",
+    "ol",
+    "li",
+    "dl",
+    "dt",
+    "dd",
+    "table",
+    "thead",
+    "tbody",
+    "tfoot",
+    "tr",
+    "th",
+    "td",
+    "caption",
+    "colgroup",
+    "col",
+    "hr",
+    "pre",
+    "code",
+    "blockquote",
+    "a",
+    "img",
+    // SVG tags for point patterns
+    "svg",
+    "g",
+    "path",
+    "circle",
+    "ellipse",
+    "rect",
+    "line",
+    "polyline",
+    "polygon",
+    "text",
+    "tspan",
+    "textPath",
+    "use",
+    "defs",
+    "symbol",
+    "clipPath",
+    "mask",
+    "linearGradient",
+    "radialGradient",
+    "stop",
+    "pattern",
+    "marker",
+    "title",
+    "desc"
+]);
+// Whitelist of allowed attributes
+var ALLOWED_ATTRS = new Set([
+    // Common attributes
+    "class",
+    "id",
+    "style",
+    "title",
+    "lang",
+    "dir",
+    // HTML specific
+    "href",
+    "src",
+    "alt",
+    "width",
+    "height",
+    "colspan",
+    "rowspan",
+    "scope",
+    "headers",
+    // SVG presentation attributes
+    "d",
+    "points",
+    "x",
+    "y",
+    "x1",
+    "x2",
+    "y1",
+    "y2",
+    "cx",
+    "cy",
+    "r",
+    "rx",
+    "ry",
+    "dx",
+    "dy",
+    "viewBox",
+    "preserveAspectRatio",
+    "transform",
+    "fill",
+    "fill-opacity",
+    "fill-rule",
+    "stroke",
+    "stroke-width",
+    "stroke-opacity",
+    "stroke-linecap",
+    "stroke-linejoin",
+    "stroke-dasharray",
+    "stroke-dashoffset",
+    "opacity",
+    "clip-path",
+    "clip-rule",
+    "mask",
+    "font-family",
+    "font-size",
+    "font-weight",
+    "font-style",
+    "text-anchor",
+    "dominant-baseline",
+    "offset",
+    "stop-color",
+    "stop-opacity",
+    "gradientUnits",
+    "gradientTransform",
+    "spreadMethod",
+    "patternUnits",
+    "patternTransform",
+    "marker-start",
+    "marker-mid",
+    "marker-end",
+    "markerWidth",
+    "markerHeight",
+    "refX",
+    "refY",
+    "xlink:href"
+]);
+// Whitelist of allowed URI protocols
+var ALLOWED_URI_PROTOCOLS = new Set([
+    "http:",
+    "https:",
+    "mailto:"
+]);
+// Attributes that contain URIs
+var URI_ATTRS = new Set(["href", "src", "xlink:href"]);
+// Pre-compiled regex patterns for performance
+var TAG_NAME_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9]*)/;
+var CLOSING_TAG_REGEX = /^<\/([a-zA-Z][a-zA-Z0-9]*)\s*>$/;
+var OPENING_TAG_REGEX = /^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)(\/?)>$/;
+var ATTR_REGEX = /([a-zA-Z][\w:-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
+var URL_IN_STYLE_REGEX = /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi;
+// Dangerous CSS patterns
+var DANGEROUS_CSS_PATTERNS = [
+    "expression(",
+    "behavior:",
+    "binding:",
+    "@import",
+    "@charset",
+    "-moz-binding:"
+];
+/**
+ * Decode HTML entities in a string
+ * @param {string} str String with potential HTML entities
+ * @returns {string} Decoded string
  * @private
  */
-var _sanitize = (function () {
-    var DANGEROUS_TAGS = "script|iframe|object|embed|form|input|button|textarea|select|style|link|meta|base|math|isindex";
-    // HTML entity character code map (for decoding)
-    var ENTITY_MAP = {
-        quot: 34,
-        amp: 38,
-        apos: 39,
-        lt: 60,
-        gt: 62,
-        nbsp: 160,
-        iexcl: 161,
-        cent: 162,
-        pound: 163,
-        curren: 164,
-        yen: 165
-    };
-    // Angle bracket codes (< and >) - never decode these to prevent tag bypass
-    var LT_CODE = 60;
-    var GT_CODE = 62;
-    // Regular expressions (compiled once for performance)
-    var rx = {
-        tags: new RegExp("<(".concat(DANGEROUS_TAGS, ")\\b[\\s\\S]*?>([\\s\\S]*?<\\/(").concat(DANGEROUS_TAGS, ")\\s*>)?"), "gi"),
-        // Closing tags only (e.g., </script>) - can break out of existing script context
-        closingTags: new RegExp("<\\/(".concat(DANGEROUS_TAGS, ")\\s*>"), "gi"),
-        htmlEntity: /&#x([0-9a-f]+);?|&#([0-9]+);?|&([a-z]+);/gi,
-        // eslint-disable-next-line no-control-regex
-        controlChar: /[\x00-\x1F\x7F]/g,
-        eventHandler: /\s*on\w+\s*=\s*(?:"[^"]*"|'[^']*'|`[^`]*`|[^\s>]*)/gi,
-        // Separate patterns for each quote type to properly capture attribute values
-        dangerousUri: /(href|src|action|xlink:href)\s*=\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`|([^\s>]+))/gi,
-        dangerousProtocol: /^(javascript|data|vbscript):/
-    };
-    return {
-        ENTITY_MAP: ENTITY_MAP,
-        LT_CODE: LT_CODE,
-        GT_CODE: GT_CODE,
-        rx: rx,
-        /**
-         * Decode HTML entities to prevent bypass attacks
-         * @param {string} str String with potential HTML entities
-         * @returns {string} Decoded string
-         */
-        decodeEntities: function (str) {
-            return str.replace(rx.htmlEntity, function (match, hex, dec, named) {
-                var code = hex ?
-                    parseInt(hex, 16) :
-                    dec ?
-                        parseInt(dec, 10) :
-                        named ?
-                            ENTITY_MAP[named.toLowerCase()] || 0 :
-                            0;
-                // Never decode angle brackets to prevent tag bypass
-                return code && code !== LT_CODE && code !== GT_CODE ?
-                    String.fromCharCode(code) :
-                    match;
-            });
-        },
-        /**
-         * Remove dangerous URI protocols from attribute values
-         * @param {string} str String to sanitize
-         * @returns {string} Sanitized string
-         */
-        removeDangerousUris: function (str) {
-            return str.replace(rx.dangerousUri, function (match, attr, dq, sq, bt, uq) {
-                var _a, _b, _c;
-                // Get value from whichever quote group matched (double, single, backtick, or unquoted)
-                var value = (_c = (_b = (_a = dq !== null && dq !== void 0 ? dq : sq) !== null && _a !== void 0 ? _a : bt) !== null && _b !== void 0 ? _b : uq) !== null && _c !== void 0 ? _c : "";
-                var quote = dq !== undefined ? '"' : sq !== undefined ? "'" : bt !== undefined ? "`" : "";
-                var normalized = value.toLowerCase().replace(/\s/g, "");
-                return rx.dangerousProtocol.test(normalized) ? "".concat(attr, "=").concat(quote).concat(quote) : match;
-            });
+function decodeHTMLEntities(str) {
+    return str
+        // Named entities
+        .replace(/&colon;/gi, ":")
+        .replace(/&newline;/gi, "\n")
+        .replace(/&tab;/gi, "\t")
+        .replace(/&nbsp;/gi, " ")
+        .replace(/&lt;/gi, "<")
+        .replace(/&gt;/gi, ">")
+        .replace(/&amp;/gi, "&")
+        .replace(/&quot;/gi, "\"")
+        .replace(/&apos;/gi, "'")
+        // Numeric entities (decimal)
+        .replace(/&#(\d+);/gi, function (_, code) { return String.fromCharCode(parseInt(code, 10)); })
+        // Numeric entities (hex)
+        .replace(/&#x([0-9a-f]+);/gi, function (_, code) { return String.fromCharCode(parseInt(code, 16)); });
+}
+/**
+ * Check if a URI is safe (whitelist approach)
+ * @param {string} uri URI to check
+ * @returns {boolean} Whether the URI is safe
+ * @private
+ */
+function isSafeURI(uri) {
+    // Decode HTML entities first to prevent bypass
+    var decoded = decodeHTMLEntities(uri).trim();
+    // Remove any whitespace/control characters that could be used for bypass
+    // eslint-disable-next-line no-control-regex
+    var normalized = decoded.replace(/[\s\u0000-\u001f]/g, "").toLowerCase();
+    // Empty or fragment-only URIs are safe
+    if (!normalized || normalized.startsWith("#")) {
+        return true;
+    }
+    // Relative paths are safe
+    if (normalized.startsWith("/") ||
+        normalized.startsWith("./") ||
+        normalized.startsWith("../") ||
+        !normalized.includes(":")) {
+        return true;
+    }
+    // Check if protocol is in whitelist
+    var colonIndex = normalized.indexOf(":");
+    if (colonIndex > 0) {
+        var protocol = normalized.substring(0, colonIndex + 1);
+        return ALLOWED_URI_PROTOCOLS.has(protocol);
+    }
+    return false;
+}
+/**
+ * Check if a style value is safe (whitelist approach)
+ * @param {string} style Style attribute value
+ * @returns {string|null} Sanitized style or null if unsafe
+ * @private
+ */
+function sanitizeStyleValue(style) {
+    // Decode HTML entities first
+    var decoded = decodeHTMLEntities(style);
+    // Remove any control characters
+    // eslint-disable-next-line no-control-regex
+    var cleaned = decoded.replace(/[\u0000-\u001f]/g, "");
+    // Check for url() - only allow safe URIs inside
+    URL_IN_STYLE_REGEX.lastIndex = 0;
+    var match;
+    while ((match = URL_IN_STYLE_REGEX.exec(cleaned)) !== null) {
+        if (!isSafeURI(match[1])) {
+            return null;
         }
-    };
-})();
-var isString = function (v) { return typeof v === "string"; };
-var isNumber = function (v) { return typeof v === "number"; };
-var isDefined = function (v) { return typeof v !== "undefined"; };
-var isObjectType = function (v) { return typeof v === "object"; };
+    }
+    // Check for dangerous CSS patterns (expression, behavior, etc.)
+    var normalizedLower = cleaned.toLowerCase().replace(/\s/g, "");
+    for (var _i = 0, DANGEROUS_CSS_PATTERNS_1 = DANGEROUS_CSS_PATTERNS; _i < DANGEROUS_CSS_PATTERNS_1.length; _i++) {
+        var pattern = DANGEROUS_CSS_PATTERNS_1[_i];
+        if (normalizedLower.includes(pattern)) {
+            return null;
+        }
+    }
+    return style;
+}
+/**
+ * Sanitize attribute value using whitelist approach
+ * @param {string} name Attribute name
+ * @param {string} value Attribute value
+ * @returns {string|null} Original value if safe, null if should be removed
+ * @private
+ */
+function sanitizeAttrValue(name, value) {
+    // Check URI attributes with whitelist
+    if (URI_ATTRS.has(name)) {
+        return isSafeURI(value) ? value : null;
+    }
+    // Check style attribute
+    if (name === "style") {
+        return sanitizeStyleValue(value);
+    }
+    // For other attributes, just check for embedded event handlers
+    var decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
+    if (/\bon\w+=/.test(decoded)) {
+        return null;
+    }
+    return value;
+}
+/**
+ * Extract tag name from a tag string
+ * Returns null if not a valid tag format
+ * @param {string} tag Tag string starting with <
+ * @returns {string|null} Lowercase tag name or null
+ * @private
+ */
+function extractTagName(tag) {
+    // Must start with < followed immediately by letter (no spaces allowed)
+    var match = tag.match(TAG_NAME_REGEX);
+    return match ? match[1].toLowerCase() : null;
+}
+/**
+ * Check if a tag is in the whitelist
+ * @param {string} tag Tag string
+ * @returns {boolean} Whether tag is allowed
+ * @private
+ */
+function isAllowedTag(tag) {
+    var tagName = extractTagName(tag);
+    return tagName !== null && ALLOWED_TAGS.has(tagName);
+}
+/**
+ * Sanitize a single HTML/SVG tag (only called for allowed tags)
+ * @param {string} fullTag The full tag string including < and >
+ * @returns {string} Sanitized tag
+ * @private
+ */
+function sanitizeTag(fullTag) {
+    // Closing tag
+    var closingMatch = fullTag.match(CLOSING_TAG_REGEX);
+    if (closingMatch) {
+        return "</".concat(closingMatch[1].toLowerCase(), ">");
+    }
+    // Opening tag
+    var openingMatch = fullTag.match(OPENING_TAG_REGEX);
+    if (!openingMatch) {
+        return "";
+    }
+    var tagName = openingMatch[1], attrString = openingMatch[2], selfClose = openingMatch[3];
+    var lowerTagName = tagName.toLowerCase();
+    // Parse and filter attributes, preserving original quote style
+    var allowedAttrs = [];
+    ATTR_REGEX.lastIndex = 0;
+    var attrMatch;
+    while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
+        var attrName = attrMatch[1].toLowerCase();
+        var doubleQuotedValue = attrMatch[2];
+        var singleQuotedValue = attrMatch[3];
+        var unquotedValue = attrMatch[4];
+        // Skip event handlers (on*)
+        if (attrName.startsWith("on")) {
+            continue;
+        }
+        // Determine original quote style and value
+        var attrValue = void 0;
+        var quoteChar = void 0;
+        if (doubleQuotedValue !== undefined) {
+            attrValue = doubleQuotedValue;
+            quoteChar = "\"";
+        }
+        else if (singleQuotedValue !== undefined) {
+            attrValue = singleQuotedValue;
+            quoteChar = "'";
+        }
+        else if (unquotedValue !== undefined) {
+            attrValue = unquotedValue;
+            quoteChar = "\"";
+        }
+        else {
+            // Boolean attribute (no value)
+            if (ALLOWED_ATTRS.has(attrName)) {
+                allowedAttrs.push(attrName);
+            }
+            continue;
+        }
+        if (ALLOWED_ATTRS.has(attrName)) {
+            var sanitizedValue = sanitizeAttrValue(attrName, attrValue);
+            if (sanitizedValue !== null) {
+                allowedAttrs.push("".concat(attrName, "=").concat(quoteChar).concat(sanitizedValue).concat(quoteChar));
+            }
+        }
+    }
+    var attrsStr = allowedAttrs.length > 0 ? " ".concat(allowedAttrs.join(" ")) : "";
+    var selfCloseStr = selfClose ? "/>" : ">";
+    return "<".concat(lowerTagName).concat(attrsStr).concat(selfCloseStr);
+}
 /**
  * Sanitize HTML string to prevent XSS attacks
- * Uses blacklist approach with repeated application to prevent nested tag bypass
- * Handles encoded characters (HTML entities, Unicode escapes) to prevent bypass attacks
+ * Pure whitelist approach - allowed tags are sanitized, others are escaped
  * @param {string} str Target string value
- * @returns {string} Sanitized string with dangerous elements removed
+ * @returns {string} Sanitized string with only allowed elements
  * @private
  */
 function sanitize(str) {
-    // Early return for non-string, empty string, or string without HTML
-    if (!isString(str) || !str || str.indexOf("<") === -1) {
+    if (typeof str !== "string" || !str || str.indexOf("<") === -1) {
         return str;
     }
-    var result = str;
-    var prev;
-    // Repeat until no more changes (prevents nested tag attacks like <scri<script>pt>)
-    do {
-        prev = result;
-        result = _sanitize.decodeEntities(result) // Decode HTML entities to prevent bypass (e.g., jav&#x0A;ascript:)
-            .replace(_sanitize.rx.controlChar, "") // Remove control characters (NULL, tab, newline, etc.)
-            .replace(_sanitize.rx.tags, "") // Remove dangerous tags (script, iframe, etc.)
-            .replace(_sanitize.rx.closingTags, "") // Remove orphan closing tags (</script>, etc.)
-            .replace(_sanitize.rx.eventHandler, ""); // Remove event handlers
-        // Remove dangerous URIs (javascript:, data:, vbscript:)
-        result = _sanitize.removeDangerousUris(result);
-    } while (result !== prev);
-    return result;
+    // Single pass: sanitize allowed tags, escape disallowed ones
+    // Also match orphaned fragments like "ipt>" from broken tags
+    return str.replace(/<\/?[^>]*>|[^<>\s]+>/g, function (match) {
+        // Remove HTML comments
+        if (match.startsWith("<!--")) {
+            return "";
+        }
+        // Orphaned fragment (e.g., "ipt>") → escape '>'
+        if (!match.startsWith("<")) {
+            return match.slice(0, -1) + "&gt;";
+        }
+        // Allowed tag → sanitize attributes
+        if (isAllowedTag(match)) {
+            return sanitizeTag(match);
+        }
+        // Disallowed tag → escape all '<' to prevent execution
+        return match.replace(/</g, "&lt;");
+    });
 }
+
+var isNumber = function (v) { return typeof v === "number"; };
+var isDefined = function (v) { return typeof v !== "undefined"; };
+var isObjectType = function (v) { return typeof v === "object"; };
 // emulate event
 ({
     mouse: (function () {
@@ -325,7 +612,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.17.4-nightly-20260122004731";
+    Plugin.version = "3.17.4-nightly-20260123004741";
     return Plugin;
 }());
 
