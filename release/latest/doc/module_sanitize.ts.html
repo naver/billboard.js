@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>module/sanitize.ts - billboard.js API doc</title>
+    
+    <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
+    
+        <meta name="keywords" content="chart, SVG, D3, Data Visualization" />
+        <meta name="keyword" content="chart, SVG, D3, Data Visualization" />
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://naver.github.io/billboard.js/demo/" target="_blank" >Examples</a></h2><h2><a href="https://github.com/naver/billboard.js" target="_blank" >GitHub</a></h2><h3>Namespaces</h3><ul><li><a href="bb.html">bb</a><ul class='members'><li data-type='member'><a href="bb.html#.instance">instance</a></li><li data-type='member'><a href="bb.html#.plugin">plugin</a></li><li data-type='member'><a href="bb.html#.version">version</a></li></ul><ul class='methods'><li data-type='method'><a href="bb.html#.defaults">defaults</a></li><li data-type='method'><a href="bb.html#.generate">generate</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="Chart.html">Chart</a><ul class='members'><li data-type='member'><a href="Chart.html#.$">$</a></li><li data-type='member'><a href="Chart.html#.plugins">plugins</a></li></ul><ul class='methods'><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4labels">axis․labels</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4max">axis․max</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4min">axis․min</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4range">axis․range</a></li><li data-type='method'><a href="Chart.html#categories">categories</a></li><li data-type='method'><a href="Chart.html#category">category</a></li><li data-type='method'><a href="Chart.html#color">color</a></li><li data-type='method'><a href="Chart.html#config">config</a></li><li data-type='method'><a href="Chart.html#data">data</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4axes">data․axes</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4colors">data․colors</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4max">data․max</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4min">data․min</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4names">data․names</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4shown">data․shown</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4values">data․values</a></li><li data-type='method'><a href="Chart.html#defocus">defocus</a></li><li data-type='method'><a href="Chart.html#destroy">destroy</a></li><li data-type='method'><a href="Chart.html#export">export</a></li><li data-type='method'><a href="Chart.html#flow">flow</a></li><li data-type='method'><a href="Chart.html#flush">flush</a></li><li data-type='method'><a href="Chart.html#focus">focus</a></li><li data-type='method'><a href="Chart.html#groups">groups</a></li><li data-type='method'><a href="Chart.html#hide">hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4hide">legend․hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4show">legend․show</a></li><li data-type='method'><a href="Chart.html#load">load</a></li><li data-type='method'><a href="Chart.html#regions">regions</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4add">regions․add</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4remove">regions․remove</a></li><li data-type='method'><a href="Chart.html#resize">resize</a></li><li data-type='method'><a href="Chart.html#revert">revert</a></li><li data-type='method'><a href="Chart.html#select">select</a></li><li data-type='method'><a href="Chart.html#selected">selected</a></li><li data-type='method'><a href="Chart.html#show">show</a></li><li data-type='method'><a href="Chart.html#subchart">subchart</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4hide">subchart․hide</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4reset">subchart․reset</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4show">subchart․show</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4toggle">subchart․toggle</a></li><li data-type='method'><a href="Chart.html#toggle">toggle</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4hide">tooltip․hide</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4show">tooltip․show</a></li><li data-type='method'><a href="Chart.html#unload">unload</a></li><li data-type='method'><a href="Chart.html#unselect">unselect</a></li><li data-type='method'><a href="Chart.html#unzoom">unzoom</a></li><li data-type='method'><a href="Chart.html#x">x</a></li><li data-type='method'><a href="Chart.html#xgrids">xgrids</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4add">xgrids․add</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4remove">xgrids․remove</a></li><li data-type='method'><a href="Chart.html#xs">xs</a></li><li data-type='method'><a href="Chart.html#ygrids">ygrids</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4add">ygrids․add</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4remove">ygrids․remove</a></li><li data-type='method'><a href="Chart.html#zoom">zoom</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4enable">zoom․enable</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4max">zoom․max</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4min">zoom․min</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4range">zoom․range</a></li></ul></li><li><a href="Options.html">Options</a><ul class='members'><li data-type='member'><a href="Options.html#.arc">arc</a></li><li data-type='member'><a href="Options.html#.area">area</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4evalTextSize">axis․evalTextSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4rotated">axis․rotated</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4tooltip">axis․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4axes">axis․x․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4categories">axis․x․categories</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4clipPath">axis․x․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4extent">axis․x․extent</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4forceAsSingle">axis․x․forceAsSingle</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4height">axis․x․height</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4inverted">axis․x․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4label">axis․x․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4localtime">axis․x․localtime</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4max">axis․x․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4min">axis․x․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4padding">axis․x․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4show">axis․x․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4autorotate">axis․x․tick․autorotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4centered">axis․x․tick․centered</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4count">axis․x․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․x․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․x․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․x․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4reverse">axis․x․tick․culling․reverse</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4fit">axis․x․tick․fit</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4format">axis․x․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4inner">axis․x․tick․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4multiline">axis․x․tick․multiline</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․x․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․x․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4show">axis․x․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4inner">axis․x․tick․text․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․x․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․x․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4tooltip">axis․x․tick․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4values">axis․x․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4width">axis․x․tick․width</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4type">axis․x․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4axes">axis․y2․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4center">axis․y2․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4default">axis․y2․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inner">axis․y2․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inverted">axis․y2․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4label">axis․y2․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4max">axis․y2․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4min">axis․y2․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4padding">axis․y2․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4show">axis․y2․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y2․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y2․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․y2․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y2․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4reverse">axis․y2․tick․culling․reverse</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y2․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4inner">axis․y2․tick․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y2․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y2․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y2․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y2․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y2․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y2․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y2․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4type">axis․y2․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4axes">axis․y․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4center">axis․y․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4clipPath">axis․y․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4default">axis․y․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inner">axis․y․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inverted">axis․y․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4label">axis․y․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4max">axis․y․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4min">axis․y․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4padding">axis․y․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4show">axis․y․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․y․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4reverse">axis․y․tick․culling․reverse</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4inner">axis․y․tick․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4type">axis․y․type</a></li><li data-type='member'><a href="Options.html#.background">background</a></li><li data-type='member'><a href="Options.html#.bar">bar</a></li><li data-type='member'><a href="Options.html#.bindto">bindto</a></li><li data-type='member'><a href="Options.html#.boost">boost</a></li><li data-type='member'><a href="Options.html#.bubble">bubble</a></li><li data-type='member'><a href="Options.html#.candlestick">candlestick</a></li><li data-type='member'><a href="Options.html#.clipPath">clipPath</a></li><li data-type='member'><a href="Options.html#.color">color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4axes">data․axes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4classes">data․classes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4color">data․color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4colors">data․colors</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4columns">data․columns</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4empty%25E2%2580%25A4label%25E2%2580%25A4text">data․empty․label․text</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4filter">data․filter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groups">data․groups</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groupsZeroAs">data․groupsZeroAs</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4headers">data․headers</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4hide">data․hide</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4idConverter">data․idConverter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4json">data․json</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4keys">data․keys</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4labels">data․labels</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4mimeType">data․mimeType</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4names">data․names</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onclick">data․onclick</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onhidden">data․onhidden</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmax">data․onmax</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmin">data․onmin</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onout">data․onout</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onover">data․onover</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onselected">data․onselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onshown">data․onshown</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onunselected">data․onunselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4order">data․order</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4regions">data․regions</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4rows">data․rows</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4draggable">data․selection․draggable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled">data․selection․enabled</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4grouped">data․selection․grouped</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4isselectable">data․selection․isselectable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4multiple">data․selection․multiple</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4stack%25E2%2580%25A4normalize">data․stack․normalize</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4type">data․type</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4types">data․types</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4url">data․url</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4x">data․x</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xFormat">data․xFormat</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xLocaltime">data․xLocaltime</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xSort">data․xSort</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xs">data․xs</a></li><li data-type='member'><a href="Options.html#.donut">donut</a></li><li data-type='member'><a href="Options.html#.funnel">funnel</a></li><li data-type='member'><a href="Options.html#.gauge">gauge</a></li><li data-type='member'><a href="Options.html#.grid">grid</a></li><li data-type='member'><a href="Options.html#.interaction">interaction</a></li><li data-type='member'><a href="Options.html#.legend">legend</a></li><li data-type='member'><a href="Options.html#.line">line</a></li><li data-type='member'><a href="Options.html#.onafterinit">onafterinit</a></li><li data-type='member'><a href="Options.html#.onbeforeinit">onbeforeinit</a></li><li data-type='member'><a href="Options.html#.onclick">onclick</a></li><li data-type='member'><a href="Options.html#.oninit">oninit</a></li><li data-type='member'><a href="Options.html#.onout">onout</a></li><li data-type='member'><a href="Options.html#.onover">onover</a></li><li data-type='member'><a href="Options.html#.onrendered">onrendered</a></li><li data-type='member'><a href="Options.html#.onresize">onresize</a></li><li data-type='member'><a href="Options.html#.onresized">onresized</a></li><li data-type='member'><a href="Options.html#.padding">padding</a></li><li data-type='member'><a href="Options.html#.pie">pie</a></li><li data-type='member'><a href="Options.html#.plugins">plugins</a></li><li data-type='member'><a href="Options.html#.point">point</a></li><li data-type='member'><a href="Options.html#.polar">polar</a></li><li data-type='member'><a href="Options.html#.radar">radar</a></li><li data-type='member'><a href="Options.html#.regions">regions</a></li><li data-type='member'><a href="Options.html#.render">render</a></li><li data-type='member'><a href="Options.html#.resize">resize</a></li><li data-type='member'><a href="Options.html#.scatter">scatter</a></li><li data-type='member'><a href="Options.html#.size">size</a></li><li data-type='member'><a href="Options.html#.spline">spline</a></li><li data-type='member'><a href="Options.html#.subchart">subchart</a></li><li data-type='member'><a href="Options.html#.svg">svg</a></li><li data-type='member'><a href="Options.html#.title">title</a></li><li data-type='member'><a href="Options.html#.tooltip">tooltip</a></li><li data-type='member'><a href="Options.html#.transition">transition</a></li><li data-type='member'><a href="Options.html#.treemap">treemap</a></li><li data-type='member'><a href="Options.html#.zoom">zoom</a></li></ul></li><li><a href="Plugin.html">Plugin</a><ul class='members'><li data-type='member'><a href="Plugin.html#.version">version</a></li></ul></li><li><a href="plugin-bubblecompare.html">plugin-bubblecompare</a><ul class='members'><li data-type='member'><a href="plugin-bubblecompare.html#.expandScale">expandScale</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.maxR">maxR</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.minR">minR</a></li></ul></li><li><a href="plugin-sparkline.html">plugin-sparkline</a><ul class='members'><li data-type='member'><a href="plugin-sparkline.html#.selector">selector</a></li></ul></li><li><a href="plugin-stanford.html">plugin-stanford</a><ul class='members'><li data-type='member'><a href="plugin-stanford.html#.colors">colors</a></li><li data-type='member'><a href="plugin-stanford.html#.epochs">epochs</a></li><li data-type='member'><a href="plugin-stanford.html#.lines">lines</a></li><li data-type='member'><a href="plugin-stanford.html#.padding">padding</a></li><li data-type='member'><a href="plugin-stanford.html#.regions">regions</a></li><li data-type='member'><a href="plugin-stanford.html#.scale">scale</a></li></ul></li><li><a href="plugin-tableview.html">plugin-tableview</a><ul class='members'><li data-type='member'><a href="plugin-tableview.html#.categoryFormat">categoryFormat</a></li><li data-type='member'><a href="plugin-tableview.html#.categoryTitle">categoryTitle</a></li><li data-type='member'><a href="plugin-tableview.html#.class">class</a></li><li data-type='member'><a href="plugin-tableview.html#.nullString">nullString</a></li><li data-type='member'><a href="plugin-tableview.html#.selector">selector</a></li><li data-type='member'><a href="plugin-tableview.html#.style">style</a></li><li data-type='member'><a href="plugin-tableview.html#.title">title</a></li><li data-type='member'><a href="plugin-tableview.html#.updateOnToggle">updateOnToggle</a></li></ul></li><li><a href="plugin-textoverlap.html">plugin-textoverlap</a><ul class='members'><li data-type='member'><a href="plugin-textoverlap.html#.area">area</a></li><li data-type='member'><a href="plugin-textoverlap.html#.extent">extent</a></li><li data-type='member'><a href="plugin-textoverlap.html#.selector">selector</a></li></ul></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">module/sanitize.ts</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+
+/**
+ * HTML/SVG Sanitization module
+ * Pure whitelist approach - only explicitly allowed tags, attributes, and protocols pass through
+ */
+
+// Whitelist of allowed HTML/SVG tags
+const ALLOWED_TAGS = new Set([
+	// HTML tags for tooltip/legend templates
+	"span",
+	"div",
+	"p",
+	"br",
+	"b",
+	"i",
+	"em",
+	"strong",
+	"u",
+	"s",
+	"sub",
+	"sup",
+	"ul",
+	"ol",
+	"li",
+	"dl",
+	"dt",
+	"dd",
+	"table",
+	"thead",
+	"tbody",
+	"tfoot",
+	"tr",
+	"th",
+	"td",
+	"caption",
+	"colgroup",
+	"col",
+	"hr",
+	"pre",
+	"code",
+	"blockquote",
+	"a",
+	"img",
+	// SVG tags for point patterns
+	"svg",
+	"g",
+	"path",
+	"circle",
+	"ellipse",
+	"rect",
+	"line",
+	"polyline",
+	"polygon",
+	"text",
+	"tspan",
+	"textPath",
+	"use",
+	"defs",
+	"symbol",
+	"clipPath",
+	"mask",
+	"linearGradient",
+	"radialGradient",
+	"stop",
+	"pattern",
+	"marker",
+	"title",
+	"desc"
+]);
+
+// Whitelist of allowed attributes
+const ALLOWED_ATTRS = new Set([
+	// Common attributes
+	"class",
+	"id",
+	"style",
+	"title",
+	"lang",
+	"dir",
+	// HTML specific
+	"href",
+	"src",
+	"alt",
+	"width",
+	"height",
+	"colspan",
+	"rowspan",
+	"scope",
+	"headers",
+	// SVG presentation attributes
+	"d",
+	"points",
+	"x",
+	"y",
+	"x1",
+	"x2",
+	"y1",
+	"y2",
+	"cx",
+	"cy",
+	"r",
+	"rx",
+	"ry",
+	"dx",
+	"dy",
+	"viewBox",
+	"preserveAspectRatio",
+	"transform",
+	"fill",
+	"fill-opacity",
+	"fill-rule",
+	"stroke",
+	"stroke-width",
+	"stroke-opacity",
+	"stroke-linecap",
+	"stroke-linejoin",
+	"stroke-dasharray",
+	"stroke-dashoffset",
+	"opacity",
+	"clip-path",
+	"clip-rule",
+	"mask",
+	"font-family",
+	"font-size",
+	"font-weight",
+	"font-style",
+	"text-anchor",
+	"dominant-baseline",
+	"offset",
+	"stop-color",
+	"stop-opacity",
+	"gradientUnits",
+	"gradientTransform",
+	"spreadMethod",
+	"patternUnits",
+	"patternTransform",
+	"marker-start",
+	"marker-mid",
+	"marker-end",
+	"markerWidth",
+	"markerHeight",
+	"refX",
+	"refY",
+	"xlink:href"
+]);
+
+// Whitelist of allowed URI protocols
+const ALLOWED_URI_PROTOCOLS = new Set([
+	"http:",
+	"https:",
+	"mailto:"
+]);
+
+// Attributes that contain URIs
+const URI_ATTRS = new Set(["href", "src", "xlink:href"]);
+
+// Pre-compiled regex patterns for performance
+const TAG_NAME_REGEX = /^&lt;\/?([a-zA-Z][a-zA-Z0-9]*)/;
+const CLOSING_TAG_REGEX = /^&lt;\/([a-zA-Z][a-zA-Z0-9]*)\s*>$/;
+const OPENING_TAG_REGEX = /^&lt;([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)(\/?)>$/;
+const ATTR_REGEX = /([a-zA-Z][\w:-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
+const URL_IN_STYLE_REGEX = /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi;
+
+// Dangerous CSS patterns
+const DANGEROUS_CSS_PATTERNS = [
+	"expression(",
+	"behavior:",
+	"binding:",
+	"@import",
+	"@charset",
+	"-moz-binding:"
+];
+
+/**
+ * Decode HTML entities in a string
+ * @param {string} str String with potential HTML entities
+ * @returns {string} Decoded string
+ * @private
+ */
+function decodeHTMLEntities(str: string): string {
+	return str
+		// Named entities
+		.replace(/&amp;colon;/gi, ":")
+		.replace(/&amp;newline;/gi, "\n")
+		.replace(/&amp;tab;/gi, "\t")
+		.replace(/&amp;nbsp;/gi, " ")
+		.replace(/&amp;lt;/gi, "&lt;")
+		.replace(/&amp;gt;/gi, ">")
+		.replace(/&amp;amp;/gi, "&amp;")
+		.replace(/&amp;quot;/gi, "\"")
+		.replace(/&amp;apos;/gi, "'")
+		// Numeric entities (decimal)
+		.replace(/&amp;#(\d+);/gi, (_, code) => String.fromCharCode(parseInt(code, 10)))
+		// Numeric entities (hex)
+		.replace(/&amp;#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
+}
+
+/**
+ * Check if a URI is safe (whitelist approach)
+ * @param {string} uri URI to check
+ * @returns {boolean} Whether the URI is safe
+ * @private
+ */
+function isSafeURI(uri: string): boolean {
+	// Decode HTML entities first to prevent bypass
+	const decoded = decodeHTMLEntities(uri).trim();
+
+	// Remove any whitespace/control characters that could be used for bypass
+	// eslint-disable-next-line no-control-regex
+	const normalized = decoded.replace(/[\s\u0000-\u001f]/g, "").toLowerCase();
+
+	// Empty or fragment-only URIs are safe
+	if (!normalized || normalized.startsWith("#")) {
+		return true;
+	}
+
+	// Relative paths are safe
+	if (
+		normalized.startsWith("/") ||
+		normalized.startsWith("./") ||
+		normalized.startsWith("../") ||
+		!normalized.includes(":")
+	) {
+		return true;
+	}
+
+	// Check if protocol is in whitelist
+	const colonIndex = normalized.indexOf(":");
+	if (colonIndex > 0) {
+		const protocol = normalized.substring(0, colonIndex + 1);
+		return ALLOWED_URI_PROTOCOLS.has(protocol);
+	}
+
+	return false;
+}
+
+/**
+ * Check if a style value is safe (whitelist approach)
+ * @param {string} style Style attribute value
+ * @returns {string|null} Sanitized style or null if unsafe
+ * @private
+ */
+function sanitizeStyleValue(style: string): string | null {
+	// Decode HTML entities first
+	const decoded = decodeHTMLEntities(style);
+
+	// Remove any control characters
+	// eslint-disable-next-line no-control-regex
+	const cleaned = decoded.replace(/[\u0000-\u001f]/g, "");
+
+	// Check for url() - only allow safe URIs inside
+	URL_IN_STYLE_REGEX.lastIndex = 0;
+	let match;
+
+	while ((match = URL_IN_STYLE_REGEX.exec(cleaned)) !== null) {
+		if (!isSafeURI(match[1])) {
+			return null;
+		}
+	}
+
+	// Check for dangerous CSS patterns (expression, behavior, etc.)
+	const normalizedLower = cleaned.toLowerCase().replace(/\s/g, "");
+
+	for (const pattern of DANGEROUS_CSS_PATTERNS) {
+		if (normalizedLower.includes(pattern)) {
+			return null;
+		}
+	}
+
+	return style;
+}
+
+// Lookup table for encoding dangerous characters in attribute values
+const ATTR_ENCODE_MAP: Record&lt;string, string> = {
+	"\"": "&amp;quot;",
+	"'": "&amp;#39;",
+	"`": "&amp;#96;"
+};
+const ATTR_ENCODE_REGEX = /["'`]/g;
+
+/**
+ * Encode dangerous characters in attribute values to HTML entities
+ * This prevents attribute injection attacks where quotes/backticks break out of the attribute context
+ * @param {string} value Attribute value
+ * @returns {string} Encoded value
+ * @private
+ */
+function encodeAttrValue(value: string): string {
+	return value.replace(ATTR_ENCODE_REGEX, char => ATTR_ENCODE_MAP[char]);
+}
+
+/**
+ * Sanitize attribute value using whitelist approach
+ * @param {string} name Attribute name
+ * @param {string} value Attribute value
+ * @param {boolean} wasUnquoted Whether the value was originally unquoted
+ * @returns {string|null} Sanitized value if safe, null if should be removed
+ * @private
+ */
+function sanitizeAttrValue(name: string, value: string, wasUnquoted: boolean = false):
+	| string
+	| null {
+	// Check URI attributes with whitelist
+	if (URI_ATTRS.has(name)) {
+		if (!isSafeURI(value)) {
+			return null;
+		}
+		// Encode dangerous characters in URI values to prevent attribute injection
+		return wasUnquoted ? encodeAttrValue(value) : value;
+	}
+
+	// Check style attribute
+	if (name === "style") {
+		const sanitizedStyle = sanitizeStyleValue(value);
+		if (sanitizedStyle === null) {
+			return null;
+		}
+		// Encode dangerous characters in style values
+		return wasUnquoted ? encodeAttrValue(sanitizedStyle) : sanitizedStyle;
+	}
+
+	// For other attributes, check for embedded event handlers
+	const decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
+	if (/\bon\w+=/.test(decoded)) {
+		return null;
+	}
+
+	// Encode dangerous characters to prevent attribute injection
+	return wasUnquoted ? encodeAttrValue(value) : value;
+}
+
+/**
+ * Extract tag name from a tag string
+ * Returns null if not a valid tag format
+ * @param {string} tag Tag string starting with &lt;
+ * @returns {string|null} Lowercase tag name or null
+ * @private
+ */
+function extractTagName(tag: string): string | null {
+	// Must start with &lt; followed immediately by letter (no spaces allowed)
+	const match = tag.match(TAG_NAME_REGEX);
+	return match ? match[1].toLowerCase() : null;
+}
+
+/**
+ * Check if a tag is in the whitelist
+ * @param {string} tag Tag string
+ * @returns {boolean} Whether tag is allowed
+ * @private
+ */
+function isAllowedTag(tag: string): boolean {
+	const tagName = extractTagName(tag);
+	return tagName !== null &amp;&amp; ALLOWED_TAGS.has(tagName);
+}
+
+/**
+ * Sanitize a single HTML/SVG tag (only called for allowed tags)
+ * @param {string} fullTag The full tag string including &lt; and >
+ * @returns {string} Sanitized tag
+ * @private
+ */
+function sanitizeTag(fullTag: string): string {
+	// Closing tag
+	const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
+	if (closingMatch) {
+		return `&lt;/${closingMatch[1].toLowerCase()}>`;
+	}
+
+	// Opening tag
+	const openingMatch = fullTag.match(OPENING_TAG_REGEX);
+	if (!openingMatch) {
+		return "";
+	}
+
+	const [, tagName, attrString, selfClose] = openingMatch;
+	const lowerTagName = tagName.toLowerCase();
+
+	// Parse and filter attributes, preserving original quote style
+	const allowedAttrs: string[] = [];
+	ATTR_REGEX.lastIndex = 0;
+	let attrMatch;
+
+	while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
+		const attrName = attrMatch[1].toLowerCase();
+		const doubleQuotedValue = attrMatch[2];
+		const singleQuotedValue = attrMatch[3];
+		const unquotedValue = attrMatch[4];
+
+		// Skip event handlers (on*)
+		if (attrName.startsWith("on")) {
+			continue;
+		}
+
+		// Determine original quote style and value
+		let attrValue: string;
+		let quoteChar: string;
+
+		if (doubleQuotedValue !== undefined) {
+			attrValue = doubleQuotedValue;
+			quoteChar = "\"";
+		} else if (singleQuotedValue !== undefined) {
+			attrValue = singleQuotedValue;
+			quoteChar = "'";
+		} else if (unquotedValue !== undefined) {
+			attrValue = unquotedValue;
+			quoteChar = "\"";
+		} else {
+			// Boolean attribute (no value)
+			if (ALLOWED_ATTRS.has(attrName)) {
+				allowedAttrs.push(attrName);
+			}
+			continue;
+		}
+
+		if (ALLOWED_ATTRS.has(attrName)) {
+			const wasUnquoted = unquotedValue !== undefined;
+			const sanitizedValue = sanitizeAttrValue(attrName, attrValue, wasUnquoted);
+			if (sanitizedValue !== null) {
+				allowedAttrs.push(`${attrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
+			}
+		}
+	}
+
+	const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
+	const selfCloseStr = selfClose ? "/>" : ">";
+
+	return `&lt;${lowerTagName}${attrsStr}${selfCloseStr}`;
+}
+
+/**
+ * Sanitize HTML string to prevent XSS attacks
+ * Pure whitelist approach - allowed tags are sanitized, others are escaped
+ * @param {string} str Target string value
+ * @returns {string} Sanitized string with only allowed elements
+ * @private
+ */
+export function sanitize(str: string): string {
+	if (typeof str !== "string" || !str || str.indexOf("&lt;") === -1) {
+		return str;
+	}
+
+	// Single pass: sanitize allowed tags, escape disallowed ones
+	// Also match orphaned fragments like "ipt>" from broken tags
+	return str.replace(
+		/&lt;\/?[^>]*>|[^&lt;>\s]+>/g,
+		match => {
+			// Remove HTML comments
+			if (match.startsWith("&lt;!--")) {
+				return "";
+			}
+
+			// Orphaned fragment (e.g., "ipt>") → escape '>'
+			if (!match.startsWith("&lt;")) {
+				return match.slice(0, -1) + "&amp;gt;";
+			}
+
+			// Allowed tag → sanitize attributes
+			if (isAllowedTag(match)) {
+				return sanitizeTag(match);
+			}
+
+			// Disallowed tag → escape all '&lt;' to prevent execution
+			return match.replace(/&lt;/g, "&amp;lt;");
+		}
+	);
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="static/doc.css">
+    
+    <script src="static/analytics.js"></script>
+    
+</body>
+</html>
