@@ -1,3 +1,23 @@
+# [3.18.0](https://github.com/naver/billboard.js/compare/3.17.4...3.18.0) (2026-01-23)
+
+
+### Bug Fixes
+
+* **color:** Fix color update on gradient ([9d6d392](https://github.com/naver/billboard.js/commit/9d6d392c00c586a490e3a606be96e45f064b12d9)), closes [#4048](https://github.com/naver/billboard.js/issues/4048)
+* **data:** Handle undefined values in total calculation ([18a5b9b](https://github.com/naver/billboard.js/commit/18a5b9b8bf43456d2167140040f9e05ad08e6544)), closes [#4073](https://github.com/naver/billboard.js/issues/4073)
+* **interaction:** Fix data.onover call in touch event ([5fe448c](https://github.com/naver/billboard.js/commit/5fe448c455dc725857f77ec4e39a93021e19a735)), closes [#4076](https://github.com/naver/billboard.js/issues/4076)
+* **load:** Update call sequence to be after data are unloaded ([f9f4a86](https://github.com/naver/billboard.js/commit/f9f4a866134afd8e1b484a857c878895801cf3c4)), closes [#4052](https://github.com/naver/billboard.js/issues/4052)
+* **text:** Fix multiline data labels vertial position ([6b5580a](https://github.com/naver/billboard.js/commit/6b5580af7c59579de1331904b2d859235e5b9497)), closes [#4062](https://github.com/naver/billboard.js/issues/4062)
+* **text:** Fix text alignment to center ([9f2960d](https://github.com/naver/billboard.js/commit/9f2960d93b366a5b53cc42d488a2d00b9701fef3)), closes [#4081](https://github.com/naver/billboard.js/issues/4081)
+* **util:** update sanitization function ([#4085](https://github.com/naver/billboard.js/issues/4085)) ([49e079c](https://github.com/naver/billboard.js/commit/49e079cdd466fc8ba7ab208988181e5b7a5f336b)), closes [#4078](https://github.com/naver/billboard.js/issues/4078)
+
+
+### Features
+
+* **arc:** Intent to ship Arc's annotation ([c740a3b](https://github.com/naver/billboard.js/commit/c740a3bad506ab08b32a2efff00e7bcbc4c41b18)), closes [#3602](https://github.com/naver/billboard.js/issues/3602)
+* **data:** Intent to ship data.stack.normalize.perGroup ([c879c25](https://github.com/naver/billboard.js/commit/c879c259337ee2516970303660231b5452707f55)), closes [#4060](https://github.com/naver/billboard.js/issues/4060)
+* **treemap:** Enhance label formatter to include tile size ([71c0d06](https://github.com/naver/billboard.js/commit/71c0d06868fb4849ca923c50dc7759d5752c7844)), closes [#4066](https://github.com/naver/billboard.js/issues/4066)
+
 ## [3.17.4](https://github.com/naver/billboard.js/compare/3.17.3...3.17.4) (2026-01-14)
 
 
