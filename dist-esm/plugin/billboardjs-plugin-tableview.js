@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.17.4-nightly-20260123004741
+ * @version 3.18.0-nightly-20260124004724
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -329,28 +329,57 @@ function sanitizeStyleValue(style) {
     }
     return style;
 }
+// Lookup table for encoding dangerous characters in attribute values
+var ATTR_ENCODE_MAP = {
+    "\"": "&quot;",
+    "'": "&#39;",
+    "`": "&#96;"
+};
+var ATTR_ENCODE_REGEX = /["'`]/g;
+/**
+ * Encode dangerous characters in attribute values to HTML entities
+ * This prevents attribute injection attacks where quotes/backticks break out of the attribute context
+ * @param {string} value Attribute value
+ * @returns {string} Encoded value
+ * @private
+ */
+function encodeAttrValue(value) {
+    return value.replace(ATTR_ENCODE_REGEX, function (char) { return ATTR_ENCODE_MAP[char]; });
+}
 /**
  * Sanitize attribute value using whitelist approach
  * @param {string} name Attribute name
  * @param {string} value Attribute value
- * @returns {string|null} Original value if safe, null if should be removed
+ * @param {boolean} wasUnquoted Whether the value was originally unquoted
+ * @returns {string|null} Sanitized value if safe, null if should be removed
  * @private
  */
-function sanitizeAttrValue(name, value) {
+function sanitizeAttrValue(name, value, wasUnquoted) {
+    if (wasUnquoted === void 0) { wasUnquoted = false; }
     // Check URI attributes with whitelist
     if (URI_ATTRS.has(name)) {
-        return isSafeURI(value) ? value : null;
+        if (!isSafeURI(value)) {
+            return null;
+        }
+        // Encode dangerous characters in URI values to prevent attribute injection
+        return wasUnquoted ? encodeAttrValue(value) : value;
     }
     // Check style attribute
     if (name === "style") {
-        return sanitizeStyleValue(value);
+        var sanitizedStyle = sanitizeStyleValue(value);
+        if (sanitizedStyle === null) {
+            return null;
+        }
+        // Encode dangerous characters in style values
+        return wasUnquoted ? encodeAttrValue(sanitizedStyle) : sanitizedStyle;
     }
-    // For other attributes, just check for embedded event handlers
+    // For other attributes, check for embedded event handlers
     var decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
     if (/\bon\w+=/.test(decoded)) {
         return null;
     }
-    return value;
+    // Encode dangerous characters to prevent attribute injection
+    return wasUnquoted ? encodeAttrValue(value) : value;
 }
 /**
  * Extract tag name from a tag string
@@ -429,7 +458,8 @@ function sanitizeTag(fullTag) {
             continue;
         }
         if (ALLOWED_ATTRS.has(attrName)) {
-            var sanitizedValue = sanitizeAttrValue(attrName, attrValue);
+            var wasUnquoted = unquotedValue !== undefined;
+            var sanitizedValue = sanitizeAttrValue(attrName, attrValue, wasUnquoted);
             if (sanitizedValue !== null) {
                 allowedAttrs.push("".concat(attrName, "=").concat(quoteChar).concat(sanitizedValue).concat(quoteChar));
             }
@@ -612,7 +642,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.17.4-nightly-20260123004741";
+    Plugin.version = "3.18.0-nightly-20260124004724";
     return Plugin;
 }());
 

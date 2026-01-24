@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.17.4-nightly-20260123004741
+ * @version 3.18.0-nightly-20260124004724
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -29554,18 +29554,34 @@ function sanitizeStyleValue(style) {
   }
   return style;
 }
-function sanitizeAttrValue(name, value) {
+const ATTR_ENCODE_MAP = {
+  '"': "&quot;",
+  "'": "&#39;",
+  "`": "&#96;"
+};
+const ATTR_ENCODE_REGEX = /["'`]/g;
+function encodeAttrValue(value) {
+  return value.replace(ATTR_ENCODE_REGEX, (char) => ATTR_ENCODE_MAP[char]);
+}
+function sanitizeAttrValue(name, value, wasUnquoted = false) {
   if (URI_ATTRS.has(name)) {
-    return isSafeURI(value) ? value : null;
+    if (!isSafeURI(value)) {
+      return null;
+    }
+    return wasUnquoted ? encodeAttrValue(value) : value;
   }
   if (name === "style") {
-    return sanitizeStyleValue(value);
+    const sanitizedStyle = sanitizeStyleValue(value);
+    if (sanitizedStyle === null) {
+      return null;
+    }
+    return wasUnquoted ? encodeAttrValue(sanitizedStyle) : sanitizedStyle;
   }
   const decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
   if (/\bon\w+=/.test(decoded)) {
     return null;
   }
-  return value;
+  return wasUnquoted ? encodeAttrValue(value) : value;
 }
 function extractTagName(tag) {
   const match = tag.match(TAG_NAME_REGEX);
@@ -29615,7 +29631,8 @@ function sanitizeTag(fullTag) {
       continue;
     }
     if (ALLOWED_ATTRS.has(attrName)) {
-      const sanitizedValue = sanitizeAttrValue(attrName, attrValue);
+      const wasUnquoted = unquotedValue !== void 0;
+      const sanitizedValue = sanitizeAttrValue(attrName, attrValue, wasUnquoted);
       if (sanitizedValue !== null) {
         allowedAttrs.push(`${attrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
       }
@@ -30220,7 +30237,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.17.4-nightly-20260123004741");
+__publicField(Plugin, "version", "3.18.0-nightly-20260124004724");
 
 ;// ./src/Plugin/textoverlap/Options.ts
 class Options {
