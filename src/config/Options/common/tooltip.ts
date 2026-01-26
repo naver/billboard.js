@@ -241,7 +241,7 @@ export default {
 	tooltip_contents: <(() => string) | {
 		bindto: string,
 		template: string,
-		text?: {[key: string]: string[]}
+		text?: Record<string, string[]>
 	}>{},
 	tooltip_init_show: false,
 	tooltip_init_x: 0,

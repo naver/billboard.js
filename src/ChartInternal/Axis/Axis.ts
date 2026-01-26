@@ -694,24 +694,39 @@ class Axis {
 			// when evalTextSize is set as function, sizeFor1Char is set to the dummy element
 			const {sizeFor1Char} = g.node();
 
-			dummy.selectAll("text")
-				.attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null)
-				.each(function(d, i) {
-					const {width, height} = sizeFor1Char ?
-						{
-							width: this.textContent.length * sizeFor1Char.w,
-							height: sizeFor1Char.h
-						} :
-						getBoundingRect(this, true);
+			const textSelection = dummy.selectAll("text")
+				.attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null);
+
+			// Batch processing to minimize layout thrashing
+			if (sizeFor1Char) {
+				// Use pre-calculated character size (no reflow needed)
+				textSelection.each(function(d, i) {
+					const width = this.textContent.length * sizeFor1Char.w;
+					const height = sizeFor1Char.h;
 
 					max.width = Math.max(max.width, width);
 					max.height = Math.max(max.height, height);
 
-					// cache tick text width for getXAxisTickTextY2Overflow()
 					if (!isYAxis) {
 						currentTickMax.ticks[i] = width;
 					}
 				});
+			} else {
+				const textNodes: SVGTextElement[] = [];
+
+				textSelection.each(function() {
+					textNodes.push(this);
+				});
+
+				textNodes.map(node => getBoundingRect(node, true)).forEach((dim, i) => {
+					max.width = Math.max(max.width, dim.width);
+					max.height = Math.max(max.height, dim.height);
+
+					if (!isYAxis) {
+						currentTickMax.ticks[i] = dim.width;
+					}
+				});
+			}
 
 			dummy.remove();
 		}
@@ -858,7 +873,7 @@ class Axis {
 	 * @returns {number} Padding value in scale
 	 * @private
 	 */
-	getPadding(padding: number | {[key: string]: number}, key: string, defaultValue: number,
+	getPadding(padding: number | Record<string, number>, key: string, defaultValue: number,
 		domainLength: number): number {
 		const p = isNumber(padding) ? padding : padding[key];
 

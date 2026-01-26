@@ -41,6 +41,15 @@ import {
 	parseDate
 } from "../../module/util";
 import type {IDataIndice, IDataRow, TIndices} from "../data/IData";
+import type {IOffset, ShapeElementConfig, UpdateTargetsConfig} from "./IShape";
+
+// Re-export types for backward compatibility
+export type {
+	IOffset,
+	LinearGradientOption,
+	ShapeElementConfig,
+	UpdateTargetsConfig
+} from "./IShape";
 
 /**
  * Get grouped data point function for y coordinate
@@ -62,9 +71,83 @@ function _getGroupedDataPointsFn(d) {
 	return fn;
 }
 
-export interface IOffset {
-	_$width: number;
-	_$total: number[];
+/**
+ * Get shape color with gradient support
+ * @param {object} d Data object
+ * @param {string} configKey Configuration key for linearGradient (e.g., 'bar_linearGradient', 'area_linearGradient')
+ * @param {(d: IDataRow) => string | null} colorFn Fallback color function when gradient is not enabled
+ * @returns {string | null} Color string or gradient URL
+ * @private
+ */
+export function getShapeColorWithGradient(
+	this: any,
+	d: IDataRow,
+	configKey: string,
+	colorFn: (d: IDataRow) => string | null
+): string | null {
+	return this.config[configKey] ? this.getGradienColortUrl(d.id) : colorFn(d);
+}
+
+/**
+ * Initialize a shape element container
+ * @param {ShapeElementConfig} config Configuration object
+ * @private
+ */
+export function initShapeElement(this: any, config: ShapeElementConfig): void {
+	const {$el} = this;
+	const {elKey, className, cssRules, position} = config;
+	const container = $el.main.select(`.${CLASS.chart}`);
+
+	$el[elKey] = position === "first" ?
+		container.insert("g", ":first-child") :
+		container.append("g");
+
+	$el[elKey].attr("class", className);
+
+	if (cssRules?.length) {
+		$el[elKey].call(this.setCssRule(false, `.${className}`, cssRules));
+	}
+}
+
+/**
+ * Common update targets pattern for shapes
+ * @param {Array} targets Target data
+ * @param {UpdateTargetsConfig} config Configuration object
+ * @returns {d3Selection} Enter selection for additional setup
+ * @private
+ */
+export function updateTargetsForShape(
+	this: any,
+	targets: any[],
+	config: UpdateTargetsConfig
+): d3Selection {
+	const $$ = this;
+	const {$el} = $$;
+	const {type, elKey, containerClass, itemClass, initFn, withFocus = true, withStyles = true} =
+		config;
+
+	if (!$el[elKey]) {
+		initFn.call($$);
+	}
+
+	const classChart = $$.getChartClass(type);
+	const classFocus = withFocus ? $$.classFocus.bind($$) : () => "";
+
+	const mainUpdate = $el.main.select(`.${containerClass}`)
+		.selectAll(`.${itemClass}`)
+		.data($$.filterNullish(targets))
+		.attr("class", d => classChart(d) + classFocus(d));
+
+	const mainEnter = mainUpdate.enter().append("g")
+		.attr("class", classChart);
+
+	if (withStyles) {
+		mainEnter
+			.style("opacity", "0")
+			.style("pointer-events", $$.getStylePropValue("none"));
+	}
+
+	return mainEnter;
 }
 
 export default {

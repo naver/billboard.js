@@ -80,6 +80,12 @@ window.bench = {
             return;
         }
 
+        // Destroy existing chart instance to prevent memory leak
+        if (this.chart) {
+            this.chart.destroy();
+            this.chart = null;
+        }
+
         const chartType = this.$el.type.value;
 
         this.perf(false, "Generate");
