@@ -74,10 +74,16 @@ window.bench = {
     },
     generate: function(type) {
         if (!window.bb) {
-            alert("Select the desired version fisrt.");
+            alert("Select the desired version first.");
             this.$el.version.focus();
 
             return;
+        }
+
+        // Destroy existing chart instance to prevent memory leak
+        if (this.chart) {
+            this.chart.destroy();
+            this.chart = null;
         }
 
         const chartType = this.$el.type.value;
