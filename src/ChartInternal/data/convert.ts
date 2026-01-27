@@ -47,7 +47,7 @@ function _getDataKeyForJson(keysParam, config) {
  */
 function _setXS(
 	ids: string[],
-	data: {[key: string]: number | null}[],
+	data: Record<string, number | null>[],
 	params: {appendXs, xs, categorized: boolean, timeSeries: boolean, customX: boolean}
 ): void {
 	const $$ = this;
@@ -141,7 +141,7 @@ export default {
 	 * @returns {IData[]} Converted targets
 	 * @private
 	 */
-	convertDataToTargets(data: {[key: string]: number | null}[], appendXs: boolean): IData[] {
+	convertDataToTargets(data: Record<string, number | null>[], appendXs: boolean): IData[] {
 		const $$ = this;
 		const {axis, config, state} = $$;
 		const chartType = config.data_type;

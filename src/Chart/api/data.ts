@@ -111,7 +111,7 @@ extend(data, {
 	 *  data2: "New Name 2"
 	 * });
 	 */
-	names: function(names?: Array<{[key: string]: string | null}>): {[key: string]: string | null} {
+	names: function(names?: Array<Record<string, string | null>>): Record<string, string | null> {
 		const $$ = this.internal;
 
 		return $$.updateDataAttributes("names", names);
@@ -136,7 +136,7 @@ extend(data, {
 	 *  data2: "#000000"
 	 * });
 	 */
-	colors: function(colors?: Array<{[key: string]: string}>): {[key: string]: string} {
+	colors: function(colors?: Array<Record<string, string>>): Record<string, string> {
 		return this.internal.updateDataAttributes("colors", colors);
 	},
 
@@ -159,7 +159,7 @@ extend(data, {
 	 *  data2: "y2"
 	 * });
 	 */
-	axes: function(axes?: Array<{[key: string]: string}>): {[key: string]: string} {
+	axes: function(axes?: Array<Record<string, string>>): Record<string, string> {
 		return this.internal.updateDataAttributes("axes", axes);
 	},
 

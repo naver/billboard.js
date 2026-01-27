@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {line as d3Line} from "d3-shape";
-import {$COMMON, $LINE} from "../../config/classes";
+import {$LINE} from "../../config/classes";
 import {
 	getPointer,
 	getRandom,
@@ -15,6 +15,7 @@ import {
 } from "../../module/util";
 import type {IDataRow} from "../data/IData";
 import {getScale} from "../internals/scale";
+import {initShapeElement, updateTargetsForShape} from "./shape";
 
 /**
  * Get stroke dasharray style value
@@ -81,35 +82,26 @@ function _getRegions(d, _regions, isTimeSeries) {
 
 export default {
 	initLine(): void {
-		const {$el} = this;
-
-		$el.line = $el.main.select(`.${$COMMON.chart}`).append("g")
-			.attr("class", $LINE.chartLines)
-			.call(this.setCssRule(false, `.${$LINE.chartLines}`, ["pointer-events:none"]));
+		initShapeElement.call(this, {
+			elKey: "line",
+			className: $LINE.chartLines,
+			cssRules: ["pointer-events:none"]
+		});
 	},
 
 	updateTargetsForLine(t): void {
 		const $$ = this;
-		const {$el: {area, line, main}} = $$;
-		const classChartLine = $$.getChartClass("Line");
+		const {$el: {area, main}} = $$;
 		const classLines = $$.getClass("lines", true);
-		const classFocus = $$.classFocus.bind($$);
-
-		if (!line) {
-			$$.initLine();
-		}
-
 		const targets = t.filter(d => !($$.isScatterType(d) || $$.isBubbleType(d)));
 
-		const mainLineUpdate = main.select(`.${$LINE.chartLines}`)
-			.selectAll(`.${$LINE.chartLine}`)
-			.data($$.filterNullish(targets))
-			.attr("class", d => classChartLine(d) + classFocus(d));
-
-		const mainLineEnter = mainLineUpdate.enter().append("g")
-			.attr("class", classChartLine)
-			.style("opacity", "0")
-			.style("pointer-events", $$.getStylePropValue("none"));
+		const mainLineEnter = updateTargetsForShape.call($$, targets, {
+			type: "Line",
+			elKey: "line",
+			containerClass: $LINE.chartLines,
+			itemClass: $LINE.chartLine,
+			initFn: $$.initLine
+		});
 
 		// Lines for each data
 		mainLineEnter.append("g")
@@ -117,6 +109,8 @@ export default {
 
 		// Areas
 		if ($$.hasTypeOf("Area")) {
+			const mainLineUpdate = main.select(`.${$LINE.chartLines}`)
+				.selectAll(`.${$LINE.chartLine}`);
 			const mainLine = (
 				!area && mainLineEnter.empty() ? mainLineUpdate : mainLineEnter
 			).filter($$.isAreaType.bind($$));

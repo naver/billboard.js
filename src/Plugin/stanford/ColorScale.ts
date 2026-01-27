@@ -3,10 +3,24 @@
  * billboard.js project is licensed under the MIT license
  */
 import {axisRight as d3AxisRight} from "d3-axis";
-import {format as d3Format} from "d3-format";
 import {scaleSequential as d3ScaleSequential, scaleSymlog as d3ScaleSymlog} from "d3-scale";
 import CLASS from "./classes";
 import {getRange, isFunction} from "./util";
+
+/**
+ * Simple number formatter.
+ * Supports "d" specifier (decimal notation, rounded to integer).
+ * @param {string} specifier Format specifier
+ * @returns {function} Formatter function
+ */
+function format(specifier: string): (n: number) => string {
+	if (specifier === "d") {
+		return (n: number): string => Math.round(n).toString();
+	}
+
+	// Default: return as-is
+	return (n: number): string => String(n);
+}
 
 /**
  * Stanford diagram plugin color scale class
@@ -70,7 +84,7 @@ export default class ColorScale {
 		} else if (isFunction(scaleFormat)) {
 			legendAxis.tickFormat(scaleFormat);
 		} else {
-			legendAxis.tickFormat(d3Format("d"));
+			legendAxis.tickFormat(format("d"));
 		}
 
 		// Draw Axis

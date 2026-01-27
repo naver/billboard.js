@@ -2,6 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {loadConfig} from "../config/config";
+
 /**
  * Base class to generate billboard.js plugin
  * @class Plugin
@@ -35,6 +37,14 @@ export default class Plugin {
 	constructor(options = {}) {
 		this.$$;
 		this.options = options;
+	}
+
+	/**
+	 * Load plugin config from options
+	 * @private
+	 */
+	loadConfig() {
+		loadConfig.call(this, this.options);
 	}
 
 	/**

@@ -3,16 +3,41 @@
  * billboard.js project is licensed under the MIT license
  */
 // @ts-nocheck
-import {hsl as d3Hsl} from "d3-color";
 import {interpolateHslLong as d3InterpolateHslLong} from "d3-interpolate";
 import {scaleSequentialLog as d3ScaleSequentialLog} from "d3-scale";
 import {$TOOLTIP} from "../../config/classes";
-import {loadConfig} from "../../config/config";
 import Plugin from "../Plugin";
 import ColorScale from "./ColorScale";
 import Elements from "./Elements";
 import Options from "./Options";
 import {compareEpochs, isEmpty, isFunction, pointInRegion} from "./util";
+
+/**
+ * HSL color object compatible with d3-interpolate
+ */
+interface HSLColor {
+	h: number;
+	s: number;
+	l: number;
+	opacity: number;
+}
+
+/**
+ * Creates an HSL color object.
+ * @param {number} h Hue (0-360)
+ * @param {number} s Saturation (0-1)
+ * @param {number} l Lightness (0-1)
+ * @param {number} opacity Opacity (0-1), defaults to 1
+ * @returns {HSLColor} HSL color object
+ */
+function hsl(h: number, s: number, l: number, opacity: number = 1): HSLColor {
+	return {
+		h: +h,
+		s: +s,
+		l: +l,
+		opacity: +opacity
+	};
+}
 
 /**
  * Stanford diagram plugin
@@ -23,19 +48,15 @@ import {compareEpochs, isEmpty, isFunction, pointInRegion} from "./util";
  * - **Required modules:**
  *   - [d3-selection](https://github.com/d3/d3-selection)
  *   - [d3-interpolate](https://github.com/d3/d3-interpolate)
- *   - [d3-color](https://github.com/d3/d3-color)
  *   - [d3-scale](https://github.com/d3/d3-scale)
  *   - [d3-brush](https://github.com/d3/d3-brush)
  *   - [d3-axis](https://github.com/d3/d3-axis)
- *   - [d3-format](https://github.com/d3/d3-format)
  * @class plugin-stanford
  * @requires d3-selection
  * @requires d3-interpolate
- * @requires d3-color
  * @requires d3-scale
  * @requires d3-brush
  * @requires d3-axis
- * @requires d3-format
  * @param {object} options Stanford plugin options
  * @augments Plugin
  * @returns {Stanford}
@@ -100,7 +121,6 @@ import {compareEpochs, isEmpty, isFunction, pointInRegion} from "./util";
  * })
  */
 export default class Stanford extends Plugin {
-	private config;
 	private colorScale;
 	private elements;
 
@@ -135,7 +155,7 @@ export default class Stanford extends Plugin {
 	$init(): void {
 		const {$$} = this;
 
-		loadConfig.call(this, this.options);
+		this.loadConfig();
 		$$.color = this.getStanfordPointColor.bind($$);
 
 		this.colorScale = new ColorScale(this);
@@ -192,7 +212,7 @@ export default class Stanford extends Plugin {
 
 		target.colors = isFunction(config.colors) ?
 			config.colors :
-			d3InterpolateHslLong(d3Hsl(250, 1, 0.5), d3Hsl(0, 1, 0.5));
+			d3InterpolateHslLong(hsl(250, 1, 0.5), hsl(0, 1, 0.5));
 
 		target.colorscale = d3ScaleSequentialLog(target.colors)
 			.domain([target.minEpochs, target.maxEpochs]);

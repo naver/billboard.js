@@ -99,27 +99,25 @@ export default {
 		const leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY;
 		const leftAxis = $el.main.select(`.${leftAxisClass}`).node();
 		const leftLabel = hasAxis && config[`axis_${isRotated ? "x" : "y"}_label`];
-		let labelWidth = 0;
 
-		// if axis label position set to inner, exclude from the value
-		if (
-			hasAxis && (
-				isString(leftLabel) || isString(leftLabel.text) ||
-				/^inner-/.test(leftLabel?.position)
-			)
-		) {
-			const label = $el.main.select(`.${leftAxisClass}-label`);
+		// Check if label measurement is needed
+		const needLabelRect = hasAxis && (
+			isString(leftLabel) || isString(leftLabel.text) ||
+			/^inner-/.test(leftLabel?.position)
+		);
+		const label = needLabelRect ? $el.main.select(`.${leftAxisClass}-label`) : null;
+		const labelNode = label && !label.empty() ? label.node() : null;
 
-			if (!label.empty()) {
-				labelWidth = getBoundingRect(label.node()).left;
-			}
-		}
+		const forceEval = !withoutRecompute;
+		const rects = {
+			label: labelNode ? getBoundingRect(labelNode, forceEval) : null,
+			leftAxis: leftAxis && hasLeftAxisRect ? getBoundingRect(leftAxis, forceEval) : null,
+			chart: getBoundingRect($el.chart.node(), forceEval)
+		};
 
-		const svgRect = leftAxis && hasLeftAxisRect ?
-			getBoundingRect(leftAxis, !withoutRecompute) :
-			{right: 0};
-		const chartRectLeft = getBoundingRect($el.chart.node(), !withoutRecompute).left +
-			labelWidth;
+		const labelWidth = rects.label?.left ?? 0;
+		const svgRect = rects.leftAxis ?? {right: 0};
+		const chartRectLeft = rects.chart.left + labelWidth;
 		const hasArc = $$.hasArcType();
 		const svgLeft = svgRect.right - chartRectLeft -
 			(hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
@@ -292,7 +290,7 @@ export default {
 	 * @returns {number|object} Padding value
 	 * @private
 	 */
-	getResettedPadding<T = number | {[key: string]: string}>(v: T): T {
+	getResettedPadding<T = number | Record<string, string>>(v: T): T {
 		const $$ = this;
 		const {config} = $$;
 		const isNum = isNumber(v);

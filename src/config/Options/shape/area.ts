@@ -2,6 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import type {LinearGradientOption} from "../../../ChartInternal/shape/IShape";
+
 /**
  * area config options
  */
@@ -66,10 +68,6 @@ export default {
 	area_above: false,
 	area_below: false,
 	area_front: true,
-	area_linearGradient: <boolean | {
-		x?: [number, number],
-		y?: [number, number],
-		stops?: [number, string | null | Function, number]
-	}>false,
+	area_linearGradient: <LinearGradientOption>false,
 	area_zerobased: true
 };
