@@ -199,7 +199,7 @@ export default {
 	 * @param {object} attr filter attribute
 	 * @private
 	 */
-	generateTextBGColorFilter(color: string | {[key: string]: string} | Function, attr = {
+	generateTextBGColorFilter(color: string | Record<string, string> | Function, attr = {
 		x: 0,
 		y: 0,
 		width: 1,

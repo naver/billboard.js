@@ -4,12 +4,7 @@
  */
 
 /* eslint-disable */
-import {
-	csvParse as d3CsvParse,
-	csvParseRows as d3CsvParseRows,
-	tsvParse as d3TsvParse,
-	tsvParseRows as d3TsvParseRows
-} from "d3-dsv";
+import {csvParse, csvParseRows, tsvParse, tsvParseRows} from "../../module/dsv";
 
 export {columns, csv, json, rows, tsv, url};
 
@@ -211,14 +206,14 @@ function convertCsvTsvToData(parser, xsv) {
 
 function csv(xsv) {
 	return convertCsvTsvToData({
-		rows: d3CsvParseRows,
-		parse: d3CsvParse
+		rows: csvParseRows,
+		parse: csvParse
 	}, xsv);
 }
 
 function tsv(tsv) {
 	return convertCsvTsvToData({
-		rows: d3TsvParseRows,
-		parse: d3TsvParse
+		rows: tsvParseRows,
+		parse: tsvParse
 	}, tsv);
 }

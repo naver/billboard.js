@@ -21,15 +21,16 @@ type TExportOption = TSize & {
 
 type TSize = {x?: number, y?: number, width: number, height: number};
 
-type TTextGlyph = {
-	[key: string]: TSize & {
+type TTextGlyph = Record<
+	string,
+	TSize & {
 		fill: string,
 		fontFamily: string,
 		fontSize: string,
 		textAnchor: string,
 		transform: string
 	}
-};
+>;
 
 /**
  * Encode to base64

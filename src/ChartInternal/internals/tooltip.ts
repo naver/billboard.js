@@ -382,7 +382,7 @@ export default {
 	 * @returns {object} top, left value
 	 */
 	getTooltipPositionViewBox(tWidth: number, tHeight: number,
-		currPos: {[key: string]: number}): {top: number, left: number} {
+		currPos: Record<string, number>): {top: number, left: number} {
 		const $$ = this;
 		const {$el: {eventRect, svg}, config, state} = $$;
 
@@ -438,7 +438,7 @@ export default {
 	 * @private
 	 */
 	getTooltipPosition(tWidth: number, tHeight: number,
-		currPos: {[key: string]: number}): {top: number, left: number} {
+		currPos: Record<string, number>): {top: number, left: number} {
 		const $$ = this;
 		const {config, scale, state} = $$;
 		const {width, height, current, hasFunnel, hasRadar, hasTreemap, isLegendRight, inputType} =
@@ -542,14 +542,15 @@ export default {
 					$$.color // color
 				))
 				.style("display", null)
-				.style("visibility", null) // for IE9
-				.datum(datum = {
-					index,
-					x,
-					current: dataStr,
-					width: tooltip.property("offsetWidth"),
-					height: tooltip.property("offsetHeight")
-				});
+				.style("visibility", null); // for IE9
+
+			tooltip.datum(datum = {
+				index,
+				x,
+				current: dataStr,
+				width: tooltip.property("offsetWidth"),
+				height: tooltip.property("offsetHeight")
+			});
 
 			callFn(config.tooltip_onshown, $$.api, selectedData);
 			$$._handleLinkedCharts(true, index);

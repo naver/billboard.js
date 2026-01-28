@@ -61,7 +61,6 @@ function _forEachValidItem<T>(items: T[], callback: (item: T, index: number) => 
 // ====================================
 // Exported
 // ====================================
-
 const isValue = (v: any): boolean => v || v === 0;
 const isFunction = (v: unknown): v is (...args: any[]) => any => typeof v === "function";
 const isString = (v: unknown): v is string => typeof v === "string";
@@ -822,7 +821,7 @@ function hasViewBox(svg: d3Selection): boolean {
  * @param {boolean} all If true, all condition should be matched
  * @returns {boolean}
  */
-function hasStyle(node, condition: {[key: string]: string}, all = false): boolean {
+function hasStyle(node, condition: Record<string, string>, all = false): boolean {
 	const isD3Node = !!node.node;
 	let has = false;
 

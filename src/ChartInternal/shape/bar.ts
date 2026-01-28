@@ -7,6 +7,7 @@ import type {d3Selection, DataRow} from "../../../types/types";
 import {$BAR, $COMMON} from "../../config/classes";
 import {getRandom, isNumber} from "../../module/util";
 import type {IBarData} from "../data/IData";
+import {getShapeColorWithGradient, updateTargetsForShape} from "./shape";
 import type {IOffset} from "./shape";
 
 type BarTypeDataRow = DataRow<number | number[]>;
@@ -50,25 +51,17 @@ export default {
 
 	updateTargetsForBar(targets: BarTypeDataRow[]): void {
 		const $$ = this;
-		const {config, $el} = $$;
-		const classChartBar = $$.getChartClass("Bar");
+		const {config} = $$;
 		const classBars = $$.getClass("bars", true);
-		const classFocus = $$.classFocus.bind($$);
 		const isSelectable = config.interaction_enabled && config.data_selection_isselectable;
 
-		if (!$el.bar) {
-			$$.initBar();
-		}
-
-		const mainBarUpdate = $el.main.select(`.${$BAR.chartBars}`)
-			.selectAll(`.${$BAR.chartBar}`)
-			.data($$.filterNullish(targets))
-			.attr("class", d => classChartBar(d) + classFocus(d));
-
-		const mainBarEnter = mainBarUpdate.enter().append("g")
-			.attr("class", classChartBar)
-			.style("opacity", "0")
-			.style("pointer-events", $$.getStylePropValue("none"));
+		const mainBarEnter = updateTargetsForShape.call($$, targets, {
+			type: "Bar",
+			elKey: "bar",
+			containerClass: $BAR.chartBars,
+			itemClass: $BAR.chartBar,
+			initFn: $$.initBar
+		});
 
 		// Bars for each data
 		mainBarEnter.append("g")
@@ -130,7 +123,7 @@ export default {
 		const $$ = this;
 		const fn = $$.getStylePropValue($$.color);
 
-		return $$.config.bar_linearGradient ? $$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
+		return getShapeColorWithGradient.call($$, d, "bar_linearGradient", fn || (() => null));
 	},
 
 	/**

@@ -59,7 +59,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	data_names: <{[key: string]: string | null}>{},
+	data_names: <Record<string, string | null>>{},
 
 	/**
 	 * Set custom data class.<br><br>
@@ -76,7 +76,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	data_classes: <{[key: string]: string}>{},
+	data_classes: <Record<string, string>>{},
 
 	/**
 	 * Set chart type at once.<br><br>
@@ -196,7 +196,7 @@ export default {
 	 *   }
 	 * });
 	 */
-	data_types: <{[key: string]: ChartTypes}>{},
+	data_types: <Record<string, ChartTypes>>{},
 
 	/**
 	 *  This option changes the order of stacking data and pieces of pie/donut.
@@ -316,7 +316,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	data_colors: <{[key: string]: string | (() => string)}>{},
+	data_colors: <Record<string, string | (() => string)>>{},
 
 	/**
 	 * Set labels options
@@ -533,11 +533,11 @@ export default {
 	data_labels: <boolean | {
 		centered?: boolean,
 		format?: (v: number, id: string, i: number, texts: d3Selection) => number,
-		colors?: string | {[key: string]: string},
+		colors?: string | Record<string, string>,
 		position?: (type: "x" | "y", v: number, id: string, i: number, texts: d3Selection) =>
 			| number
-			| {[key: string]: number}
-			| {[key: string]: {x?: number, y?: number}},
+			| Record<string, number>
+			| Record<string, {x?: number, y?: number}>,
 		rotate?: number,
 		border?: boolean | {
 			padding?: number | string | {
@@ -560,7 +560,7 @@ export default {
 				pos?: {x?: number, y?: number}
 			} | null)
 	}>{},
-	data_labels_backgroundColors: <string | {[key: string]: string} | undefined>undefined,
+	data_labels_backgroundColors: <string | Record<string, string> | undefined>undefined,
 	data_labels_colors: <string | object | Function | undefined>undefined,
 	data_labels_position: {},
 	data_labels_imgUrl: <string | Function | undefined>undefined,

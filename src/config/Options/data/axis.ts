@@ -100,7 +100,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	data_axes: <{[key: string]: string}>{},
+	data_axes: <Record<string, string>>{},
 
 	/**
 	 * Define regions for each data.<br>
