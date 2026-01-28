@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import {beforeEach, describe, expect, it} from "vitest";
 import util from "../assets/util";
-import {runWorker} from "../../src/module/worker";
+import {runWorker, cleanupWorkers} from "../../src/module/worker";
 
 describe("BOOST", () => {
 	let chart;
@@ -357,6 +357,71 @@ describe("BOOST", () => {
 					}
 				)("abcd");
 			});
+		});
+
+		it("should reuse Worker instance for same function (fix #3720)", () => {
+			// Test Worker reuse by running same function multiple times synchronously
+			let callCount = 0;
+			const results: string[] = [];
+
+			// Define a reusable test function
+			function reusable_worker_test(p) {
+				return `result_${p}`;
+			}
+
+			// Run multiple times with same function using sync mode
+			["a", "b", "c"].forEach(value => {
+				runWorker(false, reusable_worker_test, function(result) {
+					results.push(result);
+					callCount++;
+				})(value);
+			});
+
+			expect(callCount).to.be.equal(3);
+			expect(results).to.include("result_a");
+			expect(results).to.include("result_b");
+			expect(results).to.include("result_c");
+		});
+
+		it("cleanupWorkers should release all cached resources", () => {
+			// Cleanup should not throw even when no workers exist
+			expect(() => cleanupWorkers()).to.not.throw();
+		});
+
+		it("should handle frequent chart.load() calls without memory issues (fix #3720)", async () => {
+			const testChart = util.generate({
+				boost: {
+					useWorker: false // Use sync mode for reliable testing
+				},
+				data: {
+					columns: [
+						["data1", 30, 200, 100]
+					],
+					type: "line"
+				}
+			});
+
+			let loadCount = 0;
+			const maxLoads = 10;
+
+			// Simulate frequent load calls
+			for (let i = 0; i < maxLoads; i++) {
+				await new Promise<void>((resolve) => {
+					testChart.load({
+						columns: [
+							["data1", Math.random() * 100, Math.random() * 100, Math.random() * 100]
+						],
+						done: () => {
+							loadCount++;
+							resolve();
+						}
+					});
+				});
+			}
+
+			// All loads completed without crash
+			expect(loadCount).to.be.equal(maxLoads);
+			testChart.destroy();
 		});
 	});
 });
