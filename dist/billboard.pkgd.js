@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260127004749
+ * @version 3.18.0-nightly-20260128004736
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -13,8 +13,6 @@
  * - d3-axis ^3.0.0
  * - d3-brush ^3.0.0
  * - d3-drag ^3.0.0
- * - d3-dsv ^3.0.1
- * - d3-ease ^3.0.1
  * - d3-hierarchy ^3.1.2
  * - d3-interpolate ^3.0.1
  * - d3-scale ^4.0.2
@@ -30372,143 +30370,104 @@ function runWorker(useWorker = true, fn, callback, depsFn) {
   return runFn;
 }
 
-;// ./node_modules/d3-dsv/src/dsv.js
-var EOL = {}, EOF = {}, QUOTE = 34, NEWLINE = 10, RETURN = 13;
-function objectConverter(columns) {
-  return new Function("d", "return {" + columns.map(function(name, i) {
-    return JSON.stringify(name) + ": d[" + i + '] || ""';
-  }).join(",") + "}");
-}
-function customConverter(columns, f) {
-  var object = objectConverter(columns);
-  return function(row, i) {
-    return f(object(row), i, columns);
-  };
-}
-function inferColumns(rows) {
-  var columnSet = /* @__PURE__ */ Object.create(null), columns = [];
-  rows.forEach(function(row) {
-    for (var column in row) {
-      if (!(column in columnSet)) {
-        columns.push(columnSet[column] = column);
-      }
-    }
-  });
-  return columns;
-}
-function dsv_pad(value, width) {
-  var s = value + "", length = s.length;
-  return length < width ? new Array(width - length + 1).join(0) + s : s;
-}
-function dsv_formatYear(year) {
-  return year < 0 ? "-" + dsv_pad(-year, 6) : year > 9999 ? "+" + dsv_pad(year, 6) : dsv_pad(year, 4);
-}
-function formatDate(date) {
-  var hours = date.getUTCHours(), minutes = date.getUTCMinutes(), seconds = date.getUTCSeconds(), milliseconds = date.getUTCMilliseconds();
-  return isNaN(date) ? "Invalid Date" : dsv_formatYear(date.getUTCFullYear(), 4) + "-" + dsv_pad(date.getUTCMonth() + 1, 2) + "-" + dsv_pad(date.getUTCDate(), 2) + (milliseconds ? "T" + dsv_pad(hours, 2) + ":" + dsv_pad(minutes, 2) + ":" + dsv_pad(seconds, 2) + "." + dsv_pad(milliseconds, 3) + "Z" : seconds ? "T" + dsv_pad(hours, 2) + ":" + dsv_pad(minutes, 2) + ":" + dsv_pad(seconds, 2) + "Z" : minutes || hours ? "T" + dsv_pad(hours, 2) + ":" + dsv_pad(minutes, 2) + "Z" : "");
-}
-/* harmony default export */ function dsv(delimiter) {
-  var reFormat = new RegExp('["' + delimiter + "\n\r]"), DELIMITER = delimiter.charCodeAt(0);
-  function parse(text, f) {
-    var convert, columns, rows = parseRows(text, function(row, i) {
-      if (convert) return convert(row, i - 1);
-      columns = row, convert = f ? customConverter(row, f) : objectConverter(row);
-    });
-    rows.columns = columns || [];
-    return rows;
-  }
-  function parseRows(text, f) {
-    var rows = [], N = text.length, I = 0, n = 0, t, eof = N <= 0, eol = false;
-    if (text.charCodeAt(N - 1) === NEWLINE) --N;
-    if (text.charCodeAt(N - 1) === RETURN) --N;
+;// ./src/module/dsv.ts
+const QUOTE = 34;
+const NEWLINE = 10;
+const RETURN = 13;
+function dsv(delimiter) {
+  const delimiterCode = delimiter.charCodeAt(0);
+  function parseRows(text, callback) {
+    const rows = [];
+    let len = text.length;
+    let pos = 0;
+    let rowNum = 0;
+    let eof = len <= 0;
+    let eol = false;
+    text.charCodeAt(0) === 65279 && pos++;
+    text.charCodeAt(len - 1) === NEWLINE && --len;
+    text.charCodeAt(len - 1) === RETURN && --len;
     function token() {
-      if (eof) return EOF;
-      if (eol) return eol = false, EOL;
-      var i, j = I, c;
-      if (text.charCodeAt(j) === QUOTE) {
-        while (I++ < N && text.charCodeAt(I) !== QUOTE || text.charCodeAt(++I) === QUOTE) ;
-        if ((i = I) >= N) eof = true;
-        else if ((c = text.charCodeAt(I++)) === NEWLINE) eol = true;
-        else if (c === RETURN) {
-          eol = true;
-          if (text.charCodeAt(I) === NEWLINE) ++I;
+      if (eof) {
+        return null;
+      }
+      if (eol) {
+        eol = false;
+        return null;
+      }
+      const start = pos;
+      let c, end;
+      if (text.charCodeAt(start) === QUOTE) {
+        while (++pos < len) {
+          if (text.charCodeAt(pos) === QUOTE) {
+            if (text.charCodeAt(pos + 1) !== QUOTE) {
+              break;
+            }
+            pos++;
+          }
         }
-        return text.slice(j + 1, i - 1).replace(/""/g, '"');
-      }
-      while (I < N) {
-        if ((c = text.charCodeAt(i = I++)) === NEWLINE) eol = true;
-        else if (c === RETURN) {
+        if ((end = pos++) >= len) {
+          eof = true;
+        } else if ((c = text.charCodeAt(pos++)) === NEWLINE) {
           eol = true;
-          if (text.charCodeAt(I) === NEWLINE) ++I;
-        } else if (c !== DELIMITER) continue;
-        return text.slice(j, i);
+        } else if (c === RETURN) {
+          eol = true;
+          text.charCodeAt(pos) === NEWLINE && ++pos;
+        }
+        return text.slice(start + 1, end).replace(/""/g, '"');
       }
-      return eof = true, text.slice(j, N);
+      while (pos < len) {
+        if ((c = text.charCodeAt(end = pos++)) === NEWLINE) {
+          eol = true;
+        } else if (c === RETURN) {
+          eol = true;
+          text.charCodeAt(pos) === NEWLINE && ++pos;
+        } else if (c !== delimiterCode) {
+          continue;
+        }
+        return text.slice(start, end);
+      }
+      eof = true;
+      return text.slice(start, len);
     }
-    while ((t = token()) !== EOF) {
-      var row = [];
-      while (t !== EOL && t !== EOF) row.push(t), t = token();
-      if (f && (row = f(row, n++)) == null) continue;
-      rows.push(row);
+    let t;
+    while ((t = token()) !== null) {
+      const row = [];
+      while (t !== null) {
+        row.push(t);
+        t = token();
+      }
+      if (callback) {
+        const result = callback(row, rowNum++);
+        result != null && rows.push(result);
+      } else {
+        rows.push(row);
+      }
     }
     return rows;
   }
-  function preformatBody(rows, columns) {
-    return rows.map(function(row) {
-      return columns.map(function(column) {
-        return formatValue(row[column]);
-      }).join(delimiter);
+  function parse(text, callback) {
+    let columns = [];
+    return parseRows(text, (row, i) => {
+      var _a;
+      if (i === 0) {
+        columns = row;
+        return null;
+      }
+      const obj = {};
+      for (let j = 0; j < columns.length; j++) {
+        obj[columns[j]] = (_a = row[j]) != null ? _a : "";
+      }
+      return callback ? callback(obj, i - 1, columns) : obj;
     });
   }
-  function format(rows, columns) {
-    if (columns == null) columns = inferColumns(rows);
-    return [columns.map(formatValue).join(delimiter)].concat(preformatBody(rows, columns)).join("\n");
-  }
-  function formatBody(rows, columns) {
-    if (columns == null) columns = inferColumns(rows);
-    return preformatBody(rows, columns).join("\n");
-  }
-  function formatRows(rows) {
-    return rows.map(formatRow).join("\n");
-  }
-  function formatRow(row) {
-    return row.map(formatValue).join(delimiter);
-  }
-  function formatValue(value) {
-    return value == null ? "" : value instanceof Date ? formatDate(value) : reFormat.test(value += "") ? '"' + value.replace(/"/g, '""') + '"' : value;
-  }
-  return {
-    parse,
-    parseRows,
-    format,
-    formatBody,
-    formatRows,
-    formatRow,
-    formatValue
-  };
+  return { parse, parseRows };
 }
-
-;// ./node_modules/d3-dsv/src/csv.js
-
-var csv = dsv(",");
-var csvParse = csv.parse;
-var csvParseRows = csv.parseRows;
-var csvFormat = csv.format;
-var csvFormatBody = csv.formatBody;
-var csvFormatRows = csv.formatRows;
-var csvFormatRow = csv.formatRow;
-var csvFormatValue = csv.formatValue;
-
-;// ./node_modules/d3-dsv/src/tsv.js
-
-var tsv = dsv("	");
-var tsvParse = tsv.parse;
-var tsvParseRows = tsv.parseRows;
-var tsvFormat = tsv.format;
-var tsvFormatBody = tsv.formatBody;
-var tsvFormatRows = tsv.formatRows;
-var tsvFormatRow = tsv.formatRow;
-var tsvFormatValue = tsv.formatValue;
+const csv = dsv(",");
+const tsv = dsv("	");
+const csvParse = csv.parse;
+const csvParseRows = csv.parseRows;
+const tsvParse = tsv.parse;
+const tsvParseRows = tsv.parseRows;
 
 ;// ./src/ChartInternal/data/convert.helper.ts
 
@@ -35216,6 +35175,7 @@ function getScale(type = "linear", min, max) {
     return height;
   },
   getSvgLeft(withoutRecompute) {
+    var _a, _b, _c;
     const $$ = this;
     const { config, state: { hasAxis }, $el } = $$;
     const isRotated = config.axis_rotated;
@@ -35223,15 +35183,18 @@ function getScale(type = "linear", min, max) {
     const leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY;
     const leftAxis = $el.main.select(`.${leftAxisClass}`).node();
     const leftLabel = hasAxis && config[`axis_${isRotated ? "x" : "y"}_label`];
-    let labelWidth = 0;
-    if (hasAxis && (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel == null ? void 0 : leftLabel.position))) {
-      const label = $el.main.select(`.${leftAxisClass}-label`);
-      if (!label.empty()) {
-        labelWidth = getBoundingRect(label.node()).left;
-      }
-    }
-    const svgRect = leftAxis && hasLeftAxisRect ? getBoundingRect(leftAxis, !withoutRecompute) : { right: 0 };
-    const chartRectLeft = getBoundingRect($el.chart.node(), !withoutRecompute).left + labelWidth;
+    const needLabelRect = hasAxis && (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel == null ? void 0 : leftLabel.position));
+    const label = needLabelRect ? $el.main.select(`.${leftAxisClass}-label`) : null;
+    const labelNode = label && !label.empty() ? label.node() : null;
+    const forceEval = !withoutRecompute;
+    const rects = {
+      label: labelNode ? getBoundingRect(labelNode, forceEval) : null,
+      leftAxis: leftAxis && hasLeftAxisRect ? getBoundingRect(leftAxis, forceEval) : null,
+      chart: getBoundingRect($el.chart.node(), forceEval)
+    };
+    const labelWidth = (_b = (_a = rects.label) == null ? void 0 : _a.left) != null ? _b : 0;
+    const svgRect = (_c = rects.leftAxis) != null ? _c : { right: 0 };
+    const chartRectLeft = rects.chart.left + labelWidth;
     const hasArc = $$.hasArcType();
     const svgLeft = svgRect.right - chartRectLeft - (hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
     return svgLeft > 0 ? svgLeft : 0;
@@ -36554,7 +36517,8 @@ function _getTextXPos(pos = "left", width) {
         // defaultValueFormat
         $$.color
         // color
-      )).style("display", null).style("visibility", null).datum(datum = {
+      )).style("display", null).style("visibility", null);
+      tooltip.datum(datum = {
         index,
         x,
         current: dataStr,
@@ -37906,6 +37870,35 @@ function _getGroupedDataPointsFn(d) {
     fn = $$.generateGetBarPoints($$.getShapeIndices($$.isBarType));
   }
   return fn;
+}
+function getShapeColorWithGradient(d, configKey, colorFn) {
+  return this.config[configKey] ? this.getGradienColortUrl(d.id) : colorFn(d);
+}
+function initShapeElement(config) {
+  const { $el } = this;
+  const { elKey, className, cssRules, position } = config;
+  const container = $el.main.select(`.${classes.chart}`);
+  $el[elKey] = position === "first" ? container.insert("g", ":first-child") : container.append("g");
+  $el[elKey].attr("class", className);
+  if (cssRules == null ? void 0 : cssRules.length) {
+    $el[elKey].call(this.setCssRule(false, `.${className}`, cssRules));
+  }
+}
+function updateTargetsForShape(targets, config) {
+  const $$ = this;
+  const { $el } = $$;
+  const { type, elKey, containerClass, itemClass, initFn, withFocus = true, withStyles = true } = config;
+  if (!$el[elKey]) {
+    initFn.call($$);
+  }
+  const classChart = $$.getChartClass(type);
+  const classFocus = withFocus ? $$.classFocus.bind($$) : () => "";
+  const mainUpdate = $el.main.select(`.${containerClass}`).selectAll(`.${itemClass}`).data($$.filterNullish(targets)).attr("class", (d) => classChart(d) + classFocus(d));
+  const mainEnter = mainUpdate.enter().append("g").attr("class", classChart);
+  if (withStyles) {
+    mainEnter.style("opacity", "0").style("pointer-events", $$.getStylePropValue("none"));
+  }
+  return mainEnter;
 }
 /* harmony default export */ var shape = ({
   /**
@@ -44011,17 +44004,30 @@ class Axis_Axis {
       const g = dummy.append("g").attr("class", `${$AXIS[`axis${capitalize(id)}`]} ${$COMMON.dummy}`);
       axis.create(g);
       const { sizeFor1Char } = g.node();
-      dummy.selectAll("text").attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null).each(function(d, i) {
-        const { width, height } = sizeFor1Char ? {
-          width: this.textContent.length * sizeFor1Char.w,
-          height: sizeFor1Char.h
-        } : getBoundingRect(this, true);
-        max.width = Math.max(max.width, width);
-        max.height = Math.max(max.height, height);
-        if (!isYAxis) {
-          currentTickMax.ticks[i] = width;
-        }
-      });
+      const textSelection = dummy.selectAll("text").attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null);
+      if (sizeFor1Char) {
+        textSelection.each(function(d, i) {
+          const width = this.textContent.length * sizeFor1Char.w;
+          const height = sizeFor1Char.h;
+          max.width = Math.max(max.width, width);
+          max.height = Math.max(max.height, height);
+          if (!isYAxis) {
+            currentTickMax.ticks[i] = width;
+          }
+        });
+      } else {
+        const textNodes = [];
+        textSelection.each(function() {
+          textNodes.push(this);
+        });
+        textNodes.map((node) => getBoundingRect(node, true)).forEach((dim, i) => {
+          max.width = Math.max(max.width, dim.width);
+          max.height = Math.max(max.height, dim.height);
+          if (!isYAxis) {
+            currentTickMax.ticks[i] = dim.width;
+          }
+        });
+      }
       dummy.remove();
     }
     Object.keys(max).forEach((key) => {
@@ -44808,11 +44814,7 @@ class Axis_Axis {
   }
 });
 
-;// ./node_modules/d3-ease/src/linear.js
-const src_linear_linear = (t) => +t;
-
 ;// ./src/ChartInternal/interactions/flow.ts
-
 
 
 
@@ -44879,7 +44881,7 @@ const src_linear_linear = (t) => +t;
     const wait = generateWait();
     let n;
     wait.add(Object.keys(elements).map((v) => {
-      n = elements[v].transition().ease(src_linear_linear).duration(duration);
+      n = elements[v].transition().ease((t) => +t).duration(duration);
       if (v === "axis.x") {
         n = n.call((g) => {
           $$.axis.x.setTransition(g).create(g);
@@ -49312,6 +49314,7 @@ function point_y(p) {
 
 
 
+
 /* harmony default export */ var shape_area = ({
   initArea(mainLine) {
     const $$ = this;
@@ -49326,7 +49329,7 @@ function point_y(p) {
    */
   updateAreaColor(d) {
     const $$ = this;
-    return $$.config.area_linearGradient ? $$.getGradienColortUrl(d.id) : $$.color(d);
+    return getShapeColorWithGradient.call($$, d, "area_linearGradient", $$.color);
   },
   /**
    * Generate/Update elements
@@ -49444,6 +49447,7 @@ function point_y(p) {
 
 
 
+
 function _getConnectLineType(id) {
   const connectLine = this.config.bar_connectLine;
   const type = (connectLine == null ? void 0 : connectLine[id]) || connectLine;
@@ -49461,16 +49465,16 @@ function _getConnectLineType(id) {
   },
   updateTargetsForBar(targets) {
     const $$ = this;
-    const { config, $el } = $$;
-    const classChartBar = $$.getChartClass("Bar");
+    const { config } = $$;
     const classBars = $$.getClass("bars", true);
-    const classFocus = $$.classFocus.bind($$);
     const isSelectable = config.interaction_enabled && config.data_selection_isselectable;
-    if (!$el.bar) {
-      $$.initBar();
-    }
-    const mainBarUpdate = $el.main.select(`.${$BAR.chartBars}`).selectAll(`.${$BAR.chartBar}`).data($$.filterNullish(targets)).attr("class", (d) => classChartBar(d) + classFocus(d));
-    const mainBarEnter = mainBarUpdate.enter().append("g").attr("class", classChartBar).style("opacity", "0").style("pointer-events", $$.getStylePropValue("none"));
+    const mainBarEnter = updateTargetsForShape.call($$, targets, {
+      type: "Bar",
+      elKey: "bar",
+      containerClass: $BAR.chartBars,
+      itemClass: $BAR.chartBar,
+      initFn: $$.initBar
+    });
     mainBarEnter.append("g").attr("class", classBars).style("cursor", (d) => {
       var _a;
       return ((_a = isSelectable == null ? void 0 : isSelectable.bind) == null ? void 0 : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null;
@@ -49510,7 +49514,7 @@ function _getConnectLineType(id) {
   updateBarColor(d) {
     const $$ = this;
     const fn = $$.getStylePropValue($$.color);
-    return $$.config.bar_linearGradient ? $$.getGradienColortUrl(d.id) : fn ? fn(d) : null;
+    return getShapeColorWithGradient.call($$, d, "bar_linearGradient", fn || (() => null));
   },
   /**
    * Redraw function
@@ -49812,10 +49816,13 @@ var candlestick_spreadValues = (a, b) => {
 
 
 
+
 /* harmony default export */ var candlestick = ({
   initCandlestick() {
-    const { $el } = this;
-    $el.candlestick = $el.main.select(`.${$COMMON.chart}`).append("g").attr("class", $CANDLESTICK.chartCandlesticks);
+    initShapeElement.call(this, {
+      elKey: "candlestick",
+      className: $CANDLESTICK.chartCandlesticks
+    });
   },
   /**
    * Update targets by its data
@@ -49824,14 +49831,15 @@ var candlestick_spreadValues = (a, b) => {
    * @private
    */
   updateTargetsForCandlestick(targets) {
-    const $$ = this;
-    const { $el } = $$;
-    const classChart = $$.getChartClass("Candlestick");
-    if (!$el.candlestick) {
-      $$.initCandlestick();
-    }
-    const mainUpdate = $$.$el.main.select(`.${$CANDLESTICK.chartCandlesticks}`).selectAll(`.${$CANDLESTICK.chartCandlestick}`).data($$.filterNullish(targets));
-    mainUpdate.enter().append("g").attr("class", classChart).style("pointer-events", "none");
+    updateTargetsForShape.call(this, targets, {
+      type: "Candlestick",
+      elKey: "candlestick",
+      containerClass: $CANDLESTICK.chartCandlesticks,
+      itemClass: $CANDLESTICK.chartCandlestick,
+      initFn: this.initCandlestick,
+      withFocus: false,
+      withStyles: false
+    }).style("pointer-events", "none");
   },
   /**
    * Generate/Update elements
@@ -50338,6 +50346,7 @@ var line_spreadProps = (a, b) => line_defProps(a, line_getOwnPropDescs(b));
 
 
 
+
 function _getStrokeDashArray(start, end, pattern, isLastX = false) {
   const dash = start ? [start, 0] : pattern;
   for (let i = start ? start : pattern.reduce((a, c) => a + c); i <= end; ) {
@@ -50371,23 +50380,27 @@ function _getRegions(d, _regions, isTimeSeries) {
 }
 /* harmony default export */ var line = ({
   initLine() {
-    const { $el } = this;
-    $el.line = $el.main.select(`.${$COMMON.chart}`).append("g").attr("class", $LINE.chartLines).call(this.setCssRule(false, `.${$LINE.chartLines}`, ["pointer-events:none"]));
+    initShapeElement.call(this, {
+      elKey: "line",
+      className: $LINE.chartLines,
+      cssRules: ["pointer-events:none"]
+    });
   },
   updateTargetsForLine(t) {
     const $$ = this;
-    const { $el: { area, line, main } } = $$;
-    const classChartLine = $$.getChartClass("Line");
+    const { $el: { area, main } } = $$;
     const classLines = $$.getClass("lines", true);
-    const classFocus = $$.classFocus.bind($$);
-    if (!line) {
-      $$.initLine();
-    }
     const targets = t.filter((d) => !($$.isScatterType(d) || $$.isBubbleType(d)));
-    const mainLineUpdate = main.select(`.${$LINE.chartLines}`).selectAll(`.${$LINE.chartLine}`).data($$.filterNullish(targets)).attr("class", (d) => classChartLine(d) + classFocus(d));
-    const mainLineEnter = mainLineUpdate.enter().append("g").attr("class", classChartLine).style("opacity", "0").style("pointer-events", $$.getStylePropValue("none"));
+    const mainLineEnter = updateTargetsForShape.call($$, targets, {
+      type: "Line",
+      elKey: "line",
+      containerClass: $LINE.chartLines,
+      itemClass: $LINE.chartLine,
+      initFn: $$.initLine
+    });
     mainLineEnter.append("g").attr("class", classLines);
     if ($$.hasTypeOf("Area")) {
+      const mainLineUpdate = main.select(`.${$LINE.chartLines}`).selectAll(`.${$LINE.chartLine}`);
       const mainLine = (!area && mainLineEnter.empty() ? mainLineUpdate : mainLineEnter).filter($$.isAreaType.bind($$));
       $$.initArea(mainLine);
     }
@@ -53897,7 +53910,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260127004749",
+  version: "3.18.0-nightly-20260128004736",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260127004749
+ * @version 3.18.0-nightly-20260128004736
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -18,7 +18,7 @@
 		exports["bb"] = factory(require("d3-brush"), require("d3-selection"));
 	else
 		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["tableview"] = factory(root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__1__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__1__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
@@ -29,11 +29,10 @@ return /******/ (function() { // webpackBootstrap
 module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
 
 /***/ }),
-/* 2 */,
-/* 3 */
+/* 2 */
 /***/ (function(module) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__3__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__2__;
 
 /***/ })
 /******/ 	]);
@@ -91,7 +90,7 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(2);
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 ;// ./src/module/browser.ts
@@ -950,6 +949,7 @@ function loadConfig(config) {
 var Plugin_defProp = Object.defineProperty;
 var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
 class Plugin {
   /**
    * Constructor
@@ -959,7 +959,15 @@ class Plugin {
   constructor(options = {}) {
     __publicField(this, "$$");
     __publicField(this, "options");
+    __publicField(this, "config");
     this.options = options;
+  }
+  /**
+   * Load plugin config from options
+   * @private
+   */
+  loadConfig() {
+    loadConfig.call(this, this.options);
   }
   /**
    * Lifecycle hook for 'beforeInit' phase.
@@ -996,7 +1004,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260127004749");
+__publicField(Plugin, "version", "3.18.0-nightly-20260128004736");
 
 ;// ./src/Plugin/tableview/const.ts
 
@@ -1162,17 +1170,15 @@ var tableview_publicField = (obj, key, value) => tableview_defNormalProp(obj, ty
 
 
 
-
 class TableView extends Plugin {
   constructor(options) {
     super(options);
-    tableview_publicField(this, "config");
     tableview_publicField(this, "element");
     this.config = new Options();
     return this;
   }
   $beforeInit() {
-    loadConfig.call(this, this.options);
+    this.loadConfig();
   }
   $init() {
     const { class: className, selector, style } = this.config;

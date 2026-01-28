@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260127004749
+ * @version 3.18.0-nightly-20260128004736
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -26930,6 +26930,7 @@ function loadConfig(config) {
 var Plugin_defProp = Object.defineProperty;
 var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
 class Plugin {
   /**
    * Constructor
@@ -26939,7 +26940,15 @@ class Plugin {
   constructor(options = {}) {
     __publicField(this, "$$");
     __publicField(this, "options");
+    __publicField(this, "config");
     this.options = options;
+  }
+  /**
+   * Load plugin config from options
+   * @private
+   */
+  loadConfig() {
+    loadConfig.call(this, this.options);
   }
   /**
    * Lifecycle hook for 'beforeInit' phase.
@@ -26976,7 +26985,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260127004749");
+__publicField(Plugin, "version", "3.18.0-nightly-20260128004736");
 
 ;// ./src/Plugin/sparkline/Options.ts
 class Options {
@@ -27004,17 +27013,15 @@ var sparkline_publicField = (obj, key, value) => sparkline_defNormalProp(obj, ty
 
 
 
-
 class Sparkline extends Plugin {
   constructor(options) {
     super(options);
-    sparkline_publicField(this, "config");
     sparkline_publicField(this, "element");
     this.config = new Options();
     return this;
   }
   $beforeInit() {
-    loadConfig.call(this, this.options);
+    this.loadConfig();
     this.validate();
     this.element = [].slice.call(document.querySelectorAll(this.config.selector));
     this.overrideInternals();

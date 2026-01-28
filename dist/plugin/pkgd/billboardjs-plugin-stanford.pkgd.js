@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260127004749
+ * @version 3.18.0-nightly-20260128004736
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -27841,6 +27841,7 @@ function loadConfig(config) {
 var Plugin_defProp = Object.defineProperty;
 var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
 class Plugin {
   /**
    * Constructor
@@ -27850,7 +27851,15 @@ class Plugin {
   constructor(options = {}) {
     __publicField(this, "$$");
     __publicField(this, "options");
+    __publicField(this, "config");
     this.options = options;
+  }
+  /**
+   * Load plugin config from options
+   * @private
+   */
+  loadConfig() {
+    loadConfig.call(this, this.options);
   }
   /**
    * Lifecycle hook for 'beforeInit' phase.
@@ -27887,7 +27896,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260127004749");
+__publicField(Plugin, "version", "3.18.0-nightly-20260128004736");
 
 ;// ./node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {
@@ -28010,7 +28019,12 @@ var ColorScale_publicField = (obj, key, value) => ColorScale_defNormalProp(obj, 
 
 
 
-
+function ColorScale_format(specifier) {
+  if (specifier === "d") {
+    return (n) => Math.round(n).toString();
+  }
+  return (n) => String(n);
+}
 class ColorScale {
   constructor(owner) {
     ColorScale_publicField(this, "owner");
@@ -28041,7 +28055,7 @@ class ColorScale {
     } else if (isFunction(scaleFormat)) {
       legendAxis.tickFormat(scaleFormat);
     } else {
-      legendAxis.tickFormat(format("d"));
+      legendAxis.tickFormat(ColorScale_format("d"));
     }
     const axis = this.colorScale.append("g").attr("class", "legend axis").attr("transform", `translate(${barWidth},0)`).call(legendAxis);
     if (scaleFormat === "pow10") {
@@ -28354,12 +28368,17 @@ var stanford_publicField = (obj, key, value) => stanford_defNormalProp(obj, type
 
 
 
-
-
+function stanford_hsl(h, s, l, opacity = 1) {
+  return {
+    h: +h,
+    s: +s,
+    l: +l,
+    opacity: +opacity
+  };
+}
 class Stanford extends Plugin {
   constructor(options) {
     super(options);
-    stanford_publicField(this, "config");
     stanford_publicField(this, "colorScale");
     stanford_publicField(this, "elements");
     this.config = new Options();
@@ -28382,7 +28401,7 @@ class Stanford extends Plugin {
   }
   $init() {
     const { $$ } = this;
-    loadConfig.call(this, this.options);
+    this.loadConfig();
     $$.color = this.getStanfordPointColor.bind($$);
     this.colorScale = new ColorScale(this);
     this.elements = new Elements(this);
@@ -28421,7 +28440,7 @@ class Stanford extends Plugin {
     const epochs = target.values.map((a) => a.epochs);
     target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : Math.min(...epochs);
     target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : Math.max(...epochs);
-    target.colors = isFunction(config.colors) ? config.colors : hslLong(hsl(250, 1, 0.5), hsl(0, 1, 0.5));
+    target.colors = isFunction(config.colors) ? config.colors : hslLong(stanford_hsl(250, 1, 0.5), stanford_hsl(0, 1, 0.5));
     target.colorscale = sequentialLog(target.colors).domain([target.minEpochs, target.maxEpochs]);
   }
   getStanfordPointColor(d) {

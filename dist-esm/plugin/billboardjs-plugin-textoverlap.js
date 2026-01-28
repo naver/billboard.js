@@ -5,12 +5,11 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260127004749
+ * @version 3.18.0-nightly-20260128004736
  * @requires billboard.js
  * @summary billboard.js plugin
 */
 import { Delaunay } from 'd3-delaunay';
-import { polygonCentroid, polygonArea } from 'd3-polygon';
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -51,6 +50,50 @@ function __spreadArray(to, from, pack) {
         }
     }
     return to.concat(ar || Array.prototype.slice.call(from));
+}
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Compute the signed area of a polygon using the Shoelace formula.
+ * @param {Array} polygon Array of [x, y] coordinates
+ * @returns {number} Signed area of the polygon
+ * @see https://en.wikipedia.org/wiki/Shoelace_formula
+ */
+function polygonArea(polygon) {
+    var n = polygon.length;
+    var area = 0;
+    var b = polygon[n - 1];
+    for (var i = 0; i < n; i++) {
+        var a = b;
+        b = polygon[i];
+        area += a[1] * b[0] - a[0] * b[1];
+    }
+    return area / 2;
+}
+/**
+ * Compute the centroid of a polygon.
+ * @param {Array} polygon Array of [x, y] coordinates
+ * @returns {Array} Centroid [x, y] of the polygon
+ */
+function polygonCentroid(polygon) {
+    var n = polygon.length;
+    var x = 0;
+    var y = 0;
+    var k = 0;
+    var b = polygon[n - 1];
+    for (var i = 0; i < n; i++) {
+        var a = b;
+        b = polygon[i];
+        var c = a[0] * b[1] - b[0] * a[1];
+        k += c;
+        x += (a[0] + b[0]) * c;
+        y += (a[1] + b[1]) * c;
+    }
+    k *= 3;
+    return [x / k, y / k];
 }
 
 /**
@@ -174,6 +217,13 @@ var Plugin = /** @class */ (function () {
         this.options = options;
     }
     /**
+     * Load plugin config from options
+     * @private
+     */
+    Plugin.prototype.loadConfig = function () {
+        loadConfig.call(this, this.options);
+    };
+    /**
      * Lifecycle hook for 'beforeInit' phase.
      * @private
      */
@@ -204,7 +254,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.18.0-nightly-20260127004749";
+    Plugin.version = "3.18.0-nightly-20260128004736";
     return Plugin;
 }());
 
@@ -268,10 +318,8 @@ var Options = /** @class */ (function () {
  *   - Non required modules from billboard.js core, need to be installed separately.
  *   - Appropriate and works for axis based chart.
  * - **Required modules:**
- *   - [d3-polygon](https://github.com/d3/d3-polygon)
  *   - [d3-delaunay](https://github.com/d3/d3-delaunay)
  * @class plugin-textoverlap
- * @requires d3-polygon
  * @requires d3-delaunay
  * @param {object} options TextOverlap plugin options
  * @augments Plugin
@@ -311,7 +359,7 @@ var TextOverlap = /** @class */ (function (_super) {
         return _this;
     }
     TextOverlap.prototype.$init = function () {
-        loadConfig.call(this, this.options);
+        this.loadConfig();
     };
     TextOverlap.prototype.$redraw = function () {
         var _a = this, $el = _a.$$.$el, selector = _a.config.selector;
@@ -348,17 +396,15 @@ var TextOverlap = /** @class */ (function (_super) {
             var cell = voronoi.cellPolygon(i);
             if (cell && this) {
                 var _a = points[i], x = _a[0], y = _a[1];
-                // @ts-ignore wrong type definiton for d3PolygonCentroid
                 var _b = polygonCentroid(cell), cx = _b[0], cy = _b[1];
-                // @ts-ignore wrong type definiton for d3PolygonArea
-                var polygonArea$1 = Math.abs(polygonArea(cell));
+                var cellArea = Math.abs(polygonArea(cell));
                 var angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
                 var xTranslate = extent * (angle === 0 ? 1 : -1);
                 var yTranslate = angle === -1 ? -extent : extent + 5;
                 var txtAnchor = Math.abs(angle) === 1 ?
                     "middle" :
                     (angle === 0 ? "start" : "end");
-                this.style.display = polygonArea$1 < area ? "none" : "";
+                this.style.display = cellArea < area ? "none" : "";
                 this.setAttribute("text-anchor", txtAnchor);
                 this.setAttribute("dy", "0.".concat(angle === 1 ? 71 : 35, "em"));
                 this.setAttribute("transform", "translate(".concat(xTranslate, ", ").concat(yTranslate, ")"));

@@ -5,18 +5,18 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260127004749
+ * @version 3.18.0-nightly-20260128004736
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-axis"), require("d3-brush"), require("d3-drag"), require("d3-dsv"), require("d3-ease"), require("d3-hierarchy"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom"));
+		module.exports = factory(require("d3-axis"), require("d3-brush"), require("d3-drag"), require("d3-hierarchy"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom"));
 	else if(typeof define === 'function' && define.amd)
-		define(["d3-axis", "d3-brush", "d3-drag", "d3-dsv", "d3-ease", "d3-hierarchy", "d3-interpolate", "d3-scale", "d3-selection", "d3-shape", "d3-time-format", "d3-transition", "d3-zoom"], factory);
+		define(["d3-axis", "d3-brush", "d3-drag", "d3-hierarchy", "d3-interpolate", "d3-scale", "d3-selection", "d3-shape", "d3-time-format", "d3-transition", "d3-zoom"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("d3-axis"), require("d3-brush"), require("d3-drag"), require("d3-dsv"), require("d3-ease"), require("d3-hierarchy"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
+		var a = typeof exports === 'object' ? factory(require("d3-axis"), require("d3-brush"), require("d3-drag"), require("d3-hierarchy"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__14__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__10__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__9__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
@@ -86,18 +86,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__11__;
 /***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__12__;
-
-/***/ }),
-/* 13 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__13__;
-
-/***/ }),
-/* 14 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__14__;
 
 /***/ })
 /******/ 	]);
@@ -3888,8 +3876,105 @@ function runWorker(useWorker = true, fn, callback, depsFn) {
   return runFn;
 }
 
-// EXTERNAL MODULE: external {"commonjs":"d3-dsv","commonjs2":"d3-dsv","amd":"d3-dsv","root":"d3"}
-var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(5);
+;// ./src/module/dsv.ts
+const QUOTE = 34;
+const NEWLINE = 10;
+const RETURN = 13;
+function dsv(delimiter) {
+  const delimiterCode = delimiter.charCodeAt(0);
+  function parseRows(text, callback) {
+    const rows = [];
+    let len = text.length;
+    let pos = 0;
+    let rowNum = 0;
+    let eof = len <= 0;
+    let eol = false;
+    text.charCodeAt(0) === 65279 && pos++;
+    text.charCodeAt(len - 1) === NEWLINE && --len;
+    text.charCodeAt(len - 1) === RETURN && --len;
+    function token() {
+      if (eof) {
+        return null;
+      }
+      if (eol) {
+        eol = false;
+        return null;
+      }
+      const start = pos;
+      let c, end;
+      if (text.charCodeAt(start) === QUOTE) {
+        while (++pos < len) {
+          if (text.charCodeAt(pos) === QUOTE) {
+            if (text.charCodeAt(pos + 1) !== QUOTE) {
+              break;
+            }
+            pos++;
+          }
+        }
+        if ((end = pos++) >= len) {
+          eof = true;
+        } else if ((c = text.charCodeAt(pos++)) === NEWLINE) {
+          eol = true;
+        } else if (c === RETURN) {
+          eol = true;
+          text.charCodeAt(pos) === NEWLINE && ++pos;
+        }
+        return text.slice(start + 1, end).replace(/""/g, '"');
+      }
+      while (pos < len) {
+        if ((c = text.charCodeAt(end = pos++)) === NEWLINE) {
+          eol = true;
+        } else if (c === RETURN) {
+          eol = true;
+          text.charCodeAt(pos) === NEWLINE && ++pos;
+        } else if (c !== delimiterCode) {
+          continue;
+        }
+        return text.slice(start, end);
+      }
+      eof = true;
+      return text.slice(start, len);
+    }
+    let t;
+    while ((t = token()) !== null) {
+      const row = [];
+      while (t !== null) {
+        row.push(t);
+        t = token();
+      }
+      if (callback) {
+        const result = callback(row, rowNum++);
+        result != null && rows.push(result);
+      } else {
+        rows.push(row);
+      }
+    }
+    return rows;
+  }
+  function parse(text, callback) {
+    let columns = [];
+    return parseRows(text, (row, i) => {
+      var _a;
+      if (i === 0) {
+        columns = row;
+        return null;
+      }
+      const obj = {};
+      for (let j = 0; j < columns.length; j++) {
+        obj[columns[j]] = (_a = row[j]) != null ? _a : "";
+      }
+      return callback ? callback(obj, i - 1, columns) : obj;
+    });
+  }
+  return { parse, parseRows };
+}
+const csv = dsv(",");
+const tsv = dsv("	");
+const csvParse = csv.parse;
+const csvParseRows = csv.parseRows;
+const tsvParse = tsv.parse;
+const tsvParseRows = tsv.parseRows;
+
 ;// ./src/ChartInternal/data/convert.helper.ts
 
 
@@ -3975,7 +4060,7 @@ function json(json2, keysParam) {
 }
 function url(url2, mimeType = "csv", headers, keys, done) {
   const req = new XMLHttpRequest();
-  const converter = { csv, tsv, json };
+  const converter = { csv: convert_helper_csv, tsv: convert_helper_tsv, json };
   req.open("GET", url2);
   if (headers) {
     Object.keys(headers).forEach(function(key) {
@@ -4010,16 +4095,16 @@ function convertCsvTsvToData(parser, xsv) {
   }
   return d;
 }
-function csv(xsv) {
+function convert_helper_csv(xsv) {
   return convertCsvTsvToData({
-    rows: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.csvParseRows,
-    parse: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.csvParse
+    rows: csvParseRows,
+    parse: csvParse
   }, xsv);
 }
-function tsv(tsv2) {
+function convert_helper_tsv(tsv2) {
   return convertCsvTsvToData({
-    rows: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.tsvParseRows,
-    parse: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.tsvParse
+    rows: tsvParseRows,
+    parse: tsvParse
   }, tsv2);
 }
 
@@ -5204,7 +5289,7 @@ function callDone(fn, resizeAfter = false) {
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-drag","commonjs2":"d3-drag","amd":"d3-drag","root":"d3"}
-var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(6);
+var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(5);
 ;// ./src/ChartInternal/interactions/interaction.ts
 
 
@@ -5538,7 +5623,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
-var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(7);
+var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(6);
 ;// ./src/ChartInternal/internals/color.ts
 
 
@@ -6887,7 +6972,7 @@ function _buildLegendItemMap($$, legendItems) {
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-transition","commonjs2":"d3-transition","amd":"d3-transition","root":"d3"}
-var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_ = __webpack_require__(8);
+var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_ = __webpack_require__(7);
 ;// ./src/ChartInternal/internals/redraw.ts
 
 
@@ -7324,6 +7409,7 @@ function getScale(type = "linear", min, max) {
     return height;
   },
   getSvgLeft(withoutRecompute) {
+    var _a, _b, _c;
     const $$ = this;
     const { config, state: { hasAxis }, $el } = $$;
     const isRotated = config.axis_rotated;
@@ -7331,15 +7417,18 @@ function getScale(type = "linear", min, max) {
     const leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY;
     const leftAxis = $el.main.select(`.${leftAxisClass}`).node();
     const leftLabel = hasAxis && config[`axis_${isRotated ? "x" : "y"}_label`];
-    let labelWidth = 0;
-    if (hasAxis && (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel == null ? void 0 : leftLabel.position))) {
-      const label = $el.main.select(`.${leftAxisClass}-label`);
-      if (!label.empty()) {
-        labelWidth = getBoundingRect(label.node()).left;
-      }
-    }
-    const svgRect = leftAxis && hasLeftAxisRect ? getBoundingRect(leftAxis, !withoutRecompute) : { right: 0 };
-    const chartRectLeft = getBoundingRect($el.chart.node(), !withoutRecompute).left + labelWidth;
+    const needLabelRect = hasAxis && (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel == null ? void 0 : leftLabel.position));
+    const label = needLabelRect ? $el.main.select(`.${leftAxisClass}-label`) : null;
+    const labelNode = label && !label.empty() ? label.node() : null;
+    const forceEval = !withoutRecompute;
+    const rects = {
+      label: labelNode ? getBoundingRect(labelNode, forceEval) : null,
+      leftAxis: leftAxis && hasLeftAxisRect ? getBoundingRect(leftAxis, forceEval) : null,
+      chart: getBoundingRect($el.chart.node(), forceEval)
+    };
+    const labelWidth = (_b = (_a = rects.label) == null ? void 0 : _a.left) != null ? _b : 0;
+    const svgRect = (_c = rects.leftAxis) != null ? _c : { right: 0 };
+    const chartRectLeft = rects.chart.left + labelWidth;
     const hasArc = $$.hasArcType();
     const svgLeft = svgRect.right - chartRectLeft - (hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
     return svgLeft > 0 ? svgLeft : 0;
@@ -8655,7 +8744,8 @@ function _getTextXPos(pos = "left", width) {
         // defaultValueFormat
         $$.color
         // color
-      )).style("display", null).style("visibility", null).datum(datum = {
+      )).style("display", null).style("visibility", null);
+      tooltip.datum(datum = {
         index,
         x,
         current: dataStr,
@@ -9077,7 +9167,7 @@ function _getTextXPos(pos = "left", width) {
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-shape","commonjs2":"d3-shape","amd":"d3-shape","root":"d3"}
-var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webpack_require__(9);
+var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webpack_require__(8);
 ;// ./src/ChartInternal/shape/shape.ts
 
 
@@ -9093,6 +9183,35 @@ function _getGroupedDataPointsFn(d) {
     fn = $$.generateGetBarPoints($$.getShapeIndices($$.isBarType));
   }
   return fn;
+}
+function getShapeColorWithGradient(d, configKey, colorFn) {
+  return this.config[configKey] ? this.getGradienColortUrl(d.id) : colorFn(d);
+}
+function initShapeElement(config) {
+  const { $el } = this;
+  const { elKey, className, cssRules, position } = config;
+  const container = $el.main.select(`.${classes.chart}`);
+  $el[elKey] = position === "first" ? container.insert("g", ":first-child") : container.append("g");
+  $el[elKey].attr("class", className);
+  if (cssRules == null ? void 0 : cssRules.length) {
+    $el[elKey].call(this.setCssRule(false, `.${className}`, cssRules));
+  }
+}
+function updateTargetsForShape(targets, config) {
+  const $$ = this;
+  const { $el } = $$;
+  const { type, elKey, containerClass, itemClass, initFn, withFocus = true, withStyles = true } = config;
+  if (!$el[elKey]) {
+    initFn.call($$);
+  }
+  const classChart = $$.getChartClass(type);
+  const classFocus = withFocus ? $$.classFocus.bind($$) : () => "";
+  const mainUpdate = $el.main.select(`.${containerClass}`).selectAll(`.${itemClass}`).data($$.filterNullish(targets)).attr("class", (d) => classChart(d) + classFocus(d));
+  const mainEnter = mainUpdate.enter().append("g").attr("class", classChart);
+  if (withStyles) {
+    mainEnter.style("opacity", "0").style("pointer-events", $$.getStylePropValue("none"));
+  }
+  return mainEnter;
 }
 /* harmony default export */ var shape = ({
   /**
@@ -11582,7 +11701,7 @@ extend(subchart, {
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-zoom","commonjs2":"d3-zoom","amd":"d3-zoom","root":"d3"}
-var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(10);
+var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(9);
 ;// ./src/Chart/api/zoom.ts
 
 
@@ -13632,7 +13751,7 @@ extend(regions, {
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
-var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(11);
+var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(10);
 ;// ./src/ChartInternal/Axis/AxisRendererHelper.ts
 var AxisRendererHelper_defProp = Object.defineProperty;
 var AxisRendererHelper_defNormalProp = (obj, key, value) => key in obj ? AxisRendererHelper_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -14649,17 +14768,30 @@ class Axis_Axis {
       const g = dummy.append("g").attr("class", `${$AXIS[`axis${capitalize(id)}`]} ${$COMMON.dummy}`);
       axis.create(g);
       const { sizeFor1Char } = g.node();
-      dummy.selectAll("text").attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null).each(function(d, i) {
-        const { width, height } = sizeFor1Char ? {
-          width: this.textContent.length * sizeFor1Char.w,
-          height: sizeFor1Char.h
-        } : getBoundingRect(this, true);
-        max.width = Math.max(max.width, width);
-        max.height = Math.max(max.height, height);
-        if (!isYAxis) {
-          currentTickMax.ticks[i] = width;
-        }
-      });
+      const textSelection = dummy.selectAll("text").attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null);
+      if (sizeFor1Char) {
+        textSelection.each(function(d, i) {
+          const width = this.textContent.length * sizeFor1Char.w;
+          const height = sizeFor1Char.h;
+          max.width = Math.max(max.width, width);
+          max.height = Math.max(max.height, height);
+          if (!isYAxis) {
+            currentTickMax.ticks[i] = width;
+          }
+        });
+      } else {
+        const textNodes = [];
+        textSelection.each(function() {
+          textNodes.push(this);
+        });
+        textNodes.map((node) => getBoundingRect(node, true)).forEach((dim, i) => {
+          max.width = Math.max(max.width, dim.width);
+          max.height = Math.max(max.height, dim.height);
+          if (!isYAxis) {
+            currentTickMax.ticks[i] = dim.width;
+          }
+        });
+      }
       dummy.remove();
     }
     Object.keys(max).forEach((key) => {
@@ -15446,10 +15578,7 @@ class Axis_Axis {
   }
 });
 
-// EXTERNAL MODULE: external {"commonjs":"d3-ease","commonjs2":"d3-ease","amd":"d3-ease","root":"d3"}
-var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(12);
 ;// ./src/ChartInternal/interactions/flow.ts
-
 
 
 
@@ -15516,7 +15645,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
     const wait = generateWait();
     let n;
     wait.add(Object.keys(elements).map((v) => {
-      n = elements[v].transition().ease(external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_.easeLinear).duration(duration);
+      n = elements[v].transition().ease((t) => +t).duration(duration);
       if (v === "axis.x") {
         n = n.call((g) => {
           $$.axis.x.setTransition(g).create(g);
@@ -18450,7 +18579,7 @@ const options = {
 };
 
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
-var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(13);
+var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(11);
 ;// ./src/ChartInternal/internals/text.arc.ts
 
 
@@ -19501,6 +19630,7 @@ function _getAttrTweenFn(fn) {
 
 
 
+
 /* harmony default export */ var shape_area = ({
   initArea(mainLine) {
     const $$ = this;
@@ -19515,7 +19645,7 @@ function _getAttrTweenFn(fn) {
    */
   updateAreaColor(d) {
     const $$ = this;
-    return $$.config.area_linearGradient ? $$.getGradienColortUrl(d.id) : $$.color(d);
+    return getShapeColorWithGradient.call($$, d, "area_linearGradient", $$.color);
   },
   /**
    * Generate/Update elements
@@ -19633,6 +19763,7 @@ function _getAttrTweenFn(fn) {
 
 
 
+
 function _getConnectLineType(id) {
   const connectLine = this.config.bar_connectLine;
   const type = (connectLine == null ? void 0 : connectLine[id]) || connectLine;
@@ -19650,16 +19781,16 @@ function _getConnectLineType(id) {
   },
   updateTargetsForBar(targets) {
     const $$ = this;
-    const { config, $el } = $$;
-    const classChartBar = $$.getChartClass("Bar");
+    const { config } = $$;
     const classBars = $$.getClass("bars", true);
-    const classFocus = $$.classFocus.bind($$);
     const isSelectable = config.interaction_enabled && config.data_selection_isselectable;
-    if (!$el.bar) {
-      $$.initBar();
-    }
-    const mainBarUpdate = $el.main.select(`.${$BAR.chartBars}`).selectAll(`.${$BAR.chartBar}`).data($$.filterNullish(targets)).attr("class", (d) => classChartBar(d) + classFocus(d));
-    const mainBarEnter = mainBarUpdate.enter().append("g").attr("class", classChartBar).style("opacity", "0").style("pointer-events", $$.getStylePropValue("none"));
+    const mainBarEnter = updateTargetsForShape.call($$, targets, {
+      type: "Bar",
+      elKey: "bar",
+      containerClass: $BAR.chartBars,
+      itemClass: $BAR.chartBar,
+      initFn: $$.initBar
+    });
     mainBarEnter.append("g").attr("class", classBars).style("cursor", (d) => {
       var _a;
       return ((_a = isSelectable == null ? void 0 : isSelectable.bind) == null ? void 0 : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null;
@@ -19699,7 +19830,7 @@ function _getConnectLineType(id) {
   updateBarColor(d) {
     const $$ = this;
     const fn = $$.getStylePropValue($$.color);
-    return $$.config.bar_linearGradient ? $$.getGradienColortUrl(d.id) : fn ? fn(d) : null;
+    return getShapeColorWithGradient.call($$, d, "bar_linearGradient", fn || (() => null));
   },
   /**
    * Redraw function
@@ -20001,10 +20132,13 @@ var candlestick_spreadValues = (a, b) => {
 
 
 
+
 /* harmony default export */ var candlestick = ({
   initCandlestick() {
-    const { $el } = this;
-    $el.candlestick = $el.main.select(`.${$COMMON.chart}`).append("g").attr("class", $CANDLESTICK.chartCandlesticks);
+    initShapeElement.call(this, {
+      elKey: "candlestick",
+      className: $CANDLESTICK.chartCandlesticks
+    });
   },
   /**
    * Update targets by its data
@@ -20013,14 +20147,15 @@ var candlestick_spreadValues = (a, b) => {
    * @private
    */
   updateTargetsForCandlestick(targets) {
-    const $$ = this;
-    const { $el } = $$;
-    const classChart = $$.getChartClass("Candlestick");
-    if (!$el.candlestick) {
-      $$.initCandlestick();
-    }
-    const mainUpdate = $$.$el.main.select(`.${$CANDLESTICK.chartCandlesticks}`).selectAll(`.${$CANDLESTICK.chartCandlestick}`).data($$.filterNullish(targets));
-    mainUpdate.enter().append("g").attr("class", classChart).style("pointer-events", "none");
+    updateTargetsForShape.call(this, targets, {
+      type: "Candlestick",
+      elKey: "candlestick",
+      containerClass: $CANDLESTICK.chartCandlesticks,
+      itemClass: $CANDLESTICK.chartCandlestick,
+      initFn: this.initCandlestick,
+      withFocus: false,
+      withStyles: false
+    }).style("pointer-events", "none");
   },
   /**
    * Generate/Update elements
@@ -20527,6 +20662,7 @@ var line_spreadProps = (a, b) => line_defProps(a, line_getOwnPropDescs(b));
 
 
 
+
 function _getStrokeDashArray(start, end, pattern, isLastX = false) {
   const dash = start ? [start, 0] : pattern;
   for (let i = start ? start : pattern.reduce((a, c) => a + c); i <= end; ) {
@@ -20560,23 +20696,27 @@ function _getRegions(d, _regions, isTimeSeries) {
 }
 /* harmony default export */ var line = ({
   initLine() {
-    const { $el } = this;
-    $el.line = $el.main.select(`.${$COMMON.chart}`).append("g").attr("class", $LINE.chartLines).call(this.setCssRule(false, `.${$LINE.chartLines}`, ["pointer-events:none"]));
+    initShapeElement.call(this, {
+      elKey: "line",
+      className: $LINE.chartLines,
+      cssRules: ["pointer-events:none"]
+    });
   },
   updateTargetsForLine(t) {
     const $$ = this;
-    const { $el: { area, line, main } } = $$;
-    const classChartLine = $$.getChartClass("Line");
+    const { $el: { area, main } } = $$;
     const classLines = $$.getClass("lines", true);
-    const classFocus = $$.classFocus.bind($$);
-    if (!line) {
-      $$.initLine();
-    }
     const targets = t.filter((d) => !($$.isScatterType(d) || $$.isBubbleType(d)));
-    const mainLineUpdate = main.select(`.${$LINE.chartLines}`).selectAll(`.${$LINE.chartLine}`).data($$.filterNullish(targets)).attr("class", (d) => classChartLine(d) + classFocus(d));
-    const mainLineEnter = mainLineUpdate.enter().append("g").attr("class", classChartLine).style("opacity", "0").style("pointer-events", $$.getStylePropValue("none"));
+    const mainLineEnter = updateTargetsForShape.call($$, targets, {
+      type: "Line",
+      elKey: "line",
+      containerClass: $LINE.chartLines,
+      itemClass: $LINE.chartLine,
+      initFn: $$.initLine
+    });
     mainLineEnter.append("g").attr("class", classLines);
     if ($$.hasTypeOf("Area")) {
+      const mainLineUpdate = main.select(`.${$LINE.chartLines}`).selectAll(`.${$LINE.chartLine}`);
       const mainLine = (!area && mainLineEnter.empty() ? mainLineUpdate : mainLineEnter).filter($$.isAreaType.bind($$));
       $$.initArea(mainLine);
     }
@@ -21678,7 +21818,7 @@ const cacheKeyTextWidth = KEY.radarTextWidth;
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-hierarchy","commonjs2":"d3-hierarchy","amd":"d3-hierarchy","root":"d3"}
-var external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_ = __webpack_require__(14);
+var external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_ = __webpack_require__(12);
 ;// ./src/ChartInternal/shape/treemap.ts
 
 
@@ -23630,7 +23770,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260127004749",
+  version: "3.18.0-nightly-20260128004736",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

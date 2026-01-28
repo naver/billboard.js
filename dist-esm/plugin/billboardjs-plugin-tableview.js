@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260127004749
+ * @version 3.18.0-nightly-20260128004736
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -612,6 +612,13 @@ var Plugin = /** @class */ (function () {
         this.options = options;
     }
     /**
+     * Load plugin config from options
+     * @private
+     */
+    Plugin.prototype.loadConfig = function () {
+        loadConfig.call(this, this.options);
+    };
+    /**
      * Lifecycle hook for 'beforeInit' phase.
      * @private
      */
@@ -642,7 +649,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.18.0-nightly-20260127004749";
+    Plugin.version = "3.18.0-nightly-20260128004736";
     return Plugin;
 }());
 
@@ -831,7 +838,7 @@ var TableView = /** @class */ (function (_super) {
         return _this;
     }
     TableView.prototype.$beforeInit = function () {
-        loadConfig.call(this, this.options);
+        this.loadConfig();
     };
     TableView.prototype.$init = function () {
         var _a;

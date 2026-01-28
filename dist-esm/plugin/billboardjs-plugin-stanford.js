@@ -5,15 +5,13 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260127004749
+ * @version 3.18.0-nightly-20260128004736
  * @requires billboard.js
  * @summary billboard.js plugin
 */
-import { hsl } from 'd3-color';
 import { interpolateHslLong } from 'd3-interpolate';
 import { scaleSequential, scaleSymlog, scaleSequentialLog } from 'd3-scale';
 import { axisRight } from 'd3-axis';
-import { format } from 'd3-format';
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -411,6 +409,13 @@ var Plugin = /** @class */ (function () {
         this.options = options;
     }
     /**
+     * Load plugin config from options
+     * @private
+     */
+    Plugin.prototype.loadConfig = function () {
+        loadConfig.call(this, this.options);
+    };
+    /**
      * Lifecycle hook for 'beforeInit' phase.
      * @private
      */
@@ -441,7 +446,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.18.0-nightly-20260127004749";
+    Plugin.version = "3.18.0-nightly-20260128004736";
     return Plugin;
 }());
 
@@ -557,6 +562,17 @@ function getCentroid(points) {
  * billboard.js project is licensed under the MIT license
  */
 /**
+ * Simple number formatter.
+ * Supports "d" specifier (decimal notation, rounded to integer).
+ * @param {string} specifier Format specifier
+ * @returns {function} Formatter function
+ */
+function format(specifier) {
+    {
+        return function (n) { return Math.round(n).toString(); };
+    }
+}
+/**
  * Stanford diagram plugin color scale class
  * @class ColorScale
  * @param {Stanford} owner Stanford instance
@@ -609,7 +625,7 @@ var ColorScale = /** @class */ (function () {
             legendAxis.tickFormat(scaleFormat);
         }
         else {
-            legendAxis.tickFormat(format("d"));
+            legendAxis.tickFormat(format());
         }
         // Draw Axis
         var axis = this.colorScale.append("g")
@@ -931,6 +947,23 @@ var Options = /** @class */ (function () {
 }());
 
 /**
+ * Creates an HSL color object.
+ * @param {number} h Hue (0-360)
+ * @param {number} s Saturation (0-1)
+ * @param {number} l Lightness (0-1)
+ * @param {number} opacity Opacity (0-1), defaults to 1
+ * @returns {HSLColor} HSL color object
+ */
+function hsl(h, s, l, opacity) {
+    if (opacity === void 0) { opacity = 1; }
+    return {
+        h: +h,
+        s: 1,
+        l: 0.5,
+        opacity: +opacity
+    };
+}
+/**
  * Stanford diagram plugin
  * - **NOTE:**
  *   - Plugins aren't built-in. Need to be loaded or imported to be used.
@@ -939,19 +972,15 @@ var Options = /** @class */ (function () {
  * - **Required modules:**
  *   - [d3-selection](https://github.com/d3/d3-selection)
  *   - [d3-interpolate](https://github.com/d3/d3-interpolate)
- *   - [d3-color](https://github.com/d3/d3-color)
  *   - [d3-scale](https://github.com/d3/d3-scale)
  *   - [d3-brush](https://github.com/d3/d3-brush)
  *   - [d3-axis](https://github.com/d3/d3-axis)
- *   - [d3-format](https://github.com/d3/d3-format)
  * @class plugin-stanford
  * @requires d3-selection
  * @requires d3-interpolate
- * @requires d3-color
  * @requires d3-scale
  * @requires d3-brush
  * @requires d3-axis
- * @requires d3-format
  * @param {object} options Stanford plugin options
  * @augments Plugin
  * @returns {Stanford}
@@ -1040,7 +1069,7 @@ var Stanford = /** @class */ (function (_super) {
     };
     Stanford.prototype.$init = function () {
         var $$ = this.$$;
-        loadConfig.call(this, this.options);
+        this.loadConfig();
         $$.color = this.getStanfordPointColor.bind($$);
         this.colorScale = new ColorScale(this);
         this.elements = new Elements(this);
@@ -1084,7 +1113,7 @@ var Stanford = /** @class */ (function (_super) {
         target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : Math.max.apply(Math, epochs);
         target.colors = isFunction(config.colors) ?
             config.colors :
-            interpolateHslLong(hsl(250, 1, 0.5), hsl(0, 1, 0.5));
+            interpolateHslLong(hsl(250), hsl(0));
         target.colorscale = scaleSequentialLog(target.colors)
             .domain([target.minEpochs, target.maxEpochs]);
     };

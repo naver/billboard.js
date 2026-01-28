@@ -5,20 +5,20 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260127004749
+ * @version 3.18.0-nightly-20260128004736
  * @requires billboard.js
  * @summary billboard.js plugin
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-color"), require("d3-interpolate"), require("d3-scale"), require("d3-brush"), require("d3-selection"), require("d3-axis"), require("d3-format"));
+		module.exports = factory(require("d3-interpolate"), require("d3-scale"), require("d3-brush"), require("d3-selection"), require("d3-axis"));
 	else if(typeof define === 'function' && define.amd)
-		define("bb", ["d3-color", "d3-interpolate", "d3-scale", "d3-brush", "d3-selection", "d3-axis", "d3-format"], factory);
+		define("bb", ["d3-interpolate", "d3-scale", "d3-brush", "d3-selection", "d3-axis"], factory);
 	else if(typeof exports === 'object')
-		exports["bb"] = factory(require("d3-color"), require("d3-interpolate"), require("d3-scale"), require("d3-brush"), require("d3-selection"), require("d3-axis"), require("d3-format"));
+		exports["bb"] = factory(require("d3-interpolate"), require("d3-scale"), require("d3-brush"), require("d3-selection"), require("d3-axis"));
 	else
-		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["stanford"] = factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__) {
+		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["stanford"] = factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__7__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
@@ -29,13 +29,13 @@ return /******/ (function() { // webpackBootstrap
 module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
 
 /***/ }),
-/* 2 */,
-/* 3 */
+/* 2 */
 /***/ (function(module) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__3__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__2__;
 
 /***/ }),
+/* 3 */,
 /* 4 */,
 /* 5 */
 /***/ (function(module) {
@@ -53,18 +53,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__6__;
 /***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__7__;
-
-/***/ }),
-/* 8 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__8__;
-
-/***/ }),
-/* 9 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
 
 /***/ })
 /******/ 	]);
@@ -121,12 +109,10 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ Stanford; }
 });
 
-// EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
-var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(5);
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
-var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(6);
+var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(5);
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
-var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(7);
+var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(6);
 ;// ./src/config/classes.ts
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
@@ -316,7 +302,7 @@ const $ZOOM = {
 /* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(2);
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 ;// ./src/module/browser.ts
@@ -1175,6 +1161,7 @@ function loadConfig(config) {
 var Plugin_defProp = Object.defineProperty;
 var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
 class Plugin {
   /**
    * Constructor
@@ -1184,7 +1171,15 @@ class Plugin {
   constructor(options = {}) {
     __publicField(this, "$$");
     __publicField(this, "options");
+    __publicField(this, "config");
     this.options = options;
+  }
+  /**
+   * Load plugin config from options
+   * @private
+   */
+  loadConfig() {
+    loadConfig.call(this, this.options);
   }
   /**
    * Lifecycle hook for 'beforeInit' phase.
@@ -1221,12 +1216,10 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260127004749");
+__publicField(Plugin, "version", "3.18.0-nightly-20260128004736");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
-var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);
-// EXTERNAL MODULE: external {"commonjs":"d3-format","commonjs2":"d3-format","amd":"d3-format","root":"d3"}
-var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __webpack_require__(9);
+var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(7);
 ;// ./src/Plugin/stanford/classes.ts
 /* harmony default export */ var stanford_classes = ({
   colorScale: "bb-colorscale",
@@ -1245,7 +1238,12 @@ var ColorScale_publicField = (obj, key, value) => ColorScale_defNormalProp(obj, 
 
 
 
-
+function format(specifier) {
+  if (specifier === "d") {
+    return (n) => Math.round(n).toString();
+  }
+  return (n) => String(n);
+}
 class ColorScale {
   constructor(owner) {
     ColorScale_publicField(this, "owner");
@@ -1276,7 +1274,7 @@ class ColorScale {
     } else if (isFunction(scaleFormat)) {
       legendAxis.tickFormat(scaleFormat);
     } else {
-      legendAxis.tickFormat((0,external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_.format)("d"));
+      legendAxis.tickFormat(format("d"));
     }
     const axis = this.colorScale.append("g").attr("class", "legend axis").attr("transform", `translate(${barWidth},0)`).call(legendAxis);
     if (scaleFormat === "pow10") {
@@ -1589,12 +1587,17 @@ var stanford_publicField = (obj, key, value) => stanford_defNormalProp(obj, type
 
 
 
-
-
+function hsl(h, s, l, opacity = 1) {
+  return {
+    h: +h,
+    s: +s,
+    l: +l,
+    opacity: +opacity
+  };
+}
 class Stanford extends Plugin {
   constructor(options) {
     super(options);
-    stanford_publicField(this, "config");
     stanford_publicField(this, "colorScale");
     stanford_publicField(this, "elements");
     this.config = new Options();
@@ -1617,7 +1620,7 @@ class Stanford extends Plugin {
   }
   $init() {
     const { $$ } = this;
-    loadConfig.call(this, this.options);
+    this.loadConfig();
     $$.color = this.getStanfordPointColor.bind($$);
     this.colorScale = new ColorScale(this);
     this.elements = new Elements(this);
@@ -1656,7 +1659,7 @@ class Stanford extends Plugin {
     const epochs = target.values.map((a) => a.epochs);
     target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : Math.min(...epochs);
     target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : Math.max(...epochs);
-    target.colors = isFunction(config.colors) ? config.colors : (0,external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_.interpolateHslLong)((0,external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_.hsl)(250, 1, 0.5), (0,external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_.hsl)(0, 1, 0.5));
+    target.colors = isFunction(config.colors) ? config.colors : (0,external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_.interpolateHslLong)(hsl(250, 1, 0.5), hsl(0, 1, 0.5));
     target.colorscale = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSequentialLog)(target.colors).domain([target.minEpochs, target.maxEpochs]);
   }
   getStanfordPointColor(d) {

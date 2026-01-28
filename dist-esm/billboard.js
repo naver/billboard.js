@@ -5,18 +5,16 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260127004749
+ * @version 3.18.0-nightly-20260128004736
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { brushSelection, brushY, brushX } from 'd3-brush';
-import { csvParse, csvParseRows, tsvParse, tsvParseRows } from 'd3-dsv';
 import { drag as drag$1 } from 'd3-drag';
 import { scaleOrdinal, scaleLinear, scaleUtc, scaleTime, scaleLog, scaleSymlog } from 'd3-scale';
 import { transition } from 'd3-transition';
 import { curveStepBefore, curveStepAfter, curveStep, curveLinear, curveLinearClosed, curveNatural, curveMonotoneY, curveMonotoneX, curveCatmullRomOpen, curveCatmullRomClosed, curveCatmullRom, curveCardinalOpen, curveCardinalClosed, curveCardinal, curveBundle, curveBasisOpen, curveBasisClosed, curveBasis, arc, pie as pie$1, area as area$1, line as line$1 } from 'd3-shape';
 import { axisLeft, axisBottom, axisTop, axisRight } from 'd3-axis';
-import { easeLinear } from 'd3-ease';
 import { interpolate } from 'd3-interpolate';
 import { treemapResquarify, treemapSquarify, treemapSliceDice, treemapSlice, treemapDice, treemapBinary, treemap as treemap$1, hierarchy } from 'd3-hierarchy';
 import { zoomIdentity, zoomTransform, zoom as zoom$2 } from 'd3-zoom';
@@ -4349,6 +4347,142 @@ function runWorker(useWorker, fn, callback, depsFn) {
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
+ * @see https://datatracker.ietf.org/doc/html/rfc4180
+ */
+var QUOTE = 34; // "
+var NEWLINE = 10; // \n
+var RETURN = 13; // \r
+/**
+ * Create a DSV parser for the specified delimiter.
+ * @param {string} delimiter The delimiter character
+ * @returns {object} DSV parser object with parse and parseRows methods
+ * @private
+ */
+function dsv(delimiter) {
+    var delimiterCode = delimiter.charCodeAt(0);
+    /**
+     * Parse DSV string into rows of string arrays.
+     * @param {string} text DSV string to parse
+     * @param {function} [callback] Optional row callback
+     * @returns {Array} Parsed rows
+     * @private
+     */
+    function parseRows(text, callback) {
+        var rows = [];
+        var len = text.length;
+        var pos = 0;
+        var rowNum = 0;
+        var eof = len <= 0;
+        var eol = false;
+        // Strip BOM
+        text.charCodeAt(0) === 0xfeff && pos++;
+        // Strip trailing newline
+        text.charCodeAt(len - 1) === NEWLINE && --len;
+        text.charCodeAt(len - 1) === RETURN && --len;
+        /**
+         * Get next token from DSV string.
+         * @returns {string|null} Next field value, or null for EOL/EOF
+         */
+        function token() {
+            if (eof) {
+                return null;
+            }
+            if (eol) {
+                eol = false;
+                return null;
+            }
+            var start = pos;
+            var c, end;
+            // Quoted value
+            if (text.charCodeAt(start) === QUOTE) {
+                while (++pos < len) {
+                    if (text.charCodeAt(pos) === QUOTE) {
+                        if (text.charCodeAt(pos + 1) !== QUOTE) {
+                            break;
+                        }
+                        pos++;
+                    }
+                }
+                if ((end = pos++) >= len) {
+                    eof = true;
+                }
+                else if ((c = text.charCodeAt(pos++)) === NEWLINE) {
+                    eol = true;
+                }
+                else if (c === RETURN) {
+                    eol = true;
+                    text.charCodeAt(pos) === NEWLINE && ++pos;
+                }
+                return text.slice(start + 1, end).replace(/""/g, "\"");
+            }
+            // Unquoted value
+            while (pos < len) {
+                if ((c = text.charCodeAt(end = pos++)) === NEWLINE) {
+                    eol = true;
+                }
+                else if (c === RETURN) {
+                    eol = true;
+                    text.charCodeAt(pos) === NEWLINE && ++pos;
+                }
+                else if (c !== delimiterCode) {
+                    continue;
+                }
+                return text.slice(start, end);
+            }
+            eof = true;
+            return text.slice(start, len);
+        }
+        var t;
+        while ((t = token()) !== null) {
+            var row = [];
+            while (t !== null) {
+                row.push(t);
+                t = token();
+            }
+            if (callback) {
+                var result = callback(row, rowNum++);
+                result != null && rows.push(result);
+            }
+            else {
+                rows.push(row);
+            }
+        }
+        return rows;
+    }
+    /**
+     * Parse DSV string into array of objects using first row as headers.
+     * @param {string} text DSV string to parse
+     * @param {function} [callback] Optional row callback
+     * @returns {Array} Array of objects
+     * @private
+     */
+    function parse(text, callback) {
+        var columns = [];
+        return parseRows(text, function (row, i) {
+            var _a;
+            if (i === 0) {
+                columns = row;
+                return null;
+            }
+            var obj = {};
+            for (var j = 0; j < columns.length; j++) {
+                obj[columns[j]] = (_a = row[j]) !== null && _a !== void 0 ? _a : "";
+            }
+            return callback ? callback(obj, i - 1, columns) : obj;
+        });
+    }
+    return { parse: parse, parseRows: parseRows };
+}
+var csv$1 = dsv(",");
+var tsv$1 = dsv("\t");
+var csvParse = csv$1.parse;
+var csvParseRows = csv$1.parseRows;
+var tsvParse = tsv$1.parse;
+var tsvParseRows = tsv$1.parseRows;
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
 /***** Functions to be executed on Web Worker *****
@@ -8312,6 +8446,7 @@ var size = {
         return height;
     },
     getSvgLeft: function (withoutRecompute) {
+        var _a, _b, _c;
         var $$ = this;
         var config = $$.config, hasAxis = $$.state.hasAxis, $el = $$.$el;
         var isRotated = config.axis_rotated;
@@ -8319,20 +8454,20 @@ var size = {
         var leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY;
         var leftAxis = $el.main.select(".".concat(leftAxisClass)).node();
         var leftLabel = hasAxis && config["axis_".concat(isRotated ? "x" : "y", "_label")];
-        var labelWidth = 0;
-        // if axis label position set to inner, exclude from the value
-        if (hasAxis && (isString(leftLabel) || isString(leftLabel.text) ||
-            /^inner-/.test(leftLabel === null || leftLabel === void 0 ? void 0 : leftLabel.position))) {
-            var label = $el.main.select(".".concat(leftAxisClass, "-label"));
-            if (!label.empty()) {
-                labelWidth = getBoundingRect(label.node()).left;
-            }
-        }
-        var svgRect = leftAxis && hasLeftAxisRect ?
-            getBoundingRect(leftAxis, !withoutRecompute) :
-            { right: 0 };
-        var chartRectLeft = getBoundingRect($el.chart.node(), !withoutRecompute).left +
-            labelWidth;
+        // Check if label measurement is needed
+        var needLabelRect = hasAxis && (isString(leftLabel) || isString(leftLabel.text) ||
+            /^inner-/.test(leftLabel === null || leftLabel === void 0 ? void 0 : leftLabel.position));
+        var label = needLabelRect ? $el.main.select(".".concat(leftAxisClass, "-label")) : null;
+        var labelNode = label && !label.empty() ? label.node() : null;
+        var forceEval = !withoutRecompute;
+        var rects = {
+            label: labelNode ? getBoundingRect(labelNode, forceEval) : null,
+            leftAxis: leftAxis && hasLeftAxisRect ? getBoundingRect(leftAxis, forceEval) : null,
+            chart: getBoundingRect($el.chart.node(), forceEval)
+        };
+        var labelWidth = (_b = (_a = rects.label) === null || _a === void 0 ? void 0 : _a.left) !== null && _b !== void 0 ? _b : 0;
+        var svgRect = (_c = rects.leftAxis) !== null && _c !== void 0 ? _c : { right: 0 };
+        var chartRectLeft = rects.chart.left + labelWidth;
         var hasArc = $$.hasArcType();
         var svgLeft = svgRect.right - chartRectLeft -
             (hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
@@ -9937,8 +10072,8 @@ var tooltip$1 = {
             $$.color // color
             ))
                 .style("display", null)
-                .style("visibility", null) // for IE9
-                .datum(datum = {
+                .style("visibility", null); // for IE9
+            tooltip.datum(datum = {
                 index: index,
                 x: x,
                 current: dataStr,
@@ -10440,6 +10575,63 @@ function _getGroupedDataPointsFn(d) {
         fn = $$.generateGetBarPoints($$.getShapeIndices($$.isBarType));
     }
     return fn;
+}
+/**
+ * Get shape color with gradient support
+ * @param {object} d Data object
+ * @param {string} configKey Configuration key for linearGradient (e.g., 'bar_linearGradient', 'area_linearGradient')
+ * @param {(d: IDataRow) => string | null} colorFn Fallback color function when gradient is not enabled
+ * @returns {string | null} Color string or gradient URL
+ * @private
+ */
+function getShapeColorWithGradient(d, configKey, colorFn) {
+    return this.config[configKey] ? this.getGradienColortUrl(d.id) : colorFn(d);
+}
+/**
+ * Initialize a shape element container
+ * @param {ShapeElementConfig} config Configuration object
+ * @private
+ */
+function initShapeElement(config) {
+    var $el = this.$el;
+    var elKey = config.elKey, className = config.className, cssRules = config.cssRules, position = config.position;
+    var container = $el.main.select(".".concat(CLASS.chart));
+    $el[elKey] = position === "first" ?
+        container.insert("g", ":first-child") :
+        container.append("g");
+    $el[elKey].attr("class", className);
+    if (cssRules === null || cssRules === void 0 ? void 0 : cssRules.length) {
+        $el[elKey].call(this.setCssRule(false, ".".concat(className), cssRules));
+    }
+}
+/**
+ * Common update targets pattern for shapes
+ * @param {Array} targets Target data
+ * @param {UpdateTargetsConfig} config Configuration object
+ * @returns {d3Selection} Enter selection for additional setup
+ * @private
+ */
+function updateTargetsForShape(targets, config) {
+    var $$ = this;
+    var $el = $$.$el;
+    var type = config.type, elKey = config.elKey, containerClass = config.containerClass, itemClass = config.itemClass, initFn = config.initFn, _a = config.withFocus, withFocus = _a === void 0 ? true : _a, _b = config.withStyles, withStyles = _b === void 0 ? true : _b;
+    if (!$el[elKey]) {
+        initFn.call($$);
+    }
+    var classChart = $$.getChartClass(type);
+    var classFocus = withFocus ? $$.classFocus.bind($$) : function () { return ""; };
+    var mainUpdate = $el.main.select(".".concat(containerClass))
+        .selectAll(".".concat(itemClass))
+        .data($$.filterNullish(targets))
+        .attr("class", function (d) { return classChart(d) + classFocus(d); });
+    var mainEnter = mainUpdate.enter().append("g")
+        .attr("class", classChart);
+    if (withStyles) {
+        mainEnter
+            .style("opacity", "0")
+            .style("pointer-events", $$.getStylePropValue("none"));
+    }
+    return mainEnter;
 }
 var shape = {
     /**
@@ -15059,22 +15251,34 @@ var Axis = /** @class */ (function () {
             axis.create(g);
             // when evalTextSize is set as function, sizeFor1Char is set to the dummy element
             var sizeFor1Char_1 = g.node().sizeFor1Char;
-            dummy.selectAll("text")
-                .attr("transform", isNumber(tickRotate) ? "rotate(".concat(tickRotate, ")") : null)
-                .each(function (d, i) {
-                var _a = sizeFor1Char_1 ?
-                    {
-                        width: this.textContent.length * sizeFor1Char_1.w,
-                        height: sizeFor1Char_1.h
-                    } :
-                    getBoundingRect(this, true), width = _a.width, height = _a.height;
-                max.width = Math.max(max.width, width);
-                max.height = Math.max(max.height, height);
-                // cache tick text width for getXAxisTickTextY2Overflow()
-                if (!isYAxis_1) {
-                    currentTickMax.ticks[i] = width;
-                }
-            });
+            var textSelection = dummy.selectAll("text")
+                .attr("transform", isNumber(tickRotate) ? "rotate(".concat(tickRotate, ")") : null);
+            // Batch processing to minimize layout thrashing
+            if (sizeFor1Char_1) {
+                // Use pre-calculated character size (no reflow needed)
+                textSelection.each(function (d, i) {
+                    var width = this.textContent.length * sizeFor1Char_1.w;
+                    var height = sizeFor1Char_1.h;
+                    max.width = Math.max(max.width, width);
+                    max.height = Math.max(max.height, height);
+                    if (!isYAxis_1) {
+                        currentTickMax.ticks[i] = width;
+                    }
+                });
+            }
+            else {
+                var textNodes_1 = [];
+                textSelection.each(function () {
+                    textNodes_1.push(this);
+                });
+                textNodes_1.map(function (node) { return getBoundingRect(node, true); }).forEach(function (dim, i) {
+                    max.width = Math.max(max.width, dim.width);
+                    max.height = Math.max(max.height, dim.height);
+                    if (!isYAxis_1) {
+                        currentTickMax.ticks[i] = dim.width;
+                    }
+                });
+            }
             dummy.remove();
         }
         Object.keys(max).forEach(function (key) {
@@ -16041,7 +16245,7 @@ var flow = {
         wait.add(Object.keys(elements).map(function (v) {
             n = elements[v]
                 .transition()
-                .ease(easeLinear)
+                .ease(function (t) { return +t; })
                 .duration(duration);
             if (v === "axis.x") {
                 n = n.call(function (g) {
@@ -20534,7 +20738,7 @@ var shapeArea = {
      */
     updateAreaColor: function (d) {
         var $$ = this;
-        return $$.config.area_linearGradient ? $$.getGradienColortUrl(d.id) : $$.color(d);
+        return getShapeColorWithGradient.call($$, d, "area_linearGradient", $$.color);
     },
     /**
      * Generate/Update elements
@@ -20694,22 +20898,16 @@ var shapeBar = {
     },
     updateTargetsForBar: function (targets) {
         var $$ = this;
-        var config = $$.config, $el = $$.$el;
-        var classChartBar = $$.getChartClass("Bar");
+        var config = $$.config;
         var classBars = $$.getClass("bars", true);
-        var classFocus = $$.classFocus.bind($$);
         var isSelectable = config.interaction_enabled && config.data_selection_isselectable;
-        if (!$el.bar) {
-            $$.initBar();
-        }
-        var mainBarUpdate = $el.main.select(".".concat($BAR.chartBars))
-            .selectAll(".".concat($BAR.chartBar))
-            .data($$.filterNullish(targets))
-            .attr("class", function (d) { return classChartBar(d) + classFocus(d); });
-        var mainBarEnter = mainBarUpdate.enter().append("g")
-            .attr("class", classChartBar)
-            .style("opacity", "0")
-            .style("pointer-events", $$.getStylePropValue("none"));
+        var mainBarEnter = updateTargetsForShape.call($$, targets, {
+            type: "Bar",
+            elKey: "bar",
+            containerClass: $BAR.chartBars,
+            itemClass: $BAR.chartBar,
+            initFn: $$.initBar
+        });
         // Bars for each data
         mainBarEnter.append("g")
             .attr("class", classBars)
@@ -20762,7 +20960,7 @@ var shapeBar = {
     updateBarColor: function (d) {
         var $$ = this;
         var fn = $$.getStylePropValue($$.color);
-        return $$.config.bar_linearGradient ? $$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
+        return getShapeColorWithGradient.call($$, d, "bar_linearGradient", fn || (function () { return null; }));
     },
     /**
      * Redraw function
@@ -21078,11 +21276,10 @@ var shapeBubble = {
 
 var shapeCandlestick = {
     initCandlestick: function () {
-        var $el = this.$el;
-        $el.candlestick = $el.main.select(".".concat($COMMON.chart))
-            // should positioned at the beginning of the shape node to not overlap others
-            .append("g")
-            .attr("class", $CANDLESTICK.chartCandlesticks);
+        initShapeElement.call(this, {
+            elKey: "candlestick",
+            className: $CANDLESTICK.chartCandlesticks
+        });
     },
     /**
      * Update targets by its data
@@ -21091,18 +21288,15 @@ var shapeCandlestick = {
      * @private
      */
     updateTargetsForCandlestick: function (targets) {
-        var $$ = this;
-        var $el = $$.$el;
-        var classChart = $$.getChartClass("Candlestick");
-        if (!$el.candlestick) {
-            $$.initCandlestick();
-        }
-        var mainUpdate = $$.$el.main.select(".".concat($CANDLESTICK.chartCandlesticks))
-            .selectAll(".".concat($CANDLESTICK.chartCandlestick))
-            .data($$.filterNullish(targets));
-        mainUpdate.enter().append("g")
-            .attr("class", classChart)
-            .style("pointer-events", "none");
+        updateTargetsForShape.call(this, targets, {
+            type: "Candlestick",
+            elKey: "candlestick",
+            containerClass: $CANDLESTICK.chartCandlesticks,
+            itemClass: $CANDLESTICK.chartCandlestick,
+            initFn: this.initCandlestick,
+            withFocus: false,
+            withStyles: false
+        }).style("pointer-events", "none");
     },
     /**
      * Generate/Update elements
@@ -21728,34 +21922,31 @@ function _getRegions(d, _regions, isTimeSeries) {
 }
 var shapeLine = {
     initLine: function () {
-        var $el = this.$el;
-        $el.line = $el.main.select(".".concat($COMMON.chart)).append("g")
-            .attr("class", $LINE.chartLines)
-            .call(this.setCssRule(false, ".".concat($LINE.chartLines), ["pointer-events:none"]));
+        initShapeElement.call(this, {
+            elKey: "line",
+            className: $LINE.chartLines,
+            cssRules: ["pointer-events:none"]
+        });
     },
     updateTargetsForLine: function (t) {
         var $$ = this;
-        var _a = $$.$el, area = _a.area, line = _a.line, main = _a.main;
-        var classChartLine = $$.getChartClass("Line");
+        var _a = $$.$el, area = _a.area, main = _a.main;
         var classLines = $$.getClass("lines", true);
-        var classFocus = $$.classFocus.bind($$);
-        if (!line) {
-            $$.initLine();
-        }
         var targets = t.filter(function (d) { return !($$.isScatterType(d) || $$.isBubbleType(d)); });
-        var mainLineUpdate = main.select(".".concat($LINE.chartLines))
-            .selectAll(".".concat($LINE.chartLine))
-            .data($$.filterNullish(targets))
-            .attr("class", function (d) { return classChartLine(d) + classFocus(d); });
-        var mainLineEnter = mainLineUpdate.enter().append("g")
-            .attr("class", classChartLine)
-            .style("opacity", "0")
-            .style("pointer-events", $$.getStylePropValue("none"));
+        var mainLineEnter = updateTargetsForShape.call($$, targets, {
+            type: "Line",
+            elKey: "line",
+            containerClass: $LINE.chartLines,
+            itemClass: $LINE.chartLine,
+            initFn: $$.initLine
+        });
         // Lines for each data
         mainLineEnter.append("g")
             .attr("class", classLines);
         // Areas
         if ($$.hasTypeOf("Area")) {
+            var mainLineUpdate = main.select(".".concat($LINE.chartLines))
+                .selectAll(".".concat($LINE.chartLine));
             var mainLine = (!area && mainLineEnter.empty() ? mainLineUpdate : mainLineEnter).filter($$.isAreaType.bind($$));
             $$.initArea(mainLine);
         }
@@ -23479,10 +23670,6 @@ var optPoint = {
 };
 
 /**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
  * area config options
  */
 var optArea = {
@@ -23550,10 +23737,6 @@ var optArea = {
     area_zerobased: true
 };
 
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
 /**
  * bar config options
  */
@@ -26853,7 +27036,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.18.0-nightly-20260127004749
+ * @version 3.18.0-nightly-20260128004736
  */
 var bb = {
     /**
@@ -26863,7 +27046,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.18.0-nightly-20260127004749",
+    version: "3.18.0-nightly-20260128004736",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

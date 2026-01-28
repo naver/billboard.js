@@ -5,20 +5,20 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260127004749
+ * @version 3.18.0-nightly-20260128004736
  * @requires billboard.js
  * @summary billboard.js plugin
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-delaunay"), require("d3-polygon"), require("d3-brush"), require("d3-selection"));
+		module.exports = factory(require("d3-delaunay"), require("d3-brush"), require("d3-selection"));
 	else if(typeof define === 'function' && define.amd)
-		define("bb", ["d3-delaunay", "d3-polygon", "d3-brush", "d3-selection"], factory);
+		define("bb", ["d3-delaunay", "d3-brush", "d3-selection"], factory);
 	else if(typeof exports === 'object')
-		exports["bb"] = factory(require("d3-delaunay"), require("d3-polygon"), require("d3-brush"), require("d3-selection"));
+		exports["bb"] = factory(require("d3-delaunay"), require("d3-brush"), require("d3-selection"));
 	else
-		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["textoverlap"] = factory(root["d3"], root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__1__) {
+		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["textoverlap"] = factory(root["d3"], root["d3"], root["d3"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__1__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
@@ -30,24 +30,17 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
 
 /***/ }),
 
-/***/ 3:
+/***/ 2:
 /***/ (function(module) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__3__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__2__;
 
 /***/ }),
 
-/***/ 12:
+/***/ 10:
 /***/ (function(module) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__12__;
-
-/***/ }),
-
-/***/ 13:
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__13__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
 
 /***/ })
 
@@ -106,11 +99,39 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-delaunay","commonjs2":"d3-delaunay","amd":"d3-delaunay","root":"d3"}
-var external_commonjs_d3_delaunay_commonjs2_d3_delaunay_amd_d3_delaunay_root_d3_ = __webpack_require__(12);
-// EXTERNAL MODULE: external {"commonjs":"d3-polygon","commonjs2":"d3-polygon","amd":"d3-polygon","root":"d3"}
-var external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_ = __webpack_require__(13);
+var external_commonjs_d3_delaunay_commonjs2_d3_delaunay_amd_d3_delaunay_root_d3_ = __webpack_require__(10);
+;// ./src/module/polygon.ts
+function polygonArea(polygon) {
+  const n = polygon.length;
+  let area = 0;
+  let b = polygon[n - 1];
+  for (let i = 0; i < n; i++) {
+    const a = b;
+    b = polygon[i];
+    area += a[1] * b[0] - a[0] * b[1];
+  }
+  return area / 2;
+}
+function polygonCentroid(polygon) {
+  const n = polygon.length;
+  let x = 0;
+  let y = 0;
+  let k = 0;
+  let b = polygon[n - 1];
+  for (let i = 0; i < n; i++) {
+    const a = b;
+    b = polygon[i];
+    const c = a[0] * b[1] - b[0] * a[1];
+    k += c;
+    x += (a[0] + b[0]) * c;
+    y += (a[1] + b[1]) * c;
+  }
+  k *= 3;
+  return [x / k, y / k];
+}
+
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(2);
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 ;// ./src/module/browser.ts
@@ -969,6 +990,7 @@ function loadConfig(config) {
 var Plugin_defProp = Object.defineProperty;
 var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
 class Plugin {
   /**
    * Constructor
@@ -978,7 +1000,15 @@ class Plugin {
   constructor(options = {}) {
     __publicField(this, "$$");
     __publicField(this, "options");
+    __publicField(this, "config");
     this.options = options;
+  }
+  /**
+   * Load plugin config from options
+   * @private
+   */
+  loadConfig() {
+    loadConfig.call(this, this.options);
   }
   /**
    * Lifecycle hook for 'beforeInit' phase.
@@ -1015,7 +1045,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260127004749");
+__publicField(Plugin, "version", "3.18.0-nightly-20260128004736");
 
 ;// ./src/Plugin/textoverlap/Options.ts
 class Options {
@@ -1058,10 +1088,6 @@ class Options {
 }
 
 ;// ./src/Plugin/textoverlap/index.ts
-var textoverlap_defProp = Object.defineProperty;
-var textoverlap_defNormalProp = (obj, key, value) => key in obj ? textoverlap_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var textoverlap_publicField = (obj, key, value) => textoverlap_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-
 
 
 
@@ -1069,12 +1095,11 @@ var textoverlap_publicField = (obj, key, value) => textoverlap_defNormalProp(obj
 class TextOverlap extends Plugin {
   constructor(options) {
     super(options);
-    textoverlap_publicField(this, "config");
     this.config = new Options();
     return this;
   }
   $init() {
-    loadConfig.call(this, this.options);
+    this.loadConfig();
   }
   $redraw() {
     const { $$: { $el }, config: { selector } } = this;
@@ -1111,13 +1136,13 @@ class TextOverlap extends Plugin {
       const cell = voronoi.cellPolygon(i);
       if (cell && this) {
         const [x, y] = points[i];
-        const [cx, cy] = (0,external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_.polygonCentroid)(cell);
-        const polygonArea = Math.abs((0,external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_.polygonArea)(cell));
+        const [cx, cy] = polygonCentroid(cell);
+        const cellArea = Math.abs(polygonArea(cell));
         const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
         const xTranslate = extent * (angle === 0 ? 1 : -1);
         const yTranslate = angle === -1 ? -extent : extent + 5;
         const txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end";
-        this.style.display = polygonArea < area ? "none" : "";
+        this.style.display = cellArea < area ? "none" : "";
         this.setAttribute("text-anchor", txtAnchor);
         this.setAttribute("dy", `0.${angle === 1 ? 71 : 35}em`);
         this.setAttribute("transform", `translate(${xTranslate}, ${yTranslate})`);

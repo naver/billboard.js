@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260127004749
+ * @version 3.18.0-nightly-20260128004736
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -26277,28 +26277,34 @@ function* flatIterable(points, fx, fy, that) {
   }
 }
 
-;// ./node_modules/d3-polygon/src/centroid.js
-/* harmony default export */ function centroid(polygon) {
-  var i = -1, n = polygon.length, x = 0, y = 0, a, b = polygon[n - 1], c, k = 0;
-  while (++i < n) {
-    a = b;
-    b = polygon[i];
-    k += c = a[0] * b[1] - b[0] * a[1];
-    x += (a[0] + b[0]) * c;
-    y += (a[1] + b[1]) * c;
-  }
-  return k *= 3, [x / k, y / k];
-}
-
-;// ./node_modules/d3-polygon/src/area.js
-/* harmony default export */ function src_area(polygon) {
-  var i = -1, n = polygon.length, a, b = polygon[n - 1], area = 0;
-  while (++i < n) {
-    a = b;
+;// ./src/module/polygon.ts
+function polygonArea(polygon) {
+  const n = polygon.length;
+  let area = 0;
+  let b = polygon[n - 1];
+  for (let i = 0; i < n; i++) {
+    const a = b;
     b = polygon[i];
     area += a[1] * b[0] - a[0] * b[1];
   }
   return area / 2;
+}
+function polygonCentroid(polygon) {
+  const n = polygon.length;
+  let x = 0;
+  let y = 0;
+  let k = 0;
+  let b = polygon[n - 1];
+  for (let i = 0; i < n; i++) {
+    const a = b;
+    b = polygon[i];
+    const c = a[0] * b[1] - b[0] * a[1];
+    k += c;
+    x += (a[0] + b[0]) * c;
+    y += (a[1] + b[1]) * c;
+  }
+  k *= 3;
+  return [x / k, y / k];
 }
 
 ;// ./node_modules/d3-dispatch/src/dispatch.js
@@ -30191,6 +30197,7 @@ function loadConfig(config) {
 var Plugin_defProp = Object.defineProperty;
 var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
 class Plugin {
   /**
    * Constructor
@@ -30200,7 +30207,15 @@ class Plugin {
   constructor(options = {}) {
     __publicField(this, "$$");
     __publicField(this, "options");
+    __publicField(this, "config");
     this.options = options;
+  }
+  /**
+   * Load plugin config from options
+   * @private
+   */
+  loadConfig() {
+    loadConfig.call(this, this.options);
   }
   /**
    * Lifecycle hook for 'beforeInit' phase.
@@ -30237,7 +30252,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260127004749");
+__publicField(Plugin, "version", "3.18.0-nightly-20260128004736");
 
 ;// ./src/Plugin/textoverlap/Options.ts
 class Options {
@@ -30280,10 +30295,6 @@ class Options {
 }
 
 ;// ./src/Plugin/textoverlap/index.ts
-var textoverlap_defProp = Object.defineProperty;
-var textoverlap_defNormalProp = (obj, key, value) => key in obj ? textoverlap_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var textoverlap_publicField = (obj, key, value) => textoverlap_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-
 
 
 
@@ -30291,12 +30302,11 @@ var textoverlap_publicField = (obj, key, value) => textoverlap_defNormalProp(obj
 class TextOverlap extends Plugin {
   constructor(options) {
     super(options);
-    textoverlap_publicField(this, "config");
     this.config = new Options();
     return this;
   }
   $init() {
-    loadConfig.call(this, this.options);
+    this.loadConfig();
   }
   $redraw() {
     const { $$: { $el }, config: { selector } } = this;
@@ -30333,13 +30343,13 @@ class TextOverlap extends Plugin {
       const cell = voronoi.cellPolygon(i);
       if (cell && this) {
         const [x, y] = points[i];
-        const [cx, cy] = centroid(cell);
-        const polygonArea = Math.abs(src_area(cell));
+        const [cx, cy] = polygonCentroid(cell);
+        const cellArea = Math.abs(polygonArea(cell));
         const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
         const xTranslate = extent * (angle === 0 ? 1 : -1);
         const yTranslate = angle === -1 ? -extent : extent + 5;
         const txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end";
-        this.style.display = polygonArea < area ? "none" : "";
+        this.style.display = cellArea < area ? "none" : "";
         this.setAttribute("text-anchor", txtAnchor);
         this.setAttribute("dy", `0.${angle === 1 ? 71 : 35}em`);
         this.setAttribute("transform", `translate(${xTranslate}, ${yTranslate})`);
