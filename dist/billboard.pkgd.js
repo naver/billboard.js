@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260128004736
+ * @version 3.18.0-nightly-20260129005127
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -30325,14 +30325,15 @@ function generateWait() {
 
 ;// ./src/module/worker.ts
 
-const blob = {};
-function getObjectURL(fn, depsFn) {
+const cache = {};
+function getOrCreateWorkerResources(fn, depsFn) {
   var _a;
   const fnString = fn.toString();
-  const key = fnString.replace(/(function|[\s\W\n])/g, "").substring(0, 15);
-  if (!(key in blob)) {
-    blob[key] = new win.Blob([
-      `${(_a = depsFn == null ? void 0 : depsFn.map(String).join(";")) != null ? _a : ""}
+  const depsString = (_a = depsFn == null ? void 0 : depsFn.map(String).join(";")) != null ? _a : "";
+  const key = (fnString + depsString).replace(/(function|[\s\W\n])/g, "").substring(0, 30);
+  if (!(key in cache)) {
+    const blob = new win.Blob([
+      `${depsString}
 
 			self.onmessage=function({data}) {
 				const result = (${fnString}).apply(null, data);
@@ -30341,15 +30342,27 @@ function getObjectURL(fn, depsFn) {
     ], {
       type: "text/javascript"
     });
+    cache[key] = {
+      src: win.URL.createObjectURL(blob),
+      worker: null
+    };
   }
-  return win.URL.createObjectURL(blob[key]);
+  return { key, src: cache[key].src };
 }
-function getWorker(src) {
-  const worker = new win.Worker(src);
-  worker.onerror = function(e) {
-    console.error ? console.error(e) : console.log(e);
-  };
-  return worker;
+function getWorker(key, src) {
+  const cached = cache[key];
+  if (!cached) {
+    return null;
+  }
+  if (!cached.worker) {
+    cached.worker = new win.Worker(src);
+    if (cached.worker) {
+      cached.worker.onerror = function(e) {
+        console.error ? console.error(e) : console.log(e);
+      };
+    }
+  }
+  return cached.worker;
 }
 function runWorker(useWorker = true, fn, callback, depsFn) {
   let runFn = function(...args) {
@@ -30357,17 +30370,30 @@ function runWorker(useWorker = true, fn, callback, depsFn) {
     callback(res);
   };
   if (win.Worker && useWorker) {
-    const src = getObjectURL(fn, depsFn);
-    const worker = getWorker(src);
+    const { key, src } = getOrCreateWorkerResources(fn, depsFn);
+    const worker = getWorker(key, src);
     runFn = function(...args) {
-      worker.postMessage(args);
-      worker.onmessage = function(e) {
-        win.URL.revokeObjectURL(src);
-        return callback(e.data);
-      };
+      if (worker) {
+        worker.postMessage(args);
+        worker.onmessage = function(e) {
+          return callback(e.data);
+        };
+      }
     };
   }
   return runFn;
+}
+function cleanupWorkers() {
+  for (const key in cache) {
+    const cached = cache[key];
+    if (cached.worker) {
+      cached.worker.terminate();
+    }
+    if (cached.src) {
+      win.URL.revokeObjectURL(cached.src);
+    }
+    delete cache[key];
+  }
 }
 
 ;// ./src/module/dsv.ts
@@ -53910,7 +53936,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260128004736",
+  version: "3.18.0-nightly-20260129005127",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

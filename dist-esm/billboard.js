@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260128004736
+ * @version 3.18.0-nightly-20260129005127
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -4248,43 +4248,59 @@ function generateWait() {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-// Store blob in memory
-var blob = {};
+// Store worker cache in memory
+var cache = {};
 /**
- * Get Object URL
+ * Get or create cached worker resources (Object URL, Worker)
  * @param {function} fn Function to be executed in worker
  * @param {Array} depsFn Dependency functions to run given function(fn).
- * @returns {string}
+ * @returns {{key: string, src: string}} Cache key and Object URL
  * @private
  */
-function getObjectURL(fn, depsFn) {
+function getOrCreateWorkerResources(fn, depsFn) {
     var _a;
     var fnString = fn.toString();
-    var key = fnString.replace(/(function|[\s\W\n])/g, "").substring(0, 15);
-    if (!(key in blob)) {
-        // Web Worker body
-        blob[key] = new win.Blob([
-            "".concat((_a = depsFn === null || depsFn === void 0 ? void 0 : depsFn.map(String).join(";")) !== null && _a !== void 0 ? _a : "", "\n\n\t\t\tself.onmessage=function({data}) {\n\t\t\t\tconst result = (").concat(fnString, ").apply(null, data);\n\t\t\t\tself.postMessage(result);\n\t\t\t};")
+    // Include depsFn in cache key to handle different dependencies
+    var depsString = (_a = depsFn === null || depsFn === void 0 ? void 0 : depsFn.map(String).join(";")) !== null && _a !== void 0 ? _a : "";
+    var key = (fnString + depsString).replace(/(function|[\s\W\n])/g, "").substring(0, 30);
+    if (!(key in cache)) {
+        // Create Blob and Object URL for Web Worker
+        var blob = new win.Blob([
+            "".concat(depsString, "\n\n\t\t\tself.onmessage=function({data}) {\n\t\t\t\tconst result = (").concat(fnString, ").apply(null, data);\n\t\t\t\tself.postMessage(result);\n\t\t\t};")
         ], {
             type: "text/javascript"
         });
+        cache[key] = {
+            src: win.URL.createObjectURL(blob),
+            worker: null
+        };
     }
-    return win.URL.createObjectURL(blob[key]);
+    return { key: key, src: cache[key].src };
 }
 /**
- * Get WebWorker instance
+ * Get or create cached WebWorker instance
+ * @param {string} key Cache key
  * @param {string} src URL object as string
- * @returns {object} WebWorker instance
+ * @returns {Worker} WebWorker instance
  * @private
  */
-function getWorker(src) {
-    var worker = new win.Worker(src);
-    // handle error
-    worker.onerror = function (e) {
-        // eslint-disable-next-line no-console
-        console.error ? console.error(e) : console.log(e);
-    };
-    return worker;
+function getWorker(key, src) {
+    var cached = cache[key];
+    // Return null if cache entry doesn't exist
+    if (!cached) {
+        return null;
+    }
+    if (!cached.worker) {
+        cached.worker = new win.Worker(src);
+        // handle error
+        if (cached.worker) {
+            cached.worker.onerror = function (e) {
+                // eslint-disable-next-line no-console
+                console.error ? console.error(e) : console.log(e);
+            };
+        }
+    }
+    return cached.worker;
 }
 /**
  * Create and run on Web Worker
@@ -4292,7 +4308,7 @@ function getWorker(src) {
  * @param {function} fn Function to be executed in worker
  * @param {function} callback Callback function to receive result from worker
  * @param {Array} depsFn Dependency functions to run given function(fn).
- * @returns {object}
+ * @returns {function}
  * @example
  * 	const worker = runWorker(function(arg) {
  * 		  // do some tasks...
@@ -4320,25 +4336,22 @@ function runWorker(useWorker, fn, callback, depsFn) {
         callback(res);
     };
     if (win.Worker && useWorker) {
-        var src_1 = getObjectURL(fn, depsFn);
-        var worker_1 = getWorker(src_1);
+        var _a = getOrCreateWorkerResources(fn, depsFn), key = _a.key, src = _a.src;
+        var worker_1 = getWorker(key, src);
         runFn = function () {
             var args = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            // trigger worker
-            worker_1.postMessage(args);
-            // listen worker
-            worker_1.onmessage = function (e) {
-                // release object URL from memory
-                win.URL.revokeObjectURL(src_1);
-                return callback(e.data);
-            };
-            // return new Promise((resolve, reject) => {
-            // 	worker.onmessage = ({data}) => resolve(data);
-            // 	worker.onerror = reject;
-            // });
+            if (worker_1) {
+                // trigger worker
+                worker_1.postMessage(args);
+                // listen worker
+                worker_1.onmessage = function (e) {
+                    // Object URL and Worker are cached and reused
+                    return callback(e.data);
+                };
+            }
         };
     }
     return runFn;
@@ -27036,7 +27049,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.18.0-nightly-20260128004736
+ * @version 3.18.0-nightly-20260129005127
  */
 var bb = {
     /**
@@ -27046,7 +27059,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.18.0-nightly-20260128004736",
+    version: "3.18.0-nightly-20260129005127",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
