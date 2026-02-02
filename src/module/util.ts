@@ -567,6 +567,25 @@ function getTranslation(node) {
 }
 
 /**
+ * Get position value from element's attribute or transform
+ * @param {SVGElement} element SVG element
+ * @param {string} type Coordinate type ("x" or "y")
+ * @returns {number} Position value
+ * @private
+ */
+function getElementPos(element: SVGElement | undefined, type: "x" | "y"): number {
+	const attr = element?.getAttribute?.(type);
+
+	if (attr) {
+		return parseFloat(attr);
+	}
+
+	const matrix = getTranslation(element);
+
+	return type === "x" ? matrix.e : matrix.f;
+}
+
+/**
  * Get unique value from array
  * @param {Array} data Source data
  * @returns {Array} Unique array value
@@ -1024,6 +1043,7 @@ export {
 	getBoundingRect,
 	getBrushSelection,
 	getCssRules,
+	getElementPos,
 	getMinMax,
 	getOption,
 	getPathBox,

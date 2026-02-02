@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {$TEXT} from "../../config/classes";
-import {isNumber, setTextValue} from "../../module/util";
+import {getBBox, getElementPos, isNumber, setTextValue} from "../../module/util";
 
 /**
  * Get the text position
@@ -12,19 +12,16 @@ import {isNumber, setTextValue} from "../../module/util";
  * @returns {string|number} text-anchor value or position in pixel
  * @private
  */
-function _getTextXPos(pos = "left", width?: number | any): number | "start" | "middle" | "end" {
+function _getTextXPos(pos = "left", width?: number): number | "start" | "middle" | "end" {
 	const isNum = isNumber(width);
-	let position;
 
-	if (pos.indexOf("center") > -1) {
-		position = isNum ? width / 2 : "middle";
-	} else if (pos.indexOf("right") > -1) {
-		position = isNum ? width : "end";
-	} else {
-		position = isNum ? 0 : "start";
+	if (pos.includes("center")) {
+		return isNum ? width / 2 : "middle";
 	}
-
-	return position;
+	if (pos.includes("right")) {
+		return isNum ? width : "end";
+	}
+	return isNum ? 0 : "start";
 }
 
 export default {
@@ -73,9 +70,29 @@ export default {
 	getTitlePadding(): number {
 		const $$ = this;
 		const {$el: {title}, config} = $$;
+		const paddingTop = config.title_padding.top || 0;
+		const paddingBottom = config.title_padding.bottom || 0;
 
-		return (config.title_padding.top || 0) +
-			(title ? $$.getTextRect(title, $TEXT.title).height : 0) +
-			(config.title_padding.bottom || 0);
+		if (!title?.node()) {
+			return paddingTop + paddingBottom;
+		}
+
+		const titleNode = title.node() as SVGGElement;
+		const translateY = getElementPos(titleNode, "y");
+
+		// If title has been positioned, use actual bounding box for accurate calculation
+		if (translateY) {
+			const bbox = getBBox(titleNode);
+
+			// Calculate actual bottom of title text
+			// translateY is the baseline position, bbox.y is negative (above baseline),
+			// bbox.y + bbox.height gives the extent below baseline
+			return translateY + bbox.y + bbox.height + paddingBottom;
+		}
+
+		// Fallback: title not yet positioned, use text rect estimation
+		return paddingTop +
+			$$.getTextRect(title, $TEXT.title).height +
+			paddingBottom;
 	}
 };
