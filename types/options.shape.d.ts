@@ -474,21 +474,32 @@ export interface DonutOptions {
 }
 
 export interface FunnelOptions {
-	neck: {
+	neck?: {
 		/**
 		 * Set funnel neck width.
 		 */
 		width?: number | {
 			ratio: number
 		};
-		
+
 		/**
 		 * Set funnel neck height.
 		 */
 		height?: number | {
 			ratio: number
 		};
-	}
+	};
+
+	/**
+	 * Set funnel direction rotated.
+	 * When set to `true`, the funnel will be rendered horizontally (left to right) instead of vertically (top to bottom).
+	 */
+	rotated?: boolean;
+
+	/**
+	 * Enable spline (curved) edges for the funnel.
+	 */
+	spline?: boolean;
 }
 
 export interface GaugeOptions {

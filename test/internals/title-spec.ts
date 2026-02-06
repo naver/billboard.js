@@ -90,10 +90,16 @@ describe("TITLE", () => {
 				});
 
 				it("adds the correct amount of padding to fit the title", () => {
-					const height = chart.$.svg.select(".bb-title").node().getBBox().height;
+					const titleGroup = chart.$.svg.select(".bb-title").node().parentNode;
+					const bbox = titleGroup.getBBox();
+					const transform = titleGroup.getAttribute("transform");
+					const translateY = parseFloat(transform.split(",")[1]);
+
+					// The actual bottom of the title is: translateY + bbox.y + bbox.height
+					const actualBottom = translateY + bbox.y + bbox.height;
 
 					expect(chart.internal.getCurrentPaddingByDirection("top")).to.equal(
-						args.title.padding.top + height + args.title.padding.bottom
+						actualBottom + args.title.padding.bottom
 					);
 				});
 
