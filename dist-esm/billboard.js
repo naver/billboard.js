@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260202005442
+ * @version 3.18.0-nightly-20260207005040
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -3247,6 +3247,22 @@ function getTranslation(node) {
     return baseVal && baseVal.numberOfItems ?
         baseVal.getItem(0).matrix :
         { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
+}
+/**
+ * Get position value from element's attribute or transform
+ * @param {SVGElement} element SVG element
+ * @param {string} type Coordinate type ("x" or "y")
+ * @returns {number} Position value
+ * @private
+ */
+function getElementPos(element, type) {
+    var _a;
+    var attr = (_a = element === null || element === void 0 ? void 0 : element.getAttribute) === null || _a === void 0 ? void 0 : _a.call(element, type);
+    if (attr) {
+        return parseFloat(attr);
+    }
+    var matrix = getTranslation(element);
+    return type === "x" ? matrix.e : matrix.f;
 }
 /**
  * Get unique value from array
@@ -8013,6 +8029,8 @@ var redraw = {
             .attr("y", state.height / 2)
             .text(config.data_empty_label_text)
             .style("display", targetsToShow.length ? "none" : null);
+        // title - position early so other elements can calculate correct padding
+        (_b = $$.redrawTitle) === null || _b === void 0 ? void 0 : _b.call($$);
         // update axis
         if (state.hasAxis) {
             // @TODO: Make 'init' state to be accessible everywhere not passing as argument.
@@ -8035,7 +8053,7 @@ var redraw = {
             // event rects will redrawn when flow called
             if (config.interaction_enabled && !flow && wth.EventRect) {
                 $$.redrawEventRect();
-                (_b = $$.bindZoomEvent) === null || _b === void 0 ? void 0 : _b.call($$);
+                (_c = $$.bindZoomEvent) === null || _c === void 0 ? void 0 : _c.call($$);
             }
         }
         else {
@@ -8053,13 +8071,11 @@ var redraw = {
         if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
             $$.updateCircle();
         }
-        else if ((_c = $$.hasLegendDefsPoint) === null || _c === void 0 ? void 0 : _c.call($$)) {
+        else if ((_d = $$.hasLegendDefsPoint) === null || _d === void 0 ? void 0 : _d.call($$)) {
             $$.data.targets.forEach($$.point("create", this));
         }
         // text
         $$.hasDataLabel() && !$$.hasArcType(null, ["radar"]) && $$.updateText();
-        // title
-        (_d = $$.redrawTitle) === null || _d === void 0 ? void 0 : _d.call($$);
         initializing && $$.updateTypesElements();
         $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
         $$.updateTooltipOnRedraw();
@@ -9420,7 +9436,7 @@ var text = {
      * @private
      */
     getXForText: function (points, d, textElement, cachedBbox) {
-        var _a;
+        var _a, _b, _c;
         var $$ = this;
         var config = $$.config;
         var isRotated = config.axis_rotated;
@@ -9436,7 +9452,14 @@ var text = {
             }
         }
         else if (isFunnelType) {
-            xPos += $$.state.current.width / 2;
+            // Use pre-calculated center x from points[2]
+            // Preserve current position when points unavailable (during hide transition)
+            if (points) {
+                xPos = (_c = (_b = points[2]) === null || _b === void 0 ? void 0 : _b[0]) !== null && _c !== void 0 ? _c : xPos;
+            }
+            else {
+                return getElementPos(textElement, "x");
+            }
         }
         else if (isTreemapType) {
             xPos += config.data_labels.centered ? 0 : 5;
@@ -9447,18 +9470,13 @@ var text = {
                 var padding = $$.isBarType(d) ? 4 : 6;
                 var value = d.value;
                 xPos = points[2][1];
-                if (isInverted) {
-                    xPos -= padding * (value > 0 ? 1 : -1);
-                }
-                else {
-                    xPos += padding * (value < 0 ? -1 : 1);
-                }
+                xPos += padding * ((isInverted ? value > 0 : value < 0) ? -1 : 1);
             }
             else {
                 xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
             }
         }
-        if (isRotated || isTreemapType) {
+        if (isRotated || isTreemapType || isFunnelType) {
             xPos += $$.getCenteredTextPos(d, points, textElement, "x", cachedBbox);
         }
         return xPos + getTextPos.call(this, d, "x");
@@ -9473,6 +9491,7 @@ var text = {
      * @private
      */
     getYForText: function (points, d, textElement, cachedBbox) {
+        var _a, _b;
         var $$ = this;
         var axis = $$.axis, config = $$.config, state = $$.state;
         var isRotated = config.axis_rotated;
@@ -9499,9 +9518,14 @@ var text = {
             }
         }
         else if (isFunnelType) {
-            yPos = points ?
-                points[0][1] + ((points[1][1] - points[0][1]) / 2) + rect.height / 2 - 3 :
-                0;
+            // Use pre-calculated center y from points[2]
+            // Preserve current position when points unavailable (during hide transition)
+            if (points) {
+                yPos = ((_b = (_a = points[2]) === null || _a === void 0 ? void 0 : _a[1]) !== null && _b !== void 0 ? _b : points[0][1]) + rect.height / 2 - 3;
+            }
+            else {
+                return getElementPos(textElement, "y");
+            }
         }
         else if (isTreemapType) {
             yPos = points[0][1] + (config.data_labels.centered ? 0 : rect.height + 5);
@@ -9596,17 +9620,13 @@ var text = {
 function _getTextXPos(pos, width) {
     if (pos === void 0) { pos = "left"; }
     var isNum = isNumber(width);
-    var position;
-    if (pos.indexOf("center") > -1) {
-        position = isNum ? width / 2 : "middle";
+    if (pos.includes("center")) {
+        return isNum ? width / 2 : "middle";
     }
-    else if (pos.indexOf("right") > -1) {
-        position = isNum ? width : "end";
+    if (pos.includes("right")) {
+        return isNum ? width : "end";
     }
-    else {
-        position = isNum ? 0 : "start";
-    }
-    return position;
+    return isNum ? 0 : "start";
 }
 var title = {
     /**
@@ -9647,9 +9667,25 @@ var title = {
     getTitlePadding: function () {
         var $$ = this;
         var title = $$.$el.title, config = $$.config;
-        return (config.title_padding.top || 0) +
-            (title ? $$.getTextRect(title, $TEXT.title).height : 0) +
-            (config.title_padding.bottom || 0);
+        var paddingTop = config.title_padding.top || 0;
+        var paddingBottom = config.title_padding.bottom || 0;
+        if (!(title === null || title === void 0 ? void 0 : title.node())) {
+            return paddingTop + paddingBottom;
+        }
+        var titleNode = title.node();
+        var translateY = getElementPos(titleNode, "y");
+        // If title has been positioned, use actual bounding box for accurate calculation
+        if (translateY) {
+            var bbox = getBBox(titleNode);
+            // Calculate actual bottom of title text
+            // translateY is the baseline position, bbox.y is negative (above baseline),
+            // bbox.y + bbox.height gives the extent below baseline
+            return translateY + bbox.y + bbox.height + paddingBottom;
+        }
+        // Fallback: title not yet positioned, use text rect estimation
+        return paddingTop +
+            $$.getTextRect(title, $TEXT.title).height +
+            paddingBottom;
     }
 };
 
@@ -21501,21 +21537,14 @@ function _getSize(checkNeck) {
     var $$ = this;
     var config = $$.config, _a = $$.state.current, width = _a.width, height = _a.height;
     var padding = $$.getCurrentPadding();
-    var size = __assign({ width: width - (padding.left + padding.right), height: height - (config.legend_show ? $$.getLegendHeight() + 10 : 0) -
-            (padding.top + padding.bottom) }, padding);
-    // determine if container width to not be less than neck width
+    var size = __assign({ width: width - padding.left - padding.right, height: height - (config.legend_show ? $$.getLegendHeight() + 10 : 0) -
+            padding.top - padding.bottom }, padding);
     if (checkNeck) {
-        var _b = _getNeckSize.call($$, {
-            width: size.width,
-            height: size.height
-        }), neckWidth = _b.width, neckHeight = _b.height;
-        // prevent neck size to not exceeed funnel size
-        if (size.width < neckWidth) {
-            size.width = neckWidth;
-        }
-        if (size.height < neckHeight) {
-            size.height = neckHeight;
-        }
+        var neck = _getNeckSize.call($$, size);
+        var isRotated = config.funnel_rotated;
+        // Use Math.max to ensure size is not less than neck
+        size.width = Math.max(size.width, isRotated ? neck.height : neck.width);
+        size.height = Math.max(size.height, isRotated ? neck.width : neck.height);
     }
     return size;
 }
@@ -21526,22 +21555,13 @@ function _getSize(checkNeck) {
  * @private
  */
 function _getNeckSize(current) {
-    var _a;
     var $$ = this;
     var config = $$.config;
-    var width = config.funnel_neck_width;
-    var height = config.funnel_neck_height;
-    _a = [width, height].map(function (v, i) {
-        var size = v;
-        if (isObject(v)) {
-            size = current[i ? "height" : "width"] * v.ratio;
-        }
-        return size;
-    }), width = _a[0], height = _a[1];
-    return {
-        width: width,
-        height: height
-    };
+    var isRotated = config.funnel_rotated;
+    var _a = [config.funnel_neck_width, config.funnel_neck_height].map(function (v, i) {
+        return isObject(v) ? current[isRotated !== !i ? "width" : "height"] * v.ratio : v;
+    }), w = _a[0], h = _a[1];
+    return { width: w, height: h };
 }
 /**
  * Get coordinate points
@@ -21551,56 +21571,68 @@ function _getNeckSize(current) {
  */
 function _getCoord(d) {
     var $$ = this;
-    var _a = _getSize.call($$, true), top = _a.top, left = _a.left, width = _a.width;
+    var isRotated = $$.config.funnel_rotated;
+    var _a = _getSize.call($$, true), width = _a.width, height = _a.height;
     var coords = [];
-    d.forEach(function (d, i) {
-        var ratio = d.ratio;
-        var y = i > 0 ? coords[i - 1][2][1] : top;
-        // (M)(4) ------------> (1)
-        //   ˄                   |
-        //   |                   |
-        //   |                   ˅
-        //  (3) <-------------- (2)
-        coords.push(d.coords = [
-            [left, y], // M
-            [left + width, y], // 1
-            [left + width, i > 0 ? ratio + y : ratio + top], // 2
-            [left, i > 0 ? ratio + y : ratio + top], // 3
-            [left, y] // 4
-        ]);
+    // Use relative coordinates (0, 0) as origin within the funnel group
+    d.forEach(function (item, i) {
+        var _a = item.ratio, ratio = _a === void 0 ? 0 : _a;
+        var prev = i > 0 ? coords[i - 1][2][isRotated ? 0 : 1] : 0;
+        var end = ratio + prev;
+        // coords: [M(start), 1(end-start), 2(end-end), 3(start-end), 4(close)]
+        coords.push(item.coords = isRotated ?
+            [
+                [prev, 0],
+                [end, 0],
+                [end, height],
+                [prev, height],
+                [prev, 0]
+            ] :
+            [
+                [0, prev],
+                [width, prev],
+                [width, end],
+                [0, end],
+                [0, prev]
+            ]);
     });
     return coords;
 }
 /**
  * Get clip path
- * @param {boolean} forBackground Determine if clip path for background
  * @returns {string} path
  * @private
  */
-function _getClipPath(forBackground) {
-    if (forBackground === void 0) { forBackground = false; }
+function _getClipPath() {
     var $$ = this;
-    var _a = _getSize.call($$, true), width = _a.width, height = _a.height, top = _a.top, left = _a.left;
+    var isRotated = $$.config.funnel_rotated;
+    var _a = _getSize.call($$, true), width = _a.width, height = _a.height;
     var neck = _getNeckSize.call($$, { width: width, height: height });
-    var leftX = (width - neck.width) / 2;
-    var rightX = (width + neck.width) / 2;
-    var bodyHeigth = height - neck.height;
-    var coords = [
-        [0, 0], // M
-        [width, 0], // 1
-        [rightX, bodyHeigth], // 2
-        [rightX, height], // 3
-        [leftX, height], // 4
-        [leftX, bodyHeigth], // 5
-        [0, 0] // 6
-    ];
-    if (forBackground) {
-        coords.forEach(function (d) {
-            d[0] += left;
-            d[1] += top;
-        });
+    // Use relative coordinates (0, 0) as origin within the funnel group
+    var middleCoords;
+    if (isRotated) {
+        var neckY = (height - neck.width) / 2;
+        var bodyW = width - neck.height;
+        middleCoords = [
+            [bodyW, neckY],
+            [width, neckY],
+            [width, height - neckY],
+            [bodyW, height - neckY],
+            [0, height]
+        ];
     }
-    return "M".concat(coords.join("L"), "z");
+    else {
+        var neckX = (width - neck.width) / 2;
+        var bodyH = height - neck.height;
+        middleCoords = [
+            [width, 0],
+            [width - neckX, bodyH],
+            [width - neckX, height],
+            [neckX, height],
+            [neckX, bodyH]
+        ];
+    }
+    return "M".concat(__spreadArray(__spreadArray([[0, 0]], middleCoords, true), [[0, 0]], false).join("L"), "z");
 }
 /**
  * Get funnel data
@@ -21615,9 +21647,7 @@ function _getFunnelData(d) {
         id: d.id,
         value: d.values.reduce(function (a, b) { return a + b.value; }, 0)
     }); });
-    if (config.data_order) {
-        data.sort($$.getSortCompareFn.bind($$)(true));
-    }
+    config.data_order && data.sort($$.getSortCompareFn.bind($$)(true));
     return _updateRatio.call($$, data);
 }
 /**
@@ -21628,17 +21658,91 @@ function _getFunnelData(d) {
  */
 function _updateRatio(data) {
     var $$ = this;
-    var height = _getSize.call($$).height;
+    var _a = _getSize.call($$), width = _a.width, height = _a.height;
     var total = $$.getTotalDataSum(true);
+    var dimension = $$.config.funnel_rotated ? width : height;
     data.forEach(function (d) {
-        // ratio = shape's height
-        d.ratio = (d.value / total) * height;
+        d.ratio = (d.value / total) * dimension;
     });
     return data;
 }
+/**
+ * Easing function for smooth curve generation (ease-in-out cubic)
+ * @param {number} t Progress value between 0 and 1
+ * @returns {number} Eased value
+ * @private
+ */
+function _easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+/**
+ * Generate smooth edge points for spline funnel
+ * @param {number} start Start position
+ * @param {number} end End position
+ * @param {number} startEdge Start edge position
+ * @param {number} endEdge End edge position
+ * @param {boolean} isRotated Whether funnel is rotated
+ * @returns {Array} Array of [x, y] points
+ * @private
+ */
+function _generateSmoothEdgePoints(start, end, startEdge, endEdge, isRotated) {
+    var points = [];
+    // 20 segments provide smooth cubic easing curve without unnecessary overhead
+    var SPLINE_POINTS = 20;
+    for (var i = 0; i <= SPLINE_POINTS; i++) {
+        var t = i / SPLINE_POINTS;
+        var pos = start + (end - start) * t;
+        var edge = startEdge + (endEdge - startEdge) * _easeInOutCubic(t);
+        points.push(isRotated ? [pos, edge] : [edge, pos]);
+    }
+    return points;
+}
+/**
+ * Generate spline clip path for funnel with smooth curved outer edges
+ * @returns {string} SVG path string
+ * @private
+ */
+function _getSplineClipPath() {
+    var _a;
+    var $$ = this;
+    var isRotated = $$.config.funnel_rotated;
+    var _b = _getSize.call($$, true), width = _b.width, height = _b.height;
+    var neck = _getNeckSize.call($$, { width: width, height: height });
+    var lineGen = line$1()
+        .x(function (d) { return d[0]; })
+        .y(function (d) { return d[1]; })
+        .curve(curveLinear);
+    // Use relative coordinates (0, 0) as origin within the funnel group
+    // Common calculations
+    var neckHalf = (isRotated ? height - neck.width : width - neck.width) / 2;
+    var bodySize = isRotated ? width - neck.height : height - neck.height;
+    // Generate edge points based on orientation
+    var edge1 = _generateSmoothEdgePoints(0, bodySize, isRotated ? 0 : width, isRotated ? neckHalf : width - neckHalf, isRotated);
+    var edge2 = [];
+    // Add neck points if neck exists
+    if (neck.height > 0) {
+        edge1.push(isRotated ? [width, neckHalf] : [width - neckHalf, height]);
+        edge2.push(isRotated ? [width, height - neckHalf] : [neckHalf, height]);
+    }
+    // Generate opposite edge
+    edge2.push.apply(edge2, _generateSmoothEdgePoints(bodySize, 0, isRotated ? height - neckHalf : neckHalf, isRotated ? height : 0, isRotated));
+    // Insert corner points to maintain flat top/left edges
+    // isRotated: swap indices for horizontal vs vertical corner points
+    if (edge1.length > 1) {
+        var _c = isRotated ? [1, 0] : [0, 1], a = _c[0], b = _c[1];
+        edge1.splice(1, 0, [edge1[a][0], edge1[b][1]]);
+        var lastIdx = edge2.length - 1;
+        if (lastIdx > 0) {
+            edge2.splice(lastIdx, 0, [edge2[lastIdx - a][0], edge2[lastIdx - b][1]]);
+        }
+    }
+    var path1 = lineGen(edge1) || "";
+    var path2 = ((_a = lineGen(edge2)) === null || _a === void 0 ? void 0 : _a.replace(/^M/, "L")) || "";
+    return isRotated ? "".concat(path1).concat(path2, "z") : "M0,0".concat(path1.replace(/^M/, "L")).concat(path2, "z");
+}
 var shapeFunnel = {
     /**
-     * Initialize polar
+     * Initialize funnel
      * @private
      */
     initFunnel: function () {
@@ -21647,7 +21751,6 @@ var shapeFunnel = {
         $el.funnel = $el.main.select(".".concat($COMMON.chart))
             .append("g")
             .classed($FUNNEL.chartFunnels, true);
-        // define background to prevent shape overflow
         $el.funnel.background = $el.funnel.append("path")
             .classed($FUNNEL.funnelBackground, true);
         $$.bindFunnelEvent();
@@ -21659,61 +21762,59 @@ var shapeFunnel = {
     bindFunnelEvent: function () {
         var $$ = this;
         var funnel = $$.$el.funnel, config = $$.config, state = $$.state;
+        if (!config.interaction_enabled) {
+            return;
+        }
         var getTarget = function (event) {
             var _a;
             var target = event.isTrusted ? event.target : (_a = state.eventReceiver.rect) === null || _a === void 0 ? void 0 : _a.node();
-            var data;
             if (/^path$/i.test(target.tagName)) {
                 state.event = event;
-                data = select(target).datum();
+                return select(target).datum();
             }
-            return data;
         };
-        if (config.interaction_enabled) {
-            var isTouch = state.inputType === "touch";
-            funnel
-                .on(isTouch ? "touchstart" : "mouseover mousemove", function (event) {
-                var data = getTarget(event);
-                if (data) {
-                    $$.showTooltip([data], event.target);
-                    /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
-                }
-            }, isTouch ? { passive: true } : undefined)
-                .on(isTouch ? "touchend" : "mouseout", function (event) {
-                var data = getTarget(event);
-                if (config.interaction_onout) {
-                    $$.hideTooltip();
-                    $$.setOverOut(false, data);
-                }
-            });
-        }
+        var isTouch = state.inputType === "touch";
+        funnel
+            .on(isTouch ? "touchstart" : "mouseover mousemove", function (event) {
+            var data = getTarget(event);
+            if (data) {
+                $$.showTooltip([data], event.target);
+                /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
+            }
+        }, isTouch ? { passive: true } : undefined)
+            .on(isTouch ? "touchend" : "mouseout", function (event) {
+            var data = getTarget(event);
+            if (config.interaction_onout) {
+                $$.hideTooltip();
+                $$.setOverOut(false, data);
+            }
+        });
     },
     /**
-     * Update polar based on given data array
+     * Update targets for funnel
      * @param {object} t Data object
      * @private
      */
     updateTargetsForFunnel: function (t) {
         var $$ = this;
         var funnel = $$.$el.funnel;
-        var classChartFunnel = $$.getChartClass("Funnel");
-        var classFunnel = $$.getClass("funnel", true);
         if (!funnel) {
             $$.initFunnel();
         }
+        var classChartFunnel = $$.getChartClass("Funnel");
+        var classFunnel = $$.getClass("funnel", true);
         var targets = _getFunnelData.call($$, t.filter($$.isFunnelType.bind($$)));
-        var mainFunnelUpdate = funnel
+        var mainFunnelUpdate = $$.filterNullish(targets);
+        var mainFunnel = funnel
             .selectAll(".".concat($FUNNEL.chartFunnel))
-            .data($$.filterNullish(targets));
-        mainFunnelUpdate.exit().remove();
-        var mainFunnelEnter = mainFunnelUpdate
-            .enter()
+            .data(mainFunnelUpdate);
+        mainFunnel.exit().remove();
+        var mainFunnelEnter = mainFunnel.enter()
             .insert("g", ".".concat($FUNNEL.funnelBackground));
-        mainFunnelEnter
-            .append("path");
+        mainFunnelEnter.append("path");
         funnel.path = mainFunnelEnter
-            .merge(mainFunnelUpdate)
-            .attr("class", function (d) { return classChartFunnel(d); })
+            .merge(mainFunnel)
+            .attr("class", classChartFunnel)
             .select("path")
             .attr("class", classFunnel)
             .style("opacity", "0")
@@ -21731,27 +21832,36 @@ var shapeFunnel = {
             var id = _a.id;
             return id;
         });
-        funnel.path = funnel.path.filter(function (d) { return targetIds.indexOf(d.id) >= 0; });
+        funnel.path = funnel.path.filter(function (d) { return targetIds.includes(d.id); });
     },
     /**
-     * Generate treemap coordinate points data
-     * @returns {Array} Array of coordinate points
+     * Generate funnel coordinate points data for text labels
+     * @returns {(d: IDataRow) => [number, number][]} Point getter function
      * @private
      */
     generateGetFunnelPoints: function () {
         var $$ = this;
-        var funnel = $$.$el.funnel;
+        var config = $$.config, funnel = $$.$el.funnel;
+        var isRotated = config.funnel_rotated;
         var targets = $$.filterTargetsToShow(funnel.path);
-        var _a = _getSize.call($$), top = _a.top, left = _a.left, right = _a.right;
-        var center = (left - right) / 2;
+        var _a = _getSize.call($$), top = _a.top, left = _a.left, width = _a.width, height = _a.height;
         var points = {};
-        var accumulatedHeight = top !== null && top !== void 0 ? top : 0;
+        var accumulated = 0;
         targets.each(function (d, i) {
             var _a;
-            points[d.id] = [
-                [center, accumulatedHeight],
-                [center, accumulatedHeight += ((_a = targets === null || targets === void 0 ? void 0 : targets[i]) !== null && _a !== void 0 ? _a : d).ratio]
-            ];
+            var start = accumulated;
+            var ratio = ((_a = targets === null || targets === void 0 ? void 0 : targets[i]) !== null && _a !== void 0 ? _a : d).ratio;
+            accumulated += ratio;
+            // For rotated: x is main axis, y is center
+            // For non-rotated: y is main axis, x is center
+            var offset = isRotated ? left : top;
+            var segmentStart = offset + start;
+            var segmentEnd = offset + accumulated;
+            var center = (segmentStart + segmentEnd) / 2;
+            var crossCenter = isRotated ? top + height / 2 : left + width / 2;
+            points[d.id] = isRotated ?
+                [[segmentStart, crossCenter], [segmentEnd, crossCenter], [center, crossCenter]] :
+                [[crossCenter, segmentStart], [crossCenter, segmentEnd], [crossCenter, center]];
         });
         return function (d) { return points[d.id]; };
     },
@@ -21761,14 +21871,17 @@ var shapeFunnel = {
      */
     redrawFunnel: function () {
         var $$ = this;
-        var $T = $$.$T, funnel = $$.$el.funnel;
+        var config = $$.config, $T = $$.$T, funnel = $$.$el.funnel;
         var targets = $$.filterTargetsToShow(funnel.path);
         var coords = _getCoord.call($$, _updateRatio.call($$, targets.data()));
-        // set neck path
-        funnel.attr("clip-path", "path('".concat(_getClipPath.bind($$)(), "')"));
-        funnel.background.attr("d", _getClipPath.call($$, true));
+        var _a = _getSize.call($$), top = _a.top, left = _a.left;
+        var clipPath = (config.funnel_spline ? _getSplineClipPath : _getClipPath).call($$);
+        // Apply transform to position the funnel group
+        funnel.attr("transform", "translate(".concat(left, ", ").concat(top, ")"))
+            .attr("clip-path", "path('".concat(clipPath, "')"));
+        funnel.background.attr("d", clipPath);
         $T(targets)
-            .attr("d", function (d, i) { return "M".concat(coords[i].join("L"), "z"); })
+            .attr("d", function (_, i) { return "M".concat(coords[i].join("L"), "z"); })
             .style("opacity", "1");
         funnel.selectAll("g").style("opacity", null);
     }
@@ -24481,6 +24594,8 @@ var optFunnel = {
      * @property {number} [funnel.neck.height=0] Set funnel neck height.
      * @property {number} [funnel.neck.width.ratio] Set funnel neck width in ratio.
      * @property {number} [funnel.neck.height.ratio] Set funnel neck height in ratio.
+     * @property {boolean} [funnel.rotated=false] Set funnel direction rotated. When set to `true`, the funnel will be rendered horizontally (left to right) instead of vertically (top to bottom).
+     * @property {boolean} [funnel.spline=false] Enable spline (curved) edges for the funnel.
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.PolarChart)
      * @example
      *  funnel: {
@@ -24495,11 +24610,19 @@ var optFunnel = {
      *          height: {
      *            ratio: 0.5
      *          }
-     *      }
+     *      },
+     *
+     *      // Render funnel horizontally (left to right)
+     *      rotated: true,
+     *
+     *      // Enable curved edges
+     *      spline: true
      *  }
      */
     funnel_neck_width: 0,
-    funnel_neck_height: 0
+    funnel_neck_height: 0,
+    funnel_rotated: false,
+    funnel_spline: false
 };
 
 /**
@@ -27049,7 +27172,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.18.0-nightly-20260202005442
+ * @version 3.18.0-nightly-20260207005040
  */
 var bb = {
     /**
@@ -27059,7 +27182,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.18.0-nightly-20260202005442",
+    version: "3.18.0-nightly-20260207005040",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

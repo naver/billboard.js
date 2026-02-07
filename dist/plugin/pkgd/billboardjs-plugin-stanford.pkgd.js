@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260202005442
+ * @version 3.18.0-nightly-20260207005040
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -27572,6 +27572,15 @@ function getTranslation(node) {
   const baseVal = transform && transform.baseVal;
   return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
 }
+function getElementPos(element, type) {
+  var _a;
+  const attr = (_a = element == null ? void 0 : element.getAttribute) == null ? void 0 : _a.call(element, type);
+  if (attr) {
+    return parseFloat(attr);
+  }
+  const matrix = getTranslation(element);
+  return type === "x" ? matrix.e : matrix.f;
+}
 function getUnique(data) {
   const isDate = data[0] instanceof Date;
   const d = (isDate ? data.map(Number) : data).filter((v, i, self) => self.indexOf(v) === i);
@@ -27896,7 +27905,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260202005442");
+__publicField(Plugin, "version", "3.18.0-nightly-20260207005040");
 
 ;// ./node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {
