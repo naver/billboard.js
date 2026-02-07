@@ -3,6 +3,8 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
+import {line as d3Line} from "d3-shape";
+import {curveLinear as d3CurveLinear} from "d3-shape";
 import {$COMMON, $FUNNEL} from "../../config/classes";
 import {isObject} from "../../module/util";
 import type {IData, IDataRow, IFunnelData} from "../data/IData";
@@ -22,27 +24,19 @@ function _getSize(checkNeck = false): TSize {
 	const padding = $$.getCurrentPadding();
 
 	const size = {
-		width: width - (padding.left + padding.right),
+		width: width - padding.left - padding.right,
 		height: height - (config.legend_show ? $$.getLegendHeight() + 10 : 0) -
-			(padding.top + padding.bottom),
+			padding.top - padding.bottom,
 		...padding
 	};
 
-	// determine if container width to not be less than neck width
 	if (checkNeck) {
-		const {width: neckWidth, height: neckHeight} = _getNeckSize.call($$, {
-			width: size.width,
-			height: size.height
-		});
+		const neck = _getNeckSize.call($$, size);
+		const isRotated = config.funnel_rotated;
 
-		// prevent neck size to not exceeed funnel size
-		if (size.width < neckWidth) {
-			size.width = neckWidth;
-		}
-
-		if (size.height < neckHeight) {
-			size.height = neckHeight;
-		}
+		// Use Math.max to ensure size is not less than neck
+		size.width = Math.max(size.width, isRotated ? neck.height : neck.width);
+		size.height = Math.max(size.height, isRotated ? neck.width : neck.height);
 	}
 
 	return size;
@@ -57,23 +51,12 @@ function _getSize(checkNeck = false): TSize {
 function _getNeckSize(current: TSizeCurrent) {
 	const $$ = this;
 	const {config} = $$;
-	let width = config.funnel_neck_width;
-	let height = config.funnel_neck_height;
+	const isRotated = config.funnel_rotated;
+	const [w, h] = [config.funnel_neck_width, config.funnel_neck_height].map((v, i) =>
+		isObject(v) ? current[isRotated !== !i ? "width" : "height"] * v.ratio : v
+	);
 
-	[width, height] = [width, height].map((v, i) => {
-		let size = v;
-
-		if (isObject(v)) {
-			size = current[i ? "height" : "width"] * v.ratio;
-		}
-
-		return size;
-	});
-
-	return {
-		width,
-		height
-	};
+	return {width: w, height: h};
 }
 
 /**
@@ -84,25 +67,32 @@ function _getNeckSize(current: TSizeCurrent) {
  */
 function _getCoord(d: IFunnelData[]) {
 	const $$ = this;
-	const {top, left, width} = _getSize.call($$, true);
+	const isRotated = $$.config.funnel_rotated;
+	const {width, height} = _getSize.call($$, true);
 	const coords: number[][][] = [];
 
-	d.forEach((d, i) => {
-		const {ratio} = d;
-		const y = i > 0 ? coords[i - 1][2][1] : top;
+	// Use relative coordinates (0, 0) as origin within the funnel group
+	d.forEach((item, i) => {
+		const {ratio = 0} = item;
+		const prev = i > 0 ? coords[i - 1][2][isRotated ? 0 : 1] : 0;
+		const end = ratio + prev;
 
-		// (M)(4) ------------> (1)
-		//   ˄                   |
-		//   |                   |
-		//   |                   ˅
-		//  (3) <-------------- (2)
-		coords.push(d.coords = [
-			[left, y], // M
-			[left + width, y], // 1
-			[left + width, i > 0 ? ratio + y : ratio + top], // 2
-			[left, i > 0 ? ratio + y : ratio + top], // 3
-			[left, y] // 4
-		]);
+		// coords: [M(start), 1(end-start), 2(end-end), 3(start-end), 4(close)]
+		coords.push(item.coords = isRotated ?
+			[
+				[prev, 0],
+				[end, 0],
+				[end, height],
+				[prev, height],
+				[prev, 0]
+			] :
+			[
+				[0, prev],
+				[width, prev],
+				[width, end],
+				[0, end],
+				[0, prev]
+			]);
 	});
 
 	return coords;
@@ -110,36 +100,43 @@ function _getCoord(d: IFunnelData[]) {
 
 /**
  * Get clip path
- * @param {boolean} forBackground Determine if clip path for background
  * @returns {string} path
  * @private
  */
-function _getClipPath(forBackground = false): string {
+function _getClipPath(): string {
 	const $$ = this;
-	const {width, height, top, left} = _getSize.call($$, true);
+	const isRotated = $$.config.funnel_rotated;
+	const {width, height} = _getSize.call($$, true);
 	const neck = _getNeckSize.call($$, {width, height});
-	const leftX = (width - neck.width) / 2;
-	const rightX = (width + neck.width) / 2;
-	const bodyHeigth = height - neck.height;
 
-	const coords = [
-		[0, 0], // M
-		[width, 0], // 1
-		[rightX, bodyHeigth], // 2
-		[rightX, height], // 3
-		[leftX, height], // 4
-		[leftX, bodyHeigth], // 5
-		[0, 0] // 6
-	];
+	// Use relative coordinates (0, 0) as origin within the funnel group
+	let middleCoords: number[][];
 
-	if (forBackground) {
-		coords.forEach(d => {
-			d[0] += left;
-			d[1] += top;
-		});
+	if (isRotated) {
+		const neckY = (height - neck.width) / 2;
+		const bodyW = width - neck.height;
+
+		middleCoords = [
+			[bodyW, neckY],
+			[width, neckY],
+			[width, height - neckY],
+			[bodyW, height - neckY],
+			[0, height]
+		];
+	} else {
+		const neckX = (width - neck.width) / 2;
+		const bodyH = height - neck.height;
+
+		middleCoords = [
+			[width, 0],
+			[width - neckX, bodyH],
+			[width - neckX, height],
+			[neckX, height],
+			[neckX, bodyH]
+		];
 	}
 
-	return `M${coords.join("L")}z`;
+	return `M${[[0, 0], ...middleCoords, [0, 0]].join("L")}z`;
 }
 
 /**
@@ -156,9 +153,7 @@ function _getFunnelData(d: IData[]): IFunnelData[] {
 		value: d.values.reduce((a, b) => a + <number>b.value, 0)
 	}));
 
-	if (config.data_order) {
-		data.sort($$.getSortCompareFn.bind($$)(true));
-	}
+	config.data_order && data.sort($$.getSortCompareFn.bind($$)(true));
 
 	return _updateRatio.call($$, data);
 }
@@ -171,20 +166,129 @@ function _getFunnelData(d: IData[]): IFunnelData[] {
  */
 function _updateRatio(data: IFunnelData[]): IFunnelData[] {
 	const $$ = this;
-	const {height} = _getSize.call($$);
+	const {width, height} = _getSize.call($$);
 	const total = $$.getTotalDataSum(true);
+	const dimension = $$.config.funnel_rotated ? width : height;
 
 	data.forEach(d => {
-		// ratio = shape's height
-		d.ratio = (d.value / total) * height;
+		d.ratio = (d.value / total) * dimension;
 	});
 
 	return data;
 }
 
+/**
+ * Easing function for smooth curve generation (ease-in-out cubic)
+ * @param {number} t Progress value between 0 and 1
+ * @returns {number} Eased value
+ * @private
+ */
+function _easeInOutCubic(t: number): number {
+	return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+/**
+ * Generate smooth edge points for spline funnel
+ * @param {number} start Start position
+ * @param {number} end End position
+ * @param {number} startEdge Start edge position
+ * @param {number} endEdge End edge position
+ * @param {boolean} isRotated Whether funnel is rotated
+ * @returns {Array} Array of [x, y] points
+ * @private
+ */
+function _generateSmoothEdgePoints(
+	start: number,
+	end: number,
+	startEdge: number,
+	endEdge: number,
+	isRotated: boolean
+): [number, number][] {
+	const points: [number, number][] = [];
+	// 20 segments provide smooth cubic easing curve without unnecessary overhead
+	const SPLINE_POINTS = 20;
+
+	for (let i = 0; i <= SPLINE_POINTS; i++) {
+		const t = i / SPLINE_POINTS;
+		const pos = start + (end - start) * t;
+		const edge = startEdge + (endEdge - startEdge) * _easeInOutCubic(t);
+
+		points.push(isRotated ? [pos, edge] : [edge, pos]);
+	}
+
+	return points;
+}
+
+/**
+ * Generate spline clip path for funnel with smooth curved outer edges
+ * @returns {string} SVG path string
+ * @private
+ */
+function _getSplineClipPath(): string {
+	const $$ = this;
+	const isRotated = $$.config.funnel_rotated;
+	const {width, height} = _getSize.call($$, true);
+	const neck = _getNeckSize.call($$, {width, height});
+
+	const lineGen = d3Line<[number, number]>()
+		.x(d => d[0])
+		.y(d => d[1])
+		.curve(d3CurveLinear);
+
+	// Use relative coordinates (0, 0) as origin within the funnel group
+	// Common calculations
+	const neckHalf = (isRotated ? height - neck.width : width - neck.width) / 2;
+	const bodySize = isRotated ? width - neck.height : height - neck.height;
+
+	// Generate edge points based on orientation
+	const edge1 = _generateSmoothEdgePoints(
+		0,
+		bodySize,
+		isRotated ? 0 : width,
+		isRotated ? neckHalf : width - neckHalf,
+		isRotated
+	);
+
+	const edge2: [number, number][] = [];
+
+	// Add neck points if neck exists
+	if (neck.height > 0) {
+		edge1.push(isRotated ? [width, neckHalf] : [width - neckHalf, height]);
+		edge2.push(isRotated ? [width, height - neckHalf] : [neckHalf, height]);
+	}
+
+	// Generate opposite edge
+	edge2.push(..._generateSmoothEdgePoints(
+		bodySize,
+		0,
+		isRotated ? height - neckHalf : neckHalf,
+		isRotated ? height : 0,
+		isRotated
+	));
+
+	// Insert corner points to maintain flat top/left edges
+	// isRotated: swap indices for horizontal vs vertical corner points
+	if (edge1.length > 1) {
+		const [a, b] = isRotated ? [1, 0] : [0, 1];
+
+		edge1.splice(1, 0, [edge1[a][0], edge1[b][1]]);
+
+		const lastIdx = edge2.length - 1;
+
+		if (lastIdx > 0) {
+			edge2.splice(lastIdx, 0, [edge2[lastIdx - a][0], edge2[lastIdx - b][1]]);
+		}
+	}
+
+	const path1 = lineGen(edge1) || "";
+	const path2 = lineGen(edge2)?.replace(/^M/, "L") || "";
+
+	return isRotated ? `${path1}${path2}z` : `M0,0${path1.replace(/^M/, "L")}${path2}z`;
+}
+
 export default {
 	/**
-	 * Initialize polar
+	 * Initialize funnel
 	 * @private
 	 */
 	initFunnel(): void {
@@ -195,7 +299,6 @@ export default {
 			.append("g")
 			.classed($FUNNEL.chartFunnels, true);
 
-		// define background to prevent shape overflow
 		$el.funnel.background = $el.funnel.append("path")
 			.classed($FUNNEL.funnelBackground, true);
 
@@ -209,74 +312,73 @@ export default {
 	bindFunnelEvent(): void {
 		const $$ = this;
 		const {$el: {funnel}, config, state} = $$;
+
+		if (!config.interaction_enabled) {
+			return;
+		}
+
 		const getTarget = event => {
 			const target = event.isTrusted ? event.target : state.eventReceiver.rect?.node();
-			let data;
 
 			if (/^path$/i.test(target.tagName)) {
 				state.event = event;
-				data = d3Select(target).datum();
+				return d3Select(target).datum();
 			}
-
-			return data;
 		};
 
-		if (config.interaction_enabled) {
-			const isTouch = state.inputType === "touch";
+		const isTouch = state.inputType === "touch";
 
-			funnel
-				.on(isTouch ? "touchstart" : "mouseover mousemove", event => {
-					const data = getTarget(event);
+		funnel
+			.on(isTouch ? "touchstart" : "mouseover mousemove", event => {
+				const data = getTarget(event);
 
-					if (data) {
-						$$.showTooltip([data], event.target);
-						/^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
-					}
-				}, isTouch ? {passive: true} : undefined)
-				.on(isTouch ? "touchend" : "mouseout", event => {
-					const data = getTarget(event);
+				if (data) {
+					$$.showTooltip([data], event.target);
+					/^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
+				}
+			}, isTouch ? {passive: true} : undefined)
+			.on(isTouch ? "touchend" : "mouseout", event => {
+				const data = getTarget(event);
 
-					if (config.interaction_onout) {
-						$$.hideTooltip();
-						$$.setOverOut(false, data);
-					}
-				});
-		}
+				if (config.interaction_onout) {
+					$$.hideTooltip();
+					$$.setOverOut(false, data);
+				}
+			});
 	},
 
 	/**
-	 * Update polar based on given data array
+	 * Update targets for funnel
 	 * @param {object} t Data object
 	 * @private
 	 */
 	updateTargetsForFunnel(t: IData[]): void {
 		const $$ = this;
 		const {$el: {funnel}} = $$;
-		const classChartFunnel = $$.getChartClass("Funnel");
-		const classFunnel = $$.getClass("funnel", true);
 
 		if (!funnel) {
 			$$.initFunnel();
 		}
 
+		const classChartFunnel = $$.getChartClass("Funnel");
+		const classFunnel = $$.getClass("funnel", true);
 		const targets = _getFunnelData.call($$, t.filter($$.isFunnelType.bind($$)));
 
-		const mainFunnelUpdate = funnel
+		const mainFunnelUpdate = $$.filterNullish(targets);
+		const mainFunnel = funnel
 			.selectAll(`.${$FUNNEL.chartFunnel}`)
-			.data($$.filterNullish(targets));
+			.data(mainFunnelUpdate);
 
-		mainFunnelUpdate.exit().remove();
+		mainFunnel.exit().remove();
 
-		const mainFunnelEnter = mainFunnelUpdate
-			.enter()
+		const mainFunnelEnter = mainFunnel.enter()
 			.insert("g", `.${$FUNNEL.funnelBackground}`);
 
-		mainFunnelEnter
-			.append("path");
+		mainFunnelEnter.append("path");
 
 		funnel.path = mainFunnelEnter
-			.merge(mainFunnelUpdate)
-			.attr("class", d => classChartFunnel(d))
+			.merge(mainFunnel)
+			.attr("class", classChartFunnel)
 			.select("path")
 			.attr("class", classFunnel)
 			.style("opacity", "0")
@@ -293,28 +395,41 @@ export default {
 		const {$el: {funnel}} = $$;
 		const targetIds = targets.map(({id}) => id);
 
-		funnel.path = funnel.path.filter(d => targetIds.indexOf(d.id) >= 0);
+		funnel.path = funnel.path.filter(d => targetIds.includes(d.id));
 	},
 
 	/**
-	 * Generate treemap coordinate points data
-	 * @returns {Array} Array of coordinate points
+	 * Generate funnel coordinate points data for text labels
+	 * @returns {(d: IDataRow) => [number, number][]} Point getter function
 	 * @private
 	 */
 	generateGetFunnelPoints(): (d: IDataRow) => [number, number][] {
 		const $$ = this;
-		const {$el: {funnel}} = $$;
+		const {config, $el: {funnel}} = $$;
+		const isRotated = config.funnel_rotated;
 		const targets = $$.filterTargetsToShow(funnel.path);
-		const {top, left, right} = _getSize.call($$);
-		const center = (left - right) / 2;
+		const {top, left, width, height} = _getSize.call($$);
 		const points = {};
-		let accumulatedHeight = top ?? 0;
+
+		let accumulated = 0;
 
 		targets.each((d, i) => {
-			points[d.id] = [
-				[center, accumulatedHeight],
-				[center, accumulatedHeight += (targets?.[i] ?? d).ratio]
-			];
+			const start = accumulated;
+			const ratio = (targets?.[i] ?? d).ratio;
+
+			accumulated += ratio;
+
+			// For rotated: x is main axis, y is center
+			// For non-rotated: y is main axis, x is center
+			const offset = isRotated ? left : top;
+			const segmentStart = offset + start;
+			const segmentEnd = offset + accumulated;
+			const center = (segmentStart + segmentEnd) / 2;
+			const crossCenter = isRotated ? top + height / 2 : left + width / 2;
+
+			points[d.id] = isRotated ?
+				[[segmentStart, crossCenter], [segmentEnd, crossCenter], [center, crossCenter]] :
+				[[crossCenter, segmentStart], [crossCenter, segmentEnd], [crossCenter, center]];
 		});
 
 		return d => points[d.id];
@@ -326,16 +441,20 @@ export default {
 	 */
 	redrawFunnel(): void {
 		const $$ = this;
-		const {$T, $el: {funnel}} = $$;
+		const {config, $T, $el: {funnel}} = $$;
 		const targets = $$.filterTargetsToShow(funnel.path);
 		const coords = _getCoord.call($$, _updateRatio.call($$, targets.data()));
+		const {top, left} = _getSize.call($$);
+		const clipPath = (config.funnel_spline ? _getSplineClipPath : _getClipPath).call($$);
 
-		// set neck path
-		funnel.attr("clip-path", `path('${_getClipPath.bind($$)()}')`);
-		funnel.background.attr("d", _getClipPath.call($$, true));
+		// Apply transform to position the funnel group
+		funnel.attr("transform", `translate(${left}, ${top})`)
+			.attr("clip-path", `path('${clipPath}')`);
+
+		funnel.background.attr("d", clipPath);
 
 		$T(targets)
-			.attr("d", (d, i) => `M${coords[i].join("L")}z`)
+			.attr("d", (_, i) => `M${coords[i].join("L")}z`)
 			.style("opacity", "1");
 
 		funnel.selectAll("g").style("opacity", null);

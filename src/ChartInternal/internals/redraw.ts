@@ -42,6 +42,9 @@ export default {
 			.text(config.data_empty_label_text)
 			.style("display", targetsToShow.length ? "none" : null);
 
+		// title - position early so other elements can calculate correct padding
+		$$.redrawTitle?.();
+
 		// update axis
 		if (state.hasAxis) {
 			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
@@ -97,9 +100,6 @@ export default {
 
 		// text
 		$$.hasDataLabel() && !$$.hasArcType(null, ["radar"]) && $$.updateText();
-
-		// title
-		$$.redrawTitle?.();
 
 		initializing && $$.updateTypesElements();
 
