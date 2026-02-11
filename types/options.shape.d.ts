@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {DataItem, GaugeTypes} from "./types";
-import {Chart} from "./chart";
+import {DataItem, GaugeTypes} from "./types.js";
+import {Chart} from "./chart.js";
 
 /**
  * Label line configuration for arc chart types (donut, pie, polar, gauge).
