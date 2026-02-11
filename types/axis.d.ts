@@ -1,4 +1,4 @@
-import {Chart} from "./chart";
+import {Chart} from "./chart.js";
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.

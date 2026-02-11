@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {Chart} from "./chart";
-import {ChartOptions} from "./options";
+import {Chart} from "./chart.js";
+import {ChartOptions} from "./options.js";
 
 export const bb: {
 	/**
