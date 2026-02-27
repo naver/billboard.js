@@ -229,7 +229,7 @@ function _getRadiusFn(expandRate = 0) {
 				arc_cornerRadius: cornerRadius = 0
 			} = config;
 			const {data: {id}, value} = d;
-			let corner = 0;
+			let corner;
 
 			if (ratio) {
 				corner = ratio * outerRadius;
@@ -1105,7 +1105,7 @@ export default {
 		const total = $$.getTotalDataSum(true);
 		let value = isDefined(v) ? v : config.arc_needle_value;
 		let startingAngle = config[`${config.data_type}_startingAngle`] || 0;
-		let radian = 0;
+		let radian;
 
 		if (!isNumber(value)) {
 			value = hasGauge && $$.data.targets.length === 1 ? total : 0;
