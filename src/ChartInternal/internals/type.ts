@@ -225,16 +225,12 @@ export default {
 	isCirclePoint(node?): boolean {
 		const {config} = this;
 		const pattern = config.point_pattern;
-		let isCircle = false;
-
-		if (node?.tagName === "circle") {
-			isCircle = true;
-		} else {
-			isCircle = config.point_type === "circle" &&
-				(!pattern || (
-					isArray(pattern) && pattern.length === 0
-				));
-		}
+		const isCircle = node?.tagName === "circle" || (
+			config.point_type === "circle" &&
+			(!pattern || (
+				isArray(pattern) && pattern.length === 0
+			))
+		);
 
 		return isCircle;
 	},
