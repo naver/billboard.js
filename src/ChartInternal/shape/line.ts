@@ -399,7 +399,7 @@ export default {
 						}
 					}
 				} else {
-					let points = <number[][]>[];
+					let points: number[][];
 					isLastX = data.x === d[d.length - 1].x;
 
 					if (isTimeSeries) {

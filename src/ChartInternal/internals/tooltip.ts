@@ -525,7 +525,7 @@ export default {
 			return;
 		}
 
-		let datum = tooltip.datum();
+		const datum = tooltip.datum();
 		const dataStr = JSON.stringify(selectedData);
 
 		if (!datum || datum.current !== dataStr) {
@@ -544,7 +544,7 @@ export default {
 				.style("display", null)
 				.style("visibility", null); // for IE9
 
-			tooltip.datum(datum = {
+			tooltip.datum({
 				index,
 				x,
 				current: dataStr,

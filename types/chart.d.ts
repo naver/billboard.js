@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {Data, RegionOptions} from "./options";
-import {ArrayOrString, d3Selection, DataArray, DataItem, PrimitiveArray, TargetIds} from "./types";
+import {Data, RegionOptions} from "./options.js";
+import {ArrayOrString, d3Selection, DataArray, DataItem, PrimitiveArray, TargetIds} from "./types.js";
 
 export interface Chart {
 	$: {

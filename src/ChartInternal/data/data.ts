@@ -968,7 +968,7 @@ export default {
 			return values;
 		}
 
-		// when all datas are null, return empty array
+		// when all data are null, return empty array
 		// https://github.com/naver/billboard.js/issues/3124
 		if (converted.length) {
 			// insert & append cloning first/last value to be fully rendered covering on each gap sides
@@ -981,14 +981,14 @@ export default {
 			converted.unshift({x: --x, value: head.value, id});
 
 			isCategorized && stepType === "step-after" &&
-				converted.unshift({x: --x, value: head.value, id});
+				converted.unshift({x: x - 1, value: head.value, id});
 
 			// append tail
 			x = tail.x;
 			converted.push({x: ++x, value: tail.value, id});
 
 			isCategorized && stepType === "step-before" &&
-				converted.push({x: ++x, value: tail.value, id});
+				converted.push({x: x + 1, value: tail.value, id});
 		}
 
 		return converted;
