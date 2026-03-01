@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260207005040
+ * @version 3.18.0-nightly-20260301010009
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -5665,7 +5665,7 @@ var data$1 = {
         if (!(isCategorized || /step\-(after|before)/.test(stepType))) {
             return values;
         }
-        // when all datas are null, return empty array
+        // when all data are null, return empty array
         // https://github.com/naver/billboard.js/issues/3124
         if (converted.length) {
             // insert & append cloning first/last value to be fully rendered covering on each gap sides
@@ -5676,12 +5676,12 @@ var data$1 = {
             // insert head
             converted.unshift({ x: --x, value: head.value, id: id });
             isCategorized && stepType === "step-after" &&
-                converted.unshift({ x: --x, value: head.value, id: id });
+                converted.unshift({ x: x - 1, value: head.value, id: id });
             // append tail
             x = tail.x;
             converted.push({ x: ++x, value: tail.value, id: id });
             isCategorized && stepType === "step-before" &&
-                converted.push({ x: ++x, value: tail.value, id: id });
+                converted.push({ x: x + 1, value: tail.value, id: id });
         }
         return converted;
     },
@@ -10122,7 +10122,7 @@ var tooltip$1 = {
             ))
                 .style("display", null)
                 .style("visibility", null); // for IE9
-            tooltip.datum(datum = {
+            tooltip.datum({
                 index: index,
                 x: x,
                 current: dataStr,
@@ -10544,14 +10544,8 @@ var typeInternals = {
     isCirclePoint: function (node) {
         var config = this.config;
         var pattern = config.point_pattern;
-        var isCircle = false;
-        if ((node === null || node === void 0 ? void 0 : node.tagName) === "circle") {
-            isCircle = true;
-        }
-        else {
-            isCircle = config.point_type === "circle" &&
-                (!pattern || (isArray(pattern) && pattern.length === 0));
-        }
+        var isCircle = (node === null || node === void 0 ? void 0 : node.tagName) === "circle" || (config.point_type === "circle" &&
+            (!pattern || (isArray(pattern) && pattern.length === 0)));
         return isCircle;
     },
     lineData: function (d) {
@@ -19828,7 +19822,7 @@ function _getRadiusFn(expandRate) {
         corner: function (d, outerRadius) {
             var _a = config.arc_cornerRadius_ratio, ratio = _a === void 0 ? 0 : _a, _b = config.arc_cornerRadius, cornerRadius = _b === void 0 ? 0 : _b;
             var id = d.data.id, value = d.value;
-            var corner = 0;
+            var corner;
             if (ratio) {
                 corner = ratio * outerRadius;
             }
@@ -20550,7 +20544,7 @@ var shapeArc = {
         var total = $$.getTotalDataSum(true);
         var value = isDefined(v) ? v : config.arc_needle_value;
         var startingAngle = config["".concat(config.data_type, "_startingAngle")] || 0;
-        var radian = 0;
+        var radian;
         if (!isNumber(value)) {
             value = hasGauge && $$.data.targets.length === 1 ? total : 0;
         }
@@ -22311,7 +22305,7 @@ var shapeLine = {
                     }
                 }
                 else {
-                    var points = [];
+                    var points = void 0;
                     isLastX = data.x === d[d.length - 1].x;
                     if (isTimeSeries) {
                         var x0 = +prevData.x;
@@ -26634,7 +26628,7 @@ var drag = {
                 var shape = select(this);
                 var isSelected = shape.classed($SELECT.SELECTED);
                 var isIncluded = shape.classed($DRAG.INCLUDED);
-                var isWithin = false;
+                var isWithin;
                 var toggle;
                 if (shape.classed($CIRCLE.circle)) {
                     var x = +shape.attr("cx") * 1;
@@ -27172,7 +27166,7 @@ var zoomModule = function () {
 var defaults = Object.create(null);
 /**
  * @namespace bb
- * @version 3.18.0-nightly-20260207005040
+ * @version 3.18.0-nightly-20260301010009
  */
 var bb = {
     /**
@@ -27182,7 +27176,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.18.0-nightly-20260207005040",
+    version: "3.18.0-nightly-20260301010009",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

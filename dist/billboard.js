@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260207005040
+ * @version 3.18.0-nightly-20260301010009
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5012,10 +5012,10 @@ function _setXS(ids, data, params) {
       const { id } = head;
       let { x } = head;
       converted.unshift({ x: --x, value: head.value, id });
-      isCategorized && stepType === "step-after" && converted.unshift({ x: --x, value: head.value, id });
+      isCategorized && stepType === "step-after" && converted.unshift({ x: x - 1, value: head.value, id });
       x = tail.x;
       converted.push({ x: ++x, value: tail.value, id });
-      isCategorized && stepType === "step-before" && converted.push({ x: ++x, value: tail.value, id });
+      isCategorized && stepType === "step-before" && converted.push({ x: x + 1, value: tail.value, id });
     }
     return converted;
   },
@@ -8779,7 +8779,7 @@ function _getTextXPos(pos = "left", width) {
     if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
       return;
     }
-    let datum = tooltip.datum();
+    const datum = tooltip.datum();
     const dataStr = JSON.stringify(selectedData);
     if (!datum || datum.current !== dataStr) {
       const { index, x } = selectedData.concat().sort()[0];
@@ -8794,7 +8794,7 @@ function _getTextXPos(pos = "left", width) {
         $$.color
         // color
       )).style("display", null).style("visibility", null);
-      tooltip.datum(datum = {
+      tooltip.datum({
         index,
         x,
         current: dataStr,
@@ -9167,12 +9167,7 @@ function _getTextXPos(pos = "left", width) {
   isCirclePoint(node) {
     const { config } = this;
     const pattern = config.point_pattern;
-    let isCircle = false;
-    if ((node == null ? void 0 : node.tagName) === "circle") {
-      isCircle = true;
-    } else {
-      isCircle = config.point_type === "circle" && (!pattern || isArray(pattern) && pattern.length === 0);
-    }
+    const isCircle = (node == null ? void 0 : node.tagName) === "circle" || config.point_type === "circle" && (!pattern || isArray(pattern) && pattern.length === 0);
     return isCircle;
   },
   lineData(d) {
@@ -12515,7 +12510,7 @@ extend(zoom, {
         const shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
         const isSelected = shape.classed($SELECT.SELECTED);
         const isIncluded = shape.classed($DRAG.INCLUDED);
-        let isWithin = false;
+        let isWithin;
         let toggle;
         if (shape.classed($CIRCLE.circle)) {
           const x = +shape.attr("cx") * 1;
@@ -18919,7 +18914,7 @@ function _getRadiusFn(expandRate = 0) {
         arc_cornerRadius: cornerRadius = 0
       } = config;
       const { data: { id }, value } = d;
-      let corner = 0;
+      let corner;
       if (ratio) {
         corner = ratio * outerRadius;
       } else {
@@ -19501,7 +19496,7 @@ function _getAttrTweenFn(fn) {
     const total = $$.getTotalDataSum(true);
     let value = isDefined(v) ? v : config.arc_needle_value;
     let startingAngle = config[`${config.data_type}_startingAngle`] || 0;
-    let radian = 0;
+    let radian;
     if (!isNumber(value)) {
       value = hasGauge && $$.data.targets.length === 1 ? total : 0;
     }
@@ -21008,7 +21003,7 @@ function _getRegions(d, _regions, isTimeSeries) {
             }
           }
         } else {
-          let points = [];
+          let points;
           isLastX = data.x === d[d.length - 1].x;
           if (isTimeSeries) {
             const x0 = +prevData.x;
@@ -23878,7 +23873,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260207005040",
+  version: "3.18.0-nightly-20260301010009",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
