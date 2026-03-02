@@ -51,7 +51,7 @@ Two folders will be created after the build is completed.
 ### Linting
 
 To maintain the same code style and quality, we adopted [ESLint](https://eslint.org/). The [rules](https://github.com/naver/eslint-config-naver/tree/master/rules) are based on the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript) with some modifications.
-Setup your editor for checking or run the command below for linting.
+Set up your editor for checking or run the command below for linting.
 
 ```bash
 $ npm run lint
