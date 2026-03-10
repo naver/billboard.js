@@ -172,7 +172,27 @@ export default class State {
 
 			// RAF batching for zoom/drag interactions
 			pendingRaf: <number | null>null,
-			rafBatchQueue: <Array<() => void>>[]
+			rafBatchQueue: <Array<() => void>>[],
+
+			// Dirty flags for selective redraw
+			dirty: {
+				data: false, // data changed (load/unload)
+				visibility: false, // show/hide toggled
+				size: false // dimensions changed
+			},
+
+			// Performance: per-redraw generation counter for tick size caching
+			tickSizeGeneration: 0,
+
+			// Performance: cached targets for reuse within redraw cycle
+			_targetsToShow: <any[] | null>null,
+			_eventRectFingerprint: <string | null>null,
+
+			// Performance: throttle tooltip position updates on mousemove
+			_lastTooltipMouse: <number[] | null>null,
+
+			// Performance: cached grid focus D3 selection
+			_gridFocusEl: <any>null
 		};
 	}
 }

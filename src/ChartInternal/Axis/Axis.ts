@@ -10,6 +10,7 @@ import {
 } from "d3-axis";
 import type {AxisType} from "../../../types/types";
 import {$AXIS, $COMMON} from "../../config/classes";
+import {KEY} from "../../module/Cache";
 import {
 	capitalize,
 	getBoundingRect,
@@ -617,7 +618,17 @@ class Axis {
 	 */
 	getMaxTickSize(id: AxisType, withoutRecompute?: boolean): {width: number, height: number} {
 		const $$ = this.owner;
-		const {config, state: {current, resizing}, $el: {svg, chart}} = $$;
+		const {config, state, $el: {svg, chart}} = $$;
+		const {current, resizing} = state;
+
+		// Generation-based cache: skip redundant measurements within same redraw cycle
+		const cacheKey = `${KEY.maxTickSize}_${id}_${!!withoutRecompute}`;
+		const cached = $$.cache.get(cacheKey);
+
+		if (cached && cached.generation === state.tickSizeGeneration) {
+			return cached.value;
+		}
+
 		const currentTickMax = current.maxTickSize[id];
 		const configPrefix = `axis_${id}`;
 		const max = {
@@ -635,7 +646,7 @@ class Axis {
 
 		if (svg) {
 			const isYAxis = /^y2?$/.test(id);
-			const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+			const targetsToShow = state._targetsToShow || $$.filterTargetsToShow($$.data.targets);
 			const scale = $$.scale[id].copy().domain(
 				$$[`get${isYAxis ? "Y" : "X"}Domain`](targetsToShow, id)
 			);
@@ -736,6 +747,9 @@ class Axis {
 				currentTickMax[key] = max[key];
 			}
 		});
+
+		// Cache result for this redraw generation
+		$$.cache.add(cacheKey, {generation: state.tickSizeGeneration, value: currentTickMax});
 
 		return currentTickMax;
 	}

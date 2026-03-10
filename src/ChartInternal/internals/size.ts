@@ -93,7 +93,17 @@ export default {
 
 	getSvgLeft(withoutRecompute?: boolean): number {
 		const $$ = this;
-		const {config, state: {hasAxis}, $el} = $$;
+		const {cache, config, state: {hasAxis}, $el} = $$;
+
+		// Return cached value when recompute is not forced
+		if (withoutRecompute) {
+			const cached = cache.get(KEY.svgLeft);
+
+			if (cached !== null) {
+				return cached;
+			}
+		}
+
 		const isRotated = config.axis_rotated;
 		const hasLeftAxisRect = isRotated || (!isRotated && !config.axis_y_inner);
 		const leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY;
@@ -122,7 +132,11 @@ export default {
 		const svgLeft = svgRect.right - chartRectLeft -
 			(hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
 
-		return svgLeft > 0 ? svgLeft : 0;
+		const result = svgLeft > 0 ? svgLeft : 0;
+
+		cache.add(KEY.svgLeft, result);
+
+		return result;
 	},
 
 	updateDimension(withoutAxis?: boolean): void {
@@ -328,9 +342,12 @@ export default {
 
 		!isInit && $$.setContainerSize();
 
+		// Cache legend dimensions to avoid redundant calls
+		const legendWidth = legend ? $$.getLegendWidth() : 0;
+		const legendHeight = legend ? $$.getLegendHeight() : 0;
 		const currLegend = {
-			width: legend ? $$.getLegendWidth() : 0,
-			height: legend ? $$.getLegendHeight() : 0
+			width: legendWidth,
+			height: legendHeight
 		};
 
 		if (!isNonAxis && config.axis_x_show && config.axis_x_tick_autorotate) {
@@ -339,11 +356,11 @@ export default {
 
 		const legendSize = {
 			right: config.legend_show && state.isLegendRight ?
-				$$.getLegendWidth() + (isFitPadding ? 0 : 20) :
+				legendWidth + (isFitPadding ? 0 : 20) :
 				0,
 			bottom: !config.legend_show || state.isLegendRight || state.isLegendInset ?
 				0 :
-				currLegend.height
+				legendHeight
 		};
 
 		const xAxisHeight = isRotated || isNonAxis ? 0 : $$.getHorizontalAxisHeight("x");

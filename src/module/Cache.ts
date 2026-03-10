@@ -19,6 +19,7 @@ export const KEY = {
 	domainMinMax: "$domainMinMax",
 	filteredTargets: "$filteredTargets",
 	filteredNullish: "$filteredNullish",
+	svgLeft: "$svgLeft",
 	visibilityChecksum: "visibilityChecksum",
 	legendItemTextBox: "legendItemTextBox",
 	legendItemMap: "$legendItemMap",
@@ -27,7 +28,8 @@ export const KEY = {
 	setOverOut: "setOverOut",
 	callOverOutForTouch: "callOverOutForTouch",
 	textRect: "textRect",
-	shapeOffset: "$shapeOffset"
+	shapeOffset: "$shapeOffset",
+	maxTickSize: "$maxTickSize"
 };
 
 export default class Cache {
@@ -70,7 +72,7 @@ export default class Cache {
 
 			for (let i = 0, id; (id = key[i]); i++) {
 				if (id in this.cache) {
-					targets.push(this.cloneTarget(this.cache[id]));
+					targets.push(this.cache[id]);
 				}
 			}
 
@@ -89,7 +91,7 @@ export default class Cache {
 	 * @private
 	 */
 	has(key: string): boolean {
-		return key in this.cache && this.cache[key] !== null;
+		return key in this.cache;
 	}
 
 	/**
@@ -112,7 +114,7 @@ export default class Cache {
 		for (const x in $$.cache) {
 			// reset the prefixed '$' key(which is internal use data) only.
 			if (all || /^\$/.test(x)) {
-				$$.cache[x] = null;
+				delete $$.cache[x];
 			}
 		}
 	}

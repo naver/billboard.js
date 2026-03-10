@@ -4,6 +4,7 @@
  */
 import {transition as d3Transition} from "d3-transition";
 import {$COMMON, $SELECT, $TEXT} from "../../config/classes";
+import {KEY} from "../../module/Cache";
 import {generateWait} from "../../module/generator";
 import {callFn, capitalize, getOption, isTabVisible, notEmpty} from "../../module/util";
 
@@ -15,7 +16,31 @@ export default {
 
 		state.redrawing = true;
 
+		// Increment generation counter for per-redraw caching (e.g. getMaxTickSize)
+		state.tickSizeGeneration = (state.tickSizeGeneration || 0) + 1;
+
+		// Invalidate per-redraw caches (only when size changed or initializing)
+		if (options.initializing || state.dirty.size || state.dirty.data || !state.rendered) {
+			$$.cache.remove([KEY.svgLeft]);
+		}
+
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+
+		// Cache for reuse by sub-methods within this redraw cycle
+		state._targetsToShow = targetsToShow;
+
+		// Capture and reset dirty flags immediately to avoid race conditions
+		// (async afterRedraw could wipe flags set by a subsequent redraw)
+		const dirtySnapshot = {
+			data: state.dirty.data,
+			visibility: state.dirty.visibility,
+			size: state.dirty.size
+		};
+
+		state.dirty.data = false;
+		state.dirty.visibility = false;
+		state.dirty.size = false;
+
 		const {flow, initializing} = options;
 		const wth = $$.getWithOption(options);
 		const duration = wth.Transition ? config.transition_duration : 0;
@@ -45,6 +70,11 @@ export default {
 		// title - position early so other elements can calculate correct padding
 		$$.redrawTitle?.();
 
+		// Shape DOM updates (D3 data join: enter/update/exit) are only needed when data or
+		// visibility changes. Zoom/brush only need redraw*() (position recalculation via
+		// getRedrawList), not update*(). New APIs that modify data must set dirty flags.
+		const needShapeUpdate = dirtySnapshot.data || dirtySnapshot.visibility || initializing;
+
 		// update axis
 		if (state.hasAxis) {
 			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
@@ -60,7 +90,9 @@ export default {
 				const name = capitalize(v);
 
 				if ((/^(line|area)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {
-					$$[`update${name}`](wth.TransitionForExit);
+					if (needShapeUpdate) {
+						$$[`update${name}`](wth.TransitionForExit);
+					}
 				}
 			});
 
@@ -93,13 +125,19 @@ export default {
 		}
 
 		if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
-			$$.updateCircle();
+			if (needShapeUpdate) {
+				$$.updateCircle();
+			}
 		} else if ($$.hasLegendDefsPoint?.()) {
 			$$.data.targets.forEach($$.point("create", this));
 		}
 
 		// text
-		$$.hasDataLabel() && !$$.hasArcType(null, ["radar"]) && $$.updateText();
+		if ($$.hasDataLabel() && !$$.hasArcType(null, ["radar"])) {
+			if (needShapeUpdate) {
+				$$.updateText();
+			}
+		}
 
 		initializing && $$.updateTypesElements();
 
@@ -145,6 +183,8 @@ export default {
 			flowFn && flowFn();
 
 			state.redrawing = false;
+			state._targetsToShow = null;
+
 			callFn(config.onrendered, $$.api);
 		};
 
@@ -158,7 +198,7 @@ export default {
 				d3Transition().duration(duration)
 					.each(() => {
 						redrawList
-							.reduce((acc, t1) => acc.concat(t1), [])
+							.flatMap(t1 => t1)
 							.forEach(t => waitForDraw.add(t));
 					})
 					.call(waitForDraw, afterRedraw);
