@@ -162,6 +162,13 @@ const ALLOWED_ATTRS = new Set([
 	"xlink:href"
 ]);
 
+// Case-insensitive lookup maps: lowercase key → canonical casing from whitelists
+const TAG_CASE_MAP = new Map<string, string>();
+ALLOWED_TAGS.forEach(tag => TAG_CASE_MAP.set(tag.toLowerCase(), tag));
+
+const ATTR_CASE_MAP = new Map<string, string>();
+ALLOWED_ATTRS.forEach(attr => ATTR_CASE_MAP.set(attr.toLowerCase(), attr));
+
 // Whitelist of allowed URI protocols
 const ALLOWED_URI_PROTOCOLS = new Set([
 	"http:",
@@ -368,7 +375,7 @@ function extractTagName(tag: string): string | null {
  */
 function isAllowedTag(tag: string): boolean {
 	const tagName = extractTagName(tag);
-	return tagName !== null && ALLOWED_TAGS.has(tagName);
+	return tagName !== null && TAG_CASE_MAP.has(tagName);
 }
 
 /**
@@ -381,7 +388,8 @@ function sanitizeTag(fullTag: string): string {
 	// Closing tag
 	const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
 	if (closingMatch) {
-		return `</${closingMatch[1].toLowerCase()}>`;
+		const lowerName = closingMatch[1].toLowerCase();
+		return `</${TAG_CASE_MAP.get(lowerName) ?? lowerName}>`;
 	}
 
 	// Opening tag
@@ -392,6 +400,7 @@ function sanitizeTag(fullTag: string): string {
 
 	const [, tagName, attrString, selfClose] = openingMatch;
 	const lowerTagName = tagName.toLowerCase();
+	const canonicalTagName = TAG_CASE_MAP.get(lowerTagName) ?? lowerTagName;
 
 	// Parse and filter attributes, preserving original quote style
 	const allowedAttrs: string[] = [];
@@ -399,15 +408,17 @@ function sanitizeTag(fullTag: string): string {
 	let attrMatch;
 
 	while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
-		const attrName = attrMatch[1].toLowerCase();
+		const lowerAttrName = attrMatch[1].toLowerCase();
 		const doubleQuotedValue = attrMatch[2];
 		const singleQuotedValue = attrMatch[3];
 		const unquotedValue = attrMatch[4];
 
 		// Skip event handlers (on*)
-		if (attrName.startsWith("on")) {
+		if (lowerAttrName.startsWith("on")) {
 			continue;
 		}
+
+		const canonicalAttrName = ATTR_CASE_MAP.get(lowerAttrName) ?? lowerAttrName;
 
 		// Determine original quote style and value
 		let attrValue: string;
@@ -424,17 +435,17 @@ function sanitizeTag(fullTag: string): string {
 			quoteChar = "\"";
 		} else {
 			// Boolean attribute (no value)
-			if (ALLOWED_ATTRS.has(attrName)) {
-				allowedAttrs.push(attrName);
+			if (ATTR_CASE_MAP.has(lowerAttrName)) {
+				allowedAttrs.push(canonicalAttrName);
 			}
 			continue;
 		}
 
-		if (ALLOWED_ATTRS.has(attrName)) {
+		if (ATTR_CASE_MAP.has(lowerAttrName)) {
 			const wasUnquoted = unquotedValue !== undefined;
-			const sanitizedValue = sanitizeAttrValue(attrName, attrValue, wasUnquoted);
+			const sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
 			if (sanitizedValue !== null) {
-				allowedAttrs.push(`${attrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
+				allowedAttrs.push(`${canonicalAttrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
 			}
 		}
 	}
@@ -442,7 +453,7 @@ function sanitizeTag(fullTag: string): string {
 	const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
 	const selfCloseStr = selfClose ? "/>" : ">";
 
-	return `<${lowerTagName}${attrsStr}${selfCloseStr}`;
+	return `<${canonicalTagName}${attrsStr}${selfCloseStr}`;
 }
 
 /**
