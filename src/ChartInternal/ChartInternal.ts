@@ -788,6 +788,19 @@ export default class ChartInternal {
 
 		if (/^(true|parent)$/.test(resize_auto)) {
 			list.push(() => {
+				// Skip resize if dimensions haven't changed
+				const prevWidth = state.current.width;
+				const prevHeight = state.current.height;
+
+				$$.setContainerSize();
+
+				if (
+					prevWidth === state.current.width &&
+					prevHeight === state.current.height
+				) {
+					return;
+				}
+
 				state.resizing = true;
 
 				// https://github.com/naver/billboard.js/issues/2650

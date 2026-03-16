@@ -30,6 +30,7 @@ export default {
 			config.size_height = size ? size.height : null;
 
 			state.resizing = true;
+			state.dirty.size = true;
 
 			this.flush(false);
 			$$.resizeFunction();
@@ -72,6 +73,9 @@ export default {
 			}
 
 			$$.scale.zoom = null;
+
+			// Ensure shapes are fully updated on flush
+			state.dirty.data = true;
 
 			soft ?
 				$$.redraw({
@@ -117,6 +121,9 @@ export default {
 
 		if (notEmpty($$)) {
 			$$.callPluginHook("$willDestroy");
+
+			// clear interaction caches that hold DOM references
+			$$.cache?.remove(["setOverOut", "callOverOutForTouch"]);
 
 			$$.charts.splice($$.charts.indexOf(this), 1);
 

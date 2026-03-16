@@ -9,9 +9,11 @@ import {callFn, endall} from "../../module/util";
  * @param {boolean} show Show or hide
  * @param {Array} targetIdsValue Target id values
  * @param {object} options Options
+ * @param {boolean} [options.withLegend=false] whether or not display legend
+ * @param {boolean} [skipRedraw=false] whether or not skip redraw after show/hide
  * @private
  */
-function showHide(show: boolean, targetIdsValue: string[], options: any): void {
+function showHide(show: boolean, targetIdsValue: string[], options: any, skipRedraw = false): void {
 	const $$ = this.internal;
 	const targetIds = $$.mapToTargetIds(targetIdsValue);
 	const hiddenIds = $$.state.hiddenTargetIds
@@ -19,6 +21,7 @@ function showHide(show: boolean, targetIdsValue: string[], options: any): void {
 		.filter(Boolean);
 
 	$$.state.toggling = true;
+	$$.state.dirty.visibility = true;
 
 	$$[`${show ? "remove" : "add"}HiddenTargetIds`](targetIds);
 
@@ -44,11 +47,13 @@ function showHide(show: boolean, targetIdsValue: string[], options: any): void {
 
 	options.withLegend && $$[`${show ? "show" : "hide"}Legend`](targetIds);
 
-	$$.redraw({
-		withUpdateOrgXDomain: true,
-		withUpdateXDomain: true,
-		withLegend: true
-	});
+	if (!skipRedraw) {
+		$$.redraw({
+			withUpdateOrgXDomain: true,
+			withUpdateXDomain: true,
+			withLegend: true
+		});
+	}
 
 	$$.state.toggling = false;
 }
@@ -127,9 +132,15 @@ export default {
 		$$.mapToTargetIds(targetIds)
 			.forEach((id: string) => targets[$$.isTargetToShow(id) ? "hide" : "show"].push(id));
 
-		// perform show & hide task separately
-		// https://github.com/naver/billboard.js/issues/454
-		targets.show.length && this.show(targets.show, options);
-		targets.hide.length && setTimeout(() => this.hide(targets.hide, options), 0);
+		if (targets.show.length && targets.hide.length) {
+			// Batch both operations with a single redraw
+			showHide.call(this, true, targets.show, options, true);
+			showHide.call(this, false, targets.hide, options);
+		} else {
+			// perform show & hide task separately
+			// https://github.com/naver/billboard.js/issues/454
+			targets.show.length && this.show(targets.show, options);
+			targets.hide.length && this.hide(targets.hide, options);
+		}
 	}
 };

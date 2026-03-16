@@ -62,12 +62,23 @@ export default {
 	 * @param {number} min Min value
 	 * @param {number} max Max value
 	 * @param {Array} domain Domain value
+	 * @param {object} [existing] Existing scale function to be updated
 	 * @returns {function} Scale function
 	 * @private
 	 */
-	getYScale(id: "y" | "y2", min: number, max: number, domain: number[]): Function {
+	getYScale(id: "y" | "y2", min: number, max: number, domain: number[], existing?): Function {
 		const $$ = this;
-		const scale = getScale($$.axis.getAxisType(id), min, max);
+		const type = $$.axis.getAxisType(id);
+
+		// Reuse existing scale if type hasn't changed — just update range
+		if (existing && existing.type === type) {
+			existing.range([min, max]);
+			domain && existing.domain(domain);
+
+			return existing;
+		}
+
+		const scale = getScale(type, min, max);
 
 		domain && scale.domain(domain);
 
@@ -195,12 +206,13 @@ export default {
 
 			// y Axis
 			scale.y = $$.getYScale("y", min.y, max.y,
-				scale.y ? scale.y.domain() : config.axis_y_default);
+				scale.y ? scale.y.domain() : config.axis_y_default, scale.y);
 			scale.subY = $$.getYScale(
 				"y",
 				min.subY,
 				max.subY,
-				scale.subY ? scale.subY.domain() : config.axis_y_default
+				scale.subY ? scale.subY.domain() : config.axis_y_default,
+				scale.subY
 			);
 
 			axis.setAxis("y", scale.y, config.axis_y_tick_outer, isInit);
@@ -208,12 +220,13 @@ export default {
 			// y2 Axis
 			if (config.axis_y2_show) {
 				scale.y2 = $$.getYScale("y2", min.y, max.y,
-					scale.y2 ? scale.y2.domain() : config.axis_y2_default);
+					scale.y2 ? scale.y2.domain() : config.axis_y2_default, scale.y2);
 				scale.subY2 = $$.getYScale(
 					"y2",
 					min.subY,
 					max.subY,
-					scale.subY2 ? scale.subY2.domain() : config.axis_y2_default
+					scale.subY2 ? scale.subY2.domain() : config.axis_y2_default,
+					scale.subY2
 				);
 
 				axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit);

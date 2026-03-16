@@ -29,6 +29,7 @@ export default {
 				this.categories(x);
 			} else {
 				$$.updateTargetX(data.targets, x);
+				$$.state.dirty.data = true;
 
 				$$.redraw({
 					withUpdateOrgXDomain: true,
@@ -62,6 +63,7 @@ export default {
 
 		if (isObject(xs)) {
 			$$.updateTargetXs($$.data.targets, xs);
+			$$.state.dirty.data = true;
 
 			$$.redraw({
 				withUpdateOrgXDomain: true,

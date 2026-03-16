@@ -172,6 +172,12 @@ export default {
 		// save x for update data by load when custom x and bb.x API
 		_setXS.bind($$)(ids, data, params);
 
+		// Build a Map for O(1) category-to-index lookups
+		const categoryIndexMap =
+			(params.customX && params.categorized && config.axis_x_categories.length) ?
+				new Map<string, number>(config.axis_x_categories.map((cat, i) => [cat, i])) :
+				null;
+
 		// convert to target
 		const targets = ids.map((id, index) => {
 			const convertedId = config.data_idConverter.bind($$.api)(id);
@@ -203,13 +209,20 @@ export default {
 					if ((isCategory || state.hasRadar) && index === 0 && !isUndefined(rawX)) {
 						if (!hasCategory && index === 0 && i === 0 && !isDataAppend) {
 							config.axis_x_categories = [];
+
+							if (categoryIndexMap) {
+								categoryIndexMap.clear();
+							}
 						}
 
-						x = config.axis_x_categories.indexOf(rawX);
+						const rawXStr = String(rawX);
+
+						x = categoryIndexMap?.get(rawXStr) ?? -1;
 
 						if (x === -1) {
 							x = config.axis_x_categories.length;
 							config.axis_x_categories.push(rawX);
+							categoryIndexMap?.set(rawXStr, x);
 						}
 					} else {
 						x = $$.generateTargetX(rawX, id, xIndex + i);
