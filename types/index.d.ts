@@ -39,4 +39,5 @@ export {
 export * from "./axis.js";
 export * from "./chart.js";
 export * from "./options.js";
+export * from "./options.shape.js";
 export * from "./types.js";
