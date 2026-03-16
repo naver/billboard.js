@@ -6,6 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import {describe, expect, it} from "vitest";
 import util from "../assets/util";
+import Chart from "../../src/Chart/Chart";
 
 describe("DATA Convert", () => {
 	it("columns: should throw error when data contains undefined value", () => {
@@ -41,6 +42,26 @@ describe("DATA Convert", () => {
 		}
 	});
 
+	it("should handle non-array value in json object", () => {
+		const chart = util.generate({
+			data: {
+				json: {
+					1: 1,
+					data2: 2,
+					data3: [10, 20, 30]
+				},
+				type: "line"
+			}
+		}) as any;
+
+		expect(chart.data().length).to.be.equal(3);
+		expect(chart.data("1")[0].values[0].value).to.be.equal(1);
+		expect(chart.data("data2")[0].values[0].value).to.be.equal(2);
+		expect(chart.data("data3")[0].values.length).to.be.equal(3);
+
+		chart.destroy();
+	});
+
 	it("should generate json data with keys.value param only", () => {
 		const chart = util.generate({
 			data: {
@@ -53,7 +74,7 @@ describe("DATA Convert", () => {
 				},
 				type: "line"
 			}
-		});
+		}) as any;
 
 		expect(chart.data().length).to.be.equal(2);
 
