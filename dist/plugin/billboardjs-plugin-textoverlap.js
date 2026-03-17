@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260310004946
+ * @version 3.18.0-nightly-20260317005337
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -170,11 +170,19 @@ const ALLOWED_TAGS = /* @__PURE__ */ new Set([
   "b",
   "i",
   "em",
+  "small",
   "strong",
+  "mark",
   "u",
   "s",
   "sub",
   "sup",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
   "ul",
   "ol",
   "li",
@@ -195,8 +203,13 @@ const ALLOWED_TAGS = /* @__PURE__ */ new Set([
   "pre",
   "code",
   "blockquote",
+  "abbr",
+  "ins",
+  "del",
   "a",
   "img",
+  "figure",
+  "figcaption",
   // SVG tags for point patterns
   "svg",
   "g",
@@ -297,6 +310,10 @@ const ALLOWED_ATTRS = /* @__PURE__ */ new Set([
   "refY",
   "xlink:href"
 ]);
+const TAG_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_TAGS.forEach((tag) => TAG_CASE_MAP.set(tag.toLowerCase(), tag));
+const ATTR_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_ATTRS.forEach((attr) => ATTR_CASE_MAP.set(attr.toLowerCase(), attr));
 const ALLOWED_URI_PROTOCOLS = /* @__PURE__ */ new Set([
   "http:",
   "https:",
@@ -388,12 +405,14 @@ function extractTagName(tag) {
 }
 function isAllowedTag(tag) {
   const tagName = extractTagName(tag);
-  return tagName !== null && ALLOWED_TAGS.has(tagName);
+  return tagName !== null && TAG_CASE_MAP.has(tagName);
 }
 function sanitizeTag(fullTag) {
+  var _a, _b, _c;
   const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
   if (closingMatch) {
-    return `</${closingMatch[1].toLowerCase()}>`;
+    const lowerName = closingMatch[1].toLowerCase();
+    return `</${(_a = TAG_CASE_MAP.get(lowerName)) != null ? _a : lowerName}>`;
   }
   const openingMatch = fullTag.match(OPENING_TAG_REGEX);
   if (!openingMatch) {
@@ -401,17 +420,19 @@ function sanitizeTag(fullTag) {
   }
   const [, tagName, attrString, selfClose] = openingMatch;
   const lowerTagName = tagName.toLowerCase();
+  const canonicalTagName = (_b = TAG_CASE_MAP.get(lowerTagName)) != null ? _b : lowerTagName;
   const allowedAttrs = [];
   ATTR_REGEX.lastIndex = 0;
   let attrMatch;
   while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
-    const attrName = attrMatch[1].toLowerCase();
+    const lowerAttrName = attrMatch[1].toLowerCase();
     const doubleQuotedValue = attrMatch[2];
     const singleQuotedValue = attrMatch[3];
     const unquotedValue = attrMatch[4];
-    if (attrName.startsWith("on")) {
+    if (lowerAttrName.startsWith("on")) {
       continue;
     }
+    const canonicalAttrName = (_c = ATTR_CASE_MAP.get(lowerAttrName)) != null ? _c : lowerAttrName;
     let attrValue;
     let quoteChar;
     if (doubleQuotedValue !== void 0) {
@@ -424,22 +445,22 @@ function sanitizeTag(fullTag) {
       attrValue = unquotedValue;
       quoteChar = '"';
     } else {
-      if (ALLOWED_ATTRS.has(attrName)) {
-        allowedAttrs.push(attrName);
+      if (ATTR_CASE_MAP.has(lowerAttrName)) {
+        allowedAttrs.push(canonicalAttrName);
       }
       continue;
     }
-    if (ALLOWED_ATTRS.has(attrName)) {
+    if (ATTR_CASE_MAP.has(lowerAttrName)) {
       const wasUnquoted = unquotedValue !== void 0;
-      const sanitizedValue = sanitizeAttrValue(attrName, attrValue, wasUnquoted);
+      const sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
       if (sanitizedValue !== null) {
-        allowedAttrs.push(`${attrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
+        allowedAttrs.push(`${canonicalAttrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
       }
     }
   }
   const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
   const selfCloseStr = selfClose ? "/>" : ">";
-  return `<${lowerTagName}${attrsStr}${selfCloseStr}`;
+  return `<${canonicalTagName}${attrsStr}${selfCloseStr}`;
 }
 function sanitize(str) {
   if (typeof str !== "string" || !str || str.indexOf("<") === -1) {
@@ -1054,7 +1075,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260310004946");
+__publicField(Plugin, "version", "3.18.0-nightly-20260317005337");
 
 ;// ./src/Plugin/textoverlap/Options.ts
 class Options {

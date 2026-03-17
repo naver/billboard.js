@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260310004946
+ * @version 3.18.0-nightly-20260317005337
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2432,11 +2432,19 @@ const ALLOWED_TAGS = /* @__PURE__ */ new Set([
   "b",
   "i",
   "em",
+  "small",
   "strong",
+  "mark",
   "u",
   "s",
   "sub",
   "sup",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
   "ul",
   "ol",
   "li",
@@ -2457,8 +2465,13 @@ const ALLOWED_TAGS = /* @__PURE__ */ new Set([
   "pre",
   "code",
   "blockquote",
+  "abbr",
+  "ins",
+  "del",
   "a",
   "img",
+  "figure",
+  "figcaption",
   // SVG tags for point patterns
   "svg",
   "g",
@@ -2559,6 +2572,10 @@ const ALLOWED_ATTRS = /* @__PURE__ */ new Set([
   "refY",
   "xlink:href"
 ]);
+const TAG_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_TAGS.forEach((tag) => TAG_CASE_MAP.set(tag.toLowerCase(), tag));
+const ATTR_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_ATTRS.forEach((attr) => ATTR_CASE_MAP.set(attr.toLowerCase(), attr));
 const ALLOWED_URI_PROTOCOLS = /* @__PURE__ */ new Set([
   "http:",
   "https:",
@@ -2650,12 +2667,14 @@ function extractTagName(tag) {
 }
 function isAllowedTag(tag) {
   const tagName = extractTagName(tag);
-  return tagName !== null && ALLOWED_TAGS.has(tagName);
+  return tagName !== null && TAG_CASE_MAP.has(tagName);
 }
 function sanitizeTag(fullTag) {
+  var _a, _b, _c;
   const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
   if (closingMatch) {
-    return `</${closingMatch[1].toLowerCase()}>`;
+    const lowerName = closingMatch[1].toLowerCase();
+    return `</${(_a = TAG_CASE_MAP.get(lowerName)) != null ? _a : lowerName}>`;
   }
   const openingMatch = fullTag.match(OPENING_TAG_REGEX);
   if (!openingMatch) {
@@ -2663,17 +2682,19 @@ function sanitizeTag(fullTag) {
   }
   const [, tagName, attrString, selfClose] = openingMatch;
   const lowerTagName = tagName.toLowerCase();
+  const canonicalTagName = (_b = TAG_CASE_MAP.get(lowerTagName)) != null ? _b : lowerTagName;
   const allowedAttrs = [];
   ATTR_REGEX.lastIndex = 0;
   let attrMatch;
   while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
-    const attrName = attrMatch[1].toLowerCase();
+    const lowerAttrName = attrMatch[1].toLowerCase();
     const doubleQuotedValue = attrMatch[2];
     const singleQuotedValue = attrMatch[3];
     const unquotedValue = attrMatch[4];
-    if (attrName.startsWith("on")) {
+    if (lowerAttrName.startsWith("on")) {
       continue;
     }
+    const canonicalAttrName = (_c = ATTR_CASE_MAP.get(lowerAttrName)) != null ? _c : lowerAttrName;
     let attrValue;
     let quoteChar;
     if (doubleQuotedValue !== void 0) {
@@ -2686,22 +2707,22 @@ function sanitizeTag(fullTag) {
       attrValue = unquotedValue;
       quoteChar = '"';
     } else {
-      if (ALLOWED_ATTRS.has(attrName)) {
-        allowedAttrs.push(attrName);
+      if (ATTR_CASE_MAP.has(lowerAttrName)) {
+        allowedAttrs.push(canonicalAttrName);
       }
       continue;
     }
-    if (ALLOWED_ATTRS.has(attrName)) {
+    if (ATTR_CASE_MAP.has(lowerAttrName)) {
       const wasUnquoted = unquotedValue !== void 0;
-      const sanitizedValue = sanitizeAttrValue(attrName, attrValue, wasUnquoted);
+      const sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
       if (sanitizedValue !== null) {
-        allowedAttrs.push(`${attrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
+        allowedAttrs.push(`${canonicalAttrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
       }
     }
   }
   const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
   const selfCloseStr = selfClose ? "/>" : ">";
-  return `<${lowerTagName}${attrsStr}${selfCloseStr}`;
+  return `<${canonicalTagName}${attrsStr}${selfCloseStr}`;
 }
 function sanitize(str) {
   if (typeof str !== "string" || !str || str.indexOf("<") === -1) {
@@ -3508,7 +3529,25 @@ class State {
       },
       // RAF batching for zoom/drag interactions
       pendingRaf: null,
-      rafBatchQueue: []
+      rafBatchQueue: [],
+      // Dirty flags for selective redraw
+      dirty: {
+        data: false,
+        // data changed (load/unload)
+        visibility: false,
+        // show/hide toggled
+        size: false
+        // dimensions changed
+      },
+      // Performance: per-redraw generation counter for tick size caching
+      tickSizeGeneration: 0,
+      // Performance: cached targets for reuse within redraw cycle
+      _targetsToShow: null,
+      _eventRectFingerprint: null,
+      // Performance: throttle tooltip position updates on mousemove
+      _lastTooltipMouse: null,
+      // Performance: cached grid focus D3 selection
+      _gridFocusEl: null
     };
   }
 }
@@ -3545,6 +3584,7 @@ const KEY = {
   domainMinMax: "$domainMinMax",
   filteredTargets: "$filteredTargets",
   filteredNullish: "$filteredNullish",
+  svgLeft: "$svgLeft",
   visibilityChecksum: "visibilityChecksum",
   legendItemTextBox: "legendItemTextBox",
   legendItemMap: "$legendItemMap",
@@ -3553,7 +3593,8 @@ const KEY = {
   setOverOut: "setOverOut",
   callOverOutForTouch: "callOverOutForTouch",
   textRect: "textRect",
-  shapeOffset: "$shapeOffset"
+  shapeOffset: "$shapeOffset",
+  maxTickSize: "$maxTickSize"
 };
 class Cache {
   constructor() {
@@ -3591,7 +3632,7 @@ class Cache {
       const targets = [];
       for (let i = 0, id; id = key[i]; i++) {
         if (id in this.cache) {
-          targets.push(this.cloneTarget(this.cache[id]));
+          targets.push(this.cache[id]);
         }
       }
       return targets;
@@ -3607,7 +3648,7 @@ class Cache {
    * @private
    */
   has(key) {
-    return key in this.cache && this.cache[key] !== null;
+    return key in this.cache;
   }
   /**
    * Get all cache keys
@@ -3626,7 +3667,7 @@ class Cache {
     const $$ = this;
     for (const x in $$.cache) {
       if (all || /^\$/.test(x)) {
-        $$.cache[x] = null;
+        delete $$.cache[x];
       }
     }
   }
@@ -4085,7 +4126,7 @@ function json(json2, keysParam) {
   } else {
     Object.keys(json2).forEach(function(key) {
       var _a;
-      const tmp = json2[key].concat();
+      const tmp = [].concat(json2[key]);
       (_a = tmp.unshift) == null ? void 0 : _a.call(tmp, key);
       newRows.push(tmp);
     });
@@ -4253,6 +4294,7 @@ function _setXS(ids, data, params) {
       customX: axis == null ? void 0 : axis.isCustomX()
     };
     _setXS.bind($$)(ids, data, params);
+    const categoryIndexMap = params.customX && params.categorized && config.axis_x_categories.length ? new Map(config.axis_x_categories.map((cat, i) => [cat, i])) : null;
     const targets = ids.map((id, index) => {
       const convertedId = config.data_idConverter.bind($$.api)(id);
       const xKey = $$.getXKey(id);
@@ -4267,6 +4309,7 @@ function _setXS(ids, data, params) {
         id: convertedId,
         id_org: id,
         values: data.map((d, i) => {
+          var _a;
           const rawX = d[xKey];
           let value = d[id];
           let x;
@@ -4274,11 +4317,16 @@ function _setXS(ids, data, params) {
           if ((isCategory || state.hasRadar) && index === 0 && !isUndefined(rawX)) {
             if (!hasCategory && index === 0 && i === 0 && !isDataAppend) {
               config.axis_x_categories = [];
+              if (categoryIndexMap) {
+                categoryIndexMap.clear();
+              }
             }
-            x = config.axis_x_categories.indexOf(rawX);
+            const rawXStr = String(rawX);
+            x = (_a = categoryIndexMap == null ? void 0 : categoryIndexMap.get(rawXStr)) != null ? _a : -1;
             if (x === -1) {
               x = config.axis_x_categories.length;
               config.axis_x_categories.push(rawX);
+              categoryIndexMap == null ? void 0 : categoryIndexMap.set(rawXStr, x);
             }
           } else {
             x = $$.generateTargetX(rawX, id, xIndex + i);
@@ -4690,11 +4738,12 @@ function _setXS(ids, data, params) {
     return this.state.hiddenLegendIds.indexOf(targetId) < 0;
   },
   filterTargetsToShow(targets) {
+    var _a;
     const $$ = this;
     if (!targets) {
       const { cache, data, state } = $$;
       const cacheKey = KEY.filteredTargets;
-      const visibilityChecksum = state.hiddenTargetIds.join(",");
+      const visibilityChecksum = (_a = state._visibilityChecksum) != null ? _a : "";
       const storedChecksum = cache.get(KEY.visibilityChecksum);
       if (visibilityChecksum !== storedChecksum) {
         cache.remove(cacheKey);
@@ -4750,9 +4799,11 @@ function _setXS(ids, data, params) {
   },
   addHiddenTargetIds(targetIds) {
     this.addTargetIds("hiddenTargetIds", targetIds);
+    this.state._visibilityChecksum = this.state.hiddenTargetIds.join(",");
   },
   removeHiddenTargetIds(targetIds) {
     this.removeTargetIds("hiddenTargetIds", targetIds);
+    this.state._visibilityChecksum = this.state.hiddenTargetIds.join(",");
   },
   addHiddenLegendIds(targetIds) {
     this.addTargetIds("hiddenLegendIds", targetIds);
@@ -5891,41 +5942,73 @@ const schemeCategory10 = [
 
 
 /* harmony default export */ var domain = ({
-  getYDomainMinMax(targets, type) {
+  /**
+   * Get both min and max Y domain values in a single pass.
+   * Avoids calling getValuesAsIdKeyed twice.
+   * @param {Array} targets Target data
+   * @returns {[number|Date|undefined, number|Date|undefined]} [min, max]
+   * @private
+   */
+  getYDomainMinMaxBoth(targets) {
     const $$ = this;
     const { axis, config } = $$;
-    const isMin = type === "min";
     const dataGroups = config.data_groups;
     const ids = $$.mapToIds(targets);
     const idsSet = toSet(ids);
-    const ys = $$.getValuesAsIdKeyed(targets);
+    const rawYs = $$.getValuesAsIdKeyed(targets);
     if (dataGroups.length > 0) {
-      const hasValue = $$[`has${isMin ? "Negative" : "Positive"}ValueInTargets`](targets);
+      const hasNegative = $$.hasNegativeValueInTargets(targets);
+      const hasPositive = $$.hasPositiveValueInTargets(targets);
       const axisIdMap = new Map(ids.map((id) => [id, axis.getId(id)]));
+      const ysMin = {};
+      const ysMax = {};
+      for (const key in rawYs) {
+        ysMin[key] = rawYs[key].slice();
+        ysMax[key] = rawYs[key].slice();
+      }
       dataGroups.forEach((groupIds) => {
         const idsInGroup = groupIds.filter((v) => idsSet.has(v));
         if (idsInGroup.length) {
           const baseId = idsInGroup[0];
           const baseAxisId = axisIdMap.get(baseId);
-          if (hasValue && ys[baseId]) {
-            ys[baseId] = ys[baseId].map((v) => (isMin ? v < 0 : v > 0) ? v : 0);
+          if (ysMin[baseId] && hasNegative) {
+            ysMin[baseId] = ysMin[baseId].map((v) => v < 0 ? v : 0);
+          }
+          if (ysMax[baseId] && hasPositive) {
+            ysMax[baseId] = ysMax[baseId].map((v) => v > 0 ? v : 0);
           }
           idsInGroup.filter((v, i) => i > 0).forEach((id) => {
-            if (ys[id]) {
+            if (ysMin[id]) {
               const axisId = axisIdMap.get(id);
-              ys[id].forEach((v, i) => {
+              ysMin[id].forEach((v, i) => {
                 const val = +v;
-                const meetCondition = isMin ? val > 0 : val < 0;
-                if (axisId === baseAxisId && !(hasValue && meetCondition)) {
-                  ys[baseId][i] += val;
+                if (axisId === baseAxisId && !(hasNegative && val > 0)) {
+                  ysMin[baseId][i] += val;
+                }
+              });
+            }
+            if (ysMax[id]) {
+              const axisId = axisIdMap.get(id);
+              ysMax[id].forEach((v, i) => {
+                const val = +v;
+                if (axisId === baseAxisId && !(hasPositive && val < 0)) {
+                  ysMax[baseId][i] += val;
                 }
               });
             }
           });
         }
       });
+      return [
+        getMinMax("min", Object.keys(ysMin).map((key) => getMinMax("min", ysMin[key]))),
+        getMinMax("max", Object.keys(ysMax).map((key) => getMinMax("max", ysMax[key])))
+      ];
     }
-    return getMinMax(type, Object.keys(ys).map((key) => getMinMax(type, ys[key])));
+    const keys = Object.keys(rawYs);
+    return [
+      getMinMax("min", keys.map((key) => getMinMax("min", rawYs[key]))),
+      getMinMax("max", keys.map((key) => getMinMax("max", rawYs[key])))
+    ];
   },
   /**
    * Check if hidden targets bound to the given axis id
@@ -5968,8 +6051,9 @@ const schemeCategory10 = [
     const isInverted = config[`${pfx}_inverted`];
     const showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated;
     const showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
-    let yDomainMin = $$.getYDomainMinMax(yTargets, "min");
-    let yDomainMax = $$.getYDomainMinMax(yTargets, "max");
+    const [yDomainMinVal, yDomainMaxVal] = $$.getYDomainMinMaxBoth(yTargets);
+    let yDomainMin = yDomainMinVal;
+    let yDomainMax = yDomainMaxVal;
     let isZeroBased = [TYPE.BAR, TYPE.BUBBLE, TYPE.SCATTER, ...TYPE_BY_CATEGORY.Line].some((v) => {
       const type = v.indexOf("area") > -1 ? "area" : v;
       return $$.hasType(v, yTargets, true) && config[`${type}_zerobased`];
@@ -7013,6 +7097,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
 
 
 
+
 /* harmony default export */ var redraw = ({
   redraw(options = {}) {
     var _a, _b, _c, _d;
@@ -7020,7 +7105,20 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     const { config, state, $el } = $$;
     const { main, treemap } = $el;
     state.redrawing = true;
+    state.tickSizeGeneration = (state.tickSizeGeneration || 0) + 1;
+    if (options.initializing || state.dirty.size || state.dirty.data || !state.rendered) {
+      $$.cache.remove([KEY.svgLeft]);
+    }
     const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+    state._targetsToShow = targetsToShow;
+    const dirtySnapshot = {
+      data: state.dirty.data,
+      visibility: state.dirty.visibility,
+      size: state.dirty.size
+    };
+    state.dirty.data = false;
+    state.dirty.visibility = false;
+    state.dirty.size = false;
     const { flow, initializing } = options;
     const wth = $$.getWithOption(options);
     const duration = wth.Transition ? config.transition_duration : 0;
@@ -7036,6 +7134,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     }
     config.data_empty_label_text && main.select(`text.${$TEXT.text}.${$COMMON.empty}`).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null);
     (_b = $$.redrawTitle) == null ? void 0 : _b.call($$);
+    const needShapeUpdate = dirtySnapshot.data || dirtySnapshot.visibility || initializing;
     if (state.hasAxis) {
       $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
       $$.hasGrid() && $$.updateGrid();
@@ -7043,7 +7142,9 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
       ["bar", "candlestick", "line", "area"].forEach((v) => {
         const name = capitalize(v);
         if (/^(line|area)$/.test(v) && $$.hasTypeOf(name) || $$.hasType(v)) {
-          $$[`update${name}`](wth.TransitionForExit);
+          if (needShapeUpdate) {
+            $$[`update${name}`](wth.TransitionForExit);
+          }
         }
       });
       $el.text && main.selectAll(`.${$SELECT.selectedCircles}`).filter($$.isBarType.bind($$)).selectAll("circle").remove();
@@ -7059,11 +7160,17 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
       treemap && $$.updateTreemap(durationForExit);
     }
     if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
-      $$.updateCircle();
+      if (needShapeUpdate) {
+        $$.updateCircle();
+      }
     } else if ((_d = $$.hasLegendDefsPoint) == null ? void 0 : _d.call($$)) {
       $$.data.targets.forEach($$.point("create", this));
     }
-    $$.hasDataLabel() && !$$.hasArcType(null, ["radar"]) && $$.updateText();
+    if ($$.hasDataLabel() && !$$.hasArcType(null, ["radar"])) {
+      if (needShapeUpdate) {
+        $$.updateText();
+      }
+    }
     initializing && $$.updateTypesElements();
     $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
     $$.updateTooltipOnRedraw();
@@ -7096,13 +7203,14 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     const afterRedraw = () => {
       flowFn && flowFn();
       state.redrawing = false;
+      state._targetsToShow = null;
       callFn(config.onrendered, $$.api);
     };
     if (afterRedraw) {
       if (withTransition && redrawList.length) {
         const waitForDraw = generateWait();
         (0,external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_.transition)().duration(duration).each(() => {
-          redrawList.reduce((acc, t1) => acc.concat(t1), []).forEach((t) => waitForDraw.add(t));
+          redrawList.flatMap((t1) => t1).forEach((t) => waitForDraw.add(t));
         }).call(waitForDraw, afterRedraw);
       } else if (!state.transiting) {
         afterRedraw();
@@ -7212,12 +7320,19 @@ function getScale(type = "linear", min, max) {
    * @param {number} min Min value
    * @param {number} max Max value
    * @param {Array} domain Domain value
+   * @param {object} [existing] Existing scale function to be updated
    * @returns {function} Scale function
    * @private
    */
-  getYScale(id, min, max, domain) {
+  getYScale(id, min, max, domain, existing) {
     const $$ = this;
-    const scale = getScale($$.axis.getAxisType(id), min, max);
+    const type = $$.axis.getAxisType(id);
+    if (existing && existing.type === type) {
+      existing.range([min, max]);
+      domain && existing.domain(domain);
+      return existing;
+    }
+    const scale = getScale(type, min, max);
     domain && scale.domain(domain);
     return scale;
   },
@@ -7315,13 +7430,15 @@ function getScale(type = "linear", min, max) {
         "y",
         min.y,
         max.y,
-        scale.y ? scale.y.domain() : config.axis_y_default
+        scale.y ? scale.y.domain() : config.axis_y_default,
+        scale.y
       );
       scale.subY = $$.getYScale(
         "y",
         min.subY,
         max.subY,
-        scale.subY ? scale.subY.domain() : config.axis_y_default
+        scale.subY ? scale.subY.domain() : config.axis_y_default,
+        scale.subY
       );
       axis.setAxis("y", scale.y, config.axis_y_tick_outer, isInit);
       if (config.axis_y2_show) {
@@ -7329,13 +7446,15 @@ function getScale(type = "linear", min, max) {
           "y2",
           min.y,
           max.y,
-          scale.y2 ? scale.y2.domain() : config.axis_y2_default
+          scale.y2 ? scale.y2.domain() : config.axis_y2_default,
+          scale.y2
         );
         scale.subY2 = $$.getYScale(
           "y2",
           min.subY,
           max.subY,
-          scale.subY2 ? scale.subY2.domain() : config.axis_y2_default
+          scale.subY2 ? scale.subY2.domain() : config.axis_y2_default,
+          scale.subY2
         );
         axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit);
       }
@@ -7446,7 +7565,13 @@ function getScale(type = "linear", min, max) {
   getSvgLeft(withoutRecompute) {
     var _a, _b, _c;
     const $$ = this;
-    const { config, state: { hasAxis }, $el } = $$;
+    const { cache, config, state: { hasAxis }, $el } = $$;
+    if (withoutRecompute) {
+      const cached = cache.get(KEY.svgLeft);
+      if (cached !== null) {
+        return cached;
+      }
+    }
     const isRotated = config.axis_rotated;
     const hasLeftAxisRect = isRotated || !isRotated && !config.axis_y_inner;
     const leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY;
@@ -7466,7 +7591,9 @@ function getScale(type = "linear", min, max) {
     const chartRectLeft = rects.chart.left + labelWidth;
     const hasArc = $$.hasArcType();
     const svgLeft = svgRect.right - chartRectLeft - (hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
-    return svgLeft > 0 ? svgLeft : 0;
+    const result = svgLeft > 0 ? svgLeft : 0;
+    cache.add(KEY.svgLeft, result);
+    return result;
   },
   updateDimension(withoutAxis) {
     var _a;
@@ -7593,16 +7720,18 @@ function getScale(type = "linear", min, max) {
     const isNonAxis = $$.hasArcType() || state.hasFunnel || state.hasTreemap;
     const isFitPadding = ((_a = config.padding) == null ? void 0 : _a.mode) === "fit";
     !isInit && $$.setContainerSize();
+    const legendWidth = legend ? $$.getLegendWidth() : 0;
+    const legendHeight = legend ? $$.getLegendHeight() : 0;
     const currLegend = {
-      width: legend ? $$.getLegendWidth() : 0,
-      height: legend ? $$.getLegendHeight() : 0
+      width: legendWidth,
+      height: legendHeight
     };
     if (!isNonAxis && config.axis_x_show && config.axis_x_tick_autorotate) {
       $$.updateXAxisTickClip();
     }
     const legendSize = {
-      right: config.legend_show && state.isLegendRight ? $$.getLegendWidth() + (isFitPadding ? 0 : 20) : 0,
-      bottom: !config.legend_show || state.isLegendRight || state.isLegendInset ? 0 : currLegend.height
+      right: config.legend_show && state.isLegendRight ? legendWidth + (isFitPadding ? 0 : 20) : 0,
+      bottom: !config.legend_show || state.isLegendRight || state.isLegendInset ? 0 : legendHeight
     };
     const xAxisHeight = isRotated || isNonAxis ? 0 : $$.getHorizontalAxisHeight("x");
     const subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ? xAxisHeight : 30;
@@ -10218,6 +10347,12 @@ class ChartInternal {
     list.push(() => callFn(config.onresize, $$.api));
     if (/^(true|parent)$/.test(resize_auto)) {
       list.push(() => {
+        const prevWidth = state.current.width;
+        const prevHeight = state.current.height;
+        $$.setContainerSize();
+        if (prevWidth === state.current.width && prevHeight === state.current.height) {
+          return;
+        }
         state.resizing = true;
         if (config.legend_show) {
           $$.updateSizes();
@@ -10334,6 +10469,7 @@ function loadConfig(config) {
       config.size_width = size ? size.width : null;
       config.size_height = size ? size.height : null;
       state.resizing = true;
+      state.dirty.size = true;
       this.flush(false);
       $$.resizeFunction();
     }
@@ -10366,6 +10502,7 @@ function loadConfig(config) {
         state.current.zoomDomain = $$.scale.zoom.domain();
       }
       $$.scale.zoom = null;
+      state.dirty.data = true;
       soft ? $$.redraw({
         withTransform: true,
         withUpdateXDomain: true,
@@ -10398,16 +10535,17 @@ function loadConfig(config) {
    * chart.destroy();
    */
   destroy() {
-    var _a;
+    var _a, _b;
     const $$ = this.internal;
     const { $el: { chart, style, svg } } = $$;
     if (notEmpty($$)) {
       $$.callPluginHook("$willDestroy");
+      (_a = $$.cache) == null ? void 0 : _a.remove(["setOverOut", "callOverOutForTouch"]);
       $$.charts.splice($$.charts.indexOf(this), 1);
       $$.unbindAllEvents();
       svg.select("*").interrupt();
       $$.resizeFunction.clear();
-      (_a = $$.resizeFunction.resizeObserver) == null ? void 0 : _a.disconnect();
+      (_b = $$.resizeFunction.resizeObserver) == null ? void 0 : _b.disconnect();
       win.removeEventListener("resize", $$.resizeFunction);
       chart.classed("bb", false).style("position", null).selectChildren().remove();
       style && style.parentNode.removeChild(style);
@@ -11154,6 +11292,8 @@ const legend_legend = {
   load(args) {
     const $$ = this.internal;
     const { config } = $$;
+    $$.state.dirty.data = true;
+    $$.state._eventRectFingerprint = null;
     args.xs && $$.addXs(args.xs);
     "names" in args && this.data.names(args.names);
     "classes" in args && Object.keys(args.classes).forEach((id) => {
@@ -11211,6 +11351,8 @@ const legend_legend = {
       args = { ids: [args] };
     }
     const ids = $$.mapToTargetIds(args.ids);
+    $$.state.dirty.data = true;
+    $$.state._eventRectFingerprint = null;
     $$.unload(ids, () => {
       $$.redraw({
         withUpdateOrgXDomain: true,
@@ -11225,11 +11367,12 @@ const legend_legend = {
 
 ;// ./src/Chart/api/show.ts
 
-function showHide(show, targetIdsValue, options) {
+function showHide(show, targetIdsValue, options, skipRedraw = false) {
   const $$ = this.internal;
   const targetIds = $$.mapToTargetIds(targetIdsValue);
   const hiddenIds = $$.state.hiddenTargetIds.map((v) => targetIds.indexOf(v) > -1 && v).filter(Boolean);
   $$.state.toggling = true;
+  $$.state.dirty.visibility = true;
   $$[`${show ? "remove" : "add"}HiddenTargetIds`](targetIds);
   const targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds));
   const opacity = show ? null : "0";
@@ -11246,11 +11389,13 @@ function showHide(show, targetIdsValue, options) {
     targets.style("opacity", opacity);
   });
   options.withLegend && $$[`${show ? "show" : "hide"}Legend`](targetIds);
-  $$.redraw({
-    withUpdateOrgXDomain: true,
-    withUpdateXDomain: true,
-    withLegend: true
-  });
+  if (!skipRedraw) {
+    $$.redraw({
+      withUpdateOrgXDomain: true,
+      withUpdateXDomain: true,
+      withLegend: true
+    });
+  }
   $$.state.toggling = false;
 }
 /* harmony default export */ var show = ({
@@ -11321,8 +11466,13 @@ function showHide(show, targetIdsValue, options) {
     const $$ = this.internal;
     const targets = { show: [], hide: [] };
     $$.mapToTargetIds(targetIds).forEach((id) => targets[$$.isTargetToShow(id) ? "hide" : "show"].push(id));
-    targets.show.length && this.show(targets.show, options);
-    targets.hide.length && setTimeout(() => this.hide(targets.hide, options), 0);
+    if (targets.show.length && targets.hide.length) {
+      showHide.call(this, true, targets.show, options, true);
+      showHide.call(this, false, targets.hide, options);
+    } else {
+      targets.show.length && this.show(targets.show, options);
+      targets.hide.length && this.hide(targets.hide, options);
+    }
   }
 });
 
@@ -13055,6 +13205,7 @@ function setMinMax($$, type, value) {
         helper(key, value);
       });
     }
+    $$.state.dirty.data = true;
     $$.redraw({
       withUpdateOrgXDomain: true,
       withUpdateXDomain: true
@@ -13261,6 +13412,7 @@ const axis = {
     const { config } = $$;
     if (arguments.length > 1) {
       config.axis_x_categories[i] = category;
+      $$.state.dirty.data = true;
       $$.redraw();
     }
     return config.axis_x_categories[i];
@@ -13285,6 +13437,7 @@ const axis = {
       return isEmpty(cat) ? Object.values($$.data.xs)[0] : cat;
     }
     config.axis_x_categories = categories;
+    $$.state.dirty.data = true;
     $$.redraw();
     return config.axis_x_categories;
   }
@@ -13446,6 +13599,8 @@ const axis = {
       }
       domain && $$.updateXDomain(null, true, true, false, domain);
       $$.updateTargets($$.data.targets);
+      $$.state.dirty.data = true;
+      $$.state._eventRectFingerprint = null;
       $$.redraw({
         flow: {
           index: baseValue.index,
@@ -13619,6 +13774,7 @@ extend(ygrids, {
       return config.data_groups;
     }
     config.data_groups = groups;
+    $$.state.dirty.data = true;
     $$.redraw();
     return config.data_groups;
   }
@@ -13756,6 +13912,7 @@ extend(regions, {
         this.categories(x);
       } else {
         $$.updateTargetX(data.targets, x);
+        $$.state.dirty.data = true;
         $$.redraw({
           withUpdateOrgXDomain: true,
           withUpdateXDomain: true
@@ -13785,6 +13942,7 @@ extend(regions, {
     const $$ = this.internal;
     if (isObject(xs)) {
       $$.updateTargetXs($$.data.targets, xs);
+      $$.state.dirty.data = true;
       $$.redraw({
         withUpdateOrgXDomain: true,
         withUpdateXDomain: true
@@ -14323,6 +14481,7 @@ var Axis_publicField = (obj, key, value) => Axis_defNormalProp(obj, typeof key !
 
 
 
+
 /* harmony default export */ var Axis = ({
   getAxisInstance: function() {
     return this.axis || new Axis_Axis(this);
@@ -14767,7 +14926,13 @@ class Axis_Axis {
    */
   getMaxTickSize(id, withoutRecompute) {
     const $$ = this.owner;
-    const { config, state: { current, resizing }, $el: { svg, chart } } = $$;
+    const { config, state, $el: { svg, chart } } = $$;
+    const { current, resizing } = state;
+    const cacheKey = `${KEY.maxTickSize}_${id}_${!!withoutRecompute}`;
+    const cached = $$.cache.get(cacheKey);
+    if (cached && cached.generation === state.tickSizeGeneration) {
+      return cached.value;
+    }
     const currentTickMax = current.maxTickSize[id];
     const configPrefix = `axis_${id}`;
     const max = {
@@ -14779,7 +14944,7 @@ class Axis_Axis {
     }
     if (svg) {
       const isYAxis = /^y2?$/.test(id);
-      const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+      const targetsToShow = state._targetsToShow || $$.filterTargetsToShow($$.data.targets);
       const scale = $$.scale[id].copy().domain(
         $$[`get${isYAxis ? "Y" : "X"}Domain`](targetsToShow, id)
       );
@@ -14843,6 +15008,7 @@ class Axis_Axis {
         currentTickMax[key] = max[key];
       }
     });
+    $$.cache.add(cacheKey, { generation: state.tickSizeGeneration, value: currentTickMax });
     return currentTickMax;
   }
   getXAxisTickTextY2Overflow(defaultPadding) {
@@ -15145,6 +15311,7 @@ class Axis_Axis {
 }
 
 ;// ./src/ChartInternal/interactions/eventrect.ts
+var __pow = Math.pow;
 
 
 /* harmony default export */ var eventrect = ({
@@ -15312,6 +15479,12 @@ class Axis_Axis {
     const xScale = scale.zoom || scale.x;
     const isRotated = config.axis_rotated;
     const isMultipleX = $$.isMultipleX();
+    const xDomain = xScale == null ? void 0 : xScale.domain();
+    const fingerprint = xDomain ? `${xDomain[0]}_${xDomain[1]}_${$$.data.targets.length}` : null;
+    if (fingerprint && fingerprint === state._eventRectFingerprint) {
+      return;
+    }
+    state._eventRectFingerprint = fingerprint;
     let x;
     let y;
     let w;
@@ -15335,18 +15508,18 @@ class Axis_Axis {
         });
         rectW = (d) => {
           const x2 = getPrevNextX(d);
-          const xDomain = xScale.domain();
+          const xDomain2 = xScale.domain();
           let val;
           if (x2.prev === null && x2.next === null) {
             val = isRotated ? state.height : state.width;
           } else if (x2.prev === null) {
             val = (xScale(x2.next) + xScale(d.x)) / 2;
           } else if (x2.next === null) {
-            val = xScale(xDomain[1]) - (xScale(x2.prev) + xScale(d.x)) / 2;
+            val = xScale(xDomain2[1]) - (xScale(x2.prev) + xScale(d.x)) / 2;
           } else {
             Object.keys(x2).forEach((key, i) => {
               var _a;
-              x2[key] = (_a = x2[key]) != null ? _a : xDomain[i];
+              x2[key] = (_a = x2[key]) != null ? _a : xDomain2[i];
             });
             val = Math.max(0, (xScale(x2.next) - xScale(x2.prev)) / 2);
           }
@@ -15474,6 +15647,7 @@ class Axis_Axis {
   unselectRect() {
     const $$ = this;
     const { $el: { circle, tooltip } } = $$;
+    $$.state._lastTooltipMouse = null;
     $$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", null);
     $$.hideGridFocus();
     if (tooltip) {
@@ -15533,7 +15707,14 @@ class Axis_Axis {
         $$.showAxisGridFocus();
         const eventOnSameIdx = config.tooltip_grouped && index === eventReceiver.currentIdx;
         if (state.dragging || state.flowing || $$.hasArcType() || eventOnSameIdx) {
-          config.tooltip_show && eventOnSameIdx && $$.setTooltipPosition();
+          if (config.tooltip_show && eventOnSameIdx) {
+            const [mx, my] = getPointer(event, this);
+            const last = state._lastTooltipMouse;
+            if (!last || __pow(mx - last[0], 2) + __pow(my - last[1], 2) >= 9) {
+              state._lastTooltipMouse = [mx, my];
+              $$.setTooltipPosition();
+            }
+          }
           return;
         }
         if (index !== eventReceiver.currentIdx) {
@@ -16112,11 +16293,11 @@ function _smoothLines(el, type) {
    * @private
    */
   showGridFocus(data) {
-    var _a;
+    var _a, _b;
     const $$ = this;
-    const { config, state: { width, height } } = $$;
+    const { config, state, state: { width, height } } = $$;
     const isRotated = config.axis_rotated;
-    const focusEl = $$.$el.main.selectAll(
+    const focusEl = ((_a = state._gridFocusEl) == null ? void 0 : _a.size()) ? state._gridFocusEl : state._gridFocusEl = $$.$el.main.selectAll(
       `line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`
     );
     const dataToShow = (data || [focusEl.datum()]).filter(
@@ -16171,15 +16352,18 @@ function _smoothLines(el, type) {
       ["x1", "y1", "x2", "y2"].forEach((v, i) => el.attr(v, xy[i]));
     });
     _smoothLines(focusEl, "grid");
-    (_a = $$.showCircleFocus) == null ? void 0 : _a.call($$, data);
+    (_b = $$.showCircleFocus) == null ? void 0 : _b.call($$, data);
   },
   hideGridFocus() {
-    var _a;
+    var _a, _b;
     const $$ = this;
-    const { state: { inputType, resizing }, $el: { main } } = $$;
+    const { state, state: { inputType, resizing }, $el: { main } } = $$;
     if (inputType === "mouse" || !resizing) {
-      main.selectAll(`line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`).style("visibility", "hidden");
-      (_a = $$.hideCircleFocus) == null ? void 0 : _a.call($$);
+      const focusEl = ((_a = state._gridFocusEl) == null ? void 0 : _a.size()) ? state._gridFocusEl : state._gridFocusEl = main.selectAll(
+        `line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`
+      );
+      focusEl.style("visibility", "hidden");
+      (_b = $$.hideCircleFocus) == null ? void 0 : _b.call($$);
     }
   },
   updateGridFocus() {
@@ -23873,7 +24057,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260310004946",
+  version: "3.18.0-nightly-20260317005337",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

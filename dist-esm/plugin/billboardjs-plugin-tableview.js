@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260310004946
+ * @version 3.18.0-nightly-20260317005337
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -94,11 +94,19 @@ var ALLOWED_TAGS = new Set([
     "b",
     "i",
     "em",
+    "small",
     "strong",
+    "mark",
     "u",
     "s",
     "sub",
     "sup",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
     "ul",
     "ol",
     "li",
@@ -119,8 +127,13 @@ var ALLOWED_TAGS = new Set([
     "pre",
     "code",
     "blockquote",
+    "abbr",
+    "ins",
+    "del",
     "a",
     "img",
+    "figure",
+    "figcaption",
     // SVG tags for point patterns
     "svg",
     "g",
@@ -222,6 +235,11 @@ var ALLOWED_ATTRS = new Set([
     "refY",
     "xlink:href"
 ]);
+// Case-insensitive lookup maps: lowercase key → canonical casing from whitelists
+var TAG_CASE_MAP = new Map();
+ALLOWED_TAGS.forEach(function (tag) { return TAG_CASE_MAP.set(tag.toLowerCase(), tag); });
+var ATTR_CASE_MAP = new Map();
+ALLOWED_ATTRS.forEach(function (attr) { return ATTR_CASE_MAP.set(attr.toLowerCase(), attr); });
 // Whitelist of allowed URI protocols
 var ALLOWED_URI_PROTOCOLS = new Set([
     "http:",
@@ -401,7 +419,7 @@ function extractTagName(tag) {
  */
 function isAllowedTag(tag) {
     var tagName = extractTagName(tag);
-    return tagName !== null && ALLOWED_TAGS.has(tagName);
+    return tagName !== null && TAG_CASE_MAP.has(tagName);
 }
 /**
  * Sanitize a single HTML/SVG tag (only called for allowed tags)
@@ -410,10 +428,12 @@ function isAllowedTag(tag) {
  * @private
  */
 function sanitizeTag(fullTag) {
+    var _a, _b, _c;
     // Closing tag
     var closingMatch = fullTag.match(CLOSING_TAG_REGEX);
     if (closingMatch) {
-        return "</".concat(closingMatch[1].toLowerCase(), ">");
+        var lowerName = closingMatch[1].toLowerCase();
+        return "</".concat((_a = TAG_CASE_MAP.get(lowerName)) !== null && _a !== void 0 ? _a : lowerName, ">");
     }
     // Opening tag
     var openingMatch = fullTag.match(OPENING_TAG_REGEX);
@@ -422,19 +442,21 @@ function sanitizeTag(fullTag) {
     }
     var tagName = openingMatch[1], attrString = openingMatch[2], selfClose = openingMatch[3];
     var lowerTagName = tagName.toLowerCase();
+    var canonicalTagName = (_b = TAG_CASE_MAP.get(lowerTagName)) !== null && _b !== void 0 ? _b : lowerTagName;
     // Parse and filter attributes, preserving original quote style
     var allowedAttrs = [];
     ATTR_REGEX.lastIndex = 0;
     var attrMatch;
     while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
-        var attrName = attrMatch[1].toLowerCase();
+        var lowerAttrName = attrMatch[1].toLowerCase();
         var doubleQuotedValue = attrMatch[2];
         var singleQuotedValue = attrMatch[3];
         var unquotedValue = attrMatch[4];
         // Skip event handlers (on*)
-        if (attrName.startsWith("on")) {
+        if (lowerAttrName.startsWith("on")) {
             continue;
         }
+        var canonicalAttrName = (_c = ATTR_CASE_MAP.get(lowerAttrName)) !== null && _c !== void 0 ? _c : lowerAttrName;
         // Determine original quote style and value
         var attrValue = void 0;
         var quoteChar = void 0;
@@ -452,22 +474,22 @@ function sanitizeTag(fullTag) {
         }
         else {
             // Boolean attribute (no value)
-            if (ALLOWED_ATTRS.has(attrName)) {
-                allowedAttrs.push(attrName);
+            if (ATTR_CASE_MAP.has(lowerAttrName)) {
+                allowedAttrs.push(canonicalAttrName);
             }
             continue;
         }
-        if (ALLOWED_ATTRS.has(attrName)) {
+        if (ATTR_CASE_MAP.has(lowerAttrName)) {
             var wasUnquoted = unquotedValue !== undefined;
-            var sanitizedValue = sanitizeAttrValue(attrName, attrValue, wasUnquoted);
+            var sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
             if (sanitizedValue !== null) {
-                allowedAttrs.push("".concat(attrName, "=").concat(quoteChar).concat(sanitizedValue).concat(quoteChar));
+                allowedAttrs.push("".concat(canonicalAttrName, "=").concat(quoteChar).concat(sanitizedValue).concat(quoteChar));
             }
         }
     }
     var attrsStr = allowedAttrs.length > 0 ? " ".concat(allowedAttrs.join(" ")) : "";
     var selfCloseStr = selfClose ? "/>" : ">";
-    return "<".concat(lowerTagName).concat(attrsStr).concat(selfCloseStr);
+    return "<".concat(canonicalTagName).concat(attrsStr).concat(selfCloseStr);
 }
 /**
  * Sanitize HTML string to prevent XSS attacks
@@ -649,7 +671,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.18.0-nightly-20260310004946";
+    Plugin.version = "3.18.0-nightly-20260317005337";
     return Plugin;
 }());
 
