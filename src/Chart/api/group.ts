@@ -27,6 +27,7 @@ export default {
 		}
 
 		config.data_groups = groups;
+		$$.state.dirty.data = true;
 		$$.redraw();
 
 		return config.data_groups;

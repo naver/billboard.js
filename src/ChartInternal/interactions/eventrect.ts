@@ -269,6 +269,18 @@ export default {
 		const xScale = scale.zoom || scale.x;
 		const isRotated = config.axis_rotated;
 		const isMultipleX = $$.isMultipleX();
+
+		// Skip recalculation if scale domain hasn't changed
+		const xDomain = xScale?.domain();
+		const fingerprint = xDomain ?
+			`${xDomain[0]}_${xDomain[1]}_${$$.data.targets.length}` :
+			null;
+
+		if (fingerprint && fingerprint === state._eventRectFingerprint) {
+			return;
+		}
+
+		state._eventRectFingerprint = fingerprint;
 		let x;
 		let y;
 		let w;
@@ -498,6 +510,7 @@ export default {
 		const $$ = this;
 		const {$el: {circle, tooltip}} = $$;
 
+		$$.state._lastTooltipMouse = null;
 		$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", null);
 		$$.hideGridFocus();
 
@@ -587,7 +600,20 @@ export default {
 
 					// do nothing while dragging/flowing
 					if (state.dragging || state.flowing || $$.hasArcType() || eventOnSameIdx) {
-						config.tooltip_show && eventOnSameIdx && $$.setTooltipPosition();
+						// Throttle tooltip position updates: skip if mouse hasn't moved enough
+						if (config.tooltip_show && eventOnSameIdx) {
+							const [mx, my] = getPointer(event, this);
+							const last = state._lastTooltipMouse;
+
+							if (
+								!last ||
+								(mx - last[0]) ** 2 + (my - last[1]) ** 2 >= 9
+							) {
+								state._lastTooltipMouse = [mx, my];
+								$$.setTooltipPosition();
+							}
+						}
+
 						return;
 					}
 

@@ -22,6 +22,7 @@ export default {
 
 		if (arguments.length > 1) {
 			config.axis_x_categories[i] = category;
+			$$.state.dirty.data = true;
 			$$.redraw();
 		}
 
@@ -51,6 +52,7 @@ export default {
 		}
 
 		config.axis_x_categories = categories;
+		$$.state.dirty.data = true;
 		$$.redraw();
 
 		return config.axis_x_categories;

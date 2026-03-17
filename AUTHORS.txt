@@ -72,3 +72,4 @@ Alan Hamlett <alan.hamlett@gmail.com>
 Allen, Brad <BAllen+cvent@cvent.com>
 Seong Min Park <https://github.com/notoriousmango>
 Robin Van den Broeck <robin.broeck@gmail.com>
+Hjalmers <opensource@rhj.se>

@@ -199,6 +199,8 @@ export default {
 
 			// Set targets
 			$$.updateTargets($$.data.targets);
+			$$.state.dirty.data = true;
+			$$.state._eventRectFingerprint = null;
 
 			// Redraw with new targets
 			$$.redraw({

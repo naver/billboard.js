@@ -128,7 +128,7 @@ function json(json, keysParam) {
 		data = rows(newRows);
 	} else {
 		Object.keys(json).forEach(function(key) {
-			const tmp = json[key].concat();
+			const tmp: any[] = [].concat(json[key]);
 
 			tmp.unshift?.(key);
 			newRows.push(tmp);

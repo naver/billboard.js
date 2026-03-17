@@ -533,7 +533,7 @@ export default {
 		if (!targets) {
 			const {cache, data, state} = $$;
 			const cacheKey = KEY.filteredTargets;
-			const visibilityChecksum = state.hiddenTargetIds.join(",");
+			const visibilityChecksum = state._visibilityChecksum ?? "";
 			const storedChecksum = cache.get(KEY.visibilityChecksum);
 
 			// Invalidate cache if visibility changed
@@ -609,10 +609,12 @@ export default {
 
 	addHiddenTargetIds(targetIds: string[]): void {
 		this.addTargetIds("hiddenTargetIds", targetIds);
+		this.state._visibilityChecksum = this.state.hiddenTargetIds.join(",");
 	},
 
 	removeHiddenTargetIds(targetIds: string[]): void {
 		this.removeTargetIds("hiddenTargetIds", targetIds);
+		this.state._visibilityChecksum = this.state.hiddenTargetIds.join(",");
 	},
 
 	addHiddenLegendIds(targetIds: string[]): void {
