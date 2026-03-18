@@ -50,7 +50,7 @@
 	},
 	"sideEffects": [
 		"dist/**/*.css",
-		"src/**/*.js"
+		"dist-esm/**/*.css"
 	],
 	"repository": {
 		"type": "git",
