@@ -1,4 +1,4 @@
-import bb, {line, bar} from "../../dist-esm/billboard.js";
+import bb, {line, bar} from "../../dist-esm/index.esm.js";
 
 line();
 bar();
