@@ -58,6 +58,10 @@ export default [
             format: "es",
             banner: getBannerStr()
         },
+        treeshake: {
+            moduleSideEffects: false,
+            propertyReadSideEffects: false
+        },
         plugins,
         external
     },
