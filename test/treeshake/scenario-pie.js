@@ -1,4 +1,4 @@
-import bb, {pie} from "../../dist-esm/billboard.js";
+import bb, {pie} from "../../dist-esm/index.esm.js";
 
 pie();
 
