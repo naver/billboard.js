@@ -54,9 +54,15 @@ export default [
     {
         input: "src/index.esm.ts",
         output: {
-            file: `${distPath}/billboard.js`,
+            dir: distPath,
             format: "es",
+            preserveModules: true,
+            preserveModulesRoot: "src",
             banner: getBannerStr()
+        },
+        treeshake: {
+            moduleSideEffects: false,
+            propertyReadSideEffects: false
         },
         plugins,
         external
