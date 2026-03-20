@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260319005617
+ * @version 3.18.0-nightly-20260320005342
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -16,7 +16,7 @@
 		var a = typeof exports === 'object' ? factory(require("d3-axis"), require("d3-brush"), require("d3-drag"), require("d3-hierarchy"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__9__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__9__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
@@ -161,7 +161,7 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* reexport */ bb; }
 });
 
-// NAMESPACE OBJECT: ./src/config/resolver/interaction.ts
+// NAMESPACE OBJECT: ./src/config/resolver/interaction/index.ts
 var resolver_interaction_namespaceObject = {};
 __webpack_require__.r(resolver_interaction_namespaceObject);
 __webpack_require__.d(resolver_interaction_namespaceObject, {
@@ -170,36 +170,34 @@ __webpack_require__.d(resolver_interaction_namespaceObject, {
   zoom: function() { return zoomModule; }
 });
 
-// NAMESPACE OBJECT: ./src/config/resolver/shape.ts
+// NAMESPACE OBJECT: ./src/config/resolver/shape/index.ts
 var resolver_shape_namespaceObject = {};
 __webpack_require__.r(resolver_shape_namespaceObject);
 __webpack_require__.d(resolver_shape_namespaceObject, {
-  area: function() { return resolver_shape_area; },
+  area: function() { return area_area; },
   areaLineRange: function() { return areaLineRange; },
   areaSpline: function() { return areaSpline; },
   areaSplineRange: function() { return areaSplineRange; },
   areaStep: function() { return areaStep; },
   areaStepRange: function() { return areaStepRange; },
-  bar: function() { return resolver_shape_bar; },
-  bubble: function() { return resolver_shape_bubble; },
-  candlestick: function() { return resolver_shape_candlestick; },
-  donut: function() { return shape_donut; },
-  funnel: function() { return resolver_shape_funnel; },
-  gauge: function() { return resolver_shape_gauge; },
-  line: function() { return resolver_shape_line; },
-  pie: function() { return shape_pie; },
-  polar: function() { return resolver_shape_polar; },
-  radar: function() { return resolver_shape_radar; },
-  scatter: function() { return shape_scatter; },
-  spline: function() { return shape_spline; },
+  bar: function() { return bar_bar; },
+  bubble: function() { return bubble_bubble; },
+  candlestick: function() { return candlestick_candlestick; },
+  donut: function() { return donut_donut; },
+  funnel: function() { return funnel_funnel; },
+  gauge: function() { return gauge_gauge; },
+  line: function() { return line_line; },
+  pie: function() { return pie_pie; },
+  polar: function() { return polar_polar; },
+  radar: function() { return radar_radar; },
+  scatter: function() { return scatter_scatter; },
+  spline: function() { return line_spline; },
   step: function() { return step; },
-  treemap: function() { return resolver_shape_treemap; }
+  treemap: function() { return treemap_treemap; }
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(2);
-// EXTERNAL MODULE: external {"commonjs":"d3-time-format","commonjs2":"d3-time-format","amd":"d3-time-format","root":"d3"}
-var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_ = __webpack_require__(3);
 ;// ./src/config/classes.ts
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
@@ -388,6 +386,973 @@ const $ZOOM = {
 };
 /* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
+// EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
+;// ./src/module/browser.ts
+function getGlobal() {
+  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
+}
+function getFallback(w) {
+  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function";
+  const hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function" && typeof (w == null ? void 0 : w.cancelIdleCallback) === "function";
+  const request = (cb) => setTimeout(cb, 1);
+  const cancel = (id) => clearTimeout(id);
+  return [
+    hasRAF ? w.requestAnimationFrame : request,
+    hasRAF ? w.cancelAnimationFrame : cancel,
+    hasRIC ? w.requestIdleCallback : request,
+    hasRIC ? w.cancelIdleCallback : cancel
+  ];
+}
+const win = getGlobal();
+const browser_doc = win == null ? void 0 : win.document;
+const [
+  requestAnimationFrame,
+  cancelAnimationFrame,
+  requestIdleCallback,
+  cancelIdleCallback
+] = getFallback(win);
+
+
+;// ./src/module/sanitize.ts
+const ALLOWED_TAGS = /* @__PURE__ */ new Set([
+  // HTML tags for tooltip/legend templates
+  "span",
+  "div",
+  "p",
+  "br",
+  "b",
+  "i",
+  "em",
+  "small",
+  "strong",
+  "mark",
+  "u",
+  "s",
+  "sub",
+  "sup",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "ul",
+  "ol",
+  "li",
+  "dl",
+  "dt",
+  "dd",
+  "table",
+  "thead",
+  "tbody",
+  "tfoot",
+  "tr",
+  "th",
+  "td",
+  "caption",
+  "colgroup",
+  "col",
+  "hr",
+  "pre",
+  "code",
+  "blockquote",
+  "abbr",
+  "ins",
+  "del",
+  "a",
+  "img",
+  "figure",
+  "figcaption",
+  // SVG tags for point patterns
+  "svg",
+  "g",
+  "path",
+  "circle",
+  "ellipse",
+  "rect",
+  "line",
+  "polyline",
+  "polygon",
+  "text",
+  "tspan",
+  "textPath",
+  "use",
+  "defs",
+  "symbol",
+  "clipPath",
+  "mask",
+  "linearGradient",
+  "radialGradient",
+  "stop",
+  "pattern",
+  "marker",
+  "title",
+  "desc"
+]);
+const ALLOWED_ATTRS = /* @__PURE__ */ new Set([
+  // Common attributes
+  "class",
+  "id",
+  "style",
+  "title",
+  "lang",
+  "dir",
+  // HTML specific
+  "href",
+  "src",
+  "alt",
+  "width",
+  "height",
+  "colspan",
+  "rowspan",
+  "scope",
+  "headers",
+  // SVG presentation attributes
+  "d",
+  "points",
+  "x",
+  "y",
+  "x1",
+  "x2",
+  "y1",
+  "y2",
+  "cx",
+  "cy",
+  "r",
+  "rx",
+  "ry",
+  "dx",
+  "dy",
+  "viewBox",
+  "preserveAspectRatio",
+  "transform",
+  "fill",
+  "fill-opacity",
+  "fill-rule",
+  "stroke",
+  "stroke-width",
+  "stroke-opacity",
+  "stroke-linecap",
+  "stroke-linejoin",
+  "stroke-dasharray",
+  "stroke-dashoffset",
+  "opacity",
+  "clip-path",
+  "clip-rule",
+  "mask",
+  "font-family",
+  "font-size",
+  "font-weight",
+  "font-style",
+  "text-anchor",
+  "dominant-baseline",
+  "offset",
+  "stop-color",
+  "stop-opacity",
+  "gradientUnits",
+  "gradientTransform",
+  "spreadMethod",
+  "patternUnits",
+  "patternTransform",
+  "marker-start",
+  "marker-mid",
+  "marker-end",
+  "markerWidth",
+  "markerHeight",
+  "refX",
+  "refY",
+  "xlink:href"
+]);
+const TAG_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_TAGS.forEach((tag) => TAG_CASE_MAP.set(tag.toLowerCase(), tag));
+const ATTR_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_ATTRS.forEach((attr) => ATTR_CASE_MAP.set(attr.toLowerCase(), attr));
+const ALLOWED_URI_PROTOCOLS = /* @__PURE__ */ new Set([
+  "http:",
+  "https:",
+  "mailto:"
+]);
+const URI_ATTRS = /* @__PURE__ */ new Set(["href", "src", "xlink:href"]);
+const TAG_NAME_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9]*)/;
+const CLOSING_TAG_REGEX = /^<\/([a-zA-Z][a-zA-Z0-9]*)\s*>$/;
+const OPENING_TAG_REGEX = /^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)(\/?)>$/;
+const ATTR_REGEX = /([a-zA-Z][\w:-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
+const URL_IN_STYLE_REGEX = /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi;
+const DANGEROUS_CSS_PATTERNS = [
+  "expression(",
+  "behavior:",
+  "binding:",
+  "@import",
+  "@charset",
+  "-moz-binding:"
+];
+function decodeHTMLEntities(str) {
+  return str.replace(/&colon;/gi, ":").replace(/&newline;/gi, "\n").replace(/&tab;/gi, "	").replace(/&nbsp;/gi, " ").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&apos;/gi, "'").replace(/&#(\d+);/gi, (_, code) => String.fromCharCode(parseInt(code, 10))).replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
+}
+function isSafeURI(uri) {
+  const decoded = decodeHTMLEntities(uri).trim();
+  const normalized = decoded.replace(/[\s\u0000-\u001f]/g, "").toLowerCase();
+  if (!normalized || normalized.startsWith("#")) {
+    return true;
+  }
+  if (normalized.startsWith("/") || normalized.startsWith("./") || normalized.startsWith("../") || !normalized.includes(":")) {
+    return true;
+  }
+  const colonIndex = normalized.indexOf(":");
+  if (colonIndex > 0) {
+    const protocol = normalized.substring(0, colonIndex + 1);
+    return ALLOWED_URI_PROTOCOLS.has(protocol);
+  }
+  return false;
+}
+function sanitizeStyleValue(style) {
+  const decoded = decodeHTMLEntities(style);
+  const cleaned = decoded.replace(/[\u0000-\u001f]/g, "");
+  URL_IN_STYLE_REGEX.lastIndex = 0;
+  let match;
+  while ((match = URL_IN_STYLE_REGEX.exec(cleaned)) !== null) {
+    if (!isSafeURI(match[1])) {
+      return null;
+    }
+  }
+  const normalizedLower = cleaned.toLowerCase().replace(/\s/g, "");
+  for (const pattern of DANGEROUS_CSS_PATTERNS) {
+    if (normalizedLower.includes(pattern)) {
+      return null;
+    }
+  }
+  return style;
+}
+const ATTR_ENCODE_MAP = {
+  '"': "&quot;",
+  "'": "&#39;",
+  "`": "&#96;"
+};
+const ATTR_ENCODE_REGEX = /["'`]/g;
+function encodeAttrValue(value) {
+  return value.replace(ATTR_ENCODE_REGEX, (char) => ATTR_ENCODE_MAP[char]);
+}
+function sanitizeAttrValue(name, value, wasUnquoted = false) {
+  if (URI_ATTRS.has(name)) {
+    if (!isSafeURI(value)) {
+      return null;
+    }
+    return wasUnquoted ? encodeAttrValue(value) : value;
+  }
+  if (name === "style") {
+    const sanitizedStyle = sanitizeStyleValue(value);
+    if (sanitizedStyle === null) {
+      return null;
+    }
+    return wasUnquoted ? encodeAttrValue(sanitizedStyle) : sanitizedStyle;
+  }
+  const decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
+  if (/\bon\w+=/.test(decoded)) {
+    return null;
+  }
+  return wasUnquoted ? encodeAttrValue(value) : value;
+}
+function extractTagName(tag) {
+  const match = tag.match(TAG_NAME_REGEX);
+  return match ? match[1].toLowerCase() : null;
+}
+function isAllowedTag(tag) {
+  const tagName = extractTagName(tag);
+  return tagName !== null && TAG_CASE_MAP.has(tagName);
+}
+function sanitizeTag(fullTag) {
+  var _a, _b, _c;
+  const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
+  if (closingMatch) {
+    const lowerName = closingMatch[1].toLowerCase();
+    return `</${(_a = TAG_CASE_MAP.get(lowerName)) != null ? _a : lowerName}>`;
+  }
+  const openingMatch = fullTag.match(OPENING_TAG_REGEX);
+  if (!openingMatch) {
+    return "";
+  }
+  const [, tagName, attrString, selfClose] = openingMatch;
+  const lowerTagName = tagName.toLowerCase();
+  const canonicalTagName = (_b = TAG_CASE_MAP.get(lowerTagName)) != null ? _b : lowerTagName;
+  const allowedAttrs = [];
+  ATTR_REGEX.lastIndex = 0;
+  let attrMatch;
+  while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
+    const lowerAttrName = attrMatch[1].toLowerCase();
+    const doubleQuotedValue = attrMatch[2];
+    const singleQuotedValue = attrMatch[3];
+    const unquotedValue = attrMatch[4];
+    if (lowerAttrName.startsWith("on")) {
+      continue;
+    }
+    const canonicalAttrName = (_c = ATTR_CASE_MAP.get(lowerAttrName)) != null ? _c : lowerAttrName;
+    let attrValue;
+    let quoteChar;
+    if (doubleQuotedValue !== void 0) {
+      attrValue = doubleQuotedValue;
+      quoteChar = '"';
+    } else if (singleQuotedValue !== void 0) {
+      attrValue = singleQuotedValue;
+      quoteChar = "'";
+    } else if (unquotedValue !== void 0) {
+      attrValue = unquotedValue;
+      quoteChar = '"';
+    } else {
+      if (ATTR_CASE_MAP.has(lowerAttrName)) {
+        allowedAttrs.push(canonicalAttrName);
+      }
+      continue;
+    }
+    if (ATTR_CASE_MAP.has(lowerAttrName)) {
+      const wasUnquoted = unquotedValue !== void 0;
+      const sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
+      if (sanitizedValue !== null) {
+        allowedAttrs.push(`${canonicalAttrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
+      }
+    }
+  }
+  const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
+  const selfCloseStr = selfClose ? "/>" : ">";
+  return `<${canonicalTagName}${attrsStr}${selfCloseStr}`;
+}
+function sanitize(str) {
+  if (typeof str !== "string" || !str || str.indexOf("<") === -1) {
+    return str;
+  }
+  return str.replace(
+    /<\/?[^>]*>|[^<>\s]+>/g,
+    (match) => {
+      if (match.startsWith("<!--")) {
+        return "";
+      }
+      if (!match.startsWith("<")) {
+        return match.slice(0, -1) + "&gt;";
+      }
+      if (isAllowedTag(match)) {
+        return sanitizeTag(match);
+      }
+      return match.replace(/</g, "&lt;");
+    }
+  );
+}
+
+;// ./src/module/util.ts
+var util_defProp = Object.defineProperty;
+var util_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var util_hasOwnProp = Object.prototype.hasOwnProperty;
+var util_propIsEnum = Object.prototype.propertyIsEnumerable;
+var util_defNormalProp = (obj, key, value) => key in obj ? util_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var util_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (util_hasOwnProp.call(b, prop))
+      util_defNormalProp(a, prop, b[prop]);
+  if (util_getOwnPropSymbols)
+    for (var prop of util_getOwnPropSymbols(b)) {
+      if (util_propIsEnum.call(b, prop))
+        util_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+
+
+
+
+function _getRect(relativeViewport, node, forceEval = false) {
+  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+  if (forceEval) {
+    return _(node);
+  } else {
+    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
+    return needEvaluate ? node.rect = _(node) : node.rect;
+  }
+}
+function _forEachValidItem(items, callback) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item) {
+      callback(item, i);
+    }
+  }
+}
+const isValue = (v) => v || v === 0;
+const isFunction = (v) => typeof v === "function";
+const isString = (v) => typeof v === "string";
+const isNumber = (v) => typeof v === "number";
+const isUndefined = (v) => typeof v === "undefined";
+const isDefined = (v) => typeof v !== "undefined";
+const isBoolean = (v) => typeof v === "boolean";
+const ceil10 = (v) => Math.ceil(v / 10) * 10;
+const asHalfPixel = (n) => Math.ceil(n) + 0.5;
+const diffDomain = (d) => d[1] - d[0];
+const isObjectType = (v) => typeof v === "object";
+const isEmptyObject = (obj) => {
+  for (const x in obj) {
+    return false;
+  }
+  return true;
+};
+const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
+const notEmpty = (o) => !isEmpty(o);
+const isArray = (arr) => Array.isArray(arr);
+const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
+function getOption(options, key, defaultValue) {
+  return isDefined(options[key]) ? options[key] : defaultValue;
+}
+function hasValue(dict, value) {
+  let found = false;
+  Object.keys(dict).forEach((key) => dict[key] === value && (found = true));
+  return found;
+}
+function callFn(fn, thisArg, ...args) {
+  const isFn = isFunction(fn);
+  isFn && fn.call(thisArg, ...args);
+  return isFn;
+}
+function endall(transition, cb) {
+  let n = 0;
+  const end = function(...args) {
+    !--n && cb.apply(this, ...args);
+  };
+  if ("duration" in transition) {
+    transition.each(() => ++n).on("end", end);
+  } else {
+    ++n;
+    transition.call(end);
+  }
+}
+function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
+  if (!node || !isString(text)) {
+    return;
+  }
+  if (text.indexOf("\n") === -1) {
+    node.text(text);
+  } else {
+    const diff = [node.text(), text].map((v) => v.replace(/[\s\n]/g, ""));
+    if (diff[0] !== diff[1]) {
+      const multiline = text.split("\n");
+      const len = toMiddle ? multiline.length - 1 : 1;
+      node.html("");
+      multiline.forEach((v, i) => {
+        node.append("tspan").attr("x", 0).attr("dy", `${i === 0 ? dy[0] * len : dy[1]}em`).text(v);
+      });
+    }
+  }
+}
+function getRectSegList(path) {
+  const { x, y, width, height } = path.getBBox();
+  return [
+    { x, y: y + height },
+    // seg0
+    { x, y },
+    // seg1
+    { x: x + width, y },
+    // seg2
+    { x: x + width, y: y + height }
+    // seg3
+  ];
+}
+function getPathBox(path) {
+  const { width, height } = getBoundingRect(path);
+  const items = getRectSegList(path);
+  const x = items[0].x;
+  const y = Math.min(items[0].y, items[1].y);
+  return {
+    x,
+    y,
+    width,
+    height
+  };
+}
+function getPointer(event, element) {
+  var _a;
+  const touches = event && ((_a = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _a[0]);
+  let pointer = [0, 0];
+  try {
+    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
+  } catch (e) {
+  }
+  return pointer.map((v) => isNaN(v) ? 0 : v);
+}
+function getBrushSelection(ctx) {
+  const { event, $el } = ctx;
+  const main = $el.subchart.main || $el.main;
+  let selection;
+  if (event && event.type === "brush") {
+    selection = event.selection;
+  } else if (main && (selection = main.select(".bb-brush").node())) {
+    selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection);
+  }
+  return selection;
+}
+function getBoundingRect(node, forceEval = false) {
+  return _getRect(true, node, forceEval);
+}
+function getBBox(node, forceEval = false) {
+  return _getRect(false, node, forceEval);
+}
+function getRandom(asStr = true, min = 0, max = 1e4) {
+  const crpt = win.crypto || win.msCrypto;
+  const rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
+  return asStr ? String(rand) : rand;
+}
+function findIndex(arr, v, start, end, isRotated) {
+  if (start > end) {
+    return -1;
+  }
+  const mid = Math.floor((start + end) / 2);
+  let { x, w = 0 } = arr[mid];
+  if (isRotated) {
+    x = arr[mid].y;
+    w = arr[mid].h;
+  }
+  if (v >= x && v <= x + w) {
+    return mid;
+  }
+  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
+}
+function brushEmpty(ctx) {
+  const selection = getBrushSelection(ctx);
+  if (selection) {
+    return selection[0] === selection[1];
+  }
+  return true;
+}
+function deepClone(...objectN) {
+  const clone = (v) => {
+    if (isObject(v) && v.constructor) {
+      const r = new v.constructor();
+      for (const k in v) {
+        r[k] = clone(v[k]);
+      }
+      return r;
+    }
+    return v;
+  };
+  return objectN.map((v) => clone(v)).reduce((a, c) => util_spreadValues(util_spreadValues({}, a), c));
+}
+function extend(target = {}, source) {
+  if (isArray(source)) {
+    source.forEach((v) => extend(target, v));
+  }
+  for (const p in source) {
+    if (/^\d+$/.test(p) || p in target) {
+      continue;
+    }
+    target[p] = source[p];
+  }
+  return target;
+}
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+function camelize(str, separator = "-") {
+  return str.split(separator).map((v, i) => i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()).join("");
+}
+const toArray = (v) => [].slice.call(v);
+function addCssRules(style, selector, prop) {
+  const { rootSelector = "", sheet } = style;
+  const getSelector = (s) => s.replace(/\s?(bb-)/g, ".$1").replace(/\.+/g, ".");
+  const rule = `${rootSelector} ${getSelector(selector)} {${prop.join(";")}}`;
+  return sheet[sheet.insertRule ? "insertRule" : "addRule"](
+    rule,
+    sheet.cssRules.length
+  );
+}
+function getCssRules(styleSheets) {
+  let rules = [];
+  styleSheets.forEach((sheet) => {
+    var _a;
+    try {
+      if (sheet.cssRules && sheet.cssRules.length) {
+        rules = rules.concat(toArray(sheet.cssRules));
+      }
+    } catch (e) {
+      (_a = win.console) == null ? void 0 : _a.warn(`Error while reading rules from ${sheet.href}: ${e.toString()}`);
+    }
+  });
+  return rules;
+}
+function getScrollPosition(node) {
+  var _a, _b, _c, _d, _e, _f;
+  return {
+    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + ((_c = node.scrollLeft) != null ? _c : 0),
+    y: ((_e = (_d = win.pageYOffset) != null ? _d : win.scrollY) != null ? _e : 0) + ((_f = node.scrollTop) != null ? _f : 0)
+  };
+}
+function getTransformCTM(node, x = 0, y = 0, inverse = true) {
+  const point = new DOMPoint(x, y);
+  const screen = node.getScreenCTM();
+  const res = point.matrixTransform(
+    inverse ? screen == null ? void 0 : screen.inverse() : screen
+  );
+  if (inverse === false) {
+    const rect = getBoundingRect(node);
+    res.x -= rect.x;
+    res.y -= rect.y;
+  }
+  return res;
+}
+function getTranslation(node) {
+  const transform = node ? node.transform : null;
+  const baseVal = transform && transform.baseVal;
+  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
+}
+function getElementPos(element, type) {
+  var _a;
+  const attr = (_a = element == null ? void 0 : element.getAttribute) == null ? void 0 : _a.call(element, type);
+  if (attr) {
+    return parseFloat(attr);
+  }
+  const matrix = getTranslation(element);
+  return type === "x" ? matrix.e : matrix.f;
+}
+function getUnique(data) {
+  const isDate = data[0] instanceof Date;
+  const d = (isDate ? data.map(Number) : data).filter((v, i, self) => self.indexOf(v) === i);
+  return isDate ? d.map((v) => new Date(v)) : d;
+}
+function mergeArray(arr) {
+  return arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : [];
+}
+function mergeObj(target, ...objectN) {
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) {
+    return target;
+  }
+  const source = objectN.shift();
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach((key) => {
+      if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
+        const value = source[key];
+        if (isObject(value)) {
+          !target[key] && (target[key] = {});
+          target[key] = mergeObj(target[key], value);
+        } else {
+          target[key] = isArray(value) ? value.concat() : value;
+        }
+      }
+    });
+  }
+  return mergeObj(target, ...objectN);
+}
+function sortValue(data, isAsc = true) {
+  let fn;
+  if (data[0] instanceof Date) {
+    fn = isAsc ? (a, b) => a - b : (a, b) => b - a;
+  } else {
+    if (isAsc && !data.every(isNaN)) {
+      fn = (a, b) => a - b;
+    } else if (!isAsc) {
+      fn = (a, b) => a > b && -1 || a < b && 1 || a === b && 0;
+    }
+  }
+  return data.concat().sort(fn);
+}
+function getMinMax(type, data) {
+  let res = data.filter((v) => notEmpty(v));
+  if (res.length) {
+    if (isNumber(res[0])) {
+      res = Math[type](...res);
+    } else if (res[0] instanceof Date) {
+      res = sortValue(res, type === "min")[0];
+    }
+  } else {
+    res = void 0;
+  }
+  return res;
+}
+const getRange = (start, end, step = 1) => {
+  const res = [];
+  const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
+  for (let i = start; i < n; i++) {
+    res.push(start + i * step);
+  }
+  return res;
+};
+const emulateEvent = {
+  mouse: (() => {
+    const getParams = () => ({
+      bubbles: false,
+      cancelable: false,
+      screenX: 0,
+      screenY: 0,
+      clientX: 0,
+      clientY: 0
+    });
+    try {
+      new MouseEvent("t");
+      return (el, eventType, params = getParams()) => {
+        el.dispatchEvent(new MouseEvent(eventType, params));
+      };
+    } catch (e) {
+      return (el, eventType, params = getParams()) => {
+        const mouseEvent = browser_doc.createEvent("MouseEvent");
+        mouseEvent.initMouseEvent(
+          eventType,
+          params.bubbles,
+          params.cancelable,
+          win,
+          0,
+          // the event's mouse click count
+          params.screenX,
+          params.screenY,
+          params.clientX,
+          params.clientY,
+          false,
+          false,
+          false,
+          false,
+          0,
+          null
+        );
+        el.dispatchEvent(mouseEvent);
+      };
+    }
+  })(),
+  touch: (el, eventType, params) => {
+    const touchObj = new Touch(mergeObj({
+      identifier: Date.now(),
+      target: el,
+      radiusX: 2.5,
+      radiusY: 2.5,
+      rotationAngle: 10,
+      force: 0.5
+    }, params));
+    el.dispatchEvent(new TouchEvent(eventType, {
+      cancelable: true,
+      bubbles: true,
+      shiftKey: true,
+      touches: [touchObj],
+      targetTouches: [],
+      changedTouches: [touchObj]
+    }));
+  }
+};
+function tplProcess(tpl, data) {
+  let res = tpl;
+  for (const x in data) {
+    res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
+  }
+  return sanitize(res);
+}
+function parseDate(date) {
+  var _a;
+  let parsedDate;
+  if (date instanceof Date) {
+    parsedDate = date;
+  } else if (isString(date)) {
+    const { config, format } = this;
+    parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) != null ? _a : new Date(date);
+  } else if (isNumber(date) && !isNaN(date)) {
+    parsedDate = /* @__PURE__ */ new Date(+date);
+  }
+  if (!parsedDate || isNaN(+parsedDate)) {
+    console && console.error && console.error(`Failed to parse x '${date}' to Date object`);
+  }
+  return parsedDate;
+}
+function hasViewBox(svg) {
+  const attr = svg.attr("viewBox");
+  return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
+}
+function hasStyle(node, condition, all = false) {
+  const isD3Node = !!node.node;
+  let has = false;
+  for (const [key, value] of Object.entries(condition)) {
+    has = isD3Node ? node.style(key) === value : node.style[key] === value;
+    if (all === false && has) {
+      break;
+    }
+  }
+  return has;
+}
+function isTabVisible() {
+  var _a, _b;
+  return ((_a = browser_doc) == null ? void 0 : _a.hidden) === false || ((_b = browser_doc) == null ? void 0 : _b.visibilityState) === "visible";
+}
+function convertInputType(mouse, touch) {
+  const { DocumentTouch, matchMedia, navigator } = win;
+  const hasPointerCoarse = matchMedia == null ? void 0 : matchMedia("(pointer:coarse)").matches;
+  let hasTouch = false;
+  if (touch) {
+    if (navigator && "maxTouchPoints" in navigator) {
+      hasTouch = navigator.maxTouchPoints > 0;
+    } else if ("ontouchmove" in win || DocumentTouch && browser_doc instanceof DocumentTouch) {
+      hasTouch = true;
+    } else {
+      if (hasPointerCoarse) {
+        hasTouch = true;
+      } else {
+        const UA = navigator.userAgent;
+        hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
+      }
+    }
+  }
+  const hasMouse = mouse && !hasPointerCoarse && (matchMedia == null ? void 0 : matchMedia("(pointer:fine)").matches);
+  return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
+}
+function runUntil(fn, conditionFn) {
+  if (conditionFn() === false) {
+    requestAnimationFrame(() => runUntil(fn, conditionFn));
+  } else {
+    fn();
+  }
+}
+function parseShorthand(value) {
+  if (isObject(value) && !isString(value)) {
+    const obj = value;
+    return {
+      top: obj.top || 0,
+      right: obj.right || 0,
+      bottom: obj.bottom || 0,
+      left: obj.left || 0
+    };
+  }
+  const values = (isString(value) ? value.trim().split(/\s+/) : [value]).map((v) => +v || 0);
+  const [a, b = a, c = a, d = b] = values;
+  return { top: a, right: b, bottom: c, left: d };
+}
+function scheduleRAFUpdate(rafState, callback) {
+  if (rafState.pendingRaf !== null) {
+    win.cancelAnimationFrame(rafState.pendingRaf);
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+      callback();
+    });
+  } else {
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+    });
+    callback();
+  }
+}
+function toSet(items, keyFn = ((item) => item)) {
+  const set = /* @__PURE__ */ new Set();
+  _forEachValidItem(items, (item, i) => {
+    set.add(keyFn(item, i));
+  });
+  return set;
+}
+function toMap(items, keyFn, valueFn = ((item) => item)) {
+  const map = /* @__PURE__ */ new Map();
+  _forEachValidItem(items, (item, i) => {
+    map.set(keyFn(item, i), valueFn(item, i));
+  });
+  return map;
+}
+
+
+;// ./src/Chart/api/selection.ts
+
+
+
+function setSelection(isSelection = false, ids, indices, resetOther) {
+  const $$ = this;
+  const { config, $el: { main } } = $$;
+  const selectionGrouped = config.data_selection_grouped;
+  const isSelectable = config.data_selection_isselectable.bind($$.api);
+  if (!config.data_selection_enabled) {
+    return;
+  }
+  main.selectAll(`.${$SHAPE.shapes}`).selectAll(`.${$SHAPE.shape}`).each(function(d) {
+    const shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
+    const { id, index } = d.data ? d.data : d;
+    const toggle = $$.getToggle(this, d).bind($$);
+    const isTargetId = selectionGrouped || !ids || ids.indexOf(id) >= 0;
+    const isTargetIndex = !indices || indices.indexOf(index) >= 0;
+    const isSelected = shape.classed($SELECT.SELECTED);
+    if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
+      return;
+    }
+    if (isSelection) {
+      if (isTargetId && isTargetIndex && isSelectable(d) && !isSelected) {
+        toggle(true, shape.classed($SELECT.SELECTED, true), d, index);
+      } else if (isDefined(resetOther) && resetOther && isSelected) {
+        toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
+      }
+    } else {
+      if (isTargetId && isTargetIndex && isSelectable(d) && isSelected) {
+        toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
+      }
+    }
+  });
+}
+/* harmony default export */ var selection = ({
+  /**
+   * Get selected data points.<br><br>
+   * By this API, you can get selected data points information. To use this API, data.selection.enabled needs to be set true.
+   * @function selected
+   * @instance
+   * @memberof Chart
+   * @param {string} [targetId] You can filter the result by giving target id that you want to get. If not given, all of data points will be returned.
+   * @returns {Array} dataPoint Array of the data points.<br>ex.) `[{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ...]`
+   * @example
+   *  // all selected data points will be returned.
+   *  chart.selected();
+   *  // --> ex.) [{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ... ]
+   *
+   *  // all selected data points of data1 will be returned.
+   *  chart.selected("data1");
+   */
+  selected(targetId) {
+    const $$ = this.internal;
+    const dataPoint = [];
+    $$.$el.main.selectAll(`.${$SHAPE.shapes + $$.getTargetSelectorSuffix(targetId)}`).selectAll(`.${$SHAPE.shape}`).filter(function() {
+      return (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed($SELECT.SELECTED);
+    }).each((d) => dataPoint.push(d));
+    return dataPoint;
+  },
+  /**
+   * Set data points to be selected. ([`data.selection.enabled`](Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled) option should be set true to use this method)
+   * @function select
+   * @instance
+   * @memberof Chart
+   * @param {string|Array} [ids] id value to get selected.
+   * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
+   * @param {boolean} [resetOther] Unselect already selected.
+   * @example
+   *  // select all data points
+   *  chart.select();
+   *
+   *  // select all from 'data2'
+   *  chart.select("data2");
+   *
+   *  // select all from 'data1' and 'data2'
+   *  chart.select(["data1", "data2"]);
+   *
+   *  // select from 'data1', indices 2 and unselect others selected
+   *  chart.select("data1", [2], true);
+   *
+   *  // select from 'data1', indices 0, 3 and 5
+   *  chart.select("data1", [0, 3, 5]);
+   */
+  select(ids, indices, resetOther) {
+    const $$ = this.internal;
+    setSelection.bind($$)(true, ids, indices, resetOther);
+  },
+  /**
+   * Set data points to be un-selected.
+   * @function unselect
+   * @instance
+   * @memberof Chart
+   * @param {string|Array} [ids] id value to be unselected.
+   * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
+   * @example
+   *  // unselect all data points
+   *  chart.unselect();
+   *
+   *  // unselect all from 'data1'
+   *  chart.unselect("data1");
+   *
+   *  // unselect from 'data1', indices 2
+   *  chart.unselect("data1", [2]);
+   */
+  unselect(ids, indices) {
+    const $$ = this.internal;
+    setSelection.bind($$)(false, ids, indices);
+  }
+});
+
+// EXTERNAL MODULE: external {"commonjs":"d3-time-format","commonjs2":"d3-time-format","amd":"d3-time-format","root":"d3"}
+var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_ = __webpack_require__(4);
 ;// ./src/config/Options/common/boost.ts
 /* harmony default export */ var boost = ({
   /**
@@ -2393,860 +3358,6 @@ const $ZOOM = {
   interaction_inputType_touch: {},
   interaction_onout: true
 });
-
-// EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(4);
-;// ./src/module/browser.ts
-function getGlobal() {
-  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
-}
-function getFallback(w) {
-  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function";
-  const hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function" && typeof (w == null ? void 0 : w.cancelIdleCallback) === "function";
-  const request = (cb) => setTimeout(cb, 1);
-  const cancel = (id) => clearTimeout(id);
-  return [
-    hasRAF ? w.requestAnimationFrame : request,
-    hasRAF ? w.cancelAnimationFrame : cancel,
-    hasRIC ? w.requestIdleCallback : request,
-    hasRIC ? w.cancelIdleCallback : cancel
-  ];
-}
-const win = getGlobal();
-const browser_doc = win == null ? void 0 : win.document;
-const [
-  requestAnimationFrame,
-  cancelAnimationFrame,
-  requestIdleCallback,
-  cancelIdleCallback
-] = getFallback(win);
-
-
-;// ./src/module/sanitize.ts
-const ALLOWED_TAGS = /* @__PURE__ */ new Set([
-  // HTML tags for tooltip/legend templates
-  "span",
-  "div",
-  "p",
-  "br",
-  "b",
-  "i",
-  "em",
-  "small",
-  "strong",
-  "mark",
-  "u",
-  "s",
-  "sub",
-  "sup",
-  "h1",
-  "h2",
-  "h3",
-  "h4",
-  "h5",
-  "h6",
-  "ul",
-  "ol",
-  "li",
-  "dl",
-  "dt",
-  "dd",
-  "table",
-  "thead",
-  "tbody",
-  "tfoot",
-  "tr",
-  "th",
-  "td",
-  "caption",
-  "colgroup",
-  "col",
-  "hr",
-  "pre",
-  "code",
-  "blockquote",
-  "abbr",
-  "ins",
-  "del",
-  "a",
-  "img",
-  "figure",
-  "figcaption",
-  // SVG tags for point patterns
-  "svg",
-  "g",
-  "path",
-  "circle",
-  "ellipse",
-  "rect",
-  "line",
-  "polyline",
-  "polygon",
-  "text",
-  "tspan",
-  "textPath",
-  "use",
-  "defs",
-  "symbol",
-  "clipPath",
-  "mask",
-  "linearGradient",
-  "radialGradient",
-  "stop",
-  "pattern",
-  "marker",
-  "title",
-  "desc"
-]);
-const ALLOWED_ATTRS = /* @__PURE__ */ new Set([
-  // Common attributes
-  "class",
-  "id",
-  "style",
-  "title",
-  "lang",
-  "dir",
-  // HTML specific
-  "href",
-  "src",
-  "alt",
-  "width",
-  "height",
-  "colspan",
-  "rowspan",
-  "scope",
-  "headers",
-  // SVG presentation attributes
-  "d",
-  "points",
-  "x",
-  "y",
-  "x1",
-  "x2",
-  "y1",
-  "y2",
-  "cx",
-  "cy",
-  "r",
-  "rx",
-  "ry",
-  "dx",
-  "dy",
-  "viewBox",
-  "preserveAspectRatio",
-  "transform",
-  "fill",
-  "fill-opacity",
-  "fill-rule",
-  "stroke",
-  "stroke-width",
-  "stroke-opacity",
-  "stroke-linecap",
-  "stroke-linejoin",
-  "stroke-dasharray",
-  "stroke-dashoffset",
-  "opacity",
-  "clip-path",
-  "clip-rule",
-  "mask",
-  "font-family",
-  "font-size",
-  "font-weight",
-  "font-style",
-  "text-anchor",
-  "dominant-baseline",
-  "offset",
-  "stop-color",
-  "stop-opacity",
-  "gradientUnits",
-  "gradientTransform",
-  "spreadMethod",
-  "patternUnits",
-  "patternTransform",
-  "marker-start",
-  "marker-mid",
-  "marker-end",
-  "markerWidth",
-  "markerHeight",
-  "refX",
-  "refY",
-  "xlink:href"
-]);
-const TAG_CASE_MAP = /* @__PURE__ */ new Map();
-ALLOWED_TAGS.forEach((tag) => TAG_CASE_MAP.set(tag.toLowerCase(), tag));
-const ATTR_CASE_MAP = /* @__PURE__ */ new Map();
-ALLOWED_ATTRS.forEach((attr) => ATTR_CASE_MAP.set(attr.toLowerCase(), attr));
-const ALLOWED_URI_PROTOCOLS = /* @__PURE__ */ new Set([
-  "http:",
-  "https:",
-  "mailto:"
-]);
-const URI_ATTRS = /* @__PURE__ */ new Set(["href", "src", "xlink:href"]);
-const TAG_NAME_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9]*)/;
-const CLOSING_TAG_REGEX = /^<\/([a-zA-Z][a-zA-Z0-9]*)\s*>$/;
-const OPENING_TAG_REGEX = /^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)(\/?)>$/;
-const ATTR_REGEX = /([a-zA-Z][\w:-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
-const URL_IN_STYLE_REGEX = /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi;
-const DANGEROUS_CSS_PATTERNS = [
-  "expression(",
-  "behavior:",
-  "binding:",
-  "@import",
-  "@charset",
-  "-moz-binding:"
-];
-function decodeHTMLEntities(str) {
-  return str.replace(/&colon;/gi, ":").replace(/&newline;/gi, "\n").replace(/&tab;/gi, "	").replace(/&nbsp;/gi, " ").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&apos;/gi, "'").replace(/&#(\d+);/gi, (_, code) => String.fromCharCode(parseInt(code, 10))).replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
-}
-function isSafeURI(uri) {
-  const decoded = decodeHTMLEntities(uri).trim();
-  const normalized = decoded.replace(/[\s\u0000-\u001f]/g, "").toLowerCase();
-  if (!normalized || normalized.startsWith("#")) {
-    return true;
-  }
-  if (normalized.startsWith("/") || normalized.startsWith("./") || normalized.startsWith("../") || !normalized.includes(":")) {
-    return true;
-  }
-  const colonIndex = normalized.indexOf(":");
-  if (colonIndex > 0) {
-    const protocol = normalized.substring(0, colonIndex + 1);
-    return ALLOWED_URI_PROTOCOLS.has(protocol);
-  }
-  return false;
-}
-function sanitizeStyleValue(style) {
-  const decoded = decodeHTMLEntities(style);
-  const cleaned = decoded.replace(/[\u0000-\u001f]/g, "");
-  URL_IN_STYLE_REGEX.lastIndex = 0;
-  let match;
-  while ((match = URL_IN_STYLE_REGEX.exec(cleaned)) !== null) {
-    if (!isSafeURI(match[1])) {
-      return null;
-    }
-  }
-  const normalizedLower = cleaned.toLowerCase().replace(/\s/g, "");
-  for (const pattern of DANGEROUS_CSS_PATTERNS) {
-    if (normalizedLower.includes(pattern)) {
-      return null;
-    }
-  }
-  return style;
-}
-const ATTR_ENCODE_MAP = {
-  '"': "&quot;",
-  "'": "&#39;",
-  "`": "&#96;"
-};
-const ATTR_ENCODE_REGEX = /["'`]/g;
-function encodeAttrValue(value) {
-  return value.replace(ATTR_ENCODE_REGEX, (char) => ATTR_ENCODE_MAP[char]);
-}
-function sanitizeAttrValue(name, value, wasUnquoted = false) {
-  if (URI_ATTRS.has(name)) {
-    if (!isSafeURI(value)) {
-      return null;
-    }
-    return wasUnquoted ? encodeAttrValue(value) : value;
-  }
-  if (name === "style") {
-    const sanitizedStyle = sanitizeStyleValue(value);
-    if (sanitizedStyle === null) {
-      return null;
-    }
-    return wasUnquoted ? encodeAttrValue(sanitizedStyle) : sanitizedStyle;
-  }
-  const decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
-  if (/\bon\w+=/.test(decoded)) {
-    return null;
-  }
-  return wasUnquoted ? encodeAttrValue(value) : value;
-}
-function extractTagName(tag) {
-  const match = tag.match(TAG_NAME_REGEX);
-  return match ? match[1].toLowerCase() : null;
-}
-function isAllowedTag(tag) {
-  const tagName = extractTagName(tag);
-  return tagName !== null && TAG_CASE_MAP.has(tagName);
-}
-function sanitizeTag(fullTag) {
-  var _a, _b, _c;
-  const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
-  if (closingMatch) {
-    const lowerName = closingMatch[1].toLowerCase();
-    return `</${(_a = TAG_CASE_MAP.get(lowerName)) != null ? _a : lowerName}>`;
-  }
-  const openingMatch = fullTag.match(OPENING_TAG_REGEX);
-  if (!openingMatch) {
-    return "";
-  }
-  const [, tagName, attrString, selfClose] = openingMatch;
-  const lowerTagName = tagName.toLowerCase();
-  const canonicalTagName = (_b = TAG_CASE_MAP.get(lowerTagName)) != null ? _b : lowerTagName;
-  const allowedAttrs = [];
-  ATTR_REGEX.lastIndex = 0;
-  let attrMatch;
-  while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
-    const lowerAttrName = attrMatch[1].toLowerCase();
-    const doubleQuotedValue = attrMatch[2];
-    const singleQuotedValue = attrMatch[3];
-    const unquotedValue = attrMatch[4];
-    if (lowerAttrName.startsWith("on")) {
-      continue;
-    }
-    const canonicalAttrName = (_c = ATTR_CASE_MAP.get(lowerAttrName)) != null ? _c : lowerAttrName;
-    let attrValue;
-    let quoteChar;
-    if (doubleQuotedValue !== void 0) {
-      attrValue = doubleQuotedValue;
-      quoteChar = '"';
-    } else if (singleQuotedValue !== void 0) {
-      attrValue = singleQuotedValue;
-      quoteChar = "'";
-    } else if (unquotedValue !== void 0) {
-      attrValue = unquotedValue;
-      quoteChar = '"';
-    } else {
-      if (ATTR_CASE_MAP.has(lowerAttrName)) {
-        allowedAttrs.push(canonicalAttrName);
-      }
-      continue;
-    }
-    if (ATTR_CASE_MAP.has(lowerAttrName)) {
-      const wasUnquoted = unquotedValue !== void 0;
-      const sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
-      if (sanitizedValue !== null) {
-        allowedAttrs.push(`${canonicalAttrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
-      }
-    }
-  }
-  const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
-  const selfCloseStr = selfClose ? "/>" : ">";
-  return `<${canonicalTagName}${attrsStr}${selfCloseStr}`;
-}
-function sanitize(str) {
-  if (typeof str !== "string" || !str || str.indexOf("<") === -1) {
-    return str;
-  }
-  return str.replace(
-    /<\/?[^>]*>|[^<>\s]+>/g,
-    (match) => {
-      if (match.startsWith("<!--")) {
-        return "";
-      }
-      if (!match.startsWith("<")) {
-        return match.slice(0, -1) + "&gt;";
-      }
-      if (isAllowedTag(match)) {
-        return sanitizeTag(match);
-      }
-      return match.replace(/</g, "&lt;");
-    }
-  );
-}
-
-;// ./src/module/util.ts
-var util_defProp = Object.defineProperty;
-var util_getOwnPropSymbols = Object.getOwnPropertySymbols;
-var util_hasOwnProp = Object.prototype.hasOwnProperty;
-var util_propIsEnum = Object.prototype.propertyIsEnumerable;
-var util_defNormalProp = (obj, key, value) => key in obj ? util_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var util_spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (util_hasOwnProp.call(b, prop))
-      util_defNormalProp(a, prop, b[prop]);
-  if (util_getOwnPropSymbols)
-    for (var prop of util_getOwnPropSymbols(b)) {
-      if (util_propIsEnum.call(b, prop))
-        util_defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-
-
-
-
-function _getRect(relativeViewport, node, forceEval = false) {
-  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
-  if (forceEval) {
-    return _(node);
-  } else {
-    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
-    return needEvaluate ? node.rect = _(node) : node.rect;
-  }
-}
-function _forEachValidItem(items, callback) {
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (item) {
-      callback(item, i);
-    }
-  }
-}
-const isValue = (v) => v || v === 0;
-const isFunction = (v) => typeof v === "function";
-const isString = (v) => typeof v === "string";
-const isNumber = (v) => typeof v === "number";
-const isUndefined = (v) => typeof v === "undefined";
-const isDefined = (v) => typeof v !== "undefined";
-const isBoolean = (v) => typeof v === "boolean";
-const ceil10 = (v) => Math.ceil(v / 10) * 10;
-const asHalfPixel = (n) => Math.ceil(n) + 0.5;
-const diffDomain = (d) => d[1] - d[0];
-const isObjectType = (v) => typeof v === "object";
-const isEmptyObject = (obj) => {
-  for (const x in obj) {
-    return false;
-  }
-  return true;
-};
-const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
-const notEmpty = (o) => !isEmpty(o);
-const isArray = (arr) => Array.isArray(arr);
-const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
-function getOption(options, key, defaultValue) {
-  return isDefined(options[key]) ? options[key] : defaultValue;
-}
-function hasValue(dict, value) {
-  let found = false;
-  Object.keys(dict).forEach((key) => dict[key] === value && (found = true));
-  return found;
-}
-function callFn(fn, thisArg, ...args) {
-  const isFn = isFunction(fn);
-  isFn && fn.call(thisArg, ...args);
-  return isFn;
-}
-function endall(transition, cb) {
-  let n = 0;
-  const end = function(...args) {
-    !--n && cb.apply(this, ...args);
-  };
-  if ("duration" in transition) {
-    transition.each(() => ++n).on("end", end);
-  } else {
-    ++n;
-    transition.call(end);
-  }
-}
-function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
-  if (!node || !isString(text)) {
-    return;
-  }
-  if (text.indexOf("\n") === -1) {
-    node.text(text);
-  } else {
-    const diff = [node.text(), text].map((v) => v.replace(/[\s\n]/g, ""));
-    if (diff[0] !== diff[1]) {
-      const multiline = text.split("\n");
-      const len = toMiddle ? multiline.length - 1 : 1;
-      node.html("");
-      multiline.forEach((v, i) => {
-        node.append("tspan").attr("x", 0).attr("dy", `${i === 0 ? dy[0] * len : dy[1]}em`).text(v);
-      });
-    }
-  }
-}
-function getRectSegList(path) {
-  const { x, y, width, height } = path.getBBox();
-  return [
-    { x, y: y + height },
-    // seg0
-    { x, y },
-    // seg1
-    { x: x + width, y },
-    // seg2
-    { x: x + width, y: y + height }
-    // seg3
-  ];
-}
-function getPathBox(path) {
-  const { width, height } = getBoundingRect(path);
-  const items = getRectSegList(path);
-  const x = items[0].x;
-  const y = Math.min(items[0].y, items[1].y);
-  return {
-    x,
-    y,
-    width,
-    height
-  };
-}
-function getPointer(event, element) {
-  var _a;
-  const touches = event && ((_a = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _a[0]);
-  let pointer = [0, 0];
-  try {
-    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
-  } catch (e) {
-  }
-  return pointer.map((v) => isNaN(v) ? 0 : v);
-}
-function getBrushSelection(ctx) {
-  const { event, $el } = ctx;
-  const main = $el.subchart.main || $el.main;
-  let selection;
-  if (event && event.type === "brush") {
-    selection = event.selection;
-  } else if (main && (selection = main.select(".bb-brush").node())) {
-    selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection);
-  }
-  return selection;
-}
-function getBoundingRect(node, forceEval = false) {
-  return _getRect(true, node, forceEval);
-}
-function getBBox(node, forceEval = false) {
-  return _getRect(false, node, forceEval);
-}
-function getRandom(asStr = true, min = 0, max = 1e4) {
-  const crpt = win.crypto || win.msCrypto;
-  const rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
-  return asStr ? String(rand) : rand;
-}
-function findIndex(arr, v, start, end, isRotated) {
-  if (start > end) {
-    return -1;
-  }
-  const mid = Math.floor((start + end) / 2);
-  let { x, w = 0 } = arr[mid];
-  if (isRotated) {
-    x = arr[mid].y;
-    w = arr[mid].h;
-  }
-  if (v >= x && v <= x + w) {
-    return mid;
-  }
-  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
-}
-function brushEmpty(ctx) {
-  const selection = getBrushSelection(ctx);
-  if (selection) {
-    return selection[0] === selection[1];
-  }
-  return true;
-}
-function deepClone(...objectN) {
-  const clone = (v) => {
-    if (isObject(v) && v.constructor) {
-      const r = new v.constructor();
-      for (const k in v) {
-        r[k] = clone(v[k]);
-      }
-      return r;
-    }
-    return v;
-  };
-  return objectN.map((v) => clone(v)).reduce((a, c) => util_spreadValues(util_spreadValues({}, a), c));
-}
-function extend(target = {}, source) {
-  if (isArray(source)) {
-    source.forEach((v) => extend(target, v));
-  }
-  for (const p in source) {
-    if (/^\d+$/.test(p) || p in target) {
-      continue;
-    }
-    target[p] = source[p];
-  }
-  return target;
-}
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-function camelize(str, separator = "-") {
-  return str.split(separator).map((v, i) => i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()).join("");
-}
-const toArray = (v) => [].slice.call(v);
-function addCssRules(style, selector, prop) {
-  const { rootSelector = "", sheet } = style;
-  const getSelector = (s) => s.replace(/\s?(bb-)/g, ".$1").replace(/\.+/g, ".");
-  const rule = `${rootSelector} ${getSelector(selector)} {${prop.join(";")}}`;
-  return sheet[sheet.insertRule ? "insertRule" : "addRule"](
-    rule,
-    sheet.cssRules.length
-  );
-}
-function getCssRules(styleSheets) {
-  let rules = [];
-  styleSheets.forEach((sheet) => {
-    var _a;
-    try {
-      if (sheet.cssRules && sheet.cssRules.length) {
-        rules = rules.concat(toArray(sheet.cssRules));
-      }
-    } catch (e) {
-      (_a = win.console) == null ? void 0 : _a.warn(`Error while reading rules from ${sheet.href}: ${e.toString()}`);
-    }
-  });
-  return rules;
-}
-function getScrollPosition(node) {
-  var _a, _b, _c, _d, _e, _f;
-  return {
-    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + ((_c = node.scrollLeft) != null ? _c : 0),
-    y: ((_e = (_d = win.pageYOffset) != null ? _d : win.scrollY) != null ? _e : 0) + ((_f = node.scrollTop) != null ? _f : 0)
-  };
-}
-function getTransformCTM(node, x = 0, y = 0, inverse = true) {
-  const point = new DOMPoint(x, y);
-  const screen = node.getScreenCTM();
-  const res = point.matrixTransform(
-    inverse ? screen == null ? void 0 : screen.inverse() : screen
-  );
-  if (inverse === false) {
-    const rect = getBoundingRect(node);
-    res.x -= rect.x;
-    res.y -= rect.y;
-  }
-  return res;
-}
-function getTranslation(node) {
-  const transform = node ? node.transform : null;
-  const baseVal = transform && transform.baseVal;
-  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
-}
-function getElementPos(element, type) {
-  var _a;
-  const attr = (_a = element == null ? void 0 : element.getAttribute) == null ? void 0 : _a.call(element, type);
-  if (attr) {
-    return parseFloat(attr);
-  }
-  const matrix = getTranslation(element);
-  return type === "x" ? matrix.e : matrix.f;
-}
-function getUnique(data) {
-  const isDate = data[0] instanceof Date;
-  const d = (isDate ? data.map(Number) : data).filter((v, i, self) => self.indexOf(v) === i);
-  return isDate ? d.map((v) => new Date(v)) : d;
-}
-function mergeArray(arr) {
-  return arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : [];
-}
-function mergeObj(target, ...objectN) {
-  if (!objectN.length || objectN.length === 1 && !objectN[0]) {
-    return target;
-  }
-  const source = objectN.shift();
-  if (isObject(target) && isObject(source)) {
-    Object.keys(source).forEach((key) => {
-      if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
-        const value = source[key];
-        if (isObject(value)) {
-          !target[key] && (target[key] = {});
-          target[key] = mergeObj(target[key], value);
-        } else {
-          target[key] = isArray(value) ? value.concat() : value;
-        }
-      }
-    });
-  }
-  return mergeObj(target, ...objectN);
-}
-function sortValue(data, isAsc = true) {
-  let fn;
-  if (data[0] instanceof Date) {
-    fn = isAsc ? (a, b) => a - b : (a, b) => b - a;
-  } else {
-    if (isAsc && !data.every(isNaN)) {
-      fn = (a, b) => a - b;
-    } else if (!isAsc) {
-      fn = (a, b) => a > b && -1 || a < b && 1 || a === b && 0;
-    }
-  }
-  return data.concat().sort(fn);
-}
-function getMinMax(type, data) {
-  let res = data.filter((v) => notEmpty(v));
-  if (res.length) {
-    if (isNumber(res[0])) {
-      res = Math[type](...res);
-    } else if (res[0] instanceof Date) {
-      res = sortValue(res, type === "min")[0];
-    }
-  } else {
-    res = void 0;
-  }
-  return res;
-}
-const getRange = (start, end, step = 1) => {
-  const res = [];
-  const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
-  for (let i = start; i < n; i++) {
-    res.push(start + i * step);
-  }
-  return res;
-};
-const emulateEvent = {
-  mouse: (() => {
-    const getParams = () => ({
-      bubbles: false,
-      cancelable: false,
-      screenX: 0,
-      screenY: 0,
-      clientX: 0,
-      clientY: 0
-    });
-    try {
-      new MouseEvent("t");
-      return (el, eventType, params = getParams()) => {
-        el.dispatchEvent(new MouseEvent(eventType, params));
-      };
-    } catch (e) {
-      return (el, eventType, params = getParams()) => {
-        const mouseEvent = browser_doc.createEvent("MouseEvent");
-        mouseEvent.initMouseEvent(
-          eventType,
-          params.bubbles,
-          params.cancelable,
-          win,
-          0,
-          // the event's mouse click count
-          params.screenX,
-          params.screenY,
-          params.clientX,
-          params.clientY,
-          false,
-          false,
-          false,
-          false,
-          0,
-          null
-        );
-        el.dispatchEvent(mouseEvent);
-      };
-    }
-  })(),
-  touch: (el, eventType, params) => {
-    const touchObj = new Touch(mergeObj({
-      identifier: Date.now(),
-      target: el,
-      radiusX: 2.5,
-      radiusY: 2.5,
-      rotationAngle: 10,
-      force: 0.5
-    }, params));
-    el.dispatchEvent(new TouchEvent(eventType, {
-      cancelable: true,
-      bubbles: true,
-      shiftKey: true,
-      touches: [touchObj],
-      targetTouches: [],
-      changedTouches: [touchObj]
-    }));
-  }
-};
-function tplProcess(tpl, data) {
-  let res = tpl;
-  for (const x in data) {
-    res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
-  }
-  return sanitize(res);
-}
-function parseDate(date) {
-  var _a;
-  let parsedDate;
-  if (date instanceof Date) {
-    parsedDate = date;
-  } else if (isString(date)) {
-    const { config, format } = this;
-    parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) != null ? _a : new Date(date);
-  } else if (isNumber(date) && !isNaN(date)) {
-    parsedDate = /* @__PURE__ */ new Date(+date);
-  }
-  if (!parsedDate || isNaN(+parsedDate)) {
-    console && console.error && console.error(`Failed to parse x '${date}' to Date object`);
-  }
-  return parsedDate;
-}
-function hasViewBox(svg) {
-  const attr = svg.attr("viewBox");
-  return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
-}
-function hasStyle(node, condition, all = false) {
-  const isD3Node = !!node.node;
-  let has = false;
-  for (const [key, value] of Object.entries(condition)) {
-    has = isD3Node ? node.style(key) === value : node.style[key] === value;
-    if (all === false && has) {
-      break;
-    }
-  }
-  return has;
-}
-function isTabVisible() {
-  var _a, _b;
-  return ((_a = browser_doc) == null ? void 0 : _a.hidden) === false || ((_b = browser_doc) == null ? void 0 : _b.visibilityState) === "visible";
-}
-function convertInputType(mouse, touch) {
-  const { DocumentTouch, matchMedia, navigator } = win;
-  const hasPointerCoarse = matchMedia == null ? void 0 : matchMedia("(pointer:coarse)").matches;
-  let hasTouch = false;
-  if (touch) {
-    if (navigator && "maxTouchPoints" in navigator) {
-      hasTouch = navigator.maxTouchPoints > 0;
-    } else if ("ontouchmove" in win || DocumentTouch && browser_doc instanceof DocumentTouch) {
-      hasTouch = true;
-    } else {
-      if (hasPointerCoarse) {
-        hasTouch = true;
-      } else {
-        const UA = navigator.userAgent;
-        hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
-      }
-    }
-  }
-  const hasMouse = mouse && !hasPointerCoarse && (matchMedia == null ? void 0 : matchMedia("(pointer:fine)").matches);
-  return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
-}
-function runUntil(fn, conditionFn) {
-  if (conditionFn() === false) {
-    requestAnimationFrame(() => runUntil(fn, conditionFn));
-  } else {
-    fn();
-  }
-}
-function parseShorthand(value) {
-  if (isObject(value) && !isString(value)) {
-    const obj = value;
-    return {
-      top: obj.top || 0,
-      right: obj.right || 0,
-      bottom: obj.bottom || 0,
-      left: obj.left || 0
-    };
-  }
-  const values = (isString(value) ? value.trim().split(/\s+/) : [value]).map((v) => +v || 0);
-  const [a, b = a, c = a, d = b] = values;
-  return { top: a, right: b, bottom: c, left: d };
-}
-function scheduleRAFUpdate(rafState, callback) {
-  if (rafState.pendingRaf !== null) {
-    win.cancelAnimationFrame(rafState.pendingRaf);
-    rafState.pendingRaf = win.requestAnimationFrame(() => {
-      rafState.pendingRaf = null;
-      callback();
-    });
-  } else {
-    rafState.pendingRaf = win.requestAnimationFrame(() => {
-      rafState.pendingRaf = null;
-    });
-    callback();
-  }
-}
-function toSet(items, keyFn = ((item) => item)) {
-  const set = /* @__PURE__ */ new Set();
-  _forEachValidItem(items, (item, i) => {
-    set.add(keyFn(item, i));
-  });
-  return set;
-}
-function toMap(items, keyFn, valueFn = ((item) => item)) {
-  const map = /* @__PURE__ */ new Map();
-  _forEachValidItem(items, (item, i) => {
-    map.set(keyFn(item, i), valueFn(item, i));
-  });
-  return map;
-}
-
 
 ;// ./src/config/Options/Options.ts
 var Options_defProp = Object.defineProperty;
@@ -11654,976 +11765,6 @@ extend(Chart.prototype, [
   api_tooltip
 ]);
 
-;// ./src/Chart/api/selection.ts
-
-
-
-function setSelection(isSelection = false, ids, indices, resetOther) {
-  const $$ = this;
-  const { config, $el: { main } } = $$;
-  const selectionGrouped = config.data_selection_grouped;
-  const isSelectable = config.data_selection_isselectable.bind($$.api);
-  if (!config.data_selection_enabled) {
-    return;
-  }
-  main.selectAll(`.${$SHAPE.shapes}`).selectAll(`.${$SHAPE.shape}`).each(function(d) {
-    const shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
-    const { id, index } = d.data ? d.data : d;
-    const toggle = $$.getToggle(this, d).bind($$);
-    const isTargetId = selectionGrouped || !ids || ids.indexOf(id) >= 0;
-    const isTargetIndex = !indices || indices.indexOf(index) >= 0;
-    const isSelected = shape.classed($SELECT.SELECTED);
-    if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
-      return;
-    }
-    if (isSelection) {
-      if (isTargetId && isTargetIndex && isSelectable(d) && !isSelected) {
-        toggle(true, shape.classed($SELECT.SELECTED, true), d, index);
-      } else if (isDefined(resetOther) && resetOther && isSelected) {
-        toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
-      }
-    } else {
-      if (isTargetId && isTargetIndex && isSelectable(d) && isSelected) {
-        toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
-      }
-    }
-  });
-}
-/* harmony default export */ var selection = ({
-  /**
-   * Get selected data points.<br><br>
-   * By this API, you can get selected data points information. To use this API, data.selection.enabled needs to be set true.
-   * @function selected
-   * @instance
-   * @memberof Chart
-   * @param {string} [targetId] You can filter the result by giving target id that you want to get. If not given, all of data points will be returned.
-   * @returns {Array} dataPoint Array of the data points.<br>ex.) `[{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ...]`
-   * @example
-   *  // all selected data points will be returned.
-   *  chart.selected();
-   *  // --> ex.) [{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ... ]
-   *
-   *  // all selected data points of data1 will be returned.
-   *  chart.selected("data1");
-   */
-  selected(targetId) {
-    const $$ = this.internal;
-    const dataPoint = [];
-    $$.$el.main.selectAll(`.${$SHAPE.shapes + $$.getTargetSelectorSuffix(targetId)}`).selectAll(`.${$SHAPE.shape}`).filter(function() {
-      return (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed($SELECT.SELECTED);
-    }).each((d) => dataPoint.push(d));
-    return dataPoint;
-  },
-  /**
-   * Set data points to be selected. ([`data.selection.enabled`](Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled) option should be set true to use this method)
-   * @function select
-   * @instance
-   * @memberof Chart
-   * @param {string|Array} [ids] id value to get selected.
-   * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
-   * @param {boolean} [resetOther] Unselect already selected.
-   * @example
-   *  // select all data points
-   *  chart.select();
-   *
-   *  // select all from 'data2'
-   *  chart.select("data2");
-   *
-   *  // select all from 'data1' and 'data2'
-   *  chart.select(["data1", "data2"]);
-   *
-   *  // select from 'data1', indices 2 and unselect others selected
-   *  chart.select("data1", [2], true);
-   *
-   *  // select from 'data1', indices 0, 3 and 5
-   *  chart.select("data1", [0, 3, 5]);
-   */
-  select(ids, indices, resetOther) {
-    const $$ = this.internal;
-    setSelection.bind($$)(true, ids, indices, resetOther);
-  },
-  /**
-   * Set data points to be un-selected.
-   * @function unselect
-   * @instance
-   * @memberof Chart
-   * @param {string|Array} [ids] id value to be unselected.
-   * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
-   * @example
-   *  // unselect all data points
-   *  chart.unselect();
-   *
-   *  // unselect all from 'data1'
-   *  chart.unselect("data1");
-   *
-   *  // unselect from 'data1', indices 2
-   *  chart.unselect("data1", [2]);
-   */
-  unselect(ids, indices) {
-    const $$ = this.internal;
-    setSelection.bind($$)(false, ids, indices);
-  }
-});
-
-;// ./src/Chart/api/subchart.ts
-
-
-const subchart = function(domainValue) {
-  var _a;
-  const $$ = this.internal;
-  const { axis, brush, config, scale: { x, subX }, state } = $$;
-  let domain;
-  if (config.subchart_show) {
-    domain = domainValue;
-    if (Array.isArray(domain)) {
-      if (axis.isTimeSeries()) {
-        domain = domain.map((x2) => parseDate.bind($$)(x2));
-      }
-      const isWithinRange = $$.withinRange(
-        domain,
-        $$.getZoomDomain("subX", true),
-        $$.getZoomDomain("subX")
-      );
-      if (isWithinRange) {
-        state.domain = domain;
-        brush.move(
-          brush.getSelection(),
-          domain.map(subX)
-        );
-      }
-    } else {
-      domain = (_a = state.domain) != null ? _a : x.orgDomain();
-    }
-  }
-  return domain;
-};
-extend(subchart, {
-  /**
-   * Show subchart
-   * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
-   * @function subchart․show
-   * @instance
-   * @memberof Chart
-   * @example
-   * // for ESM imports, needs to import 'subchart' and must be instantiated first to enable subchart's API.
-   * import {subchart} from "billboard.js";
-   *
-   * const chart = bb.generate({
-   *   ...
-   *   subchart: {
-   *      // need to be instantiated by calling 'subchart()'
-   *      enabled: subchart()
-   *
-   *      // in case don't want subchart to be shown at initialization, instantiate with '!subchart()'
-   *      enabled: !subchart()
-   *   }
-   * });
-   *
-   * chart.subchart.show();
-   */
-  show() {
-    var _a, _b;
-    const $$ = this.internal;
-    const { $el: { subchart: subchart2 }, config } = $$;
-    const show = config.subchart_show;
-    if (!show) {
-      $$.unbindZoomEvent();
-      config.subchart_show = !show;
-      !subchart2.main && $$.initSubchart();
-      let $target = subchart2.main.selectAll(`.${$COMMON.target}`);
-      if ($$.data.targets.length !== $target.size()) {
-        $$.updateSizes();
-        $$.updateTargetsForSubchart($$.data.targets);
-        $target = (_a = subchart2.main) == null ? void 0 : _a.selectAll(`.${$COMMON.target}`);
-      }
-      $target == null ? void 0 : $target.style("opacity", null);
-      (_b = subchart2.main) == null ? void 0 : _b.style("display", null);
-      this.resize();
-    }
-  },
-  /**
-   * Hide generated subchart
-   * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
-   * @function subchart․hide
-   * @instance
-   * @memberof Chart
-   * @example
-   *  chart.subchart.hide();
-   */
-  hide() {
-    const $$ = this.internal;
-    const { $el: { subchart: { main } }, config } = $$;
-    if (config.subchart_show && (main == null ? void 0 : main.style("display")) !== "none") {
-      config.subchart_show = false;
-      main.style("display", "none");
-      this.resize();
-    }
-  },
-  /**
-   * Toggle the visibility of subchart
-   * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
-   * @function subchart․toggle
-   * @instance
-   * @memberof Chart
-   * @example
-   * // When subchart is hidden, will be shown
-   * // When subchart is shown, will be hidden
-   * chart.subchart.toggle();
-   */
-  toggle() {
-    const $$ = this.internal;
-    const { config } = $$;
-    this.subchart[config.subchart_show ? "hide" : "show"]();
-  },
-  /**
-   * Reset subchart selection
-   * @function subchart․reset
-   * @instance
-   * @memberof Chart
-   * @example
-   * // Reset subchart selection
-   * chart.subchart.reset();
-   */
-  reset() {
-    const $$ = this.internal;
-    const { brush } = $$;
-    brush.clear(brush.getSelection());
-  }
-});
-/* harmony default export */ var api_subchart = ({
-  subchart
-});
-
-// EXTERNAL MODULE: external {"commonjs":"d3-zoom","commonjs2":"d3-zoom","amd":"d3-zoom","root":"d3"}
-var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(9);
-;// ./src/Chart/api/zoom.ts
-
-
-const zoom = function(domainValue) {
-  var _a;
-  const $$ = this.internal;
-  const { axis, config, org, scale, state } = $$;
-  const isCategorized = axis.isCategorized();
-  let domain;
-  if (config.zoom_enabled) {
-    domain = domainValue;
-    if (Array.isArray(domain)) {
-      if (axis.isTimeSeries()) {
-        domain = domain.map((x) => parseDate.bind($$)(x));
-      }
-      const isWithinRange = $$.withinRange(
-        domain,
-        $$.getZoomDomain("zoom", true),
-        $$.getZoomDomain("zoom")
-      );
-      if (isWithinRange) {
-        state.domain = domain;
-        domain = $$.getZoomDomainValue(domain);
-        $$.api.tooltip.hide();
-        if (config.subchart_show) {
-          const x = scale.zoom || scale.x;
-          $$.brush.getSelection().call($$.brush.move, domain.map(x));
-        } else {
-          const x = isCategorized ? scale.x.orgScale() : org.xScale || scale.x;
-          $$.updateCurrentZoomTransform(x, domain);
-        }
-        $$.setZoomResetButton();
-      }
-    } else {
-      domain = $$.zoom.getDomain();
-    }
-  }
-  return (_a = state.domain) != null ? _a : domain;
-};
-extend(zoom, {
-  /**
-   * Enable and disable zooming.
-   * @function zoom․enable
-   * @instance
-   * @memberof Chart
-   * @param {string|boolean} enabled Possible string values are "wheel" or "drag". If enabled is true, "wheel" will be used. If false is given, zooming will be disabled.<br>When set to false, the current zooming status will be reset.
-   * @example
-   *  // Enable zooming using the mouse wheel
-   *  chart.zoom.enable(true);
-   *  // Or
-   *  chart.zoom.enable("wheel");
-   *
-   *  // Enable zooming by dragging
-   *  chart.zoom.enable("drag");
-   *
-   *  // Disable zooming
-   *  chart.zoom.enable(false);
-   */
-  enable(enabled) {
-    const $$ = this.internal;
-    const { config } = $$;
-    if (/^(drag|wheel)$/.test(enabled)) {
-      config.zoom_type = enabled;
-    }
-    config.zoom_enabled = !!enabled;
-    if (!$$.zoom) {
-      $$.initZoom();
-      $$.bindZoomEvent();
-    } else if (enabled === false) {
-      $$.bindZoomEvent(false);
-    }
-    $$.updateAndRedraw();
-  },
-  /**
-   * Set or get x Axis maximum zoom range value
-   * @function zoom․max
-   * @instance
-   * @memberof Chart
-   * @param {number} [max] maximum value to set for zoom
-   * @returns {number} zoom max value
-   * @example
-   *  // Set maximum range value
-   *  chart.zoom.max(20);
-   */
-  max(max) {
-    const $$ = this.internal;
-    const { config, org: { xDomain } } = $$;
-    if (max === 0 || max) {
-      config.zoom_x_max = getMinMax("max", [xDomain[1], max]);
-    }
-    return config.zoom_x_max;
-  },
-  /**
-   * Set or get x Axis minimum zoom range value
-   * @function zoom․min
-   * @instance
-   * @memberof Chart
-   * @param {number} [min] minimum value to set for zoom
-   * @returns {number} zoom min value
-   * @example
-   *  // Set minimum range value
-   *  chart.zoom.min(-1);
-   */
-  min(min) {
-    const $$ = this.internal;
-    const { config, org: { xDomain } } = $$;
-    if (min === 0 || min) {
-      config.zoom_x_min = getMinMax("min", [xDomain[0], min]);
-    }
-    return config.zoom_x_min;
-  },
-  /**
-   * Set zoom range
-   * @function zoom․range
-   * @instance
-   * @memberof Chart
-   * @param {object} [range] zoom range
-   * @returns {object} zoom range value
-   * {
-   *   min: 0,
-   *   max: 100
-   * }
-   * @example
-   *  chart.zoom.range({
-   *      min: 10,
-   *      max: 100
-   *  });
-   */
-  range(range) {
-    const zoom2 = this.zoom;
-    if (isObject(range)) {
-      const { min, max } = range;
-      isDefined(min) && zoom2.min(min);
-      isDefined(max) && zoom2.max(max);
-    }
-    return {
-      min: zoom2.min(),
-      max: zoom2.max()
-    };
-  }
-});
-/* harmony default export */ var api_zoom = ({
-  zoom,
-  /**
-   * Unzoom zoomed area
-   * - **NOTE:** Calling .unzoom() will not trigger zoom events.
-   * @function unzoom
-   * @instance
-   * @memberof Chart
-   * @example
-   *  chart.unzoom();
-   */
-  unzoom() {
-    const $$ = this.internal;
-    const { config, $el: { eventRect, zoomResetBtn }, scale: { zoom: zoom2 }, state } = $$;
-    if (zoom2) {
-      config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity);
-      $$.updateZoom(true);
-      zoomResetBtn == null ? void 0 : zoomResetBtn.style("display", "none");
-      if ((0,external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomTransform)(eventRect.node()) !== external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity) {
-        $$.zoom.transform(eventRect, external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity);
-      }
-      state.domain = void 0;
-    }
-  }
-});
-
-;// ./src/ChartInternal/interactions/subchart.ts
-
-
-
-
-/* harmony default export */ var interactions_subchart = ({
-  /**
-   * Initialize the brush.
-   * @private
-   */
-  initBrush() {
-    const $$ = this;
-    const { config, scale, $el: { subchart }, state } = $$;
-    const isRotated = config.axis_rotated;
-    const height = config.subchart_size_height;
-    let lastDomain;
-    let lastSelection;
-    let timeout;
-    $$.brush = (isRotated ? (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushY)() : (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushX)()).handleSize(5);
-    $$.brush.on("start brush end", (event) => {
-      const { selection, sourceEvent, target, type } = event;
-      if (type === "start") {
-        $$.state.inputType === "touch" && $$.hideTooltip();
-        lastSelection = sourceEvent ? selection : null;
-      }
-      if (/(start|brush)/.test(type)) {
-        type === "brush" && sourceEvent && state.domain && (lastSelection == null ? void 0 : lastSelection.forEach((v, i) => {
-          if (v !== selection[i]) {
-            state.domain[i] = scale.x.orgDomain()[i];
-          }
-        }));
-        $$.redrawForBrush(type !== "start");
-      }
-      if (type === "end") {
-        lastDomain = scale.x.orgDomain();
-      }
-      if (target == null ? void 0 : target.handle) {
-        if (selection === null) {
-          $$.brush.handle.attr("display", "none");
-        } else {
-          $$.brush.handle.attr("display", null).attr("transform", (d, i) => {
-            const pos = [selection[i], height / 2];
-            return `translate(${isRotated ? pos.reverse() : pos})`;
-          });
-        }
-      }
-    });
-    $$.brush.updateResize = function() {
-      timeout && clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        const selection = this.getSelection();
-        lastDomain && (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection.node()) && this.move(selection, lastDomain.map(scale.subX.orgScale()));
-      }, 0);
-    };
-    $$.brush.update = function() {
-      var _a;
-      const extent = this.extent()();
-      if (extent[1].filter((v) => isNaN(v)).length === 0) {
-        (_a = subchart.main) == null ? void 0 : _a.select(`.${classes.brush}`).call(this);
-      }
-      return this;
-    };
-    $$.brush.scale = function(scale2) {
-      const h = config.subchart_size_height;
-      let extent = $$.axis.getExtent();
-      if (!extent && scale2.range) {
-        extent = [[0, 0], [scale2.range()[1], h]];
-      } else if (isArray(extent)) {
-        extent = extent.map((v, i) => [v, i > 0 ? h : i]);
-      }
-      isRotated && extent[1].reverse();
-      this.extent(extent);
-      this.update();
-    };
-    $$.brush.getSelection = () => (
-      // @ts-ignore
-      subchart.main ? subchart.main.select(`.${classes.brush}`) : (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)([])
-    );
-  },
-  /**
-   * Initialize the subchart.
-   * @private
-   */
-  initSubchart() {
-    const $$ = this;
-    const { config, state: { clip, hasAxis }, $el: { defs, svg, subchart, axis } } = $$;
-    if (!hasAxis) {
-      return;
-    }
-    const visibility = config.subchart_show ? null : "hidden";
-    const clipId = `${clip.id}-subchart`;
-    const clipPath = $$.getClipPath(clipId);
-    clip.idSubchart = clipId;
-    $$.appendClip(defs, clipId);
-    $$.initBrush();
-    subchart.main = svg.append("g").classed(classes.subchart, true).attr("transform", $$.getTranslate("context"));
-    const { main } = subchart;
-    main.style("visibility", visibility);
-    main.append("g").attr("clip-path", clipPath).attr("class", classes.chart);
-    ["bar", "line", "bubble", "candlestick", "scatter"].forEach((v) => {
-      const type = capitalize(/^(bubble|scatter)$/.test(v) ? "circle" : v);
-      if ($$.hasType(v) || $$.hasTypeOf(type)) {
-        const chart = main.select(`.${classes.chart}`);
-        const chartClassName = classes[`chart${type}s`];
-        if (chart.select(`.${chartClassName}`).empty()) {
-          chart.append("g").attr("class", chartClassName);
-        }
-      }
-    });
-    const brush = main.append("g").attr("clip-path", clipPath).attr("class", classes.brush).call($$.brush);
-    config.subchart_showHandle && $$.addBrushHandle(brush);
-    axis.subX = main.append("g").attr("class", classes.axisX).attr("transform", $$.getTranslate("subX")).attr("clip-path", config.axis_rotated ? "" : clip.pathXAxis).style("visibility", config.subchart_axis_x_show ? visibility : "hidden");
-  },
-  /**
-   * Add brush handle
-   * Enabled when: subchart.showHandle=true
-   * @param {d3Selection} brush Brush selection
-   * @private
-   */
-  addBrushHandle(brush) {
-    const $$ = this;
-    const { config } = $$;
-    const isRotated = config.axis_rotated;
-    const initRange = config.subchart_init_range;
-    const customHandleClass = "handle--custom";
-    const path = isRotated ? [
-      "M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z",
-      "M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"
-    ] : [
-      "M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z",
-      "M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"
-    ];
-    $$.brush.handle = brush.selectAll(`.${customHandleClass}`).data(isRotated ? [{ type: "n" }, { type: "s" }] : [{ type: "w" }, { type: "e" }]).enter().append("path").attr("class", customHandleClass).attr("cursor", `${isRotated ? "ns" : "ew"}-resize`).attr("d", (d) => path[+/[se]/.test(d.type)]).attr("display", initRange ? null : "none");
-  },
-  /**
-   * Update sub chart
-   * @param {object} targets $$.data.targets
-   * @private
-   */
-  updateTargetsForSubchart(targets) {
-    const $$ = this;
-    const { config, state, $el: { subchart: { main } } } = $$;
-    if (config.subchart_show) {
-      ["bar", "line", "bubble", "candlestick", "scatter"].filter((v) => $$.hasType(v) || $$.hasTypeOf(capitalize(v))).forEach((v) => {
-        const isPointType = /^(bubble|scatter)$/.test(v);
-        const name = capitalize(isPointType ? "circle" : v);
-        const chartClass = $$.getChartClass(name, true);
-        const shapeClass = $$.getClass(isPointType ? "circles" : `${v}s`, true);
-        const shapeChart = main.select(`.${classes[`chart${`${name}s`}`]}`);
-        if (isPointType) {
-          const circle = shapeChart.selectAll(`.${classes.circles}`).data(targets.filter($$[`is${capitalize(v)}Type`].bind($$))).attr("class", shapeClass);
-          circle.exit().remove();
-          circle.enter().append("g").attr("class", shapeClass);
-        } else {
-          const shapeUpdate = shapeChart.selectAll(`.${classes[`chart${name}`]}`).attr("class", chartClass).data(targets.filter($$[`is${name}Type`].bind($$)));
-          const shapeEnter = shapeUpdate.enter().append("g").style("opacity", "0").attr("class", chartClass).append("g").attr("class", shapeClass);
-          shapeUpdate.exit().remove();
-          v === "line" && $$.hasTypeOf("Area") && shapeEnter.append("g").attr("class", $$.getClass("areas", true));
-        }
-      });
-      main.selectAll(`.${classes.brush} rect`).attr(
-        config.axis_rotated ? "width" : "height",
-        config.axis_rotated ? state.width2 : state.height2
-      );
-    }
-  },
-  /**
-   * Redraw subchart.
-   * @private
-   * @param {boolean} withSubchart whether or not to show subchart
-   * @param {number} duration duration
-   * @param {object} shape Shape's info
-   */
-  redrawSubchart(withSubchart, duration, shape) {
-    var _a;
-    const $$ = this;
-    const { config, $el: { subchart: { main } }, state } = $$;
-    const withTransition = !!duration;
-    main.style("visibility", config.subchart_show ? null : "hidden");
-    if (config.subchart_show) {
-      if (((_a = state.event) == null ? void 0 : _a.type) === "zoom") {
-        $$.brush.update();
-      }
-      if (withSubchart) {
-        const initRange = config.subchart_init_range;
-        !brushEmpty($$) && $$.brush.update();
-        Object.keys(shape.type).forEach((v) => {
-          const name = capitalize(v);
-          const drawFn = $$[`generateDraw${name}`](shape.indices[v], true);
-          $$[`update${name}`](withTransition, true);
-          $$[`redraw${name}`](drawFn, withTransition, true);
-        });
-        if ($$.hasType("bubble") || $$.hasType("scatter")) {
-          const { cx } = shape.pos;
-          const cy = $$.updateCircleY(true);
-          $$.updateCircle(true);
-          $$.redrawCircle(cx, cy, withTransition, void 0, true);
-        }
-        if (!state.rendered && initRange) {
-          state.domain = initRange;
-          $$.brush.move(
-            $$.brush.getSelection(),
-            initRange.map($$.scale.x)
-          );
-        }
-      }
-    }
-  },
-  /**
-   * Redraw the brush.
-   * @param {boolean} [callCallbck=true] Call 'onbrush' callback or not.
-   * @private
-   */
-  redrawForBrush(callCallbck = true) {
-    var _a;
-    const $$ = this;
-    const {
-      config: {
-        subchart_onbrush: onBrush,
-        zoom_rescale: withY
-      },
-      scale,
-      state
-    } = $$;
-    $$.redraw({
-      withTransition: false,
-      withY,
-      withSubchart: false,
-      withUpdateXDomain: true,
-      withDimension: false
-    });
-    callCallbck && state.rendered && onBrush.bind($$.api)((_a = state.domain) != null ? _a : scale.x.orgDomain());
-  },
-  /**
-   * Transform context
-   * @param {boolean} withTransition indicates transition is enabled
-   * @param {object} transitions The return value of the generateTransitions method of Axis.
-   * @private
-   */
-  transformContext(withTransition, transitions) {
-    const $$ = this;
-    const { $el: { subchart }, $T } = $$;
-    const subXAxis = (transitions == null ? void 0 : transitions.axisSubX) ? transitions.axisSubX : $T(subchart.main.select(`.${classes.axisX}`), withTransition);
-    subchart.main.attr("transform", $$.getTranslate("context"));
-    subXAxis.attr("transform", $$.getTranslate("subX"));
-  }
-});
-
-;// ./src/ChartInternal/interactions/zoom.ts
-
-
-
-
-
-/* harmony default export */ var interactions_zoom = ({
-  /**
-   * Initialize zoom.
-   * @private
-   */
-  initZoom() {
-    const $$ = this;
-    $$.scale.zoom = null;
-    $$.generateZoom();
-    $$.config.zoom_type === "drag" && $$.initZoomBehaviour();
-  },
-  /**
-   * Bind zoom event
-   * @param {boolean} bind Weather bind or unbound
-   * @private
-   */
-  bindZoomEvent(bind = true) {
-    const $$ = this;
-    const { config } = $$;
-    const zoomEnabled = config.zoom_enabled;
-    if (zoomEnabled && bind) {
-      !config.subchart_show && $$.bindZoomOnEventRect();
-    } else if (bind === false) {
-      $$.api.unzoom();
-      $$.unbindZoomEvent();
-    }
-  },
-  /**
-   * Generate zoom
-   * @private
-   */
-  generateZoom() {
-    const $$ = this;
-    const { config, org, scale } = $$;
-    const zoom = (0,external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoom)().duration(0).on("start", $$.onZoomStart.bind($$)).on("zoom", $$.onZoom.bind($$)).on("end", $$.onZoomEnd.bind($$));
-    zoom.orgScaleExtent = () => {
-      const extent = config.zoom_extent || [1, 10];
-      return [extent[0], Math.max($$.getMaxDataCount() / extent[1], extent[1])];
-    };
-    zoom.updateScaleExtent = function() {
-      const ratio = diffDomain($$.scale.x.orgDomain()) / diffDomain($$.getZoomDomain());
-      const extent = this.orgScaleExtent();
-      this.scaleExtent([extent[0] * ratio, extent[1] * ratio]);
-      return this;
-    };
-    zoom.updateTransformScale = (transform, correctTransform) => {
-      var _a;
-      const isRotated = config.axis_rotated;
-      (_a = org.xScale) == null ? void 0 : _a.range(scale.x.range());
-      const newScale = transform[isRotated ? "rescaleY" : "rescaleX"](org.xScale || scale.x);
-      if (newScale.domain().some((v) => /(Invalid Date|NaN)/.test(v.toString()))) {
-        return;
-      }
-      const domain = $$.trimXDomain(newScale.domain());
-      const rescale = config.zoom_rescale;
-      newScale.domain(domain, org.xDomain);
-      if (correctTransform) {
-        const t = newScale(scale.x.domain()[0]);
-        const tX = isRotated ? transform.x : t;
-        const tY = isRotated ? t : transform.y;
-        $$.$el.eventRect.property(
-          "__zoom",
-          external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity.translate(tX, tY).scale(transform.k)
-        );
-      }
-      scale.zoom = $$.getCustomizedXScale(newScale);
-      $$.axis.x.scale(scale.zoom);
-      if (rescale) {
-        !org.xScale && (org.xScale = scale.x.copy());
-        scale.x.domain(domain);
-      } else if (org.xScale) {
-        scale.x.domain(org.xScale.domain());
-        org.xScale = null;
-      }
-    };
-    zoom.getDomain = () => {
-      const domain = scale[scale.zoom ? "zoom" : "subX"].domain();
-      const isCategorized = $$.axis.isCategorized();
-      if (isCategorized) {
-        domain[1] -= 2;
-      }
-      return domain;
-    };
-    $$.zoom = zoom;
-  },
-  /**
-   * 'start' event listener
-   * @param {object} event Event object
-   * @private
-   */
-  onZoomStart(event) {
-    const $$ = this;
-    const { sourceEvent } = event;
-    if (sourceEvent) {
-      $$.zoom.startEvent = sourceEvent;
-      $$.state.zooming = true;
-      callFn($$.config.zoom_onzoomstart, $$.api, event);
-    }
-  },
-  /**
-   * 'zoom' event listener
-   * @param {object} event Event object
-   * @private
-   */
-  onZoom(event) {
-    const $$ = this;
-    const { config, scale, state, org } = $$;
-    const { sourceEvent } = event;
-    const isUnZoom = (event == null ? void 0 : event.transform) === external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity;
-    if (!config.zoom_enabled || $$.filterTargetsToShow($$.data.targets).length === 0 || !scale.zoom && (sourceEvent == null ? void 0 : sourceEvent.type.indexOf("touch")) > -1 && (sourceEvent == null ? void 0 : sourceEvent.touches.length) === 1) {
-      return;
-    }
-    if (event.sourceEvent) {
-      state.zooming = true;
-      state.domain = void 0;
-    }
-    const isMousemove = (sourceEvent == null ? void 0 : sourceEvent.type) === "mousemove";
-    const isZoomOut = (sourceEvent == null ? void 0 : sourceEvent.wheelDelta) < 0;
-    const { transform } = event;
-    if (!isMousemove && isZoomOut && scale.x.domain().every((v, i) => v !== org.xDomain[i])) {
-      scale.x.domain(org.xDomain);
-    }
-    $$.zoom.updateTransformScale(transform, config.zoom_type === "wheel" && sourceEvent);
-    const doTransition = config.transition_duration > 0 && !config.subchart_show && (state.dragging || isUnZoom || !event.sourceEvent);
-    const useRAF = sourceEvent && isMousemove && config.zoom_type !== "wheel";
-    const executeRedraw = () => {
-      var _a;
-      $$.redraw({
-        withTransition: doTransition,
-        withY: config.zoom_rescale,
-        withSubchart: false,
-        withEventRect: false,
-        withDimension: false
-      });
-      $$.state.cancelClick = isMousemove;
-      !isUnZoom && callFn(
-        config.zoom_onzoom,
-        $$.api,
-        (_a = $$.state.domain) != null ? _a : $$.zoom.getDomain()
-      );
-    };
-    useRAF ? scheduleRAFUpdate($$.state, executeRedraw) : executeRedraw();
-  },
-  /**
-   * 'end' event listener
-   * @param {object} event Event object
-   * @private
-   */
-  onZoomEnd(event) {
-    var _a, _b;
-    const $$ = this;
-    const { config, state } = $$;
-    let { startEvent } = $$.zoom;
-    let e = event == null ? void 0 : event.sourceEvent;
-    const isUnZoom = (event == null ? void 0 : event.transform) === external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity;
-    if ((startEvent == null ? void 0 : startEvent.type.indexOf("touch")) > -1) {
-      startEvent = startEvent.changedTouches[0];
-      e = (_a = e == null ? void 0 : e.changedTouches) == null ? void 0 : _a[0];
-    }
-    if (config.zoom_type === "drag" && (e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY)) {
-      return;
-    }
-    state.zooming = false;
-    $$.redrawEventRect();
-    $$.updateZoom();
-    !isUnZoom && (e || state.dragging) && callFn(
-      config.zoom_onzoomend,
-      $$.api,
-      (_b = $$.state.domain) != null ? _b : $$.zoom.getDomain()
-    );
-  },
-  /**
-   * Update zoom
-   * @param {boolean} force Force unzoom
-   * @private
-   */
-  updateZoom(force) {
-    const $$ = this;
-    const { subX, x, zoom } = $$.scale;
-    if (zoom) {
-      const zoomDomain = zoom.domain();
-      const xDomain = subX.domain();
-      const delta = 0.015;
-      const isfullyShown = $$.config.axis_x_inverted ? (zoomDomain[0] >= xDomain[0] || zoomDomain[0] + delta >= xDomain[0]) && (xDomain[1] >= zoomDomain[1] || xDomain[1] >= zoomDomain[1] + delta) : (zoomDomain[0] <= xDomain[0] || zoomDomain[0] - delta <= xDomain[0]) && (xDomain[1] <= zoomDomain[1] || xDomain[1] <= zoomDomain[1] - delta);
-      if (force || isfullyShown) {
-        $$.axis.x.scale(subX);
-        x.domain(subX.orgDomain());
-        $$.scale.zoom = null;
-      }
-    }
-  },
-  /**
-   * Set zoom transform to event rect
-   * @param {function} x x Axis scale function
-   * @param {Array} domain Domain value to be set
-   * @private
-   */
-  updateCurrentZoomTransform(x, domain) {
-    const $$ = this;
-    const { $el: { eventRect }, config } = $$;
-    const isRotated = config.axis_rotated;
-    const translate = [-x(domain[0]), 0];
-    const transform = external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity.scale(x.range()[1] / (x(domain[1]) - x(domain[0]))).translate(
-      ...isRotated ? translate.reverse() : translate
-    );
-    eventRect.call($$.zoom.transform, transform);
-  },
-  /**
-   * Attach zoom event on <rect>
-   * @private
-   */
-  bindZoomOnEventRect() {
-    var _a;
-    const $$ = this;
-    const { config, $el: { eventRect, svg } } = $$;
-    const behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
-    if (win.GestureEvent && /^((?!chrome|android|mobile).)*safari/i.test((_a = win.navigator) == null ? void 0 : _a.userAgent)) {
-      svg.on("wheel", () => {
-      });
-    }
-    eventRect == null ? void 0 : eventRect.call(behaviour).on("dblclick.zoom", null);
-  },
-  /**
-   * Initialize the drag behaviour used for zooming.
-   * @private
-   */
-  initZoomBehaviour() {
-    const $$ = this;
-    const { config, state } = $$;
-    const isRotated = config.axis_rotated;
-    let start = 0;
-    let end = 0;
-    let zoomRect;
-    let extent;
-    const prop = {
-      axis: isRotated ? "y" : "x",
-      attr: isRotated ? "height" : "width",
-      index: isRotated ? 1 : 0
-    };
-    $$.zoomBehaviour = (0,external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_.drag)().clickDistance(4).on("start", function(event) {
-      extent = $$.scale.zoom ? null : $$.axis.getExtent();
-      state.event = event;
-      $$.setDragStatus(true);
-      $$.unselectRect();
-      if (!zoomRect) {
-        zoomRect = $$.$el.main.append("rect").attr("clip-path", state.clip.path).attr("class", $ZOOM.zoomBrush).attr("width", isRotated ? state.width : 0).attr("height", isRotated ? 0 : state.height);
-      }
-      start = getPointer(event, this)[prop.index];
-      if (extent) {
-        if (start < extent[0]) {
-          start = extent[0];
-        } else if (start > extent[1]) {
-          start = extent[1];
-        }
-      }
-      end = start;
-      zoomRect.attr(prop.axis, start).attr(prop.attr, 0);
-      $$.onZoomStart(event);
-    }).on("drag", function(event) {
-      end = getPointer(event, this)[prop.index];
-      if (extent) {
-        if (end > extent[1]) {
-          end = extent[1];
-        } else if (end < extent[0]) {
-          end = extent[0];
-        }
-      }
-      zoomRect.attr(prop.axis, Math.min(start, end)).attr(prop.attr, Math.abs(end - start));
-    }).on("end", (event) => {
-      const scale = $$.scale.zoom || $$.scale.x;
-      state.event = event;
-      zoomRect.attr(prop.axis, 0).attr(prop.attr, 0);
-      if (start > end) {
-        [start, end] = [end, start];
-      }
-      if (start < 0) {
-        end += Math.abs(start);
-        start = 0;
-      }
-      if (start !== end) {
-        $$.api.zoom([start, end].map((v) => scale.invert(v)));
-      }
-      $$.setDragStatus(false);
-    });
-  },
-  setZoomResetButton() {
-    const $$ = this;
-    const { config, $el } = $$;
-    const resetButton = config.zoom_resetButton;
-    if (resetButton && config.zoom_type === "drag") {
-      if (!$el.zoomResetBtn) {
-        $el.zoomResetBtn = $$.$el.chart.append("div").classed($COMMON.button, true).append("span").on("click", function() {
-          isFunction(resetButton.onclick) && resetButton.onclick.bind($$.api)(this);
-          $$.api.unzoom();
-        }).classed($ZOOM.buttonZoomReset, true).text(resetButton.text || "Reset Zoom");
-      } else {
-        $el.zoomResetBtn.style("display", null);
-      }
-    }
-  },
-  getZoomTransform() {
-    const $$ = this;
-    const { $el: { eventRect } } = $$;
-    return (eventRect == null ? void 0 : eventRect.node()) ? (0,external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomTransform)(eventRect.node()) : { k: 1 };
-  }
-});
-
 ;// ./src/ChartInternal/interactions/drag.ts
 
 
@@ -13002,6 +12143,398 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   }
 });
 
+;// ./src/config/resolver/interaction/selection.ts
+
+
+
+
+
+
+
+let selectionModule = () => {
+  extend(ChartInternal.prototype, internals_selection);
+  extend(Chart.prototype, selection);
+  Options.setOptions([data_selection]);
+  return (selectionModule = () => true)();
+};
+
+;// ./src/Chart/api/subchart.ts
+
+
+const subchart = function(domainValue) {
+  var _a;
+  const $$ = this.internal;
+  const { axis, brush, config, scale: { x, subX }, state } = $$;
+  let domain;
+  if (config.subchart_show) {
+    domain = domainValue;
+    if (Array.isArray(domain)) {
+      if (axis.isTimeSeries()) {
+        domain = domain.map((x2) => parseDate.bind($$)(x2));
+      }
+      const isWithinRange = $$.withinRange(
+        domain,
+        $$.getZoomDomain("subX", true),
+        $$.getZoomDomain("subX")
+      );
+      if (isWithinRange) {
+        state.domain = domain;
+        brush.move(
+          brush.getSelection(),
+          domain.map(subX)
+        );
+      }
+    } else {
+      domain = (_a = state.domain) != null ? _a : x.orgDomain();
+    }
+  }
+  return domain;
+};
+extend(subchart, {
+  /**
+   * Show subchart
+   * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+   * @function subchart․show
+   * @instance
+   * @memberof Chart
+   * @example
+   * // for ESM imports, needs to import 'subchart' and must be instantiated first to enable subchart's API.
+   * import {subchart} from "billboard.js";
+   *
+   * const chart = bb.generate({
+   *   ...
+   *   subchart: {
+   *      // need to be instantiated by calling 'subchart()'
+   *      enabled: subchart()
+   *
+   *      // in case don't want subchart to be shown at initialization, instantiate with '!subchart()'
+   *      enabled: !subchart()
+   *   }
+   * });
+   *
+   * chart.subchart.show();
+   */
+  show() {
+    var _a, _b;
+    const $$ = this.internal;
+    const { $el: { subchart: subchart2 }, config } = $$;
+    const show = config.subchart_show;
+    if (!show) {
+      $$.unbindZoomEvent();
+      config.subchart_show = !show;
+      !subchart2.main && $$.initSubchart();
+      let $target = subchart2.main.selectAll(`.${$COMMON.target}`);
+      if ($$.data.targets.length !== $target.size()) {
+        $$.updateSizes();
+        $$.updateTargetsForSubchart($$.data.targets);
+        $target = (_a = subchart2.main) == null ? void 0 : _a.selectAll(`.${$COMMON.target}`);
+      }
+      $target == null ? void 0 : $target.style("opacity", null);
+      (_b = subchart2.main) == null ? void 0 : _b.style("display", null);
+      this.resize();
+    }
+  },
+  /**
+   * Hide generated subchart
+   * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+   * @function subchart․hide
+   * @instance
+   * @memberof Chart
+   * @example
+   *  chart.subchart.hide();
+   */
+  hide() {
+    const $$ = this.internal;
+    const { $el: { subchart: { main } }, config } = $$;
+    if (config.subchart_show && (main == null ? void 0 : main.style("display")) !== "none") {
+      config.subchart_show = false;
+      main.style("display", "none");
+      this.resize();
+    }
+  },
+  /**
+   * Toggle the visibility of subchart
+   * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+   * @function subchart․toggle
+   * @instance
+   * @memberof Chart
+   * @example
+   * // When subchart is hidden, will be shown
+   * // When subchart is shown, will be hidden
+   * chart.subchart.toggle();
+   */
+  toggle() {
+    const $$ = this.internal;
+    const { config } = $$;
+    this.subchart[config.subchart_show ? "hide" : "show"]();
+  },
+  /**
+   * Reset subchart selection
+   * @function subchart․reset
+   * @instance
+   * @memberof Chart
+   * @example
+   * // Reset subchart selection
+   * chart.subchart.reset();
+   */
+  reset() {
+    const $$ = this.internal;
+    const { brush } = $$;
+    brush.clear(brush.getSelection());
+  }
+});
+/* harmony default export */ var api_subchart = ({
+  subchart
+});
+
+;// ./src/ChartInternal/interactions/subchart.ts
+
+
+
+
+/* harmony default export */ var interactions_subchart = ({
+  /**
+   * Initialize the brush.
+   * @private
+   */
+  initBrush() {
+    const $$ = this;
+    const { config, scale, $el: { subchart }, state } = $$;
+    const isRotated = config.axis_rotated;
+    const height = config.subchart_size_height;
+    let lastDomain;
+    let lastSelection;
+    let timeout;
+    $$.brush = (isRotated ? (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushY)() : (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushX)()).handleSize(5);
+    $$.brush.on("start brush end", (event) => {
+      const { selection, sourceEvent, target, type } = event;
+      if (type === "start") {
+        $$.state.inputType === "touch" && $$.hideTooltip();
+        lastSelection = sourceEvent ? selection : null;
+      }
+      if (/(start|brush)/.test(type)) {
+        type === "brush" && sourceEvent && state.domain && (lastSelection == null ? void 0 : lastSelection.forEach((v, i) => {
+          if (v !== selection[i]) {
+            state.domain[i] = scale.x.orgDomain()[i];
+          }
+        }));
+        $$.redrawForBrush(type !== "start");
+      }
+      if (type === "end") {
+        lastDomain = scale.x.orgDomain();
+      }
+      if (target == null ? void 0 : target.handle) {
+        if (selection === null) {
+          $$.brush.handle.attr("display", "none");
+        } else {
+          $$.brush.handle.attr("display", null).attr("transform", (d, i) => {
+            const pos = [selection[i], height / 2];
+            return `translate(${isRotated ? pos.reverse() : pos})`;
+          });
+        }
+      }
+    });
+    $$.brush.updateResize = function() {
+      timeout && clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        const selection = this.getSelection();
+        lastDomain && (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection.node()) && this.move(selection, lastDomain.map(scale.subX.orgScale()));
+      }, 0);
+    };
+    $$.brush.update = function() {
+      var _a;
+      const extent = this.extent()();
+      if (extent[1].filter((v) => isNaN(v)).length === 0) {
+        (_a = subchart.main) == null ? void 0 : _a.select(`.${classes.brush}`).call(this);
+      }
+      return this;
+    };
+    $$.brush.scale = function(scale2) {
+      const h = config.subchart_size_height;
+      let extent = $$.axis.getExtent();
+      if (!extent && scale2.range) {
+        extent = [[0, 0], [scale2.range()[1], h]];
+      } else if (isArray(extent)) {
+        extent = extent.map((v, i) => [v, i > 0 ? h : i]);
+      }
+      isRotated && extent[1].reverse();
+      this.extent(extent);
+      this.update();
+    };
+    $$.brush.getSelection = () => (
+      // @ts-ignore
+      subchart.main ? subchart.main.select(`.${classes.brush}`) : (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)([])
+    );
+  },
+  /**
+   * Initialize the subchart.
+   * @private
+   */
+  initSubchart() {
+    const $$ = this;
+    const { config, state: { clip, hasAxis }, $el: { defs, svg, subchart, axis } } = $$;
+    if (!hasAxis) {
+      return;
+    }
+    const visibility = config.subchart_show ? null : "hidden";
+    const clipId = `${clip.id}-subchart`;
+    const clipPath = $$.getClipPath(clipId);
+    clip.idSubchart = clipId;
+    $$.appendClip(defs, clipId);
+    $$.initBrush();
+    subchart.main = svg.append("g").classed(classes.subchart, true).attr("transform", $$.getTranslate("context"));
+    const { main } = subchart;
+    main.style("visibility", visibility);
+    main.append("g").attr("clip-path", clipPath).attr("class", classes.chart);
+    ["bar", "line", "bubble", "candlestick", "scatter"].forEach((v) => {
+      const type = capitalize(/^(bubble|scatter)$/.test(v) ? "circle" : v);
+      if ($$.hasType(v) || $$.hasTypeOf(type)) {
+        const chart = main.select(`.${classes.chart}`);
+        const chartClassName = classes[`chart${type}s`];
+        if (chart.select(`.${chartClassName}`).empty()) {
+          chart.append("g").attr("class", chartClassName);
+        }
+      }
+    });
+    const brush = main.append("g").attr("clip-path", clipPath).attr("class", classes.brush).call($$.brush);
+    config.subchart_showHandle && $$.addBrushHandle(brush);
+    axis.subX = main.append("g").attr("class", classes.axisX).attr("transform", $$.getTranslate("subX")).attr("clip-path", config.axis_rotated ? "" : clip.pathXAxis).style("visibility", config.subchart_axis_x_show ? visibility : "hidden");
+  },
+  /**
+   * Add brush handle
+   * Enabled when: subchart.showHandle=true
+   * @param {d3Selection} brush Brush selection
+   * @private
+   */
+  addBrushHandle(brush) {
+    const $$ = this;
+    const { config } = $$;
+    const isRotated = config.axis_rotated;
+    const initRange = config.subchart_init_range;
+    const customHandleClass = "handle--custom";
+    const path = isRotated ? [
+      "M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z",
+      "M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"
+    ] : [
+      "M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z",
+      "M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"
+    ];
+    $$.brush.handle = brush.selectAll(`.${customHandleClass}`).data(isRotated ? [{ type: "n" }, { type: "s" }] : [{ type: "w" }, { type: "e" }]).enter().append("path").attr("class", customHandleClass).attr("cursor", `${isRotated ? "ns" : "ew"}-resize`).attr("d", (d) => path[+/[se]/.test(d.type)]).attr("display", initRange ? null : "none");
+  },
+  /**
+   * Update sub chart
+   * @param {object} targets $$.data.targets
+   * @private
+   */
+  updateTargetsForSubchart(targets) {
+    const $$ = this;
+    const { config, state, $el: { subchart: { main } } } = $$;
+    if (config.subchart_show) {
+      ["bar", "line", "bubble", "candlestick", "scatter"].filter((v) => $$.hasType(v) || $$.hasTypeOf(capitalize(v))).forEach((v) => {
+        const isPointType = /^(bubble|scatter)$/.test(v);
+        const name = capitalize(isPointType ? "circle" : v);
+        const chartClass = $$.getChartClass(name, true);
+        const shapeClass = $$.getClass(isPointType ? "circles" : `${v}s`, true);
+        const shapeChart = main.select(`.${classes[`chart${`${name}s`}`]}`);
+        if (isPointType) {
+          const circle = shapeChart.selectAll(`.${classes.circles}`).data(targets.filter($$[`is${capitalize(v)}Type`].bind($$))).attr("class", shapeClass);
+          circle.exit().remove();
+          circle.enter().append("g").attr("class", shapeClass);
+        } else {
+          const shapeUpdate = shapeChart.selectAll(`.${classes[`chart${name}`]}`).attr("class", chartClass).data(targets.filter($$[`is${name}Type`].bind($$)));
+          const shapeEnter = shapeUpdate.enter().append("g").style("opacity", "0").attr("class", chartClass).append("g").attr("class", shapeClass);
+          shapeUpdate.exit().remove();
+          v === "line" && $$.hasTypeOf("Area") && shapeEnter.append("g").attr("class", $$.getClass("areas", true));
+        }
+      });
+      main.selectAll(`.${classes.brush} rect`).attr(
+        config.axis_rotated ? "width" : "height",
+        config.axis_rotated ? state.width2 : state.height2
+      );
+    }
+  },
+  /**
+   * Redraw subchart.
+   * @private
+   * @param {boolean} withSubchart whether or not to show subchart
+   * @param {number} duration duration
+   * @param {object} shape Shape's info
+   */
+  redrawSubchart(withSubchart, duration, shape) {
+    var _a;
+    const $$ = this;
+    const { config, $el: { subchart: { main } }, state } = $$;
+    const withTransition = !!duration;
+    main.style("visibility", config.subchart_show ? null : "hidden");
+    if (config.subchart_show) {
+      if (((_a = state.event) == null ? void 0 : _a.type) === "zoom") {
+        $$.brush.update();
+      }
+      if (withSubchart) {
+        const initRange = config.subchart_init_range;
+        !brushEmpty($$) && $$.brush.update();
+        Object.keys(shape.type).forEach((v) => {
+          const name = capitalize(v);
+          const drawFn = $$[`generateDraw${name}`](shape.indices[v], true);
+          $$[`update${name}`](withTransition, true);
+          $$[`redraw${name}`](drawFn, withTransition, true);
+        });
+        if ($$.hasType("bubble") || $$.hasType("scatter")) {
+          const { cx } = shape.pos;
+          const cy = $$.updateCircleY(true);
+          $$.updateCircle(true);
+          $$.redrawCircle(cx, cy, withTransition, void 0, true);
+        }
+        if (!state.rendered && initRange) {
+          state.domain = initRange;
+          $$.brush.move(
+            $$.brush.getSelection(),
+            initRange.map($$.scale.x)
+          );
+        }
+      }
+    }
+  },
+  /**
+   * Redraw the brush.
+   * @param {boolean} [callCallbck=true] Call 'onbrush' callback or not.
+   * @private
+   */
+  redrawForBrush(callCallbck = true) {
+    var _a;
+    const $$ = this;
+    const {
+      config: {
+        subchart_onbrush: onBrush,
+        zoom_rescale: withY
+      },
+      scale,
+      state
+    } = $$;
+    $$.redraw({
+      withTransition: false,
+      withY,
+      withSubchart: false,
+      withUpdateXDomain: true,
+      withDimension: false
+    });
+    callCallbck && state.rendered && onBrush.bind($$.api)((_a = state.domain) != null ? _a : scale.x.orgDomain());
+  },
+  /**
+   * Transform context
+   * @param {boolean} withTransition indicates transition is enabled
+   * @param {object} transitions The return value of the generateTransitions method of Axis.
+   * @private
+   */
+  transformContext(withTransition, transitions) {
+    const $$ = this;
+    const { $el: { subchart }, $T } = $$;
+    const subXAxis = (transitions == null ? void 0 : transitions.axisSubX) ? transitions.axisSubX : $T(subchart.main.select(`.${classes.axisX}`), withTransition);
+    subchart.main.attr("transform", $$.getTranslate("context"));
+    subXAxis.attr("transform", $$.getTranslate("subX"));
+  }
+});
+
 ;// ./src/config/Options/interaction/subchart.ts
 /* harmony default export */ var interaction_subchart = ({
   /**
@@ -13067,6 +12600,503 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   subchart_axis_x_tick_text_show: true,
   subchart_init_range: void 0,
   subchart_onbrush: () => {
+  }
+});
+
+;// ./src/config/resolver/interaction/subchart.ts
+
+
+
+
+
+
+
+let subchartModule = () => {
+  extend(ChartInternal.prototype, interactions_subchart);
+  extend(Chart.prototype, api_subchart);
+  Options.setOptions([interaction_subchart]);
+  return (subchartModule = () => true)();
+};
+
+// EXTERNAL MODULE: external {"commonjs":"d3-zoom","commonjs2":"d3-zoom","amd":"d3-zoom","root":"d3"}
+var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(9);
+;// ./src/Chart/api/zoom.ts
+
+
+const zoom = function(domainValue) {
+  var _a;
+  const $$ = this.internal;
+  const { axis, config, org, scale, state } = $$;
+  const isCategorized = axis.isCategorized();
+  let domain;
+  if (config.zoom_enabled) {
+    domain = domainValue;
+    if (Array.isArray(domain)) {
+      if (axis.isTimeSeries()) {
+        domain = domain.map((x) => parseDate.bind($$)(x));
+      }
+      const isWithinRange = $$.withinRange(
+        domain,
+        $$.getZoomDomain("zoom", true),
+        $$.getZoomDomain("zoom")
+      );
+      if (isWithinRange) {
+        state.domain = domain;
+        domain = $$.getZoomDomainValue(domain);
+        $$.api.tooltip.hide();
+        if (config.subchart_show) {
+          const x = scale.zoom || scale.x;
+          $$.brush.getSelection().call($$.brush.move, domain.map(x));
+        } else {
+          const x = isCategorized ? scale.x.orgScale() : org.xScale || scale.x;
+          $$.updateCurrentZoomTransform(x, domain);
+        }
+        $$.setZoomResetButton();
+      }
+    } else {
+      domain = $$.zoom.getDomain();
+    }
+  }
+  return (_a = state.domain) != null ? _a : domain;
+};
+extend(zoom, {
+  /**
+   * Enable and disable zooming.
+   * @function zoom․enable
+   * @instance
+   * @memberof Chart
+   * @param {string|boolean} enabled Possible string values are "wheel" or "drag". If enabled is true, "wheel" will be used. If false is given, zooming will be disabled.<br>When set to false, the current zooming status will be reset.
+   * @example
+   *  // Enable zooming using the mouse wheel
+   *  chart.zoom.enable(true);
+   *  // Or
+   *  chart.zoom.enable("wheel");
+   *
+   *  // Enable zooming by dragging
+   *  chart.zoom.enable("drag");
+   *
+   *  // Disable zooming
+   *  chart.zoom.enable(false);
+   */
+  enable(enabled) {
+    const $$ = this.internal;
+    const { config } = $$;
+    if (/^(drag|wheel)$/.test(enabled)) {
+      config.zoom_type = enabled;
+    }
+    config.zoom_enabled = !!enabled;
+    if (!$$.zoom) {
+      $$.initZoom();
+      $$.bindZoomEvent();
+    } else if (enabled === false) {
+      $$.bindZoomEvent(false);
+    }
+    $$.updateAndRedraw();
+  },
+  /**
+   * Set or get x Axis maximum zoom range value
+   * @function zoom․max
+   * @instance
+   * @memberof Chart
+   * @param {number} [max] maximum value to set for zoom
+   * @returns {number} zoom max value
+   * @example
+   *  // Set maximum range value
+   *  chart.zoom.max(20);
+   */
+  max(max) {
+    const $$ = this.internal;
+    const { config, org: { xDomain } } = $$;
+    if (max === 0 || max) {
+      config.zoom_x_max = getMinMax("max", [xDomain[1], max]);
+    }
+    return config.zoom_x_max;
+  },
+  /**
+   * Set or get x Axis minimum zoom range value
+   * @function zoom․min
+   * @instance
+   * @memberof Chart
+   * @param {number} [min] minimum value to set for zoom
+   * @returns {number} zoom min value
+   * @example
+   *  // Set minimum range value
+   *  chart.zoom.min(-1);
+   */
+  min(min) {
+    const $$ = this.internal;
+    const { config, org: { xDomain } } = $$;
+    if (min === 0 || min) {
+      config.zoom_x_min = getMinMax("min", [xDomain[0], min]);
+    }
+    return config.zoom_x_min;
+  },
+  /**
+   * Set zoom range
+   * @function zoom․range
+   * @instance
+   * @memberof Chart
+   * @param {object} [range] zoom range
+   * @returns {object} zoom range value
+   * {
+   *   min: 0,
+   *   max: 100
+   * }
+   * @example
+   *  chart.zoom.range({
+   *      min: 10,
+   *      max: 100
+   *  });
+   */
+  range(range) {
+    const zoom2 = this.zoom;
+    if (isObject(range)) {
+      const { min, max } = range;
+      isDefined(min) && zoom2.min(min);
+      isDefined(max) && zoom2.max(max);
+    }
+    return {
+      min: zoom2.min(),
+      max: zoom2.max()
+    };
+  }
+});
+/* harmony default export */ var api_zoom = ({
+  zoom,
+  /**
+   * Unzoom zoomed area
+   * - **NOTE:** Calling .unzoom() will not trigger zoom events.
+   * @function unzoom
+   * @instance
+   * @memberof Chart
+   * @example
+   *  chart.unzoom();
+   */
+  unzoom() {
+    const $$ = this.internal;
+    const { config, $el: { eventRect, zoomResetBtn }, scale: { zoom: zoom2 }, state } = $$;
+    if (zoom2) {
+      config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity);
+      $$.updateZoom(true);
+      zoomResetBtn == null ? void 0 : zoomResetBtn.style("display", "none");
+      if ((0,external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomTransform)(eventRect.node()) !== external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity) {
+        $$.zoom.transform(eventRect, external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity);
+      }
+      state.domain = void 0;
+    }
+  }
+});
+
+;// ./src/ChartInternal/interactions/zoom.ts
+
+
+
+
+
+/* harmony default export */ var interactions_zoom = ({
+  /**
+   * Initialize zoom.
+   * @private
+   */
+  initZoom() {
+    const $$ = this;
+    $$.scale.zoom = null;
+    $$.generateZoom();
+    $$.config.zoom_type === "drag" && $$.initZoomBehaviour();
+  },
+  /**
+   * Bind zoom event
+   * @param {boolean} bind Weather bind or unbound
+   * @private
+   */
+  bindZoomEvent(bind = true) {
+    const $$ = this;
+    const { config } = $$;
+    const zoomEnabled = config.zoom_enabled;
+    if (zoomEnabled && bind) {
+      !config.subchart_show && $$.bindZoomOnEventRect();
+    } else if (bind === false) {
+      $$.api.unzoom();
+      $$.unbindZoomEvent();
+    }
+  },
+  /**
+   * Generate zoom
+   * @private
+   */
+  generateZoom() {
+    const $$ = this;
+    const { config, org, scale } = $$;
+    const zoom = (0,external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoom)().duration(0).on("start", $$.onZoomStart.bind($$)).on("zoom", $$.onZoom.bind($$)).on("end", $$.onZoomEnd.bind($$));
+    zoom.orgScaleExtent = () => {
+      const extent = config.zoom_extent || [1, 10];
+      return [extent[0], Math.max($$.getMaxDataCount() / extent[1], extent[1])];
+    };
+    zoom.updateScaleExtent = function() {
+      const ratio = diffDomain($$.scale.x.orgDomain()) / diffDomain($$.getZoomDomain());
+      const extent = this.orgScaleExtent();
+      this.scaleExtent([extent[0] * ratio, extent[1] * ratio]);
+      return this;
+    };
+    zoom.updateTransformScale = (transform, correctTransform) => {
+      var _a;
+      const isRotated = config.axis_rotated;
+      (_a = org.xScale) == null ? void 0 : _a.range(scale.x.range());
+      const newScale = transform[isRotated ? "rescaleY" : "rescaleX"](org.xScale || scale.x);
+      if (newScale.domain().some((v) => /(Invalid Date|NaN)/.test(v.toString()))) {
+        return;
+      }
+      const domain = $$.trimXDomain(newScale.domain());
+      const rescale = config.zoom_rescale;
+      newScale.domain(domain, org.xDomain);
+      if (correctTransform) {
+        const t = newScale(scale.x.domain()[0]);
+        const tX = isRotated ? transform.x : t;
+        const tY = isRotated ? t : transform.y;
+        $$.$el.eventRect.property(
+          "__zoom",
+          external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity.translate(tX, tY).scale(transform.k)
+        );
+      }
+      scale.zoom = $$.getCustomizedXScale(newScale);
+      $$.axis.x.scale(scale.zoom);
+      if (rescale) {
+        !org.xScale && (org.xScale = scale.x.copy());
+        scale.x.domain(domain);
+      } else if (org.xScale) {
+        scale.x.domain(org.xScale.domain());
+        org.xScale = null;
+      }
+    };
+    zoom.getDomain = () => {
+      const domain = scale[scale.zoom ? "zoom" : "subX"].domain();
+      const isCategorized = $$.axis.isCategorized();
+      if (isCategorized) {
+        domain[1] -= 2;
+      }
+      return domain;
+    };
+    $$.zoom = zoom;
+  },
+  /**
+   * 'start' event listener
+   * @param {object} event Event object
+   * @private
+   */
+  onZoomStart(event) {
+    const $$ = this;
+    const { sourceEvent } = event;
+    if (sourceEvent) {
+      $$.zoom.startEvent = sourceEvent;
+      $$.state.zooming = true;
+      callFn($$.config.zoom_onzoomstart, $$.api, event);
+    }
+  },
+  /**
+   * 'zoom' event listener
+   * @param {object} event Event object
+   * @private
+   */
+  onZoom(event) {
+    const $$ = this;
+    const { config, scale, state, org } = $$;
+    const { sourceEvent } = event;
+    const isUnZoom = (event == null ? void 0 : event.transform) === external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity;
+    if (!config.zoom_enabled || $$.filterTargetsToShow($$.data.targets).length === 0 || !scale.zoom && (sourceEvent == null ? void 0 : sourceEvent.type.indexOf("touch")) > -1 && (sourceEvent == null ? void 0 : sourceEvent.touches.length) === 1) {
+      return;
+    }
+    if (event.sourceEvent) {
+      state.zooming = true;
+      state.domain = void 0;
+    }
+    const isMousemove = (sourceEvent == null ? void 0 : sourceEvent.type) === "mousemove";
+    const isZoomOut = (sourceEvent == null ? void 0 : sourceEvent.wheelDelta) < 0;
+    const { transform } = event;
+    if (!isMousemove && isZoomOut && scale.x.domain().every((v, i) => v !== org.xDomain[i])) {
+      scale.x.domain(org.xDomain);
+    }
+    $$.zoom.updateTransformScale(transform, config.zoom_type === "wheel" && sourceEvent);
+    const doTransition = config.transition_duration > 0 && !config.subchart_show && (state.dragging || isUnZoom || !event.sourceEvent);
+    const useRAF = sourceEvent && isMousemove && config.zoom_type !== "wheel";
+    const executeRedraw = () => {
+      var _a;
+      $$.redraw({
+        withTransition: doTransition,
+        withY: config.zoom_rescale,
+        withSubchart: false,
+        withEventRect: false,
+        withDimension: false
+      });
+      $$.state.cancelClick = isMousemove;
+      !isUnZoom && callFn(
+        config.zoom_onzoom,
+        $$.api,
+        (_a = $$.state.domain) != null ? _a : $$.zoom.getDomain()
+      );
+    };
+    useRAF ? scheduleRAFUpdate($$.state, executeRedraw) : executeRedraw();
+  },
+  /**
+   * 'end' event listener
+   * @param {object} event Event object
+   * @private
+   */
+  onZoomEnd(event) {
+    var _a, _b;
+    const $$ = this;
+    const { config, state } = $$;
+    let { startEvent } = $$.zoom;
+    let e = event == null ? void 0 : event.sourceEvent;
+    const isUnZoom = (event == null ? void 0 : event.transform) === external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity;
+    if ((startEvent == null ? void 0 : startEvent.type.indexOf("touch")) > -1) {
+      startEvent = startEvent.changedTouches[0];
+      e = (_a = e == null ? void 0 : e.changedTouches) == null ? void 0 : _a[0];
+    }
+    if (config.zoom_type === "drag" && (e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY)) {
+      return;
+    }
+    state.zooming = false;
+    $$.redrawEventRect();
+    $$.updateZoom();
+    !isUnZoom && (e || state.dragging) && callFn(
+      config.zoom_onzoomend,
+      $$.api,
+      (_b = $$.state.domain) != null ? _b : $$.zoom.getDomain()
+    );
+  },
+  /**
+   * Update zoom
+   * @param {boolean} force Force unzoom
+   * @private
+   */
+  updateZoom(force) {
+    const $$ = this;
+    const { subX, x, zoom } = $$.scale;
+    if (zoom) {
+      const zoomDomain = zoom.domain();
+      const xDomain = subX.domain();
+      const delta = 0.015;
+      const isfullyShown = $$.config.axis_x_inverted ? (zoomDomain[0] >= xDomain[0] || zoomDomain[0] + delta >= xDomain[0]) && (xDomain[1] >= zoomDomain[1] || xDomain[1] >= zoomDomain[1] + delta) : (zoomDomain[0] <= xDomain[0] || zoomDomain[0] - delta <= xDomain[0]) && (xDomain[1] <= zoomDomain[1] || xDomain[1] <= zoomDomain[1] - delta);
+      if (force || isfullyShown) {
+        $$.axis.x.scale(subX);
+        x.domain(subX.orgDomain());
+        $$.scale.zoom = null;
+      }
+    }
+  },
+  /**
+   * Set zoom transform to event rect
+   * @param {function} x x Axis scale function
+   * @param {Array} domain Domain value to be set
+   * @private
+   */
+  updateCurrentZoomTransform(x, domain) {
+    const $$ = this;
+    const { $el: { eventRect }, config } = $$;
+    const isRotated = config.axis_rotated;
+    const translate = [-x(domain[0]), 0];
+    const transform = external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity.scale(x.range()[1] / (x(domain[1]) - x(domain[0]))).translate(
+      ...isRotated ? translate.reverse() : translate
+    );
+    eventRect.call($$.zoom.transform, transform);
+  },
+  /**
+   * Attach zoom event on <rect>
+   * @private
+   */
+  bindZoomOnEventRect() {
+    var _a;
+    const $$ = this;
+    const { config, $el: { eventRect, svg } } = $$;
+    const behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
+    if (win.GestureEvent && /^((?!chrome|android|mobile).)*safari/i.test((_a = win.navigator) == null ? void 0 : _a.userAgent)) {
+      svg.on("wheel", () => {
+      });
+    }
+    eventRect == null ? void 0 : eventRect.call(behaviour).on("dblclick.zoom", null);
+  },
+  /**
+   * Initialize the drag behaviour used for zooming.
+   * @private
+   */
+  initZoomBehaviour() {
+    const $$ = this;
+    const { config, state } = $$;
+    const isRotated = config.axis_rotated;
+    let start = 0;
+    let end = 0;
+    let zoomRect;
+    let extent;
+    const prop = {
+      axis: isRotated ? "y" : "x",
+      attr: isRotated ? "height" : "width",
+      index: isRotated ? 1 : 0
+    };
+    $$.zoomBehaviour = (0,external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_.drag)().clickDistance(4).on("start", function(event) {
+      extent = $$.scale.zoom ? null : $$.axis.getExtent();
+      state.event = event;
+      $$.setDragStatus(true);
+      $$.unselectRect();
+      if (!zoomRect) {
+        zoomRect = $$.$el.main.append("rect").attr("clip-path", state.clip.path).attr("class", $ZOOM.zoomBrush).attr("width", isRotated ? state.width : 0).attr("height", isRotated ? 0 : state.height);
+      }
+      start = getPointer(event, this)[prop.index];
+      if (extent) {
+        if (start < extent[0]) {
+          start = extent[0];
+        } else if (start > extent[1]) {
+          start = extent[1];
+        }
+      }
+      end = start;
+      zoomRect.attr(prop.axis, start).attr(prop.attr, 0);
+      $$.onZoomStart(event);
+    }).on("drag", function(event) {
+      end = getPointer(event, this)[prop.index];
+      if (extent) {
+        if (end > extent[1]) {
+          end = extent[1];
+        } else if (end < extent[0]) {
+          end = extent[0];
+        }
+      }
+      zoomRect.attr(prop.axis, Math.min(start, end)).attr(prop.attr, Math.abs(end - start));
+    }).on("end", (event) => {
+      const scale = $$.scale.zoom || $$.scale.x;
+      state.event = event;
+      zoomRect.attr(prop.axis, 0).attr(prop.attr, 0);
+      if (start > end) {
+        [start, end] = [end, start];
+      }
+      if (start < 0) {
+        end += Math.abs(start);
+        start = 0;
+      }
+      if (start !== end) {
+        $$.api.zoom([start, end].map((v) => scale.invert(v)));
+      }
+      $$.setDragStatus(false);
+    });
+  },
+  setZoomResetButton() {
+    const $$ = this;
+    const { config, $el } = $$;
+    const resetButton = config.zoom_resetButton;
+    if (resetButton && config.zoom_type === "drag") {
+      if (!$el.zoomResetBtn) {
+        $el.zoomResetBtn = $$.$el.chart.append("div").classed($COMMON.button, true).append("span").on("click", function() {
+          isFunction(resetButton.onclick) && resetButton.onclick.bind($$.api)(this);
+          $$.api.unzoom();
+        }).classed($ZOOM.buttonZoomReset, true).text(resetButton.text || "Reset Zoom");
+      } else {
+        $el.zoomResetBtn.style("display", null);
+      }
+    }
+  },
+  getZoomTransform() {
+    const $$ = this;
+    const { $el: { eventRect } } = $$;
+    return (eventRect == null ? void 0 : eventRect.node()) ? (0,external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomTransform)(eventRect.node()) : { k: 1 };
   }
 });
 
@@ -13151,7 +13181,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   zoom_x_max: void 0
 });
 
-;// ./src/config/resolver/interaction.ts
+;// ./src/config/resolver/interaction/zoom.ts
 
 
 
@@ -13159,31 +13189,1296 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 
 
 
-
-
-
-
-
-
-
-let selectionModule = () => {
-  extend(ChartInternal.prototype, internals_selection);
-  extend(Chart.prototype, selection);
-  Options.setOptions([data_selection]);
-  return (selectionModule = () => true)();
-};
-let subchartModule = () => {
-  extend(ChartInternal.prototype, interactions_subchart);
-  extend(Chart.prototype, api_subchart);
-  Options.setOptions([interaction_subchart]);
-  return (subchartModule = () => true)();
-};
 let zoomModule = () => {
   extend(ChartInternal.prototype, interactions_zoom);
   extend(Chart.prototype, api_zoom);
   Options.setOptions([interaction_zoom]);
   return (zoomModule = () => true)();
 };
+
+;// ./src/config/resolver/interaction/index.ts
+
+
+
+
+;// ./src/ChartInternal/shape/area.ts
+
+
+
+
+
+/* harmony default export */ var shape_area = ({
+  initArea(mainLine) {
+    const $$ = this;
+    const { config } = $$;
+    mainLine.insert("g", `.${config.area_front ? $CIRCLE.circles : $LINE.lines}`).attr("class", $$.getClass("areas", true));
+  },
+  /**
+   * Update area color
+   * @param {object} d Data object
+   * @returns {string} Color string
+   * @private
+   */
+  updateAreaColor(d) {
+    const $$ = this;
+    return getShapeColorWithGradient.call($$, d, "area_linearGradient", $$.color);
+  },
+  /**
+   * Generate/Update elements
+   * @param {boolean} withTransition Transition for exit elements
+   * @param {boolean} isSub Subchart draw
+   * @private
+   */
+  updateArea(withTransition, isSub = false) {
+    const $$ = this;
+    const { config, state, $el, $T } = $$;
+    const $root = isSub ? $el.subchart : $el;
+    config.area_linearGradient && $$.updateLinearGradient();
+    const area = $root.main.selectAll(`.${$AREA.areas}`).selectAll(`.${$AREA.area}`).data($$.lineData.bind($$));
+    $T(area.exit(), withTransition).style("opacity", "0").remove();
+    $root.area = area.enter().append("path").attr("class", $$.getClass("area", true)).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function() {
+      state.orgAreaOpacity = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).style("opacity");
+      return "0";
+    }).merge(area);
+    area.style("opacity", state.orgAreaOpacity);
+    $$.setRatioForGroupedData($root.area.data());
+  },
+  /**
+   * Redraw function
+   * @param {function} drawFn Retuned functino from .generateDrawCandlestick()
+   * @param {boolean} withTransition With or without transition
+   * @param {boolean} isSub Subchart draw
+   * @returns {Array}
+   */
+  redrawArea(drawFn, withTransition, isSub = false) {
+    const $$ = this;
+    const { area } = isSub ? this.$el.subchart : this.$el;
+    const { orgAreaOpacity } = $$.state;
+    return [
+      $$.$T(area, withTransition, getRandom()).attr("d", drawFn).style("fill", $$.updateAreaColor.bind($$)).style(
+        "opacity",
+        (d) => String($$.isAreaRangeType(d) ? orgAreaOpacity / 1.75 : orgAreaOpacity)
+      )
+    ];
+  },
+  /**
+   * Generate area path data
+   * @param {object} areaIndices Indices
+   * @param {boolean} isSub Weather is sub axis
+   * @returns {function}
+   * @private
+   */
+  generateDrawArea(areaIndices, isSub) {
+    const $$ = this;
+    const { config } = $$;
+    const lineConnectNull = config.line_connectNull;
+    const isRotated = config.axis_rotated;
+    const getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
+    const yScale = $$.getYScaleById.bind($$);
+    const xValue = (d) => (isSub ? $$.subxx : $$.xx).call($$, d);
+    const value0 = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)(
+      $$.isAreaRangeType(d) ? $$.getRangedData(d, "high") : $$.getShapeYMin(d.id)
+    );
+    const value1 = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[1][1] : yScale(d.id, isSub)(
+      $$.isAreaRangeType(d) ? $$.getRangedData(d, "low") : d.value
+    );
+    return (d) => {
+      let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
+      let x0 = 0;
+      let y0 = 0;
+      let path;
+      if ($$.isAreaType(d)) {
+        let area = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.area)();
+        area = isRotated ? area.y(xValue).x0(value0).x1(value1) : area.x(xValue).y0(config.area_above ? 0 : config.area_below ? $$.state.height : value0).y1(value1);
+        if (!lineConnectNull) {
+          area = area.defined((d2) => $$.getBaseValue(d2) !== null);
+        }
+        if ($$.isStepType(d)) {
+          values = $$.convertValuesToStep(values);
+        }
+        path = area.curve($$.getCurve(d))(values);
+      } else {
+        if (values[0]) {
+          x0 = $$.scale.x(values[0].x);
+          y0 = $$.getYScaleById(d.id)(values[0].value);
+        }
+        path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
+      }
+      return path || "M 0 0";
+    };
+  },
+  generateGetAreaPoints(areaIndices, isSub) {
+    const $$ = this;
+    const { config } = $$;
+    const x = $$.getShapeX(0, areaIndices, isSub);
+    const y = $$.getShapeY(!!isSub);
+    const areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, isSub);
+    const yScale = $$.getYScaleById.bind($$);
+    return function(d, i) {
+      const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
+      const offset = areaOffset(d, i) || y0;
+      const posX = x(d);
+      const value = d.value;
+      let posY = y(d);
+      if (config.axis_rotated && (value > 0 && posY < y0 || value < 0 && y0 < posY)) {
+        posY = y0;
+      }
+      return [
+        [posX, offset],
+        [posX, posY - (y0 - offset)],
+        [posX, posY - (y0 - offset)],
+        // needed for compatibility
+        [posX, offset]
+        // needed for compatibility
+      ];
+    };
+  }
+});
+
+;// ./src/config/Options/shape/area.ts
+/* harmony default export */ var Options_shape_area = ({
+  /**
+   * Set area options
+   * @name area
+   * @memberof Options
+   * @type {object}
+   * @property {object} area Area object
+   * @property {boolean} [area.above=false] Set background area `above` the data chart line.
+   * @property {boolean} [area.below=false] Set background area `below` the data chart line.
+   *  - **NOTE**: Can't be used along with `above` option. When above & below options are set to true, `above` will be prioritized.
+   * @property {boolean} [area.front=true] Set area node to be positioned over line node.
+   * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
+   * Or customize by giving below object value:
+   *  - x {Array}: `x1`, `x2` value (default: `[0, 0]`)
+   *  - y {Array}: `y1`, `y2` value (default: `[0, 1]`)
+   *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+   *    - (default: `[[0, $DATA_COLOR, 1], [1, $DATA_COLOR, 0]]`)
+   * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
+   * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
+   * @see [Demo: above](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Above)
+   * @see [Demo: below](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Below)
+   * @see [Demo: linearGradient](https://naver.github.io/billboard.js/demo/#AreaChartOptions.LinearGradient)
+   * @example
+   *  area: {
+   *      above: true,
+   *      below: false,
+   *      zerobased: false,
+   *
+   *      // <g class='bb-areas'> will be positioned behind the line <g class='bb-lines'> in stacking order
+   *      front: false,
+   *
+   *      // will generate following linearGradient:
+   *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
+   *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
+   *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
+   *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
+   *      // </linearGradient>
+   *      linearGradient: true,
+   *
+   *      // Or customized gradient
+   *      linearGradient: {
+   *      	x: [0, 0],  // x1, x2 attributes
+   *      	y: [0, 0],  // y1, y2 attributes
+   *      	stops: [
+   *      	  // offset, stop-color, stop-opacity
+   *      	  [0, "#7cb5ec", 1],
+   *
+   *      	  // setting 'null' for stop-color, will set its original data color
+   *      	  [0.5, null, 0],
+   *
+   *      	  // setting 'function' for stop-color, will pass data id as argument.
+   *      	  // It should return color string or null value
+   *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+   *      	]
+   *      }
+   *  }
+   */
+  area_above: false,
+  area_below: false,
+  area_front: true,
+  area_linearGradient: false,
+  area_zerobased: true
+});
+
+;// ./src/config/Options/shape/spline.ts
+/* harmony default export */ var spline = ({
+  /**
+   * Set spline options
+   * - **Available interpolation type values:**
+   *  - basis (d3.curveBasis)
+   *  - basis-closed (d3.curveBasisClosed)
+   *  - basis-open (d3.curveBasisOpen)
+   *  - bundle (d3.curveBundle)
+   *  - cardinal (d3.curveCardinal)
+   *  - cardinal-closed (d3.curveCardinalClosed)
+   *  - cardinal-open (d3.curveCardinalOpen)
+   *  - catmull-rom (d3.curveCatmullRom)
+   *  - catmull-rom-closed (d3.curveCatmullRomClosed)
+   *  - catmull-rom-open (d3.curveCatmullRomOpen)
+   *  - monotone-x (d3.curveMonotoneX)
+   *  - monotone-y (d3.curveMonotoneY)
+   *  - natural (d3.curveNatural)
+   *  - linear-closed (d3.curveLinearClosed)
+   *  - linear (d3.curveLinear)
+   *  - step (d3.curveStep)
+   *  - step-after (d3.curveStepAfter)
+   *  - step-before (d3.curveStepBefore)
+   * @name spline
+   * @memberof Options
+   * @type {object}
+   * @property {object} spline Spline object
+   * @property {object} spline.interpolation Spline interpolation object
+   * @property {string} [spline.interpolation.type="cardinal"] Interpolation type
+   * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
+   * @example
+   *  spline: {
+   *      interpolation: {
+   *          type: "cardinal"
+   *      }
+   *  }
+   */
+  spline_interpolation_type: "cardinal"
+});
+
+;// ./src/ChartInternal/shape/line.ts
+var line_defProp = Object.defineProperty;
+var line_defProps = Object.defineProperties;
+var line_getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var line_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var line_hasOwnProp = Object.prototype.hasOwnProperty;
+var line_propIsEnum = Object.prototype.propertyIsEnumerable;
+var line_defNormalProp = (obj, key, value) => key in obj ? line_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var line_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (line_hasOwnProp.call(b, prop))
+      line_defNormalProp(a, prop, b[prop]);
+  if (line_getOwnPropSymbols)
+    for (var prop of line_getOwnPropSymbols(b)) {
+      if (line_propIsEnum.call(b, prop))
+        line_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var line_spreadProps = (a, b) => line_defProps(a, line_getOwnPropDescs(b));
+
+
+
+
+
+function _getStrokeDashArray(start, end, pattern, isLastX = false) {
+  const dash = start ? [start, 0] : pattern;
+  for (let i = start ? start : pattern.reduce((a, c) => a + c); i <= end; ) {
+    pattern.forEach((v) => {
+      if (i + v <= end) {
+        dash.push(v);
+      }
+      i += v;
+    });
+  }
+  dash.length % 2 !== 0 && dash.push(isLastX ? pattern[1] : 0);
+  return {
+    dash: dash.join(" "),
+    length: dash.reduce((a, b) => a + b, 0)
+  };
+}
+function _getRegions(d, _regions, isTimeSeries) {
+  const $$ = this;
+  const regions = [];
+  const dasharray = "2 2";
+  if (isDefined(_regions)) {
+    const getValue = (v, def) => isUndefined(v) ? def : isTimeSeries ? parseDate.call($$, v) : v;
+    for (let i = 0, reg; reg = _regions[i]; i++) {
+      const start = getValue(reg.start, d[0].x);
+      const end = getValue(reg.end, d[d.length - 1].x);
+      const style = reg.style || { dasharray };
+      regions[i] = { start, end, style };
+    }
+  }
+  return regions;
+}
+/* harmony default export */ var line = ({
+  initLine() {
+    initShapeElement.call(this, {
+      elKey: "line",
+      className: $LINE.chartLines,
+      cssRules: ["pointer-events:none"]
+    });
+  },
+  updateTargetsForLine(t) {
+    const $$ = this;
+    const { $el: { area, main } } = $$;
+    const classLines = $$.getClass("lines", true);
+    const targets = t.filter((d) => !($$.isScatterType(d) || $$.isBubbleType(d)));
+    const mainLineEnter = updateTargetsForShape.call($$, targets, {
+      type: "Line",
+      elKey: "line",
+      containerClass: $LINE.chartLines,
+      itemClass: $LINE.chartLine,
+      initFn: $$.initLine
+    });
+    mainLineEnter.append("g").attr("class", classLines);
+    if ($$.hasTypeOf("Area")) {
+      const mainLineUpdate = main.select(`.${$LINE.chartLines}`).selectAll(`.${$LINE.chartLine}`);
+      const mainLine = (!area && mainLineEnter.empty() ? mainLineUpdate : mainLineEnter).filter($$.isAreaType.bind($$));
+      $$.initArea(mainLine);
+    }
+    $$.updateTargetForCircle(targets, mainLineEnter);
+  },
+  /**
+   * Generate/Update elements
+   * @param {boolean} withTransition Transition for exit elements
+   * @param {boolean} isSub Subchart draw
+   * @private
+   */
+  updateLine(withTransition, isSub = false) {
+    const $$ = this;
+    const { format: { extraLineClasses }, $el, $T } = $$;
+    const $root = isSub ? $el.subchart : $el;
+    const line = $root.main.selectAll(`.${$LINE.lines}`).selectAll(`.${$LINE.line}`).data($$.lineData.bind($$));
+    $T(line.exit(), withTransition).style("opacity", "0").remove();
+    $root.line = line.enter().append("path").attr("class", (d) => `${$$.getClass("line", true)(d)} ${extraLineClasses(d) || ""}`).style("stroke", $$.color).merge(line).style("opacity", $$.initialOpacity.bind($$)).attr("transform", null);
+  },
+  /**
+   * Redraw function
+   * @param {function} drawFn Retuned functino from .generateDrawCandlestick()
+   * @param {boolean} withTransition With or without transition
+   * @param {boolean} isSub Subchart draw
+   * @returns {Array}
+   * @private
+   */
+  redrawLine(drawFn, withTransition, isSub = false) {
+    const $$ = this;
+    const { $el, $T } = $$;
+    const { line } = isSub ? $el.subchart : $el;
+    return [
+      $T(line, withTransition, getRandom()).attr("d", drawFn).style("stroke", this.color).style("opacity", null)
+    ];
+  },
+  /**
+   * Get the curve interpolate
+   * @param {Array} d Data object
+   * @returns {function}
+   * @private
+   */
+  getCurve(d) {
+    const $$ = this;
+    const isRotatedStepType = $$.config.axis_rotated && $$.isStepType(d);
+    return isRotatedStepType ? (context) => {
+      const step = $$.getInterpolate(d)(context);
+      step.orgPoint = step.point;
+      step.pointRotated = function(x, y) {
+        this._point === 1 && (this._point = 2);
+        const y1 = this._y * (1 - this._t) + y * this._t;
+        this._context.lineTo(this._x, y1);
+        this._context.lineTo(x, y1);
+        this._x = x;
+        this._y = y;
+      };
+      step.point = function(x, y) {
+        this._point === 0 ? this.orgPoint(x, y) : this.pointRotated(x, y);
+      };
+      return step;
+    } : $$.getInterpolate(d);
+  },
+  generateDrawLine(lineIndices, isSub) {
+    const $$ = this;
+    const { config, scale } = $$;
+    const lineConnectNull = config.line_connectNull;
+    const isRotated = config.axis_rotated;
+    const getPoints = $$.generateGetLinePoints(lineIndices, isSub);
+    const yScale = $$.getYScaleById.bind($$);
+    const xValue = (d) => (isSub ? $$.subxx : $$.xx).call($$, d);
+    const yValue = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)($$.getBaseValue(d));
+    let line = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.line)();
+    line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
+    if (!lineConnectNull) {
+      line = line.defined((d) => $$.getBaseValue(d) !== null);
+    }
+    const x = isSub ? scale.subX : scale.x;
+    return (d) => {
+      const y = yScale(d.id, isSub);
+      let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
+      let x0 = 0;
+      let y0 = 0;
+      let path;
+      if ($$.isLineType(d)) {
+        const regions = config.data_regions[d.id];
+        if (regions) {
+          if ($$.isAreaRangeType(d)) {
+            values = values.map((dv) => line_spreadProps(line_spreadValues({}, dv), { value: $$.getRangedData(dv, "mid") }));
+          }
+          path = $$.lineWithRegions(values, scale.zoom || x, y, regions);
+        } else {
+          if ($$.isStepType(d)) {
+            values = $$.convertValuesToStep(values);
+          }
+          path = line.curve($$.getCurve(d))(values);
+        }
+      } else {
+        if (values[0]) {
+          x0 = x(values[0].x);
+          y0 = y(values[0].value);
+        }
+        path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
+      }
+      return path || "M 0 0";
+    };
+  },
+  /**
+   * Set regions dasharray and get path
+   * @param {Array} d Data object
+   * @param {function} x x scale function
+   * @param {function} y y scale function
+   * @param {object} _regions regions to be set
+   * @returns {stirng} Path string
+   * @private
+   */
+  lineWithRegions(d, x, y, _regions) {
+    const $$ = this;
+    const { config } = $$;
+    const isRotated = config.axis_rotated;
+    const isTimeSeries = $$.axis.isTimeSeries();
+    const dasharray = "2 2";
+    const regions = _getRegions.bind($$)(d, _regions, isTimeSeries);
+    const hasNullDataValue = $$.hasNullDataValue(d);
+    let xp;
+    let yp;
+    let diff;
+    let diffx2;
+    const xValue = isRotated ? (dt) => y(dt.value) : (dt) => x(dt.x);
+    const yValue = isRotated ? (dt) => x(dt.x) : (dt) => y(dt.value);
+    const generateM = (points) => `M${points[0][0]},${points[0][1]}L${points[1][0]},${points[1][1]}`;
+    const sWithRegion = isTimeSeries ? (d0, d1, k, timeseriesDiff) => {
+      const x0 = d0.x.getTime();
+      const xDiff = d1.x - d0.x;
+      const xv0 = new Date(x0 + xDiff * k);
+      const xv1 = new Date(x0 + xDiff * (k + timeseriesDiff));
+      const points = isRotated ? [[y(yp(k)), x(xv0)], [y(yp(k + diff)), x(xv1)]] : [[x(xv0), y(yp(k))], [x(xv1), y(yp(k + diff))]];
+      return generateM(points);
+    } : (d0, d1, k, otherDiff) => {
+      const x0 = x(d1.x, !isRotated);
+      const y0 = y(d1.value, isRotated);
+      const gap = k + otherDiff;
+      const xValue2 = x(xp(k), !isRotated);
+      const yValue2 = y(yp(k), isRotated);
+      let xDiff = x(xp(gap), !isRotated);
+      let yDiff = y(yp(gap), isRotated);
+      if (xDiff > x0) {
+        xDiff = x0;
+      }
+      if (d0.value > d1.value && (isRotated ? yDiff < y0 : yDiff > y0)) {
+        yDiff = y0;
+      }
+      const points = [
+        [xValue2, yValue2],
+        [xDiff, yDiff]
+      ];
+      isRotated && points.forEach((v) => v.reverse());
+      return generateM(points);
+    };
+    const axisType = { x: $$.axis.getAxisType("x"), y: $$.axis.getAxisType("y") };
+    let path = "";
+    const target = $$.$el.line.filter(({ id }) => id === d[0].id);
+    const tempNode = target.clone().style("display", "none");
+    const getLength = (node, path2) => node.attr("d", path2).node().getTotalLength();
+    const dashArray = {
+      dash: [],
+      lastLength: 0
+    };
+    let isLastX = false;
+    for (let i = 0, data; data = d[i]; i++) {
+      const prevData = d[i - 1];
+      const hasPrevData = prevData && isValue(prevData.value);
+      let style = $$.isWithinRegions(data.x, regions);
+      if (!isValue(data.value)) {
+        continue;
+      }
+      if (isUndefined(regions) || !style || !hasPrevData) {
+        path += `${i && hasPrevData ? "L" : "M"}${xValue(data)},${yValue(data)}`;
+      } else if (hasPrevData) {
+        style = ((style == null ? void 0 : style.dasharray) || dasharray).split(" ").map(Number);
+        xp = getScale(axisType.x, prevData.x, data.x);
+        yp = getScale(axisType.y, prevData.value, data.value);
+        if (hasNullDataValue) {
+          const dx = x(data.x) - x(prevData.x);
+          const dy = y(data.value) - y(prevData.value);
+          const dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+          diff = style[0] / dd;
+          diffx2 = diff * style[1];
+          for (let j = diff; j <= 1; j += diffx2) {
+            path += sWithRegion(prevData, data, j, diff);
+            if (j + diffx2 >= 1) {
+              path += sWithRegion(prevData, data, 1, 0);
+            }
+          }
+        } else {
+          let points;
+          isLastX = data.x === d[d.length - 1].x;
+          if (isTimeSeries) {
+            const x0 = +prevData.x;
+            const xv0 = new Date(x0);
+            const xv1 = new Date(x0 + (+data.x - x0));
+            points = [
+              [x(xv0), y(yp(0))],
+              // M
+              [x(xv1), y(yp(1))]
+              // L
+            ];
+          } else {
+            points = [
+              [x(xp(0)), y(yp(0))],
+              // M
+              [x(xp(1)), y(yp(1))]
+              // L
+            ];
+          }
+          isRotated && points.forEach((v) => v.reverse());
+          const startLength = getLength(tempNode, path);
+          const endLength = getLength(tempNode, path += `L${points[1].join(",")}`);
+          const strokeDashArray = _getStrokeDashArray(
+            startLength - dashArray.lastLength,
+            endLength - dashArray.lastLength,
+            style,
+            isLastX
+          );
+          dashArray.lastLength += strokeDashArray.length;
+          dashArray.dash.push(strokeDashArray.dash);
+        }
+      }
+    }
+    if (dashArray.dash.length) {
+      !isLastX && dashArray.dash.push(getLength(tempNode, path));
+      tempNode.remove();
+      target.attr("stroke-dasharray", dashArray.dash.join(" "));
+    }
+    return path;
+  },
+  isWithinRegions(withinX, withinRegions) {
+    for (let i = 0, reg; reg = withinRegions[i]; i++) {
+      if (reg.start < withinX && withinX <= reg.end) {
+        return reg.style;
+      }
+    }
+    return false;
+  },
+  isWithinStep(that, y) {
+    return Math.abs(y - getPointer(this.state.event, that)[1]) < 30;
+  },
+  shouldDrawPointsForLine(d) {
+    const linePoint = this.config.line_point;
+    return linePoint === true || isArray(linePoint) && linePoint.indexOf(d.id) !== -1;
+  }
+});
+
+;// ./src/ChartInternal/shape/point.ts
+
+
+
+const getTransitionName = () => getRandom();
+/* harmony default export */ var point = ({
+  initialOpacityForCircle(d) {
+    const { config, state: { withoutFadeIn } } = this;
+    let opacity = config.point_opacity;
+    if (isUndefined(opacity)) {
+      opacity = this.getBaseValue(d) !== null && withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
+    }
+    return opacity;
+  },
+  opacityForCircle(d) {
+    var _a;
+    const { config } = this;
+    let opacity = config.point_opacity;
+    if (isUndefined(opacity)) {
+      opacity = config.point_show && !((_a = this.isPointFocusOnly) == null ? void 0 : _a.call(this)) ? null : "0";
+      opacity = isValue(this.getBaseValue(d)) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0";
+    }
+    return opacity;
+  },
+  initCircle() {
+    const $$ = this;
+    const { $el: { main } } = $$;
+    !$$.point && ($$.point = $$.generatePoint());
+    if (($$.hasType("bubble") || $$.hasType("scatter")) && main.select(`.${$COMMON.chart} > .${$CIRCLE.chartCircles}`).empty()) {
+      main.select(`.${$COMMON.chart}`).append("g").attr("class", $CIRCLE.chartCircles);
+    }
+  },
+  updateTargetForCircle(targetsValue, enterNodeValue) {
+    const $$ = this;
+    const { config, data, $el } = $$;
+    const selectionEnabled = config.interaction_enabled && config.data_selection_enabled;
+    const isSelectable = selectionEnabled && config.data_selection_isselectable;
+    const classCircles = $$.getClass("circles", true);
+    if (!config.point_show) {
+      return;
+    }
+    $$.initCircle();
+    let targets = targetsValue;
+    let enterNode = enterNodeValue;
+    if (!targets) {
+      targets = $$.filterNullish(data.targets).filter((d) => this.isScatterType(d) || this.isBubbleType(d));
+      const mainCircle = $el.main.select(`.${$CIRCLE.chartCircles}`).style("pointer-events", "none").selectAll(`.${$CIRCLE.circles}`).data(targets);
+      mainCircle.exit().remove();
+      enterNode = mainCircle.enter();
+    }
+    selectionEnabled && enterNode.append("g").attr("class", (d) => $$.generateClass($SELECT.selectedCircles, d.id));
+    enterNode.append("g").attr("class", classCircles).call((selection) => {
+      $$.setCssRule(true, `.${$CIRCLE.circles}`, ["cursor:pointer"], isSelectable)(
+        selection
+      );
+      $$.setCssRule(true, ` .${$CIRCLE.circle}`, ["fill", "stroke"], $$.color)(selection);
+    }).style("opacity", function() {
+      const parent = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this.parentNode);
+      return parent.attr("class").indexOf($CIRCLE.chartCircles) > -1 ? "0" : null;
+    });
+    selectionEnabled && targets.forEach((t) => {
+      $el.main.selectAll(`.${$SELECT.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`).selectAll(`${$SELECT.selectedCircle}`).each((d) => {
+        d.value = t.values[d.index].value;
+      });
+    });
+  },
+  updateCircle(isSub = false) {
+    const $$ = this;
+    const { config, state, $el } = $$;
+    const focusOnly = $$.isPointFocusOnly();
+    const $root = isSub ? $el.subchart : $el;
+    if (config.point_show && !state.toggling) {
+      config.point_radialGradient && $$.updateLinearGradient();
+      const circles = $root.main.selectAll(`.${$CIRCLE.circles}`).selectAll(`.${$CIRCLE.circle}`).data((d) => {
+        const data = $$.isLineType(d) && $$.shouldDrawPointsForLine(d) || $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ? focusOnly ? [d.values[0]] : d.values : [];
+        return $$.filterNullish(data);
+      });
+      circles.exit().remove();
+      circles.enter().filter(Boolean).append(
+        $$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$))
+      );
+      $root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`).style("stroke", $$.getStylePropValue($$.color)).style("opacity", $$.initialOpacityForCircle.bind($$));
+    }
+  },
+  /**
+   * Update circle color
+   * @param {object} d Data object
+   * @returns {string} Color string
+   * @private
+   */
+  updateCircleColor(d) {
+    const $$ = this;
+    const fn = $$.getStylePropValue($$.color);
+    return $$.config.point_radialGradient ? $$.getGradienColortUrl(d.id) : fn ? fn(d) : null;
+  },
+  redrawCircle(cx, cy, withTransition, flow, isSub = false) {
+    const $$ = this;
+    const { state: { rendered }, $el, $T } = $$;
+    const $root = isSub ? $el.subchart : $el;
+    const selectedCircles = $root.main.selectAll(`.${$SELECT.selectedCircle}`);
+    if (!$$.config.point_show) {
+      return [];
+    }
+    const fn = $$.point(
+      "update",
+      $$,
+      cx,
+      cy,
+      $$.updateCircleColor.bind($$),
+      withTransition,
+      flow,
+      selectedCircles
+    );
+    const posAttr = $$.isCirclePoint() ? "c" : "";
+    const t = getRandom();
+    const opacityStyleFn = $$.opacityForCircle.bind($$);
+    const mainCircles = [];
+    $root.circle.each(function(d) {
+      let result = fn.bind(this)(d);
+      result = $T(result, withTransition || !rendered, t).style("opacity", opacityStyleFn);
+      mainCircles.push(result);
+    });
+    return [
+      mainCircles,
+      $T(selectedCircles, withTransition).attr(`${posAttr}x`, cx).attr(`${posAttr}y`, cy)
+    ];
+  },
+  /**
+   * Show focused data point circle
+   * @param {object} d Selected data
+   * @private
+   */
+  showCircleFocus(d) {
+    const $$ = this;
+    const { state: { hasRadar, resizing, toggling, transiting }, $el } = $$;
+    let { circle } = $el;
+    if (transiting === false && circle && $$.isPointFocusOnly()) {
+      const cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
+      const cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
+      const withTransition = toggling || isUndefined(d);
+      const fn = $$.point(
+        "update",
+        $$,
+        cx,
+        cy,
+        $$.getStylePropValue($$.color),
+        resizing ? false : withTransition
+      );
+      if (d) {
+        circle = circle.filter(function(t) {
+          var _a;
+          const data = (_a = d.filter) == null ? void 0 : _a.call(d, (v) => v.id === t.id);
+          return data.length ? (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).datum(data[0]) : false;
+        });
+      }
+      circle.attr("class", this.updatePointClass.bind(this)).style("opacity", null).each(function(d2) {
+        const { id, index, value } = d2;
+        let visibility = "hidden";
+        if (isValue(value)) {
+          fn.bind(this)(d2);
+          $$.expandCircles(index, id);
+          visibility = "";
+        }
+        this.style.visibility = visibility;
+      });
+    }
+  },
+  /**
+   * Hide focused data point circle
+   * @private
+   */
+  hideCircleFocus() {
+    const $$ = this;
+    const { $el: { circle } } = $$;
+    if ($$.isPointFocusOnly() && circle) {
+      $$.unexpandCircles();
+      circle.style("visibility", "hidden");
+    }
+  },
+  circleX(d) {
+    return this.xx(d);
+  },
+  updateCircleY(isSub = false) {
+    const $$ = this;
+    const getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), isSub);
+    return (d, i) => {
+      const id = d.id;
+      return $$.isGrouped(id) ? getPoints(d, i)[0][1] : $$.getYScaleById(id, isSub)($$.getBaseValue(d));
+    };
+  },
+  expandCircles(i, id, reset) {
+    const $$ = this;
+    const r = $$.pointExpandedR.bind($$);
+    reset && $$.unexpandCircles();
+    const circles = $$.getShapeByIndex("circle", i, id).classed($COMMON.EXPANDED, true);
+    const scale = r(circles) / $$.config.point_r;
+    const ratio = 1 - scale;
+    if ($$.isCirclePoint()) {
+      circles.attr("r", r);
+    } else {
+      circles.each(function() {
+        const point = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
+        if (this.tagName === "circle") {
+          point.attr("r", r);
+        } else {
+          const { width, height } = getBBox(this);
+          const x = ratio * (+point.attr("x") + width / 2);
+          const y = ratio * (+point.attr("y") + height / 2);
+          point.attr("transform", `translate(${x} ${y}) scale(${scale})`);
+        }
+      });
+    }
+  },
+  unexpandCircles(i) {
+    const $$ = this;
+    const r = $$.pointR.bind($$);
+    const circles = $$.getShapeByIndex("circle", i).filter(function() {
+      return (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed($COMMON.EXPANDED);
+    }).classed($COMMON.EXPANDED, false);
+    circles.attr("r", r);
+    if (!$$.isCirclePoint()) {
+      const scale = r(circles) / $$.config.point_r;
+      circles.attr("transform", scale !== 1 ? `scale(${scale})` : null);
+    }
+  },
+  pointR(d) {
+    const $$ = this;
+    const { config } = $$;
+    const pointR = config.point_r;
+    let r = pointR;
+    if ($$.isBubbleType(d)) {
+      r = $$.getBubbleR(d);
+    } else if (isFunction(pointR)) {
+      r = pointR.bind($$.api)(d);
+    }
+    d.r = r;
+    return r;
+  },
+  pointExpandedR(d) {
+    const $$ = this;
+    const { config } = $$;
+    const scale = $$.isBubbleType(d) ? 1.15 : 1.75;
+    return config.point_focus_expand_enabled ? config.point_focus_expand_r || $$.pointR(d) * scale : $$.pointR(d);
+  },
+  pointSelectR(d) {
+    const $$ = this;
+    const selectR = $$.config.point_select_r;
+    return isFunction(selectR) ? selectR(d) : selectR || $$.pointR(d) * 4;
+  },
+  /**
+   * Check if point.focus.only option can be applied.
+   * @returns {boolean}
+   * @private
+   */
+  isPointFocusOnly() {
+    const $$ = this;
+    return $$.config.point_focus_only && !$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
+  },
+  isWithinCircle(node, r) {
+    const { state } = this;
+    const mouse = getPointer(state.event, node);
+    const element = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(node);
+    const prefix = this.isCirclePoint(node) ? "c" : "";
+    const pointSensitivity = this.getPointSensitivity(element == null ? void 0 : element.datum());
+    let cx = +element.attr(`${prefix}x`);
+    let cy = +element.attr(`${prefix}y`);
+    if (!(cx || cy) && node.nodeType === 1) {
+      const { x, y } = getBoundingRect(node);
+      cx = x;
+      cy = y;
+    }
+    return Math.sqrt(
+      Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)
+    ) < (r || pointSensitivity);
+  },
+  /**
+   * Get data point sensitivity radius
+   * @param {object} d Data point object
+   * @returns {number} return the sensitivity value
+   */
+  getPointSensitivity(d) {
+    const $$ = this;
+    let sensitivity = $$.config.point_sensitivity;
+    if (!d) {
+      return sensitivity;
+    } else if (isFunction(sensitivity)) {
+      sensitivity = sensitivity.call($$.api, d);
+    } else if (sensitivity === "radius") {
+      sensitivity = d.r;
+    }
+    return sensitivity;
+  },
+  updatePointClass(d) {
+    const $$ = this;
+    const { circle } = $$.$el;
+    let pointClass = false;
+    if (isObject(d) || circle) {
+      pointClass = d === true ? circle.each(function(d2) {
+        let className = $$.getClass("circle", true)(d2);
+        if (this.getAttribute("class").indexOf($COMMON.EXPANDED) > -1) {
+          className += ` ${$COMMON.EXPANDED}`;
+        }
+        this.setAttribute("class", className);
+      }) : $$.getClass("circle", true)(d);
+    }
+    return pointClass;
+  },
+  generateGetLinePoints(lineIndices, isSub) {
+    const $$ = this;
+    const { config } = $$;
+    const x = $$.getShapeX(0, lineIndices, isSub);
+    const y = $$.getShapeY(isSub);
+    const lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub);
+    const yScale = $$.getYScaleById.bind($$);
+    return (d, i) => {
+      const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
+      const offset = lineOffset(d, i) || y0;
+      const posX = x(d);
+      let posY = y(d);
+      if (config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY)) {
+        posY = y0;
+      }
+      const point = [posX, posY - (y0 - offset)];
+      return [
+        point,
+        point,
+        // from here and below, needed for compatibility
+        point,
+        point
+      ];
+    };
+  },
+  custom: {
+    create(element, id, fillStyleFn) {
+      return element.append("use").attr("xlink:href", `#${id}`).attr("class", this.updatePointClass.bind(this)).style("fill", fillStyleFn).node();
+    },
+    update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
+      const $$ = this;
+      const { width, height } = getBBox(element.node());
+      const xPosFn2 = (d) => isValue(d.value) ? xPosFn(d) - width / 2 : 0;
+      const yPosFn2 = (d) => isValue(d.value) ? yPosFn(d) - height / 2 : 0;
+      let mainCircles = element;
+      if (withTransition) {
+        flow && mainCircles.attr("x", xPosFn2);
+        mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
+        selectedCircles && $$.$T(selectedCircles, withTransition, getTransitionName());
+      }
+      return mainCircles.attr("x", xPosFn2).attr("y", yPosFn2).style("fill", fillStyleFn);
+    }
+  },
+  // 'circle' data point
+  circle: {
+    create(element, sizeFn, fillStyleFn) {
+      return element.append("circle").attr("class", this.updatePointClass.bind(this)).attr("r", sizeFn).style("fill", fillStyleFn).node();
+    },
+    update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
+      const $$ = this;
+      let mainCircles = element;
+      if ($$.hasType("bubble")) {
+        mainCircles.attr("r", $$.pointR.bind($$));
+      }
+      if (withTransition) {
+        flow && mainCircles.attr("cx", xPosFn);
+        if (mainCircles.attr("cx")) {
+          mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
+        }
+        selectedCircles && $$.$T(mainCircles, withTransition, getTransitionName());
+      }
+      return mainCircles.attr("cx", xPosFn).attr("cy", yPosFn).style("fill", fillStyleFn);
+    }
+  },
+  // 'rectangle' data point
+  rectangle: {
+    create(element, sizeFn, fillStyleFn) {
+      const rectSizeFn = (d) => sizeFn(d) * 2;
+      return element.append("rect").attr("class", this.updatePointClass.bind(this)).attr("width", rectSizeFn).attr("height", rectSizeFn).style("fill", fillStyleFn).node();
+    },
+    update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
+      const $$ = this;
+      const r = $$.config.point_r;
+      const rectXPosFn = (d) => xPosFn(d) - r;
+      const rectYPosFn = (d) => yPosFn(d) - r;
+      let mainCircles = element;
+      if (withTransition) {
+        flow && mainCircles.attr("x", rectXPosFn);
+        mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
+        selectedCircles && $$.$T(selectedCircles, withTransition, getTransitionName());
+      }
+      return mainCircles.attr("x", rectXPosFn).attr("y", rectYPosFn).style("fill", fillStyleFn);
+    }
+  }
+});
+
+;// ./src/ChartInternal/shape/point.common.ts
+
+
+
+function _hasValidPointDrawMethods(point) {
+  return isObjectType(point) && isFunction(point.create) && isFunction(point.update);
+}
+function _insertPointInfoDefs(point, id) {
+  var _a;
+  const $$ = this;
+  const copyAttr = (from, target) => {
+    const attribs = from.attributes;
+    for (let i = 0, name; name = attribs[i]; i++) {
+      name = name.name;
+      target.setAttribute(name, from.getAttribute(name));
+    }
+  };
+  const doc = new DOMParser().parseFromString(sanitize(point), "image/svg+xml");
+  const node = doc.documentElement;
+  const clone = browser_doc.createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.svg, node.nodeName.toLowerCase());
+  clone.id = id;
+  clone.style.fill = "inherit";
+  clone.style.stroke = "inherit";
+  copyAttr(node, clone);
+  if ((_a = node.childNodes) == null ? void 0 : _a.length) {
+    const parent = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(clone);
+    if ("innerHTML" in clone) {
+      parent.html(sanitize(node.innerHTML));
+    } else {
+      toArray(node.childNodes).forEach((v) => {
+        copyAttr(v, parent.append(v.tagName).node());
+      });
+    }
+  }
+  $$.$el.defs.node().appendChild(clone);
+}
+/* harmony default export */ var point_common = ({
+  /**
+   * Check if point type option is valid
+   * @param {string} type point type
+   * @returns {boolean}
+   * @private
+   */
+  hasValidPointType(type) {
+    return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
+  },
+  /**
+   * Check if pattern point is set to be used on legend
+   * @returns {boolean}
+   * @private
+   */
+  hasLegendDefsPoint() {
+    var _a;
+    const { config } = this;
+    return config.legend_show && ((_a = config.point_pattern) == null ? void 0 : _a.length) && config.legend_usePoint;
+  },
+  getDefsPointId(id) {
+    const { state: { datetimeId } } = this;
+    return `${datetimeId}-point${id}`;
+  },
+  /**
+   * Get validated point pattern array
+   * @returns {Array} Array of point types
+   * @private
+   */
+  getValidPointPattern() {
+    const { config } = this;
+    const validPointType = /^(circle|rect(angle)?)$/i.test(config.point_type) ? config.point_type : "circle";
+    return notEmpty(config.point_pattern) ? config.point_pattern : [validPointType];
+  },
+  /**
+   * Get generate point function
+   * @returns {function}
+   * @private
+   */
+  generatePoint() {
+    const $$ = this;
+    const { $el, config } = $$;
+    const ids = [];
+    const pattern = $$.getValidPointPattern();
+    return function(method, context, ...args) {
+      return function(d) {
+        var _a, _b, _c, _d;
+        const id = $$.getTargetSelectorSuffix(d.id || ((_a = d.data) == null ? void 0 : _a.id) || d);
+        const element = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
+        ids.indexOf(id) < 0 && ids.push(id);
+        let point = pattern[ids.indexOf(id) % pattern.length];
+        if ($$.hasValidPointType(point)) {
+          point = $$[point];
+        } else if (!_hasValidPointDrawMethods(point || config.point_type)) {
+          const pointId = $$.getDefsPointId(id);
+          const defsPoint = $el.defs.select(`#${pointId}`);
+          if (defsPoint.size() < 1) {
+            _insertPointInfoDefs.call($$, point, pointId);
+          }
+          if (method === "create") {
+            return (_b = $$.custom) == null ? void 0 : _b.create.bind(context)(element, pointId, ...args);
+          } else if (method === "update") {
+            return (_c = $$.custom) == null ? void 0 : _c.update.bind(context)(element, ...args);
+          }
+        }
+        return (_d = point[method]) == null ? void 0 : _d.bind(context)(element, ...args);
+      };
+    };
+  }
+});
+
+;// ./src/config/Options/common/point.ts
+/* harmony default export */ var common_point = ({
+  /**
+   * Set point options
+   * @name point
+   * @memberof Options
+   * @type {object}
+   * @property {object} point Point object
+   * @property {boolean} [point.show=true] Whether to show each point in line.
+   * @property {number|function} [point.r=2.5] The radius size of each point.
+   *  - **NOTE:** Disabled for 'bubble' type
+   * @property {boolean|object} [point.radialGradient=false] Set the radial gradient on point.<br><br>
+   * Or customize by giving below object value:
+   *  - cx {number}: `cx` value (default: `0.3`)
+   *  - cy {number}: `cy` value (default: `0.3`)
+   *  - r {number}: `r` value (default: `0.7`)
+   *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+   *    - (default: `[[0.1, $DATA_COLOR, 1], [0.9, $DATA_COLOR, 0]]`)
+   * @property {boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
+   * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
+   *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
+   * @property {boolean} [point.focus.only=false] Show point only when is focused.
+   * @property {number|null} [point.opacity=undefined] Set point opacity value.
+   * - **NOTE:**
+   * 	- `null` will make to not set inline 'opacity' css prop.
+   * 	- when no value(or undefined) is set, it defaults to set opacity value according its chart types.
+   * @property {number|string|function} [point.sensitivity=10] The sensitivity value for interaction boundary.
+   * - **Available Values:**
+   *   - {number}: Absolute sensitivity value which is the distance from the data point in pixel.
+   *   - "radius": sensitivity based on point's radius
+   *   - Function: callback for each point to determine the sensitivity<br>
+   *    	```js
+   *   	sensitivity: function(d) {
+   * 	  // ex. of argument d:
+   * 	  // ==> {x: 2, value: 55, id: 'data3', index: 2, r: 19.820624179302296}
+   *
+   * 	  // returning d.r, will make sensitivity same as point's radius value.
+   *  	  return d.r;
+   * 	}
+   * 	```
+   * @property {number} [point.select.r=point.r*4] The radius size of each point on selected.
+   * @property {string} [point.type="circle"] The type of point to be drawn
+   * - **NOTE:**
+   *   - If chart has 'bubble' type, only circle can be used.
+   *   - For IE, non circle point expansions are not supported due to lack of transform support.
+   * - **Available Values:**
+   *   - circle
+   *   - rectangle
+   * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line
+   * - **NOTE:**
+   *   - This is an `experimental` feature and can have some unexpected behaviors.
+   *   - If chart has 'bubble' type, only circle can be used.
+   *   - For IE, non circle point expansions are not supported due to lack of transform support.
+   *   - Only common SVG tags are allowed to prevent XSS attacks. If creating charts from user input, it is recommended to sanitize input values to avoid potential vulnerabilities.
+   * - **Available Values:**
+   *   - circle
+   *   - rectangle
+   *   - svg shape tag interpreted as string<br>
+   *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
+   * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
+   * @see [Demo: point focus only](https://naver.github.io/billboard.js/demo/#Point.FocusOnly)
+   * @see [Demo: point radialGradient](https://naver.github.io/billboard.js/demo/#Point.RadialGradientPoint)
+   * @see [Demo: point sensitivity](https://naver.github.io/billboard.js/demo/#Point.PointSensitivity)
+   * @example
+   *  point: {
+   *      show: false,
+   *      r: 5,
+   *
+   *      // or customize the radius
+   *      r: function(d) {
+   *          ...
+   *          return r;
+   *      },
+   *
+   *      // will generate following radialGradient:
+   *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/radialGradient
+   *      // <radualGradient cx="0.3" cy="0.3" r="0.7">
+   *      //    <stop offset="0.1" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
+   *      //    <stop offset="0.9" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
+   *      // </radialrGradient>
+   *      radialGradient: true,
+   *
+   *      // Or customized gradient
+   *      radialGradient: {
+   *      	cx: 0.3,  // cx attributes
+   *      	cy: 0.5,  // cy attributes
+   *      	r: 0.7,  // r attributes
+   *      	stops: [
+   *      	  // offset, stop-color, stop-opacity
+   *      	  [0, "#7cb5ec", 1],
+   *
+   *      	  // setting 'null' for stop-color, will set its original data color
+   *      	  [0.5, null, 0],
+   *
+   *      	  // setting 'function' for stop-color, will pass data id as argument.
+   *      	  // It should return color string or null value
+   *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+   *      	]
+   *      },
+   *
+   *      focus: {
+   *          expand: {
+   *              enabled: true,
+   *              r: 1
+   *          },
+   *          only: true
+   *      },
+   *
+   *      // do not set inline 'opacity' css prop setting
+   *      opacity: null,
+   *
+   *      // set every data point's opacity value
+   *      opacity: 0.7,
+   *
+   *      select: {
+   *          r: 3
+   *      },
+   *
+   *      // having lower value, means how closer to be for interaction
+   *      sensitivity: 3,
+   *
+   *      // sensitivity based on point's radius
+   *      sensitivity: "radius",
+   *
+   *      // callback for each point to determine the sensitivity
+   *      sensitivity: function(d) {
+   * 	// ex. of argument d:
+   * 	// ==> {x: 2, value: 55, id: 'data3', index: 2, r: 19.820624179302296}
+   *
+   * 	// returning d.r, will make sensitivity same as point's radius value.
+   * 	return d.r;
+   *      }
+   *
+   *      // valid values are "circle" or "rectangle"
+   *      type: "rectangle",
+   *
+   *      // or indicate as pattern
+   *      pattern: [
+   *        "circle",
+   *        "rectangle",
+   *        "<polygon points='0 6 4 0 -4 0'></polygon>"
+   *     ],
+   *  }
+   */
+  point_show: true,
+  point_r: 2.5,
+  point_radialGradient: false,
+  point_sensitivity: 10,
+  point_focus_expand_enabled: true,
+  point_focus_expand_r: void 0,
+  point_focus_only: false,
+  point_opacity: void 0,
+  point_pattern: [],
+  point_select_r: void 0,
+  point_type: "circle"
+});
+
+;// ./src/config/Options/shape/line.ts
+/* harmony default export */ var shape_line = ({
+  /**
+   * Set line options
+   * @name line
+   * @memberof Options
+   * @type {object}
+   * @property {object} line Line object
+   * @property {boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
+   *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
+   * @property {Array}   [line.classes=undefined] If set, used to set a css class on each line.
+   * @property {boolean} [line.step.type=step] Change step type for step chart.<br>
+   * **Available values:**
+   * - step
+   * - step-before
+   * - step-after
+   * @property {boolean} [line.step.tooltipMatch=false] Set to `true` for `step-before` and `step-after` types to have cursor/tooltip match to hovered step's point instead of nearest point.
+   * @property {boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
+   * @property {boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
+   * @example
+   *  line: {
+   *      connectNull: true,
+   *      classes: [
+   *          "line-class1",
+   *          "line-class2"
+   *      ],
+   *      step: {
+   *          type: "step-after",
+   *
+   *          // to have cursor/tooltip match to hovered step's point instead of nearest point.
+   *          tooltipMatch: true
+   *      },
+   *
+   *      // hide all data points ('point.show=false' also has similar effect)
+   *      point: false,
+   *
+   *      // show data points for only indicated data
+   *      point: [
+   *          "data1", "data3"
+   *      ],
+   *
+   *      zerobased: false
+   *  }
+   */
+  line_connectNull: false,
+  line_step_type: "step",
+  line_step_tooltipMatch: false,
+  line_zerobased: false,
+  line_classes: void 0,
+  line_point: true
+});
 
 ;// ./src/Chart/api/axis.ts
 
@@ -18806,6 +20101,1174 @@ const options = {
   optGrid: common_grid
 };
 
+;// ./src/config/resolver/shape/axis.helpers.ts
+
+
+
+
+
+
+
+
+
+
+function extendAxis(module, option) {
+  extend(ChartInternal.prototype, Object.values(internal).concat(module));
+  extend(Chart.prototype, api);
+  Options.setOptions(Object.values(options).concat(option || []));
+}
+function extendLine(module, option) {
+  extendAxis([point_common, point, line].concat(module || []));
+  Options.setOptions([common_point, shape_line].concat(option || []));
+}
+
+;// ./src/config/resolver/shape/area.ts
+
+
+
+
+
+let area_area = () => (extendLine(shape_area, [Options_shape_area]), (area_area = () => TYPE.AREA)());
+let areaLineRange = () => (extendLine(shape_area, [Options_shape_area]), (areaLineRange = () => TYPE.AREA_LINE_RANGE)());
+let areaStepRange = () => (extendLine(shape_area, [Options_shape_area]), (areaStepRange = () => TYPE.AREA_STEP_RANGE)());
+let areaSpline = () => (extendLine(shape_area, [Options_shape_area, spline]), (areaSpline = () => TYPE.AREA_SPLINE)());
+let areaSplineRange = () => (extendLine(shape_area, [Options_shape_area, spline]), (areaSplineRange = () => TYPE.AREA_SPLINE_RANGE)());
+let areaStep = () => (extendLine(shape_area, [Options_shape_area]), (areaStep = () => TYPE.AREA_STEP)());
+
+;// ./src/ChartInternal/shape/bar.ts
+
+
+
+
+function _getConnectLineType(id) {
+  const connectLine = this.config.bar_connectLine;
+  const type = (connectLine == null ? void 0 : connectLine[id]) || connectLine;
+  return /^(start|end)\-(start|end)$/.test(type) ? type : null;
+}
+/* harmony default export */ var bar = ({
+  initBar() {
+    const { $el, config, state: { clip } } = this;
+    $el.bar = $el.main.select(`.${$COMMON.chart}`);
+    $el.bar = config.bar_front ? $el.bar.append("g") : $el.bar.insert("g", ":first-child");
+    $el.bar.attr("class", $BAR.chartBars).call(this.setCssRule(false, `.${$BAR.chartBars}`, ["pointer-events:none"]));
+    if (config.clipPath === false && (config.bar_radius || config.bar_radius_ratio)) {
+      $el.bar.attr("clip-path", clip.pathXAxis.replace(/#[^)]*/, `#${clip.id}`));
+    }
+  },
+  updateTargetsForBar(targets) {
+    const $$ = this;
+    const { config } = $$;
+    const classBars = $$.getClass("bars", true);
+    const isSelectable = config.interaction_enabled && config.data_selection_isselectable;
+    const mainBarEnter = updateTargetsForShape.call($$, targets, {
+      type: "Bar",
+      elKey: "bar",
+      containerClass: $BAR.chartBars,
+      itemClass: $BAR.chartBar,
+      initFn: $$.initBar
+    });
+    mainBarEnter.append("g").attr("class", classBars).style("cursor", (d) => {
+      var _a;
+      return ((_a = isSelectable == null ? void 0 : isSelectable.bind) == null ? void 0 : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null;
+    }).call((selection) => {
+      $$.setCssRule(true, ` .${$BAR.bar}`, ["fill"], $$.color)(selection);
+      selection.each(function(d) {
+        if (_getConnectLineType.call($$, d.id)) {
+          (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).append("path").attr("class", $BAR.barConnectLine);
+        }
+      });
+    });
+  },
+  /**
+   * Generate/Update elements
+   * @param {boolean} withTransition Transition for exit elements
+   * @param {boolean} isSub Subchart draw
+   * @private
+   */
+  updateBar(withTransition, isSub = false) {
+    const $$ = this;
+    const { config, $el, $T } = $$;
+    const $root = isSub ? $el.subchart : $el;
+    const classBar = $$.getClass("bar", true);
+    const initialOpacity = $$.initialOpacity.bind($$);
+    config.bar_linearGradient && $$.updateLinearGradient();
+    const bar = $root.main.selectAll(`.${$BAR.bars}`).selectAll(`.${$BAR.bar}`).data($$.labelishData.bind($$));
+    $T(bar.exit(), withTransition).style("opacity", "0").remove();
+    $root.bar = bar.enter().append("path").attr("class", classBar).style("fill", $$.updateBarColor.bind($$)).merge(bar).style("opacity", initialOpacity);
+    $$.setRatioForGroupedData($root.bar.data());
+  },
+  /**
+   * Update bar color
+   * @param {object} d Data object
+   * @returns {string} Color string
+   * @private
+   */
+  updateBarColor(d) {
+    const $$ = this;
+    const fn = $$.getStylePropValue($$.color);
+    return getShapeColorWithGradient.call($$, d, "bar_linearGradient", fn || (() => null));
+  },
+  /**
+   * Redraw function
+   * @param {function} drawFn Retuned function from .getDrawShape() => .generateDrawBar()
+   * @param {boolean} withTransition With or without transition
+   * @param {boolean} isSub Subchart draw
+   * @returns {Array}
+   * @private
+   */
+  redrawBar(drawFn, withTransition, isSub = false) {
+    const $$ = this;
+    const { bar } = isSub ? $$.$el.subchart : $$.$el;
+    const barPath = [];
+    return [
+      $$.$T(bar, withTransition, getRandom()).attr("d", function(d, i, arr) {
+        const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
+        const connectLineType = _getConnectLineType.call($$, d.id);
+        if (path.length > 1) {
+          barPath.push(path[1]);
+          if (i === arr.length - 1) {
+            const barConnectLineNode = $$.$T(
+              (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this.parentNode.querySelector(`.${$BAR.barConnectLine}`)),
+              withTransition,
+              getRandom()
+            );
+            $$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
+            barPath.splice(0);
+          }
+        }
+        return path[0];
+      }).style("fill", $$.updateBarColor.bind($$)).style("clip-path", (d) => d.clipPath).style("opacity", null)
+    ];
+  },
+  /**
+   * Generate draw function
+   * @param {object} barIndices data order within x axis.
+   * barIndices ==> {data1: 0, data2: 0, data3: 1, data4: 1, __max__: 1}
+   *
+   * When gropus given as:
+   *  groups: [
+   * 		["data1", "data2"],
+   * 		["data3", "data4"]
+   * 	],
+   *
+   * Will be rendered as:
+   * 		data1 data3   data1 data3
+   * 		data2 data4   data2 data4
+   * 		-------------------------
+   * 			 0             1
+   * @param {boolean} isSub If is for subchart
+   * @returns {function}
+   * @private
+   */
+  generateDrawBar(barIndices, isSub) {
+    const $$ = this;
+    const { config } = $$;
+    const getPoints = $$.generateGetBarPoints(barIndices, isSub);
+    const isRotated = config.axis_rotated;
+    const barRadius = config.bar_radius;
+    const barRadiusRatio = config.bar_radius_ratio;
+    const getRadius = isNumber(barRadius) && barRadius > 0 ? () => barRadius : isNumber(barRadiusRatio) ? (w) => w * barRadiusRatio : null;
+    return (d, i) => {
+      const points = getPoints(d, i);
+      const indexX = +isRotated;
+      const indexY = +!indexX;
+      const isUnderZero = d.value < 0;
+      const isInverted = config[`axis_${$$.axis.getId(d.id)}_inverted`];
+      const isNegative = !isInverted && isUnderZero || isInverted && !isUnderZero;
+      const pathRadius = ["", ""];
+      const isGrouped = $$.isGrouped(d.id);
+      const isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
+      const init = [
+        points[0][indexX],
+        points[0][indexY]
+      ];
+      let radius = 0;
+      d.clipPath = null;
+      if (getRadius) {
+        const index = isRotated ? indexY : indexX;
+        const barW = points[2][index] - points[0][index];
+        radius = !isGrouped || isRadiusData ? getRadius(barW) : 0;
+        const arc = `a${radius} ${radius} ${isNegative ? `1 0 0` : `0 0 1`} `;
+        pathRadius[+!isRotated] = `${arc}${radius},${radius}`;
+        pathRadius[+isRotated] = `${arc}${[-radius, radius][isRotated ? "sort" : "reverse"]()}`;
+        isNegative && pathRadius.reverse();
+      }
+      const pos = isRotated ? points[1][indexX] + (isNegative ? radius : -radius) : points[1][indexY] + (isNegative ? -radius : radius);
+      if (radius) {
+        let clipPath = "";
+        if (isRotated) {
+          if (isNegative && init[0] < pos) {
+            clipPath = `0 ${pos - init[0]}px 0 0`;
+          } else if (!isNegative && init[0] > pos) {
+            clipPath = `0 0 0 ${init[0] - pos}px`;
+          }
+        } else {
+          if (isNegative && init[1] > pos) {
+            clipPath = `${init[1] - pos}px 0 0 0`;
+          } else if (!isNegative && init[1] < pos) {
+            clipPath = `0 0 ${pos - init[1]}px 0`;
+          }
+        }
+        if (clipPath) {
+          d.clipPath = `inset(${clipPath})`;
+        }
+      }
+      const path = isRotated ? `H${pos} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${points[3][indexX]}` : `V${pos} ${pathRadius[0]}H${points[2][indexX] - radius} ${pathRadius[1]}V${points[3][indexY]}`;
+      const coords = [`M${points[0][indexX]},${points[0][indexY]}${path}z`];
+      if (_getConnectLineType.call($$, d.id)) {
+        coords.push(isRotated ? {
+          x: points[0][indexX],
+          y: points[0][indexY],
+          width: points[0][indexX] - pos,
+          height: points[2][indexY] - points[0][indexY]
+        } : {
+          x: points[0][indexX],
+          y: pos,
+          width: points[2][indexX] - points[0][indexX],
+          height: points[3][indexY] - pos
+        });
+      }
+      return coords;
+    };
+  },
+  /**
+   * Determine if given stacking bar data is radius type
+   * @param {object} d Data row
+   * @returns {boolean}
+   */
+  isStackingRadiusData(d) {
+    const $$ = this;
+    const { $el, config, data, state } = $$;
+    const { id, index, value } = d;
+    if (state.hiddenTargetIds.indexOf(id) > -1) {
+      const target = $el.bar.filter((d2) => d2.id === id && d2.value === value);
+      return !target.empty() && /a\d+/i.test(target.attr("d"));
+    }
+    const keys = config.data_groups.find((v) => v.indexOf(id) > -1);
+    const sortedList = $$.orderTargets(
+      $$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))
+    ).filter((v) => keys.indexOf(v.id) > -1);
+    const sortedIds = sortedList.map(
+      (v) => v.values.filter(
+        (v2) => v2.index === index && (isNumber(value) && value > 0 ? v2.value > 0 : v2.value < 0)
+      )[0]
+    ).filter(Boolean).map((v) => v.id);
+    return value !== 0 && sortedIds.indexOf(id) === sortedIds.length - 1;
+  },
+  /**
+   * Generate bar coordinate points data
+   * @param {object} barIndices Data order within x axis.
+   * @param {boolean} isSub If is for subchart
+   * @returns {Array} Array of coordinate points
+   * @private
+   */
+  generateGetBarPoints(barIndices, isSub) {
+    const $$ = this;
+    const { config } = $$;
+    const axis = isSub ? $$.axis.subX : $$.axis.x;
+    const barTargetsNum = $$.getIndicesMax(barIndices) + 1;
+    const barW = $$.getBarW("bar", axis, barTargetsNum);
+    const barX = $$.getShapeX(barW, barIndices, !!isSub);
+    const barY = $$.getShapeY(!!isSub);
+    const barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);
+    const yScale = $$.getYScaleById.bind($$);
+    return (d, i) => {
+      const { id } = d;
+      const y0 = yScale.call($$, id, isSub)($$.getShapeYMin(id));
+      const offset = barOffset(d, i) || y0;
+      const width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
+      const isInverted = config[`axis_${$$.axis.getId(id)}_inverted`];
+      const value = d.value;
+      const posX = barX(d);
+      let posY = barY(d);
+      if (config.axis_rotated && !isInverted && (value > 0 && posY < y0 || value < 0 && y0 < posY)) {
+        posY = y0;
+      }
+      if (!$$.isBarRangeType(d)) {
+        posY -= y0 - offset;
+      }
+      const startPosX = posX + width;
+      return [
+        [posX, offset],
+        [posX, posY],
+        [startPosX, posY],
+        [startPosX, offset]
+      ];
+    };
+  },
+  /**
+   * Update the bar connect line path
+   * @param {d3Selection} node d3 selection of bar connect line
+   * @param {string} type Type of connect line, one of "start-start", "start-end", "end-start", "end-end"
+   * @param {Array} barPath d3 path data for the bar
+   */
+  updateConnectLine(node, type, barPath) {
+    const path = barPath.map((v, i, arr) => {
+      const isRotated = this.config.axis_rotated;
+      const isStart = /^start-(start|end)$/.test(type);
+      const isEnd = /^end-(start|end)$/.test(type);
+      const path2 = [];
+      const x = isRotated ? isEnd ? v.x - v.width : v.x : v.x + v.width;
+      const y = isRotated ? v.y + v.height : isStart ? v.y + v.height : v.y;
+      if (i === 0) {
+        path2.push(`${x},${y}`);
+      } else {
+        path2.push(
+          isRotated ? `L${v.x - (/\w+-end$/.test(type) ? v.width : 0)},${v.y}` : `L${v.x},${v.y + (/\w+-start$/.test(type) ? v.height : 0)}`
+        );
+        if (i < arr.length - 1) {
+          path2.push(`M${x},${y}`);
+        }
+      }
+      return path2.join(" ");
+    });
+    node.attr("d", `M${path.join("")}z`);
+  }
+});
+
+;// ./src/config/Options/shape/bar.ts
+/* harmony default export */ var shape_bar = ({
+  /**
+   * Set bar options
+   * @name bar
+   * @memberof Options
+   * @type {object}
+   * @property {object} bar Bar object
+   * @property {boolean} [bar.front=false] Set 'bar' to be positioned over(on the top) other shapes elements.
+   * @property {number} [bar.indices.removeNull=false] Remove nullish data on bar indices positions.
+   * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
+   * @property {boolean|object} [bar.linearGradient=false] Set the linear gradient on bar.<br><br>
+   * Or customize by giving below object value:
+   *  - x {Array}: `x1`, `x2` value (default: `[0, 0]`)
+   *  - y {Array}: `y1`, `y2` value (default: `[0, 1]`)
+   *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+   *    - (default: `[[0, $DATA_COLOR, 1], [1, $DATA_COLOR, 0]]`)
+   * @property {boolean} [bar.overlap=false] Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
+   * @property {number} [bar.padding=0] The padding pixel value between each bar.
+   * @property {number} [bar.radius] Set the radius of bar edge in pixel.
+   * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
+   * @property {number} [bar.sensitivity=2] The sensitivity offset value for interaction boundary.
+   * @property {number|function|object} [bar.width] Change the width of bar chart.
+   * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
+   * - **NOTE:** Criteria for ratio.
+   *   - When x ticks count is same with the data count, the baseline for ratio is the minimum interval value of x ticks.
+   * 	   - ex. when timeseries x values are: [2024-01-01, 2024-02-01, 2024-03-01], the minimum interval will be `2024-02-01 ~ 2024-03-01`
+   *     - if the minimum interval is 30px, then ratio=1 means 30px.
+   *   - When x ticks count is lower than the data count, the baseline will be calculated as `chart width / data count`.
+   * 	   - ex. when chart width is 500, data count is 5, then ratio=1 means 100px.
+   * @property {number} [bar.width.max] The maximum width value for ratio.
+   * @property {number} [bar.width.dataname] Change the width of bar for indicated dataset only.
+   * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
+   *  - **NOTE:**
+   *   - Works only for non-stacked bar
+   * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
+   * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
+   * @see [Demo: bar front](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarFront)
+   * @see [Demo: bar indices](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarIndices)
+   * @see [Demo: bar overlap](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarOverlap)
+   * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
+   * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
+   * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
+   * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
+   * @example
+   *  bar: {
+   *      // make bar shape to be positioned over the other shape elements
+   *      front: true,
+   *
+   *      // remove nullish data on bar indices positions
+   *      indices: {
+   *          removeNull: true
+   *      },
+   *
+   *      // will generate following linearGradient:
+   *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
+   *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
+   *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
+   *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
+   *      // </linearGradient>
+   *      linearGradient: true,
+   *
+   *      // Or customized gradient
+   *      linearGradient: {
+   *      	x: [0, 0],  // x1, x2 attributes
+   *      	y: [0, 0],  // y1, y2 attributes
+   *      	stops: [
+   *      	  // offset, stop-color, stop-opacity
+   *      	  [0, "#7cb5ec", 1],
+   *
+   *      	  // setting 'null' for stop-color, will set its original data color
+   *      	  [0.5, null, 0],
+   *
+   *      	  // setting 'function' for stop-color, will pass data id as argument.
+   *      	  // It should return color string or null value
+   *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+   *      	]
+   *      },
+   *
+   *      // remove nullish da
+   *      overlap: true,
+   *
+   *      padding: 1,
+   *
+   *      // bar radius
+   *      radius: 10,
+   *      // or
+   *      radius: {
+   *          ratio: 0.5
+   *      }
+   *
+   *      label: {
+   *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the y Axis domain range value.
+   *          // if data value is below than 0.1, text label will be hidden.
+   *          threshold: 0.1,
+   *      },
+   *
+   *      // will not have offset between each bar elements for interaction
+   *      sensitivity: 0,
+   *
+   *      width: 10,
+   *
+   *      // or specify width callback. The callback will receive width, targetsNum, maxDataCount as arguments.
+   *      // - width: chart area width
+   *      // - targetsNum: number of targets
+   *      // - maxDataCount: maximum data count among targets
+   *      width: function(width, targetsNum, maxDataCount) {
+   *            return width / (targetsNum * maxDataCount);
+   *      }
+   *
+   *      // or specify ratio & max
+   *      width: {
+   *          ratio: 0.2,
+   *          max: 20
+   *      },
+   *
+   *      // or specify width per dataset
+   *      width: {
+   *          data1: 20,
+   *          data2: {
+   *              ratio: 0.2,
+   *              max: 20
+   *          }
+   *      },
+   *
+   *      zerobased: false
+   *  }
+   */
+  bar_connectLine: false,
+  bar_front: false,
+  bar_indices_removeNull: false,
+  bar_label_threshold: 0,
+  bar_linearGradient: false,
+  bar_overlap: false,
+  bar_padding: 0,
+  bar_radius: void 0,
+  bar_radius_ratio: void 0,
+  bar_sensitivity: 2,
+  bar_width: void 0,
+  bar_width_ratio: 0.6,
+  bar_width_max: void 0,
+  bar_zerobased: true
+});
+
+;// ./src/config/resolver/shape/bar.ts
+
+
+
+
+
+
+let bar_bar = () => (extendAxis([bar, point_common], [shape_bar, common_point]), (bar_bar = () => TYPE.BAR)());
+
+;// ./src/ChartInternal/shape/bubble.ts
+
+
+/* harmony default export */ var bubble = ({
+  /**
+   * Initializer
+   * @private
+   */
+  initBubble() {
+    const $$ = this;
+    const { config } = $$;
+    if ($$.hasType("bubble")) {
+      config.point_show = true;
+      config.point_type = "circle";
+    }
+  },
+  /**
+   * Get user agent's computed value
+   * @returns {number}
+   * @private
+   */
+  getBaseLength() {
+    const $$ = this;
+    const { width, height } = $$.state;
+    const cacheKey = KEY.bubbleBaseLength;
+    let baseLength = $$.cache.get(cacheKey);
+    if (!baseLength) {
+      $$.cache.add(cacheKey, baseLength = getMinMax("min", [width, height]));
+    }
+    return baseLength;
+  },
+  /**
+   * Get the radius value for bubble circle
+   * @param {object} d Data object
+   * @returns {number}
+   * @private
+   */
+  getBubbleR(d) {
+    const $$ = this;
+    let maxR = $$.config.bubble_maxR;
+    if (isFunction(maxR)) {
+      maxR = maxR.bind($$.api)(d);
+    } else if (!isNumber(maxR)) {
+      maxR = $$.getBaseLength() / ($$.getMaxDataCount() * 2) + 12;
+    }
+    const max = getMinMax("max", $$.getMinMaxData().max.map((d2) => $$.isBubbleZType(d2) ? $$.getBubbleZData(d2.value, "y") : isObject(d2.value) ? d2.value.mid : d2.value));
+    const maxArea = maxR * maxR * Math.PI;
+    const area = ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value) * (maxArea / max);
+    return Math.sqrt(area / Math.PI);
+  },
+  /**
+   * Get bubble dimension data
+   * @param {object|Array} d data value
+   * @param {string} type - y or z
+   * @returns {number}
+   * @private
+   */
+  getBubbleZData(d, type) {
+    return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
+  }
+});
+
+;// ./src/config/Options/shape/bubble.ts
+/* harmony default export */ var shape_bubble = ({
+  /**
+   * Set bubble options
+   * @name bubble
+   * @memberof Options
+   * @type {object}
+   * @property {object} bubble bubble object
+   * @property {number|function} [bubble.maxR=35] Set the max bubble radius value
+   * @property {boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
+   * @example
+   *  bubble: {
+   *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.
+   *      // And the lesser will have radius relatively from the max value.
+   *      maxR: 50,
+   *
+   *      // or set radius callback
+   *      maxR: function(d) {
+   *          // ex. of d param - {x: Fri Oct 06 2017 00:00:00 GMT+0900, value: 80, id: "data2", index: 5}
+   *          ...
+   *          return Math.sqrt(d.value * 2);
+   *      },
+   *      zerobased: false
+   *  }
+   */
+  bubble_maxR: 35,
+  bubble_zerobased: false
+});
+
+;// ./src/config/resolver/shape/bubble.ts
+
+
+
+
+
+
+
+let bubble_bubble = () => (extendAxis(
+  [point_common, point, bubble],
+  [shape_bubble, common_point]
+), (bubble_bubble = () => TYPE.BUBBLE)());
+
+;// ./src/ChartInternal/shape/candlestick.ts
+var candlestick_defProp = Object.defineProperty;
+var candlestick_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var candlestick_hasOwnProp = Object.prototype.hasOwnProperty;
+var candlestick_propIsEnum = Object.prototype.propertyIsEnumerable;
+var candlestick_defNormalProp = (obj, key, value) => key in obj ? candlestick_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var candlestick_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (candlestick_hasOwnProp.call(b, prop))
+      candlestick_defNormalProp(a, prop, b[prop]);
+  if (candlestick_getOwnPropSymbols)
+    for (var prop of candlestick_getOwnPropSymbols(b)) {
+      if (candlestick_propIsEnum.call(b, prop))
+        candlestick_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+
+
+
+
+/* harmony default export */ var candlestick = ({
+  initCandlestick() {
+    initShapeElement.call(this, {
+      elKey: "candlestick",
+      className: $CANDLESTICK.chartCandlesticks
+    });
+  },
+  /**
+   * Update targets by its data
+   * called from: ChartInternal.updateTargets()
+   * @param {Array} targets Filtered target by type
+   * @private
+   */
+  updateTargetsForCandlestick(targets) {
+    updateTargetsForShape.call(this, targets, {
+      type: "Candlestick",
+      elKey: "candlestick",
+      containerClass: $CANDLESTICK.chartCandlesticks,
+      itemClass: $CANDLESTICK.chartCandlestick,
+      initFn: this.initCandlestick,
+      withFocus: false,
+      withStyles: false
+    }).style("pointer-events", "none");
+  },
+  /**
+   * Generate/Update elements
+   * @param {boolean} withTransition Transition for exit elements
+   * @param {boolean} isSub Subchart draw
+   * @private
+   */
+  updateCandlestick(withTransition, isSub = false) {
+    const $$ = this;
+    const { $el, $T } = $$;
+    const $root = isSub ? $el.subchart : $el;
+    const classSetter = $$.getClass("candlestick", true);
+    const initialOpacity = $$.initialOpacity.bind($$);
+    const candlestick = $root.main.selectAll(`.${$CANDLESTICK.chartCandlestick}`).selectAll(`.${$CANDLESTICK.candlestick}`).data($$.labelishData.bind($$));
+    $T(candlestick.exit(), withTransition).style("opacity", "0").remove();
+    const candlestickEnter = candlestick.enter().filter((d) => d.value).append("g").attr("class", classSetter);
+    candlestickEnter.append("line");
+    candlestickEnter.append("path");
+    $root.candlestick = candlestick.merge(candlestickEnter).style("opacity", initialOpacity);
+  },
+  /**
+   * Get draw function
+   * @param {object} indices Indice data
+   * @param {boolean} isSub Subchart draw
+   * @returns {function}
+   * @private
+   */
+  generateDrawCandlestick(indices, isSub) {
+    const $$ = this;
+    const { config } = $$;
+    const getPoints = $$.generateGetCandlestickPoints(indices, isSub);
+    const isRotated = config.axis_rotated;
+    const downColor = config.candlestick_color_down;
+    return (d, i, g) => {
+      const points = getPoints(d, i);
+      const value = $$.getCandlestickData(d);
+      const isUp = value == null ? void 0 : value._isUp;
+      const indexX = +isRotated;
+      const indexY = +!indexX;
+      if (g.classed) {
+        g.classed($CANDLESTICK[isUp ? "valueUp" : "valueDown"], true);
+      }
+      const path = isRotated ? `H${points[1][1]} V${points[1][0]} H${points[0][1]}` : `V${points[1][1]} H${points[1][0]} V${points[0][1]}`;
+      g.select("path").attr("d", `M${points[0][indexX]},${points[0][indexY]}${path}z`).style("fill", (d2) => {
+        const color = isUp ? $$.color(d2) : isObject(downColor) ? downColor[d2.id] : downColor;
+        return color || $$.color(d2);
+      });
+      const line = g.select("line");
+      const pos = isRotated ? {
+        x1: points[2][1],
+        x2: points[2][2],
+        y1: points[2][0],
+        y2: points[2][0]
+      } : {
+        x1: points[2][0],
+        x2: points[2][0],
+        y1: points[2][1],
+        y2: points[2][2]
+      };
+      for (const x in pos) {
+        line.attr(x, pos[x]);
+      }
+    };
+  },
+  /**
+   * Generate shape drawing points
+   * @param {object} indices Indice data
+   * @param {boolean} isSub Subchart draw
+   * @returns {function}
+   */
+  generateGetCandlestickPoints(indices, isSub = false) {
+    const $$ = this;
+    const axis = isSub ? $$.axis.subX : $$.axis.x;
+    const targetsNum = $$.getIndicesMax(indices) + 1;
+    const barW = $$.getBarW("candlestick", axis, targetsNum);
+    const x = $$.getShapeX(barW, indices, !!isSub);
+    const y = $$.getShapeY(!!isSub);
+    const shapeOffset = $$.getShapeOffset($$.isBarType, indices, !!isSub);
+    const yScale = $$.getYScaleById.bind($$);
+    return (d, i) => {
+      const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
+      const offset = shapeOffset(d, i) || y0;
+      const width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
+      const value = $$.getCandlestickData(d);
+      let points;
+      if (value && isNumber(value.open) && isNumber(value.close)) {
+        const posX = {
+          start: x(d),
+          end: 0
+        };
+        posX.end = posX.start + width;
+        const posY = {
+          start: y(value.open),
+          end: y(value.close)
+        };
+        const posLine = {
+          x: posX.start + width / 2,
+          high: y(value.high),
+          low: y(value.low)
+        };
+        posY.start -= y0 - offset;
+        points = [
+          [posX.start, posY.start],
+          [posX.end, posY.end],
+          [posLine.x, posLine.low, posLine.high]
+        ];
+      } else {
+        points = [[0, 0], [0, 0], [0, 0, 0]];
+      }
+      return points;
+    };
+  },
+  /**
+   * Redraw function
+   * @param {function} drawFn Retuned functino from .generateDrawCandlestick()
+   * @param {boolean} withTransition With or without transition
+   * @param {boolean} isSub Subchart draw
+   * @returns {Array}
+   */
+  redrawCandlestick(drawFn, withTransition, isSub = false) {
+    const $$ = this;
+    const { $el, $T } = $$;
+    const { candlestick } = isSub ? $el.subchart : $el;
+    const rand = getRandom(true);
+    return [
+      candlestick.each(function(d, i) {
+        const g = $T((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this), withTransition, rand);
+        drawFn(d, i, g);
+      }).style("opacity", null)
+    ];
+  },
+  /**
+   * Get candlestick data as object
+   * @param {object} param Data object
+   * @param {Array|object} param.value Data value
+   * @returns {object|null} Converted data object
+   * @private
+   */
+  getCandlestickData({ value }) {
+    let d;
+    if (isArray(value)) {
+      const [open, high, low, close, volume = false] = value;
+      d = { open, high, low, close };
+      if (volume !== false) {
+        d.volume = volume;
+      }
+    } else if (isObject(value)) {
+      d = candlestick_spreadValues({}, value);
+    }
+    if (d) {
+      d._isUp = d.close >= d.open;
+    }
+    return d || null;
+  }
+});
+
+;// ./src/config/Options/shape/candlestick.ts
+/* harmony default export */ var shape_candlestick = ({
+  /**
+   * Set candlestick options
+   * @name candlestick
+   * @memberof Options
+   * @type {object}
+   * @property {object} candlestick Candlestick object
+   * @property {number} [candlestick.width] Change the width.
+   * @property {number} [candlestick.width.ratio=0.6] Change the width by ratio.
+   * @property {number} [candlestick.width.max] The maximum width value for ratio.
+   * @property {number} [candlestick.width.dataname] Change the width for indicated dataset only.
+   * @property {number} [candlestick.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
+   * @property {number} [candlestick.width.dataname.max] The maximum width value for ratio.
+   * @property {object} [candlestick.color] Color setting.
+   * @property {string|object} [candlestick.color.down] Change down(bearish) value color.
+   * @property {string} [candlestick.color.down.dataname] Change down value color for indicated dataset only.
+   *
+   * @see [Demo](https://naver.github.io/billboard.js/demo/##Chart.CandlestickChart)
+   * @example
+   *  candlestick: {
+   *      width: 10,
+   *
+   *      // or
+   *      width: {
+   *         	ratio: 0.2,
+   *         	max: 20
+   *      },
+   *
+   *      // or specify width per dataset
+   *      width: {
+   *         	data1: 20,
+   *         	data2: {
+   *         	    ratio: 0.2,
+   *         		max: 20
+   *         	}
+   *      },
+   *      color: {
+   *  	  	// specify bearish color
+   *  	  	down: "red",
+   *
+   *  	  	// or specify color per dataset
+   *  	  	down: {
+   *  	  		data1: "red",
+   *  	  		data2: "blue",
+   *  	  	}
+   *      }
+   *  }
+   */
+  candlestick_width: void 0,
+  candlestick_width_ratio: 0.6,
+  candlestick_width_max: void 0,
+  candlestick_color_down: "red"
+});
+
+;// ./src/config/resolver/shape/candlestick.ts
+
+
+
+
+
+
+let candlestick_candlestick = () => (extendAxis(
+  [candlestick, point_common],
+  [shape_candlestick, common_point]
+), (candlestick_candlestick = () => TYPE.CANDLESTICK)());
+
+;// ./src/config/Options/shape/arc.ts
+/* harmony default export */ var arc = ({
+  /**
+   * Set arc options
+   * @name arc
+   * @memberof Options
+   * @type {object}
+   * @property {object} arc Arc object
+   * @property {number|function} [arc.cornerRadius=0] Set corner radius of Arc(donut/gauge/pie/polar) shape.
+   *  - **NOTE:**
+   * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
+   * @property {number} [arc.cornerRadius.ratio=0] Set ratio relative of outer radius.
+   * @property {object} [arc.needle] Set needle options.
+   * @property {boolean} [arc.needle.show=false] Show or hide needle.
+   * @property {string} [arc.needle.color] Set needle filled color.
+   * @property {function} [arc.needle.path] Set custom needle path function.
+   *  - **NOTE:**
+   *   - The path should be starting from 0,0 (which is center) to top center coordinate.
+   *   - The function will receive, `length`{number} parameter which indicating the needle length in pixel relative to radius.
+   * @property {number} [arc.needle.value] Set needle value.
+   *  - **NOTE:**
+   *   - For single gauge chart, needle will point the data value by default, otherwise will point 0(zero).
+   * @property {number} [arc.needle.length=100] Set needle length in percentages relative to radius.
+   * @property {object} [arc.needle.top] Set needle top options.
+   * @property {number} [arc.needle.top.rx=0] Set needle top [rx radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+   * @property {number} [arc.needle.top.ry=0] Set needle top [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+   * @property {number} [arc.needle.top.width=0] Set needle top width in pixel.
+   * @property {object} [arc.needle.bottom] Set needle bottom options.
+   * @property {number} [arc.needle.bottom.rx=1] Set needle bottom [rx radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+   * @property {number} [arc.needle.bottom.ry=1] Set needle bottom [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+   * @property {number} [arc.needle.bottom.width=15] Set needle bottom width in pixel.
+   * @property {number} [arc.needle.bottom.len=0] Set needle bottom length in pixel. Setting this value, will make bottom larger starting from center.
+   * @property {object} [arc.rangeText] Set rangeText options.
+   * @property {Array} [arc.rangeText.values] Set range text values to be shown around Arc.
+   * - When `unit: 'absolute'`: Given values are treated as absolute values.
+   * - When `unit: '%'`: Given values are treated as percentages.
+   * @property {string} [arc.rangeText.unit="absolute"] Specify the range text unit.
+   * - "absolute": Show absolute value
+   * - "%": Show percentage value
+   * @property {boolean} [arc.rangeText.fixed=false] Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
+   * @property {function} [arc.rangeText.format] Set format function for the range text.
+   * @property {number} [arc.rangeText.position] Set position function or object for the range text.
+   * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
+   * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#PieChartOptions.CornerRadius)
+   * @see [Demo: Donut needle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutNeedle)
+   * @see [Demo: Donut RangeText](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutRangeText)
+   * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
+   * @see [Demo: Gauge needle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeNeedle)
+   * @see [Demo: Gauge RangeText](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeRangeText)
+   * @example
+   *  arc: {
+   *      cornerRadius: 12,
+   *
+   *      // can customize corner radius for each data with function callback
+   *      //
+   *      // The function will receive:
+   *      // - id {string}: Data id
+   *      // - value {number}: Data value
+   *      // - outerRadius {number}: Outer radius value
+   *      cornerRadius: function(id, value, outerRadius) {
+   *          return (id === "data1" && value > 10) ?
+   *          	50 : outerRadius * 1.2;
+   *      },
+   *
+   *      // set ratio relative of outer radius
+   *      cornerRadius: {
+   *          ratio: 0.5
+   *      },
+   *
+   *      needle: {
+   *       	show: true,
+   *       	color: "red", // any valid CSS color
+   *       	path: function(length) {
+   *       	  const len = length - 20;
+   *
+   *       	  // will return upper arrow shape path
+   *       	  // Note: The path should begun from '0,0' coordinate to top center.
+   *       	  const path = `M 0 -${len + 20}
+   *       		L -12 -${len}
+   *       		L -5 -${len}
+   *       		L -5 0
+   *       		A 1 1 0 0 0 5 0
+   *       		L 5 -${len}
+   *       		L 12 -${len} Z`;
+   *
+   *       	  return path;
+   *       	},
+   *       	value: 40,  // will make needle to point value 40.
+   *       	length: 80, // needle length in percentages relative to radius.
+   *
+   *       	top: {
+   *       	  // rx and ry are the two radii of the ellipse;
+   *       	  // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
+   *       	  rx: 1,
+   *       	  ry: 1,
+   *       	  width: 5
+   *       	},
+   *       	bottom: {
+   *       	  // rx and ry are the two radii of the ellipse;
+   *       	  // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
+   *       	  rx: 1,
+   *       	  ry: 1,
+   *       	  width: 10
+   *       	  len: 10
+   *       	}
+   *      },
+   *
+   *      rangeText: {
+   *       	values: [15, 30, 50, 75, 95],
+   *       	unit: "%",
+   *       	fixed: false, // only available for gauge chart
+   *       	format: function(v) {
+   *       	  return v === 15 ? "Fifteen" : v;
+   *       	},
+   *
+   *       	position: function(v) {
+   *       	  return v === 15 ? {x: 20, y: 10} : null; // can return one props value also.
+   *       	},
+   *       	position: {x: 10, y: 15},
+   *       	position: {x: 10}
+   *      }
+   *  }
+   */
+  arc_cornerRadius: 0,
+  arc_cornerRadius_ratio: 0,
+  arc_needle_show: false,
+  arc_needle_color: void 0,
+  arc_needle_value: void 0,
+  arc_needle_path: void 0,
+  arc_needle_length: 100,
+  arc_needle_top_rx: 0,
+  arc_needle_top_ry: 0,
+  arc_needle_top_width: 0,
+  arc_needle_bottom_rx: 1,
+  arc_needle_bottom_ry: 1,
+  arc_needle_bottom_width: 15,
+  arc_needle_bottom_len: 0,
+  arc_rangeText_values: void 0,
+  arc_rangeText_unit: "absolute",
+  arc_rangeText_fixed: false,
+  arc_rangeText_format: void 0,
+  arc_rangeText_position: void 0
+});
+
+;// ./src/config/Options/shape/donut.ts
+/* harmony default export */ var donut = ({
+  /**
+   * Set donut options
+   * @name donut
+   * @memberof Options
+   * @type {object}
+   * @property {object} donut Donut object
+   * @property {boolean} [donut.label.show=true] Show or hide label on each donut piece.
+   * @property {function} [donut.label.format] Set formatter for the label on each donut piece.
+   * @property {number} [donut.label.threshold=0.05] Set threshold ratio to show/hide labels.
+   * @property {number|function} [donut.label.ratio=undefined] Set ratio of labels position.
+   * @property {boolean|object} [donut.label.line=false] Enable label with lines (displayed outside with connector lines).
+   *  - `true`: Enable label with lines with default settings
+   *  - `false`: Labels are displayed inside the donut slices (default behavior).
+   *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
+   * @property {boolean} [donut.label.line.show=true] Show or hide connector lines.
+   * @property {number} [donut.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
+   * @property {boolean|function} [donut.label.line.text=true] Show text at the end of the connector line (outside the shape).
+   *  - `true`: show data "id" text
+   *  - `false`: use default formatter(label.format) to show text
+   *  - `function(value, ratio, id)`: Custom formatter function for the text.
+   *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
+   * @property {object|function} [donut.label.image] Set image to be displayed next to the label text.<br><br>
+   * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+   * The arguments are:<br>
+   *  - `v` is the value of the data point where the label is shown.
+   *  - `id` is the id of the data where the label is shown.
+   *  - `i` is the index of the data series point where the label is shown.
+   * @property {string} donut.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+   * @property {number} donut.label.image.width Image width in pixels.
+   * @property {number} donut.label.image.height Image height in pixels.
+   * @property {object} [donut.label.image.pos] Image position relative to the label text.
+   * @property {number} [donut.label.image.pos.x=0] x coordinate position, relative the original.
+   * @property {number} [donut.label.image.pos.y=0] y coordinate position, relative the original.
+   * @property {boolean} [donut.expand=true] Enable or disable expanding donut pieces.
+   * @property {number} [donut.expand.rate=0.98] Set expand rate.
+   * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
+   * @property {number} [donut.width] Set width of donut chart.
+   * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character for line break.
+   *  - **NOTE:**
+   *    - When `arc.needle.show=true` is set, special template `{=NEEDLE_VALUE}` can be used inside the title text to show current needle value.
+   * @property {number} [donut.padAngle=0] Set padding between data.
+   * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
+   * @see [Demo: Corner Radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
+   * @see [Demo: Needle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutNeedle)
+   * @see [Demo: Range Text](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutRangeText)
+   * @see [Demo: Label Image](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelImage)
+   * @see [Demo: Label Line](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelLine)
+   * @see [Demo: Label Ratio](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelRatio)
+   * @see [Demo: Multiline Label](https://naver.github.io/billboard.js/demo/#DonutChartOptions.MultilineLabel)
+   * @see [Demo: Multiline Title](https://naver.github.io/billboard.js/demo/#DonutChartOptions.MultilineTitle)
+   * @see [Demo: Pad Angle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.padAngle)
+   * @see [Demo: Starting Angle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.StartingAngle)
+   *
+   * @example
+   *  donut: {
+   *      label: {
+   *          show: false,
+   *          format: function(value, ratio, id) {
+   *              return d3.format("$")(value);
+   *
+   *              // to multiline, return with '\n' character
+   *              // return value +"%\nLine1\n2Line2";
+   *          },
+   *
+   *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
+   *          // if data value is below than 0.1, text label will be hidden.
+   *          threshold: 0.1,
+   *
+   *          // set ratio callback. Should return ratio value
+   *          ratio: function(d, radius, h) {
+   *          	...
+   *          	return ratio;
+   *          },
+   *          // or set ratio number
+   *          ratio: 0.5,
+   *
+   *          // Enable label with lines (displayed outside with connector lines)
+   *          line: false,  // default - labels inside
+   *          line: true,   // enable label with lines with default settings
+   *          line: {       // enable label with lines with custom settings
+   *             show: true,
+   *             distance: 20,  // horizontal line distance in pixels
+   *
+   *             // show text at the end of connector line (outside the shape)
+   *             text: true,  // use default formatter
+   *             text: function(value, ratio, id) {  // custom formatter
+   *                 return d3.format(".1%")(ratio);
+   *             }
+   *          },
+   *
+   *          // set image to be displayed next to the label text
+   *          image: {
+   *             url: "./sample.svg",
+   *
+   *             // use placeholder to dynamically set image URL based on data ID
+   *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+   *             width: 35,
+   *             height: 35,
+   *             pos: {
+   *                x: 0,
+   *                y: 0
+   *             }
+   *          },
+   *
+   *          // or use function to return image configuration dynamically
+   *          image: function(v, id, i) {
+   *             // Return different images based on value
+   *             if (v > 500) {
+   *                return {
+   *                   url: "./high-value.svg",
+   *                   width: 40,
+   *                   height: 40,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if (v > 100) {
+   *                return {
+   *                   url: "./medium-value.svg",
+   *                   width: 30,
+   *                   height: 30,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if(v < 5) {
+   *                // Return falsy value in case of don't want to show image
+   *                return null;
+   *             } else {
+   *                return {
+   *                   url: "./low-value.svg",
+   *                   width: 20,
+   *                   height: 20,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             }
+   *          }
+   *      },
+   *
+   *      // disable expand transition for interaction
+   *      expand: false,
+   *
+   *      expand: {
+   *      	// set duration of expand transition to 500ms.
+   *          duration: 500,
+   *
+   *      	// set expand area rate
+   *          rate: 1
+   *      },
+   *
+   *      width: 10,
+   *      padAngle: 0.2,
+   *      startingAngle: 1,
+   *      title: "Donut Title"
+   *
+   *      // when 'arc.needle.show=true' is set, can show current needle value.
+   *      title: "Needle value:\n{=NEEDLE_VALUE}",
+   *
+   *      // title with line break
+   *      title: "Title1\nTitle2"
+   *  }
+   */
+  donut_label_show: true,
+  donut_label_format: void 0,
+  donut_label_threshold: 0.05,
+  donut_label_line: false,
+  donut_label_image: void 0,
+  donut_label_ratio: void 0,
+  donut_width: void 0,
+  donut_title: "",
+  donut_expand: {},
+  donut_expand_rate: 0.98,
+  donut_expand_duration: 50,
+  donut_padAngle: 0,
+  donut_startingAngle: 0
+});
+
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
 var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(11);
 ;// ./src/ChartInternal/internals/text.arc.ts
@@ -19127,7 +21590,7 @@ function _getAttrTweenFn(fn) {
     };
   };
 }
-/* harmony default export */ var arc = ({
+/* harmony default export */ var shape_arc = ({
   initPie() {
     const $$ = this;
     const { config } = $$;
@@ -19853,692 +22316,24 @@ function _getAttrTweenFn(fn) {
   }
 });
 
-;// ./src/ChartInternal/shape/area.ts
+;// ./src/config/resolver/shape/arc.helpers.ts
 
 
 
 
 
-/* harmony default export */ var shape_area = ({
-  initArea(mainLine) {
-    const $$ = this;
-    const { config } = $$;
-    mainLine.insert("g", `.${config.area_front ? $CIRCLE.circles : $LINE.lines}`).attr("class", $$.getClass("areas", true));
-  },
-  /**
-   * Update area color
-   * @param {object} d Data object
-   * @returns {string} Color string
-   * @private
-   */
-  updateAreaColor(d) {
-    const $$ = this;
-    return getShapeColorWithGradient.call($$, d, "area_linearGradient", $$.color);
-  },
-  /**
-   * Generate/Update elements
-   * @param {boolean} withTransition Transition for exit elements
-   * @param {boolean} isSub Subchart draw
-   * @private
-   */
-  updateArea(withTransition, isSub = false) {
-    const $$ = this;
-    const { config, state, $el, $T } = $$;
-    const $root = isSub ? $el.subchart : $el;
-    config.area_linearGradient && $$.updateLinearGradient();
-    const area = $root.main.selectAll(`.${$AREA.areas}`).selectAll(`.${$AREA.area}`).data($$.lineData.bind($$));
-    $T(area.exit(), withTransition).style("opacity", "0").remove();
-    $root.area = area.enter().append("path").attr("class", $$.getClass("area", true)).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function() {
-      state.orgAreaOpacity = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).style("opacity");
-      return "0";
-    }).merge(area);
-    area.style("opacity", state.orgAreaOpacity);
-    $$.setRatioForGroupedData($root.area.data());
-  },
-  /**
-   * Redraw function
-   * @param {function} drawFn Retuned functino from .generateDrawCandlestick()
-   * @param {boolean} withTransition With or without transition
-   * @param {boolean} isSub Subchart draw
-   * @returns {Array}
-   */
-  redrawArea(drawFn, withTransition, isSub = false) {
-    const $$ = this;
-    const { area } = isSub ? this.$el.subchart : this.$el;
-    const { orgAreaOpacity } = $$.state;
-    return [
-      $$.$T(area, withTransition, getRandom()).attr("d", drawFn).style("fill", $$.updateAreaColor.bind($$)).style(
-        "opacity",
-        (d) => String($$.isAreaRangeType(d) ? orgAreaOpacity / 1.75 : orgAreaOpacity)
-      )
-    ];
-  },
-  /**
-   * Generate area path data
-   * @param {object} areaIndices Indices
-   * @param {boolean} isSub Weather is sub axis
-   * @returns {function}
-   * @private
-   */
-  generateDrawArea(areaIndices, isSub) {
-    const $$ = this;
-    const { config } = $$;
-    const lineConnectNull = config.line_connectNull;
-    const isRotated = config.axis_rotated;
-    const getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
-    const yScale = $$.getYScaleById.bind($$);
-    const xValue = (d) => (isSub ? $$.subxx : $$.xx).call($$, d);
-    const value0 = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)(
-      $$.isAreaRangeType(d) ? $$.getRangedData(d, "high") : $$.getShapeYMin(d.id)
-    );
-    const value1 = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[1][1] : yScale(d.id, isSub)(
-      $$.isAreaRangeType(d) ? $$.getRangedData(d, "low") : d.value
-    );
-    return (d) => {
-      let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
-      let x0 = 0;
-      let y0 = 0;
-      let path;
-      if ($$.isAreaType(d)) {
-        let area = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.area)();
-        area = isRotated ? area.y(xValue).x0(value0).x1(value1) : area.x(xValue).y0(config.area_above ? 0 : config.area_below ? $$.state.height : value0).y1(value1);
-        if (!lineConnectNull) {
-          area = area.defined((d2) => $$.getBaseValue(d2) !== null);
-        }
-        if ($$.isStepType(d)) {
-          values = $$.convertValuesToStep(values);
-        }
-        path = area.curve($$.getCurve(d))(values);
-      } else {
-        if (values[0]) {
-          x0 = $$.scale.x(values[0].x);
-          y0 = $$.getYScaleById(d.id)(values[0].value);
-        }
-        path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
-      }
-      return path || "M 0 0";
-    };
-  },
-  generateGetAreaPoints(areaIndices, isSub) {
-    const $$ = this;
-    const { config } = $$;
-    const x = $$.getShapeX(0, areaIndices, isSub);
-    const y = $$.getShapeY(!!isSub);
-    const areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, isSub);
-    const yScale = $$.getYScaleById.bind($$);
-    return function(d, i) {
-      const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
-      const offset = areaOffset(d, i) || y0;
-      const posX = x(d);
-      const value = d.value;
-      let posY = y(d);
-      if (config.axis_rotated && (value > 0 && posY < y0 || value < 0 && y0 < posY)) {
-        posY = y0;
-      }
-      return [
-        [posX, offset],
-        [posX, posY - (y0 - offset)],
-        [posX, posY - (y0 - offset)],
-        // needed for compatibility
-        [posX, offset]
-        // needed for compatibility
-      ];
-    };
-  }
-});
 
-;// ./src/ChartInternal/shape/bar.ts
-
-
-
-
-function _getConnectLineType(id) {
-  const connectLine = this.config.bar_connectLine;
-  const type = (connectLine == null ? void 0 : connectLine[id]) || connectLine;
-  return /^(start|end)\-(start|end)$/.test(type) ? type : null;
+function extendArc(module, option) {
+  extend(ChartInternal.prototype, [shape_arc, point_common].concat(module || []));
+  Options.setOptions([common_point].concat(option || []));
 }
-/* harmony default export */ var bar = ({
-  initBar() {
-    const { $el, config, state: { clip } } = this;
-    $el.bar = $el.main.select(`.${$COMMON.chart}`);
-    $el.bar = config.bar_front ? $el.bar.append("g") : $el.bar.insert("g", ":first-child");
-    $el.bar.attr("class", $BAR.chartBars).call(this.setCssRule(false, `.${$BAR.chartBars}`, ["pointer-events:none"]));
-    if (config.clipPath === false && (config.bar_radius || config.bar_radius_ratio)) {
-      $el.bar.attr("clip-path", clip.pathXAxis.replace(/#[^)]*/, `#${clip.id}`));
-    }
-  },
-  updateTargetsForBar(targets) {
-    const $$ = this;
-    const { config } = $$;
-    const classBars = $$.getClass("bars", true);
-    const isSelectable = config.interaction_enabled && config.data_selection_isselectable;
-    const mainBarEnter = updateTargetsForShape.call($$, targets, {
-      type: "Bar",
-      elKey: "bar",
-      containerClass: $BAR.chartBars,
-      itemClass: $BAR.chartBar,
-      initFn: $$.initBar
-    });
-    mainBarEnter.append("g").attr("class", classBars).style("cursor", (d) => {
-      var _a;
-      return ((_a = isSelectable == null ? void 0 : isSelectable.bind) == null ? void 0 : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null;
-    }).call((selection) => {
-      $$.setCssRule(true, ` .${$BAR.bar}`, ["fill"], $$.color)(selection);
-      selection.each(function(d) {
-        if (_getConnectLineType.call($$, d.id)) {
-          (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).append("path").attr("class", $BAR.barConnectLine);
-        }
-      });
-    });
-  },
-  /**
-   * Generate/Update elements
-   * @param {boolean} withTransition Transition for exit elements
-   * @param {boolean} isSub Subchart draw
-   * @private
-   */
-  updateBar(withTransition, isSub = false) {
-    const $$ = this;
-    const { config, $el, $T } = $$;
-    const $root = isSub ? $el.subchart : $el;
-    const classBar = $$.getClass("bar", true);
-    const initialOpacity = $$.initialOpacity.bind($$);
-    config.bar_linearGradient && $$.updateLinearGradient();
-    const bar = $root.main.selectAll(`.${$BAR.bars}`).selectAll(`.${$BAR.bar}`).data($$.labelishData.bind($$));
-    $T(bar.exit(), withTransition).style("opacity", "0").remove();
-    $root.bar = bar.enter().append("path").attr("class", classBar).style("fill", $$.updateBarColor.bind($$)).merge(bar).style("opacity", initialOpacity);
-    $$.setRatioForGroupedData($root.bar.data());
-  },
-  /**
-   * Update bar color
-   * @param {object} d Data object
-   * @returns {string} Color string
-   * @private
-   */
-  updateBarColor(d) {
-    const $$ = this;
-    const fn = $$.getStylePropValue($$.color);
-    return getShapeColorWithGradient.call($$, d, "bar_linearGradient", fn || (() => null));
-  },
-  /**
-   * Redraw function
-   * @param {function} drawFn Retuned function from .getDrawShape() => .generateDrawBar()
-   * @param {boolean} withTransition With or without transition
-   * @param {boolean} isSub Subchart draw
-   * @returns {Array}
-   * @private
-   */
-  redrawBar(drawFn, withTransition, isSub = false) {
-    const $$ = this;
-    const { bar } = isSub ? $$.$el.subchart : $$.$el;
-    const barPath = [];
-    return [
-      $$.$T(bar, withTransition, getRandom()).attr("d", function(d, i, arr) {
-        const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
-        const connectLineType = _getConnectLineType.call($$, d.id);
-        if (path.length > 1) {
-          barPath.push(path[1]);
-          if (i === arr.length - 1) {
-            const barConnectLineNode = $$.$T(
-              (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this.parentNode.querySelector(`.${$BAR.barConnectLine}`)),
-              withTransition,
-              getRandom()
-            );
-            $$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
-            barPath.splice(0);
-          }
-        }
-        return path[0];
-      }).style("fill", $$.updateBarColor.bind($$)).style("clip-path", (d) => d.clipPath).style("opacity", null)
-    ];
-  },
-  /**
-   * Generate draw function
-   * @param {object} barIndices data order within x axis.
-   * barIndices ==> {data1: 0, data2: 0, data3: 1, data4: 1, __max__: 1}
-   *
-   * When gropus given as:
-   *  groups: [
-   * 		["data1", "data2"],
-   * 		["data3", "data4"]
-   * 	],
-   *
-   * Will be rendered as:
-   * 		data1 data3   data1 data3
-   * 		data2 data4   data2 data4
-   * 		-------------------------
-   * 			 0             1
-   * @param {boolean} isSub If is for subchart
-   * @returns {function}
-   * @private
-   */
-  generateDrawBar(barIndices, isSub) {
-    const $$ = this;
-    const { config } = $$;
-    const getPoints = $$.generateGetBarPoints(barIndices, isSub);
-    const isRotated = config.axis_rotated;
-    const barRadius = config.bar_radius;
-    const barRadiusRatio = config.bar_radius_ratio;
-    const getRadius = isNumber(barRadius) && barRadius > 0 ? () => barRadius : isNumber(barRadiusRatio) ? (w) => w * barRadiusRatio : null;
-    return (d, i) => {
-      const points = getPoints(d, i);
-      const indexX = +isRotated;
-      const indexY = +!indexX;
-      const isUnderZero = d.value < 0;
-      const isInverted = config[`axis_${$$.axis.getId(d.id)}_inverted`];
-      const isNegative = !isInverted && isUnderZero || isInverted && !isUnderZero;
-      const pathRadius = ["", ""];
-      const isGrouped = $$.isGrouped(d.id);
-      const isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
-      const init = [
-        points[0][indexX],
-        points[0][indexY]
-      ];
-      let radius = 0;
-      d.clipPath = null;
-      if (getRadius) {
-        const index = isRotated ? indexY : indexX;
-        const barW = points[2][index] - points[0][index];
-        radius = !isGrouped || isRadiusData ? getRadius(barW) : 0;
-        const arc = `a${radius} ${radius} ${isNegative ? `1 0 0` : `0 0 1`} `;
-        pathRadius[+!isRotated] = `${arc}${radius},${radius}`;
-        pathRadius[+isRotated] = `${arc}${[-radius, radius][isRotated ? "sort" : "reverse"]()}`;
-        isNegative && pathRadius.reverse();
-      }
-      const pos = isRotated ? points[1][indexX] + (isNegative ? radius : -radius) : points[1][indexY] + (isNegative ? -radius : radius);
-      if (radius) {
-        let clipPath = "";
-        if (isRotated) {
-          if (isNegative && init[0] < pos) {
-            clipPath = `0 ${pos - init[0]}px 0 0`;
-          } else if (!isNegative && init[0] > pos) {
-            clipPath = `0 0 0 ${init[0] - pos}px`;
-          }
-        } else {
-          if (isNegative && init[1] > pos) {
-            clipPath = `${init[1] - pos}px 0 0 0`;
-          } else if (!isNegative && init[1] < pos) {
-            clipPath = `0 0 ${pos - init[1]}px 0`;
-          }
-        }
-        if (clipPath) {
-          d.clipPath = `inset(${clipPath})`;
-        }
-      }
-      const path = isRotated ? `H${pos} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${points[3][indexX]}` : `V${pos} ${pathRadius[0]}H${points[2][indexX] - radius} ${pathRadius[1]}V${points[3][indexY]}`;
-      const coords = [`M${points[0][indexX]},${points[0][indexY]}${path}z`];
-      if (_getConnectLineType.call($$, d.id)) {
-        coords.push(isRotated ? {
-          x: points[0][indexX],
-          y: points[0][indexY],
-          width: points[0][indexX] - pos,
-          height: points[2][indexY] - points[0][indexY]
-        } : {
-          x: points[0][indexX],
-          y: pos,
-          width: points[2][indexX] - points[0][indexX],
-          height: points[3][indexY] - pos
-        });
-      }
-      return coords;
-    };
-  },
-  /**
-   * Determine if given stacking bar data is radius type
-   * @param {object} d Data row
-   * @returns {boolean}
-   */
-  isStackingRadiusData(d) {
-    const $$ = this;
-    const { $el, config, data, state } = $$;
-    const { id, index, value } = d;
-    if (state.hiddenTargetIds.indexOf(id) > -1) {
-      const target = $el.bar.filter((d2) => d2.id === id && d2.value === value);
-      return !target.empty() && /a\d+/i.test(target.attr("d"));
-    }
-    const keys = config.data_groups.find((v) => v.indexOf(id) > -1);
-    const sortedList = $$.orderTargets(
-      $$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))
-    ).filter((v) => keys.indexOf(v.id) > -1);
-    const sortedIds = sortedList.map(
-      (v) => v.values.filter(
-        (v2) => v2.index === index && (isNumber(value) && value > 0 ? v2.value > 0 : v2.value < 0)
-      )[0]
-    ).filter(Boolean).map((v) => v.id);
-    return value !== 0 && sortedIds.indexOf(id) === sortedIds.length - 1;
-  },
-  /**
-   * Generate bar coordinate points data
-   * @param {object} barIndices Data order within x axis.
-   * @param {boolean} isSub If is for subchart
-   * @returns {Array} Array of coordinate points
-   * @private
-   */
-  generateGetBarPoints(barIndices, isSub) {
-    const $$ = this;
-    const { config } = $$;
-    const axis = isSub ? $$.axis.subX : $$.axis.x;
-    const barTargetsNum = $$.getIndicesMax(barIndices) + 1;
-    const barW = $$.getBarW("bar", axis, barTargetsNum);
-    const barX = $$.getShapeX(barW, barIndices, !!isSub);
-    const barY = $$.getShapeY(!!isSub);
-    const barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);
-    const yScale = $$.getYScaleById.bind($$);
-    return (d, i) => {
-      const { id } = d;
-      const y0 = yScale.call($$, id, isSub)($$.getShapeYMin(id));
-      const offset = barOffset(d, i) || y0;
-      const width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
-      const isInverted = config[`axis_${$$.axis.getId(id)}_inverted`];
-      const value = d.value;
-      const posX = barX(d);
-      let posY = barY(d);
-      if (config.axis_rotated && !isInverted && (value > 0 && posY < y0 || value < 0 && y0 < posY)) {
-        posY = y0;
-      }
-      if (!$$.isBarRangeType(d)) {
-        posY -= y0 - offset;
-      }
-      const startPosX = posX + width;
-      return [
-        [posX, offset],
-        [posX, posY],
-        [startPosX, posY],
-        [startPosX, offset]
-      ];
-    };
-  },
-  /**
-   * Update the bar connect line path
-   * @param {d3Selection} node d3 selection of bar connect line
-   * @param {string} type Type of connect line, one of "start-start", "start-end", "end-start", "end-end"
-   * @param {Array} barPath d3 path data for the bar
-   */
-  updateConnectLine(node, type, barPath) {
-    const path = barPath.map((v, i, arr) => {
-      const isRotated = this.config.axis_rotated;
-      const isStart = /^start-(start|end)$/.test(type);
-      const isEnd = /^end-(start|end)$/.test(type);
-      const path2 = [];
-      const x = isRotated ? isEnd ? v.x - v.width : v.x : v.x + v.width;
-      const y = isRotated ? v.y + v.height : isStart ? v.y + v.height : v.y;
-      if (i === 0) {
-        path2.push(`${x},${y}`);
-      } else {
-        path2.push(
-          isRotated ? `L${v.x - (/\w+-end$/.test(type) ? v.width : 0)},${v.y}` : `L${v.x},${v.y + (/\w+-start$/.test(type) ? v.height : 0)}`
-        );
-        if (i < arr.length - 1) {
-          path2.push(`M${x},${y}`);
-        }
-      }
-      return path2.join(" ");
-    });
-    node.attr("d", `M${path.join("")}z`);
-  }
-});
 
-;// ./src/ChartInternal/shape/bubble.ts
-
-
-/* harmony default export */ var bubble = ({
-  /**
-   * Initializer
-   * @private
-   */
-  initBubble() {
-    const $$ = this;
-    const { config } = $$;
-    if ($$.hasType("bubble")) {
-      config.point_show = true;
-      config.point_type = "circle";
-    }
-  },
-  /**
-   * Get user agent's computed value
-   * @returns {number}
-   * @private
-   */
-  getBaseLength() {
-    const $$ = this;
-    const { width, height } = $$.state;
-    const cacheKey = KEY.bubbleBaseLength;
-    let baseLength = $$.cache.get(cacheKey);
-    if (!baseLength) {
-      $$.cache.add(cacheKey, baseLength = getMinMax("min", [width, height]));
-    }
-    return baseLength;
-  },
-  /**
-   * Get the radius value for bubble circle
-   * @param {object} d Data object
-   * @returns {number}
-   * @private
-   */
-  getBubbleR(d) {
-    const $$ = this;
-    let maxR = $$.config.bubble_maxR;
-    if (isFunction(maxR)) {
-      maxR = maxR.bind($$.api)(d);
-    } else if (!isNumber(maxR)) {
-      maxR = $$.getBaseLength() / ($$.getMaxDataCount() * 2) + 12;
-    }
-    const max = getMinMax("max", $$.getMinMaxData().max.map((d2) => $$.isBubbleZType(d2) ? $$.getBubbleZData(d2.value, "y") : isObject(d2.value) ? d2.value.mid : d2.value));
-    const maxArea = maxR * maxR * Math.PI;
-    const area = ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value) * (maxArea / max);
-    return Math.sqrt(area / Math.PI);
-  },
-  /**
-   * Get bubble dimension data
-   * @param {object|Array} d data value
-   * @param {string} type - y or z
-   * @returns {number}
-   * @private
-   */
-  getBubbleZData(d, type) {
-    return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
-  }
-});
-
-;// ./src/ChartInternal/shape/candlestick.ts
-var candlestick_defProp = Object.defineProperty;
-var candlestick_getOwnPropSymbols = Object.getOwnPropertySymbols;
-var candlestick_hasOwnProp = Object.prototype.hasOwnProperty;
-var candlestick_propIsEnum = Object.prototype.propertyIsEnumerable;
-var candlestick_defNormalProp = (obj, key, value) => key in obj ? candlestick_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var candlestick_spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (candlestick_hasOwnProp.call(b, prop))
-      candlestick_defNormalProp(a, prop, b[prop]);
-  if (candlestick_getOwnPropSymbols)
-    for (var prop of candlestick_getOwnPropSymbols(b)) {
-      if (candlestick_propIsEnum.call(b, prop))
-        candlestick_defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
+;// ./src/config/resolver/shape/donut.ts
 
 
 
 
-/* harmony default export */ var candlestick = ({
-  initCandlestick() {
-    initShapeElement.call(this, {
-      elKey: "candlestick",
-      className: $CANDLESTICK.chartCandlesticks
-    });
-  },
-  /**
-   * Update targets by its data
-   * called from: ChartInternal.updateTargets()
-   * @param {Array} targets Filtered target by type
-   * @private
-   */
-  updateTargetsForCandlestick(targets) {
-    updateTargetsForShape.call(this, targets, {
-      type: "Candlestick",
-      elKey: "candlestick",
-      containerClass: $CANDLESTICK.chartCandlesticks,
-      itemClass: $CANDLESTICK.chartCandlestick,
-      initFn: this.initCandlestick,
-      withFocus: false,
-      withStyles: false
-    }).style("pointer-events", "none");
-  },
-  /**
-   * Generate/Update elements
-   * @param {boolean} withTransition Transition for exit elements
-   * @param {boolean} isSub Subchart draw
-   * @private
-   */
-  updateCandlestick(withTransition, isSub = false) {
-    const $$ = this;
-    const { $el, $T } = $$;
-    const $root = isSub ? $el.subchart : $el;
-    const classSetter = $$.getClass("candlestick", true);
-    const initialOpacity = $$.initialOpacity.bind($$);
-    const candlestick = $root.main.selectAll(`.${$CANDLESTICK.chartCandlestick}`).selectAll(`.${$CANDLESTICK.candlestick}`).data($$.labelishData.bind($$));
-    $T(candlestick.exit(), withTransition).style("opacity", "0").remove();
-    const candlestickEnter = candlestick.enter().filter((d) => d.value).append("g").attr("class", classSetter);
-    candlestickEnter.append("line");
-    candlestickEnter.append("path");
-    $root.candlestick = candlestick.merge(candlestickEnter).style("opacity", initialOpacity);
-  },
-  /**
-   * Get draw function
-   * @param {object} indices Indice data
-   * @param {boolean} isSub Subchart draw
-   * @returns {function}
-   * @private
-   */
-  generateDrawCandlestick(indices, isSub) {
-    const $$ = this;
-    const { config } = $$;
-    const getPoints = $$.generateGetCandlestickPoints(indices, isSub);
-    const isRotated = config.axis_rotated;
-    const downColor = config.candlestick_color_down;
-    return (d, i, g) => {
-      const points = getPoints(d, i);
-      const value = $$.getCandlestickData(d);
-      const isUp = value == null ? void 0 : value._isUp;
-      const indexX = +isRotated;
-      const indexY = +!indexX;
-      if (g.classed) {
-        g.classed($CANDLESTICK[isUp ? "valueUp" : "valueDown"], true);
-      }
-      const path = isRotated ? `H${points[1][1]} V${points[1][0]} H${points[0][1]}` : `V${points[1][1]} H${points[1][0]} V${points[0][1]}`;
-      g.select("path").attr("d", `M${points[0][indexX]},${points[0][indexY]}${path}z`).style("fill", (d2) => {
-        const color = isUp ? $$.color(d2) : isObject(downColor) ? downColor[d2.id] : downColor;
-        return color || $$.color(d2);
-      });
-      const line = g.select("line");
-      const pos = isRotated ? {
-        x1: points[2][1],
-        x2: points[2][2],
-        y1: points[2][0],
-        y2: points[2][0]
-      } : {
-        x1: points[2][0],
-        x2: points[2][0],
-        y1: points[2][1],
-        y2: points[2][2]
-      };
-      for (const x in pos) {
-        line.attr(x, pos[x]);
-      }
-    };
-  },
-  /**
-   * Generate shape drawing points
-   * @param {object} indices Indice data
-   * @param {boolean} isSub Subchart draw
-   * @returns {function}
-   */
-  generateGetCandlestickPoints(indices, isSub = false) {
-    const $$ = this;
-    const axis = isSub ? $$.axis.subX : $$.axis.x;
-    const targetsNum = $$.getIndicesMax(indices) + 1;
-    const barW = $$.getBarW("candlestick", axis, targetsNum);
-    const x = $$.getShapeX(barW, indices, !!isSub);
-    const y = $$.getShapeY(!!isSub);
-    const shapeOffset = $$.getShapeOffset($$.isBarType, indices, !!isSub);
-    const yScale = $$.getYScaleById.bind($$);
-    return (d, i) => {
-      const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
-      const offset = shapeOffset(d, i) || y0;
-      const width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
-      const value = $$.getCandlestickData(d);
-      let points;
-      if (value && isNumber(value.open) && isNumber(value.close)) {
-        const posX = {
-          start: x(d),
-          end: 0
-        };
-        posX.end = posX.start + width;
-        const posY = {
-          start: y(value.open),
-          end: y(value.close)
-        };
-        const posLine = {
-          x: posX.start + width / 2,
-          high: y(value.high),
-          low: y(value.low)
-        };
-        posY.start -= y0 - offset;
-        points = [
-          [posX.start, posY.start],
-          [posX.end, posY.end],
-          [posLine.x, posLine.low, posLine.high]
-        ];
-      } else {
-        points = [[0, 0], [0, 0], [0, 0, 0]];
-      }
-      return points;
-    };
-  },
-  /**
-   * Redraw function
-   * @param {function} drawFn Retuned functino from .generateDrawCandlestick()
-   * @param {boolean} withTransition With or without transition
-   * @param {boolean} isSub Subchart draw
-   * @returns {Array}
-   */
-  redrawCandlestick(drawFn, withTransition, isSub = false) {
-    const $$ = this;
-    const { $el, $T } = $$;
-    const { candlestick } = isSub ? $el.subchart : $el;
-    const rand = getRandom(true);
-    return [
-      candlestick.each(function(d, i) {
-        const g = $T((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this), withTransition, rand);
-        drawFn(d, i, g);
-      }).style("opacity", null)
-    ];
-  },
-  /**
-   * Get candlestick data as object
-   * @param {object} param Data object
-   * @param {Array|object} param.value Data value
-   * @returns {object|null} Converted data object
-   * @private
-   */
-  getCandlestickData({ value }) {
-    let d;
-    if (isArray(value)) {
-      const [open, high, low, close, volume = false] = value;
-      d = { open, high, low, close };
-      if (volume !== false) {
-        d.volume = volume;
-      }
-    } else if (isObject(value)) {
-      d = candlestick_spreadValues({}, value);
-    }
-    if (d) {
-      d._isUp = d.close >= d.open;
-    }
-    return d || null;
-  }
-});
+let donut_donut = () => (extendArc(void 0, [arc, donut]), (donut_donut = () => TYPE.DONUT)());
 
 ;// ./src/ChartInternal/shape/funnel.ts
 var funnel_defProp = Object.defineProperty;
@@ -20837,6 +22632,56 @@ function _getSplineClipPath() {
   }
 });
 
+;// ./src/config/Options/shape/funnel.ts
+/* harmony default export */ var shape_funnel = ({
+  /**
+   * Set funnel options
+   * @name funnel
+   * @memberof Options
+   * @type {object}
+   * @property {object} funnel Funnel object
+   * @property {number} [funnel.neck.width=0] Set funnel neck width.
+   * @property {number} [funnel.neck.height=0] Set funnel neck height.
+   * @property {number} [funnel.neck.width.ratio] Set funnel neck width in ratio.
+   * @property {number} [funnel.neck.height.ratio] Set funnel neck height in ratio.
+   * @property {boolean} [funnel.rotated=false] Set funnel direction rotated. When set to `true`, the funnel will be rendered horizontally (left to right) instead of vertically (top to bottom).
+   * @property {boolean} [funnel.spline=false] Enable spline (curved) edges for the funnel.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.PolarChart)
+   * @example
+   *  funnel: {
+   *      neck: {
+   *          width: 200,
+   *          height: 100,
+   *
+   *          // or specify as ratio value (relative to the chart size)
+   *          width: {
+   *            ratio: 0.5
+   *          },
+   *          height: {
+   *            ratio: 0.5
+   *          }
+   *      },
+   *
+   *      // Render funnel horizontally (left to right)
+   *      rotated: true,
+   *
+   *      // Enable curved edges
+   *      spline: true
+   *  }
+   */
+  funnel_neck_width: 0,
+  funnel_neck_height: 0,
+  funnel_rotated: false,
+  funnel_spline: false
+});
+
+;// ./src/config/resolver/shape/funnel.ts
+
+
+
+
+let funnel_funnel = () => (extendArc([funnel], [shape_funnel]), (funnel_funnel = () => TYPE.FUNNEL)());
+
 ;// ./src/ChartInternal/shape/gauge.ts
 
 
@@ -20915,835 +22760,438 @@ function _getSplineClipPath() {
   }
 });
 
-;// ./src/ChartInternal/shape/line.ts
-var line_defProp = Object.defineProperty;
-var line_defProps = Object.defineProperties;
-var line_getOwnPropDescs = Object.getOwnPropertyDescriptors;
-var line_getOwnPropSymbols = Object.getOwnPropertySymbols;
-var line_hasOwnProp = Object.prototype.hasOwnProperty;
-var line_propIsEnum = Object.prototype.propertyIsEnumerable;
-var line_defNormalProp = (obj, key, value) => key in obj ? line_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var line_spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (line_hasOwnProp.call(b, prop))
-      line_defNormalProp(a, prop, b[prop]);
-  if (line_getOwnPropSymbols)
-    for (var prop of line_getOwnPropSymbols(b)) {
-      if (line_propIsEnum.call(b, prop))
-        line_defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-var line_spreadProps = (a, b) => line_defProps(a, line_getOwnPropDescs(b));
-
-
-
-
-
-function _getStrokeDashArray(start, end, pattern, isLastX = false) {
-  const dash = start ? [start, 0] : pattern;
-  for (let i = start ? start : pattern.reduce((a, c) => a + c); i <= end; ) {
-    pattern.forEach((v) => {
-      if (i + v <= end) {
-        dash.push(v);
-      }
-      i += v;
-    });
-  }
-  dash.length % 2 !== 0 && dash.push(isLastX ? pattern[1] : 0);
-  return {
-    dash: dash.join(" "),
-    length: dash.reduce((a, b) => a + b, 0)
-  };
-}
-function _getRegions(d, _regions, isTimeSeries) {
-  const $$ = this;
-  const regions = [];
-  const dasharray = "2 2";
-  if (isDefined(_regions)) {
-    const getValue = (v, def) => isUndefined(v) ? def : isTimeSeries ? parseDate.call($$, v) : v;
-    for (let i = 0, reg; reg = _regions[i]; i++) {
-      const start = getValue(reg.start, d[0].x);
-      const end = getValue(reg.end, d[d.length - 1].x);
-      const style = reg.style || { dasharray };
-      regions[i] = { start, end, style };
-    }
-  }
-  return regions;
-}
-/* harmony default export */ var line = ({
-  initLine() {
-    initShapeElement.call(this, {
-      elKey: "line",
-      className: $LINE.chartLines,
-      cssRules: ["pointer-events:none"]
-    });
-  },
-  updateTargetsForLine(t) {
-    const $$ = this;
-    const { $el: { area, main } } = $$;
-    const classLines = $$.getClass("lines", true);
-    const targets = t.filter((d) => !($$.isScatterType(d) || $$.isBubbleType(d)));
-    const mainLineEnter = updateTargetsForShape.call($$, targets, {
-      type: "Line",
-      elKey: "line",
-      containerClass: $LINE.chartLines,
-      itemClass: $LINE.chartLine,
-      initFn: $$.initLine
-    });
-    mainLineEnter.append("g").attr("class", classLines);
-    if ($$.hasTypeOf("Area")) {
-      const mainLineUpdate = main.select(`.${$LINE.chartLines}`).selectAll(`.${$LINE.chartLine}`);
-      const mainLine = (!area && mainLineEnter.empty() ? mainLineUpdate : mainLineEnter).filter($$.isAreaType.bind($$));
-      $$.initArea(mainLine);
-    }
-    $$.updateTargetForCircle(targets, mainLineEnter);
-  },
+;// ./src/config/Options/shape/gauge.ts
+/* harmony default export */ var shape_gauge = ({
   /**
-   * Generate/Update elements
-   * @param {boolean} withTransition Transition for exit elements
-   * @param {boolean} isSub Subchart draw
-   * @private
+   * Set gauge options
+   * @name gauge
+   * @memberof Options
+   * @type {object}
+   * @property {object} gauge Gauge object
+   * @property {boolean} [gauge.background=""] Set background color. (The `.bb-chart-arcs-background` element)
+   * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
+   * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
+   * @property {function} [gauge.label.extents] Set customized min/max label text.
+   * @property {function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.<br>
+   * Will pass following arguments to the given function:
+   * - value {number}: absolute value
+   * - ratio {number}: value's ratio
+   * - id {string}: data's id value
+   * @property {number|function} [gauge.label.ratio=undefined] Set ratio of labels position.
+   * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
+   * @property {boolean|object} [gauge.label.line=false] Enable label with lines (displayed outside with connector lines).
+   *  - **NOTE:** Only applicable for single gauge (not for `gauge.type="multi"`).
+   *  - `true`: Enable label with lines with default settings
+   *  - `false`: Labels are displayed inside the gauge (default behavior).
+   *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
+   * @property {boolean} [gauge.label.line.show=true] Show or hide connector lines.
+   * @property {number} [gauge.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
+   * @property {boolean|function} [gauge.label.line.text=true] Show text at the end of the connector line (outside the shape).
+   *  - `true`: show data "id" text
+   *  - `false`: use default formatter(label.format) to show text
+   *  - `function(value, ratio, id)`: Custom formatter function for the text.
+   *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
+   * @property {object|function} [gauge.label.image] Set image to be displayed next to the label text.<br><br>
+   * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+   * The arguments are:<br>
+   *  - `v` is the value of the data point where the label is shown.
+   *  - `id` is the id of the data where the label is shown.
+   *  - `i` is the index of the data series point where the label is shown.
+   * @property {string} gauge.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+   * @property {number} gauge.label.image.width Image width in pixels.
+   * @property {number} gauge.label.image.height Image height in pixels.
+   * @property {object} [gauge.label.image.pos] Image position relative to the label text.
+   * @property {number} [gauge.label.image.pos.x=0] x coordinate position, relative the original.
+   * @property {number} [gauge.label.image.pos.y=0] y coordinate position, relative the original.
+   * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
+   * @property {number} [gauge.expand.rate=0.98] Set expand rate.
+   * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
+   * @property {boolean} [gauge.enforceMinMax=false] Enforce to given min/max value.
+   * - **Note:** Only works for single data series.
+   * 	- When `gauge.min=50` and given value is `30`, gauge will render as empty value.
+   * 	- When `gauge.max=100` and given value is `120`, gauge will render till 100, not surpassing max value.
+   * @property {number} [gauge.min=0] Set min value of the gauge.
+   * @property {number} [gauge.max=100] Set max value of the gauge.
+   * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
+   *
+   * **Limitations:**
+   * - when `gauge.fullCircle=false`:
+   *   - -1 * Math.PI / 2 <= startingAngle <= Math.PI / 2
+   *   - `startingAngle <= -1 * Math.PI / 2` defaults to `-1 * Math.PI / 2`
+   *   - `startingAngle >= Math.PI / 2` defaults to `Math.PI / 2`
+   * - when `gauge.fullCircle=true`:
+   *   - -1 * Math.PI < startingAngle < Math.PI
+   *   - `startingAngle < -1 * Math.PI` defaults to `Math.PI`
+   *   - `startingAngle >  Math.PI` defaults to `Math.PI`
+   * @property {number} [gauge.arcLength=100] Set the length of the arc to be drawn in percent from -100 to 100.<br>
+   * Negative value will draw the arc **counterclockwise**. Need to be used in conjunction with `gauge.fullCircle=true`.
+   *
+   * **Limitations:**
+   * - -100 <= arcLength (in percent) <= 100
+   * - 'arcLength < -100' defaults to -100
+   * - 'arcLength > 100' defaults to 100
+   * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character for line break.
+   *  - **NOTE:**
+   *    - When `arc.needle.show=true` is set, special template `{=NEEDLE_VALUE}` can be used inside the title text to show current needle value.
+   * @property {string} [gauge.units] Set units of the gauge.
+   * @property {number} [gauge.width] Set width of gauge chart.
+   * @property {string} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
+   * **Available Values:**
+   * - single
+   * - multi
+   * @property {number} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
+   * @see [Demo: enforceMinMax, min/max](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeMinMax)
+   * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
+   * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
+   * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelImage)
+   * @see [Demo: label line](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelLine)
+   * @see [Demo: label ratio](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelRatio)
+   * @example
+   *  gauge: {
+   *      background: "#eee", // will set 'fill' css prop for '.bb-chart-arcs-background' classed element.
+   *      fullCircle: false,
+   *      label: {
+   *          show: false,
+   *          format: function(value, ratio, id) {
+   *              return value;
+   *
+   *              // to multiline, return with '\n' character
+   *              // return value +"%\nLine1\n2Line2";
+   *          },
+   *
+   *           extents: function(value, isMax) {
+   *              return (isMax ? "Max:" : "Min:") + value;
+   *          },
+   *
+   *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
+   *          // if data value is below than 0.1, text label will be hidden.
+   *          threshold: 0.1,
+   *
+   *          // Enable label with lines (displayed outside with connector lines)
+   *          // NOTE: Only works with single gauge (not gauge.type="multi")
+   *          line: true,   // enable label with lines with default settings
+   *          line: {       // enable label with lines with custom settings
+   *              show: true,      // enable lines (default: true when line is enabled)
+   *              distance: 30,    // distance of horizontal line in pixels (default: 20)
+   *
+   *              // show text at the end of connector line (outside the shape)
+   *              text: true,  // use default formatter
+   *              text: function(value, ratio, id) {  // custom formatter
+   *                  return d3.format(".1%")(ratio);
+   *              }
+   *          },
+   *
+   *          // set ratio callback. Should return ratio value
+   *          ratio: function(d, radius, h) {
+   *              ...
+   *              return ratio;
+   *          },
+   *          // or set ratio number
+   *          ratio: 0.5,
+   *
+   *          // set image to be displayed next to the label text
+   *          image: {
+   *             url: "./sample.svg",
+   *
+   *             // use placeholder to dynamically set image URL based on data ID
+   *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+   *             width: 35,
+   *             height: 35,
+   *             pos: {
+   *                x: 0,
+   *                y: 0
+   *             }
+   *          },
+   *
+   *          // or use function to return image configuration dynamically
+   *          image: function(v, id, i) {
+   *             // Return different images based on value
+   *             if (v > 500) {
+   *                return {
+   *                   url: "./high-value.svg",
+   *                   width: 40,
+   *                   height: 40,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if (v > 100) {
+   *                return {
+   *                   url: "./medium-value.svg",
+   *                   width: 30,
+   *                   height: 30,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if(v < 5) {
+   *                // Return falsy value in case of don't want to show image
+   *                return null;
+   *             } else {
+   *                return {
+   *                   url: "./low-value.svg",
+   *                   width: 20,
+   *                   height: 20,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             }
+   *          }
+   *      },
+   *
+   *      // disable expand transition for interaction
+   *      expand: false,
+   *
+   *      expand: {
+   *      	// set duration of expand transition to 500ms.
+   *          duration: 500,
+   *
+   *      	// set expand area rate
+   *          rate: 1
+   *      },
+   *
+   *      // enforce min/max value.
+   * 		// when given value < min, will render as empty value.
+   * 		// when value > max, will render to given max value not surpassing it.
+   *      enforceMinMax: true,
+   *
+   *      min: -100,
+   *      max: 200,
+   *      type: "single"  // or 'multi'
+   *      title: "Title Text",
+   *
+   *      // when 'arc.needle.show=true' is set, can show current needle value.
+   *      title: "Needle value:\n{=NEEDLE_VALUE}",
+   *
+   *      units: "%",
+   *      width: 10,
+   *      startingAngle: -1 * Math.PI / 2,
+   *      arcLength: 100,
+   *      arcs: {
+   *          minWidth: 5
+   *      }
+   *  }
    */
-  updateLine(withTransition, isSub = false) {
-    const $$ = this;
-    const { format: { extraLineClasses }, $el, $T } = $$;
-    const $root = isSub ? $el.subchart : $el;
-    const line = $root.main.selectAll(`.${$LINE.lines}`).selectAll(`.${$LINE.line}`).data($$.lineData.bind($$));
-    $T(line.exit(), withTransition).style("opacity", "0").remove();
-    $root.line = line.enter().append("path").attr("class", (d) => `${$$.getClass("line", true)(d)} ${extraLineClasses(d) || ""}`).style("stroke", $$.color).merge(line).style("opacity", $$.initialOpacity.bind($$)).attr("transform", null);
-  },
-  /**
-   * Redraw function
-   * @param {function} drawFn Retuned functino from .generateDrawCandlestick()
-   * @param {boolean} withTransition With or without transition
-   * @param {boolean} isSub Subchart draw
-   * @returns {Array}
-   * @private
-   */
-  redrawLine(drawFn, withTransition, isSub = false) {
-    const $$ = this;
-    const { $el, $T } = $$;
-    const { line } = isSub ? $el.subchart : $el;
-    return [
-      $T(line, withTransition, getRandom()).attr("d", drawFn).style("stroke", this.color).style("opacity", null)
-    ];
-  },
-  /**
-   * Get the curve interpolate
-   * @param {Array} d Data object
-   * @returns {function}
-   * @private
-   */
-  getCurve(d) {
-    const $$ = this;
-    const isRotatedStepType = $$.config.axis_rotated && $$.isStepType(d);
-    return isRotatedStepType ? (context) => {
-      const step = $$.getInterpolate(d)(context);
-      step.orgPoint = step.point;
-      step.pointRotated = function(x, y) {
-        this._point === 1 && (this._point = 2);
-        const y1 = this._y * (1 - this._t) + y * this._t;
-        this._context.lineTo(this._x, y1);
-        this._context.lineTo(x, y1);
-        this._x = x;
-        this._y = y;
-      };
-      step.point = function(x, y) {
-        this._point === 0 ? this.orgPoint(x, y) : this.pointRotated(x, y);
-      };
-      return step;
-    } : $$.getInterpolate(d);
-  },
-  generateDrawLine(lineIndices, isSub) {
-    const $$ = this;
-    const { config, scale } = $$;
-    const lineConnectNull = config.line_connectNull;
-    const isRotated = config.axis_rotated;
-    const getPoints = $$.generateGetLinePoints(lineIndices, isSub);
-    const yScale = $$.getYScaleById.bind($$);
-    const xValue = (d) => (isSub ? $$.subxx : $$.xx).call($$, d);
-    const yValue = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)($$.getBaseValue(d));
-    let line = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.line)();
-    line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
-    if (!lineConnectNull) {
-      line = line.defined((d) => $$.getBaseValue(d) !== null);
-    }
-    const x = isSub ? scale.subX : scale.x;
-    return (d) => {
-      const y = yScale(d.id, isSub);
-      let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
-      let x0 = 0;
-      let y0 = 0;
-      let path;
-      if ($$.isLineType(d)) {
-        const regions = config.data_regions[d.id];
-        if (regions) {
-          if ($$.isAreaRangeType(d)) {
-            values = values.map((dv) => line_spreadProps(line_spreadValues({}, dv), { value: $$.getRangedData(dv, "mid") }));
-          }
-          path = $$.lineWithRegions(values, scale.zoom || x, y, regions);
-        } else {
-          if ($$.isStepType(d)) {
-            values = $$.convertValuesToStep(values);
-          }
-          path = line.curve($$.getCurve(d))(values);
-        }
-      } else {
-        if (values[0]) {
-          x0 = x(values[0].x);
-          y0 = y(values[0].value);
-        }
-        path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
-      }
-      return path || "M 0 0";
-    };
-  },
-  /**
-   * Set regions dasharray and get path
-   * @param {Array} d Data object
-   * @param {function} x x scale function
-   * @param {function} y y scale function
-   * @param {object} _regions regions to be set
-   * @returns {stirng} Path string
-   * @private
-   */
-  lineWithRegions(d, x, y, _regions) {
-    const $$ = this;
-    const { config } = $$;
-    const isRotated = config.axis_rotated;
-    const isTimeSeries = $$.axis.isTimeSeries();
-    const dasharray = "2 2";
-    const regions = _getRegions.bind($$)(d, _regions, isTimeSeries);
-    const hasNullDataValue = $$.hasNullDataValue(d);
-    let xp;
-    let yp;
-    let diff;
-    let diffx2;
-    const xValue = isRotated ? (dt) => y(dt.value) : (dt) => x(dt.x);
-    const yValue = isRotated ? (dt) => x(dt.x) : (dt) => y(dt.value);
-    const generateM = (points) => `M${points[0][0]},${points[0][1]}L${points[1][0]},${points[1][1]}`;
-    const sWithRegion = isTimeSeries ? (d0, d1, k, timeseriesDiff) => {
-      const x0 = d0.x.getTime();
-      const xDiff = d1.x - d0.x;
-      const xv0 = new Date(x0 + xDiff * k);
-      const xv1 = new Date(x0 + xDiff * (k + timeseriesDiff));
-      const points = isRotated ? [[y(yp(k)), x(xv0)], [y(yp(k + diff)), x(xv1)]] : [[x(xv0), y(yp(k))], [x(xv1), y(yp(k + diff))]];
-      return generateM(points);
-    } : (d0, d1, k, otherDiff) => {
-      const x0 = x(d1.x, !isRotated);
-      const y0 = y(d1.value, isRotated);
-      const gap = k + otherDiff;
-      const xValue2 = x(xp(k), !isRotated);
-      const yValue2 = y(yp(k), isRotated);
-      let xDiff = x(xp(gap), !isRotated);
-      let yDiff = y(yp(gap), isRotated);
-      if (xDiff > x0) {
-        xDiff = x0;
-      }
-      if (d0.value > d1.value && (isRotated ? yDiff < y0 : yDiff > y0)) {
-        yDiff = y0;
-      }
-      const points = [
-        [xValue2, yValue2],
-        [xDiff, yDiff]
-      ];
-      isRotated && points.forEach((v) => v.reverse());
-      return generateM(points);
-    };
-    const axisType = { x: $$.axis.getAxisType("x"), y: $$.axis.getAxisType("y") };
-    let path = "";
-    const target = $$.$el.line.filter(({ id }) => id === d[0].id);
-    const tempNode = target.clone().style("display", "none");
-    const getLength = (node, path2) => node.attr("d", path2).node().getTotalLength();
-    const dashArray = {
-      dash: [],
-      lastLength: 0
-    };
-    let isLastX = false;
-    for (let i = 0, data; data = d[i]; i++) {
-      const prevData = d[i - 1];
-      const hasPrevData = prevData && isValue(prevData.value);
-      let style = $$.isWithinRegions(data.x, regions);
-      if (!isValue(data.value)) {
-        continue;
-      }
-      if (isUndefined(regions) || !style || !hasPrevData) {
-        path += `${i && hasPrevData ? "L" : "M"}${xValue(data)},${yValue(data)}`;
-      } else if (hasPrevData) {
-        style = ((style == null ? void 0 : style.dasharray) || dasharray).split(" ").map(Number);
-        xp = getScale(axisType.x, prevData.x, data.x);
-        yp = getScale(axisType.y, prevData.value, data.value);
-        if (hasNullDataValue) {
-          const dx = x(data.x) - x(prevData.x);
-          const dy = y(data.value) - y(prevData.value);
-          const dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-          diff = style[0] / dd;
-          diffx2 = diff * style[1];
-          for (let j = diff; j <= 1; j += diffx2) {
-            path += sWithRegion(prevData, data, j, diff);
-            if (j + diffx2 >= 1) {
-              path += sWithRegion(prevData, data, 1, 0);
-            }
-          }
-        } else {
-          let points;
-          isLastX = data.x === d[d.length - 1].x;
-          if (isTimeSeries) {
-            const x0 = +prevData.x;
-            const xv0 = new Date(x0);
-            const xv1 = new Date(x0 + (+data.x - x0));
-            points = [
-              [x(xv0), y(yp(0))],
-              // M
-              [x(xv1), y(yp(1))]
-              // L
-            ];
-          } else {
-            points = [
-              [x(xp(0)), y(yp(0))],
-              // M
-              [x(xp(1)), y(yp(1))]
-              // L
-            ];
-          }
-          isRotated && points.forEach((v) => v.reverse());
-          const startLength = getLength(tempNode, path);
-          const endLength = getLength(tempNode, path += `L${points[1].join(",")}`);
-          const strokeDashArray = _getStrokeDashArray(
-            startLength - dashArray.lastLength,
-            endLength - dashArray.lastLength,
-            style,
-            isLastX
-          );
-          dashArray.lastLength += strokeDashArray.length;
-          dashArray.dash.push(strokeDashArray.dash);
-        }
-      }
-    }
-    if (dashArray.dash.length) {
-      !isLastX && dashArray.dash.push(getLength(tempNode, path));
-      tempNode.remove();
-      target.attr("stroke-dasharray", dashArray.dash.join(" "));
-    }
-    return path;
-  },
-  isWithinRegions(withinX, withinRegions) {
-    for (let i = 0, reg; reg = withinRegions[i]; i++) {
-      if (reg.start < withinX && withinX <= reg.end) {
-        return reg.style;
-      }
-    }
-    return false;
-  },
-  isWithinStep(that, y) {
-    return Math.abs(y - getPointer(this.state.event, that)[1]) < 30;
-  },
-  shouldDrawPointsForLine(d) {
-    const linePoint = this.config.line_point;
-    return linePoint === true || isArray(linePoint) && linePoint.indexOf(d.id) !== -1;
-  }
+  gauge_background: "",
+  gauge_fullCircle: false,
+  gauge_label_show: true,
+  gauge_label_extents: void 0,
+  gauge_label_format: void 0,
+  gauge_label_ratio: void 0,
+  gauge_label_threshold: 0,
+  gauge_label_line: false,
+  gauge_label_image: void 0,
+  gauge_enforceMinMax: false,
+  gauge_min: 0,
+  gauge_max: 100,
+  gauge_type: "single",
+  gauge_startingAngle: -1 * Math.PI / 2,
+  gauge_arcLength: 100,
+  gauge_title: "",
+  gauge_units: void 0,
+  gauge_width: void 0,
+  gauge_arcs_minWidth: 5,
+  gauge_expand: {},
+  gauge_expand_rate: 0.98,
+  gauge_expand_duration: 50
 });
 
-;// ./src/ChartInternal/shape/point.ts
+;// ./src/config/resolver/shape/gauge.ts
 
 
 
-const getTransitionName = () => getRandom();
-/* harmony default export */ var point = ({
-  initialOpacityForCircle(d) {
-    const { config, state: { withoutFadeIn } } = this;
-    let opacity = config.point_opacity;
-    if (isUndefined(opacity)) {
-      opacity = this.getBaseValue(d) !== null && withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
-    }
-    return opacity;
-  },
-  opacityForCircle(d) {
-    var _a;
-    const { config } = this;
-    let opacity = config.point_opacity;
-    if (isUndefined(opacity)) {
-      opacity = config.point_show && !((_a = this.isPointFocusOnly) == null ? void 0 : _a.call(this)) ? null : "0";
-      opacity = isValue(this.getBaseValue(d)) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0";
-    }
-    return opacity;
-  },
-  initCircle() {
-    const $$ = this;
-    const { $el: { main } } = $$;
-    !$$.point && ($$.point = $$.generatePoint());
-    if (($$.hasType("bubble") || $$.hasType("scatter")) && main.select(`.${$COMMON.chart} > .${$CIRCLE.chartCircles}`).empty()) {
-      main.select(`.${$COMMON.chart}`).append("g").attr("class", $CIRCLE.chartCircles);
-    }
-  },
-  updateTargetForCircle(targetsValue, enterNodeValue) {
-    const $$ = this;
-    const { config, data, $el } = $$;
-    const selectionEnabled = config.interaction_enabled && config.data_selection_enabled;
-    const isSelectable = selectionEnabled && config.data_selection_isselectable;
-    const classCircles = $$.getClass("circles", true);
-    if (!config.point_show) {
-      return;
-    }
-    $$.initCircle();
-    let targets = targetsValue;
-    let enterNode = enterNodeValue;
-    if (!targets) {
-      targets = $$.filterNullish(data.targets).filter((d) => this.isScatterType(d) || this.isBubbleType(d));
-      const mainCircle = $el.main.select(`.${$CIRCLE.chartCircles}`).style("pointer-events", "none").selectAll(`.${$CIRCLE.circles}`).data(targets);
-      mainCircle.exit().remove();
-      enterNode = mainCircle.enter();
-    }
-    selectionEnabled && enterNode.append("g").attr("class", (d) => $$.generateClass($SELECT.selectedCircles, d.id));
-    enterNode.append("g").attr("class", classCircles).call((selection) => {
-      $$.setCssRule(true, `.${$CIRCLE.circles}`, ["cursor:pointer"], isSelectable)(
-        selection
-      );
-      $$.setCssRule(true, ` .${$CIRCLE.circle}`, ["fill", "stroke"], $$.color)(selection);
-    }).style("opacity", function() {
-      const parent = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this.parentNode);
-      return parent.attr("class").indexOf($CIRCLE.chartCircles) > -1 ? "0" : null;
-    });
-    selectionEnabled && targets.forEach((t) => {
-      $el.main.selectAll(`.${$SELECT.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`).selectAll(`${$SELECT.selectedCircle}`).each((d) => {
-        d.value = t.values[d.index].value;
-      });
-    });
-  },
-  updateCircle(isSub = false) {
-    const $$ = this;
-    const { config, state, $el } = $$;
-    const focusOnly = $$.isPointFocusOnly();
-    const $root = isSub ? $el.subchart : $el;
-    if (config.point_show && !state.toggling) {
-      config.point_radialGradient && $$.updateLinearGradient();
-      const circles = $root.main.selectAll(`.${$CIRCLE.circles}`).selectAll(`.${$CIRCLE.circle}`).data((d) => {
-        const data = $$.isLineType(d) && $$.shouldDrawPointsForLine(d) || $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ? focusOnly ? [d.values[0]] : d.values : [];
-        return $$.filterNullish(data);
-      });
-      circles.exit().remove();
-      circles.enter().filter(Boolean).append(
-        $$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$))
-      );
-      $root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`).style("stroke", $$.getStylePropValue($$.color)).style("opacity", $$.initialOpacityForCircle.bind($$));
-    }
-  },
+
+
+let gauge_gauge = () => (extendArc([gauge], [arc, shape_gauge]), (gauge_gauge = () => TYPE.GAUGE)());
+
+;// ./src/config/resolver/shape/line.ts
+
+
+
+let line_line = () => (extendLine(), (line_line = () => TYPE.LINE)());
+let line_spline = () => (extendLine(void 0, [spline]), (line_spline = () => TYPE.SPLINE)());
+let step = () => (extendLine(), (step = () => TYPE.STEP)());
+
+;// ./src/config/Options/shape/pie.ts
+/* harmony default export */ var pie = ({
   /**
-   * Update circle color
-   * @param {object} d Data object
-   * @returns {string} Color string
-   * @private
+   * Set pie options
+   * @name pie
+   * @memberof Options
+   * @type {object}
+   * @property {object} pie Pie object
+   * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
+   * @property {function} [pie.label.format] Set formatter for the label on each pie piece.
+   * @property {number|function} [pie.label.ratio=undefined] Set ratio of labels position.
+   * @property {number} [pie.label.threshold=0.05] Set threshold ratio to show/hide labels.
+   * @property {boolean|object} [pie.label.line=false] Enable label with lines (displayed outside with connector lines).
+   *  - `true`: Enable label with lines with default settings
+   *  - `false`: Labels are displayed inside the pie slices (default behavior).
+   *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
+   * @property {boolean} [pie.label.line.show=true] Show or hide connector lines.
+   * @property {number} [pie.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
+   * @property {boolean|function} [pie.label.line.text=true] Show text at the end of the connector line (outside the shape).
+   *  - `true`: show data "id" text
+   *  - `false`: use default formatter(label.format) to show text
+   *  - `function(value, ratio, id)`: Custom formatter function for the text.
+   *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
+   * @property {object|function} [pie.label.image] Set image to be displayed next to the label text.<br><br>
+   * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+   * The arguments are:<br>
+   *  - `v` is the value of the data point where the label is shown.
+   *  - `id` is the id of the data where the label is shown.
+   *  - `i` is the index of the data series point where the label is shown.
+   * @property {string} pie.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+   * @property {number} pie.label.image.width Image width in pixels.
+   * @property {number} pie.label.image.height Image height in pixels.
+   * @property {object} [pie.label.image.pos] Image position relative to the label text.
+   * @property {number} [pie.label.image.pos.x=0] x coordinate position, relative the original.
+   * @property {number} [pie.label.image.pos.y=0] y coordinate position, relative the original.
+   * @property {boolean|object} [pie.expand=true] Enable or disable expanding pie pieces.
+   * @property {number} [pie.expand.rate=0.98] Set expand rate.
+   * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
+   * @property {number|object} [pie.innerRadius=0] Sets the inner radius of pie arc.
+   * @property {number|object|undefined} [pie.outerRadius=undefined] Sets the outer radius of pie arc.
+   * @property {number} [pie.padAngle=0] Set padding between data.
+   * @property {number} [pie.padding=0] Sets the gap between pie arcs.
+   * @property {number} [pie.startingAngle=0] Set starting angle where data draws.
+   * @see [Demo: expand.rate](https://naver.github.io/billboard.js/demo/#PieChartOptions.ExpandRate)
+   * @see [Demo: innerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.InnerRadius)
+   * @see [Demo: outerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.OuterRadius)
+   * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#PieChartOptions.StartingAngle)
+   * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#PieChartOptions.LabelImage)
+   * @see [Demo: label line](https://naver.github.io/billboard.js/demo/#PieChartOptions.LabelLine)
+   * @example
+   *  pie: {
+   *      label: {
+   *          show: false,
+   *          format: function(value, ratio, id) {
+   *              return d3.format("$")(value);
+   *
+   *              // to multiline, return with '\n' character
+   *              // return value +"%\nLine1\n2Line2";
+   *          },
+   *
+   *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
+   *          // if data value is below than 0.1, text label will be hidden.
+   *          threshold: 0.1,
+   *
+   *          // set ratio callback. Should return ratio value
+   *          ratio: function(d, radius, h) {
+   *              ...
+   *              return ratio;
+   *          },
+   *          // or set ratio number
+   *          ratio: 0.5,
+   *
+   *          // Enable label with lines (displayed outside with connector lines)
+   *          line: false,  // default - labels inside
+   *          line: true,   // enable label with lines with default settings
+   *          line: {       // enable label with lines with custom settings
+   *             show: true,
+   *             distance: 20,  // horizontal line distance in pixels
+   *
+   *             // show text at the end of connector line (outside the shape)
+   *             text: true,  // use default formatter
+   *             text: function(value, ratio, id) {  // custom formatter
+   *                 return d3.format(".1%")(ratio);
+   *             }
+   *          },
+   *
+   *          // set image to be displayed next to the label text
+   *          image: {
+   *             url: "./sample.svg",
+   *
+   *             // use placeholder to dynamically set image URL based on data ID
+   *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+   *             width: 35,
+   *             height: 35,
+   *             pos: {
+   *                x: 0,
+   *                y: 0
+   *             }
+   *          },
+   *
+   *          // or use function to return image configuration dynamically
+   *          image: function(v, id, i) {
+   *             // Return different images based on value
+   *             if (v > 500) {
+   *                return {
+   *                   url: "./high-value.svg",
+   *                   width: 40,
+   *                   height: 40,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if (v > 100) {
+   *                return {
+   *                   url: "./medium-value.svg",
+   *                   width: 30,
+   *                   height: 30,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if(v < 5) {
+   *                // Return falsy value in case of don't want to show image
+   *                return null;
+   *             } else {
+   *                return {
+   *                   url: "./low-value.svg",
+   *                   width: 20,
+   *                   height: 20,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             }
+   *          }
+   *      },
+   *
+   *      // disable expand transition for interaction
+   *      expand: false,
+   *
+   *      expand: {
+   *      	// set duration of expand transition to 500ms.
+   *          duration: 500,
+   *
+   *      	// set expand area rate
+   *          rate: 1
+   *      },
+   *
+   *      innerRadius: 0,
+   *
+   *      // set different innerRadius for each data
+   *      innerRadius: {
+   *      	data1: 10,
+   *      	data2: 0
+   *      },
+   *
+   *      outerRadius: 100,
+   *
+   *      // set different outerRadius for each data
+   *      outerRadius: {
+   *      	data1: 50,
+   *      	data2: 100
+   *      }
+   *
+   *      padAngle: 0.1,
+   *      padding: 0,
+   *      startingAngle: 1
+   *  }
    */
-  updateCircleColor(d) {
-    const $$ = this;
-    const fn = $$.getStylePropValue($$.color);
-    return $$.config.point_radialGradient ? $$.getGradienColortUrl(d.id) : fn ? fn(d) : null;
-  },
-  redrawCircle(cx, cy, withTransition, flow, isSub = false) {
-    const $$ = this;
-    const { state: { rendered }, $el, $T } = $$;
-    const $root = isSub ? $el.subchart : $el;
-    const selectedCircles = $root.main.selectAll(`.${$SELECT.selectedCircle}`);
-    if (!$$.config.point_show) {
-      return [];
-    }
-    const fn = $$.point(
-      "update",
-      $$,
-      cx,
-      cy,
-      $$.updateCircleColor.bind($$),
-      withTransition,
-      flow,
-      selectedCircles
-    );
-    const posAttr = $$.isCirclePoint() ? "c" : "";
-    const t = getRandom();
-    const opacityStyleFn = $$.opacityForCircle.bind($$);
-    const mainCircles = [];
-    $root.circle.each(function(d) {
-      let result = fn.bind(this)(d);
-      result = $T(result, withTransition || !rendered, t).style("opacity", opacityStyleFn);
-      mainCircles.push(result);
-    });
-    return [
-      mainCircles,
-      $T(selectedCircles, withTransition).attr(`${posAttr}x`, cx).attr(`${posAttr}y`, cy)
-    ];
-  },
-  /**
-   * Show focused data point circle
-   * @param {object} d Selected data
-   * @private
-   */
-  showCircleFocus(d) {
-    const $$ = this;
-    const { state: { hasRadar, resizing, toggling, transiting }, $el } = $$;
-    let { circle } = $el;
-    if (transiting === false && circle && $$.isPointFocusOnly()) {
-      const cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
-      const cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
-      const withTransition = toggling || isUndefined(d);
-      const fn = $$.point(
-        "update",
-        $$,
-        cx,
-        cy,
-        $$.getStylePropValue($$.color),
-        resizing ? false : withTransition
-      );
-      if (d) {
-        circle = circle.filter(function(t) {
-          var _a;
-          const data = (_a = d.filter) == null ? void 0 : _a.call(d, (v) => v.id === t.id);
-          return data.length ? (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).datum(data[0]) : false;
-        });
-      }
-      circle.attr("class", this.updatePointClass.bind(this)).style("opacity", null).each(function(d2) {
-        const { id, index, value } = d2;
-        let visibility = "hidden";
-        if (isValue(value)) {
-          fn.bind(this)(d2);
-          $$.expandCircles(index, id);
-          visibility = "";
-        }
-        this.style.visibility = visibility;
-      });
-    }
-  },
-  /**
-   * Hide focused data point circle
-   * @private
-   */
-  hideCircleFocus() {
-    const $$ = this;
-    const { $el: { circle } } = $$;
-    if ($$.isPointFocusOnly() && circle) {
-      $$.unexpandCircles();
-      circle.style("visibility", "hidden");
-    }
-  },
-  circleX(d) {
-    return this.xx(d);
-  },
-  updateCircleY(isSub = false) {
-    const $$ = this;
-    const getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), isSub);
-    return (d, i) => {
-      const id = d.id;
-      return $$.isGrouped(id) ? getPoints(d, i)[0][1] : $$.getYScaleById(id, isSub)($$.getBaseValue(d));
-    };
-  },
-  expandCircles(i, id, reset) {
-    const $$ = this;
-    const r = $$.pointExpandedR.bind($$);
-    reset && $$.unexpandCircles();
-    const circles = $$.getShapeByIndex("circle", i, id).classed($COMMON.EXPANDED, true);
-    const scale = r(circles) / $$.config.point_r;
-    const ratio = 1 - scale;
-    if ($$.isCirclePoint()) {
-      circles.attr("r", r);
-    } else {
-      circles.each(function() {
-        const point = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
-        if (this.tagName === "circle") {
-          point.attr("r", r);
-        } else {
-          const { width, height } = getBBox(this);
-          const x = ratio * (+point.attr("x") + width / 2);
-          const y = ratio * (+point.attr("y") + height / 2);
-          point.attr("transform", `translate(${x} ${y}) scale(${scale})`);
-        }
-      });
-    }
-  },
-  unexpandCircles(i) {
-    const $$ = this;
-    const r = $$.pointR.bind($$);
-    const circles = $$.getShapeByIndex("circle", i).filter(function() {
-      return (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed($COMMON.EXPANDED);
-    }).classed($COMMON.EXPANDED, false);
-    circles.attr("r", r);
-    if (!$$.isCirclePoint()) {
-      const scale = r(circles) / $$.config.point_r;
-      circles.attr("transform", scale !== 1 ? `scale(${scale})` : null);
-    }
-  },
-  pointR(d) {
-    const $$ = this;
-    const { config } = $$;
-    const pointR = config.point_r;
-    let r = pointR;
-    if ($$.isBubbleType(d)) {
-      r = $$.getBubbleR(d);
-    } else if (isFunction(pointR)) {
-      r = pointR.bind($$.api)(d);
-    }
-    d.r = r;
-    return r;
-  },
-  pointExpandedR(d) {
-    const $$ = this;
-    const { config } = $$;
-    const scale = $$.isBubbleType(d) ? 1.15 : 1.75;
-    return config.point_focus_expand_enabled ? config.point_focus_expand_r || $$.pointR(d) * scale : $$.pointR(d);
-  },
-  pointSelectR(d) {
-    const $$ = this;
-    const selectR = $$.config.point_select_r;
-    return isFunction(selectR) ? selectR(d) : selectR || $$.pointR(d) * 4;
-  },
-  /**
-   * Check if point.focus.only option can be applied.
-   * @returns {boolean}
-   * @private
-   */
-  isPointFocusOnly() {
-    const $$ = this;
-    return $$.config.point_focus_only && !$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
-  },
-  isWithinCircle(node, r) {
-    const { state } = this;
-    const mouse = getPointer(state.event, node);
-    const element = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(node);
-    const prefix = this.isCirclePoint(node) ? "c" : "";
-    const pointSensitivity = this.getPointSensitivity(element == null ? void 0 : element.datum());
-    let cx = +element.attr(`${prefix}x`);
-    let cy = +element.attr(`${prefix}y`);
-    if (!(cx || cy) && node.nodeType === 1) {
-      const { x, y } = getBoundingRect(node);
-      cx = x;
-      cy = y;
-    }
-    return Math.sqrt(
-      Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)
-    ) < (r || pointSensitivity);
-  },
-  /**
-   * Get data point sensitivity radius
-   * @param {object} d Data point object
-   * @returns {number} return the sensitivity value
-   */
-  getPointSensitivity(d) {
-    const $$ = this;
-    let sensitivity = $$.config.point_sensitivity;
-    if (!d) {
-      return sensitivity;
-    } else if (isFunction(sensitivity)) {
-      sensitivity = sensitivity.call($$.api, d);
-    } else if (sensitivity === "radius") {
-      sensitivity = d.r;
-    }
-    return sensitivity;
-  },
-  updatePointClass(d) {
-    const $$ = this;
-    const { circle } = $$.$el;
-    let pointClass = false;
-    if (isObject(d) || circle) {
-      pointClass = d === true ? circle.each(function(d2) {
-        let className = $$.getClass("circle", true)(d2);
-        if (this.getAttribute("class").indexOf($COMMON.EXPANDED) > -1) {
-          className += ` ${$COMMON.EXPANDED}`;
-        }
-        this.setAttribute("class", className);
-      }) : $$.getClass("circle", true)(d);
-    }
-    return pointClass;
-  },
-  generateGetLinePoints(lineIndices, isSub) {
-    const $$ = this;
-    const { config } = $$;
-    const x = $$.getShapeX(0, lineIndices, isSub);
-    const y = $$.getShapeY(isSub);
-    const lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub);
-    const yScale = $$.getYScaleById.bind($$);
-    return (d, i) => {
-      const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
-      const offset = lineOffset(d, i) || y0;
-      const posX = x(d);
-      let posY = y(d);
-      if (config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY)) {
-        posY = y0;
-      }
-      const point = [posX, posY - (y0 - offset)];
-      return [
-        point,
-        point,
-        // from here and below, needed for compatibility
-        point,
-        point
-      ];
-    };
-  },
-  custom: {
-    create(element, id, fillStyleFn) {
-      return element.append("use").attr("xlink:href", `#${id}`).attr("class", this.updatePointClass.bind(this)).style("fill", fillStyleFn).node();
-    },
-    update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
-      const $$ = this;
-      const { width, height } = getBBox(element.node());
-      const xPosFn2 = (d) => isValue(d.value) ? xPosFn(d) - width / 2 : 0;
-      const yPosFn2 = (d) => isValue(d.value) ? yPosFn(d) - height / 2 : 0;
-      let mainCircles = element;
-      if (withTransition) {
-        flow && mainCircles.attr("x", xPosFn2);
-        mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
-        selectedCircles && $$.$T(selectedCircles, withTransition, getTransitionName());
-      }
-      return mainCircles.attr("x", xPosFn2).attr("y", yPosFn2).style("fill", fillStyleFn);
-    }
-  },
-  // 'circle' data point
-  circle: {
-    create(element, sizeFn, fillStyleFn) {
-      return element.append("circle").attr("class", this.updatePointClass.bind(this)).attr("r", sizeFn).style("fill", fillStyleFn).node();
-    },
-    update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
-      const $$ = this;
-      let mainCircles = element;
-      if ($$.hasType("bubble")) {
-        mainCircles.attr("r", $$.pointR.bind($$));
-      }
-      if (withTransition) {
-        flow && mainCircles.attr("cx", xPosFn);
-        if (mainCircles.attr("cx")) {
-          mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
-        }
-        selectedCircles && $$.$T(mainCircles, withTransition, getTransitionName());
-      }
-      return mainCircles.attr("cx", xPosFn).attr("cy", yPosFn).style("fill", fillStyleFn);
-    }
-  },
-  // 'rectangle' data point
-  rectangle: {
-    create(element, sizeFn, fillStyleFn) {
-      const rectSizeFn = (d) => sizeFn(d) * 2;
-      return element.append("rect").attr("class", this.updatePointClass.bind(this)).attr("width", rectSizeFn).attr("height", rectSizeFn).style("fill", fillStyleFn).node();
-    },
-    update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
-      const $$ = this;
-      const r = $$.config.point_r;
-      const rectXPosFn = (d) => xPosFn(d) - r;
-      const rectYPosFn = (d) => yPosFn(d) - r;
-      let mainCircles = element;
-      if (withTransition) {
-        flow && mainCircles.attr("x", rectXPosFn);
-        mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
-        selectedCircles && $$.$T(selectedCircles, withTransition, getTransitionName());
-      }
-      return mainCircles.attr("x", rectXPosFn).attr("y", rectYPosFn).style("fill", fillStyleFn);
-    }
-  }
+  pie_label_show: true,
+  pie_label_format: void 0,
+  pie_label_ratio: void 0,
+  pie_label_threshold: 0.05,
+  pie_label_line: false,
+  pie_label_image: void 0,
+  pie_expand: {},
+  pie_expand_rate: 0.98,
+  pie_expand_duration: 50,
+  pie_innerRadius: 0,
+  pie_outerRadius: void 0,
+  pie_padAngle: 0,
+  pie_padding: 0,
+  pie_startingAngle: 0
 });
 
-;// ./src/ChartInternal/shape/point.common.ts
+;// ./src/config/resolver/shape/pie.ts
 
 
 
-function _hasValidPointDrawMethods(point) {
-  return isObjectType(point) && isFunction(point.create) && isFunction(point.update);
-}
-function _insertPointInfoDefs(point, id) {
-  var _a;
-  const $$ = this;
-  const copyAttr = (from, target) => {
-    const attribs = from.attributes;
-    for (let i = 0, name; name = attribs[i]; i++) {
-      name = name.name;
-      target.setAttribute(name, from.getAttribute(name));
-    }
-  };
-  const doc = new DOMParser().parseFromString(sanitize(point), "image/svg+xml");
-  const node = doc.documentElement;
-  const clone = browser_doc.createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.svg, node.nodeName.toLowerCase());
-  clone.id = id;
-  clone.style.fill = "inherit";
-  clone.style.stroke = "inherit";
-  copyAttr(node, clone);
-  if ((_a = node.childNodes) == null ? void 0 : _a.length) {
-    const parent = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(clone);
-    if ("innerHTML" in clone) {
-      parent.html(sanitize(node.innerHTML));
-    } else {
-      toArray(node.childNodes).forEach((v) => {
-        copyAttr(v, parent.append(v.tagName).node());
-      });
-    }
-  }
-  $$.$el.defs.node().appendChild(clone);
-}
-/* harmony default export */ var point_common = ({
-  /**
-   * Check if point type option is valid
-   * @param {string} type point type
-   * @returns {boolean}
-   * @private
-   */
-  hasValidPointType(type) {
-    return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
-  },
-  /**
-   * Check if pattern point is set to be used on legend
-   * @returns {boolean}
-   * @private
-   */
-  hasLegendDefsPoint() {
-    var _a;
-    const { config } = this;
-    return config.legend_show && ((_a = config.point_pattern) == null ? void 0 : _a.length) && config.legend_usePoint;
-  },
-  getDefsPointId(id) {
-    const { state: { datetimeId } } = this;
-    return `${datetimeId}-point${id}`;
-  },
-  /**
-   * Get validated point pattern array
-   * @returns {Array} Array of point types
-   * @private
-   */
-  getValidPointPattern() {
-    const { config } = this;
-    const validPointType = /^(circle|rect(angle)?)$/i.test(config.point_type) ? config.point_type : "circle";
-    return notEmpty(config.point_pattern) ? config.point_pattern : [validPointType];
-  },
-  /**
-   * Get generate point function
-   * @returns {function}
-   * @private
-   */
-  generatePoint() {
-    const $$ = this;
-    const { $el, config } = $$;
-    const ids = [];
-    const pattern = $$.getValidPointPattern();
-    return function(method, context, ...args) {
-      return function(d) {
-        var _a, _b, _c, _d;
-        const id = $$.getTargetSelectorSuffix(d.id || ((_a = d.data) == null ? void 0 : _a.id) || d);
-        const element = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
-        ids.indexOf(id) < 0 && ids.push(id);
-        let point = pattern[ids.indexOf(id) % pattern.length];
-        if ($$.hasValidPointType(point)) {
-          point = $$[point];
-        } else if (!_hasValidPointDrawMethods(point || config.point_type)) {
-          const pointId = $$.getDefsPointId(id);
-          const defsPoint = $el.defs.select(`#${pointId}`);
-          if (defsPoint.size() < 1) {
-            _insertPointInfoDefs.call($$, point, pointId);
-          }
-          if (method === "create") {
-            return (_b = $$.custom) == null ? void 0 : _b.create.bind(context)(element, pointId, ...args);
-          } else if (method === "update") {
-            return (_c = $$.custom) == null ? void 0 : _c.update.bind(context)(element, ...args);
-          }
-        }
-        return (_d = point[method]) == null ? void 0 : _d.bind(context)(element, ...args);
-      };
-    };
-  }
-});
+
+let pie_pie = () => (extendArc(void 0, [arc, pie]), (pie_pie = () => TYPE.PIE)());
 
 ;// ./src/ChartInternal/shape/polar.ts
 
@@ -21827,6 +23275,175 @@ function getDataMax($$) {
     }
   }
 });
+
+;// ./src/config/Options/shape/polar.ts
+/* harmony default export */ var shape_polar = ({
+  /**
+   * Set polar options
+   * @name polar
+   * @memberof Options
+   * @type {object}
+   * @property {object} polar Polar object
+   * @property {boolean} [polar.label.show=true] Show or hide label on each polar piece.
+   * @property {function} [polar.label.format] Set formatter for the label on each polar piece.
+   * @property {number} [polar.label.threshold=0.05] Set threshold ratio to show/hide labels.
+   * @property {number|function} [polar.label.ratio=undefined] Set ratio of labels position.
+   * @property {boolean|object} [polar.label.line=false] Enable label with lines (displayed outside with connector lines).
+   *  - `true`: Enable label with lines with default settings
+   *  - `false`: Labels are displayed inside the polar slices (default behavior).
+   *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
+   * @property {boolean} [polar.label.line.show=true] Show or hide connector lines.
+   * @property {number} [polar.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
+   * @property {boolean|function} [polar.label.line.text=true] Show text at the end of the connector line (outside the shape).
+   *  - `true`: show data "id" text
+   *  - `false`: use default formatter(label.format) to show text
+   *  - `function(value, ratio, id)`: Custom formatter function for the text.
+   *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
+   * @property {object|function} [polar.label.image] Set image to be displayed next to the label text.<br><br>
+   * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+   * The arguments are:<br>
+   *  - `v` is the value of the data point where the label is shown.
+   *  - `id` is the id of the data where the label is shown.
+   *  - `i` is the index of the data series point where the label is shown.
+   * @property {string} polar.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+   * @property {number} polar.label.image.width Image width in pixels.
+   * @property {number} polar.label.image.height Image height in pixels.
+   * @property {object} [polar.label.image.pos] Image position relative to the label text.
+   * @property {number} [polar.label.image.pos.x=0] x coordinate position, relative the original.
+   * @property {number} [polar.label.image.pos.y=0] y coordinate position, relative the original.
+   * @property {number} [polar.level.depth=3] Set the level depth.
+   * @property {boolean} [polar.level.show=true] Show or hide level.
+   * @property {string} [polar.level.text.backgroundColor="#fff"] Set label text's background color.
+   * @property {function} [polar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
+   * @property {boolean} [polar.level.text.show=true] Show or hide level text.
+   * @property {number} [polar.padAngle=0] Set padding between data.
+   * @property {number} [polar.padding=0] Sets the gap between pie arcs.
+   * @property {number} [polar.startingAngle=0] Set starting angle where data draws.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.PolarChart)
+   * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#PolarChartOptions.LabelImage)
+   * @see [Demo: label line](https://naver.github.io/billboard.js/demo/#PolarChartOptions.LabelLine)
+   * @example
+   *  polar: {
+   *      label: {
+   *          show: false,
+   *          format: function(value, ratio, id) {
+   *              return d3.format("$")(value);
+   *
+   *              // to multiline, return with '\n' character
+   *              // return value +"%\nLine1\n2Line2";
+   *          },
+   *
+   *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
+   *          // if data value is below than 0.1, text label will be hidden.
+   *          threshold: 0.1,
+   *
+   *          // set ratio callback. Should return ratio value
+   *          ratio: function(d, radius, h) {
+   *              ...
+   *              return ratio;
+   *          },
+   *          // or set ratio number
+   *          ratio: 0.5,
+   *
+   *          // Enable label with lines (displayed outside with connector lines)
+   *          line: false,  // default - labels inside
+   *          line: true,   // enable label with lines with default settings
+   *          line: {       // enable label with lines with custom settings
+   *             show: true,
+   *             distance: 20,  // horizontal line distance in pixels
+   *
+   *             // show text at the end of connector line (outside the shape)
+   *             text: true,  // use default formatter
+   *             text: function(value, ratio, id) {  // custom formatter
+   *                 return d3.format(".1%")(ratio);
+   *             }
+   *          },
+   *
+   *          // set image to be displayed next to the label text
+   *          image: {
+   *             url: "./sample.svg",
+   *
+   *             // use placeholder to dynamically set image URL based on data ID
+   *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+   *             width: 35,
+   *             height: 35,
+   *             pos: {
+   *                x: 0,
+   *                y: 0
+   *             }
+   *          },
+   *
+   *          // or use function to return image configuration dynamically
+   *          image: function(v, id, i) {
+   *             // Return different images based on value
+   *             if (v > 500) {
+   *                return {
+   *                   url: "./high-value.svg",
+   *                   width: 40,
+   *                   height: 40,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if (v > 100) {
+   *                return {
+   *                   url: "./medium-value.svg",
+   *                   width: 30,
+   *                   height: 30,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             } else if(v < 5) {
+   *                // Return falsy value in case of don't want to show image
+   *                return null;
+   *             } else {
+   *                return {
+   *                   url: "./low-value.svg",
+   *                   width: 20,
+   *                   height: 20,
+   *                   pos: { x: 0, y: 0 }
+   *                };
+   *             }
+   *          }
+   *      },
+   *      level: {
+   *          depth: 3,
+   *          max: 500,
+   *          show: true,
+   *          text: {
+   *              format: function(x) {
+   *                  return x + "%";
+   *              },
+   *              show: true,
+   *              backgroundColor: "red"
+   *          }
+   *      },
+   *      padAngle: 0.1,
+   *      padding: 0,
+   *      startingAngle: 1
+   *  }
+   */
+  polar_label_show: true,
+  polar_label_format: void 0,
+  polar_label_threshold: 0.05,
+  polar_label_line: false,
+  polar_label_image: void 0,
+  polar_label_ratio: void 0,
+  polar_level_depth: 3,
+  polar_level_max: void 0,
+  polar_level_show: true,
+  polar_level_text_backgroundColor: "#fff",
+  polar_level_text_format: (x) => x % 1 === 0 ? x : x.toFixed(2),
+  polar_level_text_show: true,
+  polar_padAngle: 0,
+  polar_padding: 0,
+  polar_startingAngle: 0
+});
+
+;// ./src/config/resolver/shape/polar.ts
+
+
+
+
+
+let polar_polar = () => (extendArc([polar], [arc, shape_polar]), (polar_polar = () => TYPE.POLAR)());
 
 ;// ./src/ChartInternal/shape/radar.ts
 
@@ -22094,6 +23711,131 @@ const cacheKeyTextWidth = KEY.radarTextWidth;
   }
 });
 
+;// ./src/config/Options/shape/radar.ts
+/* harmony default export */ var shape_radar = ({
+  /**
+   * Set radar options
+   * - **NOTE:**
+   *  > When x tick text contains `\n`, it's used as line break.
+   * @name radar
+   * @memberof Options
+   * @type {object}
+   * @property {object} radar Radar object
+   * @property {number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
+   * @property {boolean} [radar.axis.line.show=true] Show or hide axis line.
+   * @property {number} [radar.axis.text.position.x=0] x coordinate position, relative the original.
+   * @property {number} [radar.axis.text.position.y=0] y coordinate position, relative the original.
+   * @property {boolean} [radar.axis.text.show=true] Show or hide axis text.
+   * @property {boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
+   * @property {number} [radar.level.depth=3] Set the level depth.
+   * @property {boolean} [radar.level.show=true] Show or hide level.
+   * @property {function} [radar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
+   * @property {boolean} [radar.level.text.show=true] Show or hide level text.
+   * @property {number} [radar.size.ratio=0.87] Set size ratio.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.RadarChart)
+   * @see [Demo: radar axis](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxis)
+   * @see [Demo: radar level](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarLevel)
+   * @see [Demo: radar size](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarSize)
+   * @see [Demo: radar axis multiline](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxisMultiline)
+   * @example
+   *  radar: {
+   *      axis: {
+   *          max: 50,
+   *          line: {
+   *              show: false
+   *          },
+   *          text: {
+   *              position: {
+   *              	x: 0,
+   *              	y: 0
+   *              },
+   *              show: false
+   *          }
+   *      },
+   *      direction: {
+   *          clockwise: true
+   *      },
+   *      level: {
+   *          show: false,
+   *          text: {
+   *              format: function(x) {
+   *                  return x + "%";
+   *              },
+   *              show: true
+   *          }
+   *      },
+   *      size: {
+   *          ratio: 0.7
+   *      }
+   *  }
+   */
+  radar_axis_max: void 0,
+  radar_axis_line_show: true,
+  radar_axis_text_show: true,
+  radar_axis_text_position: {},
+  radar_level_depth: 3,
+  radar_level_show: true,
+  radar_level_text_format: (x) => x % 1 === 0 ? x : x.toFixed(2),
+  radar_level_text_show: true,
+  radar_size_ratio: 0.87,
+  radar_direction_clockwise: false
+});
+
+;// ./src/config/resolver/shape/radar.ts
+
+
+
+
+
+
+
+let radar_radar = () => (extendArc(
+  [internal.eventrect, point, radar],
+  [common_point, shape_radar, { axis_x_categories: options.optAxis.axis_x_categories }]
+), (radar_radar = () => TYPE.RADAR)());
+
+;// ./src/config/Options/shape/scatter.ts
+/* harmony default export */ var scatter = ({
+  /**
+   * Set scatter options
+   * @name scatter
+   * @memberof Options
+   * @type {object}
+   * @property {object} [scatter] scatter object
+   * @property {boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
+   * @example
+   *  scatter: {
+   *      connectNull: true,
+   *      step: {
+   *          type: "step-after"
+   *      },
+   *
+   *      // hide all data points ('point.show=false' also has similar effect)
+   *      point: false,
+   *
+   *      // show data points for only indicated data
+   *      point: [
+   *          "data1", "data3"
+   *      ],
+   *
+   *      zerobased: false
+   *  }
+   */
+  scatter_zerobased: false
+});
+
+;// ./src/config/resolver/shape/scatter.ts
+
+
+
+
+
+
+let scatter_scatter = () => (extendAxis(
+  [point_common, point],
+  [common_point, scatter]
+), (scatter_scatter = () => TYPE.SCATTER)());
+
 // EXTERNAL MODULE: external {"commonjs":"d3-hierarchy","commonjs2":"d3-hierarchy","amd":"d3-hierarchy","root":"d3"}
 var external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_ = __webpack_require__(12);
 ;// ./src/ChartInternal/shape/treemap.ts
@@ -22312,1582 +24054,6 @@ ${percentValue}%`;
   }
 });
 
-;// ./src/config/Options/common/point.ts
-/* harmony default export */ var common_point = ({
-  /**
-   * Set point options
-   * @name point
-   * @memberof Options
-   * @type {object}
-   * @property {object} point Point object
-   * @property {boolean} [point.show=true] Whether to show each point in line.
-   * @property {number|function} [point.r=2.5] The radius size of each point.
-   *  - **NOTE:** Disabled for 'bubble' type
-   * @property {boolean|object} [point.radialGradient=false] Set the radial gradient on point.<br><br>
-   * Or customize by giving below object value:
-   *  - cx {number}: `cx` value (default: `0.3`)
-   *  - cy {number}: `cy` value (default: `0.3`)
-   *  - r {number}: `r` value (default: `0.7`)
-   *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
-   *    - (default: `[[0.1, $DATA_COLOR, 1], [0.9, $DATA_COLOR, 0]]`)
-   * @property {boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
-   * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
-   *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
-   * @property {boolean} [point.focus.only=false] Show point only when is focused.
-   * @property {number|null} [point.opacity=undefined] Set point opacity value.
-   * - **NOTE:**
-   * 	- `null` will make to not set inline 'opacity' css prop.
-   * 	- when no value(or undefined) is set, it defaults to set opacity value according its chart types.
-   * @property {number|string|function} [point.sensitivity=10] The sensitivity value for interaction boundary.
-   * - **Available Values:**
-   *   - {number}: Absolute sensitivity value which is the distance from the data point in pixel.
-   *   - "radius": sensitivity based on point's radius
-   *   - Function: callback for each point to determine the sensitivity<br>
-   *    	```js
-   *   	sensitivity: function(d) {
-   * 	  // ex. of argument d:
-   * 	  // ==> {x: 2, value: 55, id: 'data3', index: 2, r: 19.820624179302296}
-   *
-   * 	  // returning d.r, will make sensitivity same as point's radius value.
-   *  	  return d.r;
-   * 	}
-   * 	```
-   * @property {number} [point.select.r=point.r*4] The radius size of each point on selected.
-   * @property {string} [point.type="circle"] The type of point to be drawn
-   * - **NOTE:**
-   *   - If chart has 'bubble' type, only circle can be used.
-   *   - For IE, non circle point expansions are not supported due to lack of transform support.
-   * - **Available Values:**
-   *   - circle
-   *   - rectangle
-   * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line
-   * - **NOTE:**
-   *   - This is an `experimental` feature and can have some unexpected behaviors.
-   *   - If chart has 'bubble' type, only circle can be used.
-   *   - For IE, non circle point expansions are not supported due to lack of transform support.
-   *   - Only common SVG tags are allowed to prevent XSS attacks. If creating charts from user input, it is recommended to sanitize input values to avoid potential vulnerabilities.
-   * - **Available Values:**
-   *   - circle
-   *   - rectangle
-   *   - svg shape tag interpreted as string<br>
-   *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
-   * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
-   * @see [Demo: point focus only](https://naver.github.io/billboard.js/demo/#Point.FocusOnly)
-   * @see [Demo: point radialGradient](https://naver.github.io/billboard.js/demo/#Point.RadialGradientPoint)
-   * @see [Demo: point sensitivity](https://naver.github.io/billboard.js/demo/#Point.PointSensitivity)
-   * @example
-   *  point: {
-   *      show: false,
-   *      r: 5,
-   *
-   *      // or customize the radius
-   *      r: function(d) {
-   *          ...
-   *          return r;
-   *      },
-   *
-   *      // will generate following radialGradient:
-   *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/radialGradient
-   *      // <radualGradient cx="0.3" cy="0.3" r="0.7">
-   *      //    <stop offset="0.1" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
-   *      //    <stop offset="0.9" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
-   *      // </radialrGradient>
-   *      radialGradient: true,
-   *
-   *      // Or customized gradient
-   *      radialGradient: {
-   *      	cx: 0.3,  // cx attributes
-   *      	cy: 0.5,  // cy attributes
-   *      	r: 0.7,  // r attributes
-   *      	stops: [
-   *      	  // offset, stop-color, stop-opacity
-   *      	  [0, "#7cb5ec", 1],
-   *
-   *      	  // setting 'null' for stop-color, will set its original data color
-   *      	  [0.5, null, 0],
-   *
-   *      	  // setting 'function' for stop-color, will pass data id as argument.
-   *      	  // It should return color string or null value
-   *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
-   *      	]
-   *      },
-   *
-   *      focus: {
-   *          expand: {
-   *              enabled: true,
-   *              r: 1
-   *          },
-   *          only: true
-   *      },
-   *
-   *      // do not set inline 'opacity' css prop setting
-   *      opacity: null,
-   *
-   *      // set every data point's opacity value
-   *      opacity: 0.7,
-   *
-   *      select: {
-   *          r: 3
-   *      },
-   *
-   *      // having lower value, means how closer to be for interaction
-   *      sensitivity: 3,
-   *
-   *      // sensitivity based on point's radius
-   *      sensitivity: "radius",
-   *
-   *      // callback for each point to determine the sensitivity
-   *      sensitivity: function(d) {
-   * 	// ex. of argument d:
-   * 	// ==> {x: 2, value: 55, id: 'data3', index: 2, r: 19.820624179302296}
-   *
-   * 	// returning d.r, will make sensitivity same as point's radius value.
-   * 	return d.r;
-   *      }
-   *
-   *      // valid values are "circle" or "rectangle"
-   *      type: "rectangle",
-   *
-   *      // or indicate as pattern
-   *      pattern: [
-   *        "circle",
-   *        "rectangle",
-   *        "<polygon points='0 6 4 0 -4 0'></polygon>"
-   *     ],
-   *  }
-   */
-  point_show: true,
-  point_r: 2.5,
-  point_radialGradient: false,
-  point_sensitivity: 10,
-  point_focus_expand_enabled: true,
-  point_focus_expand_r: void 0,
-  point_focus_only: false,
-  point_opacity: void 0,
-  point_pattern: [],
-  point_select_r: void 0,
-  point_type: "circle"
-});
-
-;// ./src/config/Options/shape/area.ts
-/* harmony default export */ var Options_shape_area = ({
-  /**
-   * Set area options
-   * @name area
-   * @memberof Options
-   * @type {object}
-   * @property {object} area Area object
-   * @property {boolean} [area.above=false] Set background area `above` the data chart line.
-   * @property {boolean} [area.below=false] Set background area `below` the data chart line.
-   *  - **NOTE**: Can't be used along with `above` option. When above & below options are set to true, `above` will be prioritized.
-   * @property {boolean} [area.front=true] Set area node to be positioned over line node.
-   * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
-   * Or customize by giving below object value:
-   *  - x {Array}: `x1`, `x2` value (default: `[0, 0]`)
-   *  - y {Array}: `y1`, `y2` value (default: `[0, 1]`)
-   *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
-   *    - (default: `[[0, $DATA_COLOR, 1], [1, $DATA_COLOR, 0]]`)
-   * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
-   * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
-   * @see [Demo: above](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Above)
-   * @see [Demo: below](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Below)
-   * @see [Demo: linearGradient](https://naver.github.io/billboard.js/demo/#AreaChartOptions.LinearGradient)
-   * @example
-   *  area: {
-   *      above: true,
-   *      below: false,
-   *      zerobased: false,
-   *
-   *      // <g class='bb-areas'> will be positioned behind the line <g class='bb-lines'> in stacking order
-   *      front: false,
-   *
-   *      // will generate following linearGradient:
-   *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
-   *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
-   *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
-   *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
-   *      // </linearGradient>
-   *      linearGradient: true,
-   *
-   *      // Or customized gradient
-   *      linearGradient: {
-   *      	x: [0, 0],  // x1, x2 attributes
-   *      	y: [0, 0],  // y1, y2 attributes
-   *      	stops: [
-   *      	  // offset, stop-color, stop-opacity
-   *      	  [0, "#7cb5ec", 1],
-   *
-   *      	  // setting 'null' for stop-color, will set its original data color
-   *      	  [0.5, null, 0],
-   *
-   *      	  // setting 'function' for stop-color, will pass data id as argument.
-   *      	  // It should return color string or null value
-   *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
-   *      	]
-   *      }
-   *  }
-   */
-  area_above: false,
-  area_below: false,
-  area_front: true,
-  area_linearGradient: false,
-  area_zerobased: true
-});
-
-;// ./src/config/Options/shape/bar.ts
-/* harmony default export */ var shape_bar = ({
-  /**
-   * Set bar options
-   * @name bar
-   * @memberof Options
-   * @type {object}
-   * @property {object} bar Bar object
-   * @property {boolean} [bar.front=false] Set 'bar' to be positioned over(on the top) other shapes elements.
-   * @property {number} [bar.indices.removeNull=false] Remove nullish data on bar indices positions.
-   * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
-   * @property {boolean|object} [bar.linearGradient=false] Set the linear gradient on bar.<br><br>
-   * Or customize by giving below object value:
-   *  - x {Array}: `x1`, `x2` value (default: `[0, 0]`)
-   *  - y {Array}: `y1`, `y2` value (default: `[0, 1]`)
-   *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
-   *    - (default: `[[0, $DATA_COLOR, 1], [1, $DATA_COLOR, 0]]`)
-   * @property {boolean} [bar.overlap=false] Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
-   * @property {number} [bar.padding=0] The padding pixel value between each bar.
-   * @property {number} [bar.radius] Set the radius of bar edge in pixel.
-   * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
-   * @property {number} [bar.sensitivity=2] The sensitivity offset value for interaction boundary.
-   * @property {number|function|object} [bar.width] Change the width of bar chart.
-   * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
-   * - **NOTE:** Criteria for ratio.
-   *   - When x ticks count is same with the data count, the baseline for ratio is the minimum interval value of x ticks.
-   * 	   - ex. when timeseries x values are: [2024-01-01, 2024-02-01, 2024-03-01], the minimum interval will be `2024-02-01 ~ 2024-03-01`
-   *     - if the minimum interval is 30px, then ratio=1 means 30px.
-   *   - When x ticks count is lower than the data count, the baseline will be calculated as `chart width / data count`.
-   * 	   - ex. when chart width is 500, data count is 5, then ratio=1 means 100px.
-   * @property {number} [bar.width.max] The maximum width value for ratio.
-   * @property {number} [bar.width.dataname] Change the width of bar for indicated dataset only.
-   * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
-   *  - **NOTE:**
-   *   - Works only for non-stacked bar
-   * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
-   * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
-   * @see [Demo: bar front](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarFront)
-   * @see [Demo: bar indices](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarIndices)
-   * @see [Demo: bar overlap](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarOverlap)
-   * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
-   * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
-   * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
-   * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
-   * @example
-   *  bar: {
-   *      // make bar shape to be positioned over the other shape elements
-   *      front: true,
-   *
-   *      // remove nullish data on bar indices positions
-   *      indices: {
-   *          removeNull: true
-   *      },
-   *
-   *      // will generate following linearGradient:
-   *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
-   *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
-   *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
-   *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
-   *      // </linearGradient>
-   *      linearGradient: true,
-   *
-   *      // Or customized gradient
-   *      linearGradient: {
-   *      	x: [0, 0],  // x1, x2 attributes
-   *      	y: [0, 0],  // y1, y2 attributes
-   *      	stops: [
-   *      	  // offset, stop-color, stop-opacity
-   *      	  [0, "#7cb5ec", 1],
-   *
-   *      	  // setting 'null' for stop-color, will set its original data color
-   *      	  [0.5, null, 0],
-   *
-   *      	  // setting 'function' for stop-color, will pass data id as argument.
-   *      	  // It should return color string or null value
-   *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
-   *      	]
-   *      },
-   *
-   *      // remove nullish da
-   *      overlap: true,
-   *
-   *      padding: 1,
-   *
-   *      // bar radius
-   *      radius: 10,
-   *      // or
-   *      radius: {
-   *          ratio: 0.5
-   *      }
-   *
-   *      label: {
-   *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the y Axis domain range value.
-   *          // if data value is below than 0.1, text label will be hidden.
-   *          threshold: 0.1,
-   *      },
-   *
-   *      // will not have offset between each bar elements for interaction
-   *      sensitivity: 0,
-   *
-   *      width: 10,
-   *
-   *      // or specify width callback. The callback will receive width, targetsNum, maxDataCount as arguments.
-   *      // - width: chart area width
-   *      // - targetsNum: number of targets
-   *      // - maxDataCount: maximum data count among targets
-   *      width: function(width, targetsNum, maxDataCount) {
-   *            return width / (targetsNum * maxDataCount);
-   *      }
-   *
-   *      // or specify ratio & max
-   *      width: {
-   *          ratio: 0.2,
-   *          max: 20
-   *      },
-   *
-   *      // or specify width per dataset
-   *      width: {
-   *          data1: 20,
-   *          data2: {
-   *              ratio: 0.2,
-   *              max: 20
-   *          }
-   *      },
-   *
-   *      zerobased: false
-   *  }
-   */
-  bar_connectLine: false,
-  bar_front: false,
-  bar_indices_removeNull: false,
-  bar_label_threshold: 0,
-  bar_linearGradient: false,
-  bar_overlap: false,
-  bar_padding: 0,
-  bar_radius: void 0,
-  bar_radius_ratio: void 0,
-  bar_sensitivity: 2,
-  bar_width: void 0,
-  bar_width_ratio: 0.6,
-  bar_width_max: void 0,
-  bar_zerobased: true
-});
-
-;// ./src/config/Options/shape/bubble.ts
-/* harmony default export */ var shape_bubble = ({
-  /**
-   * Set bubble options
-   * @name bubble
-   * @memberof Options
-   * @type {object}
-   * @property {object} bubble bubble object
-   * @property {number|function} [bubble.maxR=35] Set the max bubble radius value
-   * @property {boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
-   * @example
-   *  bubble: {
-   *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.
-   *      // And the lesser will have radius relatively from the max value.
-   *      maxR: 50,
-   *
-   *      // or set radius callback
-   *      maxR: function(d) {
-   *          // ex. of d param - {x: Fri Oct 06 2017 00:00:00 GMT+0900, value: 80, id: "data2", index: 5}
-   *          ...
-   *          return Math.sqrt(d.value * 2);
-   *      },
-   *      zerobased: false
-   *  }
-   */
-  bubble_maxR: 35,
-  bubble_zerobased: false
-});
-
-;// ./src/config/Options/shape/candlestick.ts
-/* harmony default export */ var shape_candlestick = ({
-  /**
-   * Set candlestick options
-   * @name candlestick
-   * @memberof Options
-   * @type {object}
-   * @property {object} candlestick Candlestick object
-   * @property {number} [candlestick.width] Change the width.
-   * @property {number} [candlestick.width.ratio=0.6] Change the width by ratio.
-   * @property {number} [candlestick.width.max] The maximum width value for ratio.
-   * @property {number} [candlestick.width.dataname] Change the width for indicated dataset only.
-   * @property {number} [candlestick.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
-   * @property {number} [candlestick.width.dataname.max] The maximum width value for ratio.
-   * @property {object} [candlestick.color] Color setting.
-   * @property {string|object} [candlestick.color.down] Change down(bearish) value color.
-   * @property {string} [candlestick.color.down.dataname] Change down value color for indicated dataset only.
-   *
-   * @see [Demo](https://naver.github.io/billboard.js/demo/##Chart.CandlestickChart)
-   * @example
-   *  candlestick: {
-   *      width: 10,
-   *
-   *      // or
-   *      width: {
-   *         	ratio: 0.2,
-   *         	max: 20
-   *      },
-   *
-   *      // or specify width per dataset
-   *      width: {
-   *         	data1: 20,
-   *         	data2: {
-   *         	    ratio: 0.2,
-   *         		max: 20
-   *         	}
-   *      },
-   *      color: {
-   *  	  	// specify bearish color
-   *  	  	down: "red",
-   *
-   *  	  	// or specify color per dataset
-   *  	  	down: {
-   *  	  		data1: "red",
-   *  	  		data2: "blue",
-   *  	  	}
-   *      }
-   *  }
-   */
-  candlestick_width: void 0,
-  candlestick_width_ratio: 0.6,
-  candlestick_width_max: void 0,
-  candlestick_color_down: "red"
-});
-
-;// ./src/config/Options/shape/line.ts
-/* harmony default export */ var shape_line = ({
-  /**
-   * Set line options
-   * @name line
-   * @memberof Options
-   * @type {object}
-   * @property {object} line Line object
-   * @property {boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
-   *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
-   * @property {Array}   [line.classes=undefined] If set, used to set a css class on each line.
-   * @property {boolean} [line.step.type=step] Change step type for step chart.<br>
-   * **Available values:**
-   * - step
-   * - step-before
-   * - step-after
-   * @property {boolean} [line.step.tooltipMatch=false] Set to `true` for `step-before` and `step-after` types to have cursor/tooltip match to hovered step's point instead of nearest point.
-   * @property {boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
-   * @property {boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
-   * @example
-   *  line: {
-   *      connectNull: true,
-   *      classes: [
-   *          "line-class1",
-   *          "line-class2"
-   *      ],
-   *      step: {
-   *          type: "step-after",
-   *
-   *          // to have cursor/tooltip match to hovered step's point instead of nearest point.
-   *          tooltipMatch: true
-   *      },
-   *
-   *      // hide all data points ('point.show=false' also has similar effect)
-   *      point: false,
-   *
-   *      // show data points for only indicated data
-   *      point: [
-   *          "data1", "data3"
-   *      ],
-   *
-   *      zerobased: false
-   *  }
-   */
-  line_connectNull: false,
-  line_step_type: "step",
-  line_step_tooltipMatch: false,
-  line_zerobased: false,
-  line_classes: void 0,
-  line_point: true
-});
-
-;// ./src/config/Options/shape/scatter.ts
-/* harmony default export */ var scatter = ({
-  /**
-   * Set scatter options
-   * @name scatter
-   * @memberof Options
-   * @type {object}
-   * @property {object} [scatter] scatter object
-   * @property {boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
-   * @example
-   *  scatter: {
-   *      connectNull: true,
-   *      step: {
-   *          type: "step-after"
-   *      },
-   *
-   *      // hide all data points ('point.show=false' also has similar effect)
-   *      point: false,
-   *
-   *      // show data points for only indicated data
-   *      point: [
-   *          "data1", "data3"
-   *      ],
-   *
-   *      zerobased: false
-   *  }
-   */
-  scatter_zerobased: false
-});
-
-;// ./src/config/Options/shape/spline.ts
-/* harmony default export */ var spline = ({
-  /**
-   * Set spline options
-   * - **Available interpolation type values:**
-   *  - basis (d3.curveBasis)
-   *  - basis-closed (d3.curveBasisClosed)
-   *  - basis-open (d3.curveBasisOpen)
-   *  - bundle (d3.curveBundle)
-   *  - cardinal (d3.curveCardinal)
-   *  - cardinal-closed (d3.curveCardinalClosed)
-   *  - cardinal-open (d3.curveCardinalOpen)
-   *  - catmull-rom (d3.curveCatmullRom)
-   *  - catmull-rom-closed (d3.curveCatmullRomClosed)
-   *  - catmull-rom-open (d3.curveCatmullRomOpen)
-   *  - monotone-x (d3.curveMonotoneX)
-   *  - monotone-y (d3.curveMonotoneY)
-   *  - natural (d3.curveNatural)
-   *  - linear-closed (d3.curveLinearClosed)
-   *  - linear (d3.curveLinear)
-   *  - step (d3.curveStep)
-   *  - step-after (d3.curveStepAfter)
-   *  - step-before (d3.curveStepBefore)
-   * @name spline
-   * @memberof Options
-   * @type {object}
-   * @property {object} spline Spline object
-   * @property {object} spline.interpolation Spline interpolation object
-   * @property {string} [spline.interpolation.type="cardinal"] Interpolation type
-   * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
-   * @example
-   *  spline: {
-   *      interpolation: {
-   *          type: "cardinal"
-   *      }
-   *  }
-   */
-  spline_interpolation_type: "cardinal"
-});
-
-;// ./src/config/Options/shape/arc.ts
-/* harmony default export */ var shape_arc = ({
-  /**
-   * Set arc options
-   * @name arc
-   * @memberof Options
-   * @type {object}
-   * @property {object} arc Arc object
-   * @property {number|function} [arc.cornerRadius=0] Set corner radius of Arc(donut/gauge/pie/polar) shape.
-   *  - **NOTE:**
-   * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
-   * @property {number} [arc.cornerRadius.ratio=0] Set ratio relative of outer radius.
-   * @property {object} [arc.needle] Set needle options.
-   * @property {boolean} [arc.needle.show=false] Show or hide needle.
-   * @property {string} [arc.needle.color] Set needle filled color.
-   * @property {function} [arc.needle.path] Set custom needle path function.
-   *  - **NOTE:**
-   *   - The path should be starting from 0,0 (which is center) to top center coordinate.
-   *   - The function will receive, `length`{number} parameter which indicating the needle length in pixel relative to radius.
-   * @property {number} [arc.needle.value] Set needle value.
-   *  - **NOTE:**
-   *   - For single gauge chart, needle will point the data value by default, otherwise will point 0(zero).
-   * @property {number} [arc.needle.length=100] Set needle length in percentages relative to radius.
-   * @property {object} [arc.needle.top] Set needle top options.
-   * @property {number} [arc.needle.top.rx=0] Set needle top [rx radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
-   * @property {number} [arc.needle.top.ry=0] Set needle top [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
-   * @property {number} [arc.needle.top.width=0] Set needle top width in pixel.
-   * @property {object} [arc.needle.bottom] Set needle bottom options.
-   * @property {number} [arc.needle.bottom.rx=1] Set needle bottom [rx radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
-   * @property {number} [arc.needle.bottom.ry=1] Set needle bottom [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
-   * @property {number} [arc.needle.bottom.width=15] Set needle bottom width in pixel.
-   * @property {number} [arc.needle.bottom.len=0] Set needle bottom length in pixel. Setting this value, will make bottom larger starting from center.
-   * @property {object} [arc.rangeText] Set rangeText options.
-   * @property {Array} [arc.rangeText.values] Set range text values to be shown around Arc.
-   * - When `unit: 'absolute'`: Given values are treated as absolute values.
-   * - When `unit: '%'`: Given values are treated as percentages.
-   * @property {string} [arc.rangeText.unit="absolute"] Specify the range text unit.
-   * - "absolute": Show absolute value
-   * - "%": Show percentage value
-   * @property {boolean} [arc.rangeText.fixed=false] Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
-   * @property {function} [arc.rangeText.format] Set format function for the range text.
-   * @property {number} [arc.rangeText.position] Set position function or object for the range text.
-   * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
-   * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#PieChartOptions.CornerRadius)
-   * @see [Demo: Donut needle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutNeedle)
-   * @see [Demo: Donut RangeText](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutRangeText)
-   * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
-   * @see [Demo: Gauge needle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeNeedle)
-   * @see [Demo: Gauge RangeText](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeRangeText)
-   * @example
-   *  arc: {
-   *      cornerRadius: 12,
-   *
-   *      // can customize corner radius for each data with function callback
-   *      //
-   *      // The function will receive:
-   *      // - id {string}: Data id
-   *      // - value {number}: Data value
-   *      // - outerRadius {number}: Outer radius value
-   *      cornerRadius: function(id, value, outerRadius) {
-   *          return (id === "data1" && value > 10) ?
-   *          	50 : outerRadius * 1.2;
-   *      },
-   *
-   *      // set ratio relative of outer radius
-   *      cornerRadius: {
-   *          ratio: 0.5
-   *      },
-   *
-   *      needle: {
-   *       	show: true,
-   *       	color: "red", // any valid CSS color
-   *       	path: function(length) {
-   *       	  const len = length - 20;
-   *
-   *       	  // will return upper arrow shape path
-   *       	  // Note: The path should begun from '0,0' coordinate to top center.
-   *       	  const path = `M 0 -${len + 20}
-   *       		L -12 -${len}
-   *       		L -5 -${len}
-   *       		L -5 0
-   *       		A 1 1 0 0 0 5 0
-   *       		L 5 -${len}
-   *       		L 12 -${len} Z`;
-   *
-   *       	  return path;
-   *       	},
-   *       	value: 40,  // will make needle to point value 40.
-   *       	length: 80, // needle length in percentages relative to radius.
-   *
-   *       	top: {
-   *       	  // rx and ry are the two radii of the ellipse;
-   *       	  // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
-   *       	  rx: 1,
-   *       	  ry: 1,
-   *       	  width: 5
-   *       	},
-   *       	bottom: {
-   *       	  // rx and ry are the two radii of the ellipse;
-   *       	  // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
-   *       	  rx: 1,
-   *       	  ry: 1,
-   *       	  width: 10
-   *       	  len: 10
-   *       	}
-   *      },
-   *
-   *      rangeText: {
-   *       	values: [15, 30, 50, 75, 95],
-   *       	unit: "%",
-   *       	fixed: false, // only available for gauge chart
-   *       	format: function(v) {
-   *       	  return v === 15 ? "Fifteen" : v;
-   *       	},
-   *
-   *       	position: function(v) {
-   *       	  return v === 15 ? {x: 20, y: 10} : null; // can return one props value also.
-   *       	},
-   *       	position: {x: 10, y: 15},
-   *       	position: {x: 10}
-   *      }
-   *  }
-   */
-  arc_cornerRadius: 0,
-  arc_cornerRadius_ratio: 0,
-  arc_needle_show: false,
-  arc_needle_color: void 0,
-  arc_needle_value: void 0,
-  arc_needle_path: void 0,
-  arc_needle_length: 100,
-  arc_needle_top_rx: 0,
-  arc_needle_top_ry: 0,
-  arc_needle_top_width: 0,
-  arc_needle_bottom_rx: 1,
-  arc_needle_bottom_ry: 1,
-  arc_needle_bottom_width: 15,
-  arc_needle_bottom_len: 0,
-  arc_rangeText_values: void 0,
-  arc_rangeText_unit: "absolute",
-  arc_rangeText_fixed: false,
-  arc_rangeText_format: void 0,
-  arc_rangeText_position: void 0
-});
-
-;// ./src/config/Options/shape/donut.ts
-/* harmony default export */ var donut = ({
-  /**
-   * Set donut options
-   * @name donut
-   * @memberof Options
-   * @type {object}
-   * @property {object} donut Donut object
-   * @property {boolean} [donut.label.show=true] Show or hide label on each donut piece.
-   * @property {function} [donut.label.format] Set formatter for the label on each donut piece.
-   * @property {number} [donut.label.threshold=0.05] Set threshold ratio to show/hide labels.
-   * @property {number|function} [donut.label.ratio=undefined] Set ratio of labels position.
-   * @property {boolean|object} [donut.label.line=false] Enable label with lines (displayed outside with connector lines).
-   *  - `true`: Enable label with lines with default settings
-   *  - `false`: Labels are displayed inside the donut slices (default behavior).
-   *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
-   * @property {boolean} [donut.label.line.show=true] Show or hide connector lines.
-   * @property {number} [donut.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
-   * @property {boolean|function} [donut.label.line.text=true] Show text at the end of the connector line (outside the shape).
-   *  - `true`: show data "id" text
-   *  - `false`: use default formatter(label.format) to show text
-   *  - `function(value, ratio, id)`: Custom formatter function for the text.
-   *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
-   * @property {object|function} [donut.label.image] Set image to be displayed next to the label text.<br><br>
-   * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
-   * The arguments are:<br>
-   *  - `v` is the value of the data point where the label is shown.
-   *  - `id` is the id of the data where the label is shown.
-   *  - `i` is the index of the data series point where the label is shown.
-   * @property {string} donut.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
-   * @property {number} donut.label.image.width Image width in pixels.
-   * @property {number} donut.label.image.height Image height in pixels.
-   * @property {object} [donut.label.image.pos] Image position relative to the label text.
-   * @property {number} [donut.label.image.pos.x=0] x coordinate position, relative the original.
-   * @property {number} [donut.label.image.pos.y=0] y coordinate position, relative the original.
-   * @property {boolean} [donut.expand=true] Enable or disable expanding donut pieces.
-   * @property {number} [donut.expand.rate=0.98] Set expand rate.
-   * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
-   * @property {number} [donut.width] Set width of donut chart.
-   * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character for line break.
-   *  - **NOTE:**
-   *    - When `arc.needle.show=true` is set, special template `{=NEEDLE_VALUE}` can be used inside the title text to show current needle value.
-   * @property {number} [donut.padAngle=0] Set padding between data.
-   * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
-   * @see [Demo: Corner Radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
-   * @see [Demo: Needle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutNeedle)
-   * @see [Demo: Range Text](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutRangeText)
-   * @see [Demo: Label Image](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelImage)
-   * @see [Demo: Label Line](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelLine)
-   * @see [Demo: Label Ratio](https://naver.github.io/billboard.js/demo/#DonutChartOptions.LabelRatio)
-   * @see [Demo: Multiline Label](https://naver.github.io/billboard.js/demo/#DonutChartOptions.MultilineLabel)
-   * @see [Demo: Multiline Title](https://naver.github.io/billboard.js/demo/#DonutChartOptions.MultilineTitle)
-   * @see [Demo: Pad Angle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.padAngle)
-   * @see [Demo: Starting Angle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.StartingAngle)
-   *
-   * @example
-   *  donut: {
-   *      label: {
-   *          show: false,
-   *          format: function(value, ratio, id) {
-   *              return d3.format("$")(value);
-   *
-   *              // to multiline, return with '\n' character
-   *              // return value +"%\nLine1\n2Line2";
-   *          },
-   *
-   *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
-   *          // if data value is below than 0.1, text label will be hidden.
-   *          threshold: 0.1,
-   *
-   *          // set ratio callback. Should return ratio value
-   *          ratio: function(d, radius, h) {
-   *          	...
-   *          	return ratio;
-   *          },
-   *          // or set ratio number
-   *          ratio: 0.5,
-   *
-   *          // Enable label with lines (displayed outside with connector lines)
-   *          line: false,  // default - labels inside
-   *          line: true,   // enable label with lines with default settings
-   *          line: {       // enable label with lines with custom settings
-   *             show: true,
-   *             distance: 20,  // horizontal line distance in pixels
-   *
-   *             // show text at the end of connector line (outside the shape)
-   *             text: true,  // use default formatter
-   *             text: function(value, ratio, id) {  // custom formatter
-   *                 return d3.format(".1%")(ratio);
-   *             }
-   *          },
-   *
-   *          // set image to be displayed next to the label text
-   *          image: {
-   *             url: "./sample.svg",
-   *
-   *             // use placeholder to dynamically set image URL based on data ID
-   *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
-   *             width: 35,
-   *             height: 35,
-   *             pos: {
-   *                x: 0,
-   *                y: 0
-   *             }
-   *          },
-   *
-   *          // or use function to return image configuration dynamically
-   *          image: function(v, id, i) {
-   *             // Return different images based on value
-   *             if (v > 500) {
-   *                return {
-   *                   url: "./high-value.svg",
-   *                   width: 40,
-   *                   height: 40,
-   *                   pos: { x: 0, y: 0 }
-   *                };
-   *             } else if (v > 100) {
-   *                return {
-   *                   url: "./medium-value.svg",
-   *                   width: 30,
-   *                   height: 30,
-   *                   pos: { x: 0, y: 0 }
-   *                };
-   *             } else if(v < 5) {
-   *                // Return falsy value in case of don't want to show image
-   *                return null;
-   *             } else {
-   *                return {
-   *                   url: "./low-value.svg",
-   *                   width: 20,
-   *                   height: 20,
-   *                   pos: { x: 0, y: 0 }
-   *                };
-   *             }
-   *          }
-   *      },
-   *
-   *      // disable expand transition for interaction
-   *      expand: false,
-   *
-   *      expand: {
-   *      	// set duration of expand transition to 500ms.
-   *          duration: 500,
-   *
-   *      	// set expand area rate
-   *          rate: 1
-   *      },
-   *
-   *      width: 10,
-   *      padAngle: 0.2,
-   *      startingAngle: 1,
-   *      title: "Donut Title"
-   *
-   *      // when 'arc.needle.show=true' is set, can show current needle value.
-   *      title: "Needle value:\n{=NEEDLE_VALUE}",
-   *
-   *      // title with line break
-   *      title: "Title1\nTitle2"
-   *  }
-   */
-  donut_label_show: true,
-  donut_label_format: void 0,
-  donut_label_threshold: 0.05,
-  donut_label_line: false,
-  donut_label_image: void 0,
-  donut_label_ratio: void 0,
-  donut_width: void 0,
-  donut_title: "",
-  donut_expand: {},
-  donut_expand_rate: 0.98,
-  donut_expand_duration: 50,
-  donut_padAngle: 0,
-  donut_startingAngle: 0
-});
-
-;// ./src/config/Options/shape/funnel.ts
-/* harmony default export */ var shape_funnel = ({
-  /**
-   * Set funnel options
-   * @name funnel
-   * @memberof Options
-   * @type {object}
-   * @property {object} funnel Funnel object
-   * @property {number} [funnel.neck.width=0] Set funnel neck width.
-   * @property {number} [funnel.neck.height=0] Set funnel neck height.
-   * @property {number} [funnel.neck.width.ratio] Set funnel neck width in ratio.
-   * @property {number} [funnel.neck.height.ratio] Set funnel neck height in ratio.
-   * @property {boolean} [funnel.rotated=false] Set funnel direction rotated. When set to `true`, the funnel will be rendered horizontally (left to right) instead of vertically (top to bottom).
-   * @property {boolean} [funnel.spline=false] Enable spline (curved) edges for the funnel.
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.PolarChart)
-   * @example
-   *  funnel: {
-   *      neck: {
-   *          width: 200,
-   *          height: 100,
-   *
-   *          // or specify as ratio value (relative to the chart size)
-   *          width: {
-   *            ratio: 0.5
-   *          },
-   *          height: {
-   *            ratio: 0.5
-   *          }
-   *      },
-   *
-   *      // Render funnel horizontally (left to right)
-   *      rotated: true,
-   *
-   *      // Enable curved edges
-   *      spline: true
-   *  }
-   */
-  funnel_neck_width: 0,
-  funnel_neck_height: 0,
-  funnel_rotated: false,
-  funnel_spline: false
-});
-
-;// ./src/config/Options/shape/gauge.ts
-/* harmony default export */ var shape_gauge = ({
-  /**
-   * Set gauge options
-   * @name gauge
-   * @memberof Options
-   * @type {object}
-   * @property {object} gauge Gauge object
-   * @property {boolean} [gauge.background=""] Set background color. (The `.bb-chart-arcs-background` element)
-   * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
-   * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
-   * @property {function} [gauge.label.extents] Set customized min/max label text.
-   * @property {function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.<br>
-   * Will pass following arguments to the given function:
-   * - value {number}: absolute value
-   * - ratio {number}: value's ratio
-   * - id {string}: data's id value
-   * @property {number|function} [gauge.label.ratio=undefined] Set ratio of labels position.
-   * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
-   * @property {boolean|object} [gauge.label.line=false] Enable label with lines (displayed outside with connector lines).
-   *  - **NOTE:** Only applicable for single gauge (not for `gauge.type="multi"`).
-   *  - `true`: Enable label with lines with default settings
-   *  - `false`: Labels are displayed inside the gauge (default behavior).
-   *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
-   * @property {boolean} [gauge.label.line.show=true] Show or hide connector lines.
-   * @property {number} [gauge.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
-   * @property {boolean|function} [gauge.label.line.text=true] Show text at the end of the connector line (outside the shape).
-   *  - `true`: show data "id" text
-   *  - `false`: use default formatter(label.format) to show text
-   *  - `function(value, ratio, id)`: Custom formatter function for the text.
-   *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
-   * @property {object|function} [gauge.label.image] Set image to be displayed next to the label text.<br><br>
-   * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
-   * The arguments are:<br>
-   *  - `v` is the value of the data point where the label is shown.
-   *  - `id` is the id of the data where the label is shown.
-   *  - `i` is the index of the data series point where the label is shown.
-   * @property {string} gauge.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
-   * @property {number} gauge.label.image.width Image width in pixels.
-   * @property {number} gauge.label.image.height Image height in pixels.
-   * @property {object} [gauge.label.image.pos] Image position relative to the label text.
-   * @property {number} [gauge.label.image.pos.x=0] x coordinate position, relative the original.
-   * @property {number} [gauge.label.image.pos.y=0] y coordinate position, relative the original.
-   * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
-   * @property {number} [gauge.expand.rate=0.98] Set expand rate.
-   * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
-   * @property {boolean} [gauge.enforceMinMax=false] Enforce to given min/max value.
-   * - **Note:** Only works for single data series.
-   * 	- When `gauge.min=50` and given value is `30`, gauge will render as empty value.
-   * 	- When `gauge.max=100` and given value is `120`, gauge will render till 100, not surpassing max value.
-   * @property {number} [gauge.min=0] Set min value of the gauge.
-   * @property {number} [gauge.max=100] Set max value of the gauge.
-   * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
-   *
-   * **Limitations:**
-   * - when `gauge.fullCircle=false`:
-   *   - -1 * Math.PI / 2 <= startingAngle <= Math.PI / 2
-   *   - `startingAngle <= -1 * Math.PI / 2` defaults to `-1 * Math.PI / 2`
-   *   - `startingAngle >= Math.PI / 2` defaults to `Math.PI / 2`
-   * - when `gauge.fullCircle=true`:
-   *   - -1 * Math.PI < startingAngle < Math.PI
-   *   - `startingAngle < -1 * Math.PI` defaults to `Math.PI`
-   *   - `startingAngle >  Math.PI` defaults to `Math.PI`
-   * @property {number} [gauge.arcLength=100] Set the length of the arc to be drawn in percent from -100 to 100.<br>
-   * Negative value will draw the arc **counterclockwise**. Need to be used in conjunction with `gauge.fullCircle=true`.
-   *
-   * **Limitations:**
-   * - -100 <= arcLength (in percent) <= 100
-   * - 'arcLength < -100' defaults to -100
-   * - 'arcLength > 100' defaults to 100
-   * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character for line break.
-   *  - **NOTE:**
-   *    - When `arc.needle.show=true` is set, special template `{=NEEDLE_VALUE}` can be used inside the title text to show current needle value.
-   * @property {string} [gauge.units] Set units of the gauge.
-   * @property {number} [gauge.width] Set width of gauge chart.
-   * @property {string} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
-   * **Available Values:**
-   * - single
-   * - multi
-   * @property {number} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
-   * @see [Demo: enforceMinMax, min/max](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeMinMax)
-   * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
-   * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
-   * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelImage)
-   * @see [Demo: label line](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelLine)
-   * @see [Demo: label ratio](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelRatio)
-   * @example
-   *  gauge: {
-   *      background: "#eee", // will set 'fill' css prop for '.bb-chart-arcs-background' classed element.
-   *      fullCircle: false,
-   *      label: {
-   *          show: false,
-   *          format: function(value, ratio, id) {
-   *              return value;
-   *
-   *              // to multiline, return with '\n' character
-   *              // return value +"%\nLine1\n2Line2";
-   *          },
-   *
-   *           extents: function(value, isMax) {
-   *              return (isMax ? "Max:" : "Min:") + value;
-   *          },
-   *
-   *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
-   *          // if data value is below than 0.1, text label will be hidden.
-   *          threshold: 0.1,
-   *
-   *          // Enable label with lines (displayed outside with connector lines)
-   *          // NOTE: Only works with single gauge (not gauge.type="multi")
-   *          line: true,   // enable label with lines with default settings
-   *          line: {       // enable label with lines with custom settings
-   *              show: true,      // enable lines (default: true when line is enabled)
-   *              distance: 30,    // distance of horizontal line in pixels (default: 20)
-   *
-   *              // show text at the end of connector line (outside the shape)
-   *              text: true,  // use default formatter
-   *              text: function(value, ratio, id) {  // custom formatter
-   *                  return d3.format(".1%")(ratio);
-   *              }
-   *          },
-   *
-   *          // set ratio callback. Should return ratio value
-   *          ratio: function(d, radius, h) {
-   *              ...
-   *              return ratio;
-   *          },
-   *          // or set ratio number
-   *          ratio: 0.5,
-   *
-   *          // set image to be displayed next to the label text
-   *          image: {
-   *             url: "./sample.svg",
-   *
-   *             // use placeholder to dynamically set image URL based on data ID
-   *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
-   *             width: 35,
-   *             height: 35,
-   *             pos: {
-   *                x: 0,
-   *                y: 0
-   *             }
-   *          },
-   *
-   *          // or use function to return image configuration dynamically
-   *          image: function(v, id, i) {
-   *             // Return different images based on value
-   *             if (v > 500) {
-   *                return {
-   *                   url: "./high-value.svg",
-   *                   width: 40,
-   *                   height: 40,
-   *                   pos: { x: 0, y: 0 }
-   *                };
-   *             } else if (v > 100) {
-   *                return {
-   *                   url: "./medium-value.svg",
-   *                   width: 30,
-   *                   height: 30,
-   *                   pos: { x: 0, y: 0 }
-   *                };
-   *             } else if(v < 5) {
-   *                // Return falsy value in case of don't want to show image
-   *                return null;
-   *             } else {
-   *                return {
-   *                   url: "./low-value.svg",
-   *                   width: 20,
-   *                   height: 20,
-   *                   pos: { x: 0, y: 0 }
-   *                };
-   *             }
-   *          }
-   *      },
-   *
-   *      // disable expand transition for interaction
-   *      expand: false,
-   *
-   *      expand: {
-   *      	// set duration of expand transition to 500ms.
-   *          duration: 500,
-   *
-   *      	// set expand area rate
-   *          rate: 1
-   *      },
-   *
-   *      // enforce min/max value.
-   * 		// when given value < min, will render as empty value.
-   * 		// when value > max, will render to given max value not surpassing it.
-   *      enforceMinMax: true,
-   *
-   *      min: -100,
-   *      max: 200,
-   *      type: "single"  // or 'multi'
-   *      title: "Title Text",
-   *
-   *      // when 'arc.needle.show=true' is set, can show current needle value.
-   *      title: "Needle value:\n{=NEEDLE_VALUE}",
-   *
-   *      units: "%",
-   *      width: 10,
-   *      startingAngle: -1 * Math.PI / 2,
-   *      arcLength: 100,
-   *      arcs: {
-   *          minWidth: 5
-   *      }
-   *  }
-   */
-  gauge_background: "",
-  gauge_fullCircle: false,
-  gauge_label_show: true,
-  gauge_label_extents: void 0,
-  gauge_label_format: void 0,
-  gauge_label_ratio: void 0,
-  gauge_label_threshold: 0,
-  gauge_label_line: false,
-  gauge_label_image: void 0,
-  gauge_enforceMinMax: false,
-  gauge_min: 0,
-  gauge_max: 100,
-  gauge_type: "single",
-  gauge_startingAngle: -1 * Math.PI / 2,
-  gauge_arcLength: 100,
-  gauge_title: "",
-  gauge_units: void 0,
-  gauge_width: void 0,
-  gauge_arcs_minWidth: 5,
-  gauge_expand: {},
-  gauge_expand_rate: 0.98,
-  gauge_expand_duration: 50
-});
-
-;// ./src/config/Options/shape/pie.ts
-/* harmony default export */ var pie = ({
-  /**
-   * Set pie options
-   * @name pie
-   * @memberof Options
-   * @type {object}
-   * @property {object} pie Pie object
-   * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
-   * @property {function} [pie.label.format] Set formatter for the label on each pie piece.
-   * @property {number|function} [pie.label.ratio=undefined] Set ratio of labels position.
-   * @property {number} [pie.label.threshold=0.05] Set threshold ratio to show/hide labels.
-   * @property {boolean|object} [pie.label.line=false] Enable label with lines (displayed outside with connector lines).
-   *  - `true`: Enable label with lines with default settings
-   *  - `false`: Labels are displayed inside the pie slices (default behavior).
-   *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
-   * @property {boolean} [pie.label.line.show=true] Show or hide connector lines.
-   * @property {number} [pie.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
-   * @property {boolean|function} [pie.label.line.text=true] Show text at the end of the connector line (outside the shape).
-   *  - `true`: show data "id" text
-   *  - `false`: use default formatter(label.format) to show text
-   *  - `function(value, ratio, id)`: Custom formatter function for the text.
-   *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
-   * @property {object|function} [pie.label.image] Set image to be displayed next to the label text.<br><br>
-   * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
-   * The arguments are:<br>
-   *  - `v` is the value of the data point where the label is shown.
-   *  - `id` is the id of the data where the label is shown.
-   *  - `i` is the index of the data series point where the label is shown.
-   * @property {string} pie.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
-   * @property {number} pie.label.image.width Image width in pixels.
-   * @property {number} pie.label.image.height Image height in pixels.
-   * @property {object} [pie.label.image.pos] Image position relative to the label text.
-   * @property {number} [pie.label.image.pos.x=0] x coordinate position, relative the original.
-   * @property {number} [pie.label.image.pos.y=0] y coordinate position, relative the original.
-   * @property {boolean|object} [pie.expand=true] Enable or disable expanding pie pieces.
-   * @property {number} [pie.expand.rate=0.98] Set expand rate.
-   * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
-   * @property {number|object} [pie.innerRadius=0] Sets the inner radius of pie arc.
-   * @property {number|object|undefined} [pie.outerRadius=undefined] Sets the outer radius of pie arc.
-   * @property {number} [pie.padAngle=0] Set padding between data.
-   * @property {number} [pie.padding=0] Sets the gap between pie arcs.
-   * @property {number} [pie.startingAngle=0] Set starting angle where data draws.
-   * @see [Demo: expand.rate](https://naver.github.io/billboard.js/demo/#PieChartOptions.ExpandRate)
-   * @see [Demo: innerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.InnerRadius)
-   * @see [Demo: outerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.OuterRadius)
-   * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#PieChartOptions.StartingAngle)
-   * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#PieChartOptions.LabelImage)
-   * @see [Demo: label line](https://naver.github.io/billboard.js/demo/#PieChartOptions.LabelLine)
-   * @example
-   *  pie: {
-   *      label: {
-   *          show: false,
-   *          format: function(value, ratio, id) {
-   *              return d3.format("$")(value);
-   *
-   *              // to multiline, return with '\n' character
-   *              // return value +"%\nLine1\n2Line2";
-   *          },
-   *
-   *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
-   *          // if data value is below than 0.1, text label will be hidden.
-   *          threshold: 0.1,
-   *
-   *          // set ratio callback. Should return ratio value
-   *          ratio: function(d, radius, h) {
-   *              ...
-   *              return ratio;
-   *          },
-   *          // or set ratio number
-   *          ratio: 0.5,
-   *
-   *          // Enable label with lines (displayed outside with connector lines)
-   *          line: false,  // default - labels inside
-   *          line: true,   // enable label with lines with default settings
-   *          line: {       // enable label with lines with custom settings
-   *             show: true,
-   *             distance: 20,  // horizontal line distance in pixels
-   *
-   *             // show text at the end of connector line (outside the shape)
-   *             text: true,  // use default formatter
-   *             text: function(value, ratio, id) {  // custom formatter
-   *                 return d3.format(".1%")(ratio);
-   *             }
-   *          },
-   *
-   *          // set image to be displayed next to the label text
-   *          image: {
-   *             url: "./sample.svg",
-   *
-   *             // use placeholder to dynamically set image URL based on data ID
-   *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
-   *             width: 35,
-   *             height: 35,
-   *             pos: {
-   *                x: 0,
-   *                y: 0
-   *             }
-   *          },
-   *
-   *          // or use function to return image configuration dynamically
-   *          image: function(v, id, i) {
-   *             // Return different images based on value
-   *             if (v > 500) {
-   *                return {
-   *                   url: "./high-value.svg",
-   *                   width: 40,
-   *                   height: 40,
-   *                   pos: { x: 0, y: 0 }
-   *                };
-   *             } else if (v > 100) {
-   *                return {
-   *                   url: "./medium-value.svg",
-   *                   width: 30,
-   *                   height: 30,
-   *                   pos: { x: 0, y: 0 }
-   *                };
-   *             } else if(v < 5) {
-   *                // Return falsy value in case of don't want to show image
-   *                return null;
-   *             } else {
-   *                return {
-   *                   url: "./low-value.svg",
-   *                   width: 20,
-   *                   height: 20,
-   *                   pos: { x: 0, y: 0 }
-   *                };
-   *             }
-   *          }
-   *      },
-   *
-   *      // disable expand transition for interaction
-   *      expand: false,
-   *
-   *      expand: {
-   *      	// set duration of expand transition to 500ms.
-   *          duration: 500,
-   *
-   *      	// set expand area rate
-   *          rate: 1
-   *      },
-   *
-   *      innerRadius: 0,
-   *
-   *      // set different innerRadius for each data
-   *      innerRadius: {
-   *      	data1: 10,
-   *      	data2: 0
-   *      },
-   *
-   *      outerRadius: 100,
-   *
-   *      // set different outerRadius for each data
-   *      outerRadius: {
-   *      	data1: 50,
-   *      	data2: 100
-   *      }
-   *
-   *      padAngle: 0.1,
-   *      padding: 0,
-   *      startingAngle: 1
-   *  }
-   */
-  pie_label_show: true,
-  pie_label_format: void 0,
-  pie_label_ratio: void 0,
-  pie_label_threshold: 0.05,
-  pie_label_line: false,
-  pie_label_image: void 0,
-  pie_expand: {},
-  pie_expand_rate: 0.98,
-  pie_expand_duration: 50,
-  pie_innerRadius: 0,
-  pie_outerRadius: void 0,
-  pie_padAngle: 0,
-  pie_padding: 0,
-  pie_startingAngle: 0
-});
-
-;// ./src/config/Options/shape/polar.ts
-/* harmony default export */ var shape_polar = ({
-  /**
-   * Set polar options
-   * @name polar
-   * @memberof Options
-   * @type {object}
-   * @property {object} polar Polar object
-   * @property {boolean} [polar.label.show=true] Show or hide label on each polar piece.
-   * @property {function} [polar.label.format] Set formatter for the label on each polar piece.
-   * @property {number} [polar.label.threshold=0.05] Set threshold ratio to show/hide labels.
-   * @property {number|function} [polar.label.ratio=undefined] Set ratio of labels position.
-   * @property {boolean|object} [polar.label.line=false] Enable label with lines (displayed outside with connector lines).
-   *  - `true`: Enable label with lines with default settings
-   *  - `false`: Labels are displayed inside the polar slices (default behavior).
-   *  - `{show: boolean, distance: number, text: boolean}`: Enable label with lines with custom settings. When object member is not provided, it will be set to default values.
-   * @property {boolean} [polar.label.line.show=true] Show or hide connector lines.
-   * @property {number} [polar.label.line.distance=20] Set the distance of the horizontal part of the connector line in pixels.
-   * @property {boolean|function} [polar.label.line.text=true] Show text at the end of the connector line (outside the shape).
-   *  - `true`: show data "id" text
-   *  - `false`: use default formatter(label.format) to show text
-   *  - `function(value, ratio, id)`: Custom formatter function for the text.
-   *  - **NOTE:** When the viewport size decreases, the size is adjusted based on the shape, so text may appear clipped. In this case, consider setting `overflow: visible` on the SVG node.
-   * @property {object|function} [polar.label.image] Set image to be displayed next to the label text.<br><br>
-   * When function is specified, will receives 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
-   * The arguments are:<br>
-   *  - `v` is the value of the data point where the label is shown.
-   *  - `id` is the id of the data where the label is shown.
-   *  - `i` is the index of the data series point where the label is shown.
-   * @property {string} polar.label.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
-   * @property {number} polar.label.image.width Image width in pixels.
-   * @property {number} polar.label.image.height Image height in pixels.
-   * @property {object} [polar.label.image.pos] Image position relative to the label text.
-   * @property {number} [polar.label.image.pos.x=0] x coordinate position, relative the original.
-   * @property {number} [polar.label.image.pos.y=0] y coordinate position, relative the original.
-   * @property {number} [polar.level.depth=3] Set the level depth.
-   * @property {boolean} [polar.level.show=true] Show or hide level.
-   * @property {string} [polar.level.text.backgroundColor="#fff"] Set label text's background color.
-   * @property {function} [polar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
-   * @property {boolean} [polar.level.text.show=true] Show or hide level text.
-   * @property {number} [polar.padAngle=0] Set padding between data.
-   * @property {number} [polar.padding=0] Sets the gap between pie arcs.
-   * @property {number} [polar.startingAngle=0] Set starting angle where data draws.
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.PolarChart)
-   * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#PolarChartOptions.LabelImage)
-   * @see [Demo: label line](https://naver.github.io/billboard.js/demo/#PolarChartOptions.LabelLine)
-   * @example
-   *  polar: {
-   *      label: {
-   *          show: false,
-   *          format: function(value, ratio, id) {
-   *              return d3.format("$")(value);
-   *
-   *              // to multiline, return with '\n' character
-   *              // return value +"%\nLine1\n2Line2";
-   *          },
-   *
-   *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
-   *          // if data value is below than 0.1, text label will be hidden.
-   *          threshold: 0.1,
-   *
-   *          // set ratio callback. Should return ratio value
-   *          ratio: function(d, radius, h) {
-   *              ...
-   *              return ratio;
-   *          },
-   *          // or set ratio number
-   *          ratio: 0.5,
-   *
-   *          // Enable label with lines (displayed outside with connector lines)
-   *          line: false,  // default - labels inside
-   *          line: true,   // enable label with lines with default settings
-   *          line: {       // enable label with lines with custom settings
-   *             show: true,
-   *             distance: 20,  // horizontal line distance in pixels
-   *
-   *             // show text at the end of connector line (outside the shape)
-   *             text: true,  // use default formatter
-   *             text: function(value, ratio, id) {  // custom formatter
-   *                 return d3.format(".1%")(ratio);
-   *             }
-   *          },
-   *
-   *          // set image to be displayed next to the label text
-   *          image: {
-   *             url: "./sample.svg",
-   *
-   *             // use placeholder to dynamically set image URL based on data ID
-   *             url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
-   *             width: 35,
-   *             height: 35,
-   *             pos: {
-   *                x: 0,
-   *                y: 0
-   *             }
-   *          },
-   *
-   *          // or use function to return image configuration dynamically
-   *          image: function(v, id, i) {
-   *             // Return different images based on value
-   *             if (v > 500) {
-   *                return {
-   *                   url: "./high-value.svg",
-   *                   width: 40,
-   *                   height: 40,
-   *                   pos: { x: 0, y: 0 }
-   *                };
-   *             } else if (v > 100) {
-   *                return {
-   *                   url: "./medium-value.svg",
-   *                   width: 30,
-   *                   height: 30,
-   *                   pos: { x: 0, y: 0 }
-   *                };
-   *             } else if(v < 5) {
-   *                // Return falsy value in case of don't want to show image
-   *                return null;
-   *             } else {
-   *                return {
-   *                   url: "./low-value.svg",
-   *                   width: 20,
-   *                   height: 20,
-   *                   pos: { x: 0, y: 0 }
-   *                };
-   *             }
-   *          }
-   *      },
-   *      level: {
-   *          depth: 3,
-   *          max: 500,
-   *          show: true,
-   *          text: {
-   *              format: function(x) {
-   *                  return x + "%";
-   *              },
-   *              show: true,
-   *              backgroundColor: "red"
-   *          }
-   *      },
-   *      padAngle: 0.1,
-   *      padding: 0,
-   *      startingAngle: 1
-   *  }
-   */
-  polar_label_show: true,
-  polar_label_format: void 0,
-  polar_label_threshold: 0.05,
-  polar_label_line: false,
-  polar_label_image: void 0,
-  polar_label_ratio: void 0,
-  polar_level_depth: 3,
-  polar_level_max: void 0,
-  polar_level_show: true,
-  polar_level_text_backgroundColor: "#fff",
-  polar_level_text_format: (x) => x % 1 === 0 ? x : x.toFixed(2),
-  polar_level_text_show: true,
-  polar_padAngle: 0,
-  polar_padding: 0,
-  polar_startingAngle: 0
-});
-
-;// ./src/config/Options/shape/radar.ts
-/* harmony default export */ var shape_radar = ({
-  /**
-   * Set radar options
-   * - **NOTE:**
-   *  > When x tick text contains `\n`, it's used as line break.
-   * @name radar
-   * @memberof Options
-   * @type {object}
-   * @property {object} radar Radar object
-   * @property {number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
-   * @property {boolean} [radar.axis.line.show=true] Show or hide axis line.
-   * @property {number} [radar.axis.text.position.x=0] x coordinate position, relative the original.
-   * @property {number} [radar.axis.text.position.y=0] y coordinate position, relative the original.
-   * @property {boolean} [radar.axis.text.show=true] Show or hide axis text.
-   * @property {boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
-   * @property {number} [radar.level.depth=3] Set the level depth.
-   * @property {boolean} [radar.level.show=true] Show or hide level.
-   * @property {function} [radar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
-   * @property {boolean} [radar.level.text.show=true] Show or hide level text.
-   * @property {number} [radar.size.ratio=0.87] Set size ratio.
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.RadarChart)
-   * @see [Demo: radar axis](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxis)
-   * @see [Demo: radar level](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarLevel)
-   * @see [Demo: radar size](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarSize)
-   * @see [Demo: radar axis multiline](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxisMultiline)
-   * @example
-   *  radar: {
-   *      axis: {
-   *          max: 50,
-   *          line: {
-   *              show: false
-   *          },
-   *          text: {
-   *              position: {
-   *              	x: 0,
-   *              	y: 0
-   *              },
-   *              show: false
-   *          }
-   *      },
-   *      direction: {
-   *          clockwise: true
-   *      },
-   *      level: {
-   *          show: false,
-   *          text: {
-   *              format: function(x) {
-   *                  return x + "%";
-   *              },
-   *              show: true
-   *          }
-   *      },
-   *      size: {
-   *          ratio: 0.7
-   *      }
-   *  }
-   */
-  radar_axis_max: void 0,
-  radar_axis_line_show: true,
-  radar_axis_text_show: true,
-  radar_axis_text_position: {},
-  radar_level_depth: 3,
-  radar_level_show: true,
-  radar_level_text_format: (x) => x % 1 === 0 ? x : x.toFixed(2),
-  radar_level_text_show: true,
-  radar_size_ratio: 0.87,
-  radar_direction_clockwise: false
-});
-
 ;// ./src/config/Options/shape/treemap.ts
 /* harmony default export */ var shape_treemap = ({
   /**
@@ -23962,7 +24128,14 @@ ${percentValue}%`;
   treemap_label_show: true
 });
 
-;// ./src/config/resolver/shape.ts
+;// ./src/config/resolver/shape/treemap.ts
+
+
+
+
+let treemap_treemap = () => (extendAxis([treemap], [shape_treemap]), (treemap_treemap = () => TYPE.TREEMAP)());
+
+;// ./src/config/resolver/shape/index.ts
 
 
 
@@ -23976,74 +24149,6 @@ ${percentValue}%`;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function extendAxis(module, option) {
-  extend(ChartInternal.prototype, Object.values(internal).concat(module));
-  extend(Chart.prototype, api);
-  Options.setOptions(Object.values(options).concat(option || []));
-}
-function extendLine(module, option) {
-  extendAxis([point_common, point, line].concat(module || []));
-  Options.setOptions([common_point, shape_line].concat(option || []));
-}
-function extendArc(module, option) {
-  extend(ChartInternal.prototype, [arc, point_common].concat(module || []));
-  Options.setOptions([common_point].concat(option || []));
-}
-let resolver_shape_area = () => (extendLine(shape_area, [Options_shape_area]), (resolver_shape_area = () => TYPE.AREA)());
-let areaLineRange = () => (extendLine(shape_area, [Options_shape_area]), (areaLineRange = () => TYPE.AREA_LINE_RANGE)());
-let areaStepRange = () => (extendLine(shape_area, [Options_shape_area]), (areaStepRange = () => TYPE.AREA_STEP_RANGE)());
-let areaSpline = () => (extendLine(shape_area, [Options_shape_area, spline]), (areaSpline = () => TYPE.AREA_SPLINE)());
-let areaSplineRange = () => (extendLine(shape_area, [Options_shape_area, spline]), (areaSplineRange = () => TYPE.AREA_SPLINE_RANGE)());
-let areaStep = () => (extendLine(shape_area, [Options_shape_area]), (areaStep = () => TYPE.AREA_STEP)());
-let resolver_shape_line = () => (extendLine(), (resolver_shape_line = () => TYPE.LINE)());
-let shape_spline = () => (extendLine(void 0, [spline]), (shape_spline = () => TYPE.SPLINE)());
-let step = () => (extendLine(), (step = () => TYPE.STEP)());
-let shape_donut = () => (extendArc(void 0, [shape_arc, donut]), (shape_donut = () => TYPE.DONUT)());
-let resolver_shape_gauge = () => (extendArc([gauge], [shape_arc, shape_gauge]), (resolver_shape_gauge = () => TYPE.GAUGE)());
-let shape_pie = () => (extendArc(void 0, [shape_arc, pie]), (shape_pie = () => TYPE.PIE)());
-let resolver_shape_polar = () => (extendArc([polar], [shape_arc, shape_polar]), (resolver_shape_polar = () => TYPE.POLAR)());
-let resolver_shape_radar = () => (extendArc(
-  [internal.eventrect, point, radar],
-  [common_point, shape_radar, { axis_x_categories: options.optAxis.axis_x_categories }]
-), (resolver_shape_radar = () => TYPE.RADAR)());
-let resolver_shape_bar = () => (extendAxis([bar, point_common], [shape_bar, common_point]), (resolver_shape_bar = () => TYPE.BAR)());
-let resolver_shape_bubble = () => (extendAxis(
-  [point_common, point, bubble],
-  [shape_bubble, common_point]
-), (resolver_shape_bubble = () => TYPE.BUBBLE)());
-let resolver_shape_candlestick = () => (extendAxis(
-  [candlestick, point_common],
-  [shape_candlestick, common_point]
-), (resolver_shape_candlestick = () => TYPE.CANDLESTICK)());
-let shape_scatter = () => (extendAxis(
-  [point_common, point],
-  [common_point, scatter]
-), (shape_scatter = () => TYPE.SCATTER)());
-let resolver_shape_funnel = () => (extendArc([funnel], [shape_funnel]), (resolver_shape_funnel = () => TYPE.FUNNEL)());
-let resolver_shape_treemap = () => (extendAxis([treemap], [shape_treemap]), (resolver_shape_treemap = () => TYPE.TREEMAP)());
 
 ;// ./src/core.ts
 
@@ -24057,7 +24162,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260319005617",
+  version: "3.18.0-nightly-20260320005342",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
