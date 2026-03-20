@@ -95,7 +95,9 @@ function json(json, keysParam) {
 
 			pathArray.some(function(k) {
 				return !(
-					target = target && k in target ? target[k] : undefined
+					target = target && typeof target === "object" && k in target ?
+						target[k] :
+						undefined
 				);
 			});
 
