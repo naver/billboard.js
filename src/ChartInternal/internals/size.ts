@@ -31,7 +31,7 @@ export default {
 	getCurrentWidth(): number {
 		const $$ = this;
 
-		return $$.config.size_width || $$.getParentWidth();
+		return $$.config.size_width || $$.getParentRectValue("width");
 	},
 
 	getCurrentHeight(): number {
@@ -74,10 +74,6 @@ export default {
 		v > bodySize && (v = bodySize);
 
 		return v;
-	},
-
-	getParentWidth(): number {
-		return this.getParentRectValue("width");
 	},
 
 	getParentHeight(): number {

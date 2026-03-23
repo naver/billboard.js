@@ -39,10 +39,6 @@ export default {
 		return dataKey || existValue;
 	},
 
-	isNotX(key): boolean {
-		return !this.isX(key);
-	},
-
 	isStackNormalized(): boolean {
 		const {config} = this;
 
@@ -680,21 +676,8 @@ export default {
 		return ys;
 	},
 
-	checkValueInTargets(targets, checker: Function): boolean {
-		return Object.keys(targets)
-			.some(id => targets[id].values.some(v => checker(v.value)));
-	},
-
 	hasMultiTargets(): boolean {
 		return this.filterTargetsToShow().length > 1;
-	},
-
-	hasNegativeValueInTargets(targets): boolean {
-		return this.checkValueInTargets(targets, v => v < 0);
-	},
-
-	hasPositiveValueInTargets(targets): boolean {
-		return this.checkValueInTargets(targets, v => v > 0);
 	},
 
 	/**

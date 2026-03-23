@@ -26,6 +26,8 @@ import {meetsLabelThreshold, updateTextImage, updateTextImagePos} from "../inter
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ChartInternalThis = any;
 
+const ARC_TYPES = ["donut", "gauge", "pie", "polar"] as const;
+
 /**
  * Get the first matching arc chart type
  * @param {ChartInternalThis} $$ ChartInternal context
@@ -639,7 +641,7 @@ export default {
 	textForArcLabel(selection: d3Selection): void {
 		const $$ = this;
 		const hasGauge = $$.hasType("gauge");
-		const chartType = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))?.[0];
+		const chartType = ARC_TYPES.filter($$.hasType.bind($$))?.[0];
 
 		if ($$.shouldShowArcLabel()) {
 			selection
@@ -761,17 +763,22 @@ export default {
 	shouldExpand(id: string): boolean {
 		const $$ = this;
 		const {config} = $$;
+		const type = $$.isDonutType(id) ?
+			"donut" :
+			$$.isGaugeType(id) ?
+			"gauge" :
+			$$.isPieType(id) ?
+			"pie" :
+			null;
 
-		return ($$.isDonutType(id) && config.donut_expand) ||
-			($$.isGaugeType(id) && config.gauge_expand) ||
-			($$.isPieType(id) && config.pie_expand);
+		return type ? !!config[`${type}_expand`] : false;
 	},
 
 	shouldShowArcLabel(): boolean {
 		const $$ = this;
 		const {config} = $$;
 
-		return ["donut", "gauge", "pie", "polar"]
+		return ARC_TYPES
 			.some(v => $$.hasType(v) && config[`${v}_label_show`]);
 	},
 
@@ -780,7 +787,7 @@ export default {
 		const {config} = $$;
 		let fn = v => v;
 
-		["donut", "gauge", "pie", "polar"]
+		ARC_TYPES
 			.filter($$.hasType.bind($$))
 			.forEach(v => {
 				fn = config[`${v}_label_${name}`];
@@ -1189,6 +1196,10 @@ export default {
 		const {config, state} = $$;
 		const isTouch = state.inputType === "touch";
 		const isMouse = state.inputType === "mouse";
+		const _getArcData = d => {
+			const updated = $$.updateAngle(d);
+			return updated ? $$.convertToArcData(updated) : null;
+		};
 
 		// eslint-disable-next-line
 		function selectArc(_this, arcData, id) {
@@ -1211,12 +1222,9 @@ export default {
 
 		arc
 			.on("click", function(event, d, i) {
-				const updated = $$.updateAngle(d);
-				let arcData;
+				const arcData = _getArcData(d);
 
-				if (updated) {
-					arcData = $$.convertToArcData(updated);
-
+				if (arcData) {
 					$$.toggleShape?.(this, arcData, i);
 					config.data_onclick.bind($$.api)(arcData, this);
 				}
@@ -1231,8 +1239,7 @@ export default {
 					}
 
 					state.event = event;
-					const updated = $$.updateAngle(d);
-					const arcData = updated ? $$.convertToArcData(updated) : null;
+					const arcData = _getArcData(d);
 					const id = arcData?.id || undefined;
 
 					selectArc(this, arcData, id);
@@ -1244,15 +1251,13 @@ export default {
 					}
 
 					state.event = event;
-					const updated = $$.updateAngle(d);
-					const arcData = updated ? $$.convertToArcData(updated) : null;
+					const arcData = _getArcData(d);
 
 					unselectArc();
 					$$.setOverOut(false, arcData);
 				})
 				.on("mousemove", function(event, d) {
-					const updated = $$.updateAngle(d);
-					const arcData = updated ? $$.convertToArcData(updated) : null;
+					const arcData = _getArcData(d);
 
 					state.event = event;
 					$$.showTooltip([arcData], this);
