@@ -188,23 +188,21 @@ export default {
 			callFn(config.onrendered, $$.api);
 		};
 
-		if (afterRedraw) {
-			// Only use transition when current tab is visible.
-			if (withTransition && redrawList.length) {
-				// Wait for end of transitions for callback
-				const waitForDraw = generateWait();
+		// Only use transition when current tab is visible.
+		if (withTransition && redrawList.length) {
+			// Wait for end of transitions for callback
+			const waitForDraw = generateWait();
 
-				// transition should be derived from one transition
-				d3Transition().duration(duration)
-					.each(() => {
-						redrawList
-							.flatMap(t1 => t1)
-							.forEach(t => waitForDraw.add(t));
-					})
-					.call(waitForDraw, afterRedraw);
-			} else if (!state.transiting) {
-				afterRedraw();
-			}
+			// transition should be derived from one transition
+			d3Transition().duration(duration)
+				.each(() => {
+					redrawList
+						.flatMap(t1 => t1)
+						.forEach(t => waitForDraw.add(t));
+				})
+				.call(waitForDraw, afterRedraw);
+		} else if (!state.transiting) {
+			afterRedraw();
 		}
 
 		// update fadein condition

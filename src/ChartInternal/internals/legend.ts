@@ -261,33 +261,6 @@ export default {
 	},
 
 	/**
-	 * Update the legend step
-	 * @param {number} step Step value
-	 * @private
-	 */
-	updateLegendStep(step: number): void {
-		this.state.legendStep = step;
-	},
-
-	/**
-	 * Update legend item width
-	 * @param {number} width Width value
-	 * @private
-	 */
-	updateLegendItemWidth(width: number): void {
-		this.state.legendItemWidth = width;
-	},
-
-	/**
-	 * Update legend item height
-	 * @param {number} height Height value
-	 * @private
-	 */
-	updateLegendItemHeight(height): void {
-		this.state.legendItemHeight = height;
-	},
-
-	/**
 	 * Update legend item color
 	 * @param {string} id Corresponding data ID value
 	 * @param {string} color Color value
@@ -650,11 +623,14 @@ export default {
 			.filter(id => !isDefined(config.data_names[id]) || config.data_names[id] !== null);
 
 		const withTransition = options.withTransition;
-		const updatePositions = $$.getUpdateLegendPositions(targetIdz, dimension, sizes);
+		const isLegendRightOrInset = state.isLegendRight || state.isLegendInset;
+		const getFormattedText = _getFormattedText.bind($$);
+		const updatePositions = $$.getUpdateLegendPositions(targetIdz, dimension, sizes,
+			isLegendRightOrInset);
 
 		if (state.isLegendInset) {
 			dimension.step = config.legend_inset_step ? config.legend_inset_step : targetIdz.length;
-			$$.updateLegendStep(dimension.step);
+			state.legendStep = dimension.step;
 		}
 
 		if (state.isLegendRight) {
@@ -678,7 +654,8 @@ export default {
 			yTile: (id, i?: number) => yForLegend(id, i) + 4
 		};
 
-		$$.generateLegendItem(targetIdz, itemTileSize, updatePositions, posFn);
+		$$.generateLegendItem(targetIdz, itemTileSize, updatePositions, posFn, isLegendRightOrInset,
+			getFormattedText);
 
 		// Set background for inset legend
 		background = legend.select(`.${$LEGEND.legendBackground} rect`);
@@ -692,12 +669,12 @@ export default {
 		if (config.legend_tooltip) {
 			legend.selectAll("title")
 				.data(targetIdz)
-				.text(id => _getFormattedText.bind($$)(id, false));
+				.text(id => getFormattedText(id, false));
 		}
 
 		const texts = legend.selectAll("text")
 			.data(targetIdz)
-			.text(id => _getFormattedText.bind($$)(id)) // MEMO: needed for update
+			.text(id => getFormattedText(id)) // MEMO: needed for update
 			.each(function(id, i) {
 				updatePositions(this, id, i);
 			});
@@ -725,9 +702,9 @@ export default {
 		}
 
 		// Update all to reflect change of legend
-		$$.updateLegendItemWidth(dimension.max.width);
-		$$.updateLegendItemHeight(dimension.max.height);
-		$$.updateLegendStep(dimension.step);
+		state.legendItemWidth = dimension.max.width;
+		state.legendItemHeight = dimension.max.height;
+		state.legendStep = dimension.step;
 	},
 
 	/**
@@ -735,13 +712,13 @@ export default {
 	 * @param {Array} targetIdz Data ids
 	 * @param {object} dimension Dimension object
 	 * @param {object} sizes Size object
+	 * @param {boolean} isLegendRightOrInset Whether legend is right or inset
 	 * @returns {function} Update position function
 	 * @private
 	 */
-	getUpdateLegendPositions(targetIdz, dimension, sizes) {
+	getUpdateLegendPositions(targetIdz, dimension, sizes, isLegendRightOrInset) {
 		const $$ = this;
 		const {config, state} = $$;
-		const isLegendRightOrInset = state.isLegendRight || state.isLegendInset;
 
 		return function(textElement, id, index) {
 			const reset = index === 0;
@@ -829,16 +806,18 @@ export default {
 	 * @param {object} itemTileSize Item tile size {width, height}
 	 * @param {function} updatePositions Update position function
 	 * @param {object} posFn Position functions
+	 * @param {boolean} isLegendRightOrInset Whether legend is right or inset
+	 * @param {function} getFormattedText Bound text formatter function
 	 * @private
 	 */
-	generateLegendItem(targetIdz, itemTileSize, updatePositions, posFn) {
+	generateLegendItem(targetIdz, itemTileSize, updatePositions, posFn, isLegendRightOrInset,
+		getFormattedText) {
 		const $$ = this;
 		const {config, state, $el: {legend}} = $$;
 		const usePoint = config.legend_usePoint;
 		const legendItemR = config.legend_item_tile_r;
 		const legendType = config.legend_item_tile_type;
 		const isRectangle = legendType !== "circle";
-		const isLegendRightOrInset = state.isLegendRight || state.isLegendInset;
 
 		const pos = -200;
 
@@ -855,7 +834,7 @@ export default {
 		}
 
 		l.append("text")
-			.text(id => _getFormattedText.bind($$)(id))
+			.text(id => getFormattedText(id))
 			.each(function(id, i) {
 				updatePositions(this, id, i);
 			})

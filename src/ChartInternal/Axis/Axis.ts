@@ -507,10 +507,6 @@ class Axis {
 			id === "x" ? ["inner-top", "inner-right"] : ["inner-right", "inner-top"]);
 	}
 
-	getLabelPositionById(id: string) {
-		return this.getAxisLabelPosition(id);
-	}
-
 	xForAxisLabel(id: string) {
 		const $$ = this.owner;
 		const {state: {width, height}} = $$;
