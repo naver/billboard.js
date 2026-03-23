@@ -263,8 +263,12 @@ export default {
 		});
 
 		// cache information about values
-		state.hasNegativeValue = targets.some(t => t.values.some(v => v.value < 0));
-		state.hasPositiveValue = targets.some(t => t.values.some(v => v.value > 0));
+		state.hasNegativeValue = targets.some(t =>
+			t.values.some(v => v.value !== null && v.value < 0)
+		);
+		state.hasPositiveValue = targets.some(t =>
+			t.values.some(v => v.value !== null && v.value > 0)
+		);
 
 		// set target types
 		if (chartType && $$.isValidChartType(chartType)) {
