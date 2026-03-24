@@ -127,8 +127,8 @@ const tooltip = {
 		const {state: {inputType}, $el: {tooltip}} = $$;
 		const data = tooltip?.datum();
 
-		if (data) {
-			const {index} = JSON.parse(data.current)[0];
+		if (data?.data?.[0]) {
+			const {index} = data.data[0];
 
 			// make to finalize, possible pending event flow set from '.tooltip.show()' call
 			(inputType === "mouse" ? ["mouseout"] : ["touchend"]).forEach(eventName => {

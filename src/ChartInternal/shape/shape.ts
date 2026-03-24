@@ -299,12 +299,18 @@ export default {
 	 * @private
 	 */
 	getIndicesMax(indices: TIndices | IDataIndice): number {
-		return notEmpty(this.config.data_xs) ?
-			// if is multiple xs, return total sum of xs' __max__ value
-			Object.keys(indices)
-				.map(v => indices[v].__max__ || 0)
-				.reduce((acc, curr) => acc + curr) :
-			(indices as IDataIndice).__max__;
+		if (!notEmpty(this.config.data_xs)) {
+			return (indices as IDataIndice).__max__;
+		}
+
+		// if is multiple xs, return total sum of xs' __max__ value
+		let total = 0;
+
+		for (const key in indices) {
+			total += indices[key].__max__ || 0;
+		}
+
+		return total;
 	},
 
 	getShapeX(offset: IOffset, indices, isSub?: boolean): (d) => number {
