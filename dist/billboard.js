@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260321005059
+ * @version 3.18.0-nightly-20260324005043
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -16,7 +16,7 @@
 		var a = typeof exports === 'object' ? factory(require("d3-axis"), require("d3-brush"), require("d3-drag"), require("d3-hierarchy"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__9__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__9__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
@@ -386,395 +386,7 @@ const $ZOOM = {
 };
 /* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
-// EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
-;// ./src/module/browser.ts
-function getGlobal() {
-  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
-}
-function getFallback(w) {
-  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function";
-  const hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function" && typeof (w == null ? void 0 : w.cancelIdleCallback) === "function";
-  const request = (cb) => setTimeout(cb, 1);
-  const cancel = (id) => clearTimeout(id);
-  return [
-    hasRAF ? w.requestAnimationFrame : request,
-    hasRAF ? w.cancelAnimationFrame : cancel,
-    hasRIC ? w.requestIdleCallback : request,
-    hasRIC ? w.cancelIdleCallback : cancel
-  ];
-}
-const win = getGlobal();
-const browser_doc = win == null ? void 0 : win.document;
-const [
-  requestAnimationFrame,
-  cancelAnimationFrame,
-  requestIdleCallback,
-  cancelIdleCallback
-] = getFallback(win);
-
-
-;// ./src/module/sanitize.ts
-const ALLOWED_TAGS = /* @__PURE__ */ new Set([
-  // HTML tags for tooltip/legend templates
-  "span",
-  "div",
-  "p",
-  "br",
-  "b",
-  "i",
-  "em",
-  "small",
-  "strong",
-  "mark",
-  "u",
-  "s",
-  "sub",
-  "sup",
-  "h1",
-  "h2",
-  "h3",
-  "h4",
-  "h5",
-  "h6",
-  "ul",
-  "ol",
-  "li",
-  "dl",
-  "dt",
-  "dd",
-  "table",
-  "thead",
-  "tbody",
-  "tfoot",
-  "tr",
-  "th",
-  "td",
-  "caption",
-  "colgroup",
-  "col",
-  "hr",
-  "pre",
-  "code",
-  "blockquote",
-  "abbr",
-  "ins",
-  "del",
-  "a",
-  "img",
-  "figure",
-  "figcaption",
-  // SVG tags for point patterns
-  "svg",
-  "g",
-  "path",
-  "circle",
-  "ellipse",
-  "rect",
-  "line",
-  "polyline",
-  "polygon",
-  "text",
-  "tspan",
-  "textPath",
-  "use",
-  "defs",
-  "symbol",
-  "clipPath",
-  "mask",
-  "linearGradient",
-  "radialGradient",
-  "stop",
-  "pattern",
-  "marker",
-  "title",
-  "desc"
-]);
-const ALLOWED_ATTRS = /* @__PURE__ */ new Set([
-  // Common attributes
-  "class",
-  "id",
-  "style",
-  "title",
-  "lang",
-  "dir",
-  // HTML specific
-  "href",
-  "src",
-  "alt",
-  "width",
-  "height",
-  "colspan",
-  "rowspan",
-  "scope",
-  "headers",
-  // SVG presentation attributes
-  "d",
-  "points",
-  "x",
-  "y",
-  "x1",
-  "x2",
-  "y1",
-  "y2",
-  "cx",
-  "cy",
-  "r",
-  "rx",
-  "ry",
-  "dx",
-  "dy",
-  "viewBox",
-  "preserveAspectRatio",
-  "transform",
-  "fill",
-  "fill-opacity",
-  "fill-rule",
-  "stroke",
-  "stroke-width",
-  "stroke-opacity",
-  "stroke-linecap",
-  "stroke-linejoin",
-  "stroke-dasharray",
-  "stroke-dashoffset",
-  "opacity",
-  "clip-path",
-  "clip-rule",
-  "mask",
-  "font-family",
-  "font-size",
-  "font-weight",
-  "font-style",
-  "text-anchor",
-  "dominant-baseline",
-  "offset",
-  "stop-color",
-  "stop-opacity",
-  "gradientUnits",
-  "gradientTransform",
-  "spreadMethod",
-  "patternUnits",
-  "patternTransform",
-  "marker-start",
-  "marker-mid",
-  "marker-end",
-  "markerWidth",
-  "markerHeight",
-  "refX",
-  "refY",
-  "xlink:href"
-]);
-const TAG_CASE_MAP = /* @__PURE__ */ new Map();
-ALLOWED_TAGS.forEach((tag) => TAG_CASE_MAP.set(tag.toLowerCase(), tag));
-const ATTR_CASE_MAP = /* @__PURE__ */ new Map();
-ALLOWED_ATTRS.forEach((attr) => ATTR_CASE_MAP.set(attr.toLowerCase(), attr));
-const ALLOWED_URI_PROTOCOLS = /* @__PURE__ */ new Set([
-  "http:",
-  "https:",
-  "mailto:"
-]);
-const URI_ATTRS = /* @__PURE__ */ new Set(["href", "src", "xlink:href"]);
-const TAG_NAME_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9]*)/;
-const CLOSING_TAG_REGEX = /^<\/([a-zA-Z][a-zA-Z0-9]*)\s*>$/;
-const OPENING_TAG_REGEX = /^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)(\/?)>$/;
-const ATTR_REGEX = /([a-zA-Z][\w:-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
-const URL_IN_STYLE_REGEX = /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi;
-const DANGEROUS_CSS_PATTERNS = [
-  "expression(",
-  "behavior:",
-  "binding:",
-  "@import",
-  "@charset",
-  "-moz-binding:"
-];
-function decodeHTMLEntities(str) {
-  return str.replace(/&colon;/gi, ":").replace(/&newline;/gi, "\n").replace(/&tab;/gi, "	").replace(/&nbsp;/gi, " ").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&apos;/gi, "'").replace(/&#(\d+);/gi, (_, code) => String.fromCharCode(parseInt(code, 10))).replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
-}
-function isSafeURI(uri) {
-  const decoded = decodeHTMLEntities(uri).trim();
-  const normalized = decoded.replace(/[\s\u0000-\u001f]/g, "").toLowerCase();
-  if (!normalized || normalized.startsWith("#")) {
-    return true;
-  }
-  if (normalized.startsWith("/") || normalized.startsWith("./") || normalized.startsWith("../") || !normalized.includes(":")) {
-    return true;
-  }
-  const colonIndex = normalized.indexOf(":");
-  if (colonIndex > 0) {
-    const protocol = normalized.substring(0, colonIndex + 1);
-    return ALLOWED_URI_PROTOCOLS.has(protocol);
-  }
-  return false;
-}
-function sanitizeStyleValue(style) {
-  const decoded = decodeHTMLEntities(style);
-  const cleaned = decoded.replace(/[\u0000-\u001f]/g, "");
-  URL_IN_STYLE_REGEX.lastIndex = 0;
-  let match;
-  while ((match = URL_IN_STYLE_REGEX.exec(cleaned)) !== null) {
-    if (!isSafeURI(match[1])) {
-      return null;
-    }
-  }
-  const normalizedLower = cleaned.toLowerCase().replace(/\s/g, "");
-  for (const pattern of DANGEROUS_CSS_PATTERNS) {
-    if (normalizedLower.includes(pattern)) {
-      return null;
-    }
-  }
-  return style;
-}
-const ATTR_ENCODE_MAP = {
-  '"': "&quot;",
-  "'": "&#39;",
-  "`": "&#96;"
-};
-const ATTR_ENCODE_REGEX = /["'`]/g;
-function encodeAttrValue(value) {
-  return value.replace(ATTR_ENCODE_REGEX, (char) => ATTR_ENCODE_MAP[char]);
-}
-function sanitizeAttrValue(name, value, wasUnquoted = false) {
-  if (URI_ATTRS.has(name)) {
-    if (!isSafeURI(value)) {
-      return null;
-    }
-    return wasUnquoted ? encodeAttrValue(value) : value;
-  }
-  if (name === "style") {
-    const sanitizedStyle = sanitizeStyleValue(value);
-    if (sanitizedStyle === null) {
-      return null;
-    }
-    return wasUnquoted ? encodeAttrValue(sanitizedStyle) : sanitizedStyle;
-  }
-  const decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
-  if (/\bon\w+=/.test(decoded)) {
-    return null;
-  }
-  return wasUnquoted ? encodeAttrValue(value) : value;
-}
-function extractTagName(tag) {
-  const match = tag.match(TAG_NAME_REGEX);
-  return match ? match[1].toLowerCase() : null;
-}
-function isAllowedTag(tag) {
-  const tagName = extractTagName(tag);
-  return tagName !== null && TAG_CASE_MAP.has(tagName);
-}
-function sanitizeTag(fullTag) {
-  var _a, _b, _c;
-  const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
-  if (closingMatch) {
-    const lowerName = closingMatch[1].toLowerCase();
-    return `</${(_a = TAG_CASE_MAP.get(lowerName)) != null ? _a : lowerName}>`;
-  }
-  const openingMatch = fullTag.match(OPENING_TAG_REGEX);
-  if (!openingMatch) {
-    return "";
-  }
-  const [, tagName, attrString, selfClose] = openingMatch;
-  const lowerTagName = tagName.toLowerCase();
-  const canonicalTagName = (_b = TAG_CASE_MAP.get(lowerTagName)) != null ? _b : lowerTagName;
-  const allowedAttrs = [];
-  ATTR_REGEX.lastIndex = 0;
-  let attrMatch;
-  while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
-    const lowerAttrName = attrMatch[1].toLowerCase();
-    const doubleQuotedValue = attrMatch[2];
-    const singleQuotedValue = attrMatch[3];
-    const unquotedValue = attrMatch[4];
-    if (lowerAttrName.startsWith("on")) {
-      continue;
-    }
-    const canonicalAttrName = (_c = ATTR_CASE_MAP.get(lowerAttrName)) != null ? _c : lowerAttrName;
-    let attrValue;
-    let quoteChar;
-    if (doubleQuotedValue !== void 0) {
-      attrValue = doubleQuotedValue;
-      quoteChar = '"';
-    } else if (singleQuotedValue !== void 0) {
-      attrValue = singleQuotedValue;
-      quoteChar = "'";
-    } else if (unquotedValue !== void 0) {
-      attrValue = unquotedValue;
-      quoteChar = '"';
-    } else {
-      if (ATTR_CASE_MAP.has(lowerAttrName)) {
-        allowedAttrs.push(canonicalAttrName);
-      }
-      continue;
-    }
-    if (ATTR_CASE_MAP.has(lowerAttrName)) {
-      const wasUnquoted = unquotedValue !== void 0;
-      const sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
-      if (sanitizedValue !== null) {
-        allowedAttrs.push(`${canonicalAttrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
-      }
-    }
-  }
-  const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
-  const selfCloseStr = selfClose ? "/>" : ">";
-  return `<${canonicalTagName}${attrsStr}${selfCloseStr}`;
-}
-function sanitize(str) {
-  if (typeof str !== "string" || !str || str.indexOf("<") === -1) {
-    return str;
-  }
-  return str.replace(
-    /<\/?[^>]*>|[^<>\s]+>/g,
-    (match) => {
-      if (match.startsWith("<!--")) {
-        return "";
-      }
-      if (!match.startsWith("<")) {
-        return match.slice(0, -1) + "&gt;";
-      }
-      if (isAllowedTag(match)) {
-        return sanitizeTag(match);
-      }
-      return match.replace(/</g, "&lt;");
-    }
-  );
-}
-
-;// ./src/module/util.ts
-var util_defProp = Object.defineProperty;
-var util_getOwnPropSymbols = Object.getOwnPropertySymbols;
-var util_hasOwnProp = Object.prototype.hasOwnProperty;
-var util_propIsEnum = Object.prototype.propertyIsEnumerable;
-var util_defNormalProp = (obj, key, value) => key in obj ? util_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var util_spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (util_hasOwnProp.call(b, prop))
-      util_defNormalProp(a, prop, b[prop]);
-  if (util_getOwnPropSymbols)
-    for (var prop of util_getOwnPropSymbols(b)) {
-      if (util_propIsEnum.call(b, prop))
-        util_defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-
-
-
-
-function _getRect(relativeViewport, node, forceEval = false) {
-  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
-  if (forceEval) {
-    return _(node);
-  } else {
-    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
-    return needEvaluate ? node.rect = _(node) : node.rect;
-  }
-}
-function _forEachValidItem(items, callback) {
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (item) {
-      callback(item, i);
-    }
-  }
-}
+;// ./src/module/util/type-checks.ts
 const isValue = (v) => v || v === 0;
 const isFunction = (v) => typeof v === "function";
 const isString = (v) => typeof v === "string";
@@ -796,448 +408,6 @@ const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length =
 const notEmpty = (o) => !isEmpty(o);
 const isArray = (arr) => Array.isArray(arr);
 const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
-function getOption(options, key, defaultValue) {
-  return isDefined(options[key]) ? options[key] : defaultValue;
-}
-function hasValue(dict, value) {
-  let found = false;
-  Object.keys(dict).forEach((key) => dict[key] === value && (found = true));
-  return found;
-}
-function callFn(fn, thisArg, ...args) {
-  const isFn = isFunction(fn);
-  isFn && fn.call(thisArg, ...args);
-  return isFn;
-}
-function endall(transition, cb) {
-  let n = 0;
-  const end = function(...args) {
-    !--n && cb.apply(this, ...args);
-  };
-  if ("duration" in transition) {
-    transition.each(() => ++n).on("end", end);
-  } else {
-    ++n;
-    transition.call(end);
-  }
-}
-function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
-  if (!node || !isString(text)) {
-    return;
-  }
-  if (text.indexOf("\n") === -1) {
-    node.text(text);
-  } else {
-    const diff = [node.text(), text].map((v) => v.replace(/[\s\n]/g, ""));
-    if (diff[0] !== diff[1]) {
-      const multiline = text.split("\n");
-      const len = toMiddle ? multiline.length - 1 : 1;
-      node.html("");
-      multiline.forEach((v, i) => {
-        node.append("tspan").attr("x", 0).attr("dy", `${i === 0 ? dy[0] * len : dy[1]}em`).text(v);
-      });
-    }
-  }
-}
-function getRectSegList(path) {
-  const { x, y, width, height } = path.getBBox();
-  return [
-    { x, y: y + height },
-    // seg0
-    { x, y },
-    // seg1
-    { x: x + width, y },
-    // seg2
-    { x: x + width, y: y + height }
-    // seg3
-  ];
-}
-function getPathBox(path) {
-  const { width, height } = getBoundingRect(path);
-  const items = getRectSegList(path);
-  const x = items[0].x;
-  const y = Math.min(items[0].y, items[1].y);
-  return {
-    x,
-    y,
-    width,
-    height
-  };
-}
-function getPointer(event, element) {
-  var _a;
-  const touches = event && ((_a = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _a[0]);
-  let pointer = [0, 0];
-  try {
-    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
-  } catch (e) {
-  }
-  return pointer.map((v) => isNaN(v) ? 0 : v);
-}
-function getBrushSelection(ctx) {
-  const { event, $el } = ctx;
-  const main = $el.subchart.main || $el.main;
-  let selection;
-  if (event && event.type === "brush") {
-    selection = event.selection;
-  } else if (main && (selection = main.select(".bb-brush").node())) {
-    selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection);
-  }
-  return selection;
-}
-function getBoundingRect(node, forceEval = false) {
-  return _getRect(true, node, forceEval);
-}
-function getBBox(node, forceEval = false) {
-  return _getRect(false, node, forceEval);
-}
-function getRandom(asStr = true, min = 0, max = 1e4) {
-  const crpt = win.crypto || win.msCrypto;
-  const rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
-  return asStr ? String(rand) : rand;
-}
-function findIndex(arr, v, start, end, isRotated) {
-  if (start > end) {
-    return -1;
-  }
-  const mid = Math.floor((start + end) / 2);
-  let { x, w = 0 } = arr[mid];
-  if (isRotated) {
-    x = arr[mid].y;
-    w = arr[mid].h;
-  }
-  if (v >= x && v <= x + w) {
-    return mid;
-  }
-  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
-}
-function brushEmpty(ctx) {
-  const selection = getBrushSelection(ctx);
-  if (selection) {
-    return selection[0] === selection[1];
-  }
-  return true;
-}
-function deepClone(...objectN) {
-  const clone = (v) => {
-    if (isObject(v) && v.constructor) {
-      const r = new v.constructor();
-      for (const k in v) {
-        r[k] = clone(v[k]);
-      }
-      return r;
-    }
-    return v;
-  };
-  return objectN.map((v) => clone(v)).reduce((a, c) => util_spreadValues(util_spreadValues({}, a), c));
-}
-function extend(target = {}, source) {
-  if (isArray(source)) {
-    source.forEach((v) => extend(target, v));
-  }
-  for (const p in source) {
-    if (/^\d+$/.test(p) || p in target) {
-      continue;
-    }
-    target[p] = source[p];
-  }
-  return target;
-}
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-function camelize(str, separator = "-") {
-  return str.split(separator).map((v, i) => i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()).join("");
-}
-const toArray = (v) => [].slice.call(v);
-function addCssRules(style, selector, prop) {
-  const { rootSelector = "", sheet } = style;
-  const getSelector = (s) => s.replace(/\s?(bb-)/g, ".$1").replace(/\.+/g, ".");
-  const rule = `${rootSelector} ${getSelector(selector)} {${prop.join(";")}}`;
-  return sheet[sheet.insertRule ? "insertRule" : "addRule"](
-    rule,
-    sheet.cssRules.length
-  );
-}
-function getCssRules(styleSheets) {
-  let rules = [];
-  styleSheets.forEach((sheet) => {
-    var _a;
-    try {
-      if (sheet.cssRules && sheet.cssRules.length) {
-        rules = rules.concat(toArray(sheet.cssRules));
-      }
-    } catch (e) {
-      (_a = win.console) == null ? void 0 : _a.warn(`Error while reading rules from ${sheet.href}: ${e.toString()}`);
-    }
-  });
-  return rules;
-}
-function getScrollPosition(node) {
-  var _a, _b, _c, _d, _e, _f;
-  return {
-    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + ((_c = node.scrollLeft) != null ? _c : 0),
-    y: ((_e = (_d = win.pageYOffset) != null ? _d : win.scrollY) != null ? _e : 0) + ((_f = node.scrollTop) != null ? _f : 0)
-  };
-}
-function getTransformCTM(node, x = 0, y = 0, inverse = true) {
-  const point = new DOMPoint(x, y);
-  const screen = node.getScreenCTM();
-  const res = point.matrixTransform(
-    inverse ? screen == null ? void 0 : screen.inverse() : screen
-  );
-  if (inverse === false) {
-    const rect = getBoundingRect(node);
-    res.x -= rect.x;
-    res.y -= rect.y;
-  }
-  return res;
-}
-function getTranslation(node) {
-  const transform = node ? node.transform : null;
-  const baseVal = transform && transform.baseVal;
-  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
-}
-function getElementPos(element, type) {
-  var _a;
-  const attr = (_a = element == null ? void 0 : element.getAttribute) == null ? void 0 : _a.call(element, type);
-  if (attr) {
-    return parseFloat(attr);
-  }
-  const matrix = getTranslation(element);
-  return type === "x" ? matrix.e : matrix.f;
-}
-function getUnique(data) {
-  const isDate = data[0] instanceof Date;
-  const d = (isDate ? data.map(Number) : data).filter((v, i, self) => self.indexOf(v) === i);
-  return isDate ? d.map((v) => new Date(v)) : d;
-}
-function mergeArray(arr) {
-  return arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : [];
-}
-function mergeObj(target, ...objectN) {
-  if (!objectN.length || objectN.length === 1 && !objectN[0]) {
-    return target;
-  }
-  const source = objectN.shift();
-  if (isObject(target) && isObject(source)) {
-    Object.keys(source).forEach((key) => {
-      if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
-        const value = source[key];
-        if (isObject(value)) {
-          !target[key] && (target[key] = {});
-          target[key] = mergeObj(target[key], value);
-        } else {
-          target[key] = isArray(value) ? value.concat() : value;
-        }
-      }
-    });
-  }
-  return mergeObj(target, ...objectN);
-}
-function sortValue(data, isAsc = true) {
-  let fn;
-  if (data[0] instanceof Date) {
-    fn = isAsc ? (a, b) => a - b : (a, b) => b - a;
-  } else {
-    if (isAsc && !data.every(isNaN)) {
-      fn = (a, b) => a - b;
-    } else if (!isAsc) {
-      fn = (a, b) => a > b && -1 || a < b && 1 || a === b && 0;
-    }
-  }
-  return data.concat().sort(fn);
-}
-function getMinMax(type, data) {
-  let res = data.filter((v) => notEmpty(v));
-  if (res.length) {
-    if (isNumber(res[0])) {
-      res = Math[type](...res);
-    } else if (res[0] instanceof Date) {
-      res = sortValue(res, type === "min")[0];
-    }
-  } else {
-    res = void 0;
-  }
-  return res;
-}
-const getRange = (start, end, step = 1) => {
-  const res = [];
-  const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
-  for (let i = start; i < n; i++) {
-    res.push(start + i * step);
-  }
-  return res;
-};
-const emulateEvent = {
-  mouse: (() => {
-    const getParams = () => ({
-      bubbles: false,
-      cancelable: false,
-      screenX: 0,
-      screenY: 0,
-      clientX: 0,
-      clientY: 0
-    });
-    try {
-      new MouseEvent("t");
-      return (el, eventType, params = getParams()) => {
-        el.dispatchEvent(new MouseEvent(eventType, params));
-      };
-    } catch (e) {
-      return (el, eventType, params = getParams()) => {
-        const mouseEvent = browser_doc.createEvent("MouseEvent");
-        mouseEvent.initMouseEvent(
-          eventType,
-          params.bubbles,
-          params.cancelable,
-          win,
-          0,
-          // the event's mouse click count
-          params.screenX,
-          params.screenY,
-          params.clientX,
-          params.clientY,
-          false,
-          false,
-          false,
-          false,
-          0,
-          null
-        );
-        el.dispatchEvent(mouseEvent);
-      };
-    }
-  })(),
-  touch: (el, eventType, params) => {
-    const touchObj = new Touch(mergeObj({
-      identifier: Date.now(),
-      target: el,
-      radiusX: 2.5,
-      radiusY: 2.5,
-      rotationAngle: 10,
-      force: 0.5
-    }, params));
-    el.dispatchEvent(new TouchEvent(eventType, {
-      cancelable: true,
-      bubbles: true,
-      shiftKey: true,
-      touches: [touchObj],
-      targetTouches: [],
-      changedTouches: [touchObj]
-    }));
-  }
-};
-function tplProcess(tpl, data) {
-  let res = tpl;
-  for (const x in data) {
-    res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
-  }
-  return sanitize(res);
-}
-function parseDate(date) {
-  var _a;
-  let parsedDate;
-  if (date instanceof Date) {
-    parsedDate = date;
-  } else if (isString(date)) {
-    const { config, format } = this;
-    parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) != null ? _a : new Date(date);
-  } else if (isNumber(date) && !isNaN(date)) {
-    parsedDate = /* @__PURE__ */ new Date(+date);
-  }
-  if (!parsedDate || isNaN(+parsedDate)) {
-    console && console.error && console.error(`Failed to parse x '${date}' to Date object`);
-  }
-  return parsedDate;
-}
-function hasViewBox(svg) {
-  const attr = svg.attr("viewBox");
-  return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
-}
-function hasStyle(node, condition, all = false) {
-  const isD3Node = !!node.node;
-  let has = false;
-  for (const [key, value] of Object.entries(condition)) {
-    has = isD3Node ? node.style(key) === value : node.style[key] === value;
-    if (all === false && has) {
-      break;
-    }
-  }
-  return has;
-}
-function isTabVisible() {
-  var _a, _b;
-  return ((_a = browser_doc) == null ? void 0 : _a.hidden) === false || ((_b = browser_doc) == null ? void 0 : _b.visibilityState) === "visible";
-}
-function convertInputType(mouse, touch) {
-  const { DocumentTouch, matchMedia, navigator } = win;
-  const hasPointerCoarse = matchMedia == null ? void 0 : matchMedia("(pointer:coarse)").matches;
-  let hasTouch = false;
-  if (touch) {
-    if (navigator && "maxTouchPoints" in navigator) {
-      hasTouch = navigator.maxTouchPoints > 0;
-    } else if ("ontouchmove" in win || DocumentTouch && browser_doc instanceof DocumentTouch) {
-      hasTouch = true;
-    } else {
-      if (hasPointerCoarse) {
-        hasTouch = true;
-      } else {
-        const UA = navigator.userAgent;
-        hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
-      }
-    }
-  }
-  const hasMouse = mouse && !hasPointerCoarse && (matchMedia == null ? void 0 : matchMedia("(pointer:fine)").matches);
-  return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
-}
-function runUntil(fn, conditionFn) {
-  if (conditionFn() === false) {
-    requestAnimationFrame(() => runUntil(fn, conditionFn));
-  } else {
-    fn();
-  }
-}
-function parseShorthand(value) {
-  if (isObject(value) && !isString(value)) {
-    const obj = value;
-    return {
-      top: obj.top || 0,
-      right: obj.right || 0,
-      bottom: obj.bottom || 0,
-      left: obj.left || 0
-    };
-  }
-  const values = (isString(value) ? value.trim().split(/\s+/) : [value]).map((v) => +v || 0);
-  const [a, b = a, c = a, d = b] = values;
-  return { top: a, right: b, bottom: c, left: d };
-}
-function scheduleRAFUpdate(rafState, callback) {
-  if (rafState.pendingRaf !== null) {
-    win.cancelAnimationFrame(rafState.pendingRaf);
-    rafState.pendingRaf = win.requestAnimationFrame(() => {
-      rafState.pendingRaf = null;
-      callback();
-    });
-  } else {
-    rafState.pendingRaf = win.requestAnimationFrame(() => {
-      rafState.pendingRaf = null;
-    });
-    callback();
-  }
-}
-function toSet(items, keyFn = ((item) => item)) {
-  const set = /* @__PURE__ */ new Set();
-  _forEachValidItem(items, (item, i) => {
-    set.add(keyFn(item, i));
-  });
-  return set;
-}
-function toMap(items, keyFn, valueFn = ((item) => item)) {
-  const map = /* @__PURE__ */ new Map();
-  _forEachValidItem(items, (item, i) => {
-    map.set(keyFn(item, i), valueFn(item, i));
-  });
-  return map;
-}
 
 
 ;// ./src/Chart/api/selection.ts
@@ -1352,7 +522,7 @@ function setSelection(isSelection = false, ids, indices, resetOther) {
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-time-format","commonjs2":"d3-time-format","amd":"d3-time-format","root":"d3"}
-var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_ = __webpack_require__(4);
+var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_ = __webpack_require__(3);
 ;// ./src/config/Options/common/boost.ts
 /* harmony default export */ var boost = ({
   /**
@@ -3359,6 +2529,580 @@ var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format
   interaction_onout: true
 });
 
+;// ./src/module/browser.ts
+function getGlobal() {
+  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
+}
+function getFallback(w) {
+  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function";
+  const hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function" && typeof (w == null ? void 0 : w.cancelIdleCallback) === "function";
+  const request = (cb) => setTimeout(cb, 1);
+  const cancel = (id) => clearTimeout(id);
+  return [
+    hasRAF ? w.requestAnimationFrame : request,
+    hasRAF ? w.cancelAnimationFrame : cancel,
+    hasRIC ? w.requestIdleCallback : request,
+    hasRIC ? w.cancelIdleCallback : cancel
+  ];
+}
+const win = getGlobal();
+const browser_doc = win == null ? void 0 : win.document;
+const [
+  requestAnimationFrame,
+  cancelAnimationFrame,
+  requestIdleCallback,
+  cancelIdleCallback
+] = getFallback(win);
+
+
+;// ./src/module/sanitize.ts
+const ALLOWED_TAGS = /* @__PURE__ */ new Set([
+  // HTML tags for tooltip/legend templates
+  "span",
+  "div",
+  "p",
+  "br",
+  "b",
+  "i",
+  "em",
+  "small",
+  "strong",
+  "mark",
+  "u",
+  "s",
+  "sub",
+  "sup",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "ul",
+  "ol",
+  "li",
+  "dl",
+  "dt",
+  "dd",
+  "table",
+  "thead",
+  "tbody",
+  "tfoot",
+  "tr",
+  "th",
+  "td",
+  "caption",
+  "colgroup",
+  "col",
+  "hr",
+  "pre",
+  "code",
+  "blockquote",
+  "abbr",
+  "ins",
+  "del",
+  "a",
+  "img",
+  "figure",
+  "figcaption",
+  // SVG tags for point patterns
+  "svg",
+  "g",
+  "path",
+  "circle",
+  "ellipse",
+  "rect",
+  "line",
+  "polyline",
+  "polygon",
+  "text",
+  "tspan",
+  "textPath",
+  "use",
+  "defs",
+  "symbol",
+  "clipPath",
+  "mask",
+  "linearGradient",
+  "radialGradient",
+  "stop",
+  "pattern",
+  "marker",
+  "title",
+  "desc"
+]);
+const ALLOWED_ATTRS = /* @__PURE__ */ new Set([
+  // Common attributes
+  "class",
+  "id",
+  "style",
+  "title",
+  "lang",
+  "dir",
+  // HTML specific
+  "href",
+  "src",
+  "alt",
+  "width",
+  "height",
+  "colspan",
+  "rowspan",
+  "scope",
+  "headers",
+  // SVG presentation attributes
+  "d",
+  "points",
+  "x",
+  "y",
+  "x1",
+  "x2",
+  "y1",
+  "y2",
+  "cx",
+  "cy",
+  "r",
+  "rx",
+  "ry",
+  "dx",
+  "dy",
+  "viewBox",
+  "preserveAspectRatio",
+  "transform",
+  "fill",
+  "fill-opacity",
+  "fill-rule",
+  "stroke",
+  "stroke-width",
+  "stroke-opacity",
+  "stroke-linecap",
+  "stroke-linejoin",
+  "stroke-dasharray",
+  "stroke-dashoffset",
+  "opacity",
+  "clip-path",
+  "clip-rule",
+  "mask",
+  "font-family",
+  "font-size",
+  "font-weight",
+  "font-style",
+  "text-anchor",
+  "dominant-baseline",
+  "offset",
+  "stop-color",
+  "stop-opacity",
+  "gradientUnits",
+  "gradientTransform",
+  "spreadMethod",
+  "patternUnits",
+  "patternTransform",
+  "marker-start",
+  "marker-mid",
+  "marker-end",
+  "markerWidth",
+  "markerHeight",
+  "refX",
+  "refY",
+  "xlink:href"
+]);
+const TAG_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_TAGS.forEach((tag) => TAG_CASE_MAP.set(tag.toLowerCase(), tag));
+const ATTR_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_ATTRS.forEach((attr) => ATTR_CASE_MAP.set(attr.toLowerCase(), attr));
+const ALLOWED_URI_PROTOCOLS = /* @__PURE__ */ new Set([
+  "http:",
+  "https:",
+  "mailto:"
+]);
+const URI_ATTRS = /* @__PURE__ */ new Set(["href", "src", "xlink:href"]);
+const TAG_NAME_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9]*)/;
+const CLOSING_TAG_REGEX = /^<\/([a-zA-Z][a-zA-Z0-9]*)\s*>$/;
+const OPENING_TAG_REGEX = /^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)(\/?)>$/;
+const ATTR_REGEX = /([a-zA-Z][\w:-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
+const URL_IN_STYLE_REGEX = /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi;
+const DANGEROUS_CSS_PATTERNS = [
+  "expression(",
+  "behavior:",
+  "binding:",
+  "@import",
+  "@charset",
+  "-moz-binding:"
+];
+function decodeHTMLEntities(str) {
+  return str.replace(/&colon;/gi, ":").replace(/&newline;/gi, "\n").replace(/&tab;/gi, "	").replace(/&nbsp;/gi, " ").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&apos;/gi, "'").replace(/&#(\d+);/gi, (_, code) => String.fromCharCode(parseInt(code, 10))).replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
+}
+function isSafeURI(uri) {
+  const decoded = decodeHTMLEntities(uri).trim();
+  const normalized = decoded.replace(/[\s\u0000-\u001f]/g, "").toLowerCase();
+  if (!normalized || normalized.startsWith("#")) {
+    return true;
+  }
+  if (normalized.startsWith("/") || normalized.startsWith("./") || normalized.startsWith("../") || !normalized.includes(":")) {
+    return true;
+  }
+  const colonIndex = normalized.indexOf(":");
+  if (colonIndex > 0) {
+    const protocol = normalized.substring(0, colonIndex + 1);
+    return ALLOWED_URI_PROTOCOLS.has(protocol);
+  }
+  return false;
+}
+function sanitizeStyleValue(style) {
+  const decoded = decodeHTMLEntities(style);
+  const cleaned = decoded.replace(/[\u0000-\u001f]/g, "");
+  URL_IN_STYLE_REGEX.lastIndex = 0;
+  let match;
+  while ((match = URL_IN_STYLE_REGEX.exec(cleaned)) !== null) {
+    if (!isSafeURI(match[1])) {
+      return null;
+    }
+  }
+  const normalizedLower = cleaned.toLowerCase().replace(/\s/g, "");
+  for (const pattern of DANGEROUS_CSS_PATTERNS) {
+    if (normalizedLower.includes(pattern)) {
+      return null;
+    }
+  }
+  return style;
+}
+const ATTR_ENCODE_MAP = {
+  '"': "&quot;",
+  "'": "&#39;",
+  "`": "&#96;"
+};
+const ATTR_ENCODE_REGEX = /["'`]/g;
+function encodeAttrValue(value) {
+  return value.replace(ATTR_ENCODE_REGEX, (char) => ATTR_ENCODE_MAP[char]);
+}
+function sanitizeAttrValue(name, value, wasUnquoted = false) {
+  if (URI_ATTRS.has(name)) {
+    if (!isSafeURI(value)) {
+      return null;
+    }
+    return wasUnquoted ? encodeAttrValue(value) : value;
+  }
+  if (name === "style") {
+    const sanitizedStyle = sanitizeStyleValue(value);
+    if (sanitizedStyle === null) {
+      return null;
+    }
+    return wasUnquoted ? encodeAttrValue(sanitizedStyle) : sanitizedStyle;
+  }
+  const decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
+  if (/\bon\w+=/.test(decoded)) {
+    return null;
+  }
+  return wasUnquoted ? encodeAttrValue(value) : value;
+}
+function extractTagName(tag) {
+  const match = tag.match(TAG_NAME_REGEX);
+  return match ? match[1].toLowerCase() : null;
+}
+function isAllowedTag(tag) {
+  const tagName = extractTagName(tag);
+  return tagName !== null && TAG_CASE_MAP.has(tagName);
+}
+function sanitizeTag(fullTag) {
+  var _a, _b, _c;
+  const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
+  if (closingMatch) {
+    const lowerName = closingMatch[1].toLowerCase();
+    return `</${(_a = TAG_CASE_MAP.get(lowerName)) != null ? _a : lowerName}>`;
+  }
+  const openingMatch = fullTag.match(OPENING_TAG_REGEX);
+  if (!openingMatch) {
+    return "";
+  }
+  const [, tagName, attrString, selfClose] = openingMatch;
+  const lowerTagName = tagName.toLowerCase();
+  const canonicalTagName = (_b = TAG_CASE_MAP.get(lowerTagName)) != null ? _b : lowerTagName;
+  const allowedAttrs = [];
+  ATTR_REGEX.lastIndex = 0;
+  let attrMatch;
+  while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
+    const lowerAttrName = attrMatch[1].toLowerCase();
+    const doubleQuotedValue = attrMatch[2];
+    const singleQuotedValue = attrMatch[3];
+    const unquotedValue = attrMatch[4];
+    if (lowerAttrName.startsWith("on")) {
+      continue;
+    }
+    const canonicalAttrName = (_c = ATTR_CASE_MAP.get(lowerAttrName)) != null ? _c : lowerAttrName;
+    let attrValue;
+    let quoteChar;
+    if (doubleQuotedValue !== void 0) {
+      attrValue = doubleQuotedValue;
+      quoteChar = '"';
+    } else if (singleQuotedValue !== void 0) {
+      attrValue = singleQuotedValue;
+      quoteChar = "'";
+    } else if (unquotedValue !== void 0) {
+      attrValue = unquotedValue;
+      quoteChar = '"';
+    } else {
+      if (ATTR_CASE_MAP.has(lowerAttrName)) {
+        allowedAttrs.push(canonicalAttrName);
+      }
+      continue;
+    }
+    if (ATTR_CASE_MAP.has(lowerAttrName)) {
+      const wasUnquoted = unquotedValue !== void 0;
+      const sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
+      if (sanitizedValue !== null) {
+        allowedAttrs.push(`${canonicalAttrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
+      }
+    }
+  }
+  const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
+  const selfCloseStr = selfClose ? "/>" : ">";
+  return `<${canonicalTagName}${attrsStr}${selfCloseStr}`;
+}
+function sanitize(str) {
+  if (typeof str !== "string" || !str || str.indexOf("<") === -1) {
+    return str;
+  }
+  return str.replace(
+    /<\/?[^>]*>|[^<>\s]+>/g,
+    (match) => {
+      if (match.startsWith("<!--")) {
+        return "";
+      }
+      if (!match.startsWith("<")) {
+        return match.slice(0, -1) + "&gt;";
+      }
+      if (isAllowedTag(match)) {
+        return sanitizeTag(match);
+      }
+      return match.replace(/</g, "&lt;");
+    }
+  );
+}
+
+;// ./src/module/util/object.ts
+var object_defProp = Object.defineProperty;
+var object_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var object_hasOwnProp = Object.prototype.hasOwnProperty;
+var object_propIsEnum = Object.prototype.propertyIsEnumerable;
+var object_defNormalProp = (obj, key, value) => key in obj ? object_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var object_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (object_hasOwnProp.call(b, prop))
+      object_defNormalProp(a, prop, b[prop]);
+  if (object_getOwnPropSymbols)
+    for (var prop of object_getOwnPropSymbols(b)) {
+      if (object_propIsEnum.call(b, prop))
+        object_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+
+
+
+function _forEachValidItem(items, callback) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item) {
+      callback(item, i);
+    }
+  }
+}
+function getOption(options, key, defaultValue) {
+  return isDefined(options[key]) ? options[key] : defaultValue;
+}
+function hasValue(dict, value) {
+  let found = false;
+  Object.keys(dict).forEach((key) => dict[key] === value && (found = true));
+  return found;
+}
+function callFn(fn, thisArg, ...args) {
+  const isFn = isFunction(fn);
+  isFn && fn.call(thisArg, ...args);
+  return isFn;
+}
+function endall(transition, cb) {
+  let n = 0;
+  const end = function(...args) {
+    !--n && cb.apply(this, ...args);
+  };
+  if ("duration" in transition) {
+    transition.each(() => ++n).on("end", end);
+  } else {
+    ++n;
+    transition.call(end);
+  }
+}
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+function camelize(str, separator = "-") {
+  return str.split(separator).map((v, i) => i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()).join("");
+}
+const toArray = (v) => [].slice.call(v);
+function deepClone(...objectN) {
+  const clone = (v) => {
+    if (isObject(v) && v.constructor) {
+      const r = new v.constructor();
+      for (const k in v) {
+        r[k] = clone(v[k]);
+      }
+      return r;
+    }
+    return v;
+  };
+  return objectN.map((v) => clone(v)).reduce((a, c) => object_spreadValues(object_spreadValues({}, a), c));
+}
+function extend(target = {}, source) {
+  if (isArray(source)) {
+    source.forEach((v) => extend(target, v));
+  }
+  for (const p in source) {
+    if (/^\d+$/.test(p) || p in target) {
+      continue;
+    }
+    target[p] = source[p];
+  }
+  return target;
+}
+function getUnique(data) {
+  const isDate = data[0] instanceof Date;
+  const d = (isDate ? data.map(Number) : data).filter((v, i, self) => self.indexOf(v) === i);
+  return isDate ? d.map((v) => new Date(v)) : d;
+}
+function mergeArray(arr) {
+  return arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : [];
+}
+function mergeObj(target, ...objectN) {
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) {
+    return target;
+  }
+  const source = objectN.shift();
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach((key) => {
+      if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
+        const value = source[key];
+        if (isObject(value)) {
+          !target[key] && (target[key] = {});
+          target[key] = mergeObj(target[key], value);
+        } else {
+          target[key] = isArray(value) ? value.concat() : value;
+        }
+      }
+    });
+  }
+  return mergeObj(target, ...objectN);
+}
+function sortValue(data, isAsc = true) {
+  let fn;
+  if (data[0] instanceof Date) {
+    fn = isAsc ? (a, b) => a - b : (a, b) => b - a;
+  } else {
+    if (isAsc && !data.every(isNaN)) {
+      fn = (a, b) => a - b;
+    } else if (!isAsc) {
+      fn = (a, b) => a > b && -1 || a < b && 1 || a === b && 0;
+    }
+  }
+  return data.concat().sort(fn);
+}
+function getMinMax(type, data) {
+  let res = data.filter((v) => notEmpty(v));
+  if (res.length) {
+    if (isNumber(res[0])) {
+      res = Math[type](...res);
+    } else if (res[0] instanceof Date) {
+      res = sortValue(res, type === "min")[0];
+    }
+  } else {
+    res = void 0;
+  }
+  return res;
+}
+const getRange = (start, end, step = 1) => {
+  const res = [];
+  const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
+  for (let i = start; i < n; i++) {
+    res.push(start + i * step);
+  }
+  return res;
+};
+function getRandom(asStr = true, min = 0, max = 1e4) {
+  const crpt = win.crypto || win.msCrypto;
+  const rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
+  return asStr ? String(rand) : rand;
+}
+function findIndex(arr, v, start, end, isRotated) {
+  if (start > end) {
+    return -1;
+  }
+  const mid = Math.floor((start + end) / 2);
+  let { x, w = 0 } = arr[mid];
+  if (isRotated) {
+    x = arr[mid].y;
+    w = arr[mid].h;
+  }
+  if (v >= x && v <= x + w) {
+    return mid;
+  }
+  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
+}
+function tplProcess(tpl, data) {
+  let res = tpl;
+  for (const x in data) {
+    res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
+  }
+  return sanitize(res);
+}
+function parseDate(date) {
+  var _a;
+  let parsedDate;
+  if (date instanceof Date) {
+    parsedDate = date;
+  } else if (isString(date)) {
+    const { config, format } = this;
+    parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) != null ? _a : new Date(date);
+  } else if (isNumber(date) && !isNaN(date)) {
+    parsedDate = /* @__PURE__ */ new Date(+date);
+  }
+  if (!parsedDate || isNaN(+parsedDate)) {
+    console && console.error && console.error(`Failed to parse x '${date}' to Date object`);
+  }
+  return parsedDate;
+}
+function parseShorthand(value) {
+  if (isObject(value) && !isString(value)) {
+    const obj = value;
+    return {
+      top: obj.top || 0,
+      right: obj.right || 0,
+      bottom: obj.bottom || 0,
+      left: obj.left || 0
+    };
+  }
+  const values = (isString(value) ? value.trim().split(/\s+/) : [value]).map((v) => +v || 0);
+  const [a, b = a, c = a, d = b] = values;
+  return { top: a, right: b, bottom: c, left: d };
+}
+function runUntil(fn, conditionFn) {
+  if (conditionFn() === false) {
+    requestAnimationFrame(() => runUntil(fn, conditionFn));
+  } else {
+    fn();
+  }
+}
+function toSet(items, keyFn = ((item) => item)) {
+  const set = /* @__PURE__ */ new Set();
+  _forEachValidItem(items, (item, i) => {
+    set.add(keyFn(item, i));
+  });
+  return set;
+}
+function toMap(items, keyFn, valueFn = ((item) => item)) {
+  const map = /* @__PURE__ */ new Map();
+  _forEachValidItem(items, (item, i) => {
+    map.set(keyFn(item, i), valueFn(item, i));
+  });
+  return map;
+}
+
+
 ;// ./src/config/Options/Options.ts
 var Options_defProp = Object.defineProperty;
 var Options_getOwnPropSymbols = Object.getOwnPropertySymbols;
@@ -3928,6 +3672,251 @@ function logError(head, tail, info) {
   throw Error(`${prefix} ${head.replace(/\%c([a-z-]+)/i, "'$1' ")} ${tail != null ? tail : ""}`);
 }
 
+;// ./src/module/util/dom.ts
+
+
+
+
+function _getRect(relativeViewport, node, forceEval = false) {
+  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+  if (forceEval) {
+    return _(node);
+  } else {
+    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
+    return needEvaluate ? node.rect = _(node) : node.rect;
+  }
+}
+function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
+  if (!node || !isString(text)) {
+    return;
+  }
+  if (text.indexOf("\n") === -1) {
+    node.text(text);
+  } else {
+    const diff = [node.text(), text].map((v) => v.replace(/[\s\n]/g, ""));
+    if (diff[0] !== diff[1]) {
+      const multiline = text.split("\n");
+      const len = toMiddle ? multiline.length - 1 : 1;
+      node.html("");
+      multiline.forEach((v, i) => {
+        node.append("tspan").attr("x", 0).attr("dy", `${i === 0 ? dy[0] * len : dy[1]}em`).text(v);
+      });
+    }
+  }
+}
+function getRectSegList(path) {
+  const { x, y, width, height } = path.getBBox();
+  return [
+    { x, y: y + height },
+    // seg0
+    { x, y },
+    // seg1
+    { x: x + width, y },
+    // seg2
+    { x: x + width, y: y + height }
+    // seg3
+  ];
+}
+function getPathBox(path) {
+  const { width, height } = getBoundingRect(path);
+  const items = getRectSegList(path);
+  const x = items[0].x;
+  const y = Math.min(items[0].y, items[1].y);
+  return {
+    x,
+    y,
+    width,
+    height
+  };
+}
+function getPointer(event, element) {
+  var _a;
+  const touches = event && ((_a = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _a[0]);
+  let pointer = [0, 0];
+  try {
+    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
+  } catch (e) {
+  }
+  return pointer.map((v) => isNaN(v) ? 0 : v);
+}
+function getBoundingRect(node, forceEval = false) {
+  return _getRect(true, node, forceEval);
+}
+function getBBox(node, forceEval = false) {
+  return _getRect(false, node, forceEval);
+}
+function addCssRules(style, selector, prop) {
+  const { rootSelector = "", sheet } = style;
+  const getSelector = (s) => s.replace(/\s?(bb-)/g, ".$1").replace(/\.+/g, ".");
+  const rule = `${rootSelector} ${getSelector(selector)} {${prop.join(";")}}`;
+  return sheet[sheet.insertRule ? "insertRule" : "addRule"](
+    rule,
+    sheet.cssRules.length
+  );
+}
+function getCssRules(styleSheets) {
+  let rules = [];
+  styleSheets.forEach((sheet) => {
+    var _a;
+    try {
+      if (sheet.cssRules && sheet.cssRules.length) {
+        rules = rules.concat(toArray(sheet.cssRules));
+      }
+    } catch (e) {
+      (_a = win.console) == null ? void 0 : _a.warn(`Error while reading rules from ${sheet.href}: ${e.toString()}`);
+    }
+  });
+  return rules;
+}
+function getScrollPosition(node) {
+  var _a, _b, _c, _d, _e, _f;
+  return {
+    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + ((_c = node.scrollLeft) != null ? _c : 0),
+    y: ((_e = (_d = win.pageYOffset) != null ? _d : win.scrollY) != null ? _e : 0) + ((_f = node.scrollTop) != null ? _f : 0)
+  };
+}
+function getTransformCTM(node, x = 0, y = 0, inverse = true) {
+  const point = new DOMPoint(x, y);
+  const screen = node.getScreenCTM();
+  const res = point.matrixTransform(
+    inverse ? screen == null ? void 0 : screen.inverse() : screen
+  );
+  if (inverse === false) {
+    const rect = getBoundingRect(node);
+    res.x -= rect.x;
+    res.y -= rect.y;
+  }
+  return res;
+}
+function getTranslation(node) {
+  const transform = node ? node.transform : null;
+  const baseVal = transform && transform.baseVal;
+  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
+}
+function getElementPos(element, type) {
+  var _a;
+  const attr = (_a = element == null ? void 0 : element.getAttribute) == null ? void 0 : _a.call(element, type);
+  if (attr) {
+    return parseFloat(attr);
+  }
+  const matrix = getTranslation(element);
+  return type === "x" ? matrix.e : matrix.f;
+}
+function hasViewBox(svg) {
+  const attr = svg.attr("viewBox");
+  return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
+}
+function hasStyle(node, condition, all = false) {
+  const isD3Node = !!node.node;
+  let has = false;
+  for (const [key, value] of Object.entries(condition)) {
+    has = isD3Node ? node.style(key) === value : node.style[key] === value;
+    if (all === false && has) {
+      break;
+    }
+  }
+  return has;
+}
+function isTabVisible() {
+  var _a, _b;
+  return ((_a = browser_doc) == null ? void 0 : _a.hidden) === false || ((_b = browser_doc) == null ? void 0 : _b.visibilityState) === "visible";
+}
+function convertInputType(mouse, touch) {
+  const { DocumentTouch, matchMedia, navigator } = win;
+  const hasPointerCoarse = matchMedia == null ? void 0 : matchMedia("(pointer:coarse)").matches;
+  let hasTouch = false;
+  if (touch) {
+    if (navigator && "maxTouchPoints" in navigator) {
+      hasTouch = navigator.maxTouchPoints > 0;
+    } else if ("ontouchmove" in win || DocumentTouch && browser_doc instanceof DocumentTouch) {
+      hasTouch = true;
+    } else {
+      if (hasPointerCoarse) {
+        hasTouch = true;
+      } else {
+        const UA = navigator.userAgent;
+        hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
+      }
+    }
+  }
+  const hasMouse = mouse && !hasPointerCoarse && (matchMedia == null ? void 0 : matchMedia("(pointer:fine)").matches);
+  return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
+}
+function scheduleRAFUpdate(rafState, callback) {
+  if (rafState.pendingRaf !== null) {
+    win.cancelAnimationFrame(rafState.pendingRaf);
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+      callback();
+    });
+  } else {
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+    });
+    callback();
+  }
+}
+const emulateEvent = {
+  mouse: (() => {
+    const getParams = () => ({
+      bubbles: false,
+      cancelable: false,
+      screenX: 0,
+      screenY: 0,
+      clientX: 0,
+      clientY: 0
+    });
+    try {
+      new MouseEvent("t");
+      return (el, eventType, params = getParams()) => {
+        el.dispatchEvent(new MouseEvent(eventType, params));
+      };
+    } catch (e) {
+      return (el, eventType, params = getParams()) => {
+        const mouseEvent = browser_doc.createEvent("MouseEvent");
+        mouseEvent.initMouseEvent(
+          eventType,
+          params.bubbles,
+          params.cancelable,
+          win,
+          0,
+          // the event's mouse click count
+          params.screenX,
+          params.screenY,
+          params.clientX,
+          params.clientY,
+          false,
+          false,
+          false,
+          false,
+          0,
+          null
+        );
+        el.dispatchEvent(mouseEvent);
+      };
+    }
+  })(),
+  touch: (el, eventType, params) => {
+    const touchObj = new Touch(mergeObj({
+      identifier: Date.now(),
+      target: el,
+      radiusX: 2.5,
+      radiusY: 2.5,
+      rotationAngle: 10,
+      force: 0.5
+    }, params));
+    el.dispatchEvent(new TouchEvent(eventType, {
+      cancelable: true,
+      bubbles: true,
+      shiftKey: true,
+      touches: [touchObj],
+      targetTouches: [],
+      changedTouches: [touchObj]
+    }));
+  }
+};
+
+
 ;// ./src/module/generator.ts
 
 
@@ -4391,7 +4380,7 @@ function _setXS(ids, data, params) {
     const { ids, xs } = dataKeys.length ? dataKeys.reduce((acc, key) => {
       if ($$.isX.call($$, key)) {
         acc.xs.push(key);
-      } else if ($$.isNotX.call($$, key)) {
+      } else {
         acc.ids.push(key);
       }
       return acc;
@@ -4466,8 +4455,12 @@ function _setXS(ids, data, params) {
       t.values.forEach((v, i) => v.index = i);
       (_a = $$.data.xs[t.id]) == null ? void 0 : _a.sort((v1, v2) => v1 - v2);
     });
-    state.hasNegativeValue = $$.hasNegativeValueInTargets(targets);
-    state.hasPositiveValue = $$.hasPositiveValueInTargets(targets);
+    state.hasNegativeValue = targets.some(
+      (t) => t.values.some((v) => v.value !== null && v.value < 0)
+    );
+    state.hasPositiveValue = targets.some(
+      (t) => t.values.some((v) => v.value !== null && v.value > 0)
+    );
     if (chartType && $$.isValidChartType(chartType)) {
       const targetIds = $$.mapToIds(targets).filter(
         (id) => !(id in config.data_types) || !$$.isValidChartType(config.data_types[id])
@@ -4491,9 +4484,6 @@ function _setXS(ids, data, params) {
     const dataKey = config.data_x && key === config.data_x;
     const existValue = notEmpty(config.data_xs) && hasValue(config.data_xs, key);
     return dataKey || existValue;
-  },
-  isNotX(key) {
-    return !this.isX(key);
   },
   isStackNormalized() {
     const { config } = this;
@@ -4958,17 +4948,8 @@ function _setXS(ids, data, params) {
     });
     return ys;
   },
-  checkValueInTargets(targets, checker) {
-    return Object.keys(targets).some((id) => targets[id].values.some((v) => checker(v.value)));
-  },
   hasMultiTargets() {
     return this.filterTargetsToShow().length > 1;
-  },
-  hasNegativeValueInTargets(targets) {
-    return this.checkValueInTargets(targets, (v) => v < 0);
-  },
-  hasPositiveValueInTargets(targets) {
-    return this.checkValueInTargets(targets, (v) => v > 0);
   },
   /**
    * Sort targets data
@@ -5486,7 +5467,7 @@ function callDone(fn, resizeAfter = false) {
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-drag","commonjs2":"d3-drag","amd":"d3-drag","root":"d3"}
-var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(5);
+var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(4);
 ;// ./src/ChartInternal/interactions/interaction.ts
 
 
@@ -5820,7 +5801,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
-var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(6);
+var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(5);
 ;// ./src/ChartInternal/internals/color.ts
 
 
@@ -6049,6 +6030,30 @@ const schemeCategory10 = [
   }
 });
 
+// EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(6);
+;// ./src/module/util/brush.ts
+
+function getBrushSelection(ctx) {
+  const { event, $el } = ctx;
+  const main = $el.subchart.main || $el.main;
+  let selection;
+  if (event && event.type === "brush") {
+    selection = event.selection;
+  } else if (main && (selection = main.select(".bb-brush").node())) {
+    selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection);
+  }
+  return selection;
+}
+function brushEmpty(ctx) {
+  const selection = getBrushSelection(ctx);
+  if (selection) {
+    return selection[0] === selection[1];
+  }
+  return true;
+}
+
+
 ;// ./src/ChartInternal/internals/domain.ts
 
 
@@ -6068,8 +6073,8 @@ const schemeCategory10 = [
     const idsSet = toSet(ids);
     const rawYs = $$.getValuesAsIdKeyed(targets);
     if (dataGroups.length > 0) {
-      const hasNegative = $$.hasNegativeValueInTargets(targets);
-      const hasPositive = $$.hasPositiveValueInTargets(targets);
+      const hasNegative = targets.some((t) => t.values.some((v) => v.value < 0));
+      const hasPositive = targets.some((t) => t.values.some((v) => v.value > 0));
       const axisIdMap = new Map(ids.map((id) => [id, axis.getId(id)]));
       const ysMin = {};
       const ysMax = {};
@@ -6671,30 +6676,6 @@ function _buildLegendItemMap($$, legendItems) {
     $T(legend, withTransition).attr("transform", $$.getTranslate("legend"));
   },
   /**
-   * Update the legend step
-   * @param {number} step Step value
-   * @private
-   */
-  updateLegendStep(step) {
-    this.state.legendStep = step;
-  },
-  /**
-   * Update legend item width
-   * @param {number} width Width value
-   * @private
-   */
-  updateLegendItemWidth(width) {
-    this.state.legendItemWidth = width;
-  },
-  /**
-   * Update legend item height
-   * @param {number} height Height value
-   * @private
-   */
-  updateLegendItemHeight(height) {
-    this.state.legendItemHeight = height;
-  },
-  /**
    * Update legend item color
    * @param {string} id Corresponding data ID value
    * @param {string} color Color value
@@ -6969,10 +6950,17 @@ function _buildLegendItemMap($$, legendItems) {
     let background;
     const targetIdz = targetIds.filter((id) => !isDefined(config.data_names[id]) || config.data_names[id] !== null);
     const withTransition = options.withTransition;
-    const updatePositions = $$.getUpdateLegendPositions(targetIdz, dimension, sizes);
+    const isLegendRightOrInset = state.isLegendRight || state.isLegendInset;
+    const getFormattedText = _getFormattedText.bind($$);
+    const updatePositions = $$.getUpdateLegendPositions(
+      targetIdz,
+      dimension,
+      sizes,
+      isLegendRightOrInset
+    );
     if (state.isLegendInset) {
       dimension.step = config.legend_inset_step ? config.legend_inset_step : targetIdz.length;
-      $$.updateLegendStep(dimension.step);
+      state.legendStep = dimension.step;
     }
     if (state.isLegendRight) {
       xForLegend = (id) => dimension.max.width * sizes.steps[id];
@@ -6993,15 +6981,22 @@ function _buildLegendItemMap($$, legendItems) {
       yRect: (id, i) => yForLegend(id, i) - 5,
       yTile: (id, i) => yForLegend(id, i) + 4
     };
-    $$.generateLegendItem(targetIdz, itemTileSize, updatePositions, posFn);
+    $$.generateLegendItem(
+      targetIdz,
+      itemTileSize,
+      updatePositions,
+      posFn,
+      isLegendRightOrInset,
+      getFormattedText
+    );
     background = legend.select(`.${$LEGEND.legendBackground} rect`);
     if (state.isLegendInset && dimension.max.width > 0 && background.size() === 0) {
       background = legend.insert("g", `.${$LEGEND.legendItem}`).attr("class", $LEGEND.legendBackground).append("rect");
     }
     if (config.legend_tooltip) {
-      legend.selectAll("title").data(targetIdz).text((id) => _getFormattedText.bind($$)(id, false));
+      legend.selectAll("title").data(targetIdz).text((id) => getFormattedText(id, false));
     }
-    const texts = legend.selectAll("text").data(targetIdz).text((id) => _getFormattedText.bind($$)(id)).each(function(id, i) {
+    const texts = legend.selectAll("text").data(targetIdz).text((id) => getFormattedText(id)).each(function(id, i) {
       updatePositions(this, id, i);
     });
     $T(texts, withTransition).attr("x", posFn.xText).attr("y", posFn.yText);
@@ -7011,22 +7006,22 @@ function _buildLegendItemMap($$, legendItems) {
     if (background) {
       $T(background, withTransition).attr("height", $$.getLegendHeight() - 12).attr("width", dimension.max.width * (dimension.step + 1) + 10);
     }
-    $$.updateLegendItemWidth(dimension.max.width);
-    $$.updateLegendItemHeight(dimension.max.height);
-    $$.updateLegendStep(dimension.step);
+    state.legendItemWidth = dimension.max.width;
+    state.legendItemHeight = dimension.max.height;
+    state.legendStep = dimension.step;
   },
   /**
    * Get position update function
    * @param {Array} targetIdz Data ids
    * @param {object} dimension Dimension object
    * @param {object} sizes Size object
+   * @param {boolean} isLegendRightOrInset Whether legend is right or inset
    * @returns {function} Update position function
    * @private
    */
-  getUpdateLegendPositions(targetIdz, dimension, sizes) {
+  getUpdateLegendPositions(targetIdz, dimension, sizes, isLegendRightOrInset) {
     const $$ = this;
     const { config, state } = $$;
-    const isLegendRightOrInset = state.isLegendRight || state.isLegendInset;
     return function(textElement, id, index) {
       const reset = index === 0;
       const isLast = index === targetIdz.length - 1;
@@ -7096,23 +7091,24 @@ function _buildLegendItemMap($$, legendItems) {
    * @param {object} itemTileSize Item tile size {width, height}
    * @param {function} updatePositions Update position function
    * @param {object} posFn Position functions
+   * @param {boolean} isLegendRightOrInset Whether legend is right or inset
+   * @param {function} getFormattedText Bound text formatter function
    * @private
    */
-  generateLegendItem(targetIdz, itemTileSize, updatePositions, posFn) {
+  generateLegendItem(targetIdz, itemTileSize, updatePositions, posFn, isLegendRightOrInset, getFormattedText) {
     const $$ = this;
     const { config, state, $el: { legend } } = $$;
     const usePoint = config.legend_usePoint;
     const legendItemR = config.legend_item_tile_r;
     const legendType = config.legend_item_tile_type;
     const isRectangle = legendType !== "circle";
-    const isLegendRightOrInset = state.isLegendRight || state.isLegendInset;
     const pos = -200;
     const l = legend.selectAll(`.${$LEGEND.legendItem}`).data(targetIdz).enter().append("g");
     $$.setLegendItem(l);
     if (config.legend_tooltip) {
       l.append("title").text((id) => id);
     }
-    l.append("text").text((id) => _getFormattedText.bind($$)(id)).each(function(id, i) {
+    l.append("text").text((id) => getFormattedText(id)).each(function(id, i) {
       updatePositions(this, id, i);
     }).style("pointer-events", $$.getStylePropValue("none")).attr("x", isLegendRightOrInset ? posFn.xText : pos).attr("y", isLegendRightOrInset ? pos : posFn.yText);
     l.append("rect").attr("class", $LEGEND.legendItemEvent).style("fill-opacity", $$.getStylePropValue("0")).attr("x", isLegendRightOrInset ? posFn.xRect : pos).attr("y", isLegendRightOrInset ? pos : posFn.yRect);
@@ -7317,15 +7313,13 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
       state._targetsToShow = null;
       callFn(config.onrendered, $$.api);
     };
-    if (afterRedraw) {
-      if (withTransition && redrawList.length) {
-        const waitForDraw = generateWait();
-        (0,external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_.transition)().duration(duration).each(() => {
-          redrawList.flatMap((t1) => t1).forEach((t) => waitForDraw.add(t));
-        }).call(waitForDraw, afterRedraw);
-      } else if (!state.transiting) {
-        afterRedraw();
-      }
+    if (withTransition && redrawList.length) {
+      const waitForDraw = generateWait();
+      (0,external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_.transition)().duration(duration).each(() => {
+        redrawList.flatMap((t1) => t1).forEach((t) => waitForDraw.add(t));
+      }).call(waitForDraw, afterRedraw);
+    } else if (!state.transiting) {
+      afterRedraw();
     }
     $$.mapToIds($$.data.targets).forEach((id) => {
       state.withoutFadeIn[id] = true;
@@ -7630,7 +7624,7 @@ function getScale(type = "linear", min, max) {
   },
   getCurrentWidth() {
     const $$ = this;
-    return $$.config.size_width || $$.getParentWidth();
+    return $$.config.size_width || $$.getParentRectValue("width");
   },
   getCurrentHeight() {
     const $$ = this;
@@ -7661,9 +7655,6 @@ function getScale(type = "linear", min, max) {
     const bodySize = browser_doc.body[offsetName];
     v > bodySize && (v = bodySize);
     return v;
-  },
-  getParentWidth() {
-    return this.getParentRectValue("width");
   },
   getParentHeight() {
     const h = this.$el.chart.style("height");
@@ -16135,9 +16126,6 @@ class Axis_Axis {
       id === "x" ? ["inner-top", "inner-right"] : ["inner-right", "inner-top"]
     );
   }
-  getLabelPositionById(id) {
-    return this.getAxisLabelPosition(id);
-  }
   xForAxisLabel(id) {
     const $$ = this.owner;
     const { state: { width, height } } = $$;
@@ -17863,7 +17851,7 @@ function _smoothLines(el, type) {
     var _a, _b;
     const $$ = this;
     if ($$.axis) {
-      const position = (_a = $$.axis) == null ? void 0 : _a.getLabelPositionById(id);
+      const position = (_a = $$.axis) == null ? void 0 : _a.getAxisLabelPosition(id);
       const { width } = $$.axis.getMaxTickSize(id, withoutRecompute);
       const gap = width === 0 ? 0.5 : 0;
       return width + (((_b = $$.config.padding) == null ? void 0 : _b.mode) === "fit" ? position.isInner ? 10 + gap : 10 : position.isInner ? 20 + gap : 40);
@@ -17899,7 +17887,7 @@ function _smoothLines(el, type) {
     if ((config.axis_x_tick_multiline || isXAxisTickRotated) && maxtickSize.height > defaultHeight) {
       h += maxtickSize.height - defaultHeight;
     }
-    return h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id === "y2" && !isRotated ? -10 : 0);
+    return h + ($$.axis.getAxisLabelPosition(id).isInner ? 0 : 10) + (id === "y2" && !isRotated ? -10 : 0);
   },
   getEventRectWidth() {
     const $$ = this;
@@ -21448,6 +21436,7 @@ var arc_spreadProps = (a, b) => arc_defProps(a, arc_getOwnPropDescs(b));
 
 
 
+const ARC_TYPES = ["donut", "gauge", "pie", "polar"];
 function _getArcType($$) {
   return ["donut", "pie", "polar", "gauge"].find((type) => $$.hasType(type));
 }
@@ -21845,7 +21834,7 @@ function _getAttrTweenFn(fn) {
     var _a;
     const $$ = this;
     const hasGauge = $$.hasType("gauge");
-    const chartType = (_a = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))) == null ? void 0 : _a[0];
+    const chartType = (_a = ARC_TYPES.filter($$.hasType.bind($$))) == null ? void 0 : _a[0];
     if ($$.shouldShowArcLabel()) {
       selection.style("fill", $$.updateTextColor.bind($$)).attr("filter", (d) => $$.updateTextBGColor.bind($$)(d, $$.config.data_labels_backgroundColors)).each(function(d) {
         const node = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
@@ -21924,18 +21913,19 @@ function _getAttrTweenFn(fn) {
   shouldExpand(id) {
     const $$ = this;
     const { config } = $$;
-    return $$.isDonutType(id) && config.donut_expand || $$.isGaugeType(id) && config.gauge_expand || $$.isPieType(id) && config.pie_expand;
+    const type = $$.isDonutType(id) ? "donut" : $$.isGaugeType(id) ? "gauge" : $$.isPieType(id) ? "pie" : null;
+    return type ? !!config[`${type}_expand`] : false;
   },
   shouldShowArcLabel() {
     const $$ = this;
     const { config } = $$;
-    return ["donut", "gauge", "pie", "polar"].some((v) => $$.hasType(v) && config[`${v}_label_show`]);
+    return ARC_TYPES.some((v) => $$.hasType(v) && config[`${v}_label_show`]);
   },
   getArcLabelConfig(name = "format") {
     const $$ = this;
     const { config } = $$;
     let fn = (v) => v;
-    ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$)).forEach((v) => {
+    ARC_TYPES.filter($$.hasType.bind($$)).forEach((v) => {
       fn = config[`${v}_label_${name}`];
     });
     if (name === "format") {
@@ -22201,6 +22191,10 @@ function _getAttrTweenFn(fn) {
     const { config, state } = $$;
     const isTouch = state.inputType === "touch";
     const isMouse = state.inputType === "mouse";
+    const _getArcData = (d) => {
+      const updated = $$.updateAngle(d);
+      return updated ? $$.convertToArcData(updated) : null;
+    };
     function selectArc(_this, arcData, id) {
       $$.expandArc(id);
       $$.api.focus(id);
@@ -22216,10 +22210,8 @@ function _getAttrTweenFn(fn) {
     }
     arc.on("click", function(event, d, i) {
       var _a;
-      const updated = $$.updateAngle(d);
-      let arcData;
-      if (updated) {
-        arcData = $$.convertToArcData(updated);
+      const arcData = _getArcData(d);
+      if (arcData) {
         (_a = $$.toggleShape) == null ? void 0 : _a.call($$, this, arcData, i);
         config.data_onclick.bind($$.api)(arcData, this);
       }
@@ -22230,8 +22222,7 @@ function _getAttrTweenFn(fn) {
           return;
         }
         state.event = event;
-        const updated = $$.updateAngle(d);
-        const arcData = updated ? $$.convertToArcData(updated) : null;
+        const arcData = _getArcData(d);
         const id = (arcData == null ? void 0 : arcData.id) || void 0;
         selectArc(this, arcData, id);
         $$.setOverOut(true, arcData);
@@ -22240,13 +22231,11 @@ function _getAttrTweenFn(fn) {
           return;
         }
         state.event = event;
-        const updated = $$.updateAngle(d);
-        const arcData = updated ? $$.convertToArcData(updated) : null;
+        const arcData = _getArcData(d);
         unselectArc();
         $$.setOverOut(false, arcData);
       }).on("mousemove", function(event, d) {
-        const updated = $$.updateAngle(d);
-        const arcData = updated ? $$.convertToArcData(updated) : null;
+        const arcData = _getArcData(d);
         state.event = event;
         $$.showTooltip([arcData], this);
       });
@@ -24162,7 +24151,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260321005059",
+  version: "3.18.0-nightly-20260324005043",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260321005059
+ * @version 3.18.0-nightly-20260324005043
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -54,26 +54,11 @@ var __assign = function() {
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
+ * @ignore
  */
-/**
- * Window object
- * @private
- */
-/* eslint-disable no-new-func, no-undef */
-/**
- * Get global object
- * @returns {object} window object
- * @private
- */
-function getGlobal() {
-    return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object &&
-        globalThis) ||
-        (typeof global === "object" && global !== null && global.Object === Object && global) ||
-        (typeof self === "object" && self !== null && self.Object === Object && self) ||
-        Function("return this")();
-}
-var win = getGlobal();
-var doc = win === null || win === void 0 ? void 0 : win.document;
+var isNumber = function (v) { return typeof v === "number"; };
+var isDefined = function (v) { return typeof v !== "undefined"; };
+var isObjectType = function (v) { return typeof v === "object"; };
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -522,40 +507,6 @@ function sanitize(str) {
     });
 }
 
-var isNumber = function (v) { return typeof v === "number"; };
-var isDefined = function (v) { return typeof v !== "undefined"; };
-var isObjectType = function (v) { return typeof v === "object"; };
-// emulate event
-({
-    mouse: (function () {
-        var getParams = function () { return ({
-            bubbles: false,
-            cancelable: false,
-            screenX: 0,
-            screenY: 0,
-            clientX: 0,
-            clientY: 0
-        }); };
-        try {
-            // eslint-disable-next-line no-new
-            new MouseEvent("t");
-            return function (el, eventType, params) {
-                if (params === void 0) { params = getParams(); }
-                el.dispatchEvent(new MouseEvent(eventType, params));
-            };
-        }
-        catch (_a) {
-            // Polyfills DOM4 MouseEvent
-            return function (el, eventType, params) {
-                if (params === void 0) { params = getParams(); }
-                var mouseEvent = doc.createEvent("MouseEvent");
-                // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
-                mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
-                params.screenX, params.screenY, params.clientX, params.clientY, false, false, false, false, 0, null);
-                el.dispatchEvent(mouseEvent);
-            };
-        }
-    })()});
 /**
  * Process the template  & return bound string
  * @param {string} tpl Template string
@@ -671,7 +622,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.18.0-nightly-20260321005059";
+    Plugin.version = "3.18.0-nightly-20260324005043";
     return Plugin;
 }());
 

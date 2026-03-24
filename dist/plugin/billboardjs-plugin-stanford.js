@@ -5,38 +5,33 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260321005059
+ * @version 3.18.0-nightly-20260324005043
  * @requires billboard.js
  * @summary billboard.js plugin
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-interpolate"), require("d3-scale"), require("d3-brush"), require("d3-selection"), require("d3-axis"));
+		module.exports = factory(require("d3-interpolate"), require("d3-scale"), require("d3-axis"));
 	else if(typeof define === 'function' && define.amd)
-		define("bb", ["d3-interpolate", "d3-scale", "d3-brush", "d3-selection", "d3-axis"], factory);
+		define("bb", ["d3-interpolate", "d3-scale", "d3-axis"], factory);
 	else if(typeof exports === 'object')
-		exports["bb"] = factory(require("d3-interpolate"), require("d3-scale"), require("d3-brush"), require("d3-selection"), require("d3-axis"));
+		exports["bb"] = factory(require("d3-interpolate"), require("d3-scale"), require("d3-axis"));
 	else
-		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["stanford"] = factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__7__) {
+		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["stanford"] = factory(root["d3"], root["d3"], root["d3"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__6__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
 /* 0 */,
-/* 1 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
-
-/***/ }),
-/* 2 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__2__;
-
-/***/ }),
+/* 1 */,
+/* 2 */,
 /* 3 */,
-/* 4 */,
+/* 4 */
+/***/ (function(module) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__4__;
+
+/***/ }),
 /* 5 */
 /***/ (function(module) {
 
@@ -47,12 +42,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__5__;
 /***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__6__;
-
-/***/ }),
-/* 7 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__7__;
 
 /***/ })
 /******/ 	]);
@@ -110,9 +99,9 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
-var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(5);
+var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(4);
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
-var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(6);
+var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(5);
 ;// ./src/config/classes.ts
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
@@ -301,10 +290,133 @@ const $ZOOM = {
 };
 /* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
-// EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(2);
-// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
-var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
+;// ./src/module/util/type-checks.ts
+const isValue = (v) => v || v === 0;
+const isFunction = (v) => typeof v === "function";
+const isString = (v) => typeof v === "string";
+const isNumber = (v) => typeof v === "number";
+const isUndefined = (v) => typeof v === "undefined";
+const isDefined = (v) => typeof v !== "undefined";
+const isBoolean = (v) => typeof v === "boolean";
+const ceil10 = (v) => Math.ceil(v / 10) * 10;
+const asHalfPixel = (n) => Math.ceil(n) + 0.5;
+const diffDomain = (d) => d[1] - d[0];
+const isObjectType = (v) => typeof v === "object";
+const isEmptyObject = (obj) => {
+  for (const x in obj) {
+    return false;
+  }
+  return true;
+};
+const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
+const notEmpty = (o) => !isEmpty(o);
+const isArray = (arr) => Array.isArray(arr);
+const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
+
+
+;// ./src/config/config.ts
+
+function loadConfig(config) {
+  const thisConfig = this.config;
+  let target;
+  let keys;
+  let read;
+  const find = () => {
+    const key = keys.shift();
+    if (key && target && isObjectType(target) && key in target) {
+      target = target[key];
+      return find();
+    } else if (!key) {
+      return target;
+    }
+    return void 0;
+  };
+  Object.keys(thisConfig).forEach((key) => {
+    target = config;
+    keys = key.split("_");
+    read = find();
+    if (isDefined(read)) {
+      thisConfig[key] = read;
+    }
+  });
+  if (this.api) {
+    this.state.orgConfig = config;
+  }
+}
+
+;// ./src/Plugin/Plugin.ts
+var Plugin_defProp = Object.defineProperty;
+var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
+class Plugin {
+  /**
+   * Constructor
+   * @param {Any} options config option object
+   * @private
+   */
+  constructor(options = {}) {
+    __publicField(this, "$$");
+    __publicField(this, "options");
+    __publicField(this, "config");
+    this.options = options;
+  }
+  /**
+   * Load plugin config from options
+   * @private
+   */
+  loadConfig() {
+    loadConfig.call(this, this.options);
+  }
+  /**
+   * Lifecycle hook for 'beforeInit' phase.
+   * @private
+   */
+  $beforeInit() {
+  }
+  /**
+   * Lifecycle hook for 'init' phase.
+   * @private
+   */
+  $init() {
+  }
+  /**
+   * Lifecycle hook for 'afterInit' phase.
+   * @private
+   */
+  $afterInit() {
+  }
+  /**
+   * Lifecycle hook for 'redraw' phase.
+   * @private
+   */
+  $redraw() {
+  }
+  /**
+   * Lifecycle hook for 'willDestroy' phase.
+   * @private
+   */
+  $willDestroy() {
+    Object.keys(this).forEach((key) => {
+      this[key] = null;
+      delete this[key];
+    });
+  }
+}
+__publicField(Plugin, "version", "3.18.0-nightly-20260324005043");
+
+// EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
+var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(6);
+;// ./src/Plugin/stanford/classes.ts
+/* harmony default export */ var stanford_classes = ({
+  colorScale: "bb-colorscale",
+  stanfordElements: "bb-stanford-elements",
+  stanfordLine: "bb-stanford-line",
+  stanfordLines: "bb-stanford-lines",
+  stanfordRegion: "bb-stanford-region",
+  stanfordRegions: "bb-stanford-regions"
+});
+
 ;// ./src/module/browser.ts
 function getGlobal() {
   return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
@@ -654,36 +766,26 @@ function sanitize(str) {
   );
 }
 
-;// ./src/module/util.ts
-var util_defProp = Object.defineProperty;
-var util_getOwnPropSymbols = Object.getOwnPropertySymbols;
-var util_hasOwnProp = Object.prototype.hasOwnProperty;
-var util_propIsEnum = Object.prototype.propertyIsEnumerable;
-var util_defNormalProp = (obj, key, value) => key in obj ? util_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var util_spreadValues = (a, b) => {
+;// ./src/module/util/object.ts
+var object_defProp = Object.defineProperty;
+var object_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var object_hasOwnProp = Object.prototype.hasOwnProperty;
+var object_propIsEnum = Object.prototype.propertyIsEnumerable;
+var object_defNormalProp = (obj, key, value) => key in obj ? object_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var object_spreadValues = (a, b) => {
   for (var prop in b || (b = {}))
-    if (util_hasOwnProp.call(b, prop))
-      util_defNormalProp(a, prop, b[prop]);
-  if (util_getOwnPropSymbols)
-    for (var prop of util_getOwnPropSymbols(b)) {
-      if (util_propIsEnum.call(b, prop))
-        util_defNormalProp(a, prop, b[prop]);
+    if (object_hasOwnProp.call(b, prop))
+      object_defNormalProp(a, prop, b[prop]);
+  if (object_getOwnPropSymbols)
+    for (var prop of object_getOwnPropSymbols(b)) {
+      if (object_propIsEnum.call(b, prop))
+        object_defNormalProp(a, prop, b[prop]);
     }
   return a;
 };
 
 
 
-
-function _getRect(relativeViewport, node, forceEval = false) {
-  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
-  if (forceEval) {
-    return _(node);
-  } else {
-    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
-    return needEvaluate ? node.rect = _(node) : node.rect;
-  }
-}
 function _forEachValidItem(items, callback) {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
@@ -692,27 +794,6 @@ function _forEachValidItem(items, callback) {
     }
   }
 }
-const isValue = (v) => v || v === 0;
-const isFunction = (v) => typeof v === "function";
-const isString = (v) => typeof v === "string";
-const isNumber = (v) => typeof v === "number";
-const isUndefined = (v) => typeof v === "undefined";
-const isDefined = (v) => typeof v !== "undefined";
-const isBoolean = (v) => typeof v === "boolean";
-const ceil10 = (v) => Math.ceil(v / 10) * 10;
-const asHalfPixel = (n) => Math.ceil(n) + 0.5;
-const diffDomain = (d) => d[1] - d[0];
-const isObjectType = (v) => typeof v === "object";
-const isEmptyObject = (obj) => {
-  for (const x in obj) {
-    return false;
-  }
-  return true;
-};
-const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
-const notEmpty = (o) => !isEmpty(o);
-const isArray = (arr) => Array.isArray(arr);
-const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
 function getOption(options, key, defaultValue) {
   return isDefined(options[key]) ? options[key] : defaultValue;
 }
@@ -738,103 +819,11 @@ function endall(transition, cb) {
     transition.call(end);
   }
 }
-function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
-  if (!node || !isString(text)) {
-    return;
-  }
-  if (text.indexOf("\n") === -1) {
-    node.text(text);
-  } else {
-    const diff = [node.text(), text].map((v) => v.replace(/[\s\n]/g, ""));
-    if (diff[0] !== diff[1]) {
-      const multiline = text.split("\n");
-      const len = toMiddle ? multiline.length - 1 : 1;
-      node.html("");
-      multiline.forEach((v, i) => {
-        node.append("tspan").attr("x", 0).attr("dy", `${i === 0 ? dy[0] * len : dy[1]}em`).text(v);
-      });
-    }
-  }
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+function camelize(str, separator = "-") {
+  return str.split(separator).map((v, i) => i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()).join("");
 }
-function getRectSegList(path) {
-  const { x, y, width, height } = path.getBBox();
-  return [
-    { x, y: y + height },
-    // seg0
-    { x, y },
-    // seg1
-    { x: x + width, y },
-    // seg2
-    { x: x + width, y: y + height }
-    // seg3
-  ];
-}
-function getPathBox(path) {
-  const { width, height } = getBoundingRect(path);
-  const items = getRectSegList(path);
-  const x = items[0].x;
-  const y = Math.min(items[0].y, items[1].y);
-  return {
-    x,
-    y,
-    width,
-    height
-  };
-}
-function getPointer(event, element) {
-  var _a;
-  const touches = event && ((_a = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _a[0]);
-  let pointer = [0, 0];
-  try {
-    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
-  } catch (e) {
-  }
-  return pointer.map((v) => isNaN(v) ? 0 : v);
-}
-function getBrushSelection(ctx) {
-  const { event, $el } = ctx;
-  const main = $el.subchart.main || $el.main;
-  let selection;
-  if (event && event.type === "brush") {
-    selection = event.selection;
-  } else if (main && (selection = main.select(".bb-brush").node())) {
-    selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection);
-  }
-  return selection;
-}
-function getBoundingRect(node, forceEval = false) {
-  return _getRect(true, node, forceEval);
-}
-function getBBox(node, forceEval = false) {
-  return _getRect(false, node, forceEval);
-}
-function getRandom(asStr = true, min = 0, max = 1e4) {
-  const crpt = win.crypto || win.msCrypto;
-  const rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
-  return asStr ? String(rand) : rand;
-}
-function findIndex(arr, v, start, end, isRotated) {
-  if (start > end) {
-    return -1;
-  }
-  const mid = Math.floor((start + end) / 2);
-  let { x, w = 0 } = arr[mid];
-  if (isRotated) {
-    x = arr[mid].y;
-    w = arr[mid].h;
-  }
-  if (v >= x && v <= x + w) {
-    return mid;
-  }
-  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
-}
-function brushEmpty(ctx) {
-  const selection = getBrushSelection(ctx);
-  if (selection) {
-    return selection[0] === selection[1];
-  }
-  return true;
-}
+const toArray = (v) => [].slice.call(v);
 function deepClone(...objectN) {
   const clone = (v) => {
     if (isObject(v) && v.constructor) {
@@ -846,7 +835,7 @@ function deepClone(...objectN) {
     }
     return v;
   };
-  return objectN.map((v) => clone(v)).reduce((a, c) => util_spreadValues(util_spreadValues({}, a), c));
+  return objectN.map((v) => clone(v)).reduce((a, c) => object_spreadValues(object_spreadValues({}, a), c));
 }
 function extend(target = {}, source) {
   if (isArray(source)) {
@@ -859,68 +848,6 @@ function extend(target = {}, source) {
     target[p] = source[p];
   }
   return target;
-}
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-function camelize(str, separator = "-") {
-  return str.split(separator).map((v, i) => i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()).join("");
-}
-const toArray = (v) => [].slice.call(v);
-function addCssRules(style, selector, prop) {
-  const { rootSelector = "", sheet } = style;
-  const getSelector = (s) => s.replace(/\s?(bb-)/g, ".$1").replace(/\.+/g, ".");
-  const rule = `${rootSelector} ${getSelector(selector)} {${prop.join(";")}}`;
-  return sheet[sheet.insertRule ? "insertRule" : "addRule"](
-    rule,
-    sheet.cssRules.length
-  );
-}
-function getCssRules(styleSheets) {
-  let rules = [];
-  styleSheets.forEach((sheet) => {
-    var _a;
-    try {
-      if (sheet.cssRules && sheet.cssRules.length) {
-        rules = rules.concat(toArray(sheet.cssRules));
-      }
-    } catch (e) {
-      (_a = win.console) == null ? void 0 : _a.warn(`Error while reading rules from ${sheet.href}: ${e.toString()}`);
-    }
-  });
-  return rules;
-}
-function getScrollPosition(node) {
-  var _a, _b, _c, _d, _e, _f;
-  return {
-    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + ((_c = node.scrollLeft) != null ? _c : 0),
-    y: ((_e = (_d = win.pageYOffset) != null ? _d : win.scrollY) != null ? _e : 0) + ((_f = node.scrollTop) != null ? _f : 0)
-  };
-}
-function getTransformCTM(node, x = 0, y = 0, inverse = true) {
-  const point = new DOMPoint(x, y);
-  const screen = node.getScreenCTM();
-  const res = point.matrixTransform(
-    inverse ? screen == null ? void 0 : screen.inverse() : screen
-  );
-  if (inverse === false) {
-    const rect = getBoundingRect(node);
-    res.x -= rect.x;
-    res.y -= rect.y;
-  }
-  return res;
-}
-function getTranslation(node) {
-  const transform = node ? node.transform : null;
-  const baseVal = transform && transform.baseVal;
-  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
-}
-function getElementPos(element, type) {
-  var _a;
-  const attr = (_a = element == null ? void 0 : element.getAttribute) == null ? void 0 : _a.call(element, type);
-  if (attr) {
-    return parseFloat(attr);
-  }
-  const matrix = getTranslation(element);
-  return type === "x" ? matrix.e : matrix.f;
 }
 function getUnique(data) {
   const isDate = data[0] instanceof Date;
@@ -984,65 +911,26 @@ const getRange = (start, end, step = 1) => {
   }
   return res;
 };
-const emulateEvent = {
-  mouse: (() => {
-    const getParams = () => ({
-      bubbles: false,
-      cancelable: false,
-      screenX: 0,
-      screenY: 0,
-      clientX: 0,
-      clientY: 0
-    });
-    try {
-      new MouseEvent("t");
-      return (el, eventType, params = getParams()) => {
-        el.dispatchEvent(new MouseEvent(eventType, params));
-      };
-    } catch (e) {
-      return (el, eventType, params = getParams()) => {
-        const mouseEvent = doc.createEvent("MouseEvent");
-        mouseEvent.initMouseEvent(
-          eventType,
-          params.bubbles,
-          params.cancelable,
-          win,
-          0,
-          // the event's mouse click count
-          params.screenX,
-          params.screenY,
-          params.clientX,
-          params.clientY,
-          false,
-          false,
-          false,
-          false,
-          0,
-          null
-        );
-        el.dispatchEvent(mouseEvent);
-      };
-    }
-  })(),
-  touch: (el, eventType, params) => {
-    const touchObj = new Touch(mergeObj({
-      identifier: Date.now(),
-      target: el,
-      radiusX: 2.5,
-      radiusY: 2.5,
-      rotationAngle: 10,
-      force: 0.5
-    }, params));
-    el.dispatchEvent(new TouchEvent(eventType, {
-      cancelable: true,
-      bubbles: true,
-      shiftKey: true,
-      touches: [touchObj],
-      targetTouches: [],
-      changedTouches: [touchObj]
-    }));
+function getRandom(asStr = true, min = 0, max = 1e4) {
+  const crpt = win.crypto || win.msCrypto;
+  const rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
+  return asStr ? String(rand) : rand;
+}
+function findIndex(arr, v, start, end, isRotated) {
+  if (start > end) {
+    return -1;
   }
-};
+  const mid = Math.floor((start + end) / 2);
+  let { x, w = 0 } = arr[mid];
+  if (isRotated) {
+    x = arr[mid].y;
+    w = arr[mid].h;
+  }
+  if (v >= x && v <= x + w) {
+    return mid;
+  }
+  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
+}
 function tplProcess(tpl, data) {
   let res = tpl;
   for (const x in data) {
@@ -1066,53 +954,6 @@ function parseDate(date) {
   }
   return parsedDate;
 }
-function hasViewBox(svg) {
-  const attr = svg.attr("viewBox");
-  return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
-}
-function hasStyle(node, condition, all = false) {
-  const isD3Node = !!node.node;
-  let has = false;
-  for (const [key, value] of Object.entries(condition)) {
-    has = isD3Node ? node.style(key) === value : node.style[key] === value;
-    if (all === false && has) {
-      break;
-    }
-  }
-  return has;
-}
-function isTabVisible() {
-  var _a, _b;
-  return ((_a = doc) == null ? void 0 : _a.hidden) === false || ((_b = doc) == null ? void 0 : _b.visibilityState) === "visible";
-}
-function convertInputType(mouse, touch) {
-  const { DocumentTouch, matchMedia, navigator } = win;
-  const hasPointerCoarse = matchMedia == null ? void 0 : matchMedia("(pointer:coarse)").matches;
-  let hasTouch = false;
-  if (touch) {
-    if (navigator && "maxTouchPoints" in navigator) {
-      hasTouch = navigator.maxTouchPoints > 0;
-    } else if ("ontouchmove" in win || DocumentTouch && doc instanceof DocumentTouch) {
-      hasTouch = true;
-    } else {
-      if (hasPointerCoarse) {
-        hasTouch = true;
-      } else {
-        const UA = navigator.userAgent;
-        hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
-      }
-    }
-  }
-  const hasMouse = mouse && !hasPointerCoarse && (matchMedia == null ? void 0 : matchMedia("(pointer:fine)").matches);
-  return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
-}
-function runUntil(fn, conditionFn) {
-  if (conditionFn() === false) {
-    requestAnimationFrame(() => runUntil(fn, conditionFn));
-  } else {
-    fn();
-  }
-}
 function parseShorthand(value) {
   if (isObject(value) && !isString(value)) {
     const obj = value;
@@ -1127,18 +968,11 @@ function parseShorthand(value) {
   const [a, b = a, c = a, d = b] = values;
   return { top: a, right: b, bottom: c, left: d };
 }
-function scheduleRAFUpdate(rafState, callback) {
-  if (rafState.pendingRaf !== null) {
-    win.cancelAnimationFrame(rafState.pendingRaf);
-    rafState.pendingRaf = win.requestAnimationFrame(() => {
-      rafState.pendingRaf = null;
-      callback();
-    });
+function runUntil(fn, conditionFn) {
+  if (conditionFn() === false) {
+    requestAnimationFrame(() => runUntil(fn, conditionFn));
   } else {
-    rafState.pendingRaf = win.requestAnimationFrame(() => {
-      rafState.pendingRaf = null;
-    });
-    callback();
+    fn();
   }
 }
 function toSet(items, keyFn = ((item) => item)) {
@@ -1156,109 +990,6 @@ function toMap(items, keyFn, valueFn = ((item) => item)) {
   return map;
 }
 
-
-;// ./src/config/config.ts
-
-function loadConfig(config) {
-  const thisConfig = this.config;
-  let target;
-  let keys;
-  let read;
-  const find = () => {
-    const key = keys.shift();
-    if (key && target && isObjectType(target) && key in target) {
-      target = target[key];
-      return find();
-    } else if (!key) {
-      return target;
-    }
-    return void 0;
-  };
-  Object.keys(thisConfig).forEach((key) => {
-    target = config;
-    keys = key.split("_");
-    read = find();
-    if (isDefined(read)) {
-      thisConfig[key] = read;
-    }
-  });
-  if (this.api) {
-    this.state.orgConfig = config;
-  }
-}
-
-;// ./src/Plugin/Plugin.ts
-var Plugin_defProp = Object.defineProperty;
-var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-
-class Plugin {
-  /**
-   * Constructor
-   * @param {Any} options config option object
-   * @private
-   */
-  constructor(options = {}) {
-    __publicField(this, "$$");
-    __publicField(this, "options");
-    __publicField(this, "config");
-    this.options = options;
-  }
-  /**
-   * Load plugin config from options
-   * @private
-   */
-  loadConfig() {
-    loadConfig.call(this, this.options);
-  }
-  /**
-   * Lifecycle hook for 'beforeInit' phase.
-   * @private
-   */
-  $beforeInit() {
-  }
-  /**
-   * Lifecycle hook for 'init' phase.
-   * @private
-   */
-  $init() {
-  }
-  /**
-   * Lifecycle hook for 'afterInit' phase.
-   * @private
-   */
-  $afterInit() {
-  }
-  /**
-   * Lifecycle hook for 'redraw' phase.
-   * @private
-   */
-  $redraw() {
-  }
-  /**
-   * Lifecycle hook for 'willDestroy' phase.
-   * @private
-   */
-  $willDestroy() {
-    Object.keys(this).forEach((key) => {
-      this[key] = null;
-      delete this[key];
-    });
-  }
-}
-__publicField(Plugin, "version", "3.18.0-nightly-20260321005059");
-
-// EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
-var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(7);
-;// ./src/Plugin/stanford/classes.ts
-/* harmony default export */ var stanford_classes = ({
-  colorScale: "bb-colorscale",
-  stanfordElements: "bb-stanford-elements",
-  stanfordLine: "bb-stanford-line",
-  stanfordLines: "bb-stanford-lines",
-  stanfordRegion: "bb-stanford-region",
-  stanfordRegions: "bb-stanford-regions"
-});
 
 ;// ./src/Plugin/stanford/ColorScale.ts
 var ColorScale_defProp = Object.defineProperty;

@@ -5,61 +5,24 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260321005059
+ * @version 3.18.0-nightly-20260324005043
  * @requires billboard.js
  * @summary billboard.js plugin
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-brush"), require("d3-selection"));
+		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define("bb", ["d3-brush", "d3-selection"], factory);
+		define("bb", [], factory);
 	else if(typeof exports === 'object')
-		exports["bb"] = factory(require("d3-brush"), require("d3-selection"));
+		exports["bb"] = factory();
 	else
-		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["tableview"] = factory(root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__1__) {
+		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["tableview"] = factory();
+})(this, function() {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ([
-/* 0 */,
-/* 1 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
-
-/***/ }),
-/* 2 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__2__;
-
-/***/ })
-/******/ 	]);
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
+/******/ 	// The require scope
+/******/ 	var __webpack_require__ = {};
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
@@ -81,18 +44,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__2__;
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
-!function() {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ TableView; }
 });
 
-// EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(2);
-// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
-var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 ;// ./src/module/browser.ts
 function getGlobal() {
   return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
@@ -442,44 +399,7 @@ function sanitize(str) {
   );
 }
 
-;// ./src/module/util.ts
-var __defProp = Object.defineProperty;
-var __getOwnPropSymbols = Object.getOwnPropertySymbols;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp.call(b, prop))
-      __defNormalProp(a, prop, b[prop]);
-  if (__getOwnPropSymbols)
-    for (var prop of __getOwnPropSymbols(b)) {
-      if (__propIsEnum.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-
-
-
-
-function _getRect(relativeViewport, node, forceEval = false) {
-  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
-  if (forceEval) {
-    return _(node);
-  } else {
-    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
-    return needEvaluate ? node.rect = _(node) : node.rect;
-  }
-}
-function _forEachValidItem(items, callback) {
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (item) {
-      callback(item, i);
-    }
-  }
-}
+;// ./src/module/util/type-checks.ts
 const isValue = (v) => v || v === 0;
 const isFunction = (v) => typeof v === "function";
 const isString = (v) => typeof v === "string";
@@ -501,6 +421,36 @@ const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length =
 const notEmpty = (o) => !isEmpty(o);
 const isArray = (arr) => Array.isArray(arr);
 const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
+
+
+;// ./src/module/util/object.ts
+var __defProp = Object.defineProperty;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+
+
+
+function _forEachValidItem(items, callback) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item) {
+      callback(item, i);
+    }
+  }
+}
 function getOption(options, key, defaultValue) {
   return isDefined(options[key]) ? options[key] : defaultValue;
 }
@@ -526,103 +476,11 @@ function endall(transition, cb) {
     transition.call(end);
   }
 }
-function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
-  if (!node || !isString(text)) {
-    return;
-  }
-  if (text.indexOf("\n") === -1) {
-    node.text(text);
-  } else {
-    const diff = [node.text(), text].map((v) => v.replace(/[\s\n]/g, ""));
-    if (diff[0] !== diff[1]) {
-      const multiline = text.split("\n");
-      const len = toMiddle ? multiline.length - 1 : 1;
-      node.html("");
-      multiline.forEach((v, i) => {
-        node.append("tspan").attr("x", 0).attr("dy", `${i === 0 ? dy[0] * len : dy[1]}em`).text(v);
-      });
-    }
-  }
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+function camelize(str, separator = "-") {
+  return str.split(separator).map((v, i) => i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()).join("");
 }
-function getRectSegList(path) {
-  const { x, y, width, height } = path.getBBox();
-  return [
-    { x, y: y + height },
-    // seg0
-    { x, y },
-    // seg1
-    { x: x + width, y },
-    // seg2
-    { x: x + width, y: y + height }
-    // seg3
-  ];
-}
-function getPathBox(path) {
-  const { width, height } = getBoundingRect(path);
-  const items = getRectSegList(path);
-  const x = items[0].x;
-  const y = Math.min(items[0].y, items[1].y);
-  return {
-    x,
-    y,
-    width,
-    height
-  };
-}
-function getPointer(event, element) {
-  var _a;
-  const touches = event && ((_a = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _a[0]);
-  let pointer = [0, 0];
-  try {
-    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
-  } catch (e) {
-  }
-  return pointer.map((v) => isNaN(v) ? 0 : v);
-}
-function getBrushSelection(ctx) {
-  const { event, $el } = ctx;
-  const main = $el.subchart.main || $el.main;
-  let selection;
-  if (event && event.type === "brush") {
-    selection = event.selection;
-  } else if (main && (selection = main.select(".bb-brush").node())) {
-    selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection);
-  }
-  return selection;
-}
-function getBoundingRect(node, forceEval = false) {
-  return _getRect(true, node, forceEval);
-}
-function getBBox(node, forceEval = false) {
-  return _getRect(false, node, forceEval);
-}
-function getRandom(asStr = true, min = 0, max = 1e4) {
-  const crpt = win.crypto || win.msCrypto;
-  const rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
-  return asStr ? String(rand) : rand;
-}
-function findIndex(arr, v, start, end, isRotated) {
-  if (start > end) {
-    return -1;
-  }
-  const mid = Math.floor((start + end) / 2);
-  let { x, w = 0 } = arr[mid];
-  if (isRotated) {
-    x = arr[mid].y;
-    w = arr[mid].h;
-  }
-  if (v >= x && v <= x + w) {
-    return mid;
-  }
-  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
-}
-function brushEmpty(ctx) {
-  const selection = getBrushSelection(ctx);
-  if (selection) {
-    return selection[0] === selection[1];
-  }
-  return true;
-}
+const toArray = (v) => [].slice.call(v);
 function deepClone(...objectN) {
   const clone = (v) => {
     if (isObject(v) && v.constructor) {
@@ -647,68 +505,6 @@ function extend(target = {}, source) {
     target[p] = source[p];
   }
   return target;
-}
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-function camelize(str, separator = "-") {
-  return str.split(separator).map((v, i) => i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()).join("");
-}
-const toArray = (v) => [].slice.call(v);
-function addCssRules(style, selector, prop) {
-  const { rootSelector = "", sheet } = style;
-  const getSelector = (s) => s.replace(/\s?(bb-)/g, ".$1").replace(/\.+/g, ".");
-  const rule = `${rootSelector} ${getSelector(selector)} {${prop.join(";")}}`;
-  return sheet[sheet.insertRule ? "insertRule" : "addRule"](
-    rule,
-    sheet.cssRules.length
-  );
-}
-function getCssRules(styleSheets) {
-  let rules = [];
-  styleSheets.forEach((sheet) => {
-    var _a;
-    try {
-      if (sheet.cssRules && sheet.cssRules.length) {
-        rules = rules.concat(toArray(sheet.cssRules));
-      }
-    } catch (e) {
-      (_a = win.console) == null ? void 0 : _a.warn(`Error while reading rules from ${sheet.href}: ${e.toString()}`);
-    }
-  });
-  return rules;
-}
-function getScrollPosition(node) {
-  var _a, _b, _c, _d, _e, _f;
-  return {
-    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + ((_c = node.scrollLeft) != null ? _c : 0),
-    y: ((_e = (_d = win.pageYOffset) != null ? _d : win.scrollY) != null ? _e : 0) + ((_f = node.scrollTop) != null ? _f : 0)
-  };
-}
-function getTransformCTM(node, x = 0, y = 0, inverse = true) {
-  const point = new DOMPoint(x, y);
-  const screen = node.getScreenCTM();
-  const res = point.matrixTransform(
-    inverse ? screen == null ? void 0 : screen.inverse() : screen
-  );
-  if (inverse === false) {
-    const rect = getBoundingRect(node);
-    res.x -= rect.x;
-    res.y -= rect.y;
-  }
-  return res;
-}
-function getTranslation(node) {
-  const transform = node ? node.transform : null;
-  const baseVal = transform && transform.baseVal;
-  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
-}
-function getElementPos(element, type) {
-  var _a;
-  const attr = (_a = element == null ? void 0 : element.getAttribute) == null ? void 0 : _a.call(element, type);
-  if (attr) {
-    return parseFloat(attr);
-  }
-  const matrix = getTranslation(element);
-  return type === "x" ? matrix.e : matrix.f;
 }
 function getUnique(data) {
   const isDate = data[0] instanceof Date;
@@ -772,65 +568,26 @@ const getRange = (start, end, step = 1) => {
   }
   return res;
 };
-const emulateEvent = {
-  mouse: (() => {
-    const getParams = () => ({
-      bubbles: false,
-      cancelable: false,
-      screenX: 0,
-      screenY: 0,
-      clientX: 0,
-      clientY: 0
-    });
-    try {
-      new MouseEvent("t");
-      return (el, eventType, params = getParams()) => {
-        el.dispatchEvent(new MouseEvent(eventType, params));
-      };
-    } catch (e) {
-      return (el, eventType, params = getParams()) => {
-        const mouseEvent = doc.createEvent("MouseEvent");
-        mouseEvent.initMouseEvent(
-          eventType,
-          params.bubbles,
-          params.cancelable,
-          win,
-          0,
-          // the event's mouse click count
-          params.screenX,
-          params.screenY,
-          params.clientX,
-          params.clientY,
-          false,
-          false,
-          false,
-          false,
-          0,
-          null
-        );
-        el.dispatchEvent(mouseEvent);
-      };
-    }
-  })(),
-  touch: (el, eventType, params) => {
-    const touchObj = new Touch(mergeObj({
-      identifier: Date.now(),
-      target: el,
-      radiusX: 2.5,
-      radiusY: 2.5,
-      rotationAngle: 10,
-      force: 0.5
-    }, params));
-    el.dispatchEvent(new TouchEvent(eventType, {
-      cancelable: true,
-      bubbles: true,
-      shiftKey: true,
-      touches: [touchObj],
-      targetTouches: [],
-      changedTouches: [touchObj]
-    }));
+function getRandom(asStr = true, min = 0, max = 1e4) {
+  const crpt = win.crypto || win.msCrypto;
+  const rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
+  return asStr ? String(rand) : rand;
+}
+function findIndex(arr, v, start, end, isRotated) {
+  if (start > end) {
+    return -1;
   }
-};
+  const mid = Math.floor((start + end) / 2);
+  let { x, w = 0 } = arr[mid];
+  if (isRotated) {
+    x = arr[mid].y;
+    w = arr[mid].h;
+  }
+  if (v >= x && v <= x + w) {
+    return mid;
+  }
+  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
+}
 function tplProcess(tpl, data) {
   let res = tpl;
   for (const x in data) {
@@ -854,53 +611,6 @@ function parseDate(date) {
   }
   return parsedDate;
 }
-function hasViewBox(svg) {
-  const attr = svg.attr("viewBox");
-  return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
-}
-function hasStyle(node, condition, all = false) {
-  const isD3Node = !!node.node;
-  let has = false;
-  for (const [key, value] of Object.entries(condition)) {
-    has = isD3Node ? node.style(key) === value : node.style[key] === value;
-    if (all === false && has) {
-      break;
-    }
-  }
-  return has;
-}
-function isTabVisible() {
-  var _a, _b;
-  return ((_a = doc) == null ? void 0 : _a.hidden) === false || ((_b = doc) == null ? void 0 : _b.visibilityState) === "visible";
-}
-function convertInputType(mouse, touch) {
-  const { DocumentTouch, matchMedia, navigator } = win;
-  const hasPointerCoarse = matchMedia == null ? void 0 : matchMedia("(pointer:coarse)").matches;
-  let hasTouch = false;
-  if (touch) {
-    if (navigator && "maxTouchPoints" in navigator) {
-      hasTouch = navigator.maxTouchPoints > 0;
-    } else if ("ontouchmove" in win || DocumentTouch && doc instanceof DocumentTouch) {
-      hasTouch = true;
-    } else {
-      if (hasPointerCoarse) {
-        hasTouch = true;
-      } else {
-        const UA = navigator.userAgent;
-        hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
-      }
-    }
-  }
-  const hasMouse = mouse && !hasPointerCoarse && (matchMedia == null ? void 0 : matchMedia("(pointer:fine)").matches);
-  return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
-}
-function runUntil(fn, conditionFn) {
-  if (conditionFn() === false) {
-    requestAnimationFrame(() => runUntil(fn, conditionFn));
-  } else {
-    fn();
-  }
-}
 function parseShorthand(value) {
   if (isObject(value) && !isString(value)) {
     const obj = value;
@@ -915,18 +625,11 @@ function parseShorthand(value) {
   const [a, b = a, c = a, d = b] = values;
   return { top: a, right: b, bottom: c, left: d };
 }
-function scheduleRAFUpdate(rafState, callback) {
-  if (rafState.pendingRaf !== null) {
-    win.cancelAnimationFrame(rafState.pendingRaf);
-    rafState.pendingRaf = win.requestAnimationFrame(() => {
-      rafState.pendingRaf = null;
-      callback();
-    });
+function runUntil(fn, conditionFn) {
+  if (conditionFn() === false) {
+    requestAnimationFrame(() => runUntil(fn, conditionFn));
   } else {
-    rafState.pendingRaf = win.requestAnimationFrame(() => {
-      rafState.pendingRaf = null;
-    });
-    callback();
+    fn();
   }
 }
 function toSet(items, keyFn = ((item) => item)) {
@@ -1034,7 +737,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260321005059");
+__publicField(Plugin, "version", "3.18.0-nightly-20260324005043");
 
 ;// ./src/Plugin/tableview/const.ts
 
@@ -1283,7 +986,6 @@ class TableView extends Plugin {
   }
 }
 
-}();
 __webpack_exports__ = __webpack_exports__["default"];
 /******/ 	return __webpack_exports__;
 /******/ })()
