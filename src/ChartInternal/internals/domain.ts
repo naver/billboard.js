@@ -36,8 +36,8 @@ export default {
 		const rawYs = $$.getValuesAsIdKeyed(targets);
 
 		if (dataGroups.length > 0) {
-			const hasNegative = $$.hasNegativeValueInTargets(targets);
-			const hasPositive = $$.hasPositiveValueInTargets(targets);
+			const hasNegative = targets.some(t => t.values.some(v => v.value < 0));
+			const hasPositive = targets.some(t => t.values.some(v => v.value > 0));
 			const axisIdMap = new Map(ids.map(id => [id, axis.getId(id)]));
 
 			// Clone ys into separate min/max copies since grouped calculation mutates values

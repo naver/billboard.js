@@ -152,7 +152,7 @@ export default {
 			dataKeys.reduce((acc, key) => {
 				if ($$.isX.call($$, key)) {
 					acc.xs.push(key);
-				} else if ($$.isNotX.call($$, key)) {
+				} else {
 					acc.ids.push(key);
 				}
 
@@ -263,8 +263,12 @@ export default {
 		});
 
 		// cache information about values
-		state.hasNegativeValue = $$.hasNegativeValueInTargets(targets);
-		state.hasPositiveValue = $$.hasPositiveValueInTargets(targets);
+		state.hasNegativeValue = targets.some(t =>
+			t.values.some(v => v.value !== null && v.value < 0)
+		);
+		state.hasPositiveValue = targets.some(t =>
+			t.values.some(v => v.value !== null && v.value > 0)
+		);
 
 		// set target types
 		if (chartType && $$.isValidChartType(chartType)) {
