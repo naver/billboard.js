@@ -24,8 +24,9 @@ export default class Options {
 	static data = {};
 
 	static setOptions(options: any[]) {
-		this.data = options
-			.reduce((a, c) => ({...a, ...c}), this.data);
+		for (let i = 0; i < options.length; i++) {
+			Object.assign(this.data, options[i]);
+		}
 	}
 
 	constructor() {

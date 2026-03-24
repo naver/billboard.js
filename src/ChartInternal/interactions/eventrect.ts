@@ -322,9 +322,8 @@ export default {
 							(xScale(x.prev) + xScale(d.x)) / 2
 						);
 					} else {
-						Object.keys(x).forEach((key, i) => {
-							x[key] = x[key] ?? xDomain[i];
-						});
+						x.prev = x.prev ?? xDomain[0];
+						x.next = x.next ?? xDomain[1];
 
 						val = Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
 					}

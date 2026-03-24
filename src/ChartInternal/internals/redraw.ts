@@ -226,14 +226,14 @@ export default {
 				list.push($$.redrawRegion(withTransition));
 			}
 
-			Object.keys(shape.type).forEach(v => {
+			for (const v in shape.type) {
 				const name = capitalize(v);
 				const drawFn = shape.type[v];
 
 				if ((/^(area|line)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {
 					list.push($$[`redraw${name}`](drawFn, withTransition));
 				}
-			});
+			}
 
 			!flow && grid.main && list.push($$.updateGridFocus());
 		}

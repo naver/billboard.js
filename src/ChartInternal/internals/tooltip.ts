@@ -112,17 +112,16 @@ export default {
 		const {api, config, state, $el} = $$;
 
 		// get formatter function
-		const [titleFn, nameFn, valueFn] = ["title", "name", "value"].map(v => {
-			const fn = config[`tooltip_format_${v}`];
-
-			return isFunction(fn) ? fn.bind(api) : fn;
-		});
+		const titleFn = config.tooltip_format_title;
+		const nameFn = config.tooltip_format_name;
+		const valueFn = config.tooltip_format_value;
 
 		// determine formatter function
-		const titleFormat = (...arg) => (titleFn || defaultTitleFormat)(...arg);
-		const nameFormat = (...arg) => (nameFn || (name => name))(...arg);
+		const titleFormat = isFunction(titleFn) ? titleFn.bind(api) : defaultTitleFormat;
+		const nameFormat = isFunction(nameFn) ? nameFn.bind(api) : (name => name);
+		const boundValueFn = isFunction(valueFn) ? valueFn.bind(api) : null;
 		const valueFormat = (v, ratio, id, index) => {
-			let fn = valueFn;
+			let fn = boundValueFn;
 
 			if (!fn) {
 				// For normalize per group, only show percentage for data in groups
@@ -314,7 +313,7 @@ export default {
 		const datum = tooltip?.datum();
 
 		if (!bindto && datum) {
-			const data = dataToShow ?? JSON.parse(datum.current);
+			const data = dataToShow ?? datum.data;
 			const [x, y] = getPointer(state.event, eventTarget ?? eventRect?.node()); // get mouse event position
 			const currPos: {
 				x: number,
@@ -501,11 +500,8 @@ export default {
 		const pos = {top: y, left: x};
 
 		// make sure to not be positioned out of viewport
-		Object.keys(pos).forEach(v => {
-			if (pos[v] < 0) {
-				pos[v] = 0;
-			}
-		});
+		if (pos.top < 0) pos.top = 0;
+		if (pos.left < 0) pos.left = 0;
 
 		return pos;
 	},
@@ -526,7 +522,9 @@ export default {
 		}
 
 		const datum = tooltip.datum();
-		const dataStr = JSON.stringify(selectedData);
+		const dataStr = `${$$.data.targets.length}:${
+			selectedData.map(d => `${d?.index}|${d?.id}|${d?.value}`).join()
+		}`;
 
 		if (!datum || datum.current !== dataStr) {
 			const {index, x} = selectedData.concat().sort()[0];
@@ -548,6 +546,7 @@ export default {
 				index,
 				x,
 				current: dataStr,
+				data: selectedData,
 				width: tooltip.property("offsetWidth"),
 				height: tooltip.property("offsetHeight")
 			});
@@ -596,7 +595,7 @@ export default {
 		if (
 			tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)
 		) {
-			const selectedData = JSON.parse(tooltip.datum().current ?? {});
+			const selectedData = tooltip.datum().data ?? [];
 
 			callFn(config.tooltip_onhide, api, selectedData);
 

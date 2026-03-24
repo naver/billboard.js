@@ -52,11 +52,11 @@ function getOption(options: object, key: string, defaultValue): any {
  * @private
  */
 function hasValue(dict: object, value: any): boolean {
-	let found = false;
+	for (const key in dict) {
+		if (dict[key] === value) return true;
+	}
 
-	Object.keys(dict).forEach(key => (dict[key] === value) && (found = true));
-
-	return found;
+	return false;
 }
 
 /**
@@ -188,8 +188,7 @@ function extend(target = {}, source): object {
  */
 function getUnique(data: any[]): any[] {
 	const isDate = data[0] instanceof Date;
-	const d = (isDate ? data.map(Number) : data)
-		.filter((v, i, self) => self.indexOf(v) === i);
+	const d = Array.from(new Set(isDate ? data.map(Number) : data));
 
 	return isDate ? d.map(v => new Date(v)) : d;
 }
@@ -359,13 +358,7 @@ function findIndex(arr, v: number, start: number, end: number, isRotated: boolea
  * @private
  */
 function tplProcess(tpl: string, data: object): string {
-	let res = tpl;
-
-	for (const x in data) {
-		res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
-	}
-
-	return sanitize(res);
+	return sanitize(tpl.replace(/\{=([^}]+)\}/g, (_, key) => data[key] ?? ""));
 }
 
 /**

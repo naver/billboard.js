@@ -16,9 +16,8 @@ import {callFn, endall} from "../../module/util";
 function showHide(show: boolean, targetIdsValue: string[], options: any, skipRedraw = false): void {
 	const $$ = this.internal;
 	const targetIds = $$.mapToTargetIds(targetIdsValue);
-	const hiddenIds = $$.state.hiddenTargetIds
-		.map(v => targetIds.indexOf(v) > -1 && v)
-		.filter(Boolean);
+	const targetIdSet = new Set(targetIds);
+	const hiddenIds = $$.state.hiddenTargetIds.filter(v => targetIdSet.has(v));
 
 	$$.state.toggling = true;
 	$$.state.dirty.visibility = true;
