@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260324005043
+ * @version 3.18.0-nightly-20260325005613
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -27417,9 +27417,10 @@ function getOption(options, key, defaultValue) {
   return isDefined(options[key]) ? options[key] : defaultValue;
 }
 function hasValue(dict, value) {
-  let found = false;
-  Object.keys(dict).forEach((key) => dict[key] === value && (found = true));
-  return found;
+  for (const key in dict) {
+    if (dict[key] === value) return true;
+  }
+  return false;
 }
 function callFn(fn, thisArg, ...args) {
   const isFn = isFunction(fn);
@@ -27470,7 +27471,7 @@ function extend(target = {}, source) {
 }
 function getUnique(data) {
   const isDate = data[0] instanceof Date;
-  const d = (isDate ? data.map(Number) : data).filter((v, i, self) => self.indexOf(v) === i);
+  const d = Array.from(new Set(isDate ? data.map(Number) : data));
   return isDate ? d.map((v) => new Date(v)) : d;
 }
 function mergeArray(arr) {
@@ -27551,11 +27552,10 @@ function findIndex(arr, v, start, end, isRotated) {
   return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
 }
 function tplProcess(tpl, data) {
-  let res = tpl;
-  for (const x in data) {
-    res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
-  }
-  return sanitize(res);
+  return sanitize(tpl.replace(/\{=([^}]+)\}/g, (_, key) => {
+    var _a;
+    return (_a = data[key]) != null ? _a : "";
+  }));
 }
 function parseDate(date) {
   var _a;
@@ -27612,21 +27612,7 @@ function toMap(items, keyFn, valueFn = ((item) => item)) {
 
 ;// ./src/config/Options/Options.ts
 var Options_defProp = Object.defineProperty;
-var Options_getOwnPropSymbols = Object.getOwnPropertySymbols;
-var Options_hasOwnProp = Object.prototype.hasOwnProperty;
-var Options_propIsEnum = Object.prototype.propertyIsEnumerable;
 var Options_defNormalProp = (obj, key, value) => key in obj ? Options_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var Options_spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (Options_hasOwnProp.call(b, prop))
-      Options_defNormalProp(a, prop, b[prop]);
-  if (Options_getOwnPropSymbols)
-    for (var prop of Options_getOwnPropSymbols(b)) {
-      if (Options_propIsEnum.call(b, prop))
-        Options_defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
 var __publicField = (obj, key, value) => Options_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
@@ -27639,7 +27625,9 @@ var __publicField = (obj, key, value) => Options_defNormalProp(obj, typeof key !
 
 const _Options = class _Options {
   static setOptions(options) {
-    this.data = options.reduce((a, c) => Options_spreadValues(Options_spreadValues({}, a), c), this.data);
+    for (let i = 0; i < options.length; i++) {
+      Object.assign(this.data, options[i]);
+    }
   }
   constructor() {
     return deepClone(
@@ -27960,7 +27948,7 @@ const KEY = {
 };
 class Cache {
   constructor() {
-    Cache_publicField(this, "cache", {});
+    Cache_publicField(this, "cache", /* @__PURE__ */ new Map());
   }
   /**
    * Add cache
@@ -27971,8 +27959,9 @@ class Cache {
    * @private
    */
   add(key, value, isDataType = false) {
-    this.cache[key] = isDataType ? this.cloneTarget(value) : value;
-    return this.cache[key];
+    const v = isDataType ? this.cloneTarget(value) : value;
+    this.cache.set(key, v);
+    return v;
   }
   /**
    * Remove cache
@@ -27980,7 +27969,10 @@ class Cache {
    * @private
    */
   remove(key) {
-    (isString(key) ? [key] : key).forEach((v) => delete this.cache[v]);
+    const keys = isString(key) ? [key] : key;
+    for (let i = 0; i < keys.length; i++) {
+      this.cache.delete(keys[i]);
+    }
   }
   /**
    * Get cahce
@@ -27993,13 +27985,13 @@ class Cache {
     if (isDataType && Array.isArray(key)) {
       const targets = [];
       for (let i = 0, id; id = key[i]; i++) {
-        if (id in this.cache) {
-          targets.push(this.cache[id]);
+        if (this.cache.has(id)) {
+          targets.push(this.cache.get(id));
         }
       }
       return targets;
     } else {
-      const value = this.cache[key];
+      const value = this.cache.get(key);
       return isValue(value) ? value : null;
     }
   }
@@ -28010,7 +28002,7 @@ class Cache {
    * @private
    */
   has(key) {
-    return key in this.cache;
+    return this.cache.has(key);
   }
   /**
    * Get all cache keys
@@ -28018,7 +28010,7 @@ class Cache {
    * @private
    */
   getKeys() {
-    return Object.keys(this.cache);
+    return Array.from(this.cache.keys());
   }
   /**
    * Reset cached data
@@ -28026,11 +28018,14 @@ class Cache {
    * @private
    */
   reset(all) {
-    const $$ = this;
-    for (const x in $$.cache) {
-      if (all || /^\$/.test(x)) {
-        delete $$.cache[x];
-      }
+    if (all) {
+      this.cache.clear();
+    } else {
+      this.cache.forEach((_, x) => {
+        if (/^\$/.test(x)) {
+          this.cache.delete(x);
+        }
+      });
     }
   }
   /**
@@ -29208,13 +29203,19 @@ function _setXS(ids, data, params) {
    */
   getMinMaxValue(data) {
     const getBaseValue = this.getBaseValue.bind(this);
-    let min;
-    let max;
-    (data || this.data.targets.map((t) => t.values)).forEach((v, i) => {
-      const value = v.map(getBaseValue).filter(isNumber);
-      min = Math.min(i ? min : Infinity, ...value);
-      max = Math.max(i ? max : -Infinity, ...value);
-    });
+    let min = Infinity;
+    let max = -Infinity;
+    const targets = data || this.data.targets.map((t) => t.values);
+    for (let i = 0; i < targets.length; i++) {
+      const v = targets[i];
+      for (let j = 0; j < v.length; j++) {
+        const val = getBaseValue(v[j]);
+        if (isNumber(val)) {
+          if (val < min) min = val;
+          if (val > max) max = val;
+        }
+      }
+    }
     return { min, max };
   },
   /**
@@ -29334,14 +29335,28 @@ function _setXS(ids, data, params) {
    * @private
    */
   getMaxDataCount() {
-    return Math.max(...this.data.targets.map((t) => t.values.length), 0);
+    const { targets } = this.data;
+    let max = 0;
+    for (let i = 0; i < targets.length; i++) {
+      if (targets[i].values.length > max) {
+        max = targets[i].values.length;
+      }
+    }
+    return max;
   },
   getMaxDataCountTarget() {
     let target = this.filterTargetsToShow() || [];
     const length = target.length;
     const isInverted = this.config.axis_x_inverted;
     if (length > 1) {
-      target = target.map((t) => t.values).reduce((a, b) => a.concat(b)).map((v) => v.x);
+      const allX = [];
+      for (let i = 0; i < target.length; i++) {
+        const values = target[i].values;
+        for (let j = 0; j < values.length; j++) {
+          allX.push(values[j].x);
+        }
+      }
+      target = allX;
       target = sortValue(getUnique(target)).map((x, index, array) => ({
         x,
         index: isInverted ? array.length - index - 1 : index
@@ -29495,7 +29510,7 @@ function _setXS(ids, data, params) {
    */
   orderTargets(targetsValue) {
     const $$ = this;
-    const targets = [...targetsValue];
+    const targets = targetsValue.slice();
     const fn = $$.getSortCompareFn();
     fn && targets.sort(fn);
     return targets;
@@ -29644,20 +29659,24 @@ function _setXS(ids, data, params) {
     const data = values.filter((v) => v && isValue(v.value));
     let minDist;
     let closest;
-    data.filter((v) => $$.isBarType(v.id) || $$.isCandlestickType(v.id)).forEach((v) => {
-      const selector = $$.isBarType(v.id) ? `.${$BAR.chartBar}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$BAR.bar}-${v.index}` : `.${$CANDLESTICK.chartCandlestick}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$CANDLESTICK.candlestick}-${v.index} path`;
-      if (!closest && $$.isWithinBar(main.select(selector).node())) {
-        closest = v;
+    for (let i = 0; i < data.length; i++) {
+      const v = data[i];
+      const isBar = $$.isBarType(v.id);
+      const isCandle = $$.isCandlestickType(v.id);
+      if (isBar || isCandle) {
+        const selector = isBar ? `.${$BAR.chartBar}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$BAR.bar}-${v.index}` : `.${$CANDLESTICK.chartCandlestick}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$CANDLESTICK.candlestick}-${v.index} path`;
+        if (!closest && $$.isWithinBar(main.select(selector).node())) {
+          closest = v;
+        }
+      } else {
+        const d = $$.dist(v, pos);
+        const sensitivity = $$.getPointSensitivity(v);
+        if (d < sensitivity && (minDist === void 0 || d < minDist)) {
+          minDist = d;
+          closest = v;
+        }
       }
-    });
-    data.filter((v) => !$$.isBarType(v.id) && !$$.isCandlestickType(v.id)).forEach((v) => {
-      const d = $$.dist(v, pos);
-      minDist = $$.getPointSensitivity(v);
-      if (d < minDist) {
-        minDist = d;
-        closest = v;
-      }
-    });
+    }
     return closest;
   },
   dist(data, pos) {
@@ -33113,15 +33132,26 @@ function brushEmpty(ctx) {
           });
         }
       });
+      const minVals2 = [];
+      const maxVals2 = [];
+      for (const key in ysMin) {
+        minVals2.push(getMinMax("min", ysMin[key]));
+        maxVals2.push(getMinMax("max", ysMax[key]));
+      }
       return [
-        getMinMax("min", Object.keys(ysMin).map((key) => getMinMax("min", ysMin[key]))),
-        getMinMax("max", Object.keys(ysMax).map((key) => getMinMax("max", ysMax[key])))
+        getMinMax("min", minVals2),
+        getMinMax("max", maxVals2)
       ];
     }
-    const keys = Object.keys(rawYs);
+    const minVals = [];
+    const maxVals = [];
+    for (const key in rawYs) {
+      minVals.push(getMinMax("min", rawYs[key]));
+      maxVals.push(getMinMax("max", rawYs[key]));
+    }
     return [
-      getMinMax("min", keys.map((key) => getMinMax("min", rawYs[key]))),
-      getMinMax("max", keys.map((key) => getMinMax("max", rawYs[key])))
+      getMinMax("min", minVals),
+      getMinMax("max", maxVals)
     ];
   },
   /**
@@ -33433,9 +33463,9 @@ function brushEmpty(ctx) {
     const isInverted = $$.config.axis_x_inverted;
     const [min, max] = range;
     if (Array.isArray(domain)) {
-      const target = [...domain];
-      isInverted && target.reverse();
-      if (target[0] < target[1]) {
+      const lo = isInverted ? domain[1] : domain[0];
+      const hi = isInverted ? domain[0] : domain[1];
+      if (lo < hi) {
         return domain.every(
           (v, i) => (i === 0 ? isInverted ? +v <= min : +v >= min : isInverted ? +v >= max : +v <= max) && !domain.every((v2, i2) => v2 === current[i2])
         );
@@ -34066,10 +34096,8 @@ function _buildLegendItemMap($$, legendItems) {
       }
       const maxLength = isLegendRightOrInset ? dimension.max.height : dimension.max.width;
       if (config.legend_equally) {
-        Object.keys(sizes.widths).forEach((id2) => sizes.widths[id2] = dimension.max.width);
-        Object.keys(sizes.heights).forEach(
-          (id2) => sizes.heights[id2] = dimension.max.height
-        );
+        for (const id2 in sizes.widths) sizes.widths[id2] = dimension.max.width;
+        for (const id2 in sizes.heights) sizes.heights[id2] = dimension.max.height;
         margin = (areaLength - maxLength * targetIdz.length) / 2;
         if (margin < dimension.posMin) {
           dimension.totalLength = 0;
@@ -34333,13 +34361,13 @@ function _buildLegendItemMap($$, legendItems) {
       if (config.regions.length) {
         list.push($$.redrawRegion(withTransition));
       }
-      Object.keys(shape.type).forEach((v) => {
+      for (const v in shape.type) {
         const name = capitalize(v);
         const drawFn = shape.type[v];
         if (/^(area|line)$/.test(v) && $$.hasTypeOf(name) || $$.hasType(v)) {
           list.push($$[`redraw${name}`](drawFn, withTransition));
         }
-      });
+      }
       !flow && grid.main && list.push($$.updateGridFocus());
     }
     if (!$$.hasArcType() || hasRadar) {
@@ -36682,14 +36710,14 @@ function _getTextXPos(pos = "left", width) {
     var _a;
     const $$ = this;
     const { api, config, state, $el } = $$;
-    const [titleFn, nameFn, valueFn] = ["title", "name", "value"].map((v) => {
-      const fn = config[`tooltip_format_${v}`];
-      return isFunction(fn) ? fn.bind(api) : fn;
-    });
-    const titleFormat = (...arg) => (titleFn || defaultTitleFormat)(...arg);
-    const nameFormat = (...arg) => (nameFn || ((name) => name))(...arg);
+    const titleFn = config.tooltip_format_title;
+    const nameFn = config.tooltip_format_name;
+    const valueFn = config.tooltip_format_value;
+    const titleFormat = isFunction(titleFn) ? titleFn.bind(api) : defaultTitleFormat;
+    const nameFormat = isFunction(nameFn) ? nameFn.bind(api) : ((name) => name);
+    const boundValueFn = isFunction(valueFn) ? valueFn.bind(api) : null;
     const valueFormat = (v, ratio, id, index) => {
-      let fn = valueFn;
+      let fn = boundValueFn;
       if (!fn) {
         if (state.hasTreemap || $$.isStackNormalized() && (!$$.isStackNormalizedPerGroup() || $$.isGrouped(id))) {
           fn = (v2, ratio2) => `${(ratio2 * 100).toFixed(2)}%`;
@@ -36823,7 +36851,7 @@ function _getTextXPos(pos = "left", width) {
     const isRotated = config.axis_rotated;
     const datum = tooltip == null ? void 0 : tooltip.datum();
     if (!bindto && datum) {
-      const data = dataToShow != null ? dataToShow : JSON.parse(datum.current);
+      const data = dataToShow != null ? dataToShow : datum.data;
       const [x, y] = getPointer(state.event, eventTarget != null ? eventTarget : eventRect == null ? void 0 : eventRect.node());
       const currPos = { x, y };
       if (state.hasAxis && scale.x && datum && "x" in datum) {
@@ -36958,11 +36986,8 @@ function _getTextXPos(pos = "left", width) {
       y -= hasGauge ? tHeight * 1.5 : tHeight + gap;
     }
     const pos = { top: y, left: x };
-    Object.keys(pos).forEach((v) => {
-      if (pos[v] < 0) {
-        pos[v] = 0;
-      }
-    });
+    if (pos.top < 0) pos.top = 0;
+    if (pos.left < 0) pos.left = 0;
     return pos;
   },
   /**
@@ -36979,7 +37004,7 @@ function _getTextXPos(pos = "left", width) {
       return;
     }
     const datum = tooltip.datum();
-    const dataStr = JSON.stringify(selectedData);
+    const dataStr = `${$$.data.targets.length}:${selectedData.map((d) => `${d == null ? void 0 : d.index}|${d == null ? void 0 : d.id}|${d == null ? void 0 : d.value}`).join()}`;
     if (!datum || datum.current !== dataStr) {
       const { index, x } = selectedData.concat().sort()[0];
       callFn(config.tooltip_onshow, $$.api, selectedData);
@@ -36997,6 +37022,7 @@ function _getTextXPos(pos = "left", width) {
         index,
         x,
         current: dataStr,
+        data: selectedData,
         width: tooltip.property("offsetWidth"),
         height: tooltip.property("offsetHeight")
       });
@@ -37035,7 +37061,7 @@ function _getTextXPos(pos = "left", width) {
     const $$ = this;
     const { api, config, $el: { tooltip } } = $$;
     if (tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
-      const selectedData = JSON.parse((_a = tooltip.datum().current) != null ? _a : {});
+      const selectedData = (_a = tooltip.datum().data) != null ? _a : [];
       callFn(config.tooltip_onhide, api, selectedData);
       tooltip.style("display", "none").datum(null);
       callFn(config.tooltip_onhidden, api, selectedData);
@@ -38488,10 +38514,14 @@ function updateTargetsForShape(targets, config) {
    * @private
    */
   getIndicesMax(indices) {
-    return notEmpty(this.config.data_xs) ? (
-      // if is multiple xs, return total sum of xs' __max__ value
-      Object.keys(indices).map((v) => indices[v].__max__ || 0).reduce((acc, curr) => acc + curr)
-    ) : indices.__max__;
+    if (!notEmpty(this.config.data_xs)) {
+      return indices.__max__;
+    }
+    let total = 0;
+    for (const key in indices) {
+      total += indices[key].__max__ || 0;
+    }
+    return total;
   },
   getShapeX(offset, indices, isSub) {
     const $$ = this;
@@ -40354,7 +40384,8 @@ const legend_legend = {
 function showHide(show, targetIdsValue, options, skipRedraw = false) {
   const $$ = this.internal;
   const targetIds = $$.mapToTargetIds(targetIdsValue);
-  const hiddenIds = $$.state.hiddenTargetIds.map((v) => targetIds.indexOf(v) > -1 && v).filter(Boolean);
+  const targetIdSet = new Set(targetIds);
+  const hiddenIds = $$.state.hiddenTargetIds.filter((v) => targetIdSet.has(v));
   $$.state.toggling = true;
   $$.state.dirty.visibility = true;
   $$[`${show ? "remove" : "add"}HiddenTargetIds`](targetIds);
@@ -40564,21 +40595,21 @@ const tooltip_tooltip = {
    * @memberof Chart
    */
   hide: function() {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     const $$ = this.internal;
     const { state: { inputType }, $el: { tooltip: tooltip2 } } = $$;
     const data = tooltip2 == null ? void 0 : tooltip2.datum();
-    if (data) {
-      const { index } = JSON.parse(data.current)[0];
+    if ((_a = data == null ? void 0 : data.data) == null ? void 0 : _a[0]) {
+      const { index } = data.data[0];
       (inputType === "mouse" ? ["mouseout"] : ["touchend"]).forEach((eventName) => {
         $$.dispatchEvent(eventName, index);
       });
     }
     inputType === "touch" && $$.callOverOutForTouch();
     $$.hideTooltip(true);
-    (_a = $$.hideGridFocus) == null ? void 0 : _a.call($$);
-    (_b = $$.unexpandCircles) == null ? void 0 : _b.call($$);
-    (_c = $$.expandBarTypeShapes) == null ? void 0 : _c.call($$, false);
+    (_b = $$.hideGridFocus) == null ? void 0 : _b.call($$);
+    (_c = $$.unexpandCircles) == null ? void 0 : _c.call($$);
+    (_d = $$.expandBarTypeShapes) == null ? void 0 : _d.call($$, false);
   }
 };
 /* harmony default export */ var api_tooltip = ({ tooltip: tooltip_tooltip });
@@ -46475,6 +46506,7 @@ var eventrect_pow = Math.pow;
           next: $$.getNextX(index)
         });
         rectW = (d) => {
+          var _a, _b;
           const x2 = getPrevNextX(d);
           const xDomain2 = xScale.domain();
           let val;
@@ -46485,10 +46517,8 @@ var eventrect_pow = Math.pow;
           } else if (x2.next === null) {
             val = xScale(xDomain2[1]) - (xScale(x2.prev) + xScale(d.x)) / 2;
           } else {
-            Object.keys(x2).forEach((key, i) => {
-              var _a;
-              x2[key] = (_a = x2[key]) != null ? _a : xDomain2[i];
-            });
+            x2.prev = (_a = x2.prev) != null ? _a : xDomain2[0];
+            x2.next = (_b = x2.next) != null ? _b : xDomain2[1];
             val = Math.max(0, (xScale(x2.next) - xScale(x2.prev)) / 2);
           }
           return val;
@@ -54486,7 +54516,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260324005043",
+  version: "3.18.0-nightly-20260325005613",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

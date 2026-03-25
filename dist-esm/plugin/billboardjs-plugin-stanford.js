@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260324005043
+ * @version 3.18.0-nightly-20260325005613
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -397,7 +397,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.18.0-nightly-20260324005043";
+    Plugin.version = "3.18.0-nightly-20260325005613";
     return Plugin;
 }());
 
@@ -1058,10 +1058,18 @@ var Stanford = /** @class */ (function (_super) {
         // TODO STANFORD see if (data.js -> orderTargets)+ can be used instead
         // Make larger values appear on top
         target.values.sort(compareEpochs);
-        // Get array of epochs
-        var epochs = target.values.map(function (a) { return a.epochs; });
-        target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : Math.min.apply(Math, epochs);
-        target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : Math.max.apply(Math, epochs);
+        // Get min/max epochs
+        var minEpoch = Infinity;
+        var maxEpoch = -Infinity;
+        for (var i = 0; i < target.values.length; i++) {
+            var e = target.values[i].epochs;
+            if (e < minEpoch)
+                minEpoch = e;
+            if (e > maxEpoch)
+                maxEpoch = e;
+        }
+        target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : minEpoch;
+        target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : maxEpoch;
         target.colors = isFunction(config.colors) ?
             config.colors :
             interpolateHslLong(hsl(250), hsl(0));

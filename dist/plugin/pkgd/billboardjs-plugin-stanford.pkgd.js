@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260324005043
+ * @version 3.18.0-nightly-20260325005613
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -24815,7 +24815,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260324005043");
+__publicField(Plugin, "version", "3.18.0-nightly-20260325005613");
 
 ;// ./node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {
@@ -25311,9 +25311,10 @@ function getOption(options, key, defaultValue) {
   return isDefined(options[key]) ? options[key] : defaultValue;
 }
 function hasValue(dict, value) {
-  let found = false;
-  Object.keys(dict).forEach((key) => dict[key] === value && (found = true));
-  return found;
+  for (const key in dict) {
+    if (dict[key] === value) return true;
+  }
+  return false;
 }
 function callFn(fn, thisArg, ...args) {
   const isFn = isFunction(fn);
@@ -25364,7 +25365,7 @@ function object_extend(target = {}, source) {
 }
 function getUnique(data) {
   const isDate = data[0] instanceof Date;
-  const d = (isDate ? data.map(Number) : data).filter((v, i, self) => self.indexOf(v) === i);
+  const d = Array.from(new Set(isDate ? data.map(Number) : data));
   return isDate ? d.map((v) => new Date(v)) : d;
 }
 function mergeArray(arr) {
@@ -25445,11 +25446,10 @@ function findIndex(arr, v, start, end, isRotated) {
   return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
 }
 function tplProcess(tpl, data) {
-  let res = tpl;
-  for (const x in data) {
-    res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
-  }
-  return sanitize(res);
+  return sanitize(tpl.replace(/\{=([^}]+)\}/g, (_, key) => {
+    var _a;
+    return (_a = data[key]) != null ? _a : "";
+  }));
 }
 function parseDate(date) {
   var _a;
@@ -25930,9 +25930,15 @@ class Stanford extends Plugin {
     const { config } = this;
     const target = this.$$.data.targets[0];
     target.values.sort(compareEpochs);
-    const epochs = target.values.map((a) => a.epochs);
-    target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : Math.min(...epochs);
-    target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : Math.max(...epochs);
+    let minEpoch = Infinity;
+    let maxEpoch = -Infinity;
+    for (let i = 0; i < target.values.length; i++) {
+      const e = target.values[i].epochs;
+      if (e < minEpoch) minEpoch = e;
+      if (e > maxEpoch) maxEpoch = e;
+    }
+    target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : minEpoch;
+    target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : maxEpoch;
     target.colors = isFunction(config.colors) ? config.colors : hslLong(stanford_hsl(250, 1, 0.5), stanford_hsl(0, 1, 0.5));
     target.colorscale = sequentialLog(target.colors).domain([target.minEpochs, target.maxEpochs]);
   }

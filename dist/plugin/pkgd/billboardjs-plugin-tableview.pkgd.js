@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260324005043
+ * @version 3.18.0-nightly-20260325005613
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23454,9 +23454,10 @@ function getOption(options, key, defaultValue) {
   return isDefined(options[key]) ? options[key] : defaultValue;
 }
 function hasValue(dict, value) {
-  let found = false;
-  Object.keys(dict).forEach((key) => dict[key] === value && (found = true));
-  return found;
+  for (const key in dict) {
+    if (dict[key] === value) return true;
+  }
+  return false;
 }
 function callFn(fn, thisArg, ...args) {
   const isFn = isFunction(fn);
@@ -23507,7 +23508,7 @@ function extend(target = {}, source) {
 }
 function getUnique(data) {
   const isDate = data[0] instanceof Date;
-  const d = (isDate ? data.map(Number) : data).filter((v, i, self) => self.indexOf(v) === i);
+  const d = Array.from(new Set(isDate ? data.map(Number) : data));
   return isDate ? d.map((v) => new Date(v)) : d;
 }
 function mergeArray(arr) {
@@ -23588,11 +23589,10 @@ function findIndex(arr, v, start, end, isRotated) {
   return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
 }
 function tplProcess(tpl, data) {
-  let res = tpl;
-  for (const x in data) {
-    res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
-  }
-  return sanitize(res);
+  return sanitize(tpl.replace(/\{=([^}]+)\}/g, (_, key) => {
+    var _a;
+    return (_a = data[key]) != null ? _a : "";
+  }));
 }
 function parseDate(date) {
   var _a;
@@ -23736,7 +23736,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260324005043");
+__publicField(Plugin, "version", "3.18.0-nightly-20260325005613");
 
 ;// ./src/Plugin/tableview/const.ts
 
