@@ -97,18 +97,32 @@ export default {
 				}
 			});
 
+			const minVals: number[] = [];
+			const maxVals: number[] = [];
+
+			for (const key in ysMin) {
+				minVals.push(getMinMax("min", ysMin[key]));
+				maxVals.push(getMinMax("max", ysMax[key]));
+			}
+
 			return [
-				getMinMax("min", Object.keys(ysMin).map(key => getMinMax("min", ysMin[key]))),
-				getMinMax("max", Object.keys(ysMax).map(key => getMinMax("max", ysMax[key])))
+				getMinMax("min", minVals),
+				getMinMax("max", maxVals)
 			];
 		}
 
 		// No groups — compute min/max directly from rawYs without cloning
-		const keys = Object.keys(rawYs);
+		const minVals: number[] = [];
+		const maxVals: number[] = [];
+
+		for (const key in rawYs) {
+			minVals.push(getMinMax("min", rawYs[key]));
+			maxVals.push(getMinMax("max", rawYs[key]));
+		}
 
 		return [
-			getMinMax("min", keys.map(key => getMinMax("min", rawYs[key]))),
-			getMinMax("max", keys.map(key => getMinMax("max", rawYs[key])))
+			getMinMax("min", minVals),
+			getMinMax("max", maxVals)
 		];
 	},
 
@@ -543,11 +557,10 @@ export default {
 		const [min, max] = range as number[];
 
 		if (Array.isArray(domain)) {
-			const target = [...domain];
+			const lo = isInverted ? domain[1] : domain[0];
+			const hi = isInverted ? domain[0] : domain[1];
 
-			isInverted && target.reverse();
-
-			if (target[0] < target[1]) {
+			if (lo < hi) {
 				return domain.every((v, i) =>
 					(
 						i === 0 ?

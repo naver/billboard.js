@@ -204,11 +204,19 @@ export default class Stanford extends Plugin {
 		// Make larger values appear on top
 		target.values.sort(compareEpochs);
 
-		// Get array of epochs
-		const epochs = target.values.map(a => a.epochs);
+		// Get min/max epochs
+		let minEpoch = Infinity;
+		let maxEpoch = -Infinity;
 
-		target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : Math.min(...epochs);
-		target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : Math.max(...epochs);
+		for (let i = 0; i < target.values.length; i++) {
+			const e = target.values[i].epochs;
+
+			if (e < minEpoch) minEpoch = e;
+			if (e > maxEpoch) maxEpoch = e;
+		}
+
+		target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : minEpoch;
+		target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : maxEpoch;
 
 		target.colors = isFunction(config.colors) ?
 			config.colors :

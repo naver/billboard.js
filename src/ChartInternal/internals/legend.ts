@@ -781,10 +781,8 @@ export default {
 			const maxLength = isLegendRightOrInset ? dimension.max.height : dimension.max.width;
 
 			if (config.legend_equally) {
-				Object.keys(sizes.widths).forEach(id2 => (sizes.widths[id2] = dimension.max.width));
-				Object.keys(sizes.heights).forEach(
-					id2 => (sizes.heights[id2] = dimension.max.height)
-				);
+				for (const id2 in sizes.widths) sizes.widths[id2] = dimension.max.width;
+				for (const id2 in sizes.heights) sizes.heights[id2] = dimension.max.height;
 				margin = (areaLength - maxLength * targetIdz.length) / 2;
 
 				if (margin < dimension.posMin) {

@@ -304,16 +304,23 @@ export default {
 	 */
 	getMinMaxValue(data): {min: number, max: number} {
 		const getBaseValue = this.getBaseValue.bind(this);
-		let min;
-		let max;
+		let min = Infinity;
+		let max = -Infinity;
 
-		(data || this.data.targets.map(t => t.values))
-			.forEach((v, i) => {
-				const value = v.map(getBaseValue).filter(isNumber);
+		const targets = data || this.data.targets.map(t => t.values);
 
-				min = Math.min(i ? min : Infinity, ...value);
-				max = Math.max(i ? max : -Infinity, ...value);
-			});
+		for (let i = 0; i < targets.length; i++) {
+			const v = targets[i];
+
+			for (let j = 0; j < v.length; j++) {
+				const val = getBaseValue(v[j]);
+
+				if (isNumber(val)) {
+					if (val < min) min = val;
+					if (val > max) max = val;
+				}
+			}
+		}
 
 		return {min, max};
 	},
@@ -467,7 +474,16 @@ export default {
 	 * @private
 	 */
 	getMaxDataCount(): number {
-		return Math.max(...this.data.targets.map(t => t.values.length), 0);
+		const {targets} = this.data;
+		let max = 0;
+
+		for (let i = 0; i < targets.length; i++) {
+			if (targets[i].values.length > max) {
+				max = targets[i].values.length;
+			}
+		}
+
+		return max;
 	},
 
 	getMaxDataCountTarget() {
@@ -476,9 +492,17 @@ export default {
 		const isInverted = this.config.axis_x_inverted;
 
 		if (length > 1) {
-			target = target.map(t => t.values)
-				.reduce((a, b) => a.concat(b))
-				.map(v => v.x);
+			const allX: any[] = [];
+
+			for (let i = 0; i < target.length; i++) {
+				const values = target[i].values;
+
+				for (let j = 0; j < values.length; j++) {
+					allX.push(values[j].x);
+				}
+			}
+
+			target = allX;
 
 			target = sortValue(getUnique(target))
 				.map((x, index, array) => ({
@@ -689,7 +713,7 @@ export default {
 	 */
 	orderTargets(targetsValue: IData[]): IData[] {
 		const $$ = this;
-		const targets = [...targetsValue];
+		const targets = targetsValue.slice();
 		const fn = $$.getSortCompareFn();
 
 		fn && targets.sort(fn);
@@ -890,12 +914,15 @@ export default {
 		let minDist;
 		let closest;
 
-		// find mouseovering bar/candlestick
+		// find mouseovering bar/candlestick and closest point in a single pass
 		// https://github.com/naver/billboard.js/issues/2434
-		data
-			.filter(v => $$.isBarType(v.id) || $$.isCandlestickType(v.id))
-			.forEach(v => {
-				const selector = $$.isBarType(v.id) ?
+		for (let i = 0; i < data.length; i++) {
+			const v = data[i];
+			const isBar = $$.isBarType(v.id);
+			const isCandle = $$.isCandlestickType(v.id);
+
+			if (isBar || isCandle) {
+				const selector = isBar ?
 					`.${$BAR.chartBar}.${$COMMON.target}${
 						$$.getTargetSelectorSuffix(v.id)
 					} .${$BAR.bar}-${v.index}` :
@@ -906,21 +933,16 @@ export default {
 				if (!closest && $$.isWithinBar(main.select(selector).node())) {
 					closest = v;
 				}
-			});
+			} else {
+				const d = $$.dist(v as IDataPoint, pos);
+				const sensitivity = $$.getPointSensitivity(v);
 
-		// find closest point from non-bar/candlestick
-		data
-			.filter(v => !$$.isBarType(v.id) && !$$.isCandlestickType(v.id))
-			.forEach((v: IDataPoint) => {
-				const d = $$.dist(v, pos);
-
-				minDist = $$.getPointSensitivity(v);
-
-				if (d < minDist) {
+				if (d < sensitivity && (minDist === undefined || d < minDist)) {
 					minDist = d;
 					closest = v;
 				}
-			});
+			}
+		}
 
 		return closest;
 	},
