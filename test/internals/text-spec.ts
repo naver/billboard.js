@@ -1560,7 +1560,7 @@ describe("TEXT", () => {
 			});
 		});
 
-		describe("Labels' postion", () => {
+		describe("Labels' position", () => {
 			const pos = {};
 
 			beforeAll(() => {
@@ -1618,7 +1618,7 @@ describe("TEXT", () => {
 			});
 		});
 
-		describe("Labels' postion on inverted axis", () => {
+		describe("Labels' position on inverted axis", () => {
 			beforeAll(() => {
 				args = {
 					data: {
@@ -1704,7 +1704,7 @@ describe("TEXT", () => {
 			});
 		});
 
-		describe("Labels' postion callback", () => {
+		describe("Labels' position callback", () => {
 			let pos: number[] = [];
 			let positionSpy: sinon.SinonSpy;
 
