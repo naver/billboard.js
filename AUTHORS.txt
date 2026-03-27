@@ -74,3 +74,4 @@ Seong Min Park <https://github.com/notoriousmango>
 Robin Van den Broeck <robin.broeck@gmail.com>
 Hjalmers <opensource@rhj.se>
 jun <ryuu.public@gmail.com>
+Juchan <jc081810qpang@naver.com>

@@ -213,7 +213,7 @@ export default class ChartInternal {
 			document.head.appendChild(styleEl);
 
 			state.style = {
-				rootSelctor: `.${state.datetimeId}`,
+				rootSelector: `.${state.datetimeId}`,
 				sheet: styleEl.sheet
 			};
 
