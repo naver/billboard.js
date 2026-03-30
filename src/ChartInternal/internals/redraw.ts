@@ -16,8 +16,12 @@ export default {
 
 		state.redrawing = true;
 
-		// Increment generation counter for per-redraw caching (e.g. getMaxTickSize)
-		state.tickSizeGeneration = (state.tickSizeGeneration || 0) + 1;
+		// Increment generation counters for cache invalidation
+		state.redrawGeneration++;
+
+		if (state.dirty.data || state.dirty.visibility || options.initializing) {
+			state.dataGeneration++;
+		}
 
 		// Invalidate per-redraw caches (only when size changed or initializing)
 		if (options.initializing || state.dirty.size || state.dirty.data || !state.rendered) {
@@ -141,7 +145,7 @@ export default {
 
 		initializing && $$.updateTypesElements();
 
-		$$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
+		$$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart, needShapeUpdate);
 		$$.updateTooltipOnRedraw();
 
 		$$.callPluginHook("$redraw", options, duration);
@@ -153,12 +157,20 @@ export default {
 	 * @param {object} flow flow object
 	 * @param {number} duration duration value
 	 * @param {boolean} withSubchart whether or not to show subchart
+	 * @param {boolean} needShapeRegen whether to regenerate draw shape
 	 * @private
 	 */
-	generateRedrawList(targets, flow: any, duration: number, withSubchart: boolean): void {
+	generateRedrawList(targets, flow: any, duration: number, withSubchart: boolean,
+		needShapeRegen: boolean = true): void {
 		const $$ = this;
 		const {config, state} = $$;
-		const shape = $$.getDrawShape();
+		const shape = needShapeRegen ?
+			$$.getDrawShape() :
+			(state._cachedDrawShape || $$.getDrawShape());
+
+		if (needShapeRegen) {
+			state._cachedDrawShape = shape;
+		}
 
 		if (state.hasAxis) {
 			// subchart
@@ -184,6 +196,7 @@ export default {
 
 			state.redrawing = false;
 			state._targetsToShow = null;
+			state._cachedDrawShape = null;
 
 			callFn(config.onrendered, $$.api);
 		};

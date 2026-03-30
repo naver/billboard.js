@@ -20,7 +20,6 @@ export const KEY = {
 	filteredTargets: "$filteredTargets",
 	filteredNullish: "$filteredNullish",
 	svgLeft: "$svgLeft",
-	visibilityChecksum: "visibilityChecksum",
 	legendItemTextBox: "legendItemTextBox",
 	legendItemMap: "$legendItemMap",
 	radarPoints: "$radarPoints",
@@ -29,7 +28,9 @@ export const KEY = {
 	callOverOutForTouch: "callOverOutForTouch",
 	textRect: "textRect",
 	shapeOffset: "$shapeOffset",
-	maxTickSize: "$maxTickSize"
+	maxTickSize: "$maxTickSize",
+	maxDataCountTarget: "$maxDataCountTarget",
+	valuesXIndexMap: "$valuesXIndexMap"
 };
 
 export default class Cache {

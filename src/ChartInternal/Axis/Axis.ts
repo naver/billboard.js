@@ -621,7 +621,7 @@ class Axis {
 		const cacheKey = `${KEY.maxTickSize}_${id}_${!!withoutRecompute}`;
 		const cached = $$.cache.get(cacheKey);
 
-		if (cached && cached.generation === state.tickSizeGeneration) {
+		if (cached && cached.generation === state.redrawGeneration) {
 			return cached.value;
 		}
 
@@ -745,7 +745,7 @@ class Axis {
 		});
 
 		// Cache result for this redraw generation
-		$$.cache.add(cacheKey, {generation: state.tickSizeGeneration, value: currentTickMax});
+		$$.cache.add(cacheKey, {generation: state.redrawGeneration, value: currentTickMax});
 
 		return currentTickMax;
 	}

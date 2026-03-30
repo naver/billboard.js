@@ -181,11 +181,13 @@ export default class State {
 				size: false // dimensions changed
 			},
 
-			// Performance: per-redraw generation counter for tick size caching
-			tickSizeGeneration: 0,
+			// Performance: generation counters for cache invalidation
+			redrawGeneration: 0, // increments every redraw (for per-redraw caches)
+			dataGeneration: 0, // increments on data/visibility changes (for data-dependent caches)
 
-			// Performance: cached targets for reuse within redraw cycle
+			// Performance: cached values for reuse within redraw cycle
 			_targetsToShow: <any[] | null>null,
+			_cachedDrawShape: <any>null,
 			_eventRectFingerprint: <string | null>null,
 
 			// Performance: throttle tooltip position updates on mousemove
