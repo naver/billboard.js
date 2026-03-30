@@ -487,9 +487,17 @@ export default {
 	},
 
 	getMaxDataCountTarget() {
-		let target = this.filterTargetsToShow() || [];
+		const $$ = this;
+		const {cache, state} = $$;
+		const cached = cache.get(KEY.maxDataCountTarget);
+
+		if (cached && cached.generation === state.dataGeneration) {
+			return cached.value;
+		}
+
+		let target = $$.filterTargetsToShow() || [];
 		const length = target.length;
-		const isInverted = this.config.axis_x_inverted;
+		const isInverted = $$.config.axis_x_inverted;
 
 		if (length > 1) {
 			const allX: any[] = [];
@@ -512,6 +520,8 @@ export default {
 		} else if (length) {
 			target = target[0].values.concat();
 		}
+
+		cache.add(KEY.maxDataCountTarget, {value: target, generation: state.dataGeneration});
 
 		return target;
 	},
@@ -553,23 +563,17 @@ export default {
 		if (!targets) {
 			const {cache, data, state} = $$;
 			const cacheKey = KEY.filteredTargets;
-			const visibilityChecksum = state._visibilityChecksum ?? "";
-			const storedChecksum = cache.get(KEY.visibilityChecksum);
+			const cached = cache.get(cacheKey);
 
-			// Invalidate cache if visibility changed
-			if (visibilityChecksum !== storedChecksum) {
-				cache.remove(cacheKey);
-				cache.add(KEY.visibilityChecksum, visibilityChecksum);
+			// Return cached result if generation matches
+			if (cached && cached.generation === state.dataGeneration) {
+				return cached.value;
 			}
 
-			// Return cached result if available
-			if (cache.has(cacheKey)) {
-				return cache.get(cacheKey);
-			}
-
-			// Compute and cache result (store the filtered array)
+			// Compute and cache result
 			const filtered = data.targets.filter(t => $$.isTargetToShow(t.id));
-			cache.add(cacheKey, filtered);
+
+			cache.add(cacheKey, {value: filtered, generation: state.dataGeneration});
 
 			return filtered;
 		}
@@ -629,12 +633,10 @@ export default {
 
 	addHiddenTargetIds(targetIds: string[]): void {
 		this.addTargetIds("hiddenTargetIds", targetIds);
-		this.state._visibilityChecksum = this.state.hiddenTargetIds.join(",");
 	},
 
 	removeHiddenTargetIds(targetIds: string[]): void {
 		this.removeTargetIds("hiddenTargetIds", targetIds);
-		this.state._visibilityChecksum = this.state.hiddenTargetIds.join(",");
 	},
 
 	addHiddenLegendIds(targetIds: string[]): void {
@@ -650,13 +652,25 @@ export default {
 		const {hasAxis} = $$.state;
 		const ys = {};
 		const isMultipleX = $$.isMultipleX();
-		const xs = isMultipleX ?
-			$$.mapTargetsToUniqueXs(targets)
-				.map(v => (isString(v) ? v : +v)) :
-			null;
 
-		// Create xIndexMap for O(1) lookup instead of O(n) indexOf in getIndexByX
-		const xIndexMap = xs ? new Map(xs.map((x, i) => [x, i])) : null;
+		let xIndexMap: Map<any, number> | null = null;
+
+		if (isMultipleX) {
+			const cached = $$.cache.get(KEY.valuesXIndexMap);
+
+			if (cached && cached.generation === $$.state.dataGeneration) {
+				xIndexMap = cached.value;
+			} else {
+				const xs = $$.mapTargetsToUniqueXs($$.data.targets)
+					.map(v => (isString(v) ? v : +v));
+
+				xIndexMap = new Map(xs.map((x, i) => [x, i]));
+				$$.cache.add(KEY.valuesXIndexMap, {
+					value: xIndexMap,
+					generation: $$.state.dataGeneration
+				});
+			}
+		}
 
 		targets.forEach(t => {
 			const data: any[] = [];
