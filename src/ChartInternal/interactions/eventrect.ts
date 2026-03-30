@@ -107,6 +107,10 @@ export default {
 			} else {
 				const index = $$.getDataIndexFromEvent(state.event);
 
+				if (index === -1 && !config.interaction_onout) {
+					return;
+				}
+
 				$$.callOverOutForTouch(index);
 
 				index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, index);
@@ -114,6 +118,10 @@ export default {
 		};
 
 		const unselectRect = () => {
+			if (!config.interaction_onout) {
+				return;
+			}
+
 			$$.unselectRect();
 			$$.callOverOutForTouch();
 		};
@@ -455,14 +463,22 @@ export default {
 		const mouse = getPointer(state.event, context);
 		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
 
-		if (triggerEvent && state.mouseover && (!closest || closest.id !== state.mouseover.id)) {
-			config.data_onout.call($$.api, state.mouseover);
-			state.mouseover = undefined;
+		if (!closest) {
+			if (config.interaction_onout) {
+				if (triggerEvent && state.mouseover) {
+					config.data_onout.call($$.api, state.mouseover);
+					state.mouseover = undefined;
+				}
+
+				$$.unselectRect();
+			}
+
+			return;
 		}
 
-		if (!closest) {
-			$$.unselectRect();
-			return;
+		if (triggerEvent && state.mouseover && closest.id !== state.mouseover.id) {
+			config.data_onout.call($$.api, state.mouseover);
+			state.mouseover = undefined;
 		}
 
 		const sameXData = (

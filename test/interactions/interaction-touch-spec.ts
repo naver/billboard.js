@@ -60,6 +60,39 @@ describe("INTERACTION: touch", () => {
 			});
 		}));
 
+		it("set options: interaction.onout=false", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 10, 20, 30],
+						["data2", 20, 16, 18]
+					],
+					type: "line"
+				},
+				interaction: {
+					onout: false,
+					inputType: {
+						touch: true
+					}
+				}
+			};
+		});
+
+		it("should maintain tooltip when interaction.onout=false", () => new Promise(done => {
+			chart.tooltip.show({index: 1});
+
+			util.simulator(chart.$.svg.node(), {
+				pos: [250, 150],
+				deltaX: -200,
+				deltaY: 0,
+				duration: 500,
+			}, () => {
+				expect(chart.$.tooltip.style("display")).to.be.equal("block");
+
+				done(1);
+			});
+		}));
+
 		it("set options: data.xs", () => {
 			args = {
 				data: {
