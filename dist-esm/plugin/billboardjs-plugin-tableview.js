@@ -5,60 +5,18 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260328005505
+ * @version 3.18.0-nightly-20260331005932
  * @requires billboard.js
  * @summary billboard.js plugin
 */
-/******************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-/* global Reflect, Promise, SuppressedError, Symbol, Iterator */
-
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-    return extendStatics(d, b);
-};
-
-function __extends(d, b) {
-    if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-
-var __assign = function() {
-    __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-var isNumber = function (v) { return typeof v === "number"; };
-var isDefined = function (v) { return typeof v !== "undefined"; };
-var isObjectType = function (v) { return typeof v === "object"; };
+const isNumber = (v) => typeof v === "number";
+const isDefined = (v) => typeof v !== "undefined";
+const isObjectType = (v) => typeof v === "object";
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -70,7 +28,7 @@ var isObjectType = function (v) { return typeof v === "object"; };
  * Pure whitelist approach - only explicitly allowed tags, attributes, and protocols pass through
  */
 // Whitelist of allowed HTML/SVG tags
-var ALLOWED_TAGS = new Set([
+const ALLOWED_TAGS = new Set([
     // HTML tags for tooltip/legend templates
     "span",
     "div",
@@ -146,7 +104,7 @@ var ALLOWED_TAGS = new Set([
     "desc"
 ]);
 // Whitelist of allowed attributes
-var ALLOWED_ATTRS = new Set([
+const ALLOWED_ATTRS = new Set([
     // Common attributes
     "class",
     "id",
@@ -221,26 +179,26 @@ var ALLOWED_ATTRS = new Set([
     "xlink:href"
 ]);
 // Case-insensitive lookup maps: lowercase key → canonical casing from whitelists
-var TAG_CASE_MAP = new Map();
-ALLOWED_TAGS.forEach(function (tag) { return TAG_CASE_MAP.set(tag.toLowerCase(), tag); });
-var ATTR_CASE_MAP = new Map();
-ALLOWED_ATTRS.forEach(function (attr) { return ATTR_CASE_MAP.set(attr.toLowerCase(), attr); });
+const TAG_CASE_MAP = new Map();
+ALLOWED_TAGS.forEach(tag => TAG_CASE_MAP.set(tag.toLowerCase(), tag));
+const ATTR_CASE_MAP = new Map();
+ALLOWED_ATTRS.forEach(attr => ATTR_CASE_MAP.set(attr.toLowerCase(), attr));
 // Whitelist of allowed URI protocols
-var ALLOWED_URI_PROTOCOLS = new Set([
+const ALLOWED_URI_PROTOCOLS = new Set([
     "http:",
     "https:",
     "mailto:"
 ]);
 // Attributes that contain URIs
-var URI_ATTRS = new Set(["href", "src", "xlink:href"]);
+const URI_ATTRS = new Set(["href", "src", "xlink:href"]);
 // Pre-compiled regex patterns for performance
-var TAG_NAME_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9]*)/;
-var CLOSING_TAG_REGEX = /^<\/([a-zA-Z][a-zA-Z0-9]*)\s*>$/;
-var OPENING_TAG_REGEX = /^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)(\/?)>$/;
-var ATTR_REGEX = /([a-zA-Z][\w:-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
-var URL_IN_STYLE_REGEX = /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi;
+const TAG_NAME_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9]*)/;
+const CLOSING_TAG_REGEX = /^<\/([a-zA-Z][a-zA-Z0-9]*)\s*>$/;
+const OPENING_TAG_REGEX = /^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)(\/?)>$/;
+const ATTR_REGEX = /([a-zA-Z][\w:-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
+const URL_IN_STYLE_REGEX = /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi;
 // Dangerous CSS patterns
-var DANGEROUS_CSS_PATTERNS = [
+const DANGEROUS_CSS_PATTERNS = [
     "expression(",
     "behavior:",
     "binding:",
@@ -267,9 +225,9 @@ function decodeHTMLEntities(str) {
         .replace(/&quot;/gi, "\"")
         .replace(/&apos;/gi, "'")
         // Numeric entities (decimal)
-        .replace(/&#(\d+);/gi, function (_, code) { return String.fromCharCode(parseInt(code, 10)); })
+        .replace(/&#(\d+);/gi, (_, code) => String.fromCharCode(parseInt(code, 10)))
         // Numeric entities (hex)
-        .replace(/&#x([0-9a-f]+);/gi, function (_, code) { return String.fromCharCode(parseInt(code, 16)); });
+        .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
 }
 /**
  * Check if a URI is safe (whitelist approach)
@@ -279,10 +237,10 @@ function decodeHTMLEntities(str) {
  */
 function isSafeURI(uri) {
     // Decode HTML entities first to prevent bypass
-    var decoded = decodeHTMLEntities(uri).trim();
+    const decoded = decodeHTMLEntities(uri).trim();
     // Remove any whitespace/control characters that could be used for bypass
     // eslint-disable-next-line no-control-regex
-    var normalized = decoded.replace(/[\s\u0000-\u001f]/g, "").toLowerCase();
+    const normalized = decoded.replace(/[\s\u0000-\u001f]/g, "").toLowerCase();
     // Empty or fragment-only URIs are safe
     if (!normalized || normalized.startsWith("#")) {
         return true;
@@ -295,9 +253,9 @@ function isSafeURI(uri) {
         return true;
     }
     // Check if protocol is in whitelist
-    var colonIndex = normalized.indexOf(":");
+    const colonIndex = normalized.indexOf(":");
     if (colonIndex > 0) {
-        var protocol = normalized.substring(0, colonIndex + 1);
+        const protocol = normalized.substring(0, colonIndex + 1);
         return ALLOWED_URI_PROTOCOLS.has(protocol);
     }
     return false;
@@ -310,22 +268,21 @@ function isSafeURI(uri) {
  */
 function sanitizeStyleValue(style) {
     // Decode HTML entities first
-    var decoded = decodeHTMLEntities(style);
+    const decoded = decodeHTMLEntities(style);
     // Remove any control characters
     // eslint-disable-next-line no-control-regex
-    var cleaned = decoded.replace(/[\u0000-\u001f]/g, "");
+    const cleaned = decoded.replace(/[\u0000-\u001f]/g, "");
     // Check for url() - only allow safe URIs inside
     URL_IN_STYLE_REGEX.lastIndex = 0;
-    var match;
+    let match;
     while ((match = URL_IN_STYLE_REGEX.exec(cleaned)) !== null) {
         if (!isSafeURI(match[1])) {
             return null;
         }
     }
     // Check for dangerous CSS patterns (expression, behavior, etc.)
-    var normalizedLower = cleaned.toLowerCase().replace(/\s/g, "");
-    for (var _i = 0, DANGEROUS_CSS_PATTERNS_1 = DANGEROUS_CSS_PATTERNS; _i < DANGEROUS_CSS_PATTERNS_1.length; _i++) {
-        var pattern = DANGEROUS_CSS_PATTERNS_1[_i];
+    const normalizedLower = cleaned.toLowerCase().replace(/\s/g, "");
+    for (const pattern of DANGEROUS_CSS_PATTERNS) {
         if (normalizedLower.includes(pattern)) {
             return null;
         }
@@ -333,12 +290,12 @@ function sanitizeStyleValue(style) {
     return style;
 }
 // Lookup table for encoding dangerous characters in attribute values
-var ATTR_ENCODE_MAP = {
+const ATTR_ENCODE_MAP = {
     "\"": "&quot;",
     "'": "&#39;",
     "`": "&#96;"
 };
-var ATTR_ENCODE_REGEX = /["'`]/g;
+const ATTR_ENCODE_REGEX = /["'`]/g;
 /**
  * Encode dangerous characters in attribute values to HTML entities
  * This prevents attribute injection attacks where quotes/backticks break out of the attribute context
@@ -347,7 +304,7 @@ var ATTR_ENCODE_REGEX = /["'`]/g;
  * @private
  */
 function encodeAttrValue(value) {
-    return value.replace(ATTR_ENCODE_REGEX, function (char) { return ATTR_ENCODE_MAP[char]; });
+    return value.replace(ATTR_ENCODE_REGEX, char => ATTR_ENCODE_MAP[char]);
 }
 /**
  * Sanitize attribute value using whitelist approach
@@ -357,8 +314,7 @@ function encodeAttrValue(value) {
  * @returns {string|null} Sanitized value if safe, null if should be removed
  * @private
  */
-function sanitizeAttrValue(name, value, wasUnquoted) {
-    if (wasUnquoted === void 0) { wasUnquoted = false; }
+function sanitizeAttrValue(name, value, wasUnquoted = false) {
     // Check URI attributes with whitelist
     if (URI_ATTRS.has(name)) {
         if (!isSafeURI(value)) {
@@ -369,7 +325,7 @@ function sanitizeAttrValue(name, value, wasUnquoted) {
     }
     // Check style attribute
     if (name === "style") {
-        var sanitizedStyle = sanitizeStyleValue(value);
+        const sanitizedStyle = sanitizeStyleValue(value);
         if (sanitizedStyle === null) {
             return null;
         }
@@ -377,7 +333,7 @@ function sanitizeAttrValue(name, value, wasUnquoted) {
         return wasUnquoted ? encodeAttrValue(sanitizedStyle) : sanitizedStyle;
     }
     // For other attributes, check for embedded event handlers
-    var decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
+    const decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
     if (/\bon\w+=/.test(decoded)) {
         return null;
     }
@@ -393,7 +349,7 @@ function sanitizeAttrValue(name, value, wasUnquoted) {
  */
 function extractTagName(tag) {
     // Must start with < followed immediately by letter (no spaces allowed)
-    var match = tag.match(TAG_NAME_REGEX);
+    const match = tag.match(TAG_NAME_REGEX);
     return match ? match[1].toLowerCase() : null;
 }
 /**
@@ -403,7 +359,7 @@ function extractTagName(tag) {
  * @private
  */
 function isAllowedTag(tag) {
-    var tagName = extractTagName(tag);
+    const tagName = extractTagName(tag);
     return tagName !== null && TAG_CASE_MAP.has(tagName);
 }
 /**
@@ -413,38 +369,37 @@ function isAllowedTag(tag) {
  * @private
  */
 function sanitizeTag(fullTag) {
-    var _a, _b, _c;
     // Closing tag
-    var closingMatch = fullTag.match(CLOSING_TAG_REGEX);
+    const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
     if (closingMatch) {
-        var lowerName = closingMatch[1].toLowerCase();
-        return "</".concat((_a = TAG_CASE_MAP.get(lowerName)) !== null && _a !== void 0 ? _a : lowerName, ">");
+        const lowerName = closingMatch[1].toLowerCase();
+        return `</${TAG_CASE_MAP.get(lowerName) ?? lowerName}>`;
     }
     // Opening tag
-    var openingMatch = fullTag.match(OPENING_TAG_REGEX);
+    const openingMatch = fullTag.match(OPENING_TAG_REGEX);
     if (!openingMatch) {
         return "";
     }
-    var tagName = openingMatch[1], attrString = openingMatch[2], selfClose = openingMatch[3];
-    var lowerTagName = tagName.toLowerCase();
-    var canonicalTagName = (_b = TAG_CASE_MAP.get(lowerTagName)) !== null && _b !== void 0 ? _b : lowerTagName;
+    const [, tagName, attrString, selfClose] = openingMatch;
+    const lowerTagName = tagName.toLowerCase();
+    const canonicalTagName = TAG_CASE_MAP.get(lowerTagName) ?? lowerTagName;
     // Parse and filter attributes, preserving original quote style
-    var allowedAttrs = [];
+    const allowedAttrs = [];
     ATTR_REGEX.lastIndex = 0;
-    var attrMatch;
+    let attrMatch;
     while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
-        var lowerAttrName = attrMatch[1].toLowerCase();
-        var doubleQuotedValue = attrMatch[2];
-        var singleQuotedValue = attrMatch[3];
-        var unquotedValue = attrMatch[4];
+        const lowerAttrName = attrMatch[1].toLowerCase();
+        const doubleQuotedValue = attrMatch[2];
+        const singleQuotedValue = attrMatch[3];
+        const unquotedValue = attrMatch[4];
         // Skip event handlers (on*)
         if (lowerAttrName.startsWith("on")) {
             continue;
         }
-        var canonicalAttrName = (_c = ATTR_CASE_MAP.get(lowerAttrName)) !== null && _c !== void 0 ? _c : lowerAttrName;
+        const canonicalAttrName = ATTR_CASE_MAP.get(lowerAttrName) ?? lowerAttrName;
         // Determine original quote style and value
-        var attrValue = void 0;
-        var quoteChar = void 0;
+        let attrValue;
+        let quoteChar;
         if (doubleQuotedValue !== undefined) {
             attrValue = doubleQuotedValue;
             quoteChar = "\"";
@@ -465,16 +420,16 @@ function sanitizeTag(fullTag) {
             continue;
         }
         if (ATTR_CASE_MAP.has(lowerAttrName)) {
-            var wasUnquoted = unquotedValue !== undefined;
-            var sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
+            const wasUnquoted = unquotedValue !== undefined;
+            const sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
             if (sanitizedValue !== null) {
-                allowedAttrs.push("".concat(canonicalAttrName, "=").concat(quoteChar).concat(sanitizedValue).concat(quoteChar));
+                allowedAttrs.push(`${canonicalAttrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
             }
         }
     }
-    var attrsStr = allowedAttrs.length > 0 ? " ".concat(allowedAttrs.join(" ")) : "";
-    var selfCloseStr = selfClose ? "/>" : ">";
-    return "<".concat(canonicalTagName).concat(attrsStr).concat(selfCloseStr);
+    const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
+    const selfCloseStr = selfClose ? "/>" : ">";
+    return `<${canonicalTagName}${attrsStr}${selfCloseStr}`;
 }
 /**
  * Sanitize HTML string to prevent XSS attacks
@@ -489,7 +444,7 @@ function sanitize(str) {
     }
     // Single pass: sanitize allowed tags, escape disallowed ones
     // Also match orphaned fragments like "ipt>" from broken tags
-    return str.replace(/<\/?[^>]*>|[^<>\s]+>/g, function (match) {
+    return str.replace(/<\/?[^>]*>|[^<>\s]+>/g, match => {
         // Remove HTML comments
         if (match.startsWith("<!--")) {
             return "";
@@ -508,6 +463,11 @@ function sanitize(str) {
 }
 
 /**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+/**
  * Process the template  & return bound string
  * @param {string} tpl Template string
  * @param {object} data Data value to be replaced
@@ -515,7 +475,7 @@ function sanitize(str) {
  * @private
  */
 function tplProcess(tpl, data) {
-    return sanitize(tpl.replace(/\{=([^}]+)\}/g, function (_, key) { var _a; return (_a = data[key]) !== null && _a !== void 0 ? _a : ""; }));
+    return sanitize(tpl.replace(/\{=([^}]+)\}/g, (_, key) => data[key] ?? ""));
 }
 
 /**
@@ -524,12 +484,12 @@ function tplProcess(tpl, data) {
  * @private
  */
 function loadConfig(config) {
-    var thisConfig = this.config;
-    var target;
-    var keys;
-    var read;
-    var find = function () {
-        var key = keys.shift();
+    const thisConfig = this.config;
+    let target;
+    let keys;
+    let read;
+    const find = () => {
+        const key = keys.shift();
         if (key && target && isObjectType(target) && key in target) {
             target = target[key];
             return find();
@@ -539,7 +499,7 @@ function loadConfig(config) {
         }
         return undefined;
     };
-    Object.keys(thisConfig).forEach(function (key) {
+    Object.keys(thisConfig).forEach(key => {
         target = config;
         keys = key.split("_");
         read = find();
@@ -570,57 +530,57 @@ function loadConfig(config) {
  * @example
  *   bb.plugin.stanford.version;  // ex) 1.9.0
  */
-var Plugin = /** @class */ (function () {
+class Plugin {
+    $$;
+    options;
+    config;
+    static version = "3.18.0-nightly-20260331005932";
     /**
      * Constructor
      * @param {Any} options config option object
      * @private
      */
-    function Plugin(options) {
-        if (options === void 0) { options = {}; }
+    constructor(options = {}) {
         this.options = options;
     }
     /**
      * Load plugin config from options
      * @private
      */
-    Plugin.prototype.loadConfig = function () {
+    loadConfig() {
         loadConfig.call(this, this.options);
-    };
+    }
     /**
      * Lifecycle hook for 'beforeInit' phase.
      * @private
      */
-    Plugin.prototype.$beforeInit = function () { };
+    $beforeInit() { }
     /**
      * Lifecycle hook for 'init' phase.
      * @private
      */
-    Plugin.prototype.$init = function () { };
+    $init() { }
     /**
      * Lifecycle hook for 'afterInit' phase.
      * @private
      */
-    Plugin.prototype.$afterInit = function () { };
+    $afterInit() { }
     /**
      * Lifecycle hook for 'redraw' phase.
      * @private
      */
-    Plugin.prototype.$redraw = function () { };
+    $redraw() { }
     /**
      * Lifecycle hook for 'willDestroy' phase.
      * @private
      */
-    Plugin.prototype.$willDestroy = function () {
-        var _this = this;
-        Object.keys(this).forEach(function (key) {
-            _this[key] = null;
-            delete _this[key];
+    $willDestroy() {
+        Object.keys(this).forEach(key => {
+            this[key] = null;
+            delete this[key];
         });
-    };
-    Plugin.version = "3.18.0-nightly-20260328005505";
-    return Plugin;
-}());
+    }
+}
 
 /**
  * Copyright (c) 2021 ~ present NAVER Corp.
@@ -630,17 +590,43 @@ var Plugin = /** @class */ (function () {
  * Constants values for plugin option
  * @ignore
  */
-var defaultStyle = {
+const defaultStyle = {
     id: "__tableview-style__",
     class: "bb-tableview",
-    rule: ".bb-tableview {\n\t\tborder-collapse:collapse;\n\t\tborder-spacing:0;\n\t\tbackground:#fff;\n\t\tmin-width:100%;\n\t\tmargin-top:10px;\n\t\tfont-family:sans-serif;\n\t\tfont-size:.9em;\n\t}\n\t.bb-tableview tr:hover {\n\t\tbackground:#eef7ff;\n\t}\n\t.bb-tableview thead tr {\n\t\tbackground:#f8f8f8;\n\t}\n\t.bb-tableview caption,.bb-tableview td,.bb-tableview th {\n\t\ttext-align: center;\n\t\tborder:1px solid silver;\n\t\tpadding:.5em;\n\t}\n\t.bb-tableview caption {\n\t\tfont-size:1.1em;\n\t\tfont-weight:700;\n\t\tmargin-bottom: -1px;\n\t}"
+    rule: `.bb-tableview {
+		border-collapse:collapse;
+		border-spacing:0;
+		background:#fff;
+		min-width:100%;
+		margin-top:10px;
+		font-family:sans-serif;
+		font-size:.9em;
+	}
+	.bb-tableview tr:hover {
+		background:#eef7ff;
+	}
+	.bb-tableview thead tr {
+		background:#f8f8f8;
+	}
+	.bb-tableview caption,.bb-tableview td,.bb-tableview th {
+		text-align: center;
+		border:1px solid silver;
+		padding:.5em;
+	}
+	.bb-tableview caption {
+		font-size:1.1em;
+		font-weight:700;
+		margin-bottom: -1px;
+	}`
 };
 // template
-var tpl = {
-    body: "<caption>{=title}</caption>\n\t\t<thead><tr>{=thead}</tr></thead>\n\t\t<tbody>{=tbody}</tbody>",
-    thead: "<th scope=\"col\">{=title}</th>",
-    tbodyHeader: "<th scope=\"row\">{=value}</th>",
-    tbody: "<td>{=value}</td>"
+const tpl = {
+    body: `<caption>{=title}</caption>
+		<thead><tr>{=thead}</tr></thead>
+		<tbody>{=tbody}</tbody>`,
+    thead: `<th scope="col">{=title}</th>`,
+    tbodyHeader: `<th scope="row">{=value}</th>`,
+    tbody: `<td>{=value}</td>`
 };
 
 /**
@@ -655,8 +641,8 @@ var tpl = {
  * @returns {TableviewOptions}
  * @private
  */
-var Options = /** @class */ (function () {
-    function Options() {
+class Options {
+    constructor() {
         return {
             /**
              * Set tableview holder selector.
@@ -690,7 +676,7 @@ var Options = /** @class */ (function () {
              *   categoryFormat: "#table-holder"
              */
             categoryFormat: function (v) {
-                var category = v;
+                let category = v;
                 if (this.$$.axis.isCategorized()) {
                     category = this.$$.categoryName(v);
                 }
@@ -752,9 +738,12 @@ var Options = /** @class */ (function () {
             nullString: "-"
         };
     }
-    return Options;
-}());
+}
 
+/**
+ * Copyright (c) 2021 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 /**
  * Table view plugin.<br>
  * Generates table view for bound dataset.
@@ -799,90 +788,89 @@ var Options = /** @class */ (function () {
  *     ]
  * })
  */
-var TableView = /** @class */ (function (_super) {
-    __extends(TableView, _super);
-    function TableView(options) {
-        var _this = _super.call(this, options) || this;
-        _this.config = new Options();
-        return _this;
+class TableView extends Plugin {
+    element;
+    constructor(options) {
+        super(options);
+        this.config = new Options();
+        return this;
     }
-    TableView.prototype.$beforeInit = function () {
+    $beforeInit() {
         this.loadConfig();
-    };
-    TableView.prototype.$init = function () {
-        var _a;
-        var _b = this.config, className = _b.class, selector = _b.selector, style = _b.style;
-        var element = document.querySelector(selector || ".".concat(className || defaultStyle.class));
+    }
+    $init() {
+        const { class: className, selector, style } = this.config;
+        let element = document.querySelector(selector || `.${className || defaultStyle.class}`);
         if (!element) {
-            var chart = this.$$.$el.chart.node();
+            const chart = this.$$.$el.chart.node();
             element = document.createElement("table");
             chart.parentNode.insertBefore(element, chart.nextSibling);
         }
         if (element.tagName !== "TABLE") {
-            var table = document.createElement("table");
+            const table = document.createElement("table");
             element.appendChild(table);
             element = table;
         }
         // append default css style
         if (style && !document.getElementById(defaultStyle.id)) {
-            var s = document.createElement("style");
+            const s = document.createElement("style");
             s.id = defaultStyle.id;
             s.innerHTML = defaultStyle.rule;
             (document.head || document.getElementsByTagName("head")[0])
                 .appendChild(s);
         }
-        (_a = element.classList).add.apply(_a, [style && defaultStyle.class, className].filter(Boolean));
+        element.classList.add(...[style && defaultStyle.class, className].filter(Boolean));
         this.element = element;
-    };
+    }
     /**
      * Generate table
      * @private
      */
-    TableView.prototype.generateTable = function () {
-        var _this = this;
-        var _a = this, $$ = _a.$$, config = _a.config, element = _a.element;
-        var dataToShow = $$.filterTargetsToShow($$.data.targets);
-        var thead = tplProcess(tpl.thead, {
+    generateTable() {
+        const { $$, config, element } = this;
+        const dataToShow = $$.filterTargetsToShow($$.data.targets);
+        let thead = tplProcess(tpl.thead, {
             title: dataToShow.length ? this.config.categoryTitle : ""
         });
-        var tbody = "";
-        var rows = [];
-        dataToShow.forEach(function (v) {
+        let tbody = "";
+        const rows = [];
+        dataToShow.forEach(v => {
             thead += tplProcess(tpl.thead, { title: v.id });
             // make up value rows
-            v.values.forEach(function (d, i) {
+            v.values.forEach((d, i) => {
                 if (!rows[i]) {
                     rows[i] = [d.x];
                 }
                 rows[i].push(d.value);
             });
         });
-        rows.forEach(function (v) {
-            tbody += "<tr>".concat(v.map(function (d, i) {
-                return tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
-                    value: i === 0 ?
-                        config.categoryFormat.bind(_this)(d) :
-                        (isNumber(d) ? d.toLocaleString() : config.nullString)
-                });
-            }).join(""), "</tr>");
+        rows.forEach(v => {
+            tbody += `<tr>${v.map((d, i) => tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
+                value: i === 0 ?
+                    config.categoryFormat.bind(this)(d) :
+                    (isNumber(d) ? d.toLocaleString() : config.nullString)
+            })).join("")}</tr>`;
         });
-        element.innerHTML = tplProcess(tpl.body, __assign(__assign({}, config), { title: config.title || $$.config.title_text || "", thead: thead, tbody: tbody }));
-    };
-    TableView.prototype.$redraw = function () {
-        var state = this.$$.state;
-        var doNotUpdate = state.resizing || (!this.config.updateOnToggle && state.toggling);
+        element.innerHTML = tplProcess(tpl.body, {
+            ...config,
+            title: config.title || $$.config.title_text || "",
+            thead,
+            tbody
+        });
+    }
+    $redraw() {
+        const { state } = this.$$;
+        const doNotUpdate = state.resizing || (!this.config.updateOnToggle && state.toggling);
         !doNotUpdate && this.generateTable();
-    };
-    TableView.prototype.$willDestroy = function () {
-        var _a, _b;
-        (_a = this.element.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(this.element);
+    }
+    $willDestroy() {
+        this.element.parentNode?.removeChild(this.element);
         // remove default css style when left one chart instance
         if (this.$$.charts.length === 1) {
-            var s = document.getElementById(defaultStyle.id);
-            (_b = s === null || s === void 0 ? void 0 : s.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(s);
+            const s = document.getElementById(defaultStyle.id);
+            s?.parentNode?.removeChild(s);
         }
-    };
-    return TableView;
-}(Plugin));
+    }
+}
 
 export { TableView as default };

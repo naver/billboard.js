@@ -5,52 +5,11 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260328005505
+ * @version 3.18.0-nightly-20260331005932
  * @requires billboard.js
  * @summary billboard.js plugin
 */
 import { Delaunay } from 'd3-delaunay';
-
-/******************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-/* global Reflect, Promise, SuppressedError, Symbol, Iterator */
-
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-    return extendStatics(d, b);
-};
-
-function __extends(d, b) {
-    if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-
-function __spreadArray(to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-}
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -63,11 +22,11 @@ function __spreadArray(to, from, pack) {
  * @see https://en.wikipedia.org/wiki/Shoelace_formula
  */
 function polygonArea(polygon) {
-    var n = polygon.length;
-    var area = 0;
-    var b = polygon[n - 1];
-    for (var i = 0; i < n; i++) {
-        var a = b;
+    const n = polygon.length;
+    let area = 0;
+    let b = polygon[n - 1];
+    for (let i = 0; i < n; i++) {
+        const a = b;
         b = polygon[i];
         area += a[1] * b[0] - a[0] * b[1];
     }
@@ -79,15 +38,15 @@ function polygonArea(polygon) {
  * @returns {Array} Centroid [x, y] of the polygon
  */
 function polygonCentroid(polygon) {
-    var n = polygon.length;
-    var x = 0;
-    var y = 0;
-    var k = 0;
-    var b = polygon[n - 1];
-    for (var i = 0; i < n; i++) {
-        var a = b;
+    const n = polygon.length;
+    let x = 0;
+    let y = 0;
+    let k = 0;
+    let b = polygon[n - 1];
+    for (let i = 0; i < n; i++) {
+        const a = b;
         b = polygon[i];
-        var c = a[0] * b[1] - b[0] * a[1];
+        const c = a[0] * b[1] - b[0] * a[1];
         k += c;
         x += (a[0] + b[0]) * c;
         y += (a[1] + b[1]) * c;
@@ -101,8 +60,8 @@ function polygonCentroid(polygon) {
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-var isDefined = function (v) { return typeof v !== "undefined"; };
-var isObjectType = function (v) { return typeof v === "object"; };
+const isDefined = (v) => typeof v !== "undefined";
+const isObjectType = (v) => typeof v === "object";
 
 /**
  * Load configuration option
@@ -110,12 +69,12 @@ var isObjectType = function (v) { return typeof v === "object"; };
  * @private
  */
 function loadConfig(config) {
-    var thisConfig = this.config;
-    var target;
-    var keys;
-    var read;
-    var find = function () {
-        var key = keys.shift();
+    const thisConfig = this.config;
+    let target;
+    let keys;
+    let read;
+    const find = () => {
+        const key = keys.shift();
         if (key && target && isObjectType(target) && key in target) {
             target = target[key];
             return find();
@@ -125,7 +84,7 @@ function loadConfig(config) {
         }
         return undefined;
     };
-    Object.keys(thisConfig).forEach(function (key) {
+    Object.keys(thisConfig).forEach(key => {
         target = config;
         keys = key.split("_");
         read = find();
@@ -156,57 +115,57 @@ function loadConfig(config) {
  * @example
  *   bb.plugin.stanford.version;  // ex) 1.9.0
  */
-var Plugin = /** @class */ (function () {
+class Plugin {
+    $$;
+    options;
+    config;
+    static version = "3.18.0-nightly-20260331005932";
     /**
      * Constructor
      * @param {Any} options config option object
      * @private
      */
-    function Plugin(options) {
-        if (options === void 0) { options = {}; }
+    constructor(options = {}) {
         this.options = options;
     }
     /**
      * Load plugin config from options
      * @private
      */
-    Plugin.prototype.loadConfig = function () {
+    loadConfig() {
         loadConfig.call(this, this.options);
-    };
+    }
     /**
      * Lifecycle hook for 'beforeInit' phase.
      * @private
      */
-    Plugin.prototype.$beforeInit = function () { };
+    $beforeInit() { }
     /**
      * Lifecycle hook for 'init' phase.
      * @private
      */
-    Plugin.prototype.$init = function () { };
+    $init() { }
     /**
      * Lifecycle hook for 'afterInit' phase.
      * @private
      */
-    Plugin.prototype.$afterInit = function () { };
+    $afterInit() { }
     /**
      * Lifecycle hook for 'redraw' phase.
      * @private
      */
-    Plugin.prototype.$redraw = function () { };
+    $redraw() { }
     /**
      * Lifecycle hook for 'willDestroy' phase.
      * @private
      */
-    Plugin.prototype.$willDestroy = function () {
-        var _this = this;
-        Object.keys(this).forEach(function (key) {
-            _this[key] = null;
-            delete _this[key];
+    $willDestroy() {
+        Object.keys(this).forEach(key => {
+            this[key] = null;
+            delete this[key];
         });
-    };
-    Plugin.version = "3.18.0-nightly-20260328005505";
-    return Plugin;
-}());
+    }
+}
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -220,8 +179,8 @@ var Plugin = /** @class */ (function () {
  * @returns {TextOverlapOptions}
  * @private
  */
-var Options = /** @class */ (function () {
-    function Options() {
+class Options {
+    constructor() {
         return {
             /**
              * Selector string for target text nodes within chart element.
@@ -257,8 +216,7 @@ var Options = /** @class */ (function () {
             area: 0
         };
     }
-    return Options;
-}());
+}
 
 /**
  * TextOverlap plugin<br>
@@ -301,68 +259,68 @@ var Options = /** @class */ (function () {
  *     ]
  * })
  */
-var TextOverlap = /** @class */ (function (_super) {
-    __extends(TextOverlap, _super);
-    function TextOverlap(options) {
-        var _this = _super.call(this, options) || this;
-        _this.config = new Options();
-        return _this;
+class TextOverlap extends Plugin {
+    constructor(options) {
+        super(options);
+        this.config = new Options();
+        return this;
     }
-    TextOverlap.prototype.$init = function () {
+    $init() {
         this.loadConfig();
-    };
-    TextOverlap.prototype.$redraw = function () {
-        var _a = this, $el = _a.$$.$el, selector = _a.config.selector;
-        var text = selector ? $el.main.selectAll(selector) : $el.text;
+    }
+    $redraw() {
+        const { $$: { $el }, config: { selector } } = this;
+        const text = selector ? $el.main.selectAll(selector) : $el.text;
         !text.empty() && this.preventLabelOverlap(text);
-    };
+    }
     /**
      * Generates the voronoi layout for data labels
      * @param {Array} points Indices values
      * @returns {object} Voronoi layout points and corresponding Data points
      * @private
      */
-    TextOverlap.prototype.generateVoronoi = function (points) {
-        var _a;
-        var $$ = this.$$;
-        var scale = $$.scale;
-        var _b = ["x", "y"].map(function (v) { return scale[v].domain(); }), min = _b[0], max = _b[1];
-        _a = [max[0], min[1]], min[1] = _a[0], max[0] = _a[1];
+    generateVoronoi(points) {
+        const { $$ } = this;
+        const { scale } = $$;
+        const [min, max] = ["x", "y"].map(v => scale[v].domain());
+        [min[1], max[0]] = [max[0], min[1]];
         return Delaunay
             .from(points)
-            .voronoi(__spreadArray(__spreadArray([], min, true), max, true)); // bounds = [xmin, ymin, xmax, ymax], default value: [0, 0, 960, 500]
-    };
+            .voronoi([
+            ...min,
+            ...max
+        ]); // bounds = [xmin, ymin, xmax, ymax], default value: [0, 0, 960, 500]
+    }
     /**
      * Set text label's position to preventg overlap.
      * @param {d3Selection} text target text selection
      * @private
      */
-    TextOverlap.prototype.preventLabelOverlap = function (text) {
-        var _a = this.config, extent = _a.extent, area = _a.area;
-        var points = text.data().map(function (v) { return [v.index, v.value]; });
-        var voronoi = this.generateVoronoi(points);
-        var i = 0;
+    preventLabelOverlap(text) {
+        const { extent, area } = this.config;
+        const points = text.data().map(v => [v.index, v.value]);
+        const voronoi = this.generateVoronoi(points);
+        let i = 0;
         text.each(function () {
-            var cell = voronoi.cellPolygon(i);
+            const cell = voronoi.cellPolygon(i);
             if (cell && this) {
-                var _a = points[i], x = _a[0], y = _a[1];
-                var _b = polygonCentroid(cell), cx = _b[0], cy = _b[1];
-                var cellArea = Math.abs(polygonArea(cell));
-                var angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
-                var xTranslate = extent * (angle === 0 ? 1 : -1);
-                var yTranslate = angle === -1 ? -extent : extent + 5;
-                var txtAnchor = Math.abs(angle) === 1 ?
+                const [x, y] = points[i];
+                const [cx, cy] = polygonCentroid(cell);
+                const cellArea = Math.abs(polygonArea(cell));
+                const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
+                const xTranslate = extent * (angle === 0 ? 1 : -1);
+                const yTranslate = angle === -1 ? -extent : extent + 5;
+                const txtAnchor = Math.abs(angle) === 1 ?
                     "middle" :
                     (angle === 0 ? "start" : "end");
                 this.style.display = cellArea < area ? "none" : "";
                 this.setAttribute("text-anchor", txtAnchor);
-                this.setAttribute("dy", "0.".concat(angle === 1 ? 71 : 35, "em"));
-                this.setAttribute("transform", "translate(".concat(xTranslate, ", ").concat(yTranslate, ")"));
+                this.setAttribute("dy", `0.${angle === 1 ? 71 : 35}em`);
+                this.setAttribute("transform", `translate(${xTranslate}, ${yTranslate})`);
             }
             i++;
         });
-    };
-    return TextOverlap;
-}(Plugin));
+    }
+}
 
 export { TextOverlap as default };

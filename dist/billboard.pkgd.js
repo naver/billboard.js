@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260328005505
+ * @version 3.18.0-nightly-20260331005932
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -27889,10 +27889,14 @@ class State {
         size: false
         // dimensions changed
       },
-      // Performance: per-redraw generation counter for tick size caching
-      tickSizeGeneration: 0,
-      // Performance: cached targets for reuse within redraw cycle
+      // Performance: generation counters for cache invalidation
+      redrawGeneration: 0,
+      // increments every redraw (for per-redraw caches)
+      dataGeneration: 0,
+      // increments on data/visibility changes (for data-dependent caches)
+      // Performance: cached values for reuse within redraw cycle
       _targetsToShow: null,
+      _cachedDrawShape: null,
       _eventRectFingerprint: null,
       // Performance: throttle tooltip position updates on mousemove
       _lastTooltipMouse: null,
@@ -27935,7 +27939,6 @@ const KEY = {
   filteredTargets: "$filteredTargets",
   filteredNullish: "$filteredNullish",
   svgLeft: "$svgLeft",
-  visibilityChecksum: "visibilityChecksum",
   legendItemTextBox: "legendItemTextBox",
   legendItemMap: "$legendItemMap",
   radarPoints: "$radarPoints",
@@ -27944,7 +27947,9 @@ const KEY = {
   callOverOutForTouch: "callOverOutForTouch",
   textRect: "textRect",
   shapeOffset: "$shapeOffset",
-  maxTickSize: "$maxTickSize"
+  maxTickSize: "$maxTickSize",
+  maxDataCountTarget: "$maxDataCountTarget",
+  valuesXIndexMap: "$valuesXIndexMap"
 };
 class Cache {
   constructor() {
@@ -29345,9 +29350,15 @@ function _setXS(ids, data, params) {
     return max;
   },
   getMaxDataCountTarget() {
-    let target = this.filterTargetsToShow() || [];
+    const $$ = this;
+    const { cache, state } = $$;
+    const cached = cache.get(KEY.maxDataCountTarget);
+    if (cached && cached.generation === state.dataGeneration) {
+      return cached.value;
+    }
+    let target = $$.filterTargetsToShow() || [];
     const length = target.length;
-    const isInverted = this.config.axis_x_inverted;
+    const isInverted = $$.config.axis_x_inverted;
     if (length > 1) {
       const allX = [];
       for (let i = 0; i < target.length; i++) {
@@ -29364,6 +29375,7 @@ function _setXS(ids, data, params) {
     } else if (length) {
       target = target[0].values.concat();
     }
+    cache.add(KEY.maxDataCountTarget, { value: target, generation: state.dataGeneration });
     return target;
   },
   mapToIds(targets) {
@@ -29389,22 +29401,16 @@ function _setXS(ids, data, params) {
     return this.state.hiddenLegendIds.indexOf(targetId) < 0;
   },
   filterTargetsToShow(targets) {
-    var _a;
     const $$ = this;
     if (!targets) {
       const { cache, data, state } = $$;
       const cacheKey = KEY.filteredTargets;
-      const visibilityChecksum = (_a = state._visibilityChecksum) != null ? _a : "";
-      const storedChecksum = cache.get(KEY.visibilityChecksum);
-      if (visibilityChecksum !== storedChecksum) {
-        cache.remove(cacheKey);
-        cache.add(KEY.visibilityChecksum, visibilityChecksum);
-      }
-      if (cache.has(cacheKey)) {
-        return cache.get(cacheKey);
+      const cached = cache.get(cacheKey);
+      if (cached && cached.generation === state.dataGeneration) {
+        return cached.value;
       }
       const filtered = data.targets.filter((t) => $$.isTargetToShow(t.id));
-      cache.add(cacheKey, filtered);
+      cache.add(cacheKey, { value: filtered, generation: state.dataGeneration });
       return filtered;
     }
     return targets.filter((t) => $$.isTargetToShow(t.id));
@@ -29450,11 +29456,9 @@ function _setXS(ids, data, params) {
   },
   addHiddenTargetIds(targetIds) {
     this.addTargetIds("hiddenTargetIds", targetIds);
-    this.state._visibilityChecksum = this.state.hiddenTargetIds.join(",");
   },
   removeHiddenTargetIds(targetIds) {
     this.removeTargetIds("hiddenTargetIds", targetIds);
-    this.state._visibilityChecksum = this.state.hiddenTargetIds.join(",");
   },
   addHiddenLegendIds(targetIds) {
     this.addTargetIds("hiddenLegendIds", targetIds);
@@ -29467,8 +29471,20 @@ function _setXS(ids, data, params) {
     const { hasAxis } = $$.state;
     const ys = {};
     const isMultipleX = $$.isMultipleX();
-    const xs = isMultipleX ? $$.mapTargetsToUniqueXs(targets).map((v) => isString(v) ? v : +v) : null;
-    const xIndexMap = xs ? new Map(xs.map((x, i) => [x, i])) : null;
+    let xIndexMap = null;
+    if (isMultipleX) {
+      const cached = $$.cache.get(KEY.valuesXIndexMap);
+      if (cached && cached.generation === $$.state.dataGeneration) {
+        xIndexMap = cached.value;
+      } else {
+        const xs = $$.mapTargetsToUniqueXs($$.data.targets).map((v) => isString(v) ? v : +v);
+        xIndexMap = new Map(xs.map((x, i) => [x, i]));
+        $$.cache.add(KEY.valuesXIndexMap, {
+          value: xIndexMap,
+          generation: $$.state.dataGeneration
+        });
+      }
+    }
     targets.forEach((t) => {
       const data = [];
       t.values.filter(({ value }) => isValue(value) || value === null).forEach((v) => {
@@ -34236,7 +34252,10 @@ function _buildLegendItemMap($$, legendItems) {
     const { config, state, $el } = $$;
     const { main, treemap } = $el;
     state.redrawing = true;
-    state.tickSizeGeneration = (state.tickSizeGeneration || 0) + 1;
+    state.redrawGeneration++;
+    if (state.dirty.data || state.dirty.visibility || options.initializing) {
+      state.dataGeneration++;
+    }
     if (options.initializing || state.dirty.size || state.dirty.data || !state.rendered) {
       $$.cache.remove([KEY.svgLeft]);
     }
@@ -34303,7 +34322,7 @@ function _buildLegendItemMap($$, legendItems) {
       }
     }
     initializing && $$.updateTypesElements();
-    $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
+    $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart, needShapeUpdate);
     $$.updateTooltipOnRedraw();
     $$.callPluginHook("$redraw", options, duration);
   },
@@ -34313,12 +34332,16 @@ function _buildLegendItemMap($$, legendItems) {
    * @param {object} flow flow object
    * @param {number} duration duration value
    * @param {boolean} withSubchart whether or not to show subchart
+   * @param {boolean} needShapeRegen whether to regenerate draw shape
    * @private
    */
-  generateRedrawList(targets, flow, duration, withSubchart) {
+  generateRedrawList(targets, flow, duration, withSubchart, needShapeRegen = true) {
     const $$ = this;
     const { config, state } = $$;
-    const shape = $$.getDrawShape();
+    const shape = needShapeRegen ? $$.getDrawShape() : state._cachedDrawShape || $$.getDrawShape();
+    if (needShapeRegen) {
+      state._cachedDrawShape = shape;
+    }
     if (state.hasAxis) {
       config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
     }
@@ -34335,6 +34358,7 @@ function _buildLegendItemMap($$, legendItems) {
       flowFn && flowFn();
       state.redrawing = false;
       state._targetsToShow = null;
+      state._cachedDrawShape = null;
       callFn(config.onrendered, $$.api);
     };
     if (withTransition && redrawList.length) {
@@ -38963,7 +38987,7 @@ class ChartInternal {
       styleEl.type = "text/css";
       browser_doc.head.appendChild(styleEl);
       state.style = {
-        rootSelctor: `.${state.datetimeId}`,
+        rootSelector: `.${state.datetimeId}`,
         sheet: styleEl.sheet
       };
       $el.style = styleEl;
@@ -45929,7 +45953,7 @@ class Axis_Axis {
     const { current, resizing } = state;
     const cacheKey = `${KEY.maxTickSize}_${id}_${!!withoutRecompute}`;
     const cached = $$.cache.get(cacheKey);
-    if (cached && cached.generation === state.tickSizeGeneration) {
+    if (cached && cached.generation === state.redrawGeneration) {
       return cached.value;
     }
     const currentTickMax = current.maxTickSize[id];
@@ -46007,7 +46031,7 @@ class Axis_Axis {
         currentTickMax[key] = max[key];
       }
     });
-    $$.cache.add(cacheKey, { generation: state.tickSizeGeneration, value: currentTickMax });
+    $$.cache.add(cacheKey, { generation: state.redrawGeneration, value: currentTickMax });
     return currentTickMax;
   }
   getXAxisTickTextY2Overflow(defaultPadding) {
@@ -46821,6 +46845,7 @@ var eventrect_pow = Math.pow;
       data.targets.forEach((d) => {
         d.values.splice(0, flowLength);
       });
+      state.dataGeneration++;
       if ($$.updateXGrid) {
         $$.updateXGrid(true);
       }
@@ -54516,7 +54541,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260328005505",
+  version: "3.18.0-nightly-20260331005932",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

@@ -5,55 +5,13 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260328005505
+ * @version 3.18.0-nightly-20260331005932
  * @requires billboard.js
  * @summary billboard.js plugin
 */
 import { interpolateHslLong } from 'd3-interpolate';
 import { scaleSequential, scaleSymlog, scaleSequentialLog } from 'd3-scale';
 import { axisRight } from 'd3-axis';
-
-/******************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-/* global Reflect, Promise, SuppressedError, Symbol, Iterator */
-
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-    return extendStatics(d, b);
-};
-
-function __extends(d, b) {
-    if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-
-var __assign = function() {
-    __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -63,195 +21,38 @@ var __assign = function() {
  * CSS class names definition
  * @private
  */
-var $COMMON = {
-    button: "bb-button",
-    chart: "bb-chart",
-    empty: "bb-empty",
-    main: "bb-main",
-    target: "bb-target",
-    EXPANDED: "_expanded_",
-    dummy: "_dummy_"
-};
-var $ARC = {
-    arc: "bb-arc",
-    arcLabelLine: "bb-arc-label-line",
-    arcLabelLineText: "bb-arc-label-line-text",
-    arcRange: "bb-arc-range",
-    arcs: "bb-arcs",
-    chartArc: "bb-chart-arc",
-    chartArcs: "bb-chart-arcs",
-    chartArcsBackground: "bb-chart-arcs-background",
-    chartArcsTitle: "bb-chart-arcs-title",
-    needle: "bb-needle"
-};
-var $AREA = {
-    area: "bb-area",
-    areas: "bb-areas"
-};
-var $AXIS = {
-    axis: "bb-axis",
-    axisX: "bb-axis-x",
-    axisXLabel: "bb-axis-x-label",
-    axisY: "bb-axis-y",
-    axisY2: "bb-axis-y2",
-    axisY2Label: "bb-axis-y2-label",
-    axisYLabel: "bb-axis-y-label",
-    axisXTooltip: "bb-axis-x-tooltip",
-    axisYTooltip: "bb-axis-y-tooltip",
-    axisY2Tooltip: "bb-axis-y2-tooltip",
-    axisTooltipX: "bb-axis-tooltip-x",
-    axisTooltipY: "bb-axis-tooltip-y"
-};
-var $BAR = {
-    bar: "bb-bar",
-    bars: "bb-bars",
-    chartBar: "bb-chart-bar",
-    chartBars: "bb-chart-bars",
-    barConnectLine: "bb-bar-connectLine"
-};
-var $CANDLESTICK = {
-    candlestick: "bb-candlestick",
-    candlesticks: "bb-candlesticks",
-    chartCandlestick: "bb-chart-candlestick",
-    chartCandlesticks: "bb-chart-candlesticks",
-    valueDown: "bb-value-down",
-    valueUp: "bb-value-up"
-};
-var $CIRCLE = {
-    chartCircles: "bb-chart-circles",
-    circle: "bb-circle",
-    circles: "bb-circles"
-};
-var $COLOR = {
-    colorPattern: "bb-color-pattern",
-    colorScale: "bb-colorscale"
-};
-var $DRAG = {
-    dragarea: "bb-dragarea",
-    INCLUDED: "_included_"
-};
-var $FUNNEL = {
-    funnel: "bb-funnel",
-    chartFunnel: "bb-chart-funnel",
-    chartFunnels: "bb-chart-funnels",
-    funnelBackground: "bb-funnel-background"
-};
-var $GAUGE = {
-    chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
-    chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
-    chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
-    chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
-    gaugeValue: "bb-gauge-value"
-};
-var $LEGEND = {
-    legend: "bb-legend",
-    legendBackground: "bb-legend-background",
-    legendItem: "bb-legend-item",
-    legendItemEvent: "bb-legend-item-event",
-    legendItemHidden: "bb-legend-item-hidden",
-    legendItemPoint: "bb-legend-item-point",
-    legendItemTile: "bb-legend-item-tile"
-};
-var $LINE = {
-    chartLine: "bb-chart-line",
-    chartLines: "bb-chart-lines",
-    line: "bb-line",
-    lines: "bb-lines"
-};
-var $EVENT = {
-    eventRect: "bb-event-rect",
-    eventRects: "bb-event-rects",
-    eventRectsMultiple: "bb-event-rects-multiple",
-    eventRectsSingle: "bb-event-rects-single"
-};
-var $FOCUS = {
-    focused: "bb-focused",
-    defocused: "bb-defocused",
-    legendItemFocused: "bb-legend-item-focused",
-    xgridFocus: "bb-xgrid-focus",
-    ygridFocus: "bb-ygrid-focus"
-};
-var $GRID = {
-    grid: "bb-grid",
-    gridLines: "bb-grid-lines",
-    xgrid: "bb-xgrid",
-    xgridLine: "bb-xgrid-line",
-    xgridLines: "bb-xgrid-lines",
-    xgrids: "bb-xgrids",
-    ygrid: "bb-ygrid",
-    ygridLine: "bb-ygrid-line",
-    ygridLines: "bb-ygrid-lines",
-    ygrids: "bb-ygrids"
-};
-var $RADAR = {
-    chartRadar: "bb-chart-radar",
-    chartRadars: "bb-chart-radars"
-};
-var $REGION = {
-    region: "bb-region",
-    regions: "bb-regions"
-};
-var $SELECT = {
-    selectedCircle: "bb-selected-circle",
-    selectedCircles: "bb-selected-circles",
-    SELECTED: "_selected_"
-};
-var $SHAPE = {
-    shape: "bb-shape",
-    shapes: "bb-shapes"
-};
-var $SUBCHART = {
-    brush: "bb-brush",
-    subchart: "bb-subchart"
-};
-var $TEXT = {
-    chartText: "bb-chart-text",
-    chartTexts: "bb-chart-texts",
-    text: "bb-text",
-    texts: "bb-texts",
-    title: "bb-title",
-    textBorderRect: "bb-text-border",
-    textLabelImage: "bb-text-label-image",
-    TextOverlapping: "text-overlapping"
-};
-var $TOOLTIP = {
+const $TOOLTIP = {
     tooltip: "bb-tooltip",
-    tooltipContainer: "bb-tooltip-container",
     tooltipName: "bb-tooltip-name"
 };
-var $TREEMAP = {
-    treemap: "bb-treemap",
-    chartTreemap: "bb-chart-treemap",
-    chartTreemaps: "bb-chart-treemaps"
-};
-var $ZOOM = {
-    buttonZoomReset: "bb-zoom-reset",
-    zoomBrush: "bb-zoom-brush"
-};
-__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM);
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-var isFunction = function (v) { return typeof v === "function"; };
-var isString = function (v) { return typeof v === "string"; };
-var isNumber = function (v) { return typeof v === "number"; };
-var isUndefined = function (v) { return typeof v === "undefined"; };
-var isDefined = function (v) { return typeof v !== "undefined"; };
-var isObjectType = function (v) { return typeof v === "object"; };
-var isEmptyObject = function (obj) {
-    for (var x in obj) {
+const isFunction = (v) => typeof v === "function";
+const isString = (v) => typeof v === "string";
+const isNumber = (v) => typeof v === "number";
+const isUndefined = (v) => typeof v === "undefined";
+const isDefined = (v) => typeof v !== "undefined";
+const isObjectType = (v) => typeof v === "object";
+const isEmptyObject = (obj) => {
+    for (const x in obj) {
         return false;
     }
     return true;
 };
-var isEmpty = function (o) { return (isUndefined(o) || o === null ||
+const isEmpty = (o) => (isUndefined(o) || o === null ||
     (isString(o) && o.length === 0) ||
     (isObjectType(o) && !(o instanceof Date) && isEmptyObject(o)) ||
-    (isNumber(o) && isNaN(o))); };
+    (isNumber(o) && isNaN(o)));
 
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
 /**
  * Get range
  * @param {number} start Start number
@@ -260,10 +61,10 @@ var isEmpty = function (o) { return (isUndefined(o) || o === null ||
  * @returns {Array}
  * @private
  */
-var getRange = function (start, end, step) {
-    var res = [];
-    var n = Math.max(0, Math.ceil((end - start) / step)) | 0;
-    for (var i = start; i < n; i++) {
+const getRange = (start, end, step = 1) => {
+    const res = [];
+    const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
+    for (let i = start; i < n; i++) {
         res.push(start + i * step);
     }
     return res;
@@ -276,23 +77,22 @@ var getRange = function (start, end, step) {
  * @private
  */
 function parseDate(date) {
-    var _a;
-    var parsedDate;
+    let parsedDate;
     if (date instanceof Date) {
         parsedDate = date;
     }
     else if (isString(date)) {
-        var _b = this, config = _b.config, format = _b.format;
+        const { config, format } = this;
         // if fails to parse, try by new Date()
         // https://github.com/naver/billboard.js/issues/1714
-        parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) !== null && _a !== void 0 ? _a : new Date(date);
+        parsedDate = format.dataTime(config.data_xFormat)(date) ?? new Date(date);
     }
     else if (isNumber(date) && !isNaN(date)) {
         parsedDate = new Date(+date);
     }
     if (!parsedDate || isNaN(+parsedDate)) {
         console && console.error &&
-            console.error("Failed to parse x '".concat(date, "' to Date object"));
+            console.error(`Failed to parse x '${date}' to Date object`);
     }
     return parsedDate;
 }
@@ -303,12 +103,12 @@ function parseDate(date) {
  * @private
  */
 function loadConfig(config) {
-    var thisConfig = this.config;
-    var target;
-    var keys;
-    var read;
-    var find = function () {
-        var key = keys.shift();
+    const thisConfig = this.config;
+    let target;
+    let keys;
+    let read;
+    const find = () => {
+        const key = keys.shift();
         if (key && target && isObjectType(target) && key in target) {
             target = target[key];
             return find();
@@ -318,7 +118,7 @@ function loadConfig(config) {
         }
         return undefined;
     };
-    Object.keys(thisConfig).forEach(function (key) {
+    Object.keys(thisConfig).forEach(key => {
         target = config;
         keys = key.split("_");
         read = find();
@@ -349,57 +149,57 @@ function loadConfig(config) {
  * @example
  *   bb.plugin.stanford.version;  // ex) 1.9.0
  */
-var Plugin = /** @class */ (function () {
+class Plugin {
+    $$;
+    options;
+    config;
+    static version = "3.18.0-nightly-20260331005932";
     /**
      * Constructor
      * @param {Any} options config option object
      * @private
      */
-    function Plugin(options) {
-        if (options === void 0) { options = {}; }
+    constructor(options = {}) {
         this.options = options;
     }
     /**
      * Load plugin config from options
      * @private
      */
-    Plugin.prototype.loadConfig = function () {
+    loadConfig() {
         loadConfig.call(this, this.options);
-    };
+    }
     /**
      * Lifecycle hook for 'beforeInit' phase.
      * @private
      */
-    Plugin.prototype.$beforeInit = function () { };
+    $beforeInit() { }
     /**
      * Lifecycle hook for 'init' phase.
      * @private
      */
-    Plugin.prototype.$init = function () { };
+    $init() { }
     /**
      * Lifecycle hook for 'afterInit' phase.
      * @private
      */
-    Plugin.prototype.$afterInit = function () { };
+    $afterInit() { }
     /**
      * Lifecycle hook for 'redraw' phase.
      * @private
      */
-    Plugin.prototype.$redraw = function () { };
+    $redraw() { }
     /**
      * Lifecycle hook for 'willDestroy' phase.
      * @private
      */
-    Plugin.prototype.$willDestroy = function () {
-        var _this = this;
-        Object.keys(this).forEach(function (key) {
-            _this[key] = null;
-            delete _this[key];
+    $willDestroy() {
+        Object.keys(this).forEach(key => {
+            this[key] = null;
+            delete this[key];
         });
-    };
-    Plugin.version = "3.18.0-nightly-20260328005505";
-    return Plugin;
-}());
+    }
+}
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -433,15 +233,15 @@ var CLASS = {
 function pointInRegion(point, region) {
     // ray-casting algorithm based on
     // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-    var x = point.x;
-    var y = point.value;
-    var inside = false;
-    for (var i = 0, j = region.length - 1; i < region.length; j = i++) {
-        var xi = region[i].x;
-        var yi = region[i].y;
-        var xj = region[j].x;
-        var yj = region[j].y;
-        var intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+    const x = point.x;
+    const y = point.value;
+    let inside = false;
+    for (let i = 0, j = region.length - 1; i < region.length; j = i++) {
+        const xi = region[i].x;
+        const yi = region[i].y;
+        const xj = region[j].x;
+        const yj = region[j].y;
+        const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
         if (intersect) {
             inside = !inside;
         }
@@ -471,10 +271,10 @@ function compareEpochs(a, b) {
  * @private
  */
 function getRegionArea(points) {
-    var area = 0;
-    var point1;
-    var point2;
-    for (var i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
+    let area = 0;
+    let point1;
+    let point2;
+    for (let i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
         point1 = points[i];
         point2 = points[j];
         area += point1.x * point2.y;
@@ -490,13 +290,13 @@ function getRegionArea(points) {
  * @private
  */
 function getCentroid(points) {
-    var area = getRegionArea(points);
-    var x = 0;
-    var y = 0;
-    var f;
-    for (var i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
-        var point1 = points[i];
-        var point2 = points[j];
+    const area = getRegionArea(points);
+    let x = 0;
+    let y = 0;
+    let f;
+    for (let i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
+        const point1 = points[i];
+        const point2 = points[j];
         f = point1.x * point2.y - point2.x * point1.y;
         x += (point1.x + point2.x) * f;
         y += (point1.y + point2.y) * f;
@@ -520,7 +320,7 @@ function getCentroid(points) {
  */
 function format(specifier) {
     {
-        return function (n) { return Math.round(n).toString(); };
+        return (n) => Math.round(n).toString();
     }
 }
 /**
@@ -529,18 +329,20 @@ function format(specifier) {
  * @param {Stanford} owner Stanford instance
  * @private
  */
-var ColorScale = /** @class */ (function () {
-    function ColorScale(owner) {
+class ColorScale {
+    owner;
+    colorScale;
+    constructor(owner) {
         this.owner = owner;
     }
-    ColorScale.prototype.drawColorScale = function () {
-        var _a = this.owner, $$ = _a.$$, config = _a.config;
-        var target = $$.data.targets[0];
-        var height = $$.state.height - config.padding_bottom - config.padding_top;
-        var barWidth = config.scale_width;
-        var barHeight = 5;
-        var points = getRange(config.padding_bottom, height, barHeight);
-        var inverseScale = scaleSequential(target.colors)
+    drawColorScale() {
+        const { $$, config } = this.owner;
+        const target = $$.data.targets[0];
+        const height = $$.state.height - config.padding_bottom - config.padding_top;
+        const barWidth = config.scale_width;
+        const barHeight = 5;
+        const points = getRange(config.padding_bottom, height, barHeight);
+        const inverseScale = scaleSequential(target.colors)
             .domain([points[points.length - 1], points[0]]);
         if (this.colorScale) {
             this.colorScale.remove();
@@ -550,25 +352,25 @@ var ColorScale = /** @class */ (function () {
             .attr("height", height)
             .attr("class", CLASS.colorScale);
         this.colorScale.append("g")
-            .attr("transform", "translate(0, ".concat(config.padding_top, ")"))
+            .attr("transform", `translate(0, ${config.padding_top})`)
             .selectAll("bars")
             .data(points)
             .enter()
             .append("rect")
-            .attr("y", function (d, i) { return i * barHeight; })
+            .attr("y", (d, i) => i * barHeight)
             .attr("x", 0)
             .attr("width", barWidth)
             .attr("height", barHeight)
-            .attr("fill", function (d) { return inverseScale(d); });
+            .attr("fill", d => inverseScale(d));
         // Legend Axis
-        var axisScale = scaleSymlog()
+        const axisScale = scaleSymlog()
             .domain([target.minEpochs, target.maxEpochs])
             .range([
             points[0] + config.padding_top + points[points.length - 1] + barHeight - 1,
             points[0] + config.padding_top
         ]);
-        var legendAxis = axisRight(axisScale);
-        var scaleFormat = config.scale_format;
+        const legendAxis = axisRight(axisScale);
+        const scaleFormat = config.scale_format;
         if (scaleFormat === "pow10") {
             legendAxis.tickValues([1, 10, 100, 1000, 10000, 100000, 1000000, 10000000]);
         }
@@ -579,30 +381,29 @@ var ColorScale = /** @class */ (function () {
             legendAxis.tickFormat(format());
         }
         // Draw Axis
-        var axis = this.colorScale.append("g")
+        const axis = this.colorScale.append("g")
             .attr("class", "legend axis")
-            .attr("transform", "translate(".concat(barWidth, ",0)"))
+            .attr("transform", `translate(${barWidth},0)`)
             .call(legendAxis);
         if (scaleFormat === "pow10") {
             axis.selectAll(".tick text")
                 .text(null)
-                .filter(function (d) { return d / Math.pow(10, Math.ceil(Math.log(d) / Math.LN10 - 1e-12)) === 1; }) // Power of Ten
+                .filter(d => d / Math.pow(10, Math.ceil(Math.log(d) / Math.LN10 - 1e-12)) === 1) // Power of Ten
                 .text(10)
                 .append("tspan")
                 .attr("dy", "-.7em") // https://bl.ocks.org/mbostock/6738229
-                .text(function (d) { return Math.round(Math.log(d) / Math.LN10); });
+                .text(d => Math.round(Math.log(d) / Math.LN10));
         }
-        this.colorScale.attr("transform", "translate(".concat($$.state.current.width - this.xForColorScale(), ", 0)"));
-    };
-    ColorScale.prototype.xForColorScale = function () {
+        this.colorScale.attr("transform", `translate(${$$.state.current.width - this.xForColorScale()}, 0)`);
+    }
+    xForColorScale() {
         return this.owner.config.padding_right +
             this.colorScale.node().getBBox().width;
-    };
-    ColorScale.prototype.getColorScalePadding = function () {
+    }
+    getColorScalePadding() {
         return this.xForColorScale() + this.owner.config.padding_left + 20;
-    };
-    return ColorScale;
-}());
+    }
+}
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -615,26 +416,27 @@ var ColorScale = /** @class */ (function () {
  * @param {Stanford} owner Stanford instance
  * @private
  */
-var Elements = /** @class */ (function () {
-    function Elements(owner) {
+class Elements {
+    owner;
+    constructor(owner) {
         this.owner = owner;
         // MEMO: Avoid blocking eventRect
-        var elements = owner.$$.$el.main.select(".bb-chart")
+        const elements = owner.$$.$el.main.select(".bb-chart")
             .append("g")
             .attr("class", CLASS.stanfordElements);
         elements.append("g").attr("class", CLASS.stanfordLines);
         elements.append("g").attr("class", CLASS.stanfordRegions);
     }
-    Elements.prototype.updateStanfordLines = function (duration) {
-        var $$ = this.owner.$$;
-        var config = $$.config, main = $$.$el.main;
-        var isRotated = config.axis_rotated;
-        var xvCustom = this.xvCustom.bind($$);
-        var yvCustom = this.yvCustom.bind($$);
+    updateStanfordLines(duration) {
+        const { $$ } = this.owner;
+        const { config, $el: { main } } = $$;
+        const isRotated = config.axis_rotated;
+        const xvCustom = this.xvCustom.bind($$);
+        const yvCustom = this.yvCustom.bind($$);
         // Stanford-Lines
-        var stanfordLine = main.select(".".concat(CLASS.stanfordLines))
+        const stanfordLine = main.select(`.${CLASS.stanfordLines}`)
             .style("shape-rendering", "geometricprecision")
-            .selectAll(".".concat(CLASS.stanfordLine))
+            .selectAll(`.${CLASS.stanfordLine}`)
             .data(this.owner.config.lines);
         // exit
         stanfordLine.exit().transition()
@@ -642,38 +444,38 @@ var Elements = /** @class */ (function () {
             .style("opacity", "0")
             .remove();
         // enter
-        var stanfordLineEnter = stanfordLine.enter().append("g");
+        const stanfordLineEnter = stanfordLine.enter().append("g");
         stanfordLineEnter.append("line")
             .style("opacity", "0");
         stanfordLineEnter
             .merge(stanfordLine)
-            .attr("class", function (d) { return CLASS.stanfordLine + (d.class ? " ".concat(d.class) : ""); })
+            .attr("class", d => CLASS.stanfordLine + (d.class ? ` ${d.class}` : ""))
             .select("line")
             .transition()
             .duration(duration)
-            .attr("x1", function (d) {
-            var v = isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
+            .attr("x1", d => {
+            const v = isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
             return v;
         })
-            .attr("x2", function (d) { return (isRotated ? yvCustom(d, "y2") : xvCustom(d, "x2")); })
-            .attr("y1", function (d) {
-            var v = isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
+            .attr("x2", d => (isRotated ? yvCustom(d, "y2") : xvCustom(d, "x2")))
+            .attr("y1", d => {
+            const v = isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
             return v;
         })
-            .attr("y2", function (d) { return (isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2")); })
+            .attr("y2", d => (isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2")))
             .transition()
             .style("opacity", null);
-    };
-    Elements.prototype.updateStanfordRegions = function (duration) {
-        var $$ = this.owner.$$;
-        var config = $$.config, main = $$.$el.main;
-        var isRotated = config.axis_rotated;
-        var xvCustom = this.xvCustom.bind($$);
-        var yvCustom = this.yvCustom.bind($$);
-        var countPointsInRegion = this.owner.countEpochsInRegion.bind($$);
+    }
+    updateStanfordRegions(duration) {
+        const { $$ } = this.owner;
+        const { config, $el: { main } } = $$;
+        const isRotated = config.axis_rotated;
+        const xvCustom = this.xvCustom.bind($$);
+        const yvCustom = this.yvCustom.bind($$);
+        const countPointsInRegion = this.owner.countEpochsInRegion.bind($$);
         // Stanford-Regions
-        var stanfordRegion = main.select(".".concat(CLASS.stanfordRegions))
-            .selectAll(".".concat(CLASS.stanfordRegion))
+        let stanfordRegion = main.select(`.${CLASS.stanfordRegions}`)
+            .selectAll(`.${CLASS.stanfordRegion}`)
             .data(this.owner.config.regions);
         // exit
         stanfordRegion.exit().transition()
@@ -681,7 +483,7 @@ var Elements = /** @class */ (function () {
             .style("opacity", "0")
             .remove();
         // enter
-        var stanfordRegionEnter = stanfordRegion.enter().append("g");
+        const stanfordRegionEnter = stanfordRegion.enter().append("g");
         stanfordRegionEnter.append("polygon")
             .style("opacity", "0");
         stanfordRegionEnter.append("text")
@@ -690,32 +492,28 @@ var Elements = /** @class */ (function () {
         stanfordRegion = stanfordRegionEnter.merge(stanfordRegion);
         // update
         stanfordRegion
-            .attr("class", function (d) { return CLASS.stanfordRegion + (d.class ? " ".concat(d.class) : ""); })
+            .attr("class", d => CLASS.stanfordRegion + (d.class ? ` ${d.class}` : ""))
             .select("polygon")
             .transition()
             .duration(duration)
-            .attr("points", function (d) {
-            return d.points.map(function (value) {
-                return [
-                    isRotated ? yvCustom(value, "y") : xvCustom(value, "x"),
-                    isRotated ? xvCustom(value, "x") : yvCustom(value, "y")
-                ].join(",");
-            }).join(" ");
-        })
+            .attr("points", d => d.points.map(value => [
+            isRotated ? yvCustom(value, "y") : xvCustom(value, "x"),
+            isRotated ? xvCustom(value, "x") : yvCustom(value, "y")
+        ].join(",")).join(" "))
             .transition()
-            .style("opacity", function (d) { return String(d.opacity ? d.opacity : 0.2); });
+            .style("opacity", d => String(d.opacity ? d.opacity : 0.2));
         stanfordRegion.select("text")
             .transition()
             .duration(duration)
-            .attr("x", function (d) { return (isRotated ?
+            .attr("x", d => (isRotated ?
             yvCustom(getCentroid(d.points), "y") :
-            xvCustom(getCentroid(d.points), "x")); })
-            .attr("y", function (d) { return (isRotated ?
+            xvCustom(getCentroid(d.points), "x")))
+            .attr("y", d => (isRotated ?
             xvCustom(getCentroid(d.points), "x") :
-            yvCustom(getCentroid(d.points), "y")); })
-            .text(function (d) {
+            yvCustom(getCentroid(d.points), "y")))
+            .text(d => {
             if (d.text) {
-                var _a = countPointsInRegion(d.points), value = _a.value, percentage = _a.percentage;
+                const { value, percentage } = countPointsInRegion(d.points);
                 return d.text(value, percentage);
             }
             return "";
@@ -724,16 +522,15 @@ var Elements = /** @class */ (function () {
             .attr("dominant-baseline", "middle")
             .transition()
             .style("opacity", null);
-    };
-    Elements.prototype.updateStanfordElements = function (duration) {
-        if (duration === void 0) { duration = 0; }
+    }
+    updateStanfordElements(duration = 0) {
         this.updateStanfordLines(duration);
         this.updateStanfordRegions(duration);
-    };
-    Elements.prototype.xvCustom = function (d, xyValue) {
-        var $$ = this;
-        var axis = $$.axis, config = $$.config;
-        var value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+    }
+    xvCustom(d, xyValue) {
+        const $$ = this;
+        const { axis, config } = $$;
+        let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
         if (axis.isTimeSeries()) {
             value = parseDate.call($$, value);
         }
@@ -741,15 +538,14 @@ var Elements = /** @class */ (function () {
             value = config.axis_x_categories.indexOf(d.value);
         }
         return $$.scale.x(value);
-    };
-    Elements.prototype.yvCustom = function (d, xyValue) {
-        var $$ = this;
-        var yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y;
-        var value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+    }
+    yvCustom(d, xyValue) {
+        const $$ = this;
+        const yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y;
+        const value = xyValue ? d[xyValue] : $$.getBaseValue(d);
         return yScale(value);
-    };
-    return Elements;
-}());
+    }
+}
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -763,8 +559,8 @@ var Elements = /** @class */ (function () {
  * @returns {StanfordOptions}
  * @private
  */
-var Options = /** @class */ (function () {
-    function Options() {
+class Options {
+    constructor() {
         return {
             /**
              * Set the color of the color scale. This function receives a value between 0 and 1, and should return a color.
@@ -894,9 +690,13 @@ var Options = /** @class */ (function () {
             regions: []
         };
     }
-    return Options;
-}());
+}
 
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+// @ts-nocheck
 /**
  * Creates an HSL color object.
  * @param {number} h Hue (0-360)
@@ -905,8 +705,7 @@ var Options = /** @class */ (function () {
  * @param {number} opacity Opacity (0-1), defaults to 1
  * @returns {HSLColor} HSL color object
  */
-function hsl(h, s, l, opacity) {
-    if (opacity === void 0) { opacity = 1; }
+function hsl(h, s, l, opacity = 1) {
     return {
         h: +h,
         s: 1,
@@ -995,31 +794,31 @@ function hsl(h, s, l, opacity) {
  *     ]
  * })
  */
-var Stanford = /** @class */ (function (_super) {
-    __extends(Stanford, _super);
-    function Stanford(options) {
-        var _this = _super.call(this, options) || this;
-        _this.config = new Options();
-        return _this;
+class Stanford extends Plugin {
+    colorScale;
+    elements;
+    constructor(options) {
+        super(options);
+        this.config = new Options();
+        return this;
     }
-    Stanford.prototype.$beforeInit = function () {
-        var _this = this;
-        var $$ = this.$$;
+    $beforeInit() {
+        const { $$ } = this;
         // override on config values & methods
         $$.config.data_xSort = false;
-        $$.isMultipleX = function () { return true; };
-        $$.showGridFocus = function () { };
-        $$.labelishData = function (d) { return d.values; };
-        $$.opacityForCircle = function () { return 1; };
-        var getCurrentPadding = $$.getCurrentPadding.bind($$);
-        $$.getCurrentPadding = function () {
-            var padding = getCurrentPadding();
-            padding.right += _this.colorScale ? _this.colorScale.getColorScalePadding() : 0;
+        $$.isMultipleX = () => true;
+        $$.showGridFocus = () => { };
+        $$.labelishData = d => d.values;
+        $$.opacityForCircle = () => 1;
+        const getCurrentPadding = $$.getCurrentPadding.bind($$);
+        $$.getCurrentPadding = () => {
+            const padding = getCurrentPadding();
+            padding.right += this.colorScale ? this.colorScale.getColorScalePadding() : 0;
             return padding;
         };
-    };
-    Stanford.prototype.$init = function () {
-        var $$ = this.$$;
+    }
+    $init() {
+        const { $$ } = this;
         this.loadConfig();
         $$.color = this.getStanfordPointColor.bind($$);
         this.colorScale = new ColorScale(this);
@@ -1030,20 +829,19 @@ var Stanford = /** @class */ (function (_super) {
         this.colorScale.drawColorScale();
         $$.right += this.colorScale ? this.colorScale.getColorScalePadding() : 0;
         this.$redraw();
-    };
-    Stanford.prototype.$redraw = function (duration) {
-        var _a, _b;
-        (_a = this.colorScale) === null || _a === void 0 ? void 0 : _a.drawColorScale();
-        (_b = this.elements) === null || _b === void 0 ? void 0 : _b.updateStanfordElements(duration);
-    };
-    Stanford.prototype.getOptions = function () {
+    }
+    $redraw(duration) {
+        this.colorScale?.drawColorScale();
+        this.elements?.updateStanfordElements(duration);
+    }
+    getOptions() {
         return new Options();
-    };
-    Stanford.prototype.convertData = function () {
-        var data = this.$$.data.targets;
-        var epochs = this.options.epochs;
-        data.forEach(function (d) {
-            d.values.forEach(function (v, i) {
+    }
+    convertData() {
+        const data = this.$$.data.targets;
+        const epochs = this.options.epochs;
+        data.forEach(d => {
+            d.values.forEach((v, i) => {
                 v.epochs = epochs[i];
             });
             d.minEpochs = undefined;
@@ -1051,18 +849,18 @@ var Stanford = /** @class */ (function (_super) {
             d.colors = undefined;
             d.colorscale = undefined;
         });
-    };
-    Stanford.prototype.initStanfordData = function () {
-        var config = this.config;
-        var target = this.$$.data.targets[0];
+    }
+    initStanfordData() {
+        const { config } = this;
+        const target = this.$$.data.targets[0];
         // TODO STANFORD see if (data.js -> orderTargets)+ can be used instead
         // Make larger values appear on top
         target.values.sort(compareEpochs);
         // Get min/max epochs
-        var minEpoch = Infinity;
-        var maxEpoch = -Infinity;
-        for (var i = 0; i < target.values.length; i++) {
-            var e = target.values[i].epochs;
+        let minEpoch = Infinity;
+        let maxEpoch = -Infinity;
+        for (let i = 0; i < target.values.length; i++) {
+            const e = target.values[i].epochs;
             if (e < minEpoch)
                 minEpoch = e;
             if (e > maxEpoch)
@@ -1075,41 +873,51 @@ var Stanford = /** @class */ (function (_super) {
             interpolateHslLong(hsl(250), hsl(0));
         target.colorscale = scaleSequentialLog(target.colors)
             .domain([target.minEpochs, target.maxEpochs]);
-    };
-    Stanford.prototype.getStanfordPointColor = function (d) {
-        var target = this.data.targets[0];
+    }
+    getStanfordPointColor(d) {
+        const target = this.data.targets[0];
         return target.colorscale(d.epochs);
-    };
-    Stanford.prototype.setStanfordTooltip = function () {
-        var config = this.$$.config;
+    }
+    setStanfordTooltip() {
+        const { config } = this.$$;
         if (isEmpty(config.tooltip_contents)) {
             config.tooltip_contents = function (d, defaultTitleFormat, defaultValueFormat, color) {
-                var data_x = config.data_x;
-                var html = "<table class=\"".concat($TOOLTIP.tooltip, "\"><tbody>");
-                d.forEach(function (v) {
-                    var _a = v.id, id = _a === void 0 ? "" : _a, _b = v.value, value = _b === void 0 ? 0 : _b, _c = v.epochs, epochs = _c === void 0 ? 0 : _c, _d = v.x, x = _d === void 0 ? "" : _d;
-                    html += "<tr>\n\t\t\t\t\t\t\t<th>".concat(data_x || "", "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultTitleFormat(x), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>").concat(v.id, "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultValueFormat(value), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"").concat($TOOLTIP.tooltipName, "-").concat(id, "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:").concat(color(v), "\"></span>Epochs</td>\n\t\t\t\t\t\t\t<td class=\"value\">").concat(defaultValueFormat(epochs), "</td>\n\t\t\t\t\t\t</tr>");
+                const { data_x } = config;
+                let html = `<table class="${$TOOLTIP.tooltip}"><tbody>`;
+                d.forEach(v => {
+                    const { id = "", value = 0, epochs = 0, x = "" } = v;
+                    html += `<tr>
+							<th>${data_x || ""}</th>
+							<th class="value">${defaultTitleFormat(x)}</th>
+						</tr>
+						<tr>
+							<th>${v.id}</th>
+							<th class="value">${defaultValueFormat(value)}</th>
+						</tr>
+						<tr class="${$TOOLTIP.tooltipName}-${id}">
+							<td class="name"><span style="background-color:${color(v)}"></span>Epochs</td>
+							<td class="value">${defaultValueFormat(epochs)}</td>
+						</tr>`;
                 });
-                return "".concat(html, "</tbody></table>");
+                return `${html}</tbody></table>`;
             };
         }
-    };
-    Stanford.prototype.countEpochsInRegion = function (region) {
-        var $$ = this;
-        var target = $$.data.targets[0];
-        var total = target.values.reduce(function (accumulator, currentValue) { return accumulator + Number(currentValue.epochs); }, 0);
-        var value = target.values.reduce(function (accumulator, currentValue) {
+    }
+    countEpochsInRegion(region) {
+        const $$ = this;
+        const target = $$.data.targets[0];
+        const total = target.values.reduce((accumulator, currentValue) => accumulator + Number(currentValue.epochs), 0);
+        const value = target.values.reduce((accumulator, currentValue) => {
             if (pointInRegion(currentValue, region)) {
                 return accumulator + Number(currentValue.epochs);
             }
             return accumulator;
         }, 0);
         return {
-            value: value,
+            value,
             percentage: value !== 0 ? +(value / total * 100).toFixed(1) : 0
         };
-    };
-    return Stanford;
-}(Plugin));
+    }
+}
 
 export { Stanford as default };

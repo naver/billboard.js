@@ -5,52 +5,10 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260328005505
+ * @version 3.18.0-nightly-20260331005932
  * @requires billboard.js
  * @summary billboard.js plugin
 */
-/******************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-/* global Reflect, Promise, SuppressedError, Symbol, Iterator */
-
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-    return extendStatics(d, b);
-};
-
-function __extends(d, b) {
-    if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-
-var __assign = function() {
-    __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -59,180 +17,16 @@ var __assign = function() {
  * CSS class names definition
  * @private
  */
-var $COMMON = {
-    button: "bb-button",
-    chart: "bb-chart",
-    empty: "bb-empty",
-    main: "bb-main",
-    target: "bb-target",
-    EXPANDED: "_expanded_",
-    dummy: "_dummy_"
-};
-var $ARC = {
-    arc: "bb-arc",
-    arcLabelLine: "bb-arc-label-line",
-    arcLabelLineText: "bb-arc-label-line-text",
-    arcRange: "bb-arc-range",
-    arcs: "bb-arcs",
-    chartArc: "bb-chart-arc",
-    chartArcs: "bb-chart-arcs",
-    chartArcsBackground: "bb-chart-arcs-background",
-    chartArcsTitle: "bb-chart-arcs-title",
-    needle: "bb-needle"
-};
-var $AREA = {
-    area: "bb-area",
-    areas: "bb-areas"
-};
-var $AXIS = {
-    axis: "bb-axis",
-    axisX: "bb-axis-x",
-    axisXLabel: "bb-axis-x-label",
-    axisY: "bb-axis-y",
-    axisY2: "bb-axis-y2",
-    axisY2Label: "bb-axis-y2-label",
-    axisYLabel: "bb-axis-y-label",
-    axisXTooltip: "bb-axis-x-tooltip",
-    axisYTooltip: "bb-axis-y-tooltip",
-    axisY2Tooltip: "bb-axis-y2-tooltip",
-    axisTooltipX: "bb-axis-tooltip-x",
-    axisTooltipY: "bb-axis-tooltip-y"
-};
-var $BAR = {
-    bar: "bb-bar",
-    bars: "bb-bars",
-    chartBar: "bb-chart-bar",
-    chartBars: "bb-chart-bars",
-    barConnectLine: "bb-bar-connectLine"
-};
-var $CANDLESTICK = {
-    candlestick: "bb-candlestick",
-    candlesticks: "bb-candlesticks",
-    chartCandlestick: "bb-chart-candlestick",
-    chartCandlesticks: "bb-chart-candlesticks",
-    valueDown: "bb-value-down",
-    valueUp: "bb-value-up"
-};
-var $CIRCLE = {
-    chartCircles: "bb-chart-circles",
-    circle: "bb-circle",
-    circles: "bb-circles"
-};
-var $COLOR = {
-    colorPattern: "bb-color-pattern",
-    colorScale: "bb-colorscale"
-};
-var $DRAG = {
-    dragarea: "bb-dragarea",
-    INCLUDED: "_included_"
-};
-var $FUNNEL = {
-    funnel: "bb-funnel",
-    chartFunnel: "bb-chart-funnel",
-    chartFunnels: "bb-chart-funnels",
-    funnelBackground: "bb-funnel-background"
-};
-var $GAUGE = {
-    chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
-    chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
-    chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
-    chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
-    gaugeValue: "bb-gauge-value"
-};
-var $LEGEND = {
-    legend: "bb-legend",
-    legendBackground: "bb-legend-background",
-    legendItem: "bb-legend-item",
-    legendItemEvent: "bb-legend-item-event",
-    legendItemHidden: "bb-legend-item-hidden",
-    legendItemPoint: "bb-legend-item-point",
-    legendItemTile: "bb-legend-item-tile"
-};
-var $LINE = {
-    chartLine: "bb-chart-line",
-    chartLines: "bb-chart-lines",
-    line: "bb-line",
-    lines: "bb-lines"
-};
-var $EVENT = {
-    eventRect: "bb-event-rect",
-    eventRects: "bb-event-rects",
-    eventRectsMultiple: "bb-event-rects-multiple",
-    eventRectsSingle: "bb-event-rects-single"
-};
-var $FOCUS = {
-    focused: "bb-focused",
-    defocused: "bb-defocused",
-    legendItemFocused: "bb-legend-item-focused",
-    xgridFocus: "bb-xgrid-focus",
-    ygridFocus: "bb-ygrid-focus"
-};
-var $GRID = {
-    grid: "bb-grid",
-    gridLines: "bb-grid-lines",
-    xgrid: "bb-xgrid",
-    xgridLine: "bb-xgrid-line",
-    xgridLines: "bb-xgrid-lines",
-    xgrids: "bb-xgrids",
-    ygrid: "bb-ygrid",
-    ygridLine: "bb-ygrid-line",
-    ygridLines: "bb-ygrid-lines",
-    ygrids: "bb-ygrids"
-};
-var $RADAR = {
-    chartRadar: "bb-chart-radar",
-    chartRadars: "bb-chart-radars"
-};
-var $REGION = {
-    region: "bb-region",
-    regions: "bb-regions"
-};
-var $SELECT = {
-    selectedCircle: "bb-selected-circle",
-    selectedCircles: "bb-selected-circles",
-    SELECTED: "_selected_"
-};
-var $SHAPE = {
-    shape: "bb-shape",
-    shapes: "bb-shapes"
-};
-var $SUBCHART = {
-    brush: "bb-brush",
-    subchart: "bb-subchart"
-};
-var $TEXT = {
-    chartText: "bb-chart-text",
-    chartTexts: "bb-chart-texts",
-    text: "bb-text",
-    texts: "bb-texts",
-    title: "bb-title",
-    textBorderRect: "bb-text-border",
-    textLabelImage: "bb-text-label-image",
-    TextOverlapping: "text-overlapping"
-};
-var $TOOLTIP = {
-    tooltip: "bb-tooltip",
-    tooltipContainer: "bb-tooltip-container",
-    tooltipName: "bb-tooltip-name"
-};
-var $TREEMAP = {
-    treemap: "bb-treemap",
-    chartTreemap: "bb-chart-treemap",
-    chartTreemaps: "bb-chart-treemaps"
-};
-var $ZOOM = {
-    buttonZoomReset: "bb-zoom-reset",
-    zoomBrush: "bb-zoom-brush"
-};
-__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM);
+const $COMMON = {
+    target: "bb-target"};
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-var isDefined = function (v) { return typeof v !== "undefined"; };
-var isObjectType = function (v) { return typeof v === "object"; };
+const isDefined = (v) => typeof v !== "undefined";
+const isObjectType = (v) => typeof v === "object";
 
 /**
  * Load configuration option
@@ -240,12 +34,12 @@ var isObjectType = function (v) { return typeof v === "object"; };
  * @private
  */
 function loadConfig(config) {
-    var thisConfig = this.config;
-    var target;
-    var keys;
-    var read;
-    var find = function () {
-        var key = keys.shift();
+    const thisConfig = this.config;
+    let target;
+    let keys;
+    let read;
+    const find = () => {
+        const key = keys.shift();
         if (key && target && isObjectType(target) && key in target) {
             target = target[key];
             return find();
@@ -255,7 +49,7 @@ function loadConfig(config) {
         }
         return undefined;
     };
-    Object.keys(thisConfig).forEach(function (key) {
+    Object.keys(thisConfig).forEach(key => {
         target = config;
         keys = key.split("_");
         read = find();
@@ -286,57 +80,57 @@ function loadConfig(config) {
  * @example
  *   bb.plugin.stanford.version;  // ex) 1.9.0
  */
-var Plugin = /** @class */ (function () {
+class Plugin {
+    $$;
+    options;
+    config;
+    static version = "3.18.0-nightly-20260331005932";
     /**
      * Constructor
      * @param {Any} options config option object
      * @private
      */
-    function Plugin(options) {
-        if (options === void 0) { options = {}; }
+    constructor(options = {}) {
         this.options = options;
     }
     /**
      * Load plugin config from options
      * @private
      */
-    Plugin.prototype.loadConfig = function () {
+    loadConfig() {
         loadConfig.call(this, this.options);
-    };
+    }
     /**
      * Lifecycle hook for 'beforeInit' phase.
      * @private
      */
-    Plugin.prototype.$beforeInit = function () { };
+    $beforeInit() { }
     /**
      * Lifecycle hook for 'init' phase.
      * @private
      */
-    Plugin.prototype.$init = function () { };
+    $init() { }
     /**
      * Lifecycle hook for 'afterInit' phase.
      * @private
      */
-    Plugin.prototype.$afterInit = function () { };
+    $afterInit() { }
     /**
      * Lifecycle hook for 'redraw' phase.
      * @private
      */
-    Plugin.prototype.$redraw = function () { };
+    $redraw() { }
     /**
      * Lifecycle hook for 'willDestroy' phase.
      * @private
      */
-    Plugin.prototype.$willDestroy = function () {
-        var _this = this;
-        Object.keys(this).forEach(function (key) {
-            _this[key] = null;
-            delete _this[key];
+    $willDestroy() {
+        Object.keys(this).forEach(key => {
+            this[key] = null;
+            delete this[key];
         });
-    };
-    Plugin.version = "3.18.0-nightly-20260328005505";
-    return Plugin;
-}());
+    }
+}
 
 /**
  * Copyright (c) 2021 ~ present NAVER Corp.
@@ -350,8 +144,8 @@ var Plugin = /** @class */ (function () {
  * @returns {TableviewOptions}
  * @private
  */
-var Options = /** @class */ (function () {
-    function Options() {
+class Options {
+    constructor() {
         return {
             /**
              * Specify sparkline charts holder selector.
@@ -366,8 +160,7 @@ var Options = /** @class */ (function () {
             selector: undefined
         };
     }
-    return Options;
-}());
+}
 
 /**
  * Sparkline plugin.<br>
@@ -414,14 +207,15 @@ var Options = /** @class */ (function () {
  *     ]
  * })
  */
-var Sparkline = /** @class */ (function (_super) {
-    __extends(Sparkline, _super);
-    function Sparkline(options) {
-        var _this = _super.call(this, options) || this;
-        _this.config = new Options();
-        return _this;
+class Sparkline extends Plugin {
+    static version = `0.0.1`;
+    element;
+    constructor(options) {
+        super(options);
+        this.config = new Options();
+        return this;
     }
-    Sparkline.prototype.$beforeInit = function () {
+    $beforeInit() {
         this.loadConfig();
         this.validate();
         this.element = [].slice.call(document.querySelectorAll(this.config.selector));
@@ -433,10 +227,10 @@ var Sparkline = /** @class */ (function (_super) {
         this.overHandler = this.overHandler.bind(this);
         this.moveHandler = this.moveHandler.bind(this);
         this.outHandler = this.outHandler.bind(this);
-    };
-    Sparkline.prototype.validate = function () {
-        var _a = this, $$ = _a.$$, config = _a.config;
-        var msg = "";
+    }
+    validate() {
+        const { $$, config } = this;
+        let msg = "";
         if (!config.selector || !document.querySelector(config.selector)) {
             msg = "No holder elements found from given selector option.";
         }
@@ -444,12 +238,12 @@ var Sparkline = /** @class */ (function (_super) {
             msg = "Contains non supported chart types.";
         }
         if (msg) {
-            throw new Error("[Sparkline plugin] ".concat(msg));
+            throw new Error(`[Sparkline plugin] ${msg}`);
         }
-    };
-    Sparkline.prototype.overrideInternals = function () {
-        var $$ = this.$$;
-        var getBarW = $$.getBarW, getIndices = $$.getIndices;
+    }
+    overrideInternals() {
+        const { $$ } = this;
+        const { getBarW, getIndices } = $$;
         // override internal methods to positioning bars
         $$.getIndices = function (indices, d, caller) {
             return caller === "getShapeX" ? {} : getIndices.call(this, indices, d);
@@ -457,15 +251,15 @@ var Sparkline = /** @class */ (function (_super) {
         $$.getBarW = function (type, axis) {
             return getBarW.call(this, type, axis, 1);
         };
-    };
-    Sparkline.prototype.overrideOptions = function () {
-        var config = this.$$.config;
+    }
+    overrideOptions() {
+        const { config } = this.$$;
         config.legend_show = false;
         config.resize_auto = false;
         config.axis_x_show = false;
         // set default axes padding
         if (config.padding !== false) {
-            var hasOption = function (o) { return Object.keys(o || {}).length > 0; };
+            const hasOption = o => Object.keys(o || {}).length > 0;
             if (hasOption(config.axis_x_padding)) {
                 config.axis_x_padding = {
                     left: 15,
@@ -480,106 +274,101 @@ var Sparkline = /** @class */ (function (_super) {
         config.axis_y_show = false;
         if (!config.tooltip_position) {
             config.tooltip_position = function (data, width, height) {
-                var event = this.internal.state.event;
-                var top = event.pageY - (height * 1.35);
-                var left = event.pageX - (width / 2);
+                const { internal: { state: { event } } } = this;
+                let top = event.pageY - (height * 1.35);
+                let left = event.pageX - (width / 2);
                 if (top < 0) {
                     top = 0;
                 }
                 if (left < 0) {
                     left = 0;
                 }
-                return { top: top, left: left };
+                return { top, left };
             };
         }
-    };
-    Sparkline.prototype.$init = function () {
-        var _a;
-        var $el = this.$$.$el;
+    }
+    $init() {
+        const { $$: { $el } } = this;
         // make disable-ish main chart element
         $el.chart
             .style("width", "0")
             .style("height", "0")
             .style("pointer-events", "none");
-        ((_a = $el.tooltip) === null || _a === void 0 ? void 0 : _a.node()) && document.body.appendChild($el.tooltip.node());
-    };
-    Sparkline.prototype.$afterInit = function () {
-        var $$ = this.$$;
+        $el.tooltip?.node() && document.body.appendChild($el.tooltip.node());
+    }
+    $afterInit() {
+        const { $$ } = this;
         $$.$el.svg.attr("style", null)
             .style("width", "0")
             .style("height", "0");
         this.bindEvents(true);
-    };
+    }
     /**
      * Bind tooltip event handlers for each sparkline elements.
      * @param {boolean} bind or unbind
      * @private
      */
-    Sparkline.prototype.bindEvents = function (bind) {
-        var _this = this;
-        if (bind === void 0) { bind = true; }
-        var config = this.$$.config;
+    bindEvents(bind = true) {
+        const { $$: { config } } = this;
         if (config.interaction_enabled && config.tooltip_show) {
-            var method_1 = "".concat(bind ? "add" : "remove", "EventListener");
+            const method = `${bind ? "add" : "remove"}EventListener`;
             this.element
-                .forEach(function (el) {
-                var svg = el.querySelector("svg");
-                svg[method_1]("mouseover", _this.overHandler);
-                svg[method_1]("mousemove", _this.moveHandler);
-                svg[method_1]("mouseout", _this.outHandler);
+                .forEach(el => {
+                const svg = el.querySelector("svg");
+                svg[method]("mouseover", this.overHandler);
+                svg[method]("mousemove", this.moveHandler);
+                svg[method]("mouseout", this.outHandler);
             });
         }
-    };
-    Sparkline.prototype.overHandler = function (e) {
-        var $$ = this.$$;
-        var eventReceiver = $$.state.eventReceiver;
+    }
+    overHandler(e) {
+        const { $$ } = this;
+        const { state: { eventReceiver } } = $$;
         eventReceiver.rect = e.target.getBoundingClientRect();
-    };
-    Sparkline.prototype.moveHandler = function (e) {
-        var _a, _b, _c, _d;
-        var $$ = this.$$;
-        var index = $$.getDataIndexFromEvent(e);
-        var data = (_a = $$.api.data(e.target.__id)) === null || _a === void 0 ? void 0 : _a[0];
-        var d = (_b = data === null || data === void 0 ? void 0 : data.values) === null || _b === void 0 ? void 0 : _b[index];
+    }
+    moveHandler(e) {
+        const { $$ } = this;
+        const index = $$.getDataIndexFromEvent(e);
+        const data = $$.api.data(e.target.__id)?.[0];
+        const d = data?.values?.[index];
         if (d && !d.name) {
             d.name = d.id;
         }
         $$.state.event = e;
-        if (((_c = $$.isPointFocusOnly) === null || _c === void 0 ? void 0 : _c.call($$)) && d) {
-            (_d = $$.showCircleFocus) === null || _d === void 0 ? void 0 : _d.call($$, [d]);
+        if ($$.isPointFocusOnly?.() && d) {
+            $$.showCircleFocus?.([d]);
         }
         $$.setExpand(index, data.id, true);
         $$.showTooltip([d], e.target);
-    };
-    Sparkline.prototype.outHandler = function (e) {
-        var $$ = this.$$;
+    }
+    outHandler(e) {
+        const { $$ } = this;
         $$.state.event = e;
         $$.isPointFocusOnly() ? $$.hideCircleFocus() : $$.unexpandCircles();
         $$.hideTooltip();
-    };
-    Sparkline.prototype.$redraw = function () {
-        var _a;
-        var $$ = this.$$;
-        var $el = $$.$el;
-        var el = this.element;
-        var data = $$.api.data();
-        var svgWrapper = (_a = $el.chart.html().match(/<svg[^>]*>/)) === null || _a === void 0 ? void 0 : _a[0];
+    }
+    $redraw() {
+        const { $$ } = this;
+        const { $el } = $$;
+        let el = this.element;
+        const data = $$.api.data();
+        const svgWrapper = $el.chart.html().match(/<svg[^>]*>/)?.[0];
         // append sparkline holder if is less than the data length
         if (el.length < data.length) {
-            var chart = $el.chart.node();
-            for (var i = data.length - el.length; i > 0; i--) {
+            const chart = $el.chart.node();
+            for (let i = data.length - el.length; i > 0; i--) {
                 chart.parentNode.insertBefore(el[0].cloneNode(), chart.nextSibling);
             }
             this.element = document.querySelectorAll(this.config.selector);
             el = this.element;
         }
-        data.map(function (v) { return v.id; })
-            .forEach(function (id, i) {
-            var selector = ".".concat($COMMON.target, "-").concat(id);
-            var shape = $el.main.selectAll(selector);
-            var svg = el[i].querySelector("svg");
+        data.map(v => v.id)
+            .forEach((id, i) => {
+            const selector = `.${$COMMON.target}-${id}`;
+            const shape = $el.main.selectAll(selector);
+            let svg = el[i].querySelector("svg");
             if (!svg) {
-                el[i].innerHTML = "".concat(svgWrapper, "</svg>");
+                el[i].innerHTML = `${svgWrapper}</svg>`;
                 svg = el[i].querySelector("svg");
                 svg.__id = id;
             }
@@ -592,16 +381,14 @@ var Sparkline = /** @class */ (function (_super) {
             svg.innerHTML = "";
             svg.appendChild(shape.node());
         });
-    };
-    Sparkline.prototype.$willDestroy = function () {
+    }
+    $willDestroy() {
         this.bindEvents(false);
         this.element
-            .forEach(function (el) {
+            .forEach(el => {
             el.innerHTML = "";
         });
-    };
-    Sparkline.version = "0.0.1";
-    return Sparkline;
-}(Plugin));
+    }
+}
 
 export { Sparkline as default };
