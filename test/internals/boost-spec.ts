@@ -28,7 +28,30 @@ describe("BOOST", () => {
 		chart = util.generate(args);
 	});
 
-	describe("useCssRule", () => {		
+	describe("useCssRule", () => {
+		it("should have correct rootSelector in state.style for CSS scoping", () => {
+			const {state} = chart.internal;
+
+			expect(state.style).to.not.be.undefined;
+			expect(state.style.rootSelector).to.be.a("string");
+			expect(state.style.rootSelector).to.include(`.${state.datetimeId}`);
+			expect(state.style.sheet).to.not.be.null;
+		});
+
+		it("should apply scoped CSS rules with rootSelector prefix", () => {
+			const {state} = chart.internal;
+			const {sheet, rootSelector} = state.style;
+
+			// CSS rules should exist and contain the rootSelector
+			expect(sheet.cssRules.length).to.be.greaterThan(0);
+
+			const hasScoped = Array.from(sheet.cssRules).some(
+				(rule: any) => rule.cssText?.includes(rootSelector.trim())
+			);
+
+			expect(hasScoped).to.be.true;
+		});
+
 		it("shouldn't set inline style props for <circle>, <text> elements", () => {
 			const {$el: {circle, legend, text}} = chart.internal;
 

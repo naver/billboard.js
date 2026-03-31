@@ -28,6 +28,9 @@ export default {
 				d.values.splice(0, flowLength);
 			});
 
+			// Increment dataGeneration to invalidate data-dependent caches
+			state.dataGeneration++;
+
 			// update elements related to x scale
 			if ($$.updateXGrid) {
 				$$.updateXGrid(true);
