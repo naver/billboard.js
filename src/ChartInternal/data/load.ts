@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {$LEGEND} from "../../config/classes";
+import {KEY} from "../../module/Cache";
 import {endall} from "../../module/util";
 
 /**
@@ -122,8 +123,16 @@ export default {
 			return;
 		}
 
-		// reset internally cached data
-		$$.cache.reset();
+		// Reset non-generation-based caches only.
+		// Generation-based caches ($filteredTargets, $maxDataCountTarget, $valuesXIndexMap,
+		// $maxTickSize_*) are invalidated automatically by dataGeneration/redrawGeneration
+		// increments at the start of the next redraw — no need to delete them eagerly.
+		$$.cache.reset(false, [
+			KEY.filteredTargets,
+			KEY.maxDataCountTarget,
+			KEY.valuesXIndexMap,
+			KEY.maxTickSize
+		]);
 
 		$$.convertData(args, d => {
 			const data = args.data || d;
@@ -140,8 +149,13 @@ export default {
 		let done = customDoneCb;
 		let targetIds = rawTargetIds;
 
-		// reset internally cached data
-		$$.cache.reset();
+		// Reset non-generation-based caches only (same rationale as loadFromArgs)
+		$$.cache.reset(false, [
+			KEY.filteredTargets,
+			KEY.maxDataCountTarget,
+			KEY.valuesXIndexMap,
+			KEY.maxTickSize
+		]);
 
 		if (!done) {
 			done = () => {};

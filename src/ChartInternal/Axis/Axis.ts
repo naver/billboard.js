@@ -2,6 +2,42 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
+/**
+ * Sample representative tick nodes to avoid N forced reflows in getMaxTickSize
+ * @param {SVGTextElement[]} nodes All tick text nodes
+ * @returns {SVGTextElement[]} Sampled subset: first, last, longest, and middle nodes
+ * @private
+ */
+function _sampleTickNodes(nodes: SVGTextElement[]): SVGTextElement[] {
+	const sampled = [nodes[0], nodes[nodes.length - 1]];
+
+	// Find the node with the longest text content (likely widest)
+	let maxLen = 0;
+	let longestNode: SVGTextElement | null = null;
+
+	for (const node of nodes) {
+		const len = node.textContent?.length ?? 0;
+
+		if (len > maxLen) {
+			maxLen = len;
+			longestNode = node;
+		}
+	}
+
+	if (longestNode && !sampled.includes(longestNode)) {
+		sampled.push(longestNode);
+	}
+
+	// Add a middle sample
+	const mid = nodes[Math.floor(nodes.length / 2)];
+
+	if (!sampled.includes(mid)) {
+		sampled.push(mid);
+	}
+
+	return sampled;
+}
 import {
 	axisBottom as d3AxisBottom,
 	axisLeft as d3AxisLeft,
@@ -725,14 +761,22 @@ class Axis {
 					textNodes.push(this);
 				});
 
-				textNodes.map(node => getBoundingRect(node, true)).forEach((dim, i) => {
+				// Sample a representative subset to avoid N forced reflows on large tick sets
+				const nodesToMeasure = textNodes.length <= 5 ?
+					textNodes :
+					_sampleTickNodes(textNodes);
+
+				nodesToMeasure.map(node => getBoundingRect(node, true)).forEach(dim => {
 					max.width = Math.max(max.width, dim.width);
 					max.height = Math.max(max.height, dim.height);
-
-					if (!isYAxis) {
-						currentTickMax.ticks[i] = dim.width;
-					}
 				});
+
+				// Estimate per-tick width from measured max for culling calculations
+				if (!isYAxis) {
+					for (let i = 0; i < textNodes.length; i++) {
+						currentTickMax.ticks[i] = max.width;
+					}
+				}
 			}
 
 			dummy.remove();
@@ -1087,14 +1131,20 @@ class Axis {
 						}
 					}
 
+					// Build index map once: O(n) instead of O(n²) indexOf per tick
+					const tickIndexMap = new Map();
+
+					for (let i = 0; i < tickValues.length; i++) {
+						tickIndexMap.set(tickValues[i], i);
+					}
+
 					tickNodes
 						.each(function(d) {
 							const node = lines ? this.querySelector("text") : this;
 
 							if (node) {
-								node.style.display = tickValues.indexOf(d) % intervalForCulling ?
-									"none" :
-									null;
+								node.style.display =
+									(tickIndexMap.get(d) ?? 0) % intervalForCulling ? "none" : null;
 							}
 						});
 				} else {

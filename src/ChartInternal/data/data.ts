@@ -213,6 +213,12 @@ export default {
 	},
 
 	getValueOnIndex(values, index: number) {
+		// Fast path: values are sorted by index from convertDataToTargets
+		if (values[index]?.index === index) {
+			return values[index];
+		}
+
+		// Fallback for sparse/reordered data
 		const valueOnIndex = values.filter(v => v.index === index);
 
 		return valueOnIndex.length ? valueOnIndex[0] : null;
