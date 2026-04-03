@@ -138,12 +138,20 @@ export default {
 		const $$ = this;
 		const {bar} = isSub ? $$.$el.subchart : $$.$el;
 		const barPath: BarConnectLine[] = [];
+		const connectLineCache = new Map<string, string | null>();
 
 		return [
 			$$.$T(bar, withTransition, getRandom())
 				.attr("d", function(d, i, arr) {
 					const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
-					const connectLineType = _getConnectLineType.call($$, d.id);
+
+					// Memoize per series id: config lookup + regex runs once per id, not per bar
+					let connectLineType = connectLineCache.get(d.id);
+
+					if (connectLineType === undefined) {
+						connectLineType = _getConnectLineType.call($$, d.id);
+						connectLineCache.set(d.id, connectLineType);
+					}
 
 					// for bar.coonectLine option
 					if (path.length > 1) {
@@ -329,14 +337,16 @@ export default {
 
 		// Get sorted Ids. Filter positive or negative values Ids from given value
 		const sortedIds = sortedList
-			.map(v =>
-				v.values.filter(
-					v2 =>
-						v2.index === index && (
-							isNumber(value) && value > 0 ? v2.value > 0 : v2.value < 0
-						)
-				)[0]
-			)
+			.map(v => {
+				// Direct index access (values are sorted by index from convertDataToTargets)
+				const v2 = v.values[index];
+
+				if (v2 && (isNumber(value) && value > 0 ? v2.value > 0 : v2.value < 0)) {
+					return v2;
+				}
+
+				return undefined;
+			})
 			.filter(Boolean)
 			.map(v => v.id);
 

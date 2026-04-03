@@ -75,7 +75,10 @@ export default {
 			$$.scale.zoom = null;
 
 			// Ensure shapes are fully updated on flush
-			state.dirty.data = true;
+			// Skip for resize-only: data hasn't changed, only geometry needs recalculation
+			if (!state.resizing) {
+				state.dirty.data = true;
+			}
 
 			soft ?
 				$$.redraw({

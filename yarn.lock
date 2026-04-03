@@ -17512,11 +17512,11 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A^6.0.2#optional!builtin<compat/typescript>":
   version: 6.0.2
-  resolution: "typescript@patch:typescript@npm%3A6.0.2#optional!builtin<compat/typescript>::version=6.0.2&hash=379a07"
+  resolution: "typescript@patch:typescript@npm%3A6.0.2#optional!builtin<compat/typescript>::version=6.0.2&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/4c3eccf92033332f7ec412d762d5049de77b76d78faa26468bc3ad869b3e53d0e70540bf32653e4380adf537f1d716ac0fa50839864bf9e5ee406843a2c936a4
+  checksum: 10c0/49f0b84fc6ca55653e77752b8a61beabc09ee3dae5d965c31596225aa6ef213c5727b1d2e895b900416dc603854ba0872ac4a812c2a4ed6793a601f9c675de02
   languageName: node
   linkType: hard
 
