@@ -10,6 +10,7 @@ import {
 	capitalize,
 	getBBox,
 	getBoundingRect,
+	getElementPos,
 	getRandom,
 	getTranslation,
 	isFunction,
@@ -452,6 +453,7 @@ export default {
 		const isRotated = config.axis_rotated;
 		const isFunnelType = $$.isFunnelType(d);
 		const isTreemapType = $$.isTreemapType(d);
+
 		let xPos = points ? points[0][0] : 0;
 
 		if ($$.isCandlestickType(d)) {
@@ -461,7 +463,13 @@ export default {
 				xPos += (points[1][0] - xPos) / 2;
 			}
 		} else if (isFunnelType) {
-			xPos += $$.state.current.width / 2;
+			// Use pre-calculated center x from points[2]
+			// Preserve current position when points unavailable (during hide transition)
+			if (points) {
+				xPos = points[2]?.[0] ?? xPos;
+			} else {
+				return getElementPos(textElement, "x");
+			}
 		} else if (isTreemapType) {
 			xPos += config.data_labels.centered ? 0 : 5;
 		} else {
@@ -471,18 +479,13 @@ export default {
 				const value = d.value as number;
 
 				xPos = points[2][1];
-
-				if (isInverted) {
-					xPos -= padding * (value > 0 ? 1 : -1);
-				} else {
-					xPos += padding * (value < 0 ? -1 : 1);
-				}
+				xPos += padding * ((isInverted ? value > 0 : value < 0) ? -1 : 1);
 			} else {
 				xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
 			}
 		}
 
-		if (isRotated || isTreemapType) {
+		if (isRotated || isTreemapType || isFunnelType) {
 			xPos += $$.getCenteredTextPos(d, points, textElement, "x", cachedBbox);
 		}
 
@@ -526,9 +529,13 @@ export default {
 				}
 			}
 		} else if (isFunnelType) {
-			yPos = points ?
-				points[0][1] + ((points[1][1] - points[0][1]) / 2) + rect.height / 2 - 3 :
-				0;
+			// Use pre-calculated center y from points[2]
+			// Preserve current position when points unavailable (during hide transition)
+			if (points) {
+				yPos = (points[2]?.[1] ?? points[0][1]) + rect.height / 2 - 3;
+			} else {
+				return getElementPos(textElement, "y");
+			}
 		} else if (isTreemapType) {
 			yPos = points[0][1] + (config.data_labels.centered ? 0 : rect.height + 5);
 		} else {

@@ -1,8 +1,25 @@
 import {resolve} from "node:path";
 import {defineConfig} from "vitest/config";
-import { playwright } from "@vitest/browser-playwright";
+import {playwright} from "@vitest/browser-playwright";
+
+const utilAliasPlugin = {
+    name: "util-alias-resolver",
+    enforce: "pre" as const,
+    resolveId(source: string, importer: string | undefined) {
+        if (/\/module\/util/i.test(source) && importer) {
+            const cleanImporter = importer.split("?")[0];
+
+            // Only redirect src/ imports to the test stub;
+            // let the test stub itself resolve to the real src/module/util
+            if (/\/src\//.test(cleanImporter) && !/test\/assets/.test(cleanImporter)) {
+                return resolve(__dirname, "./test/assets/module/util.ts");
+            }
+        }
+    }
+};
 
 export default defineConfig({
+    plugins: [utilAliasPlugin],
     optimizeDeps: {
         include: ["@vitest/coverage-istanbul"]
     },
@@ -10,7 +27,7 @@ export default defineConfig({
         preprocessorOptions: {
             scss: {
                 silenceDeprecations: ["legacy-js-api"]
-            }        
+            }
         }
     },
     test: {
@@ -54,17 +71,6 @@ export default defineConfig({
             ],
             screenshotFailures: false
         },
-        alias: [
-            {
-                find: /(.*)\/module\/util/i,
-                replacement: "./test/assets/module/util",
-                customResolver(source, importer, options) {
-                    if (/src/.test(<string>importer)) {
-                        return resolve(__dirname, source + ".ts");
-                    }
-                },
-            }
-        ],
         css: {
             include: [
                 /.+/

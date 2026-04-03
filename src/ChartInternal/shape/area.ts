@@ -8,6 +8,7 @@ import {d3Selection} from "../../../types";
 import {$AREA, $CIRCLE, $LINE} from "../../config/classes";
 import {getRandom} from "../../module/util";
 import type {IData, IDataRow} from "../data/IData";
+import {getShapeColorWithGradient} from "./shape";
 
 type Indices = {[key: string | "__max__"]: number};
 
@@ -30,7 +31,7 @@ export default {
 	updateAreaColor(d: IDataRow): string {
 		const $$ = this;
 
-		return $$.config.area_linearGradient ? $$.getGradienColortUrl(d.id) : $$.color(d);
+		return getShapeColorWithGradient.call($$, d, "area_linearGradient", $$.color) as string;
 	},
 
 	/**

@@ -4,8 +4,7 @@
  */
 import type {d3Selection} from "billboard.js/types/types";
 import {Delaunay as d3Delaunay} from "d3-delaunay";
-import {polygonArea as d3PolygonArea, polygonCentroid as d3PolygonCentroid} from "d3-polygon";
-import {loadConfig} from "../../config/config";
+import {polygonArea, polygonCentroid} from "../../module/polygon";
 import Plugin from "../Plugin";
 import Options from "./Options";
 
@@ -17,10 +16,8 @@ import Options from "./Options";
  *   - Non required modules from billboard.js core, need to be installed separately.
  *   - Appropriate and works for axis based chart.
  * - **Required modules:**
- *   - [d3-polygon](https://github.com/d3/d3-polygon)
  *   - [d3-delaunay](https://github.com/d3/d3-delaunay)
  * @class plugin-textoverlap
- * @requires d3-polygon
  * @requires d3-delaunay
  * @param {object} options TextOverlap plugin options
  * @augments Plugin
@@ -53,8 +50,6 @@ import Options from "./Options";
  * })
  */
 export default class TextOverlap extends Plugin {
-	private config;
-
 	constructor(options?: Options) {
 		super(options);
 		this.config = new Options();
@@ -63,7 +58,7 @@ export default class TextOverlap extends Plugin {
 	}
 
 	$init(): void {
-		loadConfig.call(this, this.options);
+		this.loadConfig();
 	}
 
 	$redraw(): void {
@@ -110,11 +105,8 @@ export default class TextOverlap extends Plugin {
 
 			if (cell && this) {
 				const [x, y] = points[i];
-				// @ts-ignore wrong type definiton for d3PolygonCentroid
-				const [cx, cy] = d3PolygonCentroid(cell);
-
-				// @ts-ignore wrong type definiton for d3PolygonArea
-				const polygonArea = Math.abs(d3PolygonArea(cell));
+				const [cx, cy] = polygonCentroid(cell);
+				const cellArea = Math.abs(polygonArea(cell));
 
 				const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
 				const xTranslate = extent * (angle === 0 ? 1 : -1);
@@ -124,7 +116,7 @@ export default class TextOverlap extends Plugin {
 					"middle" :
 					(angle === 0 ? "start" : "end");
 
-				this.style.display = polygonArea < area ? "none" : "";
+				this.style.display = cellArea < area ? "none" : "";
 				this.setAttribute("text-anchor", txtAnchor);
 				this.setAttribute("dy", `0.${angle === 1 ? 71 : 35}em`);
 				this.setAttribute("transform", `translate(${xTranslate}, ${yTranslate})`);

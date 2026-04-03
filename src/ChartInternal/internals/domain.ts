@@ -20,58 +20,110 @@ import {
 import type {IData, TDomainRange} from "../data/IData";
 
 export default {
-	getYDomainMinMax(targets, type: "min" | "max"): number | Date | undefined {
+	/**
+	 * Get both min and max Y domain values in a single pass.
+	 * Avoids calling getValuesAsIdKeyed twice.
+	 * @param {Array} targets Target data
+	 * @returns {[number|Date|undefined, number|Date|undefined]} [min, max]
+	 * @private
+	 */
+	getYDomainMinMaxBoth(targets): [number | Date | undefined, number | Date | undefined] {
 		const $$ = this;
 		const {axis, config} = $$;
-		const isMin = type === "min";
-
 		const dataGroups = config.data_groups;
 		const ids = $$.mapToIds(targets);
-		const idsSet = toSet(ids); // O(1) lookup instead of O(n) indexOf
-		const ys = $$.getValuesAsIdKeyed(targets);
+		const idsSet = toSet(ids);
+		const rawYs = $$.getValuesAsIdKeyed(targets);
 
 		if (dataGroups.length > 0) {
-			const hasValue = $$[`has${isMin ? "Negative" : "Positive"}ValueInTargets`](targets);
-
-			// Pre-compute axis IDs for O(1) lookup instead of repeated axis.getId() calls
+			const hasNegative = targets.some(t => t.values.some(v => v.value < 0));
+			const hasPositive = targets.some(t => t.values.some(v => v.value > 0));
 			const axisIdMap = new Map(ids.map(id => [id, axis.getId(id)]));
 
+			// Clone ys into separate min/max copies since grouped calculation mutates values
+			const ysMin = {};
+			const ysMax = {};
+
+			for (const key in rawYs) {
+				ysMin[key] = rawYs[key].slice();
+				ysMax[key] = rawYs[key].slice();
+			}
+
 			dataGroups.forEach(groupIds => {
-				// Determine baseId
-				const idsInGroup = groupIds
-					.filter(v => idsSet.has(v));
+				const idsInGroup = groupIds.filter(v => idsSet.has(v));
 
 				if (idsInGroup.length) {
 					const baseId = idsInGroup[0];
 					const baseAxisId = axisIdMap.get(baseId);
 
-					// Initialize base value. Set to 0 if not match with the condition
-					if (hasValue && ys[baseId]) {
-						ys[baseId] = ys[baseId]
-							.map(v => ((isMin ? v < 0 : v > 0) ? v : 0));
+					// Initialize base values for min (negative) and max (positive)
+					if (ysMin[baseId] && hasNegative) {
+						ysMin[baseId] = ysMin[baseId].map(v => (v < 0 ? v : 0));
+					}
+
+					if (ysMax[baseId] && hasPositive) {
+						ysMax[baseId] = ysMax[baseId].map(v => (v > 0 ? v : 0));
 					}
 
 					idsInGroup
 						.filter((v, i) => i > 0)
 						.forEach(id => {
-							if (ys[id]) {
+							if (ysMin[id]) {
 								const axisId = axisIdMap.get(id);
 
-								ys[id].forEach((v, i) => {
+								ysMin[id].forEach((v, i) => {
 									const val = +v;
-									const meetCondition = isMin ? val > 0 : val < 0;
 
-									if (axisId === baseAxisId && !(hasValue && meetCondition)) {
-										ys[baseId][i] += val;
+									// min pass: skip positive values when hasNegative
+									if (axisId === baseAxisId && !(hasNegative && val > 0)) {
+										ysMin[baseId][i] += val;
+									}
+								});
+							}
+
+							if (ysMax[id]) {
+								const axisId = axisIdMap.get(id);
+
+								ysMax[id].forEach((v, i) => {
+									const val = +v;
+
+									// max pass: skip negative values when hasPositive
+									if (axisId === baseAxisId && !(hasPositive && val < 0)) {
+										ysMax[baseId][i] += val;
 									}
 								});
 							}
 						});
 				}
 			});
+
+			const minVals: number[] = [];
+			const maxVals: number[] = [];
+
+			for (const key in ysMin) {
+				minVals.push(getMinMax("min", ysMin[key]));
+				maxVals.push(getMinMax("max", ysMax[key]));
+			}
+
+			return [
+				getMinMax("min", minVals),
+				getMinMax("max", maxVals)
+			];
 		}
 
-		return getMinMax(type, Object.keys(ys).map(key => getMinMax(type, ys[key])));
+		// No groups — compute min/max directly from rawYs without cloning
+		const minVals: number[] = [];
+		const maxVals: number[] = [];
+
+		for (const key in rawYs) {
+			minVals.push(getMinMax("min", rawYs[key]));
+			maxVals.push(getMinMax("max", rawYs[key]));
+		}
+
+		return [
+			getMinMax("min", minVals),
+			getMinMax("max", maxVals)
+		];
 	},
 
 	/**
@@ -130,8 +182,9 @@ export default {
 		const showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated;
 		const showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
 
-		let yDomainMin = $$.getYDomainMinMax(yTargets, "min");
-		let yDomainMax = $$.getYDomainMinMax(yTargets, "max");
+		const [yDomainMinVal, yDomainMaxVal] = $$.getYDomainMinMaxBoth(yTargets);
+		let yDomainMin = yDomainMinVal;
+		let yDomainMax = yDomainMaxVal;
 
 		let isZeroBased = [TYPE.BAR, TYPE.BUBBLE, TYPE.SCATTER, ...TYPE_BY_CATEGORY.Line]
 			.some(v => {
@@ -504,11 +557,10 @@ export default {
 		const [min, max] = range as number[];
 
 		if (Array.isArray(domain)) {
-			const target = [...domain];
+			const lo = isInverted ? domain[1] : domain[0];
+			const hi = isInverted ? domain[0] : domain[1];
 
-			isInverted && target.reverse();
-
-			if (target[0] < target[1]) {
+			if (lo < hi) {
 				return domain.every((v, i) =>
 					(
 						i === 0 ?

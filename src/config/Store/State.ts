@@ -156,8 +156,8 @@ export default class State {
 
 			// value for Arc
 			radius: 0,
-			innerRadius: <{[key: string]: number} | number>0,
-			outerRadius: <{[key: string]: number} | number | undefined>undefined,
+			innerRadius: <Record<string, number> | number>0,
+			outerRadius: <Record<string, number> | number | undefined>undefined,
 			innerRadiusRatio: 0,
 			gaugeArcWidth: 0,
 			radiusExpanded: 0,
@@ -172,7 +172,29 @@ export default class State {
 
 			// RAF batching for zoom/drag interactions
 			pendingRaf: <number | null>null,
-			rafBatchQueue: <Array<() => void>>[]
+			rafBatchQueue: <Array<() => void>>[],
+
+			// Dirty flags for selective redraw
+			dirty: {
+				data: false, // data changed (load/unload)
+				visibility: false, // show/hide toggled
+				size: false // dimensions changed
+			},
+
+			// Performance: generation counters for cache invalidation
+			redrawGeneration: 0, // increments every redraw (for per-redraw caches)
+			dataGeneration: 0, // increments on data/visibility changes (for data-dependent caches)
+
+			// Performance: cached values for reuse within redraw cycle
+			_targetsToShow: <any[] | null>null,
+			_cachedDrawShape: <any>null,
+			_eventRectFingerprint: <string | null>null,
+
+			// Performance: throttle tooltip position updates on mousemove
+			_lastTooltipMouse: <number[] | null>null,
+
+			// Performance: cached grid focus D3 selection
+			_gridFocusEl: <any>null
 		};
 	}
 }

@@ -80,6 +80,12 @@ window.bench = {
             return;
         }
 
+        // Destroy existing chart instance to prevent memory leak
+        if (this.chart) {
+            this.chart.destroy();
+            this.chart = null;
+        }
+
         const chartType = this.$el.type.value;
 
         this.perf(false, "Generate");
@@ -127,25 +133,30 @@ window.bench = {
         this.chart.load({
             columns: this.getData(),
             done: function() {
+                ctx.perf(true, "Load");
                 ctx.timer = setTimeout(bench.load.bind(bench), 500);
             }
         });
-
-        this.perf(true, "Load");
     },
     resize: function() {
         this.stop();
-        
+        const duration = +this.$el.transition.value;
+
         this.timer = setInterval(() => {
             this.perf(false, "Resize");
-            
+
             bench.chart.resize({
                 width: this.getRandom(200, 600),
                 height: this.getRandom(200, 480)
             });
 
-            this.perf(true, "Resize");
-        }, 500);
+            if (duration > 0) {
+                // Wait for transition to complete before measuring
+                setTimeout(() => this.perf(true, "Resize"), duration + 50);
+            } else {
+                this.perf(true, "Resize");
+            }
+        }, Math.max(500, duration + 100));
     },
     stop: function() {
         this.play = false;

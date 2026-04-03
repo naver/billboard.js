@@ -19,7 +19,7 @@ export default {
 	 *  // Update x values for all targets
 	 *  chart.x([100, 200, 300, 400, ...]);
 	 */
-	x(x?: number[]): {[key: string]: number[]} {
+	x(x?: number[]): Record<string, number[]> {
 		const $$ = this.internal;
 		const {axis, data} = $$;
 		const isCategorized = axis.isCustomX() && axis.isCategorized();
@@ -29,6 +29,7 @@ export default {
 				this.categories(x);
 			} else {
 				$$.updateTargetX(data.targets, x);
+				$$.state.dirty.data = true;
 
 				$$.redraw({
 					withUpdateOrgXDomain: true,
@@ -57,11 +58,12 @@ export default {
 	 *    data2: [100, 200, 300, 400, ...]
 	 *  });
 	 */
-	xs(xs?: {[key: string]: number[]}): {[key: string]: number[]} {
+	xs(xs?: Record<string, number[]>): Record<string, number[]> {
 		const $$ = this.internal;
 
 		if (isObject(xs)) {
 			$$.updateTargetXs($$.data.targets, xs);
+			$$.state.dirty.data = true;
 
 			$$.redraw({
 				withUpdateOrgXDomain: true,

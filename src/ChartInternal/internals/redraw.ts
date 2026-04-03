@@ -4,6 +4,7 @@
  */
 import {transition as d3Transition} from "d3-transition";
 import {$COMMON, $SELECT, $TEXT} from "../../config/classes";
+import {KEY} from "../../module/Cache";
 import {generateWait} from "../../module/generator";
 import {callFn, capitalize, getOption, isTabVisible, notEmpty} from "../../module/util";
 
@@ -15,7 +16,35 @@ export default {
 
 		state.redrawing = true;
 
+		// Increment generation counters for cache invalidation
+		state.redrawGeneration++;
+
+		if (state.dirty.data || state.dirty.visibility || options.initializing) {
+			state.dataGeneration++;
+		}
+
+		// Invalidate per-redraw caches (only when size changed or initializing)
+		if (options.initializing || state.dirty.size || state.dirty.data || !state.rendered) {
+			$$.cache.remove([KEY.svgLeft]);
+		}
+
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+
+		// Cache for reuse by sub-methods within this redraw cycle
+		state._targetsToShow = targetsToShow;
+
+		// Capture and reset dirty flags immediately to avoid race conditions
+		// (async afterRedraw could wipe flags set by a subsequent redraw)
+		const dirtySnapshot = {
+			data: state.dirty.data,
+			visibility: state.dirty.visibility,
+			size: state.dirty.size
+		};
+
+		state.dirty.data = false;
+		state.dirty.visibility = false;
+		state.dirty.size = false;
+
 		const {flow, initializing} = options;
 		const wth = $$.getWithOption(options);
 		const duration = wth.Transition ? config.transition_duration : 0;
@@ -42,6 +71,14 @@ export default {
 			.text(config.data_empty_label_text)
 			.style("display", targetsToShow.length ? "none" : null);
 
+		// title - position early so other elements can calculate correct padding
+		$$.redrawTitle?.();
+
+		// Shape DOM updates (D3 data join: enter/update/exit) are only needed when data or
+		// visibility changes. Zoom/brush only need redraw*() (position recalculation via
+		// getRedrawList), not update*(). New APIs that modify data must set dirty flags.
+		const needShapeUpdate = dirtySnapshot.data || dirtySnapshot.visibility || initializing;
+
 		// update axis
 		if (state.hasAxis) {
 			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
@@ -57,7 +94,9 @@ export default {
 				const name = capitalize(v);
 
 				if ((/^(line|area)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {
-					$$[`update${name}`](wth.TransitionForExit);
+					if (needShapeUpdate) {
+						$$[`update${name}`](wth.TransitionForExit);
+					}
 				}
 			});
 
@@ -90,20 +129,23 @@ export default {
 		}
 
 		if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
-			$$.updateCircle();
+			if (needShapeUpdate) {
+				$$.updateCircle();
+			}
 		} else if ($$.hasLegendDefsPoint?.()) {
 			$$.data.targets.forEach($$.point("create", this));
 		}
 
 		// text
-		$$.hasDataLabel() && !$$.hasArcType(null, ["radar"]) && $$.updateText();
-
-		// title
-		$$.redrawTitle?.();
+		if ($$.hasDataLabel() && !$$.hasArcType(null, ["radar"])) {
+			if (needShapeUpdate) {
+				$$.updateText();
+			}
+		}
 
 		initializing && $$.updateTypesElements();
 
-		$$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
+		$$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart, needShapeUpdate);
 		$$.updateTooltipOnRedraw();
 
 		$$.callPluginHook("$redraw", options, duration);
@@ -115,12 +157,20 @@ export default {
 	 * @param {object} flow flow object
 	 * @param {number} duration duration value
 	 * @param {boolean} withSubchart whether or not to show subchart
+	 * @param {boolean} needShapeRegen whether to regenerate draw shape
 	 * @private
 	 */
-	generateRedrawList(targets, flow: any, duration: number, withSubchart: boolean): void {
+	generateRedrawList(targets, flow: any, duration: number, withSubchart: boolean,
+		needShapeRegen: boolean = true): void {
 		const $$ = this;
 		const {config, state} = $$;
-		const shape = $$.getDrawShape();
+		const shape = needShapeRegen ?
+			$$.getDrawShape() :
+			(state._cachedDrawShape || $$.getDrawShape());
+
+		if (needShapeRegen) {
+			state._cachedDrawShape = shape;
+		}
 
 		if (state.hasAxis) {
 			// subchart
@@ -145,26 +195,27 @@ export default {
 			flowFn && flowFn();
 
 			state.redrawing = false;
+			state._targetsToShow = null;
+			state._cachedDrawShape = null;
+
 			callFn(config.onrendered, $$.api);
 		};
 
-		if (afterRedraw) {
-			// Only use transition when current tab is visible.
-			if (withTransition && redrawList.length) {
-				// Wait for end of transitions for callback
-				const waitForDraw = generateWait();
+		// Only use transition when current tab is visible.
+		if (withTransition && redrawList.length) {
+			// Wait for end of transitions for callback
+			const waitForDraw = generateWait();
 
-				// transition should be derived from one transition
-				d3Transition().duration(duration)
-					.each(() => {
-						redrawList
-							.reduce((acc, t1) => acc.concat(t1), [])
-							.forEach(t => waitForDraw.add(t));
-					})
-					.call(waitForDraw, afterRedraw);
-			} else if (!state.transiting) {
-				afterRedraw();
-			}
+			// transition should be derived from one transition
+			d3Transition().duration(duration)
+				.each(() => {
+					redrawList
+						.flatMap(t1 => t1)
+						.forEach(t => waitForDraw.add(t));
+				})
+				.call(waitForDraw, afterRedraw);
+		} else if (!state.transiting) {
+			afterRedraw();
 		}
 
 		// update fadein condition
@@ -188,14 +239,14 @@ export default {
 				list.push($$.redrawRegion(withTransition));
 			}
 
-			Object.keys(shape.type).forEach(v => {
+			for (const v in shape.type) {
 				const name = capitalize(v);
 				const drawFn = shape.type[v];
 
 				if ((/^(area|line)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {
 					list.push($$[`redraw${name}`](drawFn, withTransition));
 				}
-			});
+			}
 
 			!flow && grid.main && list.push($$.updateGridFocus());
 		}

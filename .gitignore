@@ -12,6 +12,7 @@ package-lock.json
 /demo/work
 /dist*
 /doc
+/docs
 /monitor
 /node_modules
 /test/**/__screenshots__

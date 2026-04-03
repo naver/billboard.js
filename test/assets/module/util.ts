@@ -27,6 +27,7 @@ export const {
 	getCssRules,
 	getMinMax,
 	getOption,
+	getElementPos,
 	getPathBox,
 	getPointer,
 	getRandom,

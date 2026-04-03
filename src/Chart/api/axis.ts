@@ -39,6 +39,8 @@ function setMinMax($$, type: "min" | "max", value: AxisOption): void {
 			});
 		}
 
+		$$.state.dirty.data = true;
+
 		$$.redraw({
 			withUpdateOrgXDomain: true,
 			withUpdateXDomain: true

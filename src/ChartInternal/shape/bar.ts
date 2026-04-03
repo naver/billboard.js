@@ -7,6 +7,7 @@ import type {d3Selection, DataRow} from "../../../types/types";
 import {$BAR, $COMMON} from "../../config/classes";
 import {getRandom, isNumber} from "../../module/util";
 import type {IBarData} from "../data/IData";
+import {getShapeColorWithGradient, updateTargetsForShape} from "./shape";
 import type {IOffset} from "./shape";
 
 type BarTypeDataRow = DataRow<number | number[]>;
@@ -50,25 +51,17 @@ export default {
 
 	updateTargetsForBar(targets: BarTypeDataRow[]): void {
 		const $$ = this;
-		const {config, $el} = $$;
-		const classChartBar = $$.getChartClass("Bar");
+		const {config} = $$;
 		const classBars = $$.getClass("bars", true);
-		const classFocus = $$.classFocus.bind($$);
 		const isSelectable = config.interaction_enabled && config.data_selection_isselectable;
 
-		if (!$el.bar) {
-			$$.initBar();
-		}
-
-		const mainBarUpdate = $el.main.select(`.${$BAR.chartBars}`)
-			.selectAll(`.${$BAR.chartBar}`)
-			.data($$.filterNullish(targets))
-			.attr("class", d => classChartBar(d) + classFocus(d));
-
-		const mainBarEnter = mainBarUpdate.enter().append("g")
-			.attr("class", classChartBar)
-			.style("opacity", "0")
-			.style("pointer-events", $$.getStylePropValue("none"));
+		const mainBarEnter = updateTargetsForShape.call($$, targets, {
+			type: "Bar",
+			elKey: "bar",
+			containerClass: $BAR.chartBars,
+			itemClass: $BAR.chartBar,
+			initFn: $$.initBar
+		});
 
 		// Bars for each data
 		mainBarEnter.append("g")
@@ -130,7 +123,7 @@ export default {
 		const $$ = this;
 		const fn = $$.getStylePropValue($$.color);
 
-		return $$.config.bar_linearGradient ? $$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
+		return getShapeColorWithGradient.call($$, d, "bar_linearGradient", fn || (() => null));
 	},
 
 	/**
@@ -145,12 +138,20 @@ export default {
 		const $$ = this;
 		const {bar} = isSub ? $$.$el.subchart : $$.$el;
 		const barPath: BarConnectLine[] = [];
+		const connectLineCache = new Map<string, string | null>();
 
 		return [
 			$$.$T(bar, withTransition, getRandom())
 				.attr("d", function(d, i, arr) {
 					const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
-					const connectLineType = _getConnectLineType.call($$, d.id);
+
+					// Memoize per series id: config lookup + regex runs once per id, not per bar
+					let connectLineType = connectLineCache.get(d.id);
+
+					if (connectLineType === undefined) {
+						connectLineType = _getConnectLineType.call($$, d.id);
+						connectLineCache.set(d.id, connectLineType);
+					}
 
 					// for bar.coonectLine option
 					if (path.length > 1) {
@@ -336,14 +337,16 @@ export default {
 
 		// Get sorted Ids. Filter positive or negative values Ids from given value
 		const sortedIds = sortedList
-			.map(v =>
-				v.values.filter(
-					v2 =>
-						v2.index === index && (
-							isNumber(value) && value > 0 ? v2.value > 0 : v2.value < 0
-						)
-				)[0]
-			)
+			.map(v => {
+				// Direct index access (values are sorted by index from convertDataToTargets)
+				const v2 = v.values[index];
+
+				if (v2 && (isNumber(value) && value > 0 ? v2.value > 0 : v2.value < 0)) {
+					return v2;
+				}
+
+				return undefined;
+			})
 			.filter(Boolean)
 			.map(v => v.id);
 

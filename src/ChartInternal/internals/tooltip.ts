@@ -91,9 +91,11 @@ export default {
 		const $$ = this;
 		const {api, config} = $$;
 
-		return isFunction(config.tooltip_contents) ?
-			config.tooltip_contents.bind(api)(...args) :
-			$$.getTooltipContent(...args);
+		return sanitize(
+			isFunction(config.tooltip_contents) ?
+				config.tooltip_contents.bind(api)(...args) :
+				$$.getTooltipContent(...args)
+		);
 	},
 
 	/**
@@ -110,17 +112,16 @@ export default {
 		const {api, config, state, $el} = $$;
 
 		// get formatter function
-		const [titleFn, nameFn, valueFn] = ["title", "name", "value"].map(v => {
-			const fn = config[`tooltip_format_${v}`];
+		const titleFn = config.tooltip_format_title;
+		const nameFn = config.tooltip_format_name;
+		const valueFn = config.tooltip_format_value;
 
-			return isFunction(fn) ? fn.bind(api) : fn;
-		});
-
-		// determine fotmatter function with sanitization
-		const titleFormat = (...arg) => sanitize((titleFn || defaultTitleFormat)(...arg));
-		const nameFormat = (...arg) => sanitize((nameFn || (name => name))(...arg));
+		// determine formatter function
+		const titleFormat = isFunction(titleFn) ? titleFn.bind(api) : defaultTitleFormat;
+		const nameFormat = isFunction(nameFn) ? nameFn.bind(api) : (name => name);
+		const boundValueFn = isFunction(valueFn) ? valueFn.bind(api) : null;
 		const valueFormat = (v, ratio, id, index) => {
-			let fn = valueFn;
+			let fn = boundValueFn;
 
 			if (!fn) {
 				// For normalize per group, only show percentage for data in groups
@@ -135,7 +136,7 @@ export default {
 				}
 			}
 
-			return sanitize(fn(v, ratio, id, index));
+			return fn(v, ratio, id, index);
 		};
 
 		const order = config.tooltip_order;
@@ -312,7 +313,7 @@ export default {
 		const datum = tooltip?.datum();
 
 		if (!bindto && datum) {
-			const data = dataToShow ?? JSON.parse(datum.current);
+			const data = dataToShow ?? datum.data;
 			const [x, y] = getPointer(state.event, eventTarget ?? eventRect?.node()); // get mouse event position
 			const currPos: {
 				x: number,
@@ -380,7 +381,7 @@ export default {
 	 * @returns {object} top, left value
 	 */
 	getTooltipPositionViewBox(tWidth: number, tHeight: number,
-		currPos: {[key: string]: number}): {top: number, left: number} {
+		currPos: Record<string, number>): {top: number, left: number} {
 		const $$ = this;
 		const {$el: {eventRect, svg}, config, state} = $$;
 
@@ -436,7 +437,7 @@ export default {
 	 * @private
 	 */
 	getTooltipPosition(tWidth: number, tHeight: number,
-		currPos: {[key: string]: number}): {top: number, left: number} {
+		currPos: Record<string, number>): {top: number, left: number} {
 		const $$ = this;
 		const {config, scale, state} = $$;
 		const {width, height, current, hasFunnel, hasRadar, hasTreemap, isLegendRight, inputType} =
@@ -499,11 +500,8 @@ export default {
 		const pos = {top: y, left: x};
 
 		// make sure to not be positioned out of viewport
-		Object.keys(pos).forEach(v => {
-			if (pos[v] < 0) {
-				pos[v] = 0;
-			}
-		});
+		if (pos.top < 0) pos.top = 0;
+		if (pos.left < 0) pos.left = 0;
 
 		return pos;
 	},
@@ -523,8 +521,10 @@ export default {
 			return;
 		}
 
-		let datum = tooltip.datum();
-		const dataStr = JSON.stringify(selectedData);
+		const datum = tooltip.datum();
+		const dataStr = `${$$.data.targets.length}:${
+			selectedData.map(d => `${d?.index}|${d?.id}|${d?.value}`).join()
+		}`;
 
 		if (!datum || datum.current !== dataStr) {
 			const {index, x} = selectedData.concat().sort()[0];
@@ -533,21 +533,23 @@ export default {
 
 			// set tooltip content
 			tooltip
-				.html(sanitize($$.getTooltipHTML(
+				.html($$.getTooltipHTML(
 					selectedData, // data
 					$$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$), // defaultTitleFormat
 					$$.getDefaultValueFormat(), // defaultValueFormat
 					$$.color // color
-				)))
+				))
 				.style("display", null)
-				.style("visibility", null) // for IE9
-				.datum(datum = {
-					index,
-					x,
-					current: dataStr,
-					width: tooltip.property("offsetWidth"),
-					height: tooltip.property("offsetHeight")
-				});
+				.style("visibility", null); // for IE9
+
+			tooltip.datum({
+				index,
+				x,
+				current: dataStr,
+				data: selectedData,
+				width: tooltip.property("offsetWidth"),
+				height: tooltip.property("offsetHeight")
+			});
 
 			callFn(config.tooltip_onshown, $$.api, selectedData);
 			$$._handleLinkedCharts(true, index);
@@ -593,7 +595,7 @@ export default {
 		if (
 			tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)
 		) {
-			const selectedData = JSON.parse(tooltip.datum().current ?? {});
+			const selectedData = tooltip.datum().data ?? [];
 
 			callFn(config.tooltip_onhide, api, selectedData);
 

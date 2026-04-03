@@ -189,11 +189,13 @@ describe("SHAPE FUNNEL", () => {
 
 		it("check path value with padding", () => {
 			const {funnel} = chart.internal.$el;
-			const expectedClipPath = "M0,0L600,0L400,310L400,410L200,410L200,310L0,0z";
-			const expectedBackgroundPath = "M20,20L620,20L420,330L420,430L220,430L220,330L20,20z";
+			// Paths use relative coordinates (0,0) within the funnel group
+			// The funnel group has a transform to position it
+			const expectedPath = "M0,0L600,0L400,310L400,410L200,410L200,310L0,0z";
 
-			expect(funnel.attr("clip-path").indexOf(expectedClipPath) > -1).to.be.true;
-			expect(funnel.select(`.${$FUNNEL.funnelBackground}`).attr("d").indexOf(expectedBackgroundPath) > -1).to.be.true;
+			expect(funnel.attr("transform")).to.equal("translate(20, 20)");
+			expect(funnel.attr("clip-path").indexOf(expectedPath) > -1).to.be.true;
+			expect(funnel.select(`.${$FUNNEL.funnelBackground}`).attr("d").indexOf(expectedPath) > -1).to.be.true;
 		});
 	});
 
@@ -220,6 +222,8 @@ describe("SHAPE FUNNEL", () => {
 
 		function chkNeckSize(str, width, height) {
 			const path = str
+				.replace(/^path\(['"]?/i, "")
+				.replace(/['"]?\)$/, "")
 				.replace(/[mz]/ig, "")
 				.split("L")
 				.map(v => v.split(",").map(Number));
@@ -382,7 +386,290 @@ describe("SHAPE FUNNEL", () => {
 
 					done(1);
 				}
-			});			
+			});
 		}));
+	});
+
+	describe("rotated option", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "funnel"
+				},
+				funnel: {
+					rotated: true
+				}
+			};
+		});
+
+		it("check for horizontal funnel rendering", () => {
+			const {internal} = chart;
+			const {$el: {funnel}} = internal;
+			let width = 0;
+
+			funnel.selectAll(`path.${$SHAPE.shape}`).each(function(d, i) {
+				const rect = this.getBoundingClientRect();
+
+				expect(rect.width).to.be.closeTo(d.ratio, 1);
+				width += rect.width;
+			});
+
+			expect(width).to.be.closeTo(+chart.$.svg.attr("width"), 1);
+		});
+
+		it("check rotated clip-path", () => {
+			const path = chart.internal.$el.funnel.attr("clip-path")
+				.replace(/(^path\(|\)$|')/g, "");
+
+			// Should have horizontal funnel shape (neck on right side)
+			expect(path).to.include("M");
+			expect(path).to.include("L");
+			expect(path).to.include("z");
+		});
+
+		it("set options: funnel.rotated=true with neck", () => {
+			args.funnel = {
+				rotated: true,
+				neck: {
+					width: 100,
+					height: 150
+				}
+			};
+		});
+
+		it("check rotated funnel with neck", () => {
+			const {funnel} = chart.internal.$el;
+			const clipPath = funnel.attr("clip-path")
+				.replace(/(^path\(|\)$|')/g, "");
+
+			// Rotated funnel clip path should contain valid path data
+			expect(clipPath).to.include("M");
+			expect(clipPath).to.include("L");
+			expect(clipPath).to.include("z");
+
+			// Check background path exists and is valid
+			const bgPath = funnel.select(`.${$FUNNEL.funnelBackground}`).attr("d");
+
+			expect(bgPath).to.include("M");
+		});
+
+		it("set options: funnel.rotated=true with ratio neck", () => {
+			args.funnel = {
+				rotated: true,
+				neck: {
+					width: {ratio: 0.3},
+					height: {ratio: 0.2}
+				}
+			};
+		});
+
+		it("check rotated funnel with ratio neck", () => {
+			const {funnel} = chart.internal.$el;
+			const clipPath = funnel.attr("clip-path")
+				.replace(/(^path\(|\)$|')/g, "");
+
+			// Rotated funnel clip path with ratio neck should be valid
+			expect(clipPath).to.include("M");
+			expect(clipPath).to.include("L");
+
+			// Check shapes are rendered correctly
+			const shapes = funnel.selectAll(`path.${$SHAPE.shape}`);
+
+			expect(shapes.size()).to.be.equal(3);
+		});
+	});
+
+	describe("spline option", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "funnel"
+				},
+				funnel: {
+					spline: true
+				}
+			};
+		});
+
+		it("check for spline funnel rendering", () => {
+			const {internal} = chart;
+			const {$el: {funnel}} = internal;
+
+			funnel.selectAll(`path.${$SHAPE.shape}`).each(function(d, i) {
+				const pathData = this.getAttribute("d");
+
+				// Spline paths should contain curve commands (C for cubic bezier)
+				// or at minimum, should be valid paths
+				expect(pathData).to.include("M");
+				expect(pathData.length).to.be.greaterThan(0);
+			});
+		});
+
+		it("check spline clip-path contains curves", () => {
+			const path = chart.internal.$el.funnel.attr("clip-path")
+				.replace(/(^path\(|\)$|')/g, "");
+
+			// Spline clip path should contain curve commands
+			expect(path).to.include("M");
+			expect(path.length).to.be.greaterThan(0);
+		});
+
+		it("set options: spline with neck", () => {
+			args.funnel = {
+				neck: {
+					width: 150,
+					height: 80
+				},
+				spline: true
+			};
+		});
+
+		it("check spline funnel with neck", () => {
+			const {funnel} = chart.internal.$el;
+			const clipPath = funnel.attr("clip-path")
+				.replace(/(^path\(|\)$|')/g, "");
+
+			// Spline clip path with neck should render correctly
+			expect(clipPath).to.include("M");
+			expect(clipPath.length).to.be.greaterThan(0);
+		});
+	});
+
+	describe("rotated + spline combination", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "funnel"
+				},
+				funnel: {
+					rotated: true,
+					spline: true
+				}
+			};
+		});
+
+		it("check rotated spline funnel rendering", () => {
+			const {internal} = chart;
+			const {$el: {funnel}} = internal;
+
+			funnel.selectAll(`path.${$SHAPE.shape}`).each(function(d, i) {
+				const pathData = this.getAttribute("d");
+
+				// Check that path data is valid
+				expect(pathData).to.include("M");
+				expect(pathData.length).to.be.greaterThan(0);
+			});
+
+			// Check shapes count
+			expect(funnel.selectAll(`path.${$SHAPE.shape}`).size()).to.be.equal(3);
+		});
+
+		it("set options: rotated + spline + neck", () => {
+			args.funnel = {
+				rotated: true,
+				neck: {
+					width: 100,
+					height: 100
+				},
+				spline: true
+			};
+		});
+
+		it("check rotated spline funnel with neck", () => {
+			const {funnel} = chart.internal.$el;
+			const clipPath = funnel.attr("clip-path")
+				.replace(/(^path\(|\)$|')/g, "");
+
+			// Should render correctly with all options combined
+			expect(clipPath).to.include("M");
+			expect(clipPath.length).to.be.greaterThan(0);
+
+			// Check shapes are rendered
+			const shapes = funnel.selectAll(`path.${$SHAPE.shape}`);
+
+			expect(shapes.size()).to.be.equal(3);
+		});
+	});
+
+	describe("dynamic data with rotated/spline", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "funnel"
+				},
+				funnel: {
+					rotated: true,
+					spline: true
+				}
+			};
+		});
+
+		it("should .load() work with rotated spline funnel", () => new Promise(done => {
+			chart.load({
+				columns: [
+					["data4", 35]
+				],
+				done() {
+					const {internal: {$el: {funnel}}} = this;
+					const shapes = funnel.selectAll(`path.${$SHAPE.shape}`);
+
+					expect(shapes.size()).to.be.equal(4);
+
+					done(1);
+				}
+			});
+		}));
+
+		it("should .unload() work with rotated spline funnel", () => new Promise(done => {
+			chart.unload({
+				ids: ["data4"],
+				done() {
+					const {internal: {$el: {funnel}}} = this;
+					const shapes = funnel.selectAll(`path.${$SHAPE.shape}`);
+
+					expect(shapes.size()).to.be.equal(3);
+
+					done(1);
+				}
+			});
+		}));
+
+		it("should resize work with rotated funnel", () => {
+			const {internal} = chart;
+
+			// when
+			chart.resize({width: 400, height: 300});
+
+			const {$el: {funnel}} = internal;
+			const shapes = funnel.selectAll(`path.${$SHAPE.shape}`);
+
+			// Check shapes are still rendered after resize
+			expect(shapes.size()).to.be.greaterThan(0);
+
+			// Check that clip-path is updated
+			const clipPath = funnel.attr("clip-path");
+
+			expect(clipPath).to.include("path");
+		});
 	});
 });

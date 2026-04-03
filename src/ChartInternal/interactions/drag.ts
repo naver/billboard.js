@@ -61,7 +61,7 @@ export default {
 					const shape: d3Selection = d3Select(this);
 					const isSelected = shape.classed($SELECT.SELECTED);
 					const isIncluded = shape.classed($DRAG.INCLUDED);
-					let isWithin: any = false;
+					let isWithin;
 					let toggle;
 
 					if (shape.classed($CIRCLE.circle)) {

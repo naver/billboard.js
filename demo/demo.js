@@ -499,28 +499,6 @@ var demos = {
 				options: {
 					data: {
 						columns: [
-							["data1", 11300],
-							["data2", 12245],
-							["data3", 11125],
-							["data4", 13355],
-							["data5", 18562]
-						],
-						type: "funnel",
-						labels: true,
-						order: "asc"
-					},
-					funnel: {
-						neck: {
-							width: 200,
-							height: 50
-						}
-					}
-				}
-			},
-			{
-				options: {
-					data: {
-						columns: [
 							["data1", 130],
 							["data2", 245],
 							["data3", 425],
@@ -542,6 +520,97 @@ var demos = {
 							},
 							height: {
 								ratio: 0.5
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Spline Funnel"
+					},
+					data: {
+						columns: [
+							["data1", 100],
+							["data2", 80],
+							["data3", 60],
+							["data4", 40],
+							["data5", 20]
+						],
+						type: "funnel",
+						order: "desc",
+						labels: true
+					},
+					funnel: {
+						spline: true,
+						neck: {
+							width: {
+								ratio: 0.2
+							},
+							height: {
+								ratio: 0.3
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Rotated Funnel"
+					},
+					data: {
+						columns: [
+							["Step 1", 1200],
+							["Step 2", 900],
+							["Step 3", 600],
+							["Step 4", 350],
+							["Step 5", 350]
+						],
+						type: "funnel",
+						order: "desc",
+						labels: {
+							format: function(v, id, i, texts) {
+						return `${id}\n${v}`;
+							}
+						}
+					},
+					funnel: {
+						rotated: true,
+						neck: {
+							width: 80,
+							height: 100
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Rotated Spline Funnel"
+					},
+					data: {
+						columns: [
+							["Visitors", 5000],
+							["Signups", 3500],
+							["Trials", 2000],
+							["Purchases", 800],
+							["Renewals", 700]
+						],
+						type: "funnel",
+						order: "desc",
+						labels: true
+					},
+					funnel: {
+						rotated: true,
+						spline: true,
+						neck: {
+							width: {
+								ratio: 0.25
+							},
+							height: {
+								ratio: 0.2
 							}
 						}
 					}

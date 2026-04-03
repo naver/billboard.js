@@ -147,6 +147,9 @@ export default {
 		const $$ = this.internal;
 		const {config} = $$;
 
+		$$.state.dirty.data = true;
+		$$.state._eventRectFingerprint = null;
+
 		// update xs if specified
 		args.xs && $$.addXs(args.xs);
 
@@ -225,6 +228,9 @@ export default {
 		}
 
 		const ids = $$.mapToTargetIds(args.ids);
+
+		$$.state.dirty.data = true;
+		$$.state._eventRectFingerprint = null;
 
 		$$.unload(ids, () => {
 			$$.redraw({

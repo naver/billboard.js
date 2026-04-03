@@ -4,7 +4,6 @@
  */
 import type {IData} from "../../ChartInternal/data/IData";
 import {$COMMON} from "../../config/classes";
-import {loadConfig} from "../../config/config";
 import Plugin from "../Plugin";
 import Options from "./Options";
 
@@ -55,7 +54,6 @@ import Options from "./Options";
  */
 export default class Sparkline extends Plugin {
 	static version = `0.0.1`;
-	private config;
 	private element;
 
 	constructor(options) {
@@ -66,7 +64,7 @@ export default class Sparkline extends Plugin {
 	}
 
 	$beforeInit(): void {
-		loadConfig.call(this, this.options);
+		this.loadConfig();
 
 		this.validate();
 		this.element = [].slice.call(document.querySelectorAll(this.config.selector));

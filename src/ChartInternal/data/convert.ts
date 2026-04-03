@@ -47,7 +47,7 @@ function _getDataKeyForJson(keysParam, config) {
  */
 function _setXS(
 	ids: string[],
-	data: {[key: string]: number | null}[],
+	data: Record<string, number | null>[],
 	params: {appendXs, xs, categorized: boolean, timeSeries: boolean, customX: boolean}
 ): void {
 	const $$ = this;
@@ -141,7 +141,7 @@ export default {
 	 * @returns {IData[]} Converted targets
 	 * @private
 	 */
-	convertDataToTargets(data: {[key: string]: number | null}[], appendXs: boolean): IData[] {
+	convertDataToTargets(data: Record<string, number | null>[], appendXs: boolean): IData[] {
 		const $$ = this;
 		const {axis, config, state} = $$;
 		const chartType = config.data_type;
@@ -152,7 +152,7 @@ export default {
 			dataKeys.reduce((acc, key) => {
 				if ($$.isX.call($$, key)) {
 					acc.xs.push(key);
-				} else if ($$.isNotX.call($$, key)) {
+				} else {
 					acc.ids.push(key);
 				}
 
@@ -171,6 +171,12 @@ export default {
 
 		// save x for update data by load when custom x and bb.x API
 		_setXS.bind($$)(ids, data, params);
+
+		// Build a Map for O(1) category-to-index lookups
+		const categoryIndexMap =
+			(params.customX && params.categorized && config.axis_x_categories.length) ?
+				new Map<string, number>(config.axis_x_categories.map((cat, i) => [cat, i])) :
+				null;
 
 		// convert to target
 		const targets = ids.map((id, index) => {
@@ -203,13 +209,20 @@ export default {
 					if ((isCategory || state.hasRadar) && index === 0 && !isUndefined(rawX)) {
 						if (!hasCategory && index === 0 && i === 0 && !isDataAppend) {
 							config.axis_x_categories = [];
+
+							if (categoryIndexMap) {
+								categoryIndexMap.clear();
+							}
 						}
 
-						x = config.axis_x_categories.indexOf(rawX);
+						const rawXStr = String(rawX);
+
+						x = categoryIndexMap?.get(rawXStr) ?? -1;
 
 						if (x === -1) {
 							x = config.axis_x_categories.length;
 							config.axis_x_categories.push(rawX);
+							categoryIndexMap?.set(rawXStr, x);
 						}
 					} else {
 						x = $$.generateTargetX(rawX, id, xIndex + i);
@@ -250,8 +263,12 @@ export default {
 		});
 
 		// cache information about values
-		state.hasNegativeValue = $$.hasNegativeValueInTargets(targets);
-		state.hasPositiveValue = $$.hasPositiveValueInTargets(targets);
+		state.hasNegativeValue = targets.some(t =>
+			t.values.some(v => v.value !== null && v.value < 0)
+		);
+		state.hasPositiveValue = targets.some(t =>
+			t.values.some(v => v.value !== null && v.value > 0)
+		);
 
 		// set target types
 		if (chartType && $$.isValidChartType(chartType)) {

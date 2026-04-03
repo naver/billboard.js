@@ -2,10 +2,10 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {Axis} from "./axis";
-import {ChartTypes, d3Selection, DataItem, PrimitiveArray} from "./types";
-import {Chart} from "./chart";
-import {IArcData, IData, IDataPoint, IDataRow} from "../src/ChartInternal/data/IData";
+import {Axis} from "./axis.js";
+import {ChartTypes, d3Selection, DataItem, PrimitiveArray} from "./types.js";
+import {Chart} from "./chart.js";
+import {IArcData, IData, IDataPoint, IDataRow} from "../src/ChartInternal/data/IData.js";
 import {
 	ArcOptions,
 	AreaOptions,
@@ -23,7 +23,7 @@ import {
 	ScatterOptions,
 	SplineOptions,
 	TreemapOptions
-} from "./options.shape";
+} from "./options.shape.js";
 
 export type FormatFunction = (
 	this: Chart,

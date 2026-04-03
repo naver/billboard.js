@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {Plugin} from "../plugin";
-import {SparklineOptions} from "./options";
+import {Plugin} from "../plugin.js";
+import {SparklineOptions} from "./options.js";
 
 export default class Sparkline extends Plugin {
 	/**

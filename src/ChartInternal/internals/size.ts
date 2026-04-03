@@ -31,7 +31,7 @@ export default {
 	getCurrentWidth(): number {
 		const $$ = this;
 
-		return $$.config.size_width || $$.getParentWidth();
+		return $$.config.size_width || $$.getParentRectValue("width");
 	},
 
 	getCurrentHeight(): number {
@@ -76,10 +76,6 @@ export default {
 		return v;
 	},
 
-	getParentWidth(): number {
-		return this.getParentRectValue("width");
-	},
-
 	getParentHeight(): number {
 		const h: string = this.$el.chart.style("height");
 		let height = 0;
@@ -93,38 +89,50 @@ export default {
 
 	getSvgLeft(withoutRecompute?: boolean): number {
 		const $$ = this;
-		const {config, state: {hasAxis}, $el} = $$;
+		const {cache, config, state: {hasAxis}, $el} = $$;
+
+		// Return cached value when recompute is not forced
+		if (withoutRecompute) {
+			const cached = cache.get(KEY.svgLeft);
+
+			if (cached !== null) {
+				return cached;
+			}
+		}
+
 		const isRotated = config.axis_rotated;
 		const hasLeftAxisRect = isRotated || (!isRotated && !config.axis_y_inner);
 		const leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY;
 		const leftAxis = $el.main.select(`.${leftAxisClass}`).node();
 		const leftLabel = hasAxis && config[`axis_${isRotated ? "x" : "y"}_label`];
-		let labelWidth = 0;
 
-		// if axis label position set to inner, exclude from the value
-		if (
-			hasAxis && (
-				isString(leftLabel) || isString(leftLabel.text) ||
-				/^inner-/.test(leftLabel?.position)
-			)
-		) {
-			const label = $el.main.select(`.${leftAxisClass}-label`);
+		// Check if label measurement is needed
+		const needLabelRect = hasAxis && (
+			isString(leftLabel) || isString(leftLabel.text) ||
+			/^inner-/.test(leftLabel?.position)
+		);
+		const label = needLabelRect ? $el.main.select(`.${leftAxisClass}-label`) : null;
+		const labelNode = label && !label.empty() ? label.node() : null;
 
-			if (!label.empty()) {
-				labelWidth = getBoundingRect(label.node()).left;
-			}
-		}
+		const forceEval = !withoutRecompute;
+		const rects = {
+			label: labelNode ? getBoundingRect(labelNode, forceEval) : null,
+			leftAxis: leftAxis && hasLeftAxisRect ? getBoundingRect(leftAxis, forceEval) : null,
+			chart: getBoundingRect($el.chart.node(), forceEval)
+		};
 
-		const svgRect = leftAxis && hasLeftAxisRect ?
-			getBoundingRect(leftAxis, !withoutRecompute) :
-			{right: 0};
-		const chartRectLeft = getBoundingRect($el.chart.node(), !withoutRecompute).left +
-			labelWidth;
+		const labelWidth = rects.label?.left ?? 0;
+		const svgRect = rects.leftAxis ?? {right: 0};
+		const chartRectLeft = rects.chart.left + labelWidth;
 		const hasArc = $$.hasArcType();
 		const svgLeft = svgRect.right - chartRectLeft -
 			(hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
 
-		return svgLeft > 0 ? svgLeft : 0;
+		const result = svgLeft > 0 ? svgLeft : 0;
+
+		cache.add(KEY.svgLeft, result);
+
+		return result;
 	},
 
 	updateDimension(withoutAxis?: boolean): void {
@@ -292,7 +300,7 @@ export default {
 	 * @returns {number|object} Padding value
 	 * @private
 	 */
-	getResettedPadding<T = number | {[key: string]: string}>(v: T): T {
+	getResettedPadding<T = number | Record<string, string>>(v: T): T {
 		const $$ = this;
 		const {config} = $$;
 		const isNum = isNumber(v);
@@ -330,9 +338,12 @@ export default {
 
 		!isInit && $$.setContainerSize();
 
+		// Cache legend dimensions to avoid redundant calls
+		const legendWidth = legend ? $$.getLegendWidth() : 0;
+		const legendHeight = legend ? $$.getLegendHeight() : 0;
 		const currLegend = {
-			width: legend ? $$.getLegendWidth() : 0,
-			height: legend ? $$.getLegendHeight() : 0
+			width: legendWidth,
+			height: legendHeight
 		};
 
 		if (!isNonAxis && config.axis_x_show && config.axis_x_tick_autorotate) {
@@ -341,11 +352,11 @@ export default {
 
 		const legendSize = {
 			right: config.legend_show && state.isLegendRight ?
-				$$.getLegendWidth() + (isFitPadding ? 0 : 20) :
+				legendWidth + (isFitPadding ? 0 : 20) :
 				0,
 			bottom: !config.legend_show || state.isLegendRight || state.isLegendInset ?
 				0 :
-				currLegend.height
+				legendHeight
 		};
 
 		const xAxisHeight = isRotated || isNonAxis ? 0 : $$.getHorizontalAxisHeight("x");

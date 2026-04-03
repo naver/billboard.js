@@ -2,7 +2,6 @@
  * Copyright (c) 2021 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {loadConfig} from "../../config/config";
 import {isNumber, tplProcess} from "../../module/util";
 import Plugin from "../Plugin";
 import {defaultStyle, tpl} from "./const";
@@ -53,7 +52,6 @@ import Options from "./Options";
  * })
  */
 export default class TableView extends Plugin {
-	private config;
 	private element;
 
 	constructor(options) {
@@ -64,7 +62,7 @@ export default class TableView extends Plugin {
 	}
 
 	$beforeInit(): void {
-		loadConfig.call(this, this.options);
+		this.loadConfig();
 	}
 
 	$init(): void {

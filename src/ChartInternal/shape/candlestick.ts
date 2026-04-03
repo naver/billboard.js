@@ -3,8 +3,9 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
-import {$CANDLESTICK, $COMMON} from "../../config/classes";
+import {$CANDLESTICK} from "../../config/classes";
 import {getRandom, isArray, isNumber, isObject} from "../../module/util";
+import {initShapeElement, updateTargetsForShape} from "./shape";
 import type {IOffset} from "./shape";
 
 interface ICandlestickData {
@@ -17,12 +18,10 @@ interface ICandlestickData {
 
 export default {
 	initCandlestick(): void {
-		const {$el} = this;
-
-		$el.candlestick = $el.main.select(`.${$COMMON.chart}`)
-			// should positioned at the beginning of the shape node to not overlap others
-			.append("g")
-			.attr("class", $CANDLESTICK.chartCandlesticks);
+		initShapeElement.call(this, {
+			elKey: "candlestick",
+			className: $CANDLESTICK.chartCandlesticks
+		});
 	},
 
 	/**
@@ -32,21 +31,15 @@ export default {
 	 * @private
 	 */
 	updateTargetsForCandlestick(targets): void {
-		const $$ = this;
-		const {$el} = $$;
-		const classChart = $$.getChartClass("Candlestick");
-
-		if (!$el.candlestick) {
-			$$.initCandlestick();
-		}
-
-		const mainUpdate = $$.$el.main.select(`.${$CANDLESTICK.chartCandlesticks}`)
-			.selectAll(`.${$CANDLESTICK.chartCandlestick}`)
-			.data($$.filterNullish(targets));
-
-		mainUpdate.enter().append("g")
-			.attr("class", classChart)
-			.style("pointer-events", "none");
+		updateTargetsForShape.call(this, targets, {
+			type: "Candlestick",
+			elKey: "candlestick",
+			containerClass: $CANDLESTICK.chartCandlesticks,
+			itemClass: $CANDLESTICK.chartCandlestick,
+			initFn: this.initCandlestick,
+			withFocus: false,
+			withStyles: false
+		}).style("pointer-events", "none");
 	},
 
 	/**

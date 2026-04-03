@@ -9,7 +9,7 @@ import sinon from "sinon";
 import util from "../assets/util";
 import {getFallback, window} from "../../src/module/browser";
 // import {getGlobal, getFallback, window} from "../../src/module/browser";
-import {getWorker, runWorker} from "../../src/module/worker";
+import {runWorker} from "../../src/module/worker";
 
 describe("MODULE", function() {
     let chart;
@@ -20,7 +20,7 @@ describe("MODULE", function() {
 	});
 
     afterEach(() => {
-        chart.destroy();
+        chart?.destroy();
     });
 
     describe("Cache", () => {
@@ -122,29 +122,17 @@ describe("MODULE", function() {
         }));
     });
 
-    describe("Worker", () => { 
-        it("check worker onerror handler call.", () => {
-            const worker = getWorker("test");
-            const errorStub = sinon.stub(console, "error");
+    describe("Worker", () => {
+        it("check runWorker sync execution", () => {
+            let result = null;
 
-            worker.onerror({e: {message: "ERR MSG"}});
+            runWorker(
+                false,
+                function(val: number) { return val * 2; },
+                function(res: number) { result = res; }
+            )(5);
 
-            expect(errorStub.called).to.be.true;
-
-            errorStub.restore();
-            
-            const error = console.error;
-
-            // @ts-ignore
-            console.error = null;
-            const logStub = sinon.stub(console, "log");
-
-            worker.onerror({e: {message: "ERR MSG"}});
-
-            expect(logStub.called).to.be.true;
-
-            logStub.restore();
-            console.error = error;
+            expect(result).to.be.equal(10);
         });
 
         it("check with dependency function", () => new Promise(done => {
@@ -155,7 +143,7 @@ describe("MODULE", function() {
             runWorker(
                 true,
                 function() { return depsFn(); },
-                function(res) {
+                function(res: number) {
                     expect(res).to.be.equal(1234);
                     done(1);
                 },

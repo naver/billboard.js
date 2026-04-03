@@ -19,7 +19,7 @@ export const KEY = {
 	domainMinMax: "$domainMinMax",
 	filteredTargets: "$filteredTargets",
 	filteredNullish: "$filteredNullish",
-	visibilityChecksum: "visibilityChecksum",
+	svgLeft: "$svgLeft",
 	legendItemTextBox: "legendItemTextBox",
 	legendItemMap: "$legendItemMap",
 	radarPoints: "$radarPoints",
@@ -27,11 +27,14 @@ export const KEY = {
 	setOverOut: "setOverOut",
 	callOverOutForTouch: "callOverOutForTouch",
 	textRect: "textRect",
-	shapeOffset: "$shapeOffset"
+	shapeOffset: "$shapeOffset",
+	maxTickSize: "$maxTickSize",
+	maxDataCountTarget: "$maxDataCountTarget",
+	valuesXIndexMap: "$valuesXIndexMap"
 };
 
 export default class Cache {
-	private cache = {};
+	private cache = new Map<string, any>();
 
 	/**
 	 * Add cache
@@ -42,8 +45,10 @@ export default class Cache {
 	 * @private
 	 */
 	add(key: string, value, isDataType = false) {
-		this.cache[key] = isDataType ? this.cloneTarget(value) : value;
-		return this.cache[key];
+		const v = isDataType ? this.cloneTarget(value) : value;
+
+		this.cache.set(key, v);
+		return v;
 	}
 
 	/**
@@ -52,8 +57,11 @@ export default class Cache {
 	 * @private
 	 */
 	remove(key: string | string[]) {
-		(isString(key) ? [key] : key)
-			.forEach(v => delete this.cache[v]);
+		const keys = isString(key) ? [key] : key;
+
+		for (let i = 0; i < keys.length; i++) {
+			this.cache.delete(keys[i]);
+		}
 	}
 
 	/**
@@ -69,14 +77,14 @@ export default class Cache {
 			const targets: any[] = [];
 
 			for (let i = 0, id; (id = key[i]); i++) {
-				if (id in this.cache) {
-					targets.push(this.cloneTarget(this.cache[id]));
+				if (this.cache.has(id)) {
+					targets.push(this.cache.get(id));
 				}
 			}
 
 			return targets;
 		} else {
-			const value = this.cache[key as string];
+			const value = this.cache.get(key as string);
 
 			return isValue(value) ? value : null;
 		}
@@ -89,7 +97,7 @@ export default class Cache {
 	 * @private
 	 */
 	has(key: string): boolean {
-		return key in this.cache && this.cache[key] !== null;
+		return this.cache.has(key);
 	}
 
 	/**
@@ -98,22 +106,26 @@ export default class Cache {
 	 * @private
 	 */
 	getKeys(): string[] {
-		return Object.keys(this.cache);
+		return Array.from(this.cache.keys());
 	}
 
 	/**
 	 * Reset cached data
 	 * @param {boolean} all true: reset all data, false: reset only '$' prefixed key data
+	 * @param {string[]} excludePrefixes Keys starting with any of these prefixes are preserved
 	 * @private
 	 */
-	reset(all?: boolean): void {
-		const $$ = this;
-
-		for (const x in $$.cache) {
-			// reset the prefixed '$' key(which is internal use data) only.
-			if (all || /^\$/.test(x)) {
-				$$.cache[x] = null;
-			}
+	reset(all?: boolean, excludePrefixes?: string[]): void {
+		if (all) {
+			this.cache.clear();
+		} else {
+			this.cache.forEach((_, x) => {
+				if (/^\$/.test(x)) {
+					if (!excludePrefixes?.some(prefix => x.startsWith(prefix))) {
+						this.cache.delete(x);
+					}
+				}
+			});
 		}
 	}
 

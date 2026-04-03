@@ -25,7 +25,7 @@ export default {
 		const $$ = this;
 
 		if ($$.axis) {
-			const position = $$.axis?.getLabelPositionById(id);
+			const position = $$.axis?.getAxisLabelPosition(id);
 			const {width} = $$.axis.getMaxTickSize(id, withoutRecompute);
 			const gap = width === 0 ? 0.5 : 0;
 
@@ -88,7 +88,7 @@ export default {
 		}
 
 		return h +
-			($$.axis.getLabelPositionById(id).isInner ? 0 : 10) +
+			($$.axis.getAxisLabelPosition(id).isInner ? 0 : 10) +
 			(id === "y2" && !isRotated ? -10 : 0);
 	},
 

@@ -2,6 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import type {LinearGradientOption} from "../../../ChartInternal/shape/IShape";
+
 /**
  * bar config options
  */
@@ -136,11 +138,7 @@ export default {
 	bar_front: false,
 	bar_indices_removeNull: false,
 	bar_label_threshold: 0,
-	bar_linearGradient: <boolean | {
-		x?: [number, number],
-		y?: [number, number],
-		stops?: [number, string | null | Function, number]
-	}>false,
+	bar_linearGradient: <LinearGradientOption>false,
 	bar_overlap: false,
 	bar_padding: 0,
 	bar_radius: <number | {ratio: number} | undefined>undefined,

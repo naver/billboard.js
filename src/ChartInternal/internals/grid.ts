@@ -385,11 +385,15 @@ export default {
 	 */
 	showGridFocus(data?): void {
 		const $$ = this;
-		const {config, state: {width, height}} = $$;
+		const {config, state, state: {width, height}} = $$;
 		const isRotated = config.axis_rotated;
-		const focusEl = $$.$el.main.selectAll(
-			`line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`
-		);
+
+		// Cache grid focus selection to avoid repeated DOM queries on mousemove
+		const focusEl = state._gridFocusEl?.size() ?
+			state._gridFocusEl :
+			(state._gridFocusEl = $$.$el.main.selectAll(
+				`line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`
+			));
 
 		const dataToShow = (data || [focusEl.datum()]).filter(d =>
 			d && isValue($$.getBaseValue(d))
@@ -461,12 +465,16 @@ export default {
 
 	hideGridFocus(): void {
 		const $$ = this;
-		const {state: {inputType, resizing}, $el: {main}} = $$;
+		const {state, state: {inputType, resizing}, $el: {main}} = $$;
 
 		if (inputType === "mouse" || !resizing) {
-			main.selectAll(`line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`)
-				.style("visibility", "hidden");
+			const focusEl = state._gridFocusEl?.size() ?
+				state._gridFocusEl :
+				(state._gridFocusEl = main.selectAll(
+					`line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`
+				));
 
+			focusEl.style("visibility", "hidden");
 			$$.hideCircleFocus?.();
 		}
 	},

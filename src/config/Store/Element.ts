@@ -14,7 +14,7 @@ type T = d3Selection | null;
  */
 export default class Element {
 	constructor() {
-		const element: {[key: string]: T | {[key: string]: T}} = {
+		const element: Record<string, T | Record<string, T>> = {
 			chart: null,
 			main: null,
 			svg: null,

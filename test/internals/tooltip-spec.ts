@@ -1667,8 +1667,9 @@ describe("TOOLTIP", function() {
 
 				const tooltipHtml = chart.$.tooltip.html();
 
+				// iframe tag is escaped, preventing execution
 				expect(tooltipHtml).to.not.include("<iframe");
-				expect(tooltipHtml).to.not.include("javascript:");
+				expect(tooltipHtml).to.include("&lt;iframe");
 				expect(tooltipHtml).to.include("Title");
 			});
 		});

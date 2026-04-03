@@ -2,7 +2,6 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {easeLinear as d3EaseLinear} from "d3-ease";
 import CLASS from "../../config/classes";
 import {generateWait} from "../../module/generator";
 import {diffDomain} from "../../module/util";
@@ -28,6 +27,9 @@ export default {
 			data.targets.forEach(d => {
 				d.values.splice(0, flowLength);
 			});
+
+			// Increment dataGeneration to invalidate data-dependent caches
+			state.dataGeneration++;
 
 			// update elements related to x scale
 			if ($$.updateXGrid) {
@@ -89,7 +91,7 @@ export default {
 		wait.add(Object.keys(elements).map(v => {
 			n = elements[v]
 				.transition()
-				.ease(d3EaseLinear)
+				.ease((t: number): number => +t)
 				.duration(duration);
 
 			if (v === "axis.x") {

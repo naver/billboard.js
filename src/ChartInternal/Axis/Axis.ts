@@ -2,6 +2,42 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
+/**
+ * Sample representative tick nodes to avoid N forced reflows in getMaxTickSize
+ * @param {SVGTextElement[]} nodes All tick text nodes
+ * @returns {SVGTextElement[]} Sampled subset: first, last, longest, and middle nodes
+ * @private
+ */
+function _sampleTickNodes(nodes: SVGTextElement[]): SVGTextElement[] {
+	const sampled = [nodes[0], nodes[nodes.length - 1]];
+
+	// Find the node with the longest text content (likely widest)
+	let maxLen = 0;
+	let longestNode: SVGTextElement | null = null;
+
+	for (const node of nodes) {
+		const len = node.textContent?.length ?? 0;
+
+		if (len > maxLen) {
+			maxLen = len;
+			longestNode = node;
+		}
+	}
+
+	if (longestNode && !sampled.includes(longestNode)) {
+		sampled.push(longestNode);
+	}
+
+	// Add a middle sample
+	const mid = nodes[Math.floor(nodes.length / 2)];
+
+	if (!sampled.includes(mid)) {
+		sampled.push(mid);
+	}
+
+	return sampled;
+}
 import {
 	axisBottom as d3AxisBottom,
 	axisLeft as d3AxisLeft,
@@ -10,6 +46,7 @@ import {
 } from "d3-axis";
 import type {AxisType} from "../../../types/types";
 import {$AXIS, $COMMON} from "../../config/classes";
+import {KEY} from "../../module/Cache";
 import {
 	capitalize,
 	getBoundingRect,
@@ -506,10 +543,6 @@ class Axis {
 			id === "x" ? ["inner-top", "inner-right"] : ["inner-right", "inner-top"]);
 	}
 
-	getLabelPositionById(id: string) {
-		return this.getAxisLabelPosition(id);
-	}
-
 	xForAxisLabel(id: string) {
 		const $$ = this.owner;
 		const {state: {width, height}} = $$;
@@ -617,7 +650,17 @@ class Axis {
 	 */
 	getMaxTickSize(id: AxisType, withoutRecompute?: boolean): {width: number, height: number} {
 		const $$ = this.owner;
-		const {config, state: {current, resizing}, $el: {svg, chart}} = $$;
+		const {config, state, $el: {svg, chart}} = $$;
+		const {current, resizing} = state;
+
+		// Generation-based cache: skip redundant measurements within same redraw cycle
+		const cacheKey = `${KEY.maxTickSize}_${id}_${!!withoutRecompute}`;
+		const cached = $$.cache.get(cacheKey);
+
+		if (cached && cached.generation === state.redrawGeneration) {
+			return cached.value;
+		}
+
 		const currentTickMax = current.maxTickSize[id];
 		const configPrefix = `axis_${id}`;
 		const max = {
@@ -635,7 +678,7 @@ class Axis {
 
 		if (svg) {
 			const isYAxis = /^y2?$/.test(id);
-			const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+			const targetsToShow = state._targetsToShow || $$.filterTargetsToShow($$.data.targets);
 			const scale = $$.scale[id].copy().domain(
 				$$[`get${isYAxis ? "Y" : "X"}Domain`](targetsToShow, id)
 			);
@@ -694,24 +737,47 @@ class Axis {
 			// when evalTextSize is set as function, sizeFor1Char is set to the dummy element
 			const {sizeFor1Char} = g.node();
 
-			dummy.selectAll("text")
-				.attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null)
-				.each(function(d, i) {
-					const {width, height} = sizeFor1Char ?
-						{
-							width: this.textContent.length * sizeFor1Char.w,
-							height: sizeFor1Char.h
-						} :
-						getBoundingRect(this, true);
+			const textSelection = dummy.selectAll("text")
+				.attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null);
+
+			// Batch processing to minimize layout thrashing
+			if (sizeFor1Char) {
+				// Use pre-calculated character size (no reflow needed)
+				textSelection.each(function(d, i) {
+					const width = this.textContent.length * sizeFor1Char.w;
+					const height = sizeFor1Char.h;
 
 					max.width = Math.max(max.width, width);
 					max.height = Math.max(max.height, height);
 
-					// cache tick text width for getXAxisTickTextY2Overflow()
 					if (!isYAxis) {
 						currentTickMax.ticks[i] = width;
 					}
 				});
+			} else {
+				const textNodes: SVGTextElement[] = [];
+
+				textSelection.each(function() {
+					textNodes.push(this);
+				});
+
+				// Sample a representative subset to avoid N forced reflows on large tick sets
+				const nodesToMeasure = textNodes.length <= 5 ?
+					textNodes :
+					_sampleTickNodes(textNodes);
+
+				nodesToMeasure.map(node => getBoundingRect(node, true)).forEach(dim => {
+					max.width = Math.max(max.width, dim.width);
+					max.height = Math.max(max.height, dim.height);
+				});
+
+				// Estimate per-tick width from measured max for culling calculations
+				if (!isYAxis) {
+					for (let i = 0; i < textNodes.length; i++) {
+						currentTickMax.ticks[i] = max.width;
+					}
+				}
+			}
 
 			dummy.remove();
 		}
@@ -721,6 +787,9 @@ class Axis {
 				currentTickMax[key] = max[key];
 			}
 		});
+
+		// Cache result for this redraw generation
+		$$.cache.add(cacheKey, {generation: state.redrawGeneration, value: currentTickMax});
 
 		return currentTickMax;
 	}
@@ -858,7 +927,7 @@ class Axis {
 	 * @returns {number} Padding value in scale
 	 * @private
 	 */
-	getPadding(padding: number | {[key: string]: number}, key: string, defaultValue: number,
+	getPadding(padding: number | Record<string, number>, key: string, defaultValue: number,
 		domainLength: number): number {
 		const p = isNumber(padding) ? padding : padding[key];
 
@@ -1062,14 +1131,20 @@ class Axis {
 						}
 					}
 
+					// Build index map once: O(n) instead of O(n²) indexOf per tick
+					const tickIndexMap = new Map();
+
+					for (let i = 0; i < tickValues.length; i++) {
+						tickIndexMap.set(tickValues[i], i);
+					}
+
 					tickNodes
 						.each(function(d) {
 							const node = lines ? this.querySelector("text") : this;
 
 							if (node) {
-								node.style.display = tickValues.indexOf(d) % intervalForCulling ?
-									"none" :
-									null;
+								node.style.display =
+									(tickIndexMap.get(d) ?? 0) % intervalForCulling ? "none" : null;
 							}
 						});
 				} else {

@@ -39,10 +39,6 @@ export default {
 		return dataKey || existValue;
 	},
 
-	isNotX(key): boolean {
-		return !this.isX(key);
-	},
-
 	isStackNormalized(): boolean {
 		const {config} = this;
 
@@ -217,6 +213,12 @@ export default {
 	},
 
 	getValueOnIndex(values, index: number) {
+		// Fast path: values are sorted by index from convertDataToTargets
+		if (values[index]?.index === index) {
+			return values[index];
+		}
+
+		// Fallback for sparse/reordered data
 		const valueOnIndex = values.filter(v => v.index === index);
 
 		return valueOnIndex.length ? valueOnIndex[0] : null;
@@ -308,16 +310,23 @@ export default {
 	 */
 	getMinMaxValue(data): {min: number, max: number} {
 		const getBaseValue = this.getBaseValue.bind(this);
-		let min;
-		let max;
+		let min = Infinity;
+		let max = -Infinity;
 
-		(data || this.data.targets.map(t => t.values))
-			.forEach((v, i) => {
-				const value = v.map(getBaseValue).filter(isNumber);
+		const targets = data || this.data.targets.map(t => t.values);
 
-				min = Math.min(i ? min : Infinity, ...value);
-				max = Math.max(i ? max : -Infinity, ...value);
-			});
+		for (let i = 0; i < targets.length; i++) {
+			const v = targets[i];
+
+			for (let j = 0; j < v.length; j++) {
+				const val = getBaseValue(v[j]);
+
+				if (isNumber(val)) {
+					if (val < min) min = val;
+					if (val > max) max = val;
+				}
+			}
+		}
 
 		return {min, max};
 	},
@@ -471,18 +480,43 @@ export default {
 	 * @private
 	 */
 	getMaxDataCount(): number {
-		return Math.max(...this.data.targets.map(t => t.values.length), 0);
+		const {targets} = this.data;
+		let max = 0;
+
+		for (let i = 0; i < targets.length; i++) {
+			if (targets[i].values.length > max) {
+				max = targets[i].values.length;
+			}
+		}
+
+		return max;
 	},
 
 	getMaxDataCountTarget() {
-		let target = this.filterTargetsToShow() || [];
+		const $$ = this;
+		const {cache, state} = $$;
+		const cached = cache.get(KEY.maxDataCountTarget);
+
+		if (cached && cached.generation === state.dataGeneration) {
+			return cached.value;
+		}
+
+		let target = $$.filterTargetsToShow() || [];
 		const length = target.length;
-		const isInverted = this.config.axis_x_inverted;
+		const isInverted = $$.config.axis_x_inverted;
 
 		if (length > 1) {
-			target = target.map(t => t.values)
-				.reduce((a, b) => a.concat(b))
-				.map(v => v.x);
+			const allX: any[] = [];
+
+			for (let i = 0; i < target.length; i++) {
+				const values = target[i].values;
+
+				for (let j = 0; j < values.length; j++) {
+					allX.push(values[j].x);
+				}
+			}
+
+			target = allX;
 
 			target = sortValue(getUnique(target))
 				.map((x, index, array) => ({
@@ -492,6 +526,8 @@ export default {
 		} else if (length) {
 			target = target[0].values.concat();
 		}
+
+		cache.add(KEY.maxDataCountTarget, {value: target, generation: state.dataGeneration});
 
 		return target;
 	},
@@ -533,23 +569,17 @@ export default {
 		if (!targets) {
 			const {cache, data, state} = $$;
 			const cacheKey = KEY.filteredTargets;
-			const visibilityChecksum = state.hiddenTargetIds.join(",");
-			const storedChecksum = cache.get(KEY.visibilityChecksum);
+			const cached = cache.get(cacheKey);
 
-			// Invalidate cache if visibility changed
-			if (visibilityChecksum !== storedChecksum) {
-				cache.remove(cacheKey);
-				cache.add(KEY.visibilityChecksum, visibilityChecksum);
+			// Return cached result if generation matches
+			if (cached && cached.generation === state.dataGeneration) {
+				return cached.value;
 			}
 
-			// Return cached result if available
-			if (cache.has(cacheKey)) {
-				return cache.get(cacheKey);
-			}
-
-			// Compute and cache result (store the filtered array)
+			// Compute and cache result
 			const filtered = data.targets.filter(t => $$.isTargetToShow(t.id));
-			cache.add(cacheKey, filtered);
+
+			cache.add(cacheKey, {value: filtered, generation: state.dataGeneration});
 
 			return filtered;
 		}
@@ -628,13 +658,25 @@ export default {
 		const {hasAxis} = $$.state;
 		const ys = {};
 		const isMultipleX = $$.isMultipleX();
-		const xs = isMultipleX ?
-			$$.mapTargetsToUniqueXs(targets)
-				.map(v => (isString(v) ? v : +v)) :
-			null;
 
-		// Create xIndexMap for O(1) lookup instead of O(n) indexOf in getIndexByX
-		const xIndexMap = xs ? new Map(xs.map((x, i) => [x, i])) : null;
+		let xIndexMap: Map<any, number> | null = null;
+
+		if (isMultipleX) {
+			const cached = $$.cache.get(KEY.valuesXIndexMap);
+
+			if (cached && cached.generation === $$.state.dataGeneration) {
+				xIndexMap = cached.value;
+			} else {
+				const xs = $$.mapTargetsToUniqueXs($$.data.targets)
+					.map(v => (isString(v) ? v : +v));
+
+				xIndexMap = new Map(xs.map((x, i) => [x, i]));
+				$$.cache.add(KEY.valuesXIndexMap, {
+					value: xIndexMap,
+					generation: $$.state.dataGeneration
+				});
+			}
+		}
 
 		targets.forEach(t => {
 			const data: any[] = [];
@@ -678,21 +720,8 @@ export default {
 		return ys;
 	},
 
-	checkValueInTargets(targets, checker: Function): boolean {
-		return Object.keys(targets)
-			.some(id => targets[id].values.some(v => checker(v.value)));
-	},
-
 	hasMultiTargets(): boolean {
 		return this.filterTargetsToShow().length > 1;
-	},
-
-	hasNegativeValueInTargets(targets): boolean {
-		return this.checkValueInTargets(targets, v => v < 0);
-	},
-
-	hasPositiveValueInTargets(targets): boolean {
-		return this.checkValueInTargets(targets, v => v > 0);
 	},
 
 	/**
@@ -704,7 +733,7 @@ export default {
 	 */
 	orderTargets(targetsValue: IData[]): IData[] {
 		const $$ = this;
-		const targets = [...targetsValue];
+		const targets = targetsValue.slice();
 		const fn = $$.getSortCompareFn();
 
 		fn && targets.sort(fn);
@@ -905,12 +934,15 @@ export default {
 		let minDist;
 		let closest;
 
-		// find mouseovering bar/candlestick
+		// find mouseovering bar/candlestick and closest point in a single pass
 		// https://github.com/naver/billboard.js/issues/2434
-		data
-			.filter(v => $$.isBarType(v.id) || $$.isCandlestickType(v.id))
-			.forEach(v => {
-				const selector = $$.isBarType(v.id) ?
+		for (let i = 0; i < data.length; i++) {
+			const v = data[i];
+			const isBar = $$.isBarType(v.id);
+			const isCandle = $$.isCandlestickType(v.id);
+
+			if (isBar || isCandle) {
+				const selector = isBar ?
 					`.${$BAR.chartBar}.${$COMMON.target}${
 						$$.getTargetSelectorSuffix(v.id)
 					} .${$BAR.bar}-${v.index}` :
@@ -921,21 +953,16 @@ export default {
 				if (!closest && $$.isWithinBar(main.select(selector).node())) {
 					closest = v;
 				}
-			});
+			} else {
+				const d = $$.dist(v as IDataPoint, pos);
+				const sensitivity = $$.getPointSensitivity(v);
 
-		// find closest point from non-bar/candlestick
-		data
-			.filter(v => !$$.isBarType(v.id) && !$$.isCandlestickType(v.id))
-			.forEach((v: IDataPoint) => {
-				const d = $$.dist(v, pos);
-
-				minDist = $$.getPointSensitivity(v);
-
-				if (d < minDist) {
+				if (d < sensitivity && (minDist === undefined || d < minDist)) {
 					minDist = d;
 					closest = v;
 				}
-			});
+			}
+		}
 
 		return closest;
 	},
@@ -968,7 +995,7 @@ export default {
 			return values;
 		}
 
-		// when all datas are null, return empty array
+		// when all data are null, return empty array
 		// https://github.com/naver/billboard.js/issues/3124
 		if (converted.length) {
 			// insert & append cloning first/last value to be fully rendered covering on each gap sides
@@ -981,14 +1008,14 @@ export default {
 			converted.unshift({x: --x, value: head.value, id});
 
 			isCategorized && stepType === "step-after" &&
-				converted.unshift({x: --x, value: head.value, id});
+				converted.unshift({x: x - 1, value: head.value, id});
 
 			// append tail
 			x = tail.x;
 			converted.push({x: ++x, value: tail.value, id});
 
 			isCategorized && stepType === "step-before" &&
-				converted.push({x: ++x, value: tail.value, id});
+				converted.push({x: x + 1, value: tail.value, id});
 		}
 
 		return converted;

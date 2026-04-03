@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {DataItem, GaugeTypes} from "./types";
-import {Chart} from "./chart";
+import {DataItem, GaugeTypes} from "./types.js";
+import {Chart} from "./chart.js";
 
 /**
  * Label line configuration for arc chart types (donut, pie, polar, gauge).
@@ -474,21 +474,32 @@ export interface DonutOptions {
 }
 
 export interface FunnelOptions {
-	neck: {
+	neck?: {
 		/**
 		 * Set funnel neck width.
 		 */
 		width?: number | {
 			ratio: number
 		};
-		
+
 		/**
 		 * Set funnel neck height.
 		 */
 		height?: number | {
 			ratio: number
 		};
-	}
+	};
+
+	/**
+	 * Set funnel direction rotated.
+	 * When set to `true`, the funnel will be rendered horizontally (left to right) instead of vertically (top to bottom).
+	 */
+	rotated?: boolean;
+
+	/**
+	 * Enable spline (curved) edges for the funnel.
+	 */
+	spline?: boolean;
 }
 
 export interface GaugeOptions {
