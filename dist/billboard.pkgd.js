@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260401010611
+ * @version 3.18.0-nightly-20260404005528
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -28020,15 +28020,18 @@ class Cache {
   /**
    * Reset cached data
    * @param {boolean} all true: reset all data, false: reset only '$' prefixed key data
+   * @param {string[]} excludePrefixes Keys starting with any of these prefixes are preserved
    * @private
    */
-  reset(all) {
+  reset(all, excludePrefixes) {
     if (all) {
       this.cache.clear();
     } else {
       this.cache.forEach((_, x) => {
         if (/^\$/.test(x)) {
-          this.cache.delete(x);
+          if (!(excludePrefixes == null ? void 0 : excludePrefixes.some((prefix) => x.startsWith(prefix)))) {
+            this.cache.delete(x);
+          }
         }
       });
     }
@@ -29138,6 +29141,10 @@ function _setXS(ids, data, params) {
     return value;
   },
   getValueOnIndex(values, index) {
+    var _a;
+    if (((_a = values[index]) == null ? void 0 : _a.index) === index) {
+      return values[index];
+    }
     const valueOnIndex = values.filter((v) => v.index === index);
     return valueOnIndex.length ? valueOnIndex[0] : null;
   },
@@ -29918,6 +29925,7 @@ function _setXS(ids, data, params) {
 ;// ./src/ChartInternal/data/load.ts
 
 
+
 function callDone(fn, resizeAfter = false) {
   const $$ = this;
   const { api } = $$;
@@ -29994,7 +30002,12 @@ function callDone(fn, resizeAfter = false) {
     if (!$$.config) {
       return;
     }
-    $$.cache.reset();
+    $$.cache.reset(false, [
+      KEY.filteredTargets,
+      KEY.maxDataCountTarget,
+      KEY.valuesXIndexMap,
+      KEY.maxTickSize
+    ]);
     $$.convertData(args, (d) => {
       const data = args.data || d;
       args.append && (data.__append__ = true);
@@ -30008,7 +30021,12 @@ function callDone(fn, resizeAfter = false) {
     const hasLegendDefsPoint = !!((_a = $$.hasLegendDefsPoint) == null ? void 0 : _a.call($$));
     let done = customDoneCb;
     let targetIds = rawTargetIds;
-    $$.cache.reset();
+    $$.cache.reset(false, [
+      KEY.filteredTargets,
+      KEY.maxDataCountTarget,
+      KEY.valuesXIndexMap,
+      KEY.maxTickSize
+    ]);
     if (!done) {
       done = () => {
       };
@@ -39540,7 +39558,9 @@ function loadConfig(config) {
         state.current.zoomDomain = $$.scale.zoom.domain();
       }
       $$.scale.zoom = null;
-      state.dirty.data = true;
+      if (!state.resizing) {
+        state.dirty.data = true;
+      }
       soft ? $$.redraw({
         withTransform: true,
         withUpdateXDomain: true,
@@ -45502,6 +45522,27 @@ class AxisRenderer {
 var Axis_defProp = Object.defineProperty;
 var Axis_defNormalProp = (obj, key, value) => key in obj ? Axis_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var Axis_publicField = (obj, key, value) => Axis_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+function _sampleTickNodes(nodes) {
+  var _a, _b;
+  const sampled = [nodes[0], nodes[nodes.length - 1]];
+  let maxLen = 0;
+  let longestNode = null;
+  for (const node of nodes) {
+    const len = (_b = (_a = node.textContent) == null ? void 0 : _a.length) != null ? _b : 0;
+    if (len > maxLen) {
+      maxLen = len;
+      longestNode = node;
+    }
+  }
+  if (longestNode && !sampled.includes(longestNode)) {
+    sampled.push(longestNode);
+  }
+  const mid = nodes[Math.floor(nodes.length / 2)];
+  if (!sampled.includes(mid)) {
+    sampled.push(mid);
+  }
+  return sampled;
+}
 
 
 
@@ -46016,13 +46057,16 @@ class Axis_Axis {
         textSelection.each(function() {
           textNodes.push(this);
         });
-        textNodes.map((node) => getBoundingRect(node, true)).forEach((dim, i) => {
+        const nodesToMeasure = textNodes.length <= 5 ? textNodes : _sampleTickNodes(textNodes);
+        nodesToMeasure.map((node) => getBoundingRect(node, true)).forEach((dim) => {
           max.width = Math.max(max.width, dim.width);
           max.height = Math.max(max.height, dim.height);
-          if (!isYAxis) {
-            currentTickMax.ticks[i] = dim.width;
-          }
         });
+        if (!isYAxis) {
+          for (let i = 0; i < textNodes.length; i++) {
+            currentTickMax.ticks[i] = max.width;
+          }
+        }
       }
       dummy.remove();
     }
@@ -46281,10 +46325,15 @@ class Axis_Axis {
               break;
             }
           }
+          const tickIndexMap = /* @__PURE__ */ new Map();
+          for (let i = 0; i < tickValues.length; i++) {
+            tickIndexMap.set(tickValues[i], i);
+          }
           tickNodes.each(function(d) {
+            var _a;
             const node = lines ? this.querySelector("text") : this;
             if (node) {
-              node.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : null;
+              node.style.display = ((_a = tickIndexMap.get(d)) != null ? _a : 0) % intervalForCulling ? "none" : null;
             }
           });
         } else {
@@ -49948,10 +49997,15 @@ function _getConnectLineType(id) {
     const $$ = this;
     const { bar } = isSub ? $$.$el.subchart : $$.$el;
     const barPath = [];
+    const connectLineCache = /* @__PURE__ */ new Map();
     return [
       $$.$T(bar, withTransition, getRandom()).attr("d", function(d, i, arr) {
         const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
-        const connectLineType = _getConnectLineType.call($$, d.id);
+        let connectLineType = connectLineCache.get(d.id);
+        if (connectLineType === void 0) {
+          connectLineType = _getConnectLineType.call($$, d.id);
+          connectLineCache.set(d.id, connectLineType);
+        }
         if (path.length > 1) {
           barPath.push(path[1]);
           if (i === arr.length - 1) {
@@ -50076,11 +50130,13 @@ function _getConnectLineType(id) {
     const sortedList = $$.orderTargets(
       $$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))
     ).filter((v) => keys.indexOf(v.id) > -1);
-    const sortedIds = sortedList.map(
-      (v) => v.values.filter(
-        (v2) => v2.index === index && (isNumber(value) && value > 0 ? v2.value > 0 : v2.value < 0)
-      )[0]
-    ).filter(Boolean).map((v) => v.id);
+    const sortedIds = sortedList.map((v) => {
+      const v2 = v.values[index];
+      if (v2 && (isNumber(value) && value > 0 ? v2.value > 0 : v2.value < 0)) {
+        return v2;
+      }
+      return void 0;
+    }).filter(Boolean).map((v) => v.id);
     return value !== 0 && sortedIds.indexOf(id) === sortedIds.length - 1;
   },
   /**
@@ -54541,7 +54597,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260401010611",
+  version: "3.18.0-nightly-20260404005528",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
