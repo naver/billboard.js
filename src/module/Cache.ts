@@ -112,15 +112,18 @@ export default class Cache {
 	/**
 	 * Reset cached data
 	 * @param {boolean} all true: reset all data, false: reset only '$' prefixed key data
+	 * @param {string[]} excludePrefixes Keys starting with any of these prefixes are preserved
 	 * @private
 	 */
-	reset(all?: boolean): void {
+	reset(all?: boolean, excludePrefixes?: string[]): void {
 		if (all) {
 			this.cache.clear();
 		} else {
 			this.cache.forEach((_, x) => {
 				if (/^\$/.test(x)) {
-					this.cache.delete(x);
+					if (!excludePrefixes?.some(prefix => x.startsWith(prefix))) {
+						this.cache.delete(x);
+					}
 				}
 			});
 		}
