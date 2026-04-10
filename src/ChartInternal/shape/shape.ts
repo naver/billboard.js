@@ -590,7 +590,7 @@ export default {
 		if (!isGrouped && isObjectType(config[configName])) {
 			result = {_$width: result, _$total: []};
 
-			$$.filterTargetsToShow($$.data.targets).forEach(v => {
+			$$.getTargetsToShow().forEach(v => {
 				if (config[configName][v.id]) {
 					result[v.id] = getWidth(v.id);
 					result._$total.push(result[v.id] || result._$width);
