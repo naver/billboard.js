@@ -678,7 +678,7 @@ class Axis {
 
 		if (svg) {
 			const isYAxis = /^y2?$/.test(id);
-			const targetsToShow = state._targetsToShow || $$.filterTargetsToShow($$.data.targets);
+			const targetsToShow = $$.getTargetsToShow();
 			const scale = $$.scale[id].copy().domain(
 				$$[`get${isYAxis ? "Y" : "X"}Domain`](targetsToShow, id)
 			);
@@ -859,7 +859,7 @@ class Axis {
 			maxOverflow = Math.max(maxOverflow, overflow);
 		}
 
-		const filteredTargets = $$.filterTargetsToShow($$.data.targets);
+		const filteredTargets = $$.getTargetsToShow();
 		let tickOffset = 0;
 
 		if (

@@ -562,6 +562,12 @@ export default {
 		return this.state.hiddenLegendIds.indexOf(targetId) < 0;
 	},
 
+	getTargetsToShow(): any[] {
+		const {state} = this;
+
+		return state._targetsToShow ?? this.filterTargetsToShow();
+	},
+
 	filterTargetsToShow(targets?) {
 		const $$ = this;
 

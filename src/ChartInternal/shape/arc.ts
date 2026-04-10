@@ -162,7 +162,7 @@ function _getRadiusFn(expandRate = 0) {
 	const $$ = this;
 	const {config, state} = $$;
 	const hasMultiArcGauge = $$.hasMultiArcGauge();
-	const singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
+	const singleArcWidth = state.gaugeArcWidth / $$.getTargetsToShow().length;
 	const expandWidth = expandRate ?
 		(
 			Math.min(
@@ -304,7 +304,7 @@ export default {
 		const dataType = config.data_type;
 		const padding = config[`${dataType}_padding`];
 		const w = config.gauge_width || config.donut_width;
-		const gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length *
+		const gaugeArcWidth = $$.getTargetsToShow().length *
 			config.gauge_arcs_minWidth;
 
 		// Radius reduction ratio when labels are present
@@ -1139,7 +1139,7 @@ export default {
 		const {config, state} = $$;
 		const hasMultiArcGauge = $$.hasMultiArcGauge();
 		const isFullCircle = config.gauge_fullCircle;
-		const showEmptyTextLabel = $$.filterTargetsToShow($$.data.targets).length === 0 &&
+		const showEmptyTextLabel = $$.getTargetsToShow().length === 0 &&
 			!!config.data_empty_label_text;
 
 		const startAngle = $$.getStartingAngle();
