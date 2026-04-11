@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260404005528
+ * @version 3.18.0-nightly-20260411005800
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23047,6 +23047,7 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 ;// ./node_modules/d3-selection/src/selector.js
+Object.defineProperty(selector, "name", { value: "default", configurable: true });
 function none() {
 }
 /* harmony default export */ function selector(selector) {
@@ -23056,6 +23057,7 @@ function none() {
 }
 
 ;// ./node_modules/d3-selection/src/selection/select.js
+Object.defineProperty(selection_select, "name", { value: "default", configurable: true });
 
 
 /* harmony default export */ function selection_select(select) {
@@ -23077,6 +23079,7 @@ function array(x) {
 }
 
 ;// ./node_modules/d3-selection/src/selectorAll.js
+Object.defineProperty(selectorAll, "name", { value: "default", configurable: true });
 function empty() {
   return [];
 }
@@ -23087,6 +23090,7 @@ function empty() {
 }
 
 ;// ./node_modules/d3-selection/src/selection/selectAll.js
+Object.defineProperty(selectAll, "name", { value: "default", configurable: true });
 
 
 
@@ -23110,6 +23114,7 @@ function arrayAll(select) {
 }
 
 ;// ./node_modules/d3-selection/src/matcher.js
+Object.defineProperty(matcher, "name", { value: "default", configurable: true });
 /* harmony default export */ function matcher(selector) {
   return function() {
     return this.matches(selector);
@@ -23122,6 +23127,7 @@ function childMatcher(selector) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/selectChild.js
+Object.defineProperty(selectChild, "name", { value: "default", configurable: true });
 
 var find = Array.prototype.find;
 function childFind(match) {
@@ -23137,6 +23143,7 @@ function childFirst() {
 }
 
 ;// ./node_modules/d3-selection/src/selection/selectChildren.js
+Object.defineProperty(selectChildren, "name", { value: "default", configurable: true });
 
 var filter = Array.prototype.filter;
 function children() {
@@ -23152,6 +23159,7 @@ function childrenFilter(match) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/filter.js
+Object.defineProperty(selection_filter, "name", { value: "default", configurable: true });
 
 
 /* harmony default export */ function selection_filter(match) {
@@ -23167,11 +23175,13 @@ function childrenFilter(match) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/sparse.js
+Object.defineProperty(sparse, "name", { value: "default", configurable: true });
 /* harmony default export */ function sparse(update) {
   return new Array(update.length);
 }
 
 ;// ./node_modules/d3-selection/src/selection/enter.js
+Object.defineProperty(enter, "name", { value: "default", configurable: true });
 
 
 /* harmony default export */ function enter() {
@@ -23201,6 +23211,7 @@ EnterNode.prototype = {
 };
 
 ;// ./node_modules/d3-selection/src/constant.js
+Object.defineProperty(constant, "name", { value: "default", configurable: true });
 /* harmony default export */ function constant(x) {
   return function() {
     return x;
@@ -23208,6 +23219,7 @@ EnterNode.prototype = {
 }
 
 ;// ./node_modules/d3-selection/src/selection/data.js
+Object.defineProperty(data, "name", { value: "default", configurable: true });
 
 
 
@@ -23283,6 +23295,7 @@ function arraylike(data) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/exit.js
+Object.defineProperty(exit, "name", { value: "default", configurable: true });
 
 
 /* harmony default export */ function exit() {
@@ -23290,6 +23303,7 @@ function arraylike(data) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/join.js
+Object.defineProperty(join, "name", { value: "default", configurable: true });
 /* harmony default export */ function join(onenter, onupdate, onexit) {
   var enter = this.enter(), update = this, exit = this.exit();
   if (typeof onenter === "function") {
@@ -23308,6 +23322,7 @@ function arraylike(data) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/merge.js
+Object.defineProperty(merge, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function merge(context) {
   var selection = context.selection ? context.selection() : context;
@@ -23325,6 +23340,7 @@ function arraylike(data) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/order.js
+Object.defineProperty(order, "name", { value: "default", configurable: true });
 /* harmony default export */ function order() {
   for (var groups = this._groups, j = -1, m = groups.length; ++j < m; ) {
     for (var group = groups[j], i = group.length - 1, next = group[i], node; --i >= 0; ) {
@@ -23338,6 +23354,7 @@ function arraylike(data) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/sort.js
+Object.defineProperty(sort, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function sort(compare) {
   if (!compare) compare = ascending;
@@ -23359,6 +23376,7 @@ function ascending(a, b) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/call.js
+Object.defineProperty(call, "name", { value: "default", configurable: true });
 /* harmony default export */ function call() {
   var callback = arguments[0];
   arguments[0] = this;
@@ -23367,11 +23385,13 @@ function ascending(a, b) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/nodes.js
+Object.defineProperty(nodes, "name", { value: "default", configurable: true });
 /* harmony default export */ function nodes() {
   return Array.from(this);
 }
 
 ;// ./node_modules/d3-selection/src/selection/node.js
+Object.defineProperty(node, "name", { value: "default", configurable: true });
 /* harmony default export */ function node() {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length; i < n; ++i) {
@@ -23383,6 +23403,7 @@ function ascending(a, b) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/size.js
+Object.defineProperty(size, "name", { value: "default", configurable: true });
 /* harmony default export */ function size() {
   let size = 0;
   for (const node of this) ++size;
@@ -23390,11 +23411,13 @@ function ascending(a, b) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/empty.js
+Object.defineProperty(selection_empty, "name", { value: "default", configurable: true });
 /* harmony default export */ function selection_empty() {
   return !this.node();
 }
 
 ;// ./node_modules/d3-selection/src/selection/each.js
+Object.defineProperty(each, "name", { value: "default", configurable: true });
 /* harmony default export */ function each(callback) {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
@@ -23415,6 +23438,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
 });
 
 ;// ./node_modules/d3-selection/src/namespace.js
+Object.defineProperty(namespace, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function namespace(name) {
   var prefix = name += "", i = prefix.indexOf(":");
@@ -23423,6 +23447,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
 }
 
 ;// ./node_modules/d3-selection/src/selection/attr.js
+Object.defineProperty(attr, "name", { value: "default", configurable: true });
 
 function attrRemove(name) {
   return function() {
@@ -23468,11 +23493,13 @@ function attrFunctionNS(fullname, value) {
 }
 
 ;// ./node_modules/d3-selection/src/window.js
+Object.defineProperty(src_window, "name", { value: "default", configurable: true });
 /* harmony default export */ function src_window(node) {
   return node.ownerDocument && node.ownerDocument.defaultView || node.document && node || node.defaultView;
 }
 
 ;// ./node_modules/d3-selection/src/selection/style.js
+Object.defineProperty(style, "name", { value: "default", configurable: true });
 
 function styleRemove(name) {
   return function() {
@@ -23499,6 +23526,7 @@ function styleValue(node, name) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/property.js
+Object.defineProperty(property, "name", { value: "default", configurable: true });
 function propertyRemove(name) {
   return function() {
     delete this[name];
@@ -23521,6 +23549,7 @@ function propertyFunction(name, value) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/classed.js
+Object.defineProperty(classed, "name", { value: "default", configurable: true });
 function classArray(string) {
   return string.trim().split(/^|\s+/);
 }
@@ -23584,6 +23613,7 @@ function classedFunction(names, value) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/text.js
+Object.defineProperty(selection_text, "name", { value: "default", configurable: true });
 function textRemove() {
   this.textContent = "";
 }
@@ -23603,6 +23633,7 @@ function textFunction(value) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/html.js
+Object.defineProperty(html, "name", { value: "default", configurable: true });
 function htmlRemove() {
   this.innerHTML = "";
 }
@@ -23622,6 +23653,7 @@ function htmlFunction(value) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/raise.js
+Object.defineProperty(selection_raise, "name", { value: "default", configurable: true });
 function raise() {
   if (this.nextSibling) this.parentNode.appendChild(this);
 }
@@ -23630,6 +23662,7 @@ function raise() {
 }
 
 ;// ./node_modules/d3-selection/src/selection/lower.js
+Object.defineProperty(selection_lower, "name", { value: "default", configurable: true });
 function lower() {
   if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
 }
@@ -23638,6 +23671,7 @@ function lower() {
 }
 
 ;// ./node_modules/d3-selection/src/creator.js
+Object.defineProperty(creator, "name", { value: "default", configurable: true });
 
 
 function creatorInherit(name) {
@@ -23657,6 +23691,7 @@ function creatorFixed(fullname) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/append.js
+Object.defineProperty(append, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function append(name) {
   var create = typeof name === "function" ? name : creator(name);
@@ -23666,6 +23701,7 @@ function creatorFixed(fullname) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/insert.js
+Object.defineProperty(insert, "name", { value: "default", configurable: true });
 
 
 function constantNull() {
@@ -23679,6 +23715,7 @@ function constantNull() {
 }
 
 ;// ./node_modules/d3-selection/src/selection/remove.js
+Object.defineProperty(selection_remove, "name", { value: "default", configurable: true });
 function remove() {
   var parent = this.parentNode;
   if (parent) parent.removeChild(this);
@@ -23688,6 +23725,7 @@ function remove() {
 }
 
 ;// ./node_modules/d3-selection/src/selection/clone.js
+Object.defineProperty(clone, "name", { value: "default", configurable: true });
 function selection_cloneShallow() {
   var clone = this.cloneNode(false), parent = this.parentNode;
   return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
@@ -23701,11 +23739,13 @@ function selection_cloneDeep() {
 }
 
 ;// ./node_modules/d3-selection/src/selection/datum.js
+Object.defineProperty(selection_datum, "name", { value: "default", configurable: true });
 /* harmony default export */ function selection_datum(value) {
   return arguments.length ? this.property("__data__", value) : this.node().__data__;
 }
 
 ;// ./node_modules/d3-selection/src/selection/on.js
+Object.defineProperty(on, "name", { value: "default", configurable: true });
 function contextListener(listener) {
   return function(event) {
     listener.call(this, event, this.__data__);
@@ -23769,6 +23809,7 @@ function onAdd(typename, value, options) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/dispatch.js
+Object.defineProperty(dispatch, "name", { value: "default", configurable: true });
 
 function dispatchEvent(node, type, params) {
   var window = src_window(node), event = window.CustomEvent;
@@ -23796,6 +23837,7 @@ function dispatchFunction(type, params) {
 }
 
 ;// ./node_modules/d3-selection/src/selection/iterator.js
+Object.defineProperty(iterator, "name", { value: "default", configurable: true });
 /* harmony default export */ function* iterator() {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
@@ -23891,6 +23933,7 @@ Selection.prototype = selection.prototype = {
 /* harmony default export */ var src_selection = (selection);
 
 ;// ./node_modules/d3-selection/src/select.js
+Object.defineProperty(src_select, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function src_select(selector) {
   return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
@@ -24009,7 +24052,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260404005528");
+__publicField(Plugin, "version", "3.18.0-nightly-20260411005800");
 
 ;// ./src/Plugin/bubblecompare/index.ts
 var bubblecompare_defProp = Object.defineProperty;

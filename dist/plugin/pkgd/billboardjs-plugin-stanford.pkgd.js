@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260404005528
+ * @version 3.18.0-nightly-20260411005800
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23049,6 +23049,7 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 ;// ./node_modules/d3-color/src/define.js
+Object.defineProperty(src_define, "name", { value: "default", configurable: true });
 /* harmony default export */ function src_define(constructor, factory, prototype) {
   constructor.prototype = factory.prototype = prototype;
   prototype.constructor = constructor;
@@ -23390,6 +23391,7 @@ function hsl2rgb(h, m1, m2) {
 
 ;// ./node_modules/d3-interpolate/src/constant.js
 /* harmony default export */ var constant = ((x) => () => x);
+(Object.getOwnPropertyDescriptor(constant, "name") || {}).writable || Object.defineProperty(constant, "name", { value: "default", configurable: true });
 
 ;// ./node_modules/d3-interpolate/src/color.js
 
@@ -23436,6 +23438,7 @@ function hsl_hsl(hue2) {
 var hslLong = hsl_hsl(nogamma);
 
 ;// ./node_modules/d3-interpolate/src/basis.js
+Object.defineProperty(src_basis, "name", { value: "default", configurable: true });
 function basis(t1, v0, v1, v2, v3) {
   var t2 = t1 * t1, t3 = t2 * t1;
   return ((1 - 3 * t1 + 3 * t2 - t3) * v0 + (4 - 6 * t2 + 3 * t3) * v1 + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2 + t3 * v3) / 6;
@@ -23449,6 +23452,7 @@ function basis(t1, v0, v1, v2, v3) {
 }
 
 ;// ./node_modules/d3-interpolate/src/basisClosed.js
+Object.defineProperty(basisClosed, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function basisClosed(values) {
   var n = values.length;
@@ -23503,6 +23507,7 @@ var rgbBasis = rgbSpline(src_basis);
 var rgbBasisClosed = rgbSpline(basisClosed);
 
 ;// ./node_modules/d3-interpolate/src/numberArray.js
+Object.defineProperty(numberArray, "name", { value: "default", configurable: true });
 /* harmony default export */ function numberArray(a, b) {
   if (!b) b = [];
   var n = a ? Math.min(b.length, a.length) : 0, c = b.slice(), i;
@@ -23516,6 +23521,7 @@ function isNumberArray(x) {
 }
 
 ;// ./node_modules/d3-interpolate/src/array.js
+Object.defineProperty(array, "name", { value: "default", configurable: true });
 
 
 /* harmony default export */ function array(a, b) {
@@ -23532,6 +23538,7 @@ function genericArray(a, b) {
 }
 
 ;// ./node_modules/d3-interpolate/src/date.js
+Object.defineProperty(date, "name", { value: "default", configurable: true });
 /* harmony default export */ function date(a, b) {
   var d = /* @__PURE__ */ new Date();
   return a = +a, b = +b, function(t) {
@@ -23540,6 +23547,7 @@ function genericArray(a, b) {
 }
 
 ;// ./node_modules/d3-interpolate/src/number.js
+Object.defineProperty(number, "name", { value: "default", configurable: true });
 /* harmony default export */ function number(a, b) {
   return a = +a, b = +b, function(t) {
     return a * (1 - t) + b * t;
@@ -23547,6 +23555,7 @@ function genericArray(a, b) {
 }
 
 ;// ./node_modules/d3-interpolate/src/object.js
+Object.defineProperty(object, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function object(a, b) {
   var i = {}, c = {}, k;
@@ -23566,6 +23575,7 @@ function genericArray(a, b) {
 }
 
 ;// ./node_modules/d3-interpolate/src/string.js
+Object.defineProperty(string, "name", { value: "default", configurable: true });
 
 var reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g, reB = new RegExp(reA.source, "g");
 function zero(b) {
@@ -23608,6 +23618,7 @@ function one(b) {
 }
 
 ;// ./node_modules/d3-interpolate/src/value.js
+Object.defineProperty(value, "name", { value: "default", configurable: true });
 
 
 
@@ -23623,6 +23634,7 @@ function one(b) {
 }
 
 ;// ./node_modules/d3-interpolate/src/round.js
+Object.defineProperty(round, "name", { value: "default", configurable: true });
 /* harmony default export */ function round(a, b) {
   return a = +a, b = +b, function(t) {
     return Math.round(a * (1 - t) + b * t);
@@ -23934,6 +23946,7 @@ FormatSpecifier.prototype.toString = function() {
 };
 
 ;// ./node_modules/d3-format/src/formatDecimal.js
+Object.defineProperty(formatDecimal, "name", { value: "default", configurable: true });
 /* harmony default export */ function formatDecimal(x) {
   return Math.abs(x = Math.round(x)) >= 1e21 ? x.toLocaleString("en").replace(/,/g, "") : x.toString(10);
 }
@@ -23947,18 +23960,21 @@ function formatDecimalParts(x, p) {
 }
 
 ;// ./node_modules/d3-format/src/exponent.js
+Object.defineProperty(exponent, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function exponent(x) {
   return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
 }
 
 ;// ./node_modules/d3-format/src/precisionPrefix.js
+Object.defineProperty(precisionPrefix, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function precisionPrefix(step, value) {
   return Math.max(0, Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3 - exponent(Math.abs(step)));
 }
 
 ;// ./node_modules/d3-format/src/formatGroup.js
+Object.defineProperty(formatGroup, "name", { value: "default", configurable: true });
 /* harmony default export */ function formatGroup(grouping, thousands) {
   return function(value, width) {
     var i = value.length, t = [], j = 0, g = grouping[0], length = 0;
@@ -23973,6 +23989,7 @@ function formatDecimalParts(x, p) {
 }
 
 ;// ./node_modules/d3-format/src/formatNumerals.js
+Object.defineProperty(formatNumerals, "name", { value: "default", configurable: true });
 /* harmony default export */ function formatNumerals(numerals) {
   return function(value) {
     return value.replace(/[0-9]/g, function(i) {
@@ -23982,6 +23999,7 @@ function formatDecimalParts(x, p) {
 }
 
 ;// ./node_modules/d3-format/src/formatTrim.js
+Object.defineProperty(formatTrim, "name", { value: "default", configurable: true });
 /* harmony default export */ function formatTrim(s) {
   out: for (var n = s.length, i = 1, i0 = -1, i1; i < n; ++i) {
     switch (s[i]) {
@@ -24002,6 +24020,7 @@ function formatDecimalParts(x, p) {
 }
 
 ;// ./node_modules/d3-format/src/formatPrefixAuto.js
+Object.defineProperty(formatPrefixAuto, "name", { value: "default", configurable: true });
 
 var prefixExponent;
 /* harmony default export */ function formatPrefixAuto(x, p) {
@@ -24012,6 +24031,7 @@ var prefixExponent;
 }
 
 ;// ./node_modules/d3-format/src/formatRounded.js
+Object.defineProperty(formatRounded, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function formatRounded(x, p) {
   var d = formatDecimalParts(x, p);
@@ -24041,11 +24061,13 @@ var prefixExponent;
 });
 
 ;// ./node_modules/d3-format/src/identity.js
+Object.defineProperty(src_identity, "name", { value: "default", configurable: true });
 /* harmony default export */ function src_identity(x) {
   return x;
 }
 
 ;// ./node_modules/d3-format/src/locale.js
+Object.defineProperty(locale, "name", { value: "default", configurable: true });
 
 
 
@@ -24144,6 +24166,7 @@ function defaultLocale(definition) {
 }
 
 ;// ./node_modules/d3-format/src/precisionRound.js
+Object.defineProperty(precisionRound, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function precisionRound(step, max) {
   step = Math.abs(step), max = Math.abs(max) - step;
@@ -24151,6 +24174,7 @@ function defaultLocale(definition) {
 }
 
 ;// ./node_modules/d3-format/src/precisionFixed.js
+Object.defineProperty(precisionFixed, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function precisionFixed(step) {
   return Math.max(0, -exponent(Math.abs(step)));
@@ -24815,9 +24839,10 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260404005528");
+__publicField(Plugin, "version", "3.18.0-nightly-20260411005800");
 
 ;// ./node_modules/d3-axis/src/identity.js
+Object.defineProperty(d3_axis_src_identity, "name", { value: "default", configurable: true });
 /* harmony default export */ function d3_axis_src_identity(x) {
   return x;
 }

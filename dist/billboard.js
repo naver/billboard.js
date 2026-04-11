@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260404005528
+ * @version 3.18.0-nightly-20260411005800
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -4871,6 +4871,11 @@ function _setXS(ids, data, params) {
   },
   isLegendToShow(targetId) {
     return this.state.hiddenLegendIds.indexOf(targetId) < 0;
+  },
+  getTargetsToShow() {
+    var _a;
+    const { state } = this;
+    return (_a = state._targetsToShow) != null ? _a : this.filterTargetsToShow();
   },
   filterTargetsToShow(targets) {
     const $$ = this;
@@ -9882,7 +9887,7 @@ function updateTargetsForShape(targets, config) {
     let result = getWidth();
     if (!isGrouped && isObjectType(config[configName])) {
       result = { _$width: result, _$total: [] };
-      $$.filterTargetsToShow($$.data.targets).forEach((v) => {
+      $$.getTargetsToShow().forEach((v) => {
         if (config[configName][v.id]) {
           result[v.id] = getWidth(v.id);
           result._$total.push(result[v.id] || result._$width);
@@ -16323,7 +16328,7 @@ class Axis_Axis {
     }
     if (svg) {
       const isYAxis = /^y2?$/.test(id);
-      const targetsToShow = state._targetsToShow || $$.filterTargetsToShow($$.data.targets);
+      const targetsToShow = $$.getTargetsToShow();
       const scale = $$.scale[id].copy().domain(
         $$[`get${isYAxis ? "Y" : "X"}Domain`](targetsToShow, id)
       );
@@ -16435,7 +16440,7 @@ class Axis_Axis {
       const overflow = rotatedTickTextWidth - tickLength / 2 - remainingTickWidth;
       maxOverflow = Math.max(maxOverflow, overflow);
     }
-    const filteredTargets = $$.filterTargetsToShow($$.data.targets);
+    const filteredTargets = $$.getTargetsToShow();
     let tickOffset = 0;
     if (!isTimeSeries && config.axis_x_tick_count <= filteredTargets.length && filteredTargets[0].values.length) {
       const scale = getScale(
@@ -16867,7 +16872,7 @@ var __pow = Math.pow;
     const isRotated = config.axis_rotated;
     const isMultipleX = $$.isMultipleX();
     const xDomain = xScale == null ? void 0 : xScale.domain();
-    const fingerprint = xDomain ? `${xDomain[0]}_${xDomain[1]}_${$$.data.targets.length}` : null;
+    const fingerprint = xDomain ? `${xDomain[0]}_${xDomain[1]}_${$$.data.targets.length}_${state.hiddenTargetIds.join(",")}` : null;
     if (fingerprint && fingerprint === state._eventRectFingerprint) {
       return;
     }
@@ -17621,7 +17626,8 @@ function _smoothLines(el, type) {
   },
   initFocusGrid() {
     const $$ = this;
-    const { config, state: { clip }, $el } = $$;
+    const { config, state, state: { clip }, $el } = $$;
+    state._gridFocusEl = null;
     const isFront = config.grid_front;
     const className = `.${isFront && $el.gridLines.main ? $GRID.gridLines : $COMMON.chart}${isFront ? " + *" : ""}`;
     const grid = $el.main.insert("g", className).attr("clip-path", clip.pathGrid).attr("class", $GRID.grid);
@@ -21607,7 +21613,7 @@ function _getRadiusFn(expandRate = 0) {
   const $$ = this;
   const { config, state } = $$;
   const hasMultiArcGauge = $$.hasMultiArcGauge();
-  const singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
+  const singleArcWidth = state.gaugeArcWidth / $$.getTargetsToShow().length;
   const expandWidth = expandRate ? Math.min(
     state.radiusExpanded * expandRate - state.radius,
     singleArcWidth * 0.8 - (1 - expandRate) * 100
@@ -21709,7 +21715,7 @@ function _getAttrTweenFn(fn) {
     const dataType = config.data_type;
     const padding = config[`${dataType}_padding`];
     const w = config.gauge_width || config.donut_width;
-    const gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length * config.gauge_arcs_minWidth;
+    const gaugeArcWidth = $$.getTargetsToShow().length * config.gauge_arcs_minWidth;
     const LABEL_RADIUS_RATIO = 0.85;
     const labelWithLineRatio = isLabelWithLine.call($$) ? LABEL_RADIUS_RATIO : 1;
     state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * ($$.hasMultiArcGauge() && config.gauge_label_show ? LABEL_RADIUS_RATIO : labelWithLineRatio);
@@ -22264,7 +22270,7 @@ function _getAttrTweenFn(fn) {
     const { config, state } = $$;
     const hasMultiArcGauge = $$.hasMultiArcGauge();
     const isFullCircle = config.gauge_fullCircle;
-    const showEmptyTextLabel = $$.filterTargetsToShow($$.data.targets).length === 0 && !!config.data_empty_label_text;
+    const showEmptyTextLabel = $$.getTargetsToShow().length === 0 && !!config.data_empty_label_text;
     const startAngle = $$.getStartingAngle();
     const endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
     let backgroundArc = $$.$el.arcs.select(
@@ -22832,7 +22838,7 @@ let funnel_funnel = () => (extendArc([funnel], [shape_funnel]), (funnel_funnel =
       let transform = "";
       if (hiddenTargetIds.indexOf(d.data.id) < 0) {
         const updated = $$.updateAngle(d);
-        const innerLineLength = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length * (updated.index + 1);
+        const innerLineLength = state.gaugeArcWidth / $$.getTargetsToShow().length * (updated.index + 1);
         const lineAngle = updated.endAngle - Math.PI / 2;
         const arcInnerRadius = state.radius - innerLineLength;
         const linePositioningAngle = lineAngle - (arcInnerRadius === 0 ? 0 : 1 / arcInnerRadius);
@@ -24262,7 +24268,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260404005528",
+  version: "3.18.0-nightly-20260411005800",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
