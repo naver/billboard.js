@@ -270,10 +270,12 @@ export default {
 		const isRotated = config.axis_rotated;
 		const isMultipleX = $$.isMultipleX();
 
-		// Skip recalculation if scale domain hasn't changed
+		// Skip recalculation if scale domain or visibility hasn't changed
 		const xDomain = xScale?.domain();
 		const fingerprint = xDomain ?
-			`${xDomain[0]}_${xDomain[1]}_${$$.data.targets.length}` :
+			`${xDomain[0]}_${xDomain[1]}_${$$.data.targets.length}_${
+				state.hiddenTargetIds.join(",")
+			}` :
 			null;
 
 		if (fingerprint && fingerprint === state._eventRectFingerprint) {

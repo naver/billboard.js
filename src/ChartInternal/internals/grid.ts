@@ -279,7 +279,10 @@ export default {
 
 	initFocusGrid(): void {
 		const $$ = this;
-		const {config, state: {clip}, $el} = $$;
+		const {config, state, state: {clip}, $el} = $$;
+
+		// Invalidate cached D3 selection in case grid is re-initialized
+		state._gridFocusEl = null;
 		const isFront = config.grid_front;
 		const className = `.${isFront && $el.gridLines.main ? $GRID.gridLines : $COMMON.chart}${
 			isFront ? " + *" : ""

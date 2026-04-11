@@ -84,7 +84,7 @@ export default {
 				if (hiddenTargetIds.indexOf(d.data.id) < 0) {
 					const updated = $$.updateAngle(d);
 					const innerLineLength = state.gaugeArcWidth /
-						$$.filterTargetsToShow($$.data.targets).length *
+						$$.getTargetsToShow().length *
 						(updated.index + 1);
 					const lineAngle = updated.endAngle - Math.PI / 2;
 					const arcInnerRadius = state.radius - innerLineLength;
