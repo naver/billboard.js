@@ -409,29 +409,9 @@ export default {
 	 */
 	isPointFocusOnly(): boolean {
 		const $$ = this;
-		const {config} = $$;
 
-		if ($$.hasType("bubble") || $$.hasType("scatter") || $$.hasArcType(null, ["radar"])) {
-			return false;
-		}
-
-		if (config.point_focus_only) {
-			return true;
-		}
-
-		const threshold = config.point_focus_only_threshold;
-
-		if (threshold !== undefined) {
-			let totalPoints = 0;
-
-			for (const target of $$.data.targets) {
-				totalPoints += target.values.length;
-			}
-
-			return totalPoints > threshold;
-		}
-
-		return false;
+		return $$.config.point_focus_only &&
+			!$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
 	},
 
 	isWithinCircle(node: SVGElement, r?: number): boolean {
