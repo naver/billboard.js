@@ -13,6 +13,12 @@ import {isString} from "./type-checks";
 const RE_CSS_BB = /\s?(bb-)/g;
 const RE_CSS_DOTS = /\.+/g;
 
+/**
+ * Convert a CSS selector string to dot-notation class selector
+ * @param {string} s Selector string
+ * @returns {string}
+ * @private
+ */
 function getCssSelector(s: string): string {
 	return s.replace(RE_CSS_BB, ".$1").replace(RE_CSS_DOTS, ".");
 }
