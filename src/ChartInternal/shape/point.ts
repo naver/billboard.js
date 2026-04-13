@@ -111,7 +111,7 @@ export default {
 				const parent = d3Select(this.parentNode);
 
 				// if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
-				return parent.attr("class").indexOf($CIRCLE.chartCircles) > -1 ? "0" : null;
+				return parent.classed($CIRCLE.chartCircles) ? "0" : null;
 			});
 
 		// Update date for selected circles
@@ -147,15 +147,17 @@ export default {
 
 			circles.exit().remove();
 
+			const pointR = $$.pointR.bind($$);
+			const updateCircleColor = $$.updateCircleColor.bind($$);
+			const initialOpacityForCircle = $$.initialOpacityForCircle.bind($$);
+
 			circles.enter()
 				.filter(Boolean)
-				.append(
-					$$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$))
-				);
+				.append($$.point("create", this, pointR, updateCircleColor));
 
 			$root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`)
 				.style("stroke", $$.getStylePropValue($$.color))
-				.style("opacity", $$.initialOpacityForCircle.bind($$));
+				.style("opacity", initialOpacityForCircle);
 		}
 	},
 
@@ -182,12 +184,47 @@ export default {
 			return [];
 		}
 
-		const fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition,
-			flow, selectedCircles);
 		const posAttr = $$.isCirclePoint() ? "c" : "";
-
 		const t = getRandom();
 		const opacityStyleFn = $$.opacityForCircle.bind($$);
+
+		// For standard circle type, batch the update across all circles in one pass
+		if ($$.isCirclePoint()) {
+			const sel = $root.circle;
+
+			if ($$.hasType("bubble")) {
+				sel.attr("r", $$.pointR.bind($$));
+			}
+
+			if (withTransition) {
+				flow && sel.attr("cx", cx);
+
+				// Only animate circles that already have a position; new circles jump directly
+				// to avoid them sliding in from the origin (cx=0)
+				$T(sel.filter(function() {
+					return !!this.getAttribute("cx");
+				}), true, t)
+					.attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+
+				sel.filter(function() {
+					return !this.getAttribute("cx");
+				})
+					.attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+			} else {
+				sel.attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+			}
+
+			const result = $T(sel, withTransition || !rendered, t)
+				.style("opacity", opacityStyleFn);
+
+			return [
+				[result],
+				$T(selectedCircles, withTransition).attr("cx", cx).attr("cy", cy)
+			];
+		}
+
+		const fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition,
+			flow, selectedCircles);
 		const mainCircles: any[] = [];
 
 		$root.circle.each(function(d) {

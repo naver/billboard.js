@@ -912,7 +912,7 @@ describe("LEGEND", () => {
 				// when double click
 				fireEvent(item, "dblclick", undefined, chart);
 
-				expect(state.hiddenTargetIds.length && state.hiddenTargetIds.indexOf(id) === -1).to.be.true;
+				expect(state.hiddenTargetIds.size && !state.hiddenTargetIds.has(id)).to.be.true;
 
 				// when double click again, it should return to initial state
 				fireEvent(item, "dblclick", undefined, chart);

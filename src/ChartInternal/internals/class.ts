@@ -4,9 +4,21 @@
  */
 import CLASS from "../../config/classes";
 
+// Hoisted to module level to avoid recompilation on every getTargetSelectorSuffix() call
+const RE_SELECTOR_SUFFIX = /[\x00-\x20\x7F-\xA0\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g; // eslint-disable-line no-control-regex
+
 export default {
 	generateClass(prefix: string, targetId: string): string {
-		return ` ${prefix} ${prefix + this.getTargetSelectorSuffix(targetId)}`;
+		const cache = this.state.generateClassCache;
+		const key = `${prefix}\0${targetId}`;
+		let cls = cache.get(key);
+
+		if (!cls) {
+			cls = ` ${prefix} ${prefix + this.getTargetSelectorSuffix(targetId)}`;
+			cache.set(key, cls);
+		}
+
+		return cls;
 	},
 
 	/**
@@ -77,19 +89,18 @@ export default {
 	},
 
 	classFocused(d): string {
-		return ` ${this.state.focusedTargetIds.indexOf(d.id) >= 0 ? CLASS.focused : ""}`;
+		return ` ${this.state.focusedTargetIds.has(d.id) ? CLASS.focused : ""}`;
 	},
 
 	classDefocused(d): string {
-		return ` ${this.state.defocusedTargetIds.indexOf(d.id) >= 0 ? CLASS.defocused : ""}`;
+		return ` ${this.state.defocusedTargetIds.has(d.id) ? CLASS.defocused : ""}`;
 	},
 
 	getTargetSelectorSuffix(targetId?: string | number): string {
 		const targetStr = targetId || targetId === 0 ? `-${targetId}` : "";
 
 		// replace control ascii(0 ~ 32) and extended ascii(127 ~ 160)
-		return targetStr
-			.replace(/[\x00-\x20\x7F-\xA0\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-"); // eslint-disable-line no-control-regex
+		return targetStr.replace(RE_SELECTOR_SUFFIX, "-");
 	},
 
 	selectorTarget(id: string, prefix = "", postfix = ""): string {
