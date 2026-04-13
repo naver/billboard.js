@@ -348,6 +348,18 @@ export default {
 			offset._$total.length ? offset._$total.reduce(sum) / 2 : 0
 		);
 
+		// Pre-compute prefix sums to avoid O(n) slice+reduce on every bar datum
+		const prefixSums: number[] = [];
+
+		if (halfWidth && isObjectType(offset) && offset._$total.length) {
+			let acc = 0;
+
+			for (const v of offset._$total) {
+				acc += v;
+				prefixSums.push(acc);
+			}
+		}
+
 		return d => {
 			const ind = $$.getIndices(indices, d, "getShapeX");
 			const index = d.id in ind ? ind[d.id] : 0;
@@ -361,7 +373,7 @@ export default {
 					const offsetWidth = offset[d.id] || offset._$width;
 
 					x = barOverlap ? xPos - offsetWidth / 2 : xPos - offsetWidth +
-						offset._$total.slice(0, index + 1).reduce(sum) -
+						(prefixSums[index] ?? offset._$total.slice(0, index + 1).reduce(sum)) -
 						halfWidth;
 				} else {
 					x = xPos - (isNumber(offset) ? offset : offset._$width) *

@@ -776,7 +776,17 @@ export default {
 	},
 
 	filterByX(targets, x) {
-		return mergeArray(targets.map(t => t.values)).filter(v => v.x - x === 0);
+		const result: any[] = [];
+
+		for (const t of targets) {
+			for (const v of t.values) {
+				if (v.x - x === 0) {
+					result.push(v);
+				}
+			}
+		}
+
+		return result;
 	},
 
 	filterNullish(data) {

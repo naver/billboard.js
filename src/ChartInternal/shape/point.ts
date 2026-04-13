@@ -147,15 +147,17 @@ export default {
 
 			circles.exit().remove();
 
+			const pointR = $$.pointR.bind($$);
+			const updateCircleColor = $$.updateCircleColor.bind($$);
+			const initialOpacityForCircle = $$.initialOpacityForCircle.bind($$);
+
 			circles.enter()
 				.filter(Boolean)
-				.append(
-					$$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$))
-				);
+				.append($$.point("create", this, pointR, updateCircleColor));
 
 			$root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`)
 				.style("stroke", $$.getStylePropValue($$.color))
-				.style("opacity", $$.initialOpacityForCircle.bind($$));
+				.style("opacity", initialOpacityForCircle);
 		}
 	},
 
