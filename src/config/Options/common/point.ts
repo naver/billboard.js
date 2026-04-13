@@ -162,6 +162,7 @@ export default {
 	point_focus_expand_enabled: true,
 	point_focus_expand_r: <number | undefined>undefined,
 	point_focus_only: false,
+	point_focus_only_threshold: <number | undefined>undefined,
 	point_opacity: <number | null | undefined>undefined,
 	point_pattern: <string[]>[],
 	point_select_r: <number | undefined>undefined,

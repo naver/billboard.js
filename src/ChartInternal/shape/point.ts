@@ -184,12 +184,47 @@ export default {
 			return [];
 		}
 
-		const fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition,
-			flow, selectedCircles);
 		const posAttr = $$.isCirclePoint() ? "c" : "";
-
 		const t = getRandom();
 		const opacityStyleFn = $$.opacityForCircle.bind($$);
+
+		// For standard circle type, batch the update across all circles in one pass
+		if ($$.isCirclePoint()) {
+			const sel = $root.circle;
+
+			if ($$.hasType("bubble")) {
+				sel.attr("r", $$.pointR.bind($$));
+			}
+
+			if (withTransition) {
+				flow && sel.attr("cx", cx);
+
+				// Only animate circles that already have a position; new circles jump directly
+				// to avoid them sliding in from the origin (cx=0)
+				$T(sel.filter(function() {
+					return !!this.getAttribute("cx");
+				}), true, t)
+					.attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+
+				sel.filter(function() {
+					return !this.getAttribute("cx");
+				})
+					.attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+			} else {
+				sel.attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+			}
+
+			const result = $T(sel, withTransition || !rendered, t)
+				.style("opacity", opacityStyleFn);
+
+			return [
+				[result],
+				$T(selectedCircles, withTransition).attr("cx", cx).attr("cy", cy)
+			];
+		}
+
+		const fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition,
+			flow, selectedCircles);
 		const mainCircles: any[] = [];
 
 		$root.circle.each(function(d) {
@@ -374,9 +409,29 @@ export default {
 	 */
 	isPointFocusOnly(): boolean {
 		const $$ = this;
+		const {config} = $$;
 
-		return $$.config.point_focus_only &&
-			!$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
+		if ($$.hasType("bubble") || $$.hasType("scatter") || $$.hasArcType(null, ["radar"])) {
+			return false;
+		}
+
+		if (config.point_focus_only) {
+			return true;
+		}
+
+		const threshold = config.point_focus_only_threshold;
+
+		if (threshold !== undefined) {
+			let totalPoints = 0;
+
+			for (const target of $$.data.targets) {
+				totalPoints += target.values.length;
+			}
+
+			return totalPoints > threshold;
+		}
+
+		return false;
 	},
 
 	isWithinCircle(node: SVGElement, r?: number): boolean {
