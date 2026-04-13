@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-import {requestAnimationFrame, window} from "../browser";
+import {requestAnimationFrame} from "../browser";
 import {sanitize} from "../sanitize";
 import {
 	isArray,
@@ -309,21 +309,19 @@ const getRange = (start: number, end: number, step = 1): number[] => {
 	return res;
 };
 
+let _transitionCounter = 0;
+
 /**
- * Retrun random number
+ * Return auto-incrementing counter value.
+ * Transition names only need uniqueness, not cryptographic randomness.
  * @param {boolean} asStr Convert returned value as string
- * @param {number} min Minimum value
- * @param {number} max Maximum value
  * @returns {number|string}
  * @private
  */
-function getRandom(asStr = true, min = 0, max = 10000) {
-	const crpt = window.crypto || window.msCrypto;
-	const rand = crpt ?
-		min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) :
-		Math.floor(Math.random() * (max - min) + min);
+function getRandom(asStr = true) {
+	const id = ++_transitionCounter;
 
-	return asStr ? String(rand) : rand;
+	return asStr ? String(id) : id;
 }
 
 /**

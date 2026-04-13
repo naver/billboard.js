@@ -194,7 +194,10 @@ export default class State {
 			_lastTooltipMouse: <number[] | null>null,
 
 			// Performance: cached grid focus D3 selection
-			_gridFocusEl: <any>null
+			_gridFocusEl: <any>null,
+
+			// Performance: generateClass() result cache (series IDs are fixed per chart)
+			generateClassCache: new Map<string, string>()
 		};
 	}
 }

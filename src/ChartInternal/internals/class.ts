@@ -9,7 +9,16 @@ const RE_SELECTOR_SUFFIX = /[\x00-\x20\x7F-\xA0\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`
 
 export default {
 	generateClass(prefix: string, targetId: string): string {
-		return ` ${prefix} ${prefix + this.getTargetSelectorSuffix(targetId)}`;
+		const cache = this.state.generateClassCache;
+		const key = `${prefix}\0${targetId}`;
+		let cls = cache.get(key);
+
+		if (!cls) {
+			cls = ` ${prefix} ${prefix + this.getTargetSelectorSuffix(targetId)}`;
+			cache.set(key, cls);
+		}
+
+		return cls;
 	},
 
 	/**

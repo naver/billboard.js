@@ -509,6 +509,25 @@ export default {
 		);
 		const groupsZeroAs = $$.config.data_groupsZeroAs;
 
+		// Pre-build per-series same-stacking-group lookup to avoid .filter() on every datum.
+		// bar_indices_removeNull recomputes group membership per-datum index, so fall back there.
+		let sameGroupByTargetId: Map<string, typeof shapeOffsetTargets> | null = null;
+
+		if (!$$.config.bar_indices_removeNull) {
+			sameGroupByTargetId = new Map();
+
+			for (const target of shapeOffsetTargets) {
+				const ind = $$.getIndices(indices, {id: target.id, index: 0} as IDataRow);
+
+				sameGroupByTargetId.set(
+					target.id,
+					shapeOffsetTargets.filter(
+						t => t.id !== target.id && ind[t.id] === ind[target.id]
+					)
+				);
+			}
+		}
+
 		return (d, idx) => {
 			const {id, value, x} = d;
 			const ind = $$.getIndices(indices, d);
@@ -523,41 +542,42 @@ export default {
 			const y0 = scale(groupsZeroAs === "zero" ? 0 : $$.getShapeYMin(id));
 			let offset = y0;
 
-			shapeOffsetTargets
-				.filter(t => t.id !== id && ind[t.id] === ind[id])
-				.forEach(t => {
-					const {
-						id: tid,
-						rowValueMapByXValue,
-						rowValues,
-						values: tvalues
-					} = t;
+			const sameGroupTargets = sameGroupByTargetId?.get(id) ??
+				shapeOffsetTargets.filter(t => t.id !== id && ind[t.id] === ind[id]);
 
-					// for same stacked group (ind[tid] === ind[id])
-					if (indexMapByTargetId[tid] < indexMapByTargetId[id]) {
-						const rValue = tvalues[dataXAsNumber];
-						let row = rowValues[idx];
+			for (const t of sameGroupTargets) {
+				const {
+					id: tid,
+					rowValueMapByXValue,
+					rowValues,
+					values: tvalues
+				} = t;
 
-						// check if the x values line up
-						if (!row || Number(row.x) !== dataXAsNumber) {
-							row = rowValueMapByXValue[dataXAsNumber];
-						}
+				// for same stacked group (ind[tid] === ind[id])
+				if (indexMapByTargetId[tid] < indexMapByTargetId[id]) {
+					const rValue = tvalues[dataXAsNumber];
+					let row = rowValues[idx];
 
-						if (row?.value * value >= 0 && isNumber(rValue)) {
-							const addOffset = value === 0 ?
-								(
-									(groupsZeroAs === "positive" &&
-										rValue > 0) ||
-									(groupsZeroAs === "negative" && rValue < 0)
-								) :
-								true;
+					// check if the x values line up
+					if (!row || Number(row.x) !== dataXAsNumber) {
+						row = rowValueMapByXValue[dataXAsNumber];
+					}
 
-							if (addOffset) {
-								offset += scale(rValue) - y0;
-							}
+					if (row?.value * value >= 0 && isNumber(rValue)) {
+						const addOffset = value === 0 ?
+							(
+								(groupsZeroAs === "positive" &&
+									rValue > 0) ||
+								(groupsZeroAs === "negative" && rValue < 0)
+							) :
+							true;
+
+						if (addOffset) {
+							offset += scale(rValue) - y0;
 						}
 					}
-				});
+				}
+			}
 
 			return offset;
 		};
