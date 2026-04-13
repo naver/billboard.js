@@ -135,8 +135,11 @@ export default {
 	isHiddenTargetWithYDomain(id): boolean {
 		const $$ = this;
 
-		return $$.state.hiddenTargetIds
-			.some(v => $$.axis.getId(v) === id);
+		for (const v of $$.state.hiddenTargetIds) {
+			if ($$.axis.getId(v) === id) return true;
+		}
+
+		return false;
 	},
 
 	getYDomain(targets: IData[], axisId: "y" | "y2", xDomain: TDomainRange) {

@@ -429,7 +429,7 @@ describe("SHAPE GAUGE", () => {
 
 			const hiddenIds = chart.internal.state.hiddenTargetIds;
 			const target = chart.$.text.texts.filter(function(d) {
-				return hiddenIds.indexOf(d.id) === -1 && !this.textContent;
+				return !hiddenIds.has(d.id) && !this.textContent;
 			});
 
 			expect(target.size()).to.be.equal(1);

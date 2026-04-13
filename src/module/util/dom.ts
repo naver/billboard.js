@@ -9,6 +9,14 @@ import {document, window} from "../browser";
 import {mergeObj, toArray} from "./object";
 import {isString} from "./type-checks";
 
+// Hoisted to module level to avoid recompilation on every addCssRules() call
+const RE_CSS_BB = /\s?(bb-)/g;
+const RE_CSS_DOTS = /\.+/g;
+
+function getCssSelector(s: string): string {
+	return s.replace(RE_CSS_BB, ".$1").replace(RE_CSS_DOTS, ".");
+}
+
 // ====================================
 // Internal Helper (Not Exported)
 // ====================================
@@ -183,12 +191,7 @@ function getBBox(node, forceEval = false) {
  */
 function addCssRules(style, selector: string, prop: string[]): number {
 	const {rootSelector = "", sheet} = style;
-	const getSelector = s =>
-		s
-			.replace(/\s?(bb-)/g, ".$1")
-			.replace(/\.+/g, ".");
-
-	const rule = `${rootSelector} ${getSelector(selector)} {${prop.join(";")}}`;
+	const rule = `${rootSelector} ${getCssSelector(selector)} {${prop.join(";")}}`;
 
 	return sheet[sheet.insertRule ? "insertRule" : "addRule"](
 		rule,

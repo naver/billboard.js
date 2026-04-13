@@ -1036,7 +1036,7 @@ export default {
 		const $$ = this;
 		const {$el, config, state: {hiddenTargetIds, radius}} = $$;
 		const length = (radius - 1) / 100 * config.arc_needle_length;
-		const hasDataToShow = hiddenTargetIds.length !== $$.data.targets.length;
+		const hasDataToShow = hiddenTargetIds.size !== $$.data.targets.length;
 		let needle = $$.$el.arcs.select(`.${$ARC.needle}`);
 
 		// needle options
@@ -1163,7 +1163,7 @@ export default {
 				.merge(backgroundArc)
 				.style("fill", (config.gauge_background) || null)
 				.attr("d", ({id}) => {
-					if (showEmptyTextLabel || state.hiddenTargetIds.indexOf(id) >= 0) {
+					if (showEmptyTextLabel || state.hiddenTargetIds.has(id)) {
 						return "M 0 0";
 					}
 

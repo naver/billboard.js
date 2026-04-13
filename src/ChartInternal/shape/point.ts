@@ -111,7 +111,7 @@ export default {
 				const parent = d3Select(this.parentNode);
 
 				// if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
-				return parent.attr("class").indexOf($CIRCLE.chartCircles) > -1 ? "0" : null;
+				return parent.classed($CIRCLE.chartCircles) ? "0" : null;
 			});
 
 		// Update date for selected circles

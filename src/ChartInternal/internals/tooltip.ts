@@ -23,6 +23,10 @@ import {
 } from "../../module/util";
 import type {IArcData, IDataRow} from "../data/IData";
 
+// Hoisted to module level to avoid recompilation on every getTooltipContentTemplate() call
+const RE_WHITESPACE = /(\r?\n|\t)/g;
+const RE_TOOLTIP_TPL = /{{(.*)}}/;
+
 export default {
 	/**
 	 * Initializes the tooltip
@@ -295,8 +299,8 @@ export default {
 					<td class="value">{=VALUE}</td>
 				</tr>}}
 			</tbody></table>`)
-			.replace(/(\r?\n|\t)/g, "")
-			.split(/{{(.*)}}/);
+			.replace(RE_WHITESPACE, "")
+			.split(RE_TOOLTIP_TPL);
 	},
 
 	/**

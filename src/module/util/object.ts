@@ -271,7 +271,15 @@ function getMinMax(type: "min" | "max", data: number[] | Date[] | any): number |
 
 	if (res.length) {
 		if (isNumber(res[0])) {
-			res = Math[type](...res);
+			let result = type === "min" ? Infinity : -Infinity;
+
+			for (const v of res) {
+				if (type === "min" ? v < result : v > result) {
+					result = v;
+				}
+			}
+
+			res = result;
 		} else if (res[0] instanceof Date) {
 			res = sortValue(res, type === "min")[0];
 		}

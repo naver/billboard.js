@@ -321,7 +321,7 @@ export default {
 		const {id, index, value} = d;
 
 		// when the data is hidden, check if has rounded edges
-		if (state.hiddenTargetIds.indexOf(id) > -1) {
+		if (state.hiddenTargetIds.has(id)) {
 			const target = $el.bar.filter(d => d.id === id && d.value === value);
 
 			return !target.empty() && /a\d+/i.test(target.attr("d"));

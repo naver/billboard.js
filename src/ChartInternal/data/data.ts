@@ -455,8 +455,8 @@ export default {
 		const {api, state: {hiddenTargetIds}} = $$;
 		let total = 0;
 
-		if (hiddenTargetIds.length) {
-			total = api.data.values.bind(api)(hiddenTargetIds)
+		if (hiddenTargetIds.size) {
+			total = api.data.values.bind(api)([...hiddenTargetIds])
 				.reduce((p, c) => p + c);
 		}
 
@@ -555,11 +555,11 @@ export default {
 	},
 
 	isTargetToShow(targetId): boolean {
-		return this.state.hiddenTargetIds.indexOf(targetId) < 0;
+		return !this.state.hiddenTargetIds.has(targetId);
 	},
 
 	isLegendToShow(targetId): boolean {
-		return this.state.hiddenLegendIds.indexOf(targetId) < 0;
+		return !this.state.hiddenLegendIds.has(targetId);
 	},
 
 	getTargetsToShow(): any[] {
@@ -618,12 +618,9 @@ export default {
 	 */
 	addTargetIds(type: string, targetIds: string[] | string): void {
 		const {state} = this;
-		const ids = (isArray(targetIds) ? targetIds : [targetIds]) as [];
+		const ids = (isArray(targetIds) ? targetIds : [targetIds]) as string[];
 
-		ids.forEach(v => {
-			state[type].indexOf(v) < 0 &&
-				state[type].push(v);
-		});
+		ids.forEach(v => state[type].add(v));
 	},
 
 	/**
@@ -634,13 +631,9 @@ export default {
 	 */
 	removeTargetIds(type: string, targetIds: string[] | string): void {
 		const {state} = this;
-		const ids = (isArray(targetIds) ? targetIds : [targetIds]) as [];
+		const ids = (isArray(targetIds) ? targetIds : [targetIds]) as string[];
 
-		ids.forEach(v => {
-			const index = state[type].indexOf(v);
-
-			index >= 0 && state[type].splice(index, 1);
-		});
+		ids.forEach(v => state[type].delete(v));
 	},
 
 	addHiddenTargetIds(targetIds: string[]): void {
@@ -1154,9 +1147,9 @@ export default {
 					return ratio;
 				}
 
-				if (hiddenTargetIds.length) {
+				if (hiddenTargetIds.size) {
 					// When normalized per group, only subtract hidden data from the same group
-					let hiddenIds = hiddenTargetIds;
+					let hiddenIds: string[] = [...hiddenTargetIds];
 
 					if ($$.isStackNormalizedPerGroup() && d.id) {
 						const group = config.data_groups.find(g => g.indexOf(d.id) >= 0);

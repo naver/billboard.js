@@ -81,7 +81,7 @@ export default {
 				let y = 0;
 				let transform = "";
 
-				if (hiddenTargetIds.indexOf(d.data.id) < 0) {
+				if (!hiddenTargetIds.has(d.data.id)) {
 					const updated = $$.updateAngle(d);
 					const innerLineLength = state.gaugeArcWidth /
 						$$.getTargetsToShow().length *
