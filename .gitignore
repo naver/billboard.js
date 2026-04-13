@@ -16,3 +16,6 @@ package-lock.json
 /monitor
 /node_modules
 /test/**/__screenshots__
+/test-results
+/benchmark/results.json
+/benchmark/current.json
