@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260411005800
+ * @version 3.18.0-nightly-20260414010553
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23551,7 +23551,13 @@ function getMinMax(type, data) {
   let res = data.filter((v) => notEmpty(v));
   if (res.length) {
     if (isNumber(res[0])) {
-      res = Math[type](...res);
+      let result = type === "min" ? Infinity : -Infinity;
+      for (const v of res) {
+        if (type === "min" ? v < result : v > result) {
+          result = v;
+        }
+      }
+      res = result;
     } else if (res[0] instanceof Date) {
       res = sortValue(res, type === "min")[0];
     }
@@ -23568,10 +23574,10 @@ const getRange = (start, end, step = 1) => {
   }
   return res;
 };
-function getRandom(asStr = true, min = 0, max = 1e4) {
-  const crpt = win.crypto || win.msCrypto;
-  const rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
-  return asStr ? String(rand) : rand;
+let _transitionCounter = 0;
+function getRandom(asStr = true) {
+  const id = ++_transitionCounter;
+  return asStr ? String(id) : id;
 }
 function findIndex(arr, v, start, end, isRotated) {
   if (start > end) {
@@ -23736,7 +23742,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260411005800");
+__publicField(Plugin, "version", "3.18.0-nightly-20260414010553");
 
 ;// ./src/Plugin/tableview/const.ts
 

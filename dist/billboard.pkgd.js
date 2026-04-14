@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260411005800
+ * @version 3.18.0-nightly-20260414010553
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -27557,7 +27557,13 @@ function getMinMax(type, data) {
   let res = data.filter((v) => notEmpty(v));
   if (res.length) {
     if (isNumber(res[0])) {
-      res = Math[type](...res);
+      let result = type === "min" ? Infinity : -Infinity;
+      for (const v of res) {
+        if (type === "min" ? v < result : v > result) {
+          result = v;
+        }
+      }
+      res = result;
     } else if (res[0] instanceof Date) {
       res = sortValue(res, type === "min")[0];
     }
@@ -27574,10 +27580,10 @@ const getRange = (start, end, step = 1) => {
   }
   return res;
 };
-function getRandom(asStr = true, min = 0, max = 1e4) {
-  const crpt = win.crypto || win.msCrypto;
-  const rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
-  return asStr ? String(rand) : rand;
+let _transitionCounter = 0;
+function getRandom(asStr = true) {
+  const id = ++_transitionCounter;
+  return asStr ? String(id) : id;
 }
 function findIndex(arr, v, start, end, isRotated) {
   if (start > end) {
@@ -27901,11 +27907,11 @@ class State {
       orgAreaOpacity: "0.2",
       orgConfig: {},
       // user original genration config
-      // ID strings
-      hiddenTargetIds: [],
-      hiddenLegendIds: [],
-      focusedTargetIds: [],
-      defocusedTargetIds: [],
+      // ID strings (Set for O(1) lookup — see isTargetToShow, classFocused, etc.)
+      hiddenTargetIds: /* @__PURE__ */ new Set(),
+      hiddenLegendIds: /* @__PURE__ */ new Set(),
+      focusedTargetIds: /* @__PURE__ */ new Set(),
+      defocusedTargetIds: /* @__PURE__ */ new Set(),
       // value for Arc
       radius: 0,
       innerRadius: 0,
@@ -27944,7 +27950,9 @@ class State {
       // Performance: throttle tooltip position updates on mousemove
       _lastTooltipMouse: null,
       // Performance: cached grid focus D3 selection
-      _gridFocusEl: null
+      _gridFocusEl: null,
+      // Performance: generateClass() result cache (series IDs are fixed per chart)
+      generateClassCache: /* @__PURE__ */ new Map()
     };
   }
 }
@@ -28260,6 +28268,11 @@ Object.defineProperty(src_pointer, "name", { value: "default", configurable: tru
 
 
 
+const RE_CSS_BB = /\s?(bb-)/g;
+const RE_CSS_DOTS = /\.+/g;
+function getCssSelector(s) {
+  return s.replace(RE_CSS_BB, ".$1").replace(RE_CSS_DOTS, ".");
+}
 function _getRect(relativeViewport, node, forceEval = false) {
   const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
   if (forceEval) {
@@ -28330,8 +28343,7 @@ function getBBox(node, forceEval = false) {
 }
 function addCssRules(style, selector, prop) {
   const { rootSelector = "", sheet } = style;
-  const getSelector = (s) => s.replace(/\s?(bb-)/g, ".$1").replace(/\.+/g, ".");
-  const rule = `${rootSelector} ${getSelector(selector)} {${prop.join(";")}}`;
+  const rule = `${rootSelector} ${getCssSelector(selector)} {${prop.join(";")}}`;
   return sheet[sheet.insertRule ? "insertRule" : "addRule"](
     rule,
     sheet.cssRules.length
@@ -29371,8 +29383,8 @@ function _setXS(ids, data, params) {
     const $$ = this;
     const { api, state: { hiddenTargetIds } } = $$;
     let total = 0;
-    if (hiddenTargetIds.length) {
-      total = api.data.values.bind(api)(hiddenTargetIds).reduce((p, c) => p + c);
+    if (hiddenTargetIds.size) {
+      total = api.data.values.bind(api)([...hiddenTargetIds]).reduce((p, c) => p + c);
     }
     return total;
   },
@@ -29447,10 +29459,10 @@ function _setXS(ids, data, params) {
     return false;
   },
   isTargetToShow(targetId) {
-    return this.state.hiddenTargetIds.indexOf(targetId) < 0;
+    return !this.state.hiddenTargetIds.has(targetId);
   },
   isLegendToShow(targetId) {
-    return this.state.hiddenLegendIds.indexOf(targetId) < 0;
+    return !this.state.hiddenLegendIds.has(targetId);
   },
   getTargetsToShow() {
     var _a;
@@ -29493,9 +29505,7 @@ function _setXS(ids, data, params) {
   addTargetIds(type, targetIds) {
     const { state } = this;
     const ids = isArray(targetIds) ? targetIds : [targetIds];
-    ids.forEach((v) => {
-      state[type].indexOf(v) < 0 && state[type].push(v);
-    });
+    ids.forEach((v) => state[type].add(v));
   },
   /**
    * Remove from the state target Ids
@@ -29506,10 +29516,7 @@ function _setXS(ids, data, params) {
   removeTargetIds(type, targetIds) {
     const { state } = this;
     const ids = isArray(targetIds) ? targetIds : [targetIds];
-    ids.forEach((v) => {
-      const index = state[type].indexOf(v);
-      index >= 0 && state[type].splice(index, 1);
-    });
+    ids.forEach((v) => state[type].delete(v));
   },
   addHiddenTargetIds(targetIds) {
     this.addTargetIds("hiddenTargetIds", targetIds);
@@ -29615,7 +29622,15 @@ function _setXS(ids, data, params) {
     return fn || null;
   },
   filterByX(targets, x) {
-    return mergeArray(targets.map((t) => t.values)).filter((v) => v.x - x === 0);
+    const result = [];
+    for (const t of targets) {
+      for (const v of t.values) {
+        if (v.x - x === 0) {
+          result.push(v);
+        }
+      }
+    }
+    return result;
   },
   filterNullish(data) {
     const filter = (v) => isValue(v.value);
@@ -29884,8 +29899,8 @@ function _setXS(ids, data, params) {
         if (total === null) {
           return ratio;
         }
-        if (hiddenTargetIds.length) {
-          let hiddenIds = hiddenTargetIds;
+        if (hiddenTargetIds.size) {
+          let hiddenIds = [...hiddenTargetIds];
           if ($$.isStackNormalizedPerGroup() && d.id) {
             const group = config.data_groups.find((g) => g.indexOf(d.id) >= 0);
             if (group) {
@@ -30652,9 +30667,17 @@ function defaultTouchable() {
 
 ;// ./src/ChartInternal/internals/class.ts
 
+const RE_SELECTOR_SUFFIX = /[\x00-\x20\x7F-\xA0\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g;
 /* harmony default export */ var internals_class = ({
   generateClass(prefix, targetId) {
-    return ` ${prefix} ${prefix + this.getTargetSelectorSuffix(targetId)}`;
+    const cache = this.state.generateClassCache;
+    const key = `${prefix}\0${targetId}`;
+    let cls = cache.get(key);
+    if (!cls) {
+      cls = ` ${prefix} ${prefix + this.getTargetSelectorSuffix(targetId)}`;
+      cache.set(key, cls);
+    }
+    return cls;
   },
   /**
    * Get class string
@@ -30710,14 +30733,14 @@ function defaultTouchable() {
     return this.classFocused(d) + this.classDefocused(d);
   },
   classFocused(d) {
-    return ` ${this.state.focusedTargetIds.indexOf(d.id) >= 0 ? classes.focused : ""}`;
+    return ` ${this.state.focusedTargetIds.has(d.id) ? classes.focused : ""}`;
   },
   classDefocused(d) {
-    return ` ${this.state.defocusedTargetIds.indexOf(d.id) >= 0 ? classes.defocused : ""}`;
+    return ` ${this.state.defocusedTargetIds.has(d.id) ? classes.defocused : ""}`;
   },
   getTargetSelectorSuffix(targetId) {
     const targetStr = targetId || targetId === 0 ? `-${targetId}` : "";
-    return targetStr.replace(/[\x00-\x20\x7F-\xA0\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-");
+    return targetStr.replace(RE_SELECTOR_SUFFIX, "-");
   },
   selectorTarget(id, prefix = "", postfix = "") {
     const target = this.getTargetSelectorSuffix(id);
@@ -30934,10 +30957,12 @@ const schemeCategory10 = [
       } else if (colors[id]) {
         color = colors[id];
       } else {
-        if (ids.indexOf(id) < 0) {
+        let idx = ids.indexOf(id);
+        if (idx < 0) {
           ids.push(id);
+          idx = ids.length - 1;
         }
-        color = isLine ? originalColorPattern[ids.indexOf(id) % originalColorPattern.length] : pattern[ids.indexOf(id) % pattern.length];
+        color = isLine ? originalColorPattern[idx % originalColorPattern.length] : pattern[idx % pattern.length];
         colors[id] = color;
       }
       color = isFunction(callback) ? callback.call($$.api, color, d) : color;
@@ -33291,7 +33316,10 @@ function brushEmpty(ctx) {
    */
   isHiddenTargetWithYDomain(id) {
     const $$ = this;
-    return $$.state.hiddenTargetIds.some((v) => $$.axis.getId(v) === id);
+    for (const v of $$.state.hiddenTargetIds) {
+      if ($$.axis.getId(v) === id) return true;
+    }
+    return false;
   },
   getYDomain(targets, axisId, xDomain) {
     const $$ = this;
@@ -33721,7 +33749,7 @@ function _buildLegendItemMap($$, legendItems) {
       }
       $$.updateLegend();
     } else {
-      $$.state.hiddenLegendIds = $$.mapToIds($$.data.targets);
+      $$.state.hiddenLegendIds = new Set($$.mapToIds($$.data.targets));
     }
   },
   /**
@@ -33995,11 +34023,11 @@ function _buildLegendItemMap($$, legendItems) {
             config.legend_item_onclick,
             api,
             id,
-            !state.hiddenTargetIds.includes(id)
+            !state.hiddenTargetIds.has(id)
           )) {
             const { altKey, target, type } = event;
             if (type === "dblclick" || altKey) {
-              if (state.hiddenTargetIds.length && target.parentNode.getAttribute("class").indexOf(
+              if (state.hiddenTargetIds.size && target.parentNode.getAttribute("class").indexOf(
                 $LEGEND.legendItemHidden
               ) === -1) {
                 api.show();
@@ -34020,7 +34048,7 @@ function _buildLegendItemMap($$, legendItems) {
           config.legend_item_onout,
           api,
           id,
-          !state.hiddenTargetIds.includes(id)
+          !state.hiddenTargetIds.has(id)
         )) {
           src_select(this).classed($FOCUS.legendItemFocused, false);
           if (hasGauge) {
@@ -34033,7 +34061,7 @@ function _buildLegendItemMap($$, legendItems) {
           config.legend_item_onover,
           api,
           id,
-          !state.hiddenTargetIds.includes(id)
+          !state.hiddenTargetIds.has(id)
         )) {
           src_select(this).classed($FOCUS.legendItemFocused, true);
           if (hasGauge) {
@@ -36795,6 +36823,8 @@ function _getTextXPos(pos = "left", width) {
 
 
 
+const RE_WHITESPACE = /(\r?\n|\t)/g;
+const RE_TOOLTIP_TPL = /{{(.*)}}/;
 /* harmony default export */ var internals_tooltip = ({
   /**
    * Initializes the tooltip
@@ -36986,7 +37016,7 @@ function _getTextXPos(pos = "left", width) {
 					<td class="name">${this.patterns ? `{=COLOR}` : `<span style="background-color:{=COLOR}"></span>`}{=NAME}</td>
 					<td class="value">{=VALUE}</td>
 				</tr>}}
-			</tbody></table>`).replace(/(\r?\n|\t)/g, "").split(/{{(.*)}}/);
+			</tbody></table>`).replace(RE_WHITESPACE, "").split(RE_TOOLTIP_TPL);
   },
   /**
    * Update tooltip position coordinate
@@ -38516,6 +38546,26 @@ function stepAfter(context) {
 
 
 
+const CURVE_MAP = {
+  basis: curve_basis,
+  "basis-closed": curve_basisClosed,
+  "basis-open": basisOpen,
+  bundle: bundle,
+  cardinal: cardinal,
+  "cardinal-closed": cardinalClosed,
+  "cardinal-open": cardinalOpen,
+  "catmull-rom": catmullRom,
+  "catmull-rom-closed": catmullRomClosed,
+  "catmull-rom-open": catmullRomOpen,
+  "monotone-x": monotoneX,
+  "monotone-y": monotoneY,
+  natural: natural,
+  "linear-closed": linearClosed,
+  linear: curve_linear,
+  step: step,
+  "step-after": stepAfter,
+  "step-before": stepBefore
+};
 function _getGroupedDataPointsFn(d) {
   const $$ = this;
   let fn;
@@ -38690,7 +38740,16 @@ function updateTargetsForShape(targets, config) {
     const barPadding = config.bar_padding;
     const sum = (p, c) => p + c;
     const halfWidth = isObjectType(offset) && (offset._$total.length ? offset._$total.reduce(sum) / 2 : 0);
+    const prefixSums = [];
+    if (halfWidth && isObjectType(offset) && offset._$total.length) {
+      let acc = 0;
+      for (const v of offset._$total) {
+        acc += v;
+        prefixSums.push(acc);
+      }
+    }
     return (d) => {
+      var _a;
       const ind = $$.getIndices(indices, d, "getShapeX");
       const index = d.id in ind ? ind[d.id] : 0;
       const targetsNum = (ind.__max__ || 0) + 1;
@@ -38699,7 +38758,7 @@ function updateTargetsForShape(targets, config) {
         const xPos = currScale(d.x, true);
         if (halfWidth) {
           const offsetWidth = offset[d.id] || offset._$width;
-          x = barOverlap ? xPos - offsetWidth / 2 : xPos - offsetWidth + offset._$total.slice(0, index + 1).reduce(sum) - halfWidth;
+          x = barOverlap ? xPos - offsetWidth / 2 : xPos - offsetWidth + ((_a = prefixSums[index]) != null ? _a : offset._$total.slice(0, index + 1).reduce(sum)) - halfWidth;
         } else {
           x = xPos - (isNumber(offset) ? offset : offset._$width) * (targetsNum / 2 - (barOverlap ? 1 : index));
         }
@@ -38801,7 +38860,21 @@ function updateTargetsForShape(targets, config) {
       typeFilter
     );
     const groupsZeroAs = $$.config.data_groupsZeroAs;
+    let sameGroupByTargetId = null;
+    if (!$$.config.bar_indices_removeNull) {
+      sameGroupByTargetId = /* @__PURE__ */ new Map();
+      for (const target of shapeOffsetTargets) {
+        const ind = $$.getIndices(indices, { id: target.id, index: 0 });
+        sameGroupByTargetId.set(
+          target.id,
+          shapeOffsetTargets.filter(
+            (t) => t.id !== target.id && ind[t.id] === ind[target.id]
+          )
+        );
+      }
+    }
     return (d, idx) => {
+      var _a;
       const { id, value, x } = d;
       const ind = $$.getIndices(indices, d);
       const scale = $$.getYScaleById(id, isSub);
@@ -38811,7 +38884,8 @@ function updateTargetsForShape(targets, config) {
       const dataXAsNumber = Number(x);
       const y0 = scale(groupsZeroAs === "zero" ? 0 : $$.getShapeYMin(id));
       let offset = y0;
-      shapeOffsetTargets.filter((t) => t.id !== id && ind[t.id] === ind[id]).forEach((t) => {
+      const sameGroupTargets = (_a = sameGroupByTargetId == null ? void 0 : sameGroupByTargetId.get(id)) != null ? _a : shapeOffsetTargets.filter((t) => t.id !== id && ind[t.id] === ind[id]);
+      for (const t of sameGroupTargets) {
         const {
           id: tid,
           rowValueMapByXValue,
@@ -38831,7 +38905,7 @@ function updateTargetsForShape(targets, config) {
             }
           }
         }
-      });
+      }
       return offset;
     };
   },
@@ -38932,26 +39006,7 @@ function updateTargetsForShape(targets, config) {
   getInterpolate(d) {
     const $$ = this;
     const interpolation = $$.getInterpolateType(d);
-    return {
-      basis: curve_basis,
-      "basis-closed": curve_basisClosed,
-      "basis-open": basisOpen,
-      bundle: bundle,
-      cardinal: cardinal,
-      "cardinal-closed": cardinalClosed,
-      "cardinal-open": cardinalOpen,
-      "catmull-rom": catmullRom,
-      "catmull-rom-closed": catmullRomClosed,
-      "catmull-rom-open": catmullRomOpen,
-      "monotone-x": monotoneX,
-      "monotone-y": monotoneY,
-      natural: natural,
-      "linear-closed": linearClosed,
-      linear: curve_linear,
-      step: step,
-      "step-after": stepAfter,
-      "step-before": stepBefore
-    }[interpolation];
+    return CURVE_MAP[interpolation];
   },
   getInterpolateType(d) {
     const $$ = this;
@@ -40198,8 +40253,8 @@ function renderText(ctx, glyph) {
       $$.hasType("gauge") && $$.markOverlapped(targetIdsValue, $$, `.${$GAUGE.gaugeValue}`);
     }
     $$.toggleFocusLegend(targetIds, true);
-    state.focusedTargetIds = targetIds;
-    state.defocusedTargetIds = state.defocusedTargetIds.filter((id) => targetIds.indexOf(id) < 0);
+    state.focusedTargetIds = new Set(targetIds);
+    targetIds.forEach((id) => state.defocusedTargetIds.delete(id));
   },
   /**
    * This API fades out specified targets and reverts the others.<br><br>
@@ -40231,8 +40286,8 @@ function renderText(ctx, glyph) {
       $$.hasType("gauge") && $$.undoMarkOverlapped($$, `.${$GAUGE.gaugeValue}`);
     }
     $$.toggleFocusLegend(targetIds, false);
-    state.focusedTargetIds = state.focusedTargetIds.filter((id) => targetIds.indexOf(id) < 0);
-    state.defocusedTargetIds = targetIds;
+    targetIds.forEach((id) => state.focusedTargetIds.delete(id));
+    state.defocusedTargetIds = new Set(targetIds);
   },
   /**
    * Revert focused or defocused state to initial state.<br><br>
@@ -40264,8 +40319,8 @@ function renderText(ctx, glyph) {
         return src_select(this).classed($FOCUS.legendItemFocused);
       }).classed($FOCUS.legendItemFocused, false);
     }
-    state.focusedTargetIds = [];
-    state.defocusedTargetIds = [];
+    state.focusedTargetIds = /* @__PURE__ */ new Set();
+    state.defocusedTargetIds = /* @__PURE__ */ new Set();
   }
 });
 
@@ -40546,7 +40601,7 @@ function showHide(show, targetIdsValue, options, skipRedraw = false) {
   const $$ = this.internal;
   const targetIds = $$.mapToTargetIds(targetIdsValue);
   const targetIdSet = new Set(targetIds);
-  const hiddenIds = $$.state.hiddenTargetIds.filter((v) => targetIdSet.has(v));
+  const hiddenIds = [...$$.state.hiddenTargetIds].filter((v) => targetIdSet.has(v));
   $$.state.toggling = true;
   $$.state.dirty.visibility = true;
   $$[`${show ? "remove" : "add"}HiddenTargetIds`](targetIds);
@@ -43603,7 +43658,7 @@ const getTransitionName = () => getRandom();
       $$.setCssRule(true, ` .${$CIRCLE.circle}`, ["fill", "stroke"], $$.color)(selection);
     }).style("opacity", function() {
       const parent = src_select(this.parentNode);
-      return parent.attr("class").indexOf($CIRCLE.chartCircles) > -1 ? "0" : null;
+      return parent.classed($CIRCLE.chartCircles) ? "0" : null;
     });
     selectionEnabled && targets.forEach((t) => {
       $el.main.selectAll(`.${$SELECT.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`).selectAll(`${$SELECT.selectedCircle}`).each((d) => {
@@ -43623,10 +43678,11 @@ const getTransitionName = () => getRandom();
         return $$.filterNullish(data);
       });
       circles.exit().remove();
-      circles.enter().filter(Boolean).append(
-        $$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$))
-      );
-      $root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`).style("stroke", $$.getStylePropValue($$.color)).style("opacity", $$.initialOpacityForCircle.bind($$));
+      const pointR = $$.pointR.bind($$);
+      const updateCircleColor = $$.updateCircleColor.bind($$);
+      const initialOpacityForCircle = $$.initialOpacityForCircle.bind($$);
+      circles.enter().filter(Boolean).append($$.point("create", this, pointR, updateCircleColor));
+      $root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`).style("stroke", $$.getStylePropValue($$.color)).style("opacity", initialOpacityForCircle);
     }
   },
   /**
@@ -43648,6 +43704,31 @@ const getTransitionName = () => getRandom();
     if (!$$.config.point_show) {
       return [];
     }
+    const posAttr = $$.isCirclePoint() ? "c" : "";
+    const t = getRandom();
+    const opacityStyleFn = $$.opacityForCircle.bind($$);
+    if ($$.isCirclePoint()) {
+      const sel = $root.circle;
+      if ($$.hasType("bubble")) {
+        sel.attr("r", $$.pointR.bind($$));
+      }
+      if (withTransition) {
+        flow && sel.attr("cx", cx);
+        $T(sel.filter(function() {
+          return !!this.getAttribute("cx");
+        }), true, t).attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+        sel.filter(function() {
+          return !this.getAttribute("cx");
+        }).attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+      } else {
+        sel.attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+      }
+      const result = $T(sel, withTransition || !rendered, t).style("opacity", opacityStyleFn);
+      return [
+        [result],
+        $T(selectedCircles, withTransition).attr("cx", cx).attr("cy", cy)
+      ];
+    }
     const fn = $$.point(
       "update",
       $$,
@@ -43658,9 +43739,6 @@ const getTransitionName = () => getRandom();
       flow,
       selectedCircles
     );
-    const posAttr = $$.isCirclePoint() ? "c" : "";
-    const t = getRandom();
-    const opacityStyleFn = $$.opacityForCircle.bind($$);
     const mainCircles = [];
     $root.circle.each(function(d) {
       let result = fn.bind(this)(d);
@@ -46677,7 +46755,7 @@ var eventrect_pow = Math.pow;
     const isRotated = config.axis_rotated;
     const isMultipleX = $$.isMultipleX();
     const xDomain = xScale == null ? void 0 : xScale.domain();
-    const fingerprint = xDomain ? `${xDomain[0]}_${xDomain[1]}_${$$.data.targets.length}_${state.hiddenTargetIds.join(",")}` : null;
+    const fingerprint = xDomain ? `${xDomain[0]}_${xDomain[1]}_${$$.data.targets.length}_${[...state.hiddenTargetIds].join(",")}` : null;
     if (fingerprint && fingerprint === state._eventRectFingerprint) {
       return;
     }
@@ -50248,7 +50326,7 @@ function _getConnectLineType(id) {
     const $$ = this;
     const { $el, config, data, state } = $$;
     const { id, index, value } = d;
-    if (state.hiddenTargetIds.indexOf(id) > -1) {
+    if (state.hiddenTargetIds.has(id)) {
       const target = $el.bar.filter((d2) => d2.id === id && d2.value === value);
       return !target.empty() && /a\d+/i.test(target.attr("d"));
     }
@@ -52204,7 +52282,7 @@ function _getAttrTweenFn(fn) {
     const $$ = this;
     const { $el, config, state: { hiddenTargetIds, radius } } = $$;
     const length = (radius - 1) / 100 * config.arc_needle_length;
-    const hasDataToShow = hiddenTargetIds.length !== $$.data.targets.length;
+    const hasDataToShow = hiddenTargetIds.size !== $$.data.targets.length;
     let needle = $$.$el.arcs.select(`.${$ARC.needle}`);
     const pathFn = config.arc_needle_path;
     const baseWidth = config.arc_needle_bottom_width / 2;
@@ -52283,7 +52361,7 @@ function _getAttrTweenFn(fn) {
       let index = 0;
       backgroundArc = backgroundArc.selectAll(`path.${$ARC.chartArcsBackground}`).data($$.data.targets);
       backgroundArc.enter().append("path").attr("class", (d, i) => `${$ARC.chartArcsBackground} ${$ARC.chartArcsBackground}-${i}`).merge(backgroundArc).style("fill", config.gauge_background || null).attr("d", ({ id }) => {
-        if (showEmptyTextLabel || state.hiddenTargetIds.indexOf(id) >= 0) {
+        if (showEmptyTextLabel || state.hiddenTargetIds.has(id)) {
           return "M 0 0";
         }
         const d = {
@@ -52839,7 +52917,7 @@ let funnel_funnel = () => (extendArc([funnel], [shape_funnel]), (funnel_funnel =
       let x = 0;
       let y = 0;
       let transform = "";
-      if (hiddenTargetIds.indexOf(d.data.id) < 0) {
+      if (!hiddenTargetIds.has(d.data.id)) {
         const updated = $$.updateAngle(d);
         const innerLineLength = state.gaugeArcWidth / $$.getTargetsToShow().length * (updated.index + 1);
         const lineAngle = updated.endAngle - Math.PI / 2;
@@ -54747,7 +54825,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260411005800",
+  version: "3.18.0-nightly-20260414010553",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
