@@ -148,11 +148,11 @@ export default class State {
 			orgAreaOpacity: "0.2",
 			orgConfig: {}, // user original genration config
 
-			// ID strings
-			hiddenTargetIds: <string[]>[],
-			hiddenLegendIds: <string[]>[],
-			focusedTargetIds: <string[]>[],
-			defocusedTargetIds: <string[]>[],
+			// ID strings (Set for O(1) lookup — see isTargetToShow, classFocused, etc.)
+			hiddenTargetIds: new Set<string>(),
+			hiddenLegendIds: new Set<string>(),
+			focusedTargetIds: new Set<string>(),
+			defocusedTargetIds: new Set<string>(),
 
 			// value for Arc
 			radius: 0,
@@ -194,7 +194,10 @@ export default class State {
 			_lastTooltipMouse: <number[] | null>null,
 
 			// Performance: cached grid focus D3 selection
-			_gridFocusEl: <any>null
+			_gridFocusEl: <any>null,
+
+			// Performance: generateClass() result cache (series IDs are fixed per chart)
+			generateClassCache: new Map<string, string>()
 		};
 	}
 }

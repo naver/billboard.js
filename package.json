@@ -103,6 +103,7 @@
 		"@commitlint/cli": "^20.5.0",
 		"@commitlint/config-conventional": "^20.5.0",
 		"@eslint/js": "^10.0.1",
+		"@playwright/test": "^1.59.1",
 		"@rollup/plugin-node-resolve": "^16.0.3",
 		"@rollup/plugin-replace": "^6.0.3",
 		"@rollup/plugin-typescript": "^12.3.0",

@@ -274,7 +274,7 @@ export default {
 		const xDomain = xScale?.domain();
 		const fingerprint = xDomain ?
 			`${xDomain[0]}_${xDomain[1]}_${$$.data.targets.length}_${
-				state.hiddenTargetIds.join(",")
+				[...state.hiddenTargetIds].join(",")
 			}` :
 			null;
 

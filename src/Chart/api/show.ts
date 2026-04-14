@@ -17,7 +17,7 @@ function showHide(show: boolean, targetIdsValue: string[], options: any, skipRed
 	const $$ = this.internal;
 	const targetIds = $$.mapToTargetIds(targetIdsValue);
 	const targetIdSet = new Set(targetIds);
-	const hiddenIds = $$.state.hiddenTargetIds.filter(v => targetIdSet.has(v));
+	const hiddenIds = [...$$.state.hiddenTargetIds].filter(v => targetIdSet.has(v));
 
 	$$.state.toggling = true;
 	$$.state.dirty.visibility = true;

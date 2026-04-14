@@ -104,7 +104,7 @@ export default {
 			// MEMO: translate will be updated by this, so transform not needed in updateLegend()
 			$$.updateLegend();
 		} else {
-			$$.state.hiddenLegendIds = $$.mapToIds($$.data.targets);
+			$$.state.hiddenLegendIds = new Set($$.mapToIds($$.data.targets));
 		}
 	},
 
@@ -477,14 +477,14 @@ export default {
 						function(event, id) {
 							if (
 								!callFn(config.legend_item_onclick, api, id,
-									!state.hiddenTargetIds.includes(id))
+									!state.hiddenTargetIds.has(id))
 							) {
 								const {altKey, target, type} = event;
 
 								if (type === "dblclick" || altKey) {
 									// when focused legend is clicked(with altKey or double clicked), reset all hiding.
 									if (
-										state.hiddenTargetIds.length &&
+										state.hiddenTargetIds.size &&
 										target.parentNode.getAttribute("class").indexOf(
 												$LEGEND.legendItemHidden
 											) === -1
@@ -511,7 +511,7 @@ export default {
 					function(event, id) {
 						if (
 							!callFn(config.legend_item_onout, api, id,
-								!state.hiddenTargetIds.includes(id))
+								!state.hiddenTargetIds.has(id))
 						) {
 							d3Select(this).classed($FOCUS.legendItemFocused, false);
 
@@ -527,7 +527,7 @@ export default {
 					function(event, id) {
 						if (
 							!callFn(config.legend_item_onover, api, id,
-								!state.hiddenTargetIds.includes(id))
+								!state.hiddenTargetIds.has(id))
 						) {
 							d3Select(this).classed($FOCUS.legendItemFocused, true);
 

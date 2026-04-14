@@ -43,6 +43,28 @@ import {
 import type {IDataIndice, IDataRow, TIndices} from "../data/IData";
 import type {IOffset, ShapeElementConfig, UpdateTargetsConfig} from "./IShape";
 
+// Module-level constant: avoids re-creating the lookup object on every getInterpolate() call
+const CURVE_MAP: Record<string, unknown> = {
+	basis: d3CurveBasis,
+	"basis-closed": d3CurveBasisClosed,
+	"basis-open": d3CurveBasisOpen,
+	bundle: d3CurveBundle,
+	cardinal: d3CurveCardinal,
+	"cardinal-closed": d3CurveCardinalClosed,
+	"cardinal-open": d3CurveCardinalOpen,
+	"catmull-rom": d3CurveCatmullRom,
+	"catmull-rom-closed": d3CurveCatmullRomClosed,
+	"catmull-rom-open": d3CurveCatmullRomOpen,
+	"monotone-x": d3CurveMonotoneX,
+	"monotone-y": d3CurveMonotoneY,
+	natural: d3CurveNatural,
+	"linear-closed": d3CurveLinearClosed,
+	linear: d3CurveLinear,
+	step: d3CurveStep,
+	"step-after": d3CurveStepAfter,
+	"step-before": d3CurveStepBefore
+};
+
 // Re-export types for backward compatibility
 export type {
 	IOffset,
@@ -326,6 +348,18 @@ export default {
 			offset._$total.length ? offset._$total.reduce(sum) / 2 : 0
 		);
 
+		// Pre-compute prefix sums to avoid O(n) slice+reduce on every bar datum
+		const prefixSums: number[] = [];
+
+		if (halfWidth && isObjectType(offset) && offset._$total.length) {
+			let acc = 0;
+
+			for (const v of offset._$total) {
+				acc += v;
+				prefixSums.push(acc);
+			}
+		}
+
 		return d => {
 			const ind = $$.getIndices(indices, d, "getShapeX");
 			const index = d.id in ind ? ind[d.id] : 0;
@@ -339,7 +373,7 @@ export default {
 					const offsetWidth = offset[d.id] || offset._$width;
 
 					x = barOverlap ? xPos - offsetWidth / 2 : xPos - offsetWidth +
-						offset._$total.slice(0, index + 1).reduce(sum) -
+						(prefixSums[index] ?? offset._$total.slice(0, index + 1).reduce(sum)) -
 						halfWidth;
 				} else {
 					x = xPos - (isNumber(offset) ? offset : offset._$width) *
@@ -475,6 +509,25 @@ export default {
 		);
 		const groupsZeroAs = $$.config.data_groupsZeroAs;
 
+		// Pre-build per-series same-stacking-group lookup to avoid .filter() on every datum.
+		// bar_indices_removeNull recomputes group membership per-datum index, so fall back there.
+		let sameGroupByTargetId: Map<string, typeof shapeOffsetTargets> | null = null;
+
+		if (!$$.config.bar_indices_removeNull) {
+			sameGroupByTargetId = new Map();
+
+			for (const target of shapeOffsetTargets) {
+				const ind = $$.getIndices(indices, {id: target.id, index: 0} as IDataRow);
+
+				sameGroupByTargetId.set(
+					target.id,
+					shapeOffsetTargets.filter(
+						t => t.id !== target.id && ind[t.id] === ind[target.id]
+					)
+				);
+			}
+		}
+
 		return (d, idx) => {
 			const {id, value, x} = d;
 			const ind = $$.getIndices(indices, d);
@@ -489,41 +542,42 @@ export default {
 			const y0 = scale(groupsZeroAs === "zero" ? 0 : $$.getShapeYMin(id));
 			let offset = y0;
 
-			shapeOffsetTargets
-				.filter(t => t.id !== id && ind[t.id] === ind[id])
-				.forEach(t => {
-					const {
-						id: tid,
-						rowValueMapByXValue,
-						rowValues,
-						values: tvalues
-					} = t;
+			const sameGroupTargets = sameGroupByTargetId?.get(id) ??
+				shapeOffsetTargets.filter(t => t.id !== id && ind[t.id] === ind[id]);
 
-					// for same stacked group (ind[tid] === ind[id])
-					if (indexMapByTargetId[tid] < indexMapByTargetId[id]) {
-						const rValue = tvalues[dataXAsNumber];
-						let row = rowValues[idx];
+			for (const t of sameGroupTargets) {
+				const {
+					id: tid,
+					rowValueMapByXValue,
+					rowValues,
+					values: tvalues
+				} = t;
 
-						// check if the x values line up
-						if (!row || Number(row.x) !== dataXAsNumber) {
-							row = rowValueMapByXValue[dataXAsNumber];
-						}
+				// for same stacked group (ind[tid] === ind[id])
+				if (indexMapByTargetId[tid] < indexMapByTargetId[id]) {
+					const rValue = tvalues[dataXAsNumber];
+					let row = rowValues[idx];
 
-						if (row?.value * value >= 0 && isNumber(rValue)) {
-							const addOffset = value === 0 ?
-								(
-									(groupsZeroAs === "positive" &&
-										rValue > 0) ||
-									(groupsZeroAs === "negative" && rValue < 0)
-								) :
-								true;
+					// check if the x values line up
+					if (!row || Number(row.x) !== dataXAsNumber) {
+						row = rowValueMapByXValue[dataXAsNumber];
+					}
 
-							if (addOffset) {
-								offset += scale(rValue) - y0;
-							}
+					if (row?.value * value >= 0 && isNumber(rValue)) {
+						const addOffset = value === 0 ?
+							(
+								(groupsZeroAs === "positive" &&
+									rValue > 0) ||
+								(groupsZeroAs === "negative" && rValue < 0)
+							) :
+							true;
+
+						if (addOffset) {
+							offset += scale(rValue) - y0;
 						}
 					}
-				});
+				}
+			}
 
 			return offset;
 		};
@@ -658,26 +712,7 @@ export default {
 		const $$ = this;
 		const interpolation = $$.getInterpolateType(d);
 
-		return {
-			basis: d3CurveBasis,
-			"basis-closed": d3CurveBasisClosed,
-			"basis-open": d3CurveBasisOpen,
-			bundle: d3CurveBundle,
-			cardinal: d3CurveCardinal,
-			"cardinal-closed": d3CurveCardinalClosed,
-			"cardinal-open": d3CurveCardinalOpen,
-			"catmull-rom": d3CurveCatmullRom,
-			"catmull-rom-closed": d3CurveCatmullRomClosed,
-			"catmull-rom-open": d3CurveCatmullRomOpen,
-			"monotone-x": d3CurveMonotoneX,
-			"monotone-y": d3CurveMonotoneY,
-			natural: d3CurveNatural,
-			"linear-closed": d3CurveLinearClosed,
-			linear: d3CurveLinear,
-			step: d3CurveStep,
-			"step-after": d3CurveStepAfter,
-			"step-before": d3CurveStepBefore
-		}[interpolation];
+		return CURVE_MAP[interpolation];
 	},
 
 	getInterpolateType(d) {
