@@ -199,7 +199,7 @@ export default {
 	 */
 	generateDrawBar(barIndices, isSub?: boolean): (d: IBarData, i: number) => BarPath {
 		const $$ = this;
-		const {config} = $$;
+		const {config, data, state} = $$;
 		const getPoints = $$.generateGetBarPoints(barIndices, isSub);
 		const isRotated = config.axis_rotated;
 		const barRadius = config.bar_radius;
@@ -209,6 +209,47 @@ export default {
 		const getRadius = isNumber(barRadius) && barRadius > 0 ? () => barRadius : (
 			isNumber(barRadiusRatio) ? w => w * barRadiusRatio : null
 		);
+
+		// Pre-compute stacking radius positions once (O(n)) for O(1) lookup per bar.
+		// Key: "id:index" — only the top-of-stack bar for each sign (pos/neg) per group per index.
+		const stackingRadiusSet = new Set<string>();
+
+		if (getRadius && config.data_groups.length) {
+			const orderedBarTargets = $$.orderTargets(
+				$$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))
+			);
+
+			for (const group of config.data_groups) {
+				const groupSet = new Set(group);
+				const groupTargets = orderedBarTargets.filter(t => groupSet.has(t.id));
+
+				// Iterate in order: last write wins → top-of-stack for each (index, sign)
+				const lastPosByIndex = new Map<number, string>();
+				const lastNegByIndex = new Map<number, string>();
+
+				for (const target of groupTargets) {
+					for (const v of target.values) {
+						if (v.value === null || v.value === 0) {
+							continue;
+						}
+
+						if (v.value > 0) {
+							lastPosByIndex.set(v.index, target.id);
+						} else {
+							lastNegByIndex.set(v.index, target.id);
+						}
+					}
+				}
+
+				for (const [idx, id] of lastPosByIndex) {
+					stackingRadiusSet.add(`${id}:${idx}`);
+				}
+
+				for (const [idx, id] of lastNegByIndex) {
+					stackingRadiusSet.add(`${id}:${idx}`);
+				}
+			}
+		}
 
 		return (d: IBarData, i: number): BarPath => {
 			// 4 points that make a bar
@@ -224,7 +265,14 @@ export default {
 
 			const pathRadius = ["", ""];
 			const isGrouped = $$.isGrouped(d.id);
-			const isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
+			const isRadiusData = getRadius && isGrouped && d.value !== 0 ?
+				(
+					// Hidden bars: DOM fallback (can't be pre-computed)
+					state.hiddenTargetIds.has(d.id) ?
+						$$.isStackingRadiusData(d) :
+						stackingRadiusSet.has(`${d.id}:${d.index}`)
+				) :
+				false;
 			const init = [
 				points[0][indexX],
 				points[0][indexY]

@@ -43,7 +43,7 @@ describe("ESM build", function() {
     
     it("should generate each chart types", () => {
         Object.keys(bb)
-            .filter(v => !/(bb|default|selection|subchart|zoom)/.test(v))
+            .filter(v => !/(bb|default|selection|subchart|zoom|exportApi|flow)/.test(v))
             .forEach(v => {
                 let path;
 
@@ -102,5 +102,37 @@ describe("ESM build", function() {
 
                 path && expect(/NaN/.test(path)).to.be.false;
             });
+    });
+
+    describe("Optional API modules", function() {
+        it("should export exportApi and flow as functions", () => {
+            expect(typeof bb.exportApi).to.equal("function");
+            expect(typeof bb.flow).to.equal("function");
+        });
+
+        it("exportApi() should enable chart.export()", () => {
+            bb.exportApi();
+
+            chart = bb.bb.generate({
+                data: {columns: [["data1", 300, 350, 300]]}
+            });
+
+            const result = (chart as any).export();
+
+            expect(/^data:image\/svg\+xml;base64,.+/.test(result)).to.be.true;
+        });
+
+        it("flow() should enable chart.flow()", () => new Promise(done => {
+            bb.flow();
+
+            chart = bb.bb.generate({
+                data: {columns: [["data1", 300, 350, 300, 100]]}
+            });
+
+            (chart as any).flow({
+                columns: [["data1", 400]],
+                done
+            });
+        }));
     });
 });

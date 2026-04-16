@@ -29,4 +29,8 @@ export {
 // interaction module
 export {selection, subchart, zoom} from "./config/resolver/interaction";
 
+// optional API modules (tree-shakable)
+export {exportApi} from "./config/resolver/export";
+export {flow} from "./config/resolver/flow";
+
 export {bb, default} from "./core";

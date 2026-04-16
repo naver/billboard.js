@@ -4,12 +4,12 @@
  */
 import ChartInternal from "../ChartInternal/ChartInternal";
 import {loadConfig} from "../config/config";
+import {logError} from "../module/error";
 import {extend, isFunction, notEmpty} from "../module/util";
 
 import apiChart from "./api/chart";
 import apiColor from "./api/color";
 import apiData from "./api/data";
-import apiExport from "./api/export";
 import apiFocus from "./api/focus";
 import apiLegend from "./api/legend";
 import apiLoad from "./api/load";
@@ -156,10 +156,21 @@ extend(Chart.prototype, [
 	apiChart,
 	apiColor,
 	apiData,
-	apiExport,
 	apiFocus,
 	apiLegend,
 	apiLoad,
 	apiShow,
 	apiTooltip
 ]);
+
+// Stubs for optional modules — replaced by real implementation when module fn is called
+(Chart.prototype as any)["export"] = function() {
+	logError("Please, make sure if %cexportApi",
+		"module has been imported and specified correctly.",
+		"https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality");
+};
+
+(Chart.prototype as any).flow = function() {
+	logError("Please, make sure if %cflow", "module has been imported and specified correctly.",
+		"https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality");
+};
