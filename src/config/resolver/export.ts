@@ -22,7 +22,6 @@ import {extend} from "../../module/util";
  * chart.export(); // now available
  */
 export let exportApi = (): Record<string, never> => {
-	delete (Chart.prototype as any)["export"]; // remove stub before extending
 	extend(Chart.prototype, [apiExport]);
 	return (exportApi = () => ({}))();
 };

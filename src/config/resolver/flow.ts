@@ -26,7 +26,6 @@ import {extend} from "../../module/util";
  */
 export let flow = (): Record<string, never> => {
 	extend(ChartInternal.prototype, internalFlow);
-	delete (Chart.prototype as any).flow; // remove stub before extending
 	extend(Chart.prototype, [apiFlow]);
 	return (flow = () => ({}))();
 };
