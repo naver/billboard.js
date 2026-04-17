@@ -267,7 +267,7 @@ describe("ZOOM", function() {
 			const {$: {main}, internal: {scale, $el}} = chart;
 			const eventRect = $el.eventRect.node();;
 
-		
+
 			new Promise((resolve, reject) => {
 				util.fireEvent(eventRect, "mousedown", {
 					clientX: 50,
@@ -292,7 +292,7 @@ describe("ZOOM", function() {
 						clientX: 150,
 						clientY: 100
 					}, chart);
-	
+
 					expect(eventOrder).to.be.deep.equal(["start", "zoom", "end"]);
 
 					// when
@@ -304,6 +304,102 @@ describe("ZOOM", function() {
 					done(1);
 				}, 350);
 			});
+		}));
+
+		// https://github.com/naver/billboard.js/issues/4131
+		it("onzoomend should fire when drag zoom release happens outside the chart boundary", () => new Promise(done => {
+			const {internal: {$el}} = chart;
+			const eventRect = $el.eventRect.node();
+			const widthBeforeRelease = chart.internal.state.width;
+
+			eventOrder = [];
+
+			new Promise(resolve => {
+				util.fireEvent(eventRect, "mousedown", {
+					clientX: 80,
+					clientY: 100
+				}, chart);
+
+				resolve(true);
+			}).then(() => new Promise(resolve => {
+				setTimeout(() => {
+					// drag toward the chart's right edge
+					util.fireEvent(eventRect, "mousemove", {
+						clientX: 200,
+						clientY: 100
+					}, chart);
+
+					resolve(true);
+				}, 350);
+			})).then(() => {
+				setTimeout(() => {
+					// release BEYOND the chart's right edge (simulating the
+					// user's cursor leaving the chart before mouseup).
+					util.fireEvent(eventRect, "mouseup", {
+						clientX: widthBeforeRelease + 400,
+						clientY: 100
+					}, chart);
+
+					// zoom should have been applied and onzoomend fired
+					expect(eventOrder).to.include("end");
+
+					chart.unzoom();
+					done(1);
+				}, 350);
+			});
+		}));
+
+		// https://github.com/naver/billboard.js/issues/4131 (follow-up)
+		// Circles must reposition to the new zoom scale alongside the line/axis.
+		// Previously the cx/cy transition was silently interrupted because it
+		// shared the same transition name as the opacity transition on the
+		// same selection, leaving circles stranded at pre-zoom positions while
+		// line and axis correctly moved to zoom positions.
+		// This test uses a non-zero transition duration so the bug surfaces —
+		// with duration=0 the transition commits instantly and the interruption
+		// would not leave circles stranded.
+		it("data point circles should reposition on chart.zoom() in sync with the line", () => new Promise(done => {
+			args = {
+				size: {width: 300, height: 250},
+				data: {
+					columns: [["data1", 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150]],
+					type: "line"
+				},
+				zoom: {enabled: true, type: "drag"},
+				transition: {duration: 100}
+			};
+			chart = util.generate(args);
+
+			setTimeout(() => {
+				const getCircleCx = () =>
+					chart.$.circles.nodes().map((n: any) => +n.getAttribute("cx"));
+
+				const before = getCircleCx();
+
+				// zoom into the latter half
+				chart.zoom([4, 8]);
+
+				// wait longer than transition duration so the animation completes
+				setTimeout(() => {
+					const after = getCircleCx();
+
+					// At least some circles' cx MUST differ from their pre-zoom positions.
+					// Before the point.ts fix, the batched cx transition was interrupted by
+					// the opacity transition (both used the same name), so cx values stayed
+					// frozen at the pre-zoom scale.x values.
+					const changedCount = before.filter((v, i) => Math.abs(v - after[i]) > 0.5).length;
+
+					expect(changedCount).to.be.above(0);
+
+					// Sanity: circles in the visible zoom window should land inside [0, width]
+					const width = chart.internal.state.width;
+					const inWindow = after.filter((v: number) => v >= 0 && v <= width).length;
+
+					expect(inWindow).to.be.above(0);
+
+					done(1);
+				}, 500);
+			}, 100);
 		}));
 	});
 
