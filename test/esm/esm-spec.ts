@@ -43,7 +43,7 @@ describe("ESM build", function() {
     
     it("should generate each chart types", () => {
         Object.keys(bb)
-            .filter(v => !/(bb|default|selection|subchart|zoom)/.test(v))
+            .filter(v => !/(bb|default|selection|subchart|zoom|exportApi|flow|grid|regions|category)/.test(v))
             .forEach(v => {
                 let path;
 
@@ -102,5 +102,84 @@ describe("ESM build", function() {
 
                 path && expect(/NaN/.test(path)).to.be.false;
             });
+    });
+
+    describe("Optional API modules", function() {
+        it("should export optional resolvers as functions", () => {
+            expect(typeof bb.exportApi).to.equal("function");
+            expect(typeof bb.flow).to.equal("function");
+            expect(typeof bb.grid).to.equal("function");
+            expect(typeof bb.regions).to.equal("function");
+            expect(typeof bb.category).to.equal("function");
+        });
+
+        it("exportApi() should enable chart.export()", () => {
+            bb.exportApi();
+
+            chart = bb.bb.generate({
+                data: {columns: [["data1", 300, 350, 300]]}
+            });
+
+            const result = (chart as any).export();
+
+            expect(/^data:image\/svg\+xml;base64,.+/.test(result)).to.be.true;
+        });
+
+        it("flow() should enable chart.flow()", () => new Promise(done => {
+            bb.flow();
+
+            chart = bb.bb.generate({
+                data: {columns: [["data1", 300, 350, 300, 100]]}
+            });
+
+            (chart as any).flow({
+                columns: [["data1", 400]],
+                done
+            });
+        }));
+
+        it("grid() should enable chart.xgrids() / chart.ygrids()", () => {
+            bb.grid();
+
+            chart = bb.bb.generate({
+                data: {type: bb.bar(), columns: [["data1", 300, 350, 300]]}
+            });
+
+            const added = (chart as any).xgrids([{value: 1, text: "L1"}]);
+
+            expect(Array.isArray(added)).to.be.true;
+            expect(added[0].text).to.equal("L1");
+
+            const yAdded = (chart as any).ygrids([{value: 300, text: "Y1"}]);
+
+            expect(yAdded[0].text).to.equal("Y1");
+        });
+
+        it("regions() should enable chart.regions()", () => {
+            bb.regions();
+
+            chart = bb.bb.generate({
+                data: {type: bb.bar(), columns: [["data1", 300, 350, 300]]}
+            });
+
+            const set = (chart as any).regions([{start: 0, end: 1, class: "r1"}]);
+
+            expect(Array.isArray(set)).to.be.true;
+            expect(set[0].class).to.equal("r1");
+        });
+
+        it("category() should enable chart.category() / chart.categories()", () => {
+            bb.category();
+
+            chart = bb.bb.generate({
+                data: {type: bb.bar(), columns: [["data1", 300, 350, 300]]},
+                axis: {x: {type: "category", categories: ["a", "b", "c"]}}
+            });
+
+            expect((chart as any).category(1)).to.equal("b");
+
+            (chart as any).categories(["x", "y", "z"]);
+            expect((chart as any).category(2)).to.equal("z");
+        });
     });
 });

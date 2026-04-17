@@ -485,8 +485,8 @@ export default class ChartInternal {
 		}
 
 		if (hasAxis) {
-			// Regions
-			config.regions.length && $$.initRegion();
+			// Regions (optional module — initRegion installed by regions resolver)
+			config.regions.length && $$.initRegion?.();
 
 			// Add Axis here, when clipPath is 'false'
 			!config.clipPath && $$.axis.init();
@@ -505,8 +505,8 @@ export default class ChartInternal {
 			// Cover whole with rects for events
 			hasInteraction && $$.initEventRect?.();
 
-			// Grids
-			$$.initGrid();
+			// Grids (optional module — initGrid installed by grid resolver)
+			$$.initGrid?.();
 
 			// Add Axis here, when clipPath is 'true'
 			config.clipPath && $$.axis?.init();

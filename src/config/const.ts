@@ -30,6 +30,22 @@ export const TYPE = {
 };
 
 /**
+ * Optional API modules and their resolver module name.
+ * Used by checkApiModuleImport() to surface a helpful error when a user calls
+ * chart.export() / chart.flow() without importing the matching resolver.
+ * @private
+ */
+export const API_MODULE_NEEDED = {
+	export: "exportApi",
+	flow: "flow",
+	xgrids: "grid",
+	ygrids: "grid",
+	regions: "regions",
+	category: "category",
+	categories: "category"
+};
+
+/**
  * Chart type module and its method from ChartInternal class, needed to be initialized.
  * @private
  */
