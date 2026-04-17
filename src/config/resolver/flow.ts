@@ -26,6 +26,8 @@ import {extend} from "../../module/util";
  */
 export let flow = (): Record<string, never> => {
 	extend(ChartInternal.prototype, internalFlow);
-	extend(Chart.prototype, [apiFlow]);
+	// Direct assignment overrides the stub installed by Chart/api/stubs.
+	// (extend() skips existing keys; direct assignment makes the override explicit.)
+	(Chart.prototype as any).flow = apiFlow.flow;
 	return (flow = () => ({}))();
 };

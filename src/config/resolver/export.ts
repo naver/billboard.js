@@ -4,7 +4,6 @@
  */
 import apiExport from "../../Chart/api/export";
 import Chart from "../../Chart/Chart";
-import {extend} from "../../module/util";
 
 /**
  * Enable chart export API (chart.export()).
@@ -22,6 +21,8 @@ import {extend} from "../../module/util";
  * chart.export(); // now available
  */
 export let exportApi = (): Record<string, never> => {
-	extend(Chart.prototype, [apiExport]);
+	// Direct assignment overrides the stub installed by Chart/api/stubs.
+	// (extend() skips existing keys; direct assignment makes the override explicit.)
+	(Chart.prototype as any).export = apiExport.export;
 	return (exportApi = () => ({}))();
 };

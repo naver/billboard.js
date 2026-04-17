@@ -481,8 +481,8 @@ export default {
 		// expand points
 		$$.setExpand(closest.index, closest.id, true);
 
-		// Show xgrid focus line
-		$$.showGridFocus(selectedData);
+		// Show xgrid focus line (optional module — grid resolver)
+		$$.showGridFocus?.(selectedData);
 
 		const dist = $$.dist(closest, mouse);
 
@@ -513,7 +513,7 @@ export default {
 
 		$$.state._lastTooltipMouse = null;
 		$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", null);
-		$$.hideGridFocus();
+		$$.hideGridFocus?.();
 
 		if (tooltip) {
 			$$.hideTooltip();
