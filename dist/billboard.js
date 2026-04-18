@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260414010553
+ * @version 3.18.0-nightly-20260418010022
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -196,8 +196,84 @@ __webpack_require__.d(resolver_shape_namespaceObject, {
   treemap: function() { return treemap_treemap; }
 });
 
+;// ./src/module/util/type-checks.ts
+const isValue = (v) => v || v === 0;
+const isFunction = (v) => typeof v === "function";
+const isString = (v) => typeof v === "string";
+const isNumber = (v) => typeof v === "number";
+const isUndefined = (v) => typeof v === "undefined";
+const isDefined = (v) => typeof v !== "undefined";
+const isBoolean = (v) => typeof v === "boolean";
+const ceil10 = (v) => Math.ceil(v / 10) * 10;
+const asHalfPixel = (n) => Math.ceil(n) + 0.5;
+const diffDomain = (d) => d[1] - d[0];
+const isObjectType = (v) => typeof v === "object";
+const isEmptyObject = (obj) => {
+  for (const x in obj) {
+    return false;
+  }
+  return true;
+};
+const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
+const notEmpty = (o) => !isEmpty(o);
+const isArray = (arr) => Array.isArray(arr);
+const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
+
+
+;// ./src/Chart/api/category.ts
+
+/* harmony default export */ var category = ({
+  /**
+   * Set specified category name on category axis.
+   * @function category
+   * @instance
+   * @memberof Chart
+   * @param {number} i index of category to be changed
+   * @param {string} category category value to be changed
+   * @returns {string}
+   * @example
+   * chart.category(2, "Category 3");
+   */
+  category(i, category) {
+    const $$ = this.internal;
+    const { config } = $$;
+    if (arguments.length > 1) {
+      config.axis_x_categories[i] = category;
+      $$.state.dirty.data = true;
+      $$.redraw();
+    }
+    return config.axis_x_categories[i];
+  },
+  /**
+   * Set or get category names on category axis.
+   * @function categories
+   * @instance
+   * @memberof Chart
+   * @param {Array} categories This must be an array that includes category names in string. If category names are included in the date by data.x option, this is not required.
+   * @returns {Array}
+   * @example
+   * chart.categories([
+   *      "Category 1", "Category 2", ...
+   * ]);
+   */
+  categories(categories) {
+    const $$ = this.internal;
+    const { config } = $$;
+    if (!categories || !Array.isArray(categories)) {
+      const cat = config.axis_x_categories;
+      return isEmpty(cat) ? Object.values($$.data.xs)[0] : cat;
+    }
+    config.axis_x_categories = categories;
+    $$.state.dirty.data = true;
+    $$.redraw();
+    return config.axis_x_categories;
+  }
+});
+
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(2);
+// EXTERNAL MODULE: external {"commonjs":"d3-time-format","commonjs2":"d3-time-format","amd":"d3-time-format","root":"d3"}
+var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_ = __webpack_require__(3);
 ;// ./src/config/classes.ts
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
@@ -386,143 +462,6 @@ const $ZOOM = {
 };
 /* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
-;// ./src/module/util/type-checks.ts
-const isValue = (v) => v || v === 0;
-const isFunction = (v) => typeof v === "function";
-const isString = (v) => typeof v === "string";
-const isNumber = (v) => typeof v === "number";
-const isUndefined = (v) => typeof v === "undefined";
-const isDefined = (v) => typeof v !== "undefined";
-const isBoolean = (v) => typeof v === "boolean";
-const ceil10 = (v) => Math.ceil(v / 10) * 10;
-const asHalfPixel = (n) => Math.ceil(n) + 0.5;
-const diffDomain = (d) => d[1] - d[0];
-const isObjectType = (v) => typeof v === "object";
-const isEmptyObject = (obj) => {
-  for (const x in obj) {
-    return false;
-  }
-  return true;
-};
-const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
-const notEmpty = (o) => !isEmpty(o);
-const isArray = (arr) => Array.isArray(arr);
-const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
-
-
-;// ./src/Chart/api/selection.ts
-
-
-
-function setSelection(isSelection = false, ids, indices, resetOther) {
-  const $$ = this;
-  const { config, $el: { main } } = $$;
-  const selectionGrouped = config.data_selection_grouped;
-  const isSelectable = config.data_selection_isselectable.bind($$.api);
-  if (!config.data_selection_enabled) {
-    return;
-  }
-  main.selectAll(`.${$SHAPE.shapes}`).selectAll(`.${$SHAPE.shape}`).each(function(d) {
-    const shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
-    const { id, index } = d.data ? d.data : d;
-    const toggle = $$.getToggle(this, d).bind($$);
-    const isTargetId = selectionGrouped || !ids || ids.indexOf(id) >= 0;
-    const isTargetIndex = !indices || indices.indexOf(index) >= 0;
-    const isSelected = shape.classed($SELECT.SELECTED);
-    if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
-      return;
-    }
-    if (isSelection) {
-      if (isTargetId && isTargetIndex && isSelectable(d) && !isSelected) {
-        toggle(true, shape.classed($SELECT.SELECTED, true), d, index);
-      } else if (isDefined(resetOther) && resetOther && isSelected) {
-        toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
-      }
-    } else {
-      if (isTargetId && isTargetIndex && isSelectable(d) && isSelected) {
-        toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
-      }
-    }
-  });
-}
-/* harmony default export */ var selection = ({
-  /**
-   * Get selected data points.<br><br>
-   * By this API, you can get selected data points information. To use this API, data.selection.enabled needs to be set true.
-   * @function selected
-   * @instance
-   * @memberof Chart
-   * @param {string} [targetId] You can filter the result by giving target id that you want to get. If not given, all of data points will be returned.
-   * @returns {Array} dataPoint Array of the data points.<br>ex.) `[{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ...]`
-   * @example
-   *  // all selected data points will be returned.
-   *  chart.selected();
-   *  // --> ex.) [{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ... ]
-   *
-   *  // all selected data points of data1 will be returned.
-   *  chart.selected("data1");
-   */
-  selected(targetId) {
-    const $$ = this.internal;
-    const dataPoint = [];
-    $$.$el.main.selectAll(`.${$SHAPE.shapes + $$.getTargetSelectorSuffix(targetId)}`).selectAll(`.${$SHAPE.shape}`).filter(function() {
-      return (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed($SELECT.SELECTED);
-    }).each((d) => dataPoint.push(d));
-    return dataPoint;
-  },
-  /**
-   * Set data points to be selected. ([`data.selection.enabled`](Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled) option should be set true to use this method)
-   * @function select
-   * @instance
-   * @memberof Chart
-   * @param {string|Array} [ids] id value to get selected.
-   * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
-   * @param {boolean} [resetOther] Unselect already selected.
-   * @example
-   *  // select all data points
-   *  chart.select();
-   *
-   *  // select all from 'data2'
-   *  chart.select("data2");
-   *
-   *  // select all from 'data1' and 'data2'
-   *  chart.select(["data1", "data2"]);
-   *
-   *  // select from 'data1', indices 2 and unselect others selected
-   *  chart.select("data1", [2], true);
-   *
-   *  // select from 'data1', indices 0, 3 and 5
-   *  chart.select("data1", [0, 3, 5]);
-   */
-  select(ids, indices, resetOther) {
-    const $$ = this.internal;
-    setSelection.bind($$)(true, ids, indices, resetOther);
-  },
-  /**
-   * Set data points to be un-selected.
-   * @function unselect
-   * @instance
-   * @memberof Chart
-   * @param {string|Array} [ids] id value to be unselected.
-   * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
-   * @example
-   *  // unselect all data points
-   *  chart.unselect();
-   *
-   *  // unselect all from 'data1'
-   *  chart.unselect("data1");
-   *
-   *  // unselect from 'data1', indices 2
-   *  chart.unselect("data1", [2]);
-   */
-  unselect(ids, indices) {
-    const $$ = this.internal;
-    setSelection.bind($$)(false, ids, indices);
-  }
-});
-
-// EXTERNAL MODULE: external {"commonjs":"d3-time-format","commonjs2":"d3-time-format","amd":"d3-time-format","root":"d3"}
-var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_ = __webpack_require__(3);
 ;// ./src/config/Options/common/boost.ts
 /* harmony default export */ var boost = ({
   /**
@@ -3575,6 +3514,15 @@ const TYPE = {
   STEP: "step",
   TREEMAP: "treemap"
 };
+const API_MODULE_NEEDED = {
+  export: "exportApi",
+  flow: "flow",
+  xgrids: "grid",
+  ygrids: "grid",
+  regions: "regions",
+  category: "category",
+  categories: "category"
+};
 const TYPE_METHOD_NEEDED = {
   AREA: "initArea",
   AREA_LINE_RANGE: "initArea",
@@ -3646,6 +3594,7 @@ const TYPE_BY_CATEGORY = {
 
 
 
+const MODULE_IMPORT_DOC = "https://github.com/naver/billboard.js/blob/master/MODULE_IMPORTS.md";
 function checkModuleImport(ctx) {
   const $$ = ctx;
   const { config } = $$;
@@ -3664,7 +3613,15 @@ function checkModuleImport(ctx) {
   type && logError(
     `Please, make sure if %c${camelize(type)}`,
     "module has been imported and specified correctly.",
-    "https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality"
+    MODULE_IMPORT_DOC
+  );
+}
+function checkApiModuleImport(apiName) {
+  const moduleName = API_MODULE_NEEDED[apiName];
+  moduleName && logError(
+    `Please, make sure if %c${moduleName}`,
+    "module has been imported and specified correctly.",
+    MODULE_IMPORT_DOC
   );
 }
 function logError(head, tail, info) {
@@ -5774,7 +5731,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
 });
 
 ;// ./src/ChartInternal/internals/category.ts
-/* harmony default export */ var category = ({
+/* harmony default export */ var internals_category = ({
   /**
    * Category Name
    * @param {number} i Index number
@@ -7302,7 +7259,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
 
 /* harmony default export */ var redraw = ({
   redraw(options = {}) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f;
     const $$ = this;
     const { config, state, $el } = $$;
     const { main, treemap } = $el;
@@ -7342,8 +7299,8 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     const needShapeUpdate = dirtySnapshot.data || dirtySnapshot.visibility || initializing;
     if (state.hasAxis) {
       $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
-      $$.hasGrid() && $$.updateGrid();
-      config.regions.length && $$.updateRegion();
+      ((_c = $$.hasGrid) == null ? void 0 : _c.call($$)) && $$.updateGrid();
+      config.regions.length && ((_d = $$.updateRegion) == null ? void 0 : _d.call($$));
       ["bar", "candlestick", "line", "area"].forEach((v) => {
         const name = capitalize(v);
         if (/^(line|area)$/.test(v) && $$.hasTypeOf(name) || $$.hasType(v)) {
@@ -7355,7 +7312,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
       $el.text && main.selectAll(`.${$SELECT.selectedCircles}`).filter($$.isBarType.bind($$)).selectAll("circle").remove();
       if (config.interaction_enabled && !flow && wth.EventRect) {
         $$.redrawEventRect();
-        (_c = $$.bindZoomEvent) == null ? void 0 : _c.call($$);
+        (_e = $$.bindZoomEvent) == null ? void 0 : _e.call($$);
       }
     } else {
       $el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
@@ -7368,7 +7325,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
       if (needShapeUpdate) {
         $$.updateCircle();
       }
-    } else if ((_d = $$.hasLegendDefsPoint) == null ? void 0 : _d.call($$)) {
+    } else if ((_f = $$.hasLegendDefsPoint) == null ? void 0 : _f.call($$)) {
       $$.data.targets.forEach($$.point("create", this));
     }
     if ($$.hasDataLabel() && !$$.hasArcType(null, ["radar"])) {
@@ -7434,10 +7391,10 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     const { cx, cy, xForText, yForText } = shape.pos;
     const list = [];
     if (hasAxis) {
-      if (config.grid_x_lines.length || config.grid_y_lines.length) {
+      if ($$.redrawGrid && (config.grid_x_lines.length || config.grid_y_lines.length)) {
         list.push($$.redrawGrid(withTransition));
       }
-      if (config.regions.length) {
+      if ($$.redrawRegion && config.regions.length) {
         list.push($$.redrawRegion(withTransition));
       }
       for (const v in shape.type) {
@@ -7447,7 +7404,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
           list.push($$[`redraw${name}`](drawFn, withTransition));
         }
       }
-      !flow && grid.main && list.push($$.updateGridFocus());
+      !flow && grid.main && $$.updateGridFocus && list.push($$.updateGridFocus());
     }
     if (!$$.hasArcType() || hasRadar) {
       notEmpty(config.data_labels) && config.data_labels !== false && list.push($$.redrawText(xForText, yForText, flow, withTransition));
@@ -10274,7 +10231,7 @@ class ChartInternal {
     );
   }
   initWithData(data2) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d, _e;
     const $$ = this;
     const { config, scale: scale2, state, $el, org } = $$;
     const { hasAxis, hasFunnel, hasTreemap } = state;
@@ -10354,16 +10311,16 @@ class ChartInternal {
       main.append("text").attr("class", `${$TEXT.text} ${$COMMON.empty}`).attr("text-anchor", "middle").attr("dominant-baseline", "middle");
     }
     if (hasAxis) {
-      config.regions.length && $$.initRegion();
+      config.regions.length && ((_b = $$.initRegion) == null ? void 0 : _b.call($$));
       !config.clipPath && $$.axis.init();
     }
     main.append("g").classed($COMMON.chart, true).attr("clip-path", hasAxis ? state.clip.path : null);
     $$.callPluginHook("$init");
     $$.initChartElements();
     if (hasAxis) {
-      hasInteraction && ((_b = $$.initEventRect) == null ? void 0 : _b.call($$));
-      $$.initGrid();
-      config.clipPath && ((_c = $$.axis) == null ? void 0 : _c.init());
+      hasInteraction && ((_c = $$.initEventRect) == null ? void 0 : _c.call($$));
+      (_d = $$.initGrid) == null ? void 0 : _d.call($$);
+      config.clipPath && ((_e = $$.axis) == null ? void 0 : _e.init());
     }
     $$.updateTargets($$.data.targets);
     $$.updateDimension();
@@ -10628,7 +10585,7 @@ extend(ChartInternal.prototype, [
   convert,
   data_data,
   load,
-  category,
+  internals_category,
   internals_class,
   internals_color,
   domain,
@@ -11026,202 +10983,6 @@ extend(api_data_data, {
   }
 });
 /* harmony default export */ var api_data = ({ data: api_data_data });
-
-;// ./src/Chart/api/export.ts
-
-
-
-const b64EncodeUnicode = (str) => {
-  var _a, _b;
-  return (_b = (_a = win).btoa) == null ? void 0 : _b.call(
-    _a,
-    encodeURIComponent(str).replace(
-      /%([0-9A-F]{2})/g,
-      (match, p) => String.fromCharCode(Number(`0x${p}`))
-    )
-  );
-};
-function nodeToSvgDataUrl(node, option, orgSize) {
-  const { width, height } = option || orgSize;
-  const serializer = new XMLSerializer();
-  const clone = node.cloneNode(true);
-  const cssText = getCssRules(toArray(browser_doc.styleSheets)).filter((r) => r.cssText).map((r) => r.cssText);
-  clone.setAttribute("xmlns", external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.xhtml);
-  clone.style.margin = "0";
-  clone.style.padding = "0";
-  if (option.preserveFontStyle) {
-    clone.querySelectorAll("text").forEach((t) => {
-      t.innerHTML = "";
-    });
-  }
-  const nodeXml = serializer.serializeToString(clone);
-  const style = browser_doc.createElement("style");
-  style.appendChild(browser_doc.createTextNode(cssText.join("\n")));
-  const styleXml = serializer.serializeToString(style);
-  const dataStr = `<svg xmlns="${external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.svg}" width="${width}" height="${height}" 
-		viewBox="0 0 ${orgSize.width} ${orgSize.height}" 
-		preserveAspectRatio="${(option == null ? void 0 : option.preserveAspectRatio) === false ? "none" : "xMinYMid meet"}">
-			<foreignObject width="100%" height="100%">
-				${styleXml}
-				${nodeXml.replace(/(url\()[^#]+/g, "$1")}
-			</foreignObject></svg>`;
-  return `data:image/svg+xml;base64,${b64EncodeUnicode(dataStr)}`;
-}
-function getCoords(elem, svgOffset) {
-  const { top, left } = svgOffset;
-  const { x, y } = getBBox(elem, true);
-  const { a, b, c, d, e, f } = elem.getScreenCTM();
-  const { width, height } = getBoundingRect(elem, true);
-  return {
-    x: a * x + c * y + e - left,
-    y: b * x + d * y + f - top + (height - Math.round(height / 4)),
-    width,
-    height
-  };
-}
-function getGlyph(svg) {
-  const { left, top } = getBoundingRect(svg);
-  const filterFn = (t) => t.textContent || t.childElementCount;
-  const glyph = [];
-  toArray(svg.querySelectorAll("text")).filter(filterFn).forEach((t) => {
-    const getStyleFn = (ts) => {
-      const { fill, fontFamily, fontSize, textAnchor, transform } = win.getComputedStyle(
-        ts
-      );
-      const { x, y, width, height } = getCoords(ts, { left, top });
-      return {
-        [ts.textContent]: {
-          x,
-          y,
-          width,
-          height,
-          fill,
-          fontFamily,
-          fontSize,
-          textAnchor,
-          transform
-        }
-      };
-    };
-    if (t.childElementCount > 1) {
-      const text = [];
-      toArray(t.querySelectorAll("tspan")).filter(filterFn).forEach((ts) => {
-        glyph.push(getStyleFn(ts));
-      });
-      return text;
-    } else {
-      glyph.push(getStyleFn(t));
-    }
-  });
-  return glyph;
-}
-function renderText(ctx, glyph) {
-  glyph.forEach((g) => {
-    Object.keys(g).forEach((key) => {
-      const { x, y, width, height, fill, fontFamily, fontSize, transform } = g[key];
-      ctx.save();
-      ctx.font = `${fontSize} ${fontFamily}`;
-      ctx.fillStyle = fill;
-      if (transform === "none") {
-        ctx.fillText(key, x, y);
-      } else {
-        const args = transform.replace(/(matrix|\(|\))/g, "").split(",");
-        if (args.splice(4).every((v) => +v === 0)) {
-          args.push(x + width - width / 4);
-          args.push(y - height + height / 3);
-        } else {
-          args.push(x);
-          args.push(y);
-        }
-        ctx.transform(...args);
-        ctx.fillText(key, 0, 0);
-      }
-      ctx.restore();
-    });
-  });
-}
-/* harmony default export */ var api_export = ({
-  /**
-   * Export chart as an image.
-   * - **NOTE:**
-   *   - IE11 and below not work properly due to the lack of the feature(<a href="https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx">foreignObject</a>) support
-   *   - Every style applied to the chart & the basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
-   * @function export
-   * @instance
-   * @memberof Chart
-   * @param {object} option Export option
-   * @param {string} [option.mimeType="image/png"] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
-   * @param {number} [option.width={currentWidth}] width
-   * @param {number} [option.height={currentHeigth}] height
-   * @param {boolean} [option.preserveAspectRatio=true] Preserve aspect ratio on given size
-   * @param {boolean} [option.preserveFontStyle=false] Preserve font style(font-family).<br>
-   * **NOTE:**
-   *   - This option is useful when outlink web font style's `font-family` are applied to chart's text element.
-   *   - Text element's position(especially "transformed") can't be preserved correctly according the page's layout condition.
-   *   - If need to preserve accurate text position, embed the web font data within to the page and set `preserveFontStyle=false`.
-   *     - Checkout the embed example: <a href="https://stackblitz.com/edit/zfbya9-8nf9nn?file=index.html">https://stackblitz.com/edit/zfbya9-8nf9nn?file=index.html</a>
-   * @param {function(string): void} [callback] The callback to be invoked when export is ready.
-   * @returns {string} dataURI
-   * @example
-   *  chart.export();
-   *  // --> "data:image/svg+xml;base64,PHN..."
-   *
-   *  // Initialize the download automatically
-   *  chart.export({mimeType: "image/png"}, dataUrl => {
-   *     const link = document.createElement("a");
-   *
-   *     link.download = `${Date.now()}.png`;
-   *     link.href = dataUrl;
-   *     link.innerHTML = "Download chart as image";
-   *
-   *     document.body.appendChild(link);
-   *  });
-   *
-   *  // Resize the exported image
-   *  chart.export(
-   *    {
-   *      width: 800,
-   *      height: 600,
-   *      preserveAspectRatio: false,
-   *      preserveFontStyle: false,
-   *      mimeType: "image/png"
-   *    },
-   *    dataUrl => { ... }
-   *  );
-   */
-  export(option, callback) {
-    const $$ = this.internal;
-    const { state, $el: { chart, svg } } = $$;
-    const { width, height } = state.current;
-    const opt = mergeObj(/* @__PURE__ */ Object.create(null), {
-      width,
-      height,
-      preserveAspectRatio: true,
-      preserveFontStyle: false,
-      mimeType: "image/png"
-    }, option);
-    const svgDataUrl = nodeToSvgDataUrl(chart.node(), opt, { width, height });
-    const glyph = opt.preserveFontStyle ? getGlyph(svg.node()) : [];
-    if (callback && isFunction(callback)) {
-      const img = new Image();
-      img.crossOrigin = "Anonymous";
-      img.onload = () => {
-        const canvas = browser_doc.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        canvas.width = opt.width || width;
-        canvas.height = opt.height || height;
-        ctx.drawImage(img, 0, 0);
-        if (glyph.length) {
-          renderText(ctx, glyph);
-          glyph.length = 0;
-        }
-        callback.bind(this)(canvas.toDataURL(opt.mimeType));
-      };
-      img.src = svgDataUrl;
-    }
-    return svgDataUrl;
-  }
-});
 
 ;// ./src/Chart/api/focus.ts
 
@@ -11851,7 +11612,6 @@ var Chart_publicField = (obj, key, value) => Chart_defNormalProp(obj, typeof key
 
 
 
-
 class Chart {
   constructor(options) {
     Chart_publicField(this, "plugins", []);
@@ -11883,13 +11643,1276 @@ extend(Chart.prototype, [
   chart,
   api_color,
   api_data,
-  api_export,
   api_focus,
   api_legend,
   api_load,
   show,
   api_tooltip
 ]);
+
+;// ./src/config/resolver/category.ts
+
+
+let category_category = () => {
+  Chart.prototype.category = category.category;
+  Chart.prototype.categories = category.categories;
+  return (category_category = () => ({}))();
+};
+
+;// ./src/Chart/api/export.ts
+
+
+
+const b64EncodeUnicode = (str) => {
+  var _a, _b;
+  return (_b = (_a = win).btoa) == null ? void 0 : _b.call(
+    _a,
+    encodeURIComponent(str).replace(
+      /%([0-9A-F]{2})/g,
+      (match, p) => String.fromCharCode(Number(`0x${p}`))
+    )
+  );
+};
+function nodeToSvgDataUrl(node, option, orgSize) {
+  const { width, height } = option || orgSize;
+  const serializer = new XMLSerializer();
+  const clone = node.cloneNode(true);
+  const cssText = getCssRules(toArray(browser_doc.styleSheets)).filter((r) => r.cssText).map((r) => r.cssText);
+  clone.setAttribute("xmlns", external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.xhtml);
+  clone.style.margin = "0";
+  clone.style.padding = "0";
+  if (option.preserveFontStyle) {
+    clone.querySelectorAll("text").forEach((t) => {
+      t.innerHTML = "";
+    });
+  }
+  const nodeXml = serializer.serializeToString(clone);
+  const style = browser_doc.createElement("style");
+  style.appendChild(browser_doc.createTextNode(cssText.join("\n")));
+  const styleXml = serializer.serializeToString(style);
+  const dataStr = `<svg xmlns="${external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.svg}" width="${width}" height="${height}" 
+		viewBox="0 0 ${orgSize.width} ${orgSize.height}" 
+		preserveAspectRatio="${(option == null ? void 0 : option.preserveAspectRatio) === false ? "none" : "xMinYMid meet"}">
+			<foreignObject width="100%" height="100%">
+				${styleXml}
+				${nodeXml.replace(/(url\()[^#]+/g, "$1")}
+			</foreignObject></svg>`;
+  return `data:image/svg+xml;base64,${b64EncodeUnicode(dataStr)}`;
+}
+function getCoords(elem, svgOffset) {
+  const { top, left } = svgOffset;
+  const { x, y } = getBBox(elem, true);
+  const { a, b, c, d, e, f } = elem.getScreenCTM();
+  const { width, height } = getBoundingRect(elem, true);
+  return {
+    x: a * x + c * y + e - left,
+    y: b * x + d * y + f - top + (height - Math.round(height / 4)),
+    width,
+    height
+  };
+}
+function getGlyph(svg) {
+  const { left, top } = getBoundingRect(svg);
+  const filterFn = (t) => t.textContent || t.childElementCount;
+  const glyph = [];
+  toArray(svg.querySelectorAll("text")).filter(filterFn).forEach((t) => {
+    const getStyleFn = (ts) => {
+      const { fill, fontFamily, fontSize, textAnchor, transform } = win.getComputedStyle(
+        ts
+      );
+      const { x, y, width, height } = getCoords(ts, { left, top });
+      return {
+        [ts.textContent]: {
+          x,
+          y,
+          width,
+          height,
+          fill,
+          fontFamily,
+          fontSize,
+          textAnchor,
+          transform
+        }
+      };
+    };
+    if (t.childElementCount > 1) {
+      const text = [];
+      toArray(t.querySelectorAll("tspan")).filter(filterFn).forEach((ts) => {
+        glyph.push(getStyleFn(ts));
+      });
+      return text;
+    } else {
+      glyph.push(getStyleFn(t));
+    }
+  });
+  return glyph;
+}
+function renderText(ctx, glyph) {
+  glyph.forEach((g) => {
+    Object.keys(g).forEach((key) => {
+      const { x, y, width, height, fill, fontFamily, fontSize, transform } = g[key];
+      ctx.save();
+      ctx.font = `${fontSize} ${fontFamily}`;
+      ctx.fillStyle = fill;
+      if (transform === "none") {
+        ctx.fillText(key, x, y);
+      } else {
+        const args = transform.replace(/(matrix|\(|\))/g, "").split(",");
+        if (args.splice(4).every((v) => +v === 0)) {
+          args.push(x + width - width / 4);
+          args.push(y - height + height / 3);
+        } else {
+          args.push(x);
+          args.push(y);
+        }
+        ctx.transform(...args);
+        ctx.fillText(key, 0, 0);
+      }
+      ctx.restore();
+    });
+  });
+}
+/* harmony default export */ var api_export = ({
+  /**
+   * Export chart as an image.
+   * - **NOTE:**
+   *   - IE11 and below not work properly due to the lack of the feature(<a href="https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx">foreignObject</a>) support
+   *   - Every style applied to the chart & the basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
+   * @function export
+   * @instance
+   * @memberof Chart
+   * @param {object} option Export option
+   * @param {string} [option.mimeType="image/png"] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
+   * @param {number} [option.width={currentWidth}] width
+   * @param {number} [option.height={currentHeigth}] height
+   * @param {boolean} [option.preserveAspectRatio=true] Preserve aspect ratio on given size
+   * @param {boolean} [option.preserveFontStyle=false] Preserve font style(font-family).<br>
+   * **NOTE:**
+   *   - This option is useful when outlink web font style's `font-family` are applied to chart's text element.
+   *   - Text element's position(especially "transformed") can't be preserved correctly according the page's layout condition.
+   *   - If need to preserve accurate text position, embed the web font data within to the page and set `preserveFontStyle=false`.
+   *     - Checkout the embed example: <a href="https://stackblitz.com/edit/zfbya9-8nf9nn?file=index.html">https://stackblitz.com/edit/zfbya9-8nf9nn?file=index.html</a>
+   * @param {function(string): void} [callback] The callback to be invoked when export is ready.
+   * @returns {string} dataURI
+   * @example
+   *  chart.export();
+   *  // --> "data:image/svg+xml;base64,PHN..."
+   *
+   *  // Initialize the download automatically
+   *  chart.export({mimeType: "image/png"}, dataUrl => {
+   *     const link = document.createElement("a");
+   *
+   *     link.download = `${Date.now()}.png`;
+   *     link.href = dataUrl;
+   *     link.innerHTML = "Download chart as image";
+   *
+   *     document.body.appendChild(link);
+   *  });
+   *
+   *  // Resize the exported image
+   *  chart.export(
+   *    {
+   *      width: 800,
+   *      height: 600,
+   *      preserveAspectRatio: false,
+   *      preserveFontStyle: false,
+   *      mimeType: "image/png"
+   *    },
+   *    dataUrl => { ... }
+   *  );
+   */
+  export(option, callback) {
+    const $$ = this.internal;
+    const { state, $el: { chart, svg } } = $$;
+    const { width, height } = state.current;
+    const opt = mergeObj(/* @__PURE__ */ Object.create(null), {
+      width,
+      height,
+      preserveAspectRatio: true,
+      preserveFontStyle: false,
+      mimeType: "image/png"
+    }, option);
+    const svgDataUrl = nodeToSvgDataUrl(chart.node(), opt, { width, height });
+    const glyph = opt.preserveFontStyle ? getGlyph(svg.node()) : [];
+    if (callback && isFunction(callback)) {
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+      img.onload = () => {
+        const canvas = browser_doc.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = opt.width || width;
+        canvas.height = opt.height || height;
+        ctx.drawImage(img, 0, 0);
+        if (glyph.length) {
+          renderText(ctx, glyph);
+          glyph.length = 0;
+        }
+        callback.bind(this)(canvas.toDataURL(opt.mimeType));
+      };
+      img.src = svgDataUrl;
+    }
+    return svgDataUrl;
+  }
+});
+
+;// ./src/config/resolver/export.ts
+
+
+let exportApi = () => {
+  Chart.prototype.export = api_export.export;
+  return (exportApi = () => ({}))();
+};
+
+;// ./src/Chart/api/flow.ts
+
+/* harmony default export */ var flow = ({
+  /**
+   * Flow data to the chart.<br><br>
+   * By this API, you can append new data points to the chart.
+   * @function flow
+   * @instance
+   * @memberof Chart
+   * @param {object} args The object can consist with following members:<br>
+   *
+   *    | Key | Type | Description |
+   *    | --- | --- | --- |
+   *    | json | Object | Data as JSON format (@see [data․json](Options.html#.data%25E2%2580%25A4json)) |
+   *    | rows | Array | Data in array as row format (@see [data․rows](Options.html#.data%25E2%2580%25A4json)) |
+   *    | columns | Array | Data in array as column format (@see [data․columns](Options.html#.data%25E2%2580%25A4columns)) |
+   *    | to | String | The lower x edge will move to that point. If not given, the lower x edge will move by the number of given data points |
+   *    | length | Number | The lower x edge will move by the number of this argument |
+   *    | duration | Number | The duration of the transition will be specified value. If not given, transition.duration will be used as default |
+   *    | done | Function | The specified function will be called when flow ends |
+   *
+   * - **NOTE:**
+   *   - If json, rows and columns given, the data will be loaded.
+   *   - If data that has the same target id is given, the chart will be appended.
+   *   - Otherwise, new target will be added. One of these is required when calling.
+   *   - If json specified, keys is required as well as data.json.
+   * 	 - If tab isn't visible(by evaluating `document.hidden`), will not be executed to prevent unnecessary work.
+   * @example
+   * // 2 data points will be appended to the tail and popped from the head.
+   * // After that, 4 data points will be appended and no data points will be poppoed.
+   * chart.flow({
+   *  columns: [
+   *    ["x", "2018-01-11", "2018-01-21"],
+   *    ["data1", 500, 200],
+   *    ["data2", 100, 300],
+   *    ["data3", 200, 120]
+   *  ],
+   *  to: "2013-01-11",
+   *  done: function () {
+   *    chart.flow({
+   *      columns: [
+   *        ["x", "2018-02-11", "2018-02-12", "2018-02-13", "2018-02-14"],
+   *        ["data1", 200, 300, 100, 250],
+   *        ["data2", 100, 90, 40, 120],
+   *        ["data3", 100, 100, 300, 500]
+   *      ],
+   *      length: 2,
+   *      duration: 1500
+   *    });
+   *  }
+   * });
+   */
+  flow(args) {
+    const $$ = this.internal;
+    let data;
+    if (args.json || args.rows || args.columns) {
+      $$.convertData(args, (res) => {
+        data = res;
+        _();
+      });
+    }
+    function _() {
+      let domain;
+      let length = 0;
+      let tail = 0;
+      let diff;
+      let to;
+      if ($$.state.redrawing || !data || !isTabVisible()) {
+        return;
+      }
+      const notfoundIds = [];
+      const orgDataCount = $$.getMaxDataCount();
+      const targets = $$.convertDataToTargets(data, true);
+      const isTimeSeries = $$.axis.isTimeSeries();
+      $$.data.targets.forEach((t) => {
+        let found = false;
+        for (let i = 0; i < targets.length; i++) {
+          if (t.id === targets[i].id) {
+            found = true;
+            if (t.values[t.values.length - 1]) {
+              tail = t.values[t.values.length - 1].index + 1;
+            }
+            length = targets[i].values.length;
+            for (let j = 0; j < length; j++) {
+              targets[i].values[j].index = tail + j;
+              if (!isTimeSeries) {
+                targets[i].values[j].x = tail + j;
+              }
+            }
+            t.values = t.values.concat(targets[i].values);
+            targets.splice(i, 1);
+            break;
+          }
+        }
+        !found && notfoundIds.push(t.id);
+      });
+      $$.data.targets.forEach((t) => {
+        for (let i = 0; i < notfoundIds.length; i++) {
+          if (t.id === notfoundIds[i]) {
+            tail = t.values[t.values.length - 1].index + 1;
+            for (let j = 0; j < length; j++) {
+              t.values.push({
+                id: t.id,
+                index: tail + j,
+                x: isTimeSeries ? $$.getOtherTargetX(tail + j) : tail + j,
+                value: null
+              });
+            }
+          }
+        }
+      });
+      if ($$.data.targets.length) {
+        targets.forEach((t) => {
+          const missing = [];
+          for (let i = $$.data.targets[0].values[0].index; i < tail; i++) {
+            missing.push({
+              id: t.id,
+              index: i,
+              x: isTimeSeries ? $$.getOtherTargetX(i) : i,
+              value: null
+            });
+          }
+          t.values.forEach((v) => {
+            v.index += tail;
+            if (!isTimeSeries) {
+              v.x += tail;
+            }
+          });
+          t.values = missing.concat(t.values);
+        });
+      }
+      $$.data.targets = $$.data.targets.concat(targets);
+      const baseTarget = $$.data.targets[0];
+      const baseValue = baseTarget.values[0];
+      if (isDefined(args.to)) {
+        length = 0;
+        to = isTimeSeries ? parseDate.call($$, args.to) : args.to;
+        baseTarget.values.forEach((v) => {
+          v.x < to && length++;
+        });
+      } else if (isDefined(args.length)) {
+        length = args.length;
+      }
+      if (!orgDataCount) {
+        if (isTimeSeries) {
+          diff = baseTarget.values.length > 1 ? baseTarget.values[baseTarget.values.length - 1].x - baseValue.x : baseValue.x - $$.getXDomain($$.data.targets)[0];
+        } else {
+          diff = 1;
+        }
+        domain = [baseValue.x - diff, baseValue.x];
+      } else if (orgDataCount === 1 && isTimeSeries) {
+        diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
+        domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
+      }
+      domain && $$.updateXDomain(null, true, true, false, domain);
+      $$.updateTargets($$.data.targets);
+      $$.state.dirty.data = true;
+      $$.state._eventRectFingerprint = null;
+      $$.redraw({
+        flow: {
+          index: baseValue.index,
+          length,
+          duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
+          done: args.done,
+          orgDataCount
+        },
+        withLegend: true,
+        withTransition: orgDataCount > 1,
+        withTrimXDomain: false,
+        withUpdateXAxis: true
+      });
+    }
+  }
+});
+
+;// ./src/ChartInternal/interactions/flow.ts
+
+
+
+/* harmony default export */ var interactions_flow = ({
+  /**
+   * Generate flow
+   * @param {object} args option object
+   * @returns {function}
+   * @private
+   */
+  generateFlow(args) {
+    const $$ = this;
+    const { data, state, $el } = $$;
+    return function() {
+      var _a;
+      const flowLength = args.flow.length;
+      state.flowing = true;
+      data.targets.forEach((d) => {
+        d.values.splice(0, flowLength);
+      });
+      state.dataGeneration++;
+      if ($$.updateXGrid) {
+        $$.updateXGrid(true);
+      }
+      const elements = {};
+      [
+        "axis.x",
+        "grid.x",
+        "gridLines.x",
+        "region.list",
+        "text",
+        "bar",
+        "line",
+        "area",
+        "circle"
+      ].forEach((v) => {
+        const name = v.split(".");
+        let node = $el[name[0]];
+        if (node && name.length > 1) {
+          node = node[name[1]];
+        }
+        if (node == null ? void 0 : node.size()) {
+          elements[v] = node;
+        }
+      });
+      (_a = $$.hideGridFocus) == null ? void 0 : _a.call($$);
+      $$.setFlowList(elements, args);
+    };
+  },
+  /**
+   * Set flow list
+   * @param {object} elements Target elements
+   * @param {object} args option object
+   * @private
+   */
+  setFlowList(elements, args) {
+    const $$ = this;
+    const { flow, targets } = args;
+    const {
+      duration = args.duration,
+      index: flowIndex,
+      length: flowLength,
+      orgDataCount
+    } = flow;
+    const transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength);
+    const wait = generateWait();
+    let n;
+    wait.add(Object.keys(elements).map((v) => {
+      n = elements[v].transition().ease((t) => +t).duration(duration);
+      if (v === "axis.x") {
+        n = n.call((g) => {
+          $$.axis.x.setTransition(g).create(g);
+        });
+      } else if (v === "region.list") {
+        n = n.filter($$.isRegionOnX).attr("transform", transform);
+      } else {
+        n = n.attr("transform", transform);
+      }
+      return n;
+    }));
+    n.call(wait, () => {
+      $$.cleanUpFlow(elements, args);
+    });
+  },
+  /**
+   * Clean up flow
+   * @param {object} elements Target elements
+   * @param {object} args option object
+   * @private
+   */
+  cleanUpFlow(elements, args) {
+    const $$ = this;
+    const { config, state, $el: { svg } } = $$;
+    const isRotated = config.axis_rotated;
+    const { flow, shape, xv } = args;
+    const { cx, cy, xForText, yForText } = shape.pos;
+    const {
+      done = () => {
+      },
+      length: flowLength
+    } = flow;
+    if (flowLength) {
+      ["circle", "text", "shape", "eventRect"].forEach((v) => {
+        const target = [];
+        for (let i = 0; i < flowLength; i++) {
+          target.push(`.${classes[v]}-${i}`);
+        }
+        svg.selectAll(`.${classes[`${v}s`]}`).selectAll(target).remove();
+      });
+      svg.select(`.${classes.xgrid}`).remove();
+    }
+    Object.keys(elements).forEach((v) => {
+      const n = elements[v];
+      if (v !== "axis.x") {
+        n.attr("transform", null);
+      }
+      if (v === "grid.x") {
+        n.attr(state.xgridAttr);
+      } else if (v === "gridLines.x") {
+        n.attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? state.width : xv);
+        n.select("text").attr("x", isRotated ? state.width : 0).attr("y", xv);
+      } else if (/^(area|bar|line)$/.test(v)) {
+        n.attr("d", shape.type[v]);
+      } else if (v === "text") {
+        n.attr("x", xForText).attr("y", yForText).style("fill-opacity", $$.opacityForText.bind($$));
+      } else if (v === "circle") {
+        if ($$.isCirclePoint()) {
+          n.attr("cx", cx).attr("cy", cy);
+        } else {
+          const xFunc = (d) => cx(d) - config.point_r;
+          const yFunc = (d) => cy(d) - config.point_r;
+          n.attr("x", xFunc).attr("y", yFunc);
+        }
+      } else if (v === "region.list") {
+        n.select("rect").filter($$.isRegionOnX).attr("x", $$.regionX.bind($$)).attr("width", $$.regionWidth.bind($$));
+      }
+    });
+    config.interaction_enabled && $$.redrawEventRect();
+    done.call($$.api);
+    state.flowing = false;
+  },
+  /**
+   * Get flow transform value
+   * @param {object} targets target
+   * @param {number} orgDataCount original data count
+   * @param {number} flowIndex flow index
+   * @param {number} flowLength flow length
+   * @returns {string}
+   * @private
+   */
+  getFlowTransform(targets, orgDataCount, flowIndex, flowLength) {
+    const $$ = this;
+    const { data, scale: { x } } = $$;
+    const dataValues = data.targets[0].values;
+    let flowStart = $$.getValueOnIndex(dataValues, flowIndex);
+    let flowEnd = $$.getValueOnIndex(dataValues, flowIndex + flowLength);
+    let translateX;
+    const orgDomain = x.domain();
+    const domain = $$.updateXDomain(targets, true, true);
+    if (!orgDataCount) {
+      if (dataValues.length !== 1) {
+        translateX = x(orgDomain[0]) - x(domain[0]);
+      } else {
+        if ($$.axis.isTimeSeries()) {
+          flowStart = $$.getValueOnIndex(dataValues, 0);
+          flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
+          translateX = x(flowStart.x) - x(flowEnd.x);
+        } else {
+          translateX = diffDomain(domain) / 2;
+        }
+      }
+    } else if (orgDataCount === 1 || (flowStart == null ? void 0 : flowStart.x) === (flowEnd == null ? void 0 : flowEnd.x)) {
+      translateX = x(orgDomain[0]) - x(domain[0]);
+    } else {
+      translateX = $$.axis.isTimeSeries() ? x(orgDomain[0]) - x(domain[0]) : x((flowStart == null ? void 0 : flowStart.x) || 0) - x(flowEnd.x);
+    }
+    const scaleX = diffDomain(orgDomain) / diffDomain(domain);
+    return `translate(${translateX},0) scale(${scaleX},1)`;
+  }
+});
+
+;// ./src/config/resolver/flow.ts
+
+
+
+
+
+let flow_flow = () => {
+  extend(ChartInternal.prototype, interactions_flow);
+  Chart.prototype.flow = flow.flow;
+  return (flow_flow = () => ({}))();
+};
+
+;// ./src/Chart/api/grid.ts
+
+function grid(grids, axisId) {
+  const $$ = this.internal;
+  const { config } = $$;
+  const withTransition = config.transition_duration && isTabVisible();
+  const gridPropLines = `grid_${axisId}_lines`;
+  if (!grids) {
+    return config[gridPropLines];
+  }
+  config[gridPropLines] = grids;
+  $$.updateGrid();
+  $$.redrawGrid(withTransition);
+  return config[gridPropLines];
+}
+function add(grids, axisId) {
+  const gridPropLines = `grid_${axisId}_lines`;
+  return grid.bind(this)(
+    this.internal.config[gridPropLines].concat(grids || []),
+    axisId
+  );
+}
+function remove(grids, isXAxis) {
+  this.internal.removeGridLines(grids, isXAxis);
+}
+const xgrids = function(grids) {
+  return grid.bind(this)(grids, "x");
+};
+extend(xgrids, {
+  /**
+   * Add x grid lines.<br>
+   * This API adds new x grid lines instead of replacing like xgrids.
+   * @function xgrids․add
+   * @instance
+   * @memberof Chart
+   * @param {Array|object} grids New x grid lines will be added. The format of this argument is the same as grid.x.lines and it's possible to give an Object if only one line will be added.
+   * @returns {Array}
+   * @example
+   *  // Add a new x grid line
+   * chart.xgrids.add(
+   *   {value: 4, text: "Label 4"}
+   * );
+   *
+   * // Add new x grid lines
+   * chart.xgrids.add([
+   *   {value: 2, text: "Label 2"},
+   *   {value: 4, text: "Label 4"}
+   * ]);
+   */
+  add(grids) {
+    return add.bind(this)(grids, "x");
+  },
+  /**
+   * Remove x grid lines.<br>
+   * This API removes x grid lines.
+   * @function xgrids․remove
+   * @instance
+   * @memberof Chart
+   * @param {object} grids This argument should include value or class. If value is given, the x grid lines that have specified x value will be removed. If class is given, the x grid lines that have specified class will be removed. If args is not given, all of x grid lines will be removed.
+   * @param {number} [grids.value] target value
+   * @param {string} [grids.class] target class
+   * @returns {void}
+   * @example
+   * // x grid line on x = 2 will be removed
+   * chart.xgrids.remove({value: 2});
+   *
+   * // x grid lines that have 'grid-A' will be removed
+   * chart.xgrids.remove({
+   *   class: "grid-A"
+   * });
+   *
+   * // all of x grid lines will be removed
+   * chart.xgrids.remove();
+   */
+  remove(grids) {
+    return remove.bind(this)(grids, true);
+  }
+});
+const ygrids = function(grids) {
+  return grid.bind(this)(grids, "y");
+};
+extend(ygrids, {
+  /**
+   * Add y grid lines.<br>
+   * This API adds new y grid lines instead of replacing like ygrids.
+   * @function ygrids․add
+   * @instance
+   * @memberof Chart
+   * @param {Array|object} grids New y grid lines will be added. The format of this argument is the same as grid.y.lines and it's possible to give an Object if only one line will be added.
+   * @returns {object}
+   * @example
+   *  // Add a new x grid line
+   * chart.ygrids.add(
+   *   {value: 400, text: "Label 4"}
+   * );
+   *
+   * // Add new x grid lines
+   * chart.ygrids.add([
+   *   {value: 200, text: "Label 2"},
+   *   {value: 400, text: "Label 4"}
+   * ]);
+   */
+  add(grids) {
+    return add.bind(this)(grids, "y");
+  },
+  /**
+   * Remove y grid lines.<br>
+   * This API removes x grid lines.
+   * @function ygrids․remove
+   * @instance
+   * @memberof Chart
+   * @param {object} grids This argument should include value or class. If value is given, the y grid lines that have specified y value will be removed. If class is given, the y grid lines that have specified class will be removed. If args is not given, all of y grid lines will be removed.
+   * @param {number} [grids.value] target value
+   * @param {string} [grids.class] target class
+   * @returns {void}
+   * @example
+   * // y grid line on y = 200 will be removed
+   * chart.ygrids.remove({value: 200});
+   *
+   * // y grid lines that have 'grid-A' will be removed
+   * chart.ygrids.remove({
+   *   class: "grid-A"
+   * });
+   *
+   * // all of y grid lines will be removed
+   * chart.ygrids.remove();
+   */
+  remove(grids) {
+    return remove.bind(this)(grids, false);
+  }
+});
+/* harmony default export */ var api_grid = ({ xgrids, ygrids });
+
+;// ./src/ChartInternal/internals/grid.ts
+
+
+
+const _getGridTextAnchor = (d) => isValue(d.position) || "end";
+const _getGridTextDx = (d) => d.position === "start" ? 4 : d.position === "middle" ? 0 : -4;
+function _getGridTextX(isX, width, height) {
+  return (d) => {
+    let x = isX ? 0 : width;
+    if (d.position === "start") {
+      x = isX ? -height : 0;
+    } else if (d.position === "middle") {
+      x = (isX ? -height : width) / 2;
+    }
+    return x;
+  };
+}
+function _smoothLines(el, type) {
+  if (type === "grid") {
+    el.each(function() {
+      const g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
+      ["x1", "x2", "y1", "y2"].forEach((v) => g.attr(v, +g.attr(v)));
+    });
+  }
+}
+/* harmony default export */ var internals_grid = ({
+  hasGrid() {
+    const { config } = this;
+    return ["x", "y"].some((v) => config[`grid_${v}_show`] || config[`grid_${v}_lines`].length);
+  },
+  initGrid() {
+    const $$ = this;
+    $$.hasGrid() && $$.initGridLines();
+    $$.initFocusGrid();
+  },
+  initGridLines() {
+    const $$ = this;
+    const { config, state: { clip }, $el } = $$;
+    if (config.grid_x_lines.length || config.grid_y_lines.length) {
+      $el.gridLines.main = $el.main.insert(
+        "g",
+        `.${$COMMON.chart}${config.grid_lines_front ? " + *" : ""}`
+      ).attr("clip-path", clip.pathGrid).attr("class", `${$GRID.grid} ${$GRID.gridLines}`);
+      $el.gridLines.main.append("g").attr("class", $GRID.xgridLines);
+      $el.gridLines.main.append("g").attr("class", $GRID.ygridLines);
+      $el.gridLines.x = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.selectAll)([]);
+    }
+  },
+  updateXGrid(withoutUpdate) {
+    const $$ = this;
+    const { config, scale, state, $el: { main, grid } } = $$;
+    const isRotated = config.axis_rotated;
+    const xgridData = $$.generateGridData(config.grid_x_type, scale.x);
+    const tickOffset = $$.axis.isCategorized() ? $$.axis.x.tickOffset() : 0;
+    const pos = (d) => (scale.zoom || scale.x)(d) + tickOffset * (isRotated ? -1 : 1);
+    state.xgridAttr = isRotated ? {
+      x1: 0,
+      x2: state.width,
+      y1: pos,
+      y2: pos
+    } : {
+      x1: pos,
+      x2: pos,
+      y1: 0,
+      y2: state.height
+    };
+    grid.x = main.select(`.${$GRID.xgrids}`).selectAll(`.${$GRID.xgrid}`).data(xgridData);
+    grid.x.exit().remove();
+    grid.x = grid.x.enter().append("line").attr("class", $GRID.xgrid).merge(grid.x);
+    if (!withoutUpdate) {
+      grid.x.each(function() {
+        const grid2 = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
+        Object.keys(state.xgridAttr).forEach((id) => {
+          grid2.attr(id, state.xgridAttr[id]).style("opacity", () => grid2.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ? "0" : null);
+        });
+      });
+    }
+  },
+  updateYGrid() {
+    const $$ = this;
+    const { axis, config, scale, state, $el: { grid, main } } = $$;
+    const isRotated = config.axis_rotated;
+    const pos = (d) => scale.y(d);
+    const gridValues = axis.y.getGeneratedTicks(config.grid_y_ticks) || $$.scale.y.ticks(config.grid_y_ticks);
+    grid.y = main.select(`.${$GRID.ygrids}`).selectAll(`.${$GRID.ygrid}`).data(gridValues);
+    grid.y.exit().remove();
+    grid.y = grid.y.enter().append("line").attr("class", $GRID.ygrid).merge(grid.y);
+    grid.y.attr("x1", isRotated ? pos : 0).attr("x2", isRotated ? pos : state.width).attr("y1", isRotated ? 0 : pos).attr("y2", isRotated ? state.height : pos);
+    _smoothLines(grid.y, "grid");
+  },
+  updateGrid() {
+    const $$ = this;
+    const { $el: { grid, gridLines } } = $$;
+    !gridLines.main && $$.initGridLines();
+    grid.main.style("visibility", $$.hasArcType() ? "hidden" : null);
+    $$.hideGridFocus();
+    $$.updateGridLines("x");
+    $$.updateGridLines("y");
+  },
+  /**
+   * Update Grid lines
+   * @param {string} type x | y
+   * @private
+   */
+  updateGridLines(type) {
+    const $$ = this;
+    const { config, $el: { gridLines, main }, $T } = $$;
+    const isRotated = config.axis_rotated;
+    const isX = type === "x";
+    config[`grid_${type}_show`] && $$[`update${type.toUpperCase()}Grid`]();
+    let lines = main.select(`.${$GRID[`${type}gridLines`]}`).selectAll(`.${$GRID[`${type}gridLine`]}`).data(config[`grid_${type}_lines`]);
+    $T(lines.exit()).style("opacity", "0").remove();
+    const gridLine = lines.enter().append("g");
+    gridLine.append("line").style("opacity", "0");
+    lines = gridLine.merge(lines);
+    lines.each(function(d) {
+      const g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
+      if (g.select("text").empty() && d.text) {
+        g.append("text").style("opacity", "0");
+      }
+    });
+    $T(lines.attr("class", (d) => `${$GRID[`${type}gridLine`]} ${d.class || ""}`.trim()).select("text").attr("text-anchor", _getGridTextAnchor).attr(
+      "transform",
+      () => isX ? isRotated ? null : "rotate(-90)" : isRotated ? "rotate(-90)" : null
+    ).attr("dx", _getGridTextDx).attr("dy", -5)).text(function(d) {
+      var _a;
+      return (_a = d.text) != null ? _a : this.remove();
+    });
+    gridLines[type] = lines;
+  },
+  redrawGrid(withTransition) {
+    const $$ = this;
+    const {
+      config: { axis_rotated: isRotated },
+      state: { width, height },
+      $el: { gridLines },
+      $T
+    } = $$;
+    const xv = $$.xv.bind($$);
+    const yv = $$.yv.bind($$);
+    let xLines = gridLines.x.select("line");
+    let xTexts = gridLines.x.select("text");
+    let yLines = gridLines.y.select("line");
+    let yTexts = gridLines.y.select("text");
+    xLines = $T(xLines, withTransition).attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? width : xv).attr("y1", isRotated ? xv : 0).attr("y2", isRotated ? xv : height);
+    xTexts = $T(xTexts, withTransition).attr("x", _getGridTextX(!isRotated, width, height)).attr("y", xv);
+    yLines = $T(yLines, withTransition).attr("x1", isRotated ? yv : 0).attr("x2", isRotated ? yv : width).attr("y1", isRotated ? 0 : yv).attr("y2", isRotated ? height : yv);
+    yTexts = $T(yTexts, withTransition).attr("x", _getGridTextX(isRotated, width, height)).attr("y", yv);
+    return [
+      xLines.style("opacity", null),
+      xTexts.style("opacity", null),
+      yLines.style("opacity", null),
+      yTexts.style("opacity", null)
+    ];
+  },
+  initFocusGrid() {
+    const $$ = this;
+    const { config, state, state: { clip }, $el } = $$;
+    state._gridFocusEl = null;
+    const isFront = config.grid_front;
+    const className = `.${isFront && $el.gridLines.main ? $GRID.gridLines : $COMMON.chart}${isFront ? " + *" : ""}`;
+    const grid = $el.main.insert("g", className).attr("clip-path", clip.pathGrid).attr("class", $GRID.grid);
+    $el.grid.main = grid;
+    config.grid_x_show && grid.append("g").attr("class", $GRID.xgrids);
+    config.grid_y_show && grid.append("g").attr("class", $GRID.ygrids);
+    if (config.axis_tooltip) {
+      const axis = grid.append("g").attr("class", "bb-axis-tooltip");
+      axis.append("line").attr("class", "bb-axis-tooltip-x");
+      axis.append("line").attr("class", "bb-axis-tooltip-y");
+    }
+    if (config.interaction_enabled && config.grid_focus_show && !config.axis_tooltip) {
+      grid.append("g").attr("class", $FOCUS.xgridFocus).append("line").attr("class", $FOCUS.xgridFocus);
+      if (config.grid_focus_y && !config.tooltip_grouped) {
+        grid.append("g").attr("class", $FOCUS.ygridFocus).append("line").attr("class", $FOCUS.ygridFocus);
+      }
+    }
+  },
+  showAxisGridFocus() {
+    var _a, _b;
+    const $$ = this;
+    const { config, format, state: { event, width, height } } = $$;
+    const isRotated = config.axis_rotated;
+    const [x, y] = getPointer(event, (_a = $$.$el.eventRect) == null ? void 0 : _a.node());
+    const pos = { x, y };
+    for (const [axis, node] of Object.entries($$.$el.axisTooltip)) {
+      const attr = axis === "x" && !isRotated || axis !== "x" && isRotated ? "x" : "y";
+      const value = pos[attr];
+      let scaleText = (_b = $$.scale[axis]) == null ? void 0 : _b.invert(value);
+      if (scaleText) {
+        scaleText = axis === "x" && $$.axis.isTimeSeries() ? format.xAxisTick(scaleText) : scaleText == null ? void 0 : scaleText.toFixed(2);
+        node == null ? void 0 : node.attr(attr, value).text(scaleText);
+      }
+    }
+    $$.$el.main.selectAll(
+      `line.bb-axis-tooltip-x, line.bb-axis-tooltip-y`
+    ).style("visibility", null).each(function(d, i) {
+      const line = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
+      if (i === 0) {
+        line.attr("x1", x).attr("x2", x).attr("y1", i ? 0 : height).attr("y2", i ? height : 0);
+      } else {
+        line.attr("x1", i ? 0 : width).attr("x2", i ? width : 0).attr("y1", y).attr("y2", y);
+      }
+    });
+  },
+  hideAxisGridFocus() {
+    const $$ = this;
+    $$.$el.main.selectAll(
+      `line.${$AXIS.axisTooltipX}, line.${$AXIS.axisTooltipY}`
+    ).style("visibility", "hidden");
+    Object.values($$.$el.axisTooltip).forEach((v) => v == null ? void 0 : v.style("display", "none"));
+  },
+  /**
+   * Show grid focus line
+   * @param {Array} data Selected data
+   * @private
+   */
+  showGridFocus(data) {
+    var _a, _b;
+    const $$ = this;
+    const { config, state, state: { width, height } } = $$;
+    const isRotated = config.axis_rotated;
+    const focusEl = ((_a = state._gridFocusEl) == null ? void 0 : _a.size()) ? state._gridFocusEl : state._gridFocusEl = $$.$el.main.selectAll(
+      `line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`
+    );
+    const dataToShow = (data || [focusEl.datum()]).filter(
+      (d) => d && isValue($$.getBaseValue(d))
+    );
+    if (!config.tooltip_show || dataToShow.length === 0 || !config.axis_x_forceAsSingle && $$.hasType("bubble") || $$.hasArcType()) {
+      return;
+    }
+    const isEdge = config.grid_focus_edge && !config.tooltip_grouped;
+    const xx = $$.xx.bind($$);
+    focusEl.style("visibility", null).data(dataToShow.concat(dataToShow)).each(function(d) {
+      const el = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
+      const pos = {
+        x: xx(d),
+        y: $$.getYScaleById(d.id)(d.value)
+      };
+      let xy;
+      if (el.classed($FOCUS.xgridFocus)) {
+        xy = isRotated ? [
+          null,
+          // x1
+          pos.x,
+          // y1
+          isEdge ? pos.y : width,
+          // x2
+          pos.x
+          // y2
+        ] : [
+          pos.x,
+          isEdge ? pos.y : null,
+          pos.x,
+          height
+        ];
+      } else {
+        const isY2 = $$.axis.getId(d.id) === "y2";
+        xy = isRotated ? [
+          pos.y,
+          // x1
+          isEdge && !isY2 ? pos.x : null,
+          // y1
+          pos.y,
+          // x2
+          isEdge && isY2 ? pos.x : height
+          // y2
+        ] : [
+          isEdge && isY2 ? pos.x : null,
+          pos.y,
+          isEdge && !isY2 ? pos.x : width,
+          pos.y
+        ];
+      }
+      ["x1", "y1", "x2", "y2"].forEach((v, i) => el.attr(v, xy[i]));
+    });
+    _smoothLines(focusEl, "grid");
+    (_b = $$.showCircleFocus) == null ? void 0 : _b.call($$, data);
+  },
+  hideGridFocus() {
+    var _a, _b;
+    const $$ = this;
+    const { state, state: { inputType, resizing }, $el: { main } } = $$;
+    if (inputType === "mouse" || !resizing) {
+      const focusEl = ((_a = state._gridFocusEl) == null ? void 0 : _a.size()) ? state._gridFocusEl : state._gridFocusEl = main.selectAll(
+        `line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`
+      );
+      focusEl.style("visibility", "hidden");
+      (_b = $$.hideCircleFocus) == null ? void 0 : _b.call($$);
+    }
+  },
+  updateGridFocus() {
+    var _a;
+    const $$ = this;
+    const { state: { inputType, width, height, resizing }, $el: { grid } } = $$;
+    const xgridFocus = grid.main.select(`line.${$FOCUS.xgridFocus}`);
+    if (inputType === "touch") {
+      if (xgridFocus.empty()) {
+        resizing && ((_a = $$.showCircleFocus) == null ? void 0 : _a.call($$));
+      } else {
+        $$.showGridFocus();
+      }
+    } else {
+      const isRotated = $$.config.axis_rotated;
+      xgridFocus.attr("x1", isRotated ? 0 : -10).attr("x2", isRotated ? width : -10).attr("y1", isRotated ? -10 : 0).attr("y2", isRotated ? -10 : height);
+    }
+    return true;
+  },
+  generateGridData(type, scale) {
+    const $$ = this;
+    const tickNum = $$.$el.main.select(`.${$AXIS.axisX}`).selectAll(".tick").size();
+    let gridData = [];
+    if (type === "year") {
+      const xDomain = $$.getXDomain();
+      const [firstYear, lastYear] = xDomain.map((v) => v.getFullYear());
+      for (let i = firstYear; i <= lastYear; i++) {
+        gridData.push(/* @__PURE__ */ new Date(`${i}-01-01 00:00:00`));
+      }
+    } else {
+      gridData = scale.ticks(10);
+      if (gridData.length > tickNum) {
+        gridData = gridData.filter((d) => String(d).indexOf(".") < 0);
+      }
+    }
+    return gridData;
+  },
+  getGridFilterToRemove(params) {
+    return params ? (line) => {
+      let found = false;
+      (isArray(params) ? params.concat() : [params]).forEach((param) => {
+        if ("value" in param && line.value === param.value || "class" in param && line.class === param.class) {
+          found = true;
+        }
+      });
+      return found;
+    } : () => true;
+  },
+  removeGridLines(params, forX) {
+    const $$ = this;
+    const { config, $T } = $$;
+    const toRemove = $$.getGridFilterToRemove(params);
+    const toShow = (line) => !toRemove(line);
+    const classLines = forX ? $GRID.xgridLines : $GRID.ygridLines;
+    const classLine = forX ? $GRID.xgridLine : $GRID.ygridLine;
+    $T($$.$el.main.select(`.${classLines}`).selectAll(`.${classLine}`).filter(toRemove)).style("opacity", "0").remove();
+    const gridLines = `grid_${forX ? "x" : "y"}_lines`;
+    config[gridLines] = config[gridLines].filter(toShow);
+  }
+});
+
+;// ./src/config/Options/common/grid.ts
+/* harmony default export */ var common_grid = ({
+  /**
+   * Set related options
+   * @name grid
+   * @memberof Options
+   * @type {object}
+   * @property {boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
+   * @property {object} x Grid x object
+   * @property {boolean} [x.show=false] Show grids along x axis.
+   * @property {Array} [x.lines=[]] Show additional grid lines along x axis.<br>
+   *  This option accepts array including object that has value, text, position and class. text, position and class are optional. For position, start, middle and end (default) are available.
+   *  If x axis is category axis, value can be category name. If x axis is timeseries axis, value can be date string, Date object and unixtime integer.
+   * @property {object} y Grid y object
+   * @property {boolean} [y.show=false] Show grids along x axis.
+   * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
+   *  This option accepts array including object that has value, text, position and class.
+   * @property {number} [y.ticks=undefined] Number of y grids to be shown.
+   * @property {object} focus Grid focus object
+   * @property {boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+   * @property {boolean} [focus.show=true] Show grid line when focus.
+   * @property {boolean} [focus.y=false] Show y coordinate focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+   * @property {object} lines Grid lines object
+   * @property {boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
+   * @default undefined
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Grid.GridLines)
+   * @see [Demo: X Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalXGridLines)
+   * @see [Demo: Y Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalYGridLines)
+   * @example
+   * grid: {
+   *   x: {
+   *     show: true,
+   *     lines: [
+   *       {value: 2, text: "Label on 2"},
+   *       {value: 5, text: "Label on 5", class: "label-5"},
+   *       {value: 6, text: "Label on 6", position: "start"}
+   *     ]
+   *   },
+   *   y: {
+   *     show: true,
+   *     lines: [
+   *       {value: 100, text: "Label on 100"},
+   *       {value: 200, text: "Label on 200", class: "label-200"},
+   *       {value: 300, text: "Label on 300", position: 'middle'}
+   *     ],
+   *     ticks: 5
+   *   },
+   *   front: true,
+   *   focus: {
+   *      show: false,
+   *
+   *      // Below options are available when 'tooltip.grouped=false' option is set
+   *      edge: true,
+   *      y: true
+   *   },
+   *   lines: {
+   *      front: false
+   *   }
+   * }
+   */
+  grid_x_show: false,
+  grid_x_type: "tick",
+  grid_x_lines: [],
+  grid_y_show: false,
+  grid_y_lines: [],
+  grid_y_ticks: void 0,
+  grid_focus_edge: false,
+  grid_focus_show: true,
+  grid_focus_y: false,
+  grid_front: false,
+  grid_lines_front: true
+});
+
+;// ./src/config/resolver/grid.ts
+
+
+
+
+
+
+
+let grid_grid = () => {
+  extend(ChartInternal.prototype, internals_grid);
+  Chart.prototype.xgrids = api_grid.xgrids;
+  Chart.prototype.ygrids = api_grid.ygrids;
+  Options.setOptions([common_grid]);
+  return (grid_grid = () => ({}))();
+};
+
+;// ./src/Chart/api/selection.ts
+
+
+
+function setSelection(isSelection = false, ids, indices, resetOther) {
+  const $$ = this;
+  const { config, $el: { main } } = $$;
+  const selectionGrouped = config.data_selection_grouped;
+  const isSelectable = config.data_selection_isselectable.bind($$.api);
+  if (!config.data_selection_enabled) {
+    return;
+  }
+  main.selectAll(`.${$SHAPE.shapes}`).selectAll(`.${$SHAPE.shape}`).each(function(d) {
+    const shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
+    const { id, index } = d.data ? d.data : d;
+    const toggle = $$.getToggle(this, d).bind($$);
+    const isTargetId = selectionGrouped || !ids || ids.indexOf(id) >= 0;
+    const isTargetIndex = !indices || indices.indexOf(index) >= 0;
+    const isSelected = shape.classed($SELECT.SELECTED);
+    if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
+      return;
+    }
+    if (isSelection) {
+      if (isTargetId && isTargetIndex && isSelectable(d) && !isSelected) {
+        toggle(true, shape.classed($SELECT.SELECTED, true), d, index);
+      } else if (isDefined(resetOther) && resetOther && isSelected) {
+        toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
+      }
+    } else {
+      if (isTargetId && isTargetIndex && isSelectable(d) && isSelected) {
+        toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
+      }
+    }
+  });
+}
+/* harmony default export */ var selection = ({
+  /**
+   * Get selected data points.<br><br>
+   * By this API, you can get selected data points information. To use this API, data.selection.enabled needs to be set true.
+   * @function selected
+   * @instance
+   * @memberof Chart
+   * @param {string} [targetId] You can filter the result by giving target id that you want to get. If not given, all of data points will be returned.
+   * @returns {Array} dataPoint Array of the data points.<br>ex.) `[{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ...]`
+   * @example
+   *  // all selected data points will be returned.
+   *  chart.selected();
+   *  // --> ex.) [{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ... ]
+   *
+   *  // all selected data points of data1 will be returned.
+   *  chart.selected("data1");
+   */
+  selected(targetId) {
+    const $$ = this.internal;
+    const dataPoint = [];
+    $$.$el.main.selectAll(`.${$SHAPE.shapes + $$.getTargetSelectorSuffix(targetId)}`).selectAll(`.${$SHAPE.shape}`).filter(function() {
+      return (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed($SELECT.SELECTED);
+    }).each((d) => dataPoint.push(d));
+    return dataPoint;
+  },
+  /**
+   * Set data points to be selected. ([`data.selection.enabled`](Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled) option should be set true to use this method)
+   * @function select
+   * @instance
+   * @memberof Chart
+   * @param {string|Array} [ids] id value to get selected.
+   * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
+   * @param {boolean} [resetOther] Unselect already selected.
+   * @example
+   *  // select all data points
+   *  chart.select();
+   *
+   *  // select all from 'data2'
+   *  chart.select("data2");
+   *
+   *  // select all from 'data1' and 'data2'
+   *  chart.select(["data1", "data2"]);
+   *
+   *  // select from 'data1', indices 2 and unselect others selected
+   *  chart.select("data1", [2], true);
+   *
+   *  // select from 'data1', indices 0, 3 and 5
+   *  chart.select("data1", [0, 3, 5]);
+   */
+  select(ids, indices, resetOther) {
+    const $$ = this.internal;
+    setSelection.bind($$)(true, ids, indices, resetOther);
+  },
+  /**
+   * Set data points to be un-selected.
+   * @function unselect
+   * @instance
+   * @memberof Chart
+   * @param {string|Array} [ids] id value to be unselected.
+   * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
+   * @example
+   *  // unselect all data points
+   *  chart.unselect();
+   *
+   *  // unselect all from 'data1'
+   *  chart.unselect("data1");
+   *
+   *  // unselect from 'data1', indices 2
+   *  chart.unselect("data1", [2]);
+   */
+  unselect(ids, indices) {
+    const $$ = this.internal;
+    setSelection.bind($$)(false, ids, indices);
+  }
+});
 
 ;// ./src/ChartInternal/interactions/drag.ts
 
@@ -13158,6 +14181,10 @@ extend(zoom, {
       attr: isRotated ? "height" : "width",
       index: isRotated ? 1 : 0
     };
+    const clampPointer = (v) => {
+      const [lo, hi] = extent != null ? extent : [0, isRotated ? state.height : state.width];
+      return Math.min(Math.max(v, lo), hi);
+    };
     $$.zoomBehaviour = (0,external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_.drag)().clickDistance(4).on("start", function(event) {
       extent = $$.scale.zoom ? null : $$.axis.getExtent();
       state.event = event;
@@ -13166,30 +14193,17 @@ extend(zoom, {
       if (!zoomRect) {
         zoomRect = $$.$el.main.append("rect").attr("clip-path", state.clip.path).attr("class", $ZOOM.zoomBrush).attr("width", isRotated ? state.width : 0).attr("height", isRotated ? 0 : state.height);
       }
-      start = getPointer(event, this)[prop.index];
-      if (extent) {
-        if (start < extent[0]) {
-          start = extent[0];
-        } else if (start > extent[1]) {
-          start = extent[1];
-        }
-      }
+      start = clampPointer(getPointer(event, this)[prop.index]);
       end = start;
       zoomRect.attr(prop.axis, start).attr(prop.attr, 0);
       $$.onZoomStart(event);
     }).on("drag", function(event) {
-      end = getPointer(event, this)[prop.index];
-      if (extent) {
-        if (end > extent[1]) {
-          end = extent[1];
-        } else if (end < extent[0]) {
-          end = extent[0];
-        }
-      }
+      end = clampPointer(getPointer(event, this)[prop.index]);
       zoomRect.attr(prop.axis, Math.min(start, end)).attr(prop.attr, Math.abs(end - start));
     }).on("end", (event) => {
       const scale = $$.scale.zoom || $$.scale.x;
       state.event = event;
+      end = clampPointer(end);
       zoomRect.attr(prop.axis, 0).attr(prop.attr, 0);
       if (start > end) {
         [start, end] = [end, start];
@@ -13326,6 +14340,249 @@ let zoomModule = () => {
 
 
 
+
+;// ./src/Chart/api/regions.ts
+
+
+function regionsFn(regions2, isAdd = false) {
+  const $$ = this.internal;
+  const { config } = $$;
+  const withTransition = config.transition_duration && isTabVisible();
+  if (!regions2) {
+    return config.regions;
+  }
+  config.regions = isAdd ? config.regions.concat(regions2) : regions2;
+  $$.updateRegion();
+  $$.redrawRegion(withTransition);
+  return isAdd ? config.regions : regions2;
+}
+const regions = function(regions2) {
+  return regionsFn.bind(this)(regions2);
+};
+extend(regions, {
+  /**
+   * Add new region.<br><br>
+   * This API adds new region instead of replacing like regions.
+   * @function regions․add
+   * @instance
+   * @memberof Chart
+   * @param {Array|object} regions New region will be added. The format of this argument is the same as [regions](./Options.html#.regions) and it's possible to give an Object if only one region will be added.
+   * @returns {Array} regions
+   * @example
+   * // Add a new region
+   * chart.regions.add(
+   *    {
+   *      axis: "x", start: 5, class: "regionX",
+   *      label: {
+   *      	text: "Region Text",
+   *      	color: "red"  // color string
+   *      }
+   *    }
+   * );
+   *
+   * // Add new regions
+   * chart.regions.add([
+   *    {axis: "x", start: 5, class: "regionX"},
+   *    {
+   *      axis: "y", end: 50, class: "regionY",
+   *      label: {
+   *      	text: "Region Text",
+   *      	x: 5,  // position relative of the initial x coordinate
+   *      	y: 5,  // position relative of the initial y coordinate
+   *      	color: "red",  // color string
+   *      	rotated: true  // make text to show in vertical or horizontal
+   *      }
+   *    }
+   * ]);
+   */
+  add: function(regions2) {
+    return regionsFn.bind(this)(regions2, true);
+  },
+  /**
+   * Remove regions.<br><br>
+   * This API removes regions.
+   * @function regions․remove
+   * @instance
+   * @memberof Chart
+   * @param {object} optionsValue This argument should include classes. If classes is given, the regions that have one of the specified classes will be removed. If args is not given, all of regions will be removed.
+   * @returns {Array} regions Removed regions
+   * @example
+   * // regions that have 'region-A' or 'region-B' will be removed.
+   * chart.regions.remove({
+   *   classes: [
+   *     "region-A", "region-B"
+   *   ]
+   * });
+   *
+   * // all of regions will be removed.
+   * chart.regions.remove();
+   */
+  remove: function(optionsValue) {
+    const $$ = this.internal;
+    const { config, $T } = $$;
+    const options = optionsValue || {};
+    const classes = getOption(options, "classes", [$REGION.region]);
+    let regions2 = $$.$el.main.select(`.${$REGION.regions}`).selectAll(classes.map((c) => `.${c}`));
+    $T(regions2).style("opacity", "0").remove();
+    regions2 = config.regions;
+    if (Object.keys(options).length) {
+      regions2 = regions2.filter((region) => {
+        let found = false;
+        if (!region.class) {
+          return true;
+        }
+        region.class.split(" ").forEach((c) => {
+          if (classes.indexOf(c) >= 0) {
+            found = true;
+          }
+        });
+        return !found;
+      });
+      config.regions = regions2;
+    } else {
+      config.regions = [];
+    }
+    return regions2;
+  }
+});
+/* harmony default export */ var api_regions = ({ regions });
+
+;// ./src/ChartInternal/internals/region.ts
+
+
+
+/* harmony default export */ var region = ({
+  initRegion() {
+    const $$ = this;
+    const { $el } = $$;
+    $el.region.main = $el.main.insert("g", ":first-child").attr("clip-path", $$.state.clip.path).attr("class", $REGION.regions);
+  },
+  updateRegion() {
+    const $$ = this;
+    const { config, $el: { region }, $T } = $$;
+    if (!region.main) {
+      $$.initRegion();
+    }
+    region.main.style("visibility", $$.hasArcType() ? "hidden" : null);
+    const regions = region.main.selectAll(`.${$REGION.region}`).data(config.regions);
+    $T(regions.exit()).style("opacity", "0").remove();
+    const regionsEnter = regions.enter().append("g");
+    regionsEnter.append("rect").style("fill-opacity", "0");
+    region.list = regionsEnter.merge(regions).attr("class", $$.classRegion.bind($$));
+    region.list.each(function(d) {
+      var _a;
+      const g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
+      if (g.select("text").empty() && ((_a = d.label) == null ? void 0 : _a.text)) {
+        (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).append("text").style("opacity", "0");
+      }
+    });
+  },
+  redrawRegion(withTransition) {
+    const $$ = this;
+    const { $el: { region }, $T } = $$;
+    const regionX = $$.regionX.bind($$);
+    const regionY = $$.regionY.bind($$);
+    const attr = ["width", "height"];
+    let regions = region.list.select("rect");
+    let label = region.list.selectAll("text");
+    regions = $T(regions, withTransition).attr("x", regionX).attr("y", regionY).attr("width", $$.regionWidth.bind($$)).attr("height", $$.regionHeight.bind($$));
+    label = $T(label, withTransition).text((d) => {
+      var _a;
+      return (_a = d.label) == null ? void 0 : _a.text;
+    }).attr("transform", ({ label: label2 }) => label2.rotated ? ` rotate(-90)` : null).attr("transform", function(d) {
+      var _a;
+      const { x = 0, y = 0, center = false, rotated = false } = (_a = d.label) != null ? _a : {};
+      const rect = this.previousElementSibling;
+      const pos = { x: 0, y: 0 };
+      if (isString(center)) {
+        ["x", "y"].forEach((v, i) => {
+          if (center.indexOf(v) > -1) {
+            pos[v] = (+rect.getAttribute(attr[i]) - getBoundingRect(this)[attr[i]]) / 2;
+          }
+        });
+      }
+      return `translate(${regionX(d) + pos.x + x}, ${regionY(d) + pos.y + y})${rotated ? ` rotate(-90)` : ``}`;
+    }).attr("text-anchor", ({ label: label2 }) => (label2 == null ? void 0 : label2.rotated) ? "end" : null).attr("dy", "1em").style("fill", ({ label: label2 }) => {
+      var _a;
+      return (_a = label2 == null ? void 0 : label2.color) != null ? _a : null;
+    });
+    return [
+      regions.style("fill-opacity", (d) => isValue(d.opacity) ? d.opacity : null).on("end", function() {
+        (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this.parentNode).selectAll("rect:not([x])").remove();
+      }),
+      label.style("opacity", null)
+    ];
+  },
+  regionX(d) {
+    return this.getRegionSize("x", d);
+  },
+  regionY(d) {
+    return this.getRegionSize("y", d);
+  },
+  regionWidth(d) {
+    return this.getRegionSize("width", d);
+  },
+  regionHeight(d) {
+    return this.getRegionSize("height", d);
+  },
+  /**
+   * Get Region size according start/end position
+   * @param {string} type Type string
+   * @param {ojbect} d Data object
+   * @returns {number}
+   * @private
+   */
+  getRegionSize(type, d) {
+    const $$ = this;
+    const { config, scale, state } = $$;
+    const isRotated = config.axis_rotated;
+    const isAxisType = /(x|y|y2)/.test(type);
+    const isType = isAxisType ? type === "x" : type === "width";
+    const start = !isAxisType && $$[isType ? "regionX" : "regionY"](d);
+    let key = isAxisType ? "start" : "end";
+    let pos = isAxisType ? 0 : state[type];
+    let currScale;
+    if (d.axis === "y" || d.axis === "y2") {
+      if (!isAxisType && !isType) {
+        key = "start";
+      } else if (isAxisType && !isType) {
+        key = "end";
+      }
+      if ((isType ? isRotated : !isRotated) && key in d) {
+        currScale = scale[d.axis];
+      }
+    } else if ((isType ? !isRotated : isRotated) && key in d) {
+      currScale = scale.zoom || scale.x;
+    }
+    if (currScale) {
+      let offset = 0;
+      pos = d[key];
+      if ($$.axis.isTimeSeries(d.axis)) {
+        pos = parseDate.call($$, pos);
+      } else if (/(x|width)/.test(type) && $$.axis.isCategorized() && isNaN(pos)) {
+        pos = config.axis_x_categories.indexOf(pos);
+        offset = $$.axis.x.tickOffset() * (key === "start" ? -1 : 1);
+      }
+      pos = currScale(pos) + offset;
+    }
+    return isAxisType ? pos : pos < start ? 0 : pos - start;
+  },
+  isRegionOnX(d) {
+    return !d.axis || d.axis === "x";
+  }
+});
+
+;// ./src/config/resolver/regions.ts
+
+
+
+
+
+let regions_regions = () => {
+  extend(ChartInternal.prototype, region);
+  Chart.prototype.regions = api_regions.regions;
+  return (regions_regions = () => ({}))();
+};
 
 ;// ./src/ChartInternal/shape/area.ts
 
@@ -14013,7 +15270,7 @@ const getTransitionName = () => getRandom();
         flow && sel.attr("cx", cx);
         $T(sel.filter(function() {
           return !!this.getAttribute("cx");
-        }), true, t).attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+        }), true, `${t}-pos`).attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
         sel.filter(function() {
           return !this.getAttribute("cx");
         }).attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
@@ -14837,364 +16094,6 @@ const axis = {
 };
 /* harmony default export */ var api_axis = ({ axis });
 
-;// ./src/Chart/api/category.ts
-
-/* harmony default export */ var api_category = ({
-  /**
-   * Set specified category name on category axis.
-   * @function category
-   * @instance
-   * @memberof Chart
-   * @param {number} i index of category to be changed
-   * @param {string} category category value to be changed
-   * @returns {string}
-   * @example
-   * chart.category(2, "Category 3");
-   */
-  category(i, category) {
-    const $$ = this.internal;
-    const { config } = $$;
-    if (arguments.length > 1) {
-      config.axis_x_categories[i] = category;
-      $$.state.dirty.data = true;
-      $$.redraw();
-    }
-    return config.axis_x_categories[i];
-  },
-  /**
-   * Set or get category names on category axis.
-   * @function categories
-   * @instance
-   * @memberof Chart
-   * @param {Array} categories This must be an array that includes category names in string. If category names are included in the date by data.x option, this is not required.
-   * @returns {Array}
-   * @example
-   * chart.categories([
-   *      "Category 1", "Category 2", ...
-   * ]);
-   */
-  categories(categories) {
-    const $$ = this.internal;
-    const { config } = $$;
-    if (!categories || !Array.isArray(categories)) {
-      const cat = config.axis_x_categories;
-      return isEmpty(cat) ? Object.values($$.data.xs)[0] : cat;
-    }
-    config.axis_x_categories = categories;
-    $$.state.dirty.data = true;
-    $$.redraw();
-    return config.axis_x_categories;
-  }
-});
-
-;// ./src/Chart/api/flow.ts
-
-/* harmony default export */ var flow = ({
-  /**
-   * Flow data to the chart.<br><br>
-   * By this API, you can append new data points to the chart.
-   * @function flow
-   * @instance
-   * @memberof Chart
-   * @param {object} args The object can consist with following members:<br>
-   *
-   *    | Key | Type | Description |
-   *    | --- | --- | --- |
-   *    | json | Object | Data as JSON format (@see [data․json](Options.html#.data%25E2%2580%25A4json)) |
-   *    | rows | Array | Data in array as row format (@see [data․rows](Options.html#.data%25E2%2580%25A4json)) |
-   *    | columns | Array | Data in array as column format (@see [data․columns](Options.html#.data%25E2%2580%25A4columns)) |
-   *    | to | String | The lower x edge will move to that point. If not given, the lower x edge will move by the number of given data points |
-   *    | length | Number | The lower x edge will move by the number of this argument |
-   *    | duration | Number | The duration of the transition will be specified value. If not given, transition.duration will be used as default |
-   *    | done | Function | The specified function will be called when flow ends |
-   *
-   * - **NOTE:**
-   *   - If json, rows and columns given, the data will be loaded.
-   *   - If data that has the same target id is given, the chart will be appended.
-   *   - Otherwise, new target will be added. One of these is required when calling.
-   *   - If json specified, keys is required as well as data.json.
-   * 	 - If tab isn't visible(by evaluating `document.hidden`), will not be executed to prevent unnecessary work.
-   * @example
-   * // 2 data points will be appended to the tail and popped from the head.
-   * // After that, 4 data points will be appended and no data points will be poppoed.
-   * chart.flow({
-   *  columns: [
-   *    ["x", "2018-01-11", "2018-01-21"],
-   *    ["data1", 500, 200],
-   *    ["data2", 100, 300],
-   *    ["data3", 200, 120]
-   *  ],
-   *  to: "2013-01-11",
-   *  done: function () {
-   *    chart.flow({
-   *      columns: [
-   *        ["x", "2018-02-11", "2018-02-12", "2018-02-13", "2018-02-14"],
-   *        ["data1", 200, 300, 100, 250],
-   *        ["data2", 100, 90, 40, 120],
-   *        ["data3", 100, 100, 300, 500]
-   *      ],
-   *      length: 2,
-   *      duration: 1500
-   *    });
-   *  }
-   * });
-   */
-  flow(args) {
-    const $$ = this.internal;
-    let data;
-    if (args.json || args.rows || args.columns) {
-      $$.convertData(args, (res) => {
-        data = res;
-        _();
-      });
-    }
-    function _() {
-      let domain;
-      let length = 0;
-      let tail = 0;
-      let diff;
-      let to;
-      if ($$.state.redrawing || !data || !isTabVisible()) {
-        return;
-      }
-      const notfoundIds = [];
-      const orgDataCount = $$.getMaxDataCount();
-      const targets = $$.convertDataToTargets(data, true);
-      const isTimeSeries = $$.axis.isTimeSeries();
-      $$.data.targets.forEach((t) => {
-        let found = false;
-        for (let i = 0; i < targets.length; i++) {
-          if (t.id === targets[i].id) {
-            found = true;
-            if (t.values[t.values.length - 1]) {
-              tail = t.values[t.values.length - 1].index + 1;
-            }
-            length = targets[i].values.length;
-            for (let j = 0; j < length; j++) {
-              targets[i].values[j].index = tail + j;
-              if (!isTimeSeries) {
-                targets[i].values[j].x = tail + j;
-              }
-            }
-            t.values = t.values.concat(targets[i].values);
-            targets.splice(i, 1);
-            break;
-          }
-        }
-        !found && notfoundIds.push(t.id);
-      });
-      $$.data.targets.forEach((t) => {
-        for (let i = 0; i < notfoundIds.length; i++) {
-          if (t.id === notfoundIds[i]) {
-            tail = t.values[t.values.length - 1].index + 1;
-            for (let j = 0; j < length; j++) {
-              t.values.push({
-                id: t.id,
-                index: tail + j,
-                x: isTimeSeries ? $$.getOtherTargetX(tail + j) : tail + j,
-                value: null
-              });
-            }
-          }
-        }
-      });
-      if ($$.data.targets.length) {
-        targets.forEach((t) => {
-          const missing = [];
-          for (let i = $$.data.targets[0].values[0].index; i < tail; i++) {
-            missing.push({
-              id: t.id,
-              index: i,
-              x: isTimeSeries ? $$.getOtherTargetX(i) : i,
-              value: null
-            });
-          }
-          t.values.forEach((v) => {
-            v.index += tail;
-            if (!isTimeSeries) {
-              v.x += tail;
-            }
-          });
-          t.values = missing.concat(t.values);
-        });
-      }
-      $$.data.targets = $$.data.targets.concat(targets);
-      const baseTarget = $$.data.targets[0];
-      const baseValue = baseTarget.values[0];
-      if (isDefined(args.to)) {
-        length = 0;
-        to = isTimeSeries ? parseDate.call($$, args.to) : args.to;
-        baseTarget.values.forEach((v) => {
-          v.x < to && length++;
-        });
-      } else if (isDefined(args.length)) {
-        length = args.length;
-      }
-      if (!orgDataCount) {
-        if (isTimeSeries) {
-          diff = baseTarget.values.length > 1 ? baseTarget.values[baseTarget.values.length - 1].x - baseValue.x : baseValue.x - $$.getXDomain($$.data.targets)[0];
-        } else {
-          diff = 1;
-        }
-        domain = [baseValue.x - diff, baseValue.x];
-      } else if (orgDataCount === 1 && isTimeSeries) {
-        diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
-        domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
-      }
-      domain && $$.updateXDomain(null, true, true, false, domain);
-      $$.updateTargets($$.data.targets);
-      $$.state.dirty.data = true;
-      $$.state._eventRectFingerprint = null;
-      $$.redraw({
-        flow: {
-          index: baseValue.index,
-          length,
-          duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
-          done: args.done,
-          orgDataCount
-        },
-        withLegend: true,
-        withTransition: orgDataCount > 1,
-        withTrimXDomain: false,
-        withUpdateXAxis: true
-      });
-    }
-  }
-});
-
-;// ./src/Chart/api/grid.ts
-
-function grid(grids, axisId) {
-  const $$ = this.internal;
-  const { config } = $$;
-  const withTransition = config.transition_duration && isTabVisible();
-  const gridPropLines = `grid_${axisId}_lines`;
-  if (!grids) {
-    return config[gridPropLines];
-  }
-  config[gridPropLines] = grids;
-  $$.updateGrid();
-  $$.redrawGrid(withTransition);
-  return config[gridPropLines];
-}
-function add(grids, axisId) {
-  const gridPropLines = `grid_${axisId}_lines`;
-  return grid.bind(this)(
-    this.internal.config[gridPropLines].concat(grids || []),
-    axisId
-  );
-}
-function remove(grids, isXAxis) {
-  this.internal.removeGridLines(grids, isXAxis);
-}
-const xgrids = function(grids) {
-  return grid.bind(this)(grids, "x");
-};
-extend(xgrids, {
-  /**
-   * Add x grid lines.<br>
-   * This API adds new x grid lines instead of replacing like xgrids.
-   * @function xgrids․add
-   * @instance
-   * @memberof Chart
-   * @param {Array|object} grids New x grid lines will be added. The format of this argument is the same as grid.x.lines and it's possible to give an Object if only one line will be added.
-   * @returns {Array}
-   * @example
-   *  // Add a new x grid line
-   * chart.xgrids.add(
-   *   {value: 4, text: "Label 4"}
-   * );
-   *
-   * // Add new x grid lines
-   * chart.xgrids.add([
-   *   {value: 2, text: "Label 2"},
-   *   {value: 4, text: "Label 4"}
-   * ]);
-   */
-  add(grids) {
-    return add.bind(this)(grids, "x");
-  },
-  /**
-   * Remove x grid lines.<br>
-   * This API removes x grid lines.
-   * @function xgrids․remove
-   * @instance
-   * @memberof Chart
-   * @param {object} grids This argument should include value or class. If value is given, the x grid lines that have specified x value will be removed. If class is given, the x grid lines that have specified class will be removed. If args is not given, all of x grid lines will be removed.
-   * @param {number} [grids.value] target value
-   * @param {string} [grids.class] target class
-   * @returns {void}
-   * @example
-   * // x grid line on x = 2 will be removed
-   * chart.xgrids.remove({value: 2});
-   *
-   * // x grid lines that have 'grid-A' will be removed
-   * chart.xgrids.remove({
-   *   class: "grid-A"
-   * });
-   *
-   * // all of x grid lines will be removed
-   * chart.xgrids.remove();
-   */
-  remove(grids) {
-    return remove.bind(this)(grids, true);
-  }
-});
-const ygrids = function(grids) {
-  return grid.bind(this)(grids, "y");
-};
-extend(ygrids, {
-  /**
-   * Add y grid lines.<br>
-   * This API adds new y grid lines instead of replacing like ygrids.
-   * @function ygrids․add
-   * @instance
-   * @memberof Chart
-   * @param {Array|object} grids New y grid lines will be added. The format of this argument is the same as grid.y.lines and it's possible to give an Object if only one line will be added.
-   * @returns {object}
-   * @example
-   *  // Add a new x grid line
-   * chart.ygrids.add(
-   *   {value: 400, text: "Label 4"}
-   * );
-   *
-   * // Add new x grid lines
-   * chart.ygrids.add([
-   *   {value: 200, text: "Label 2"},
-   *   {value: 400, text: "Label 4"}
-   * ]);
-   */
-  add(grids) {
-    return add.bind(this)(grids, "y");
-  },
-  /**
-   * Remove y grid lines.<br>
-   * This API removes x grid lines.
-   * @function ygrids․remove
-   * @instance
-   * @memberof Chart
-   * @param {object} grids This argument should include value or class. If value is given, the y grid lines that have specified y value will be removed. If class is given, the y grid lines that have specified class will be removed. If args is not given, all of y grid lines will be removed.
-   * @param {number} [grids.value] target value
-   * @param {string} [grids.class] target class
-   * @returns {void}
-   * @example
-   * // y grid line on y = 200 will be removed
-   * chart.ygrids.remove({value: 200});
-   *
-   * // y grid lines that have 'grid-A' will be removed
-   * chart.ygrids.remove({
-   *   class: "grid-A"
-   * });
-   *
-   * // all of y grid lines will be removed
-   * chart.ygrids.remove();
-   */
-  remove(grids) {
-    return remove.bind(this)(grids, false);
-  }
-});
-/* harmony default export */ var api_grid = ({ xgrids, ygrids });
-
 ;// ./src/Chart/api/group.ts
 
 /* harmony default export */ var group = ({
@@ -15223,112 +16122,6 @@ extend(ygrids, {
     return config.data_groups;
   }
 });
-
-;// ./src/Chart/api/regions.ts
-
-
-function regionsFn(regions2, isAdd = false) {
-  const $$ = this.internal;
-  const { config } = $$;
-  const withTransition = config.transition_duration && isTabVisible();
-  if (!regions2) {
-    return config.regions;
-  }
-  config.regions = isAdd ? config.regions.concat(regions2) : regions2;
-  $$.updateRegion();
-  $$.redrawRegion(withTransition);
-  return isAdd ? config.regions : regions2;
-}
-const regions = function(regions2) {
-  return regionsFn.bind(this)(regions2);
-};
-extend(regions, {
-  /**
-   * Add new region.<br><br>
-   * This API adds new region instead of replacing like regions.
-   * @function regions․add
-   * @instance
-   * @memberof Chart
-   * @param {Array|object} regions New region will be added. The format of this argument is the same as [regions](./Options.html#.regions) and it's possible to give an Object if only one region will be added.
-   * @returns {Array} regions
-   * @example
-   * // Add a new region
-   * chart.regions.add(
-   *    {
-   *      axis: "x", start: 5, class: "regionX",
-   *      label: {
-   *      	text: "Region Text",
-   *      	color: "red"  // color string
-   *      }
-   *    }
-   * );
-   *
-   * // Add new regions
-   * chart.regions.add([
-   *    {axis: "x", start: 5, class: "regionX"},
-   *    {
-   *      axis: "y", end: 50, class: "regionY",
-   *      label: {
-   *      	text: "Region Text",
-   *      	x: 5,  // position relative of the initial x coordinate
-   *      	y: 5,  // position relative of the initial y coordinate
-   *      	color: "red",  // color string
-   *      	rotated: true  // make text to show in vertical or horizontal
-   *      }
-   *    }
-   * ]);
-   */
-  add: function(regions2) {
-    return regionsFn.bind(this)(regions2, true);
-  },
-  /**
-   * Remove regions.<br><br>
-   * This API removes regions.
-   * @function regions․remove
-   * @instance
-   * @memberof Chart
-   * @param {object} optionsValue This argument should include classes. If classes is given, the regions that have one of the specified classes will be removed. If args is not given, all of regions will be removed.
-   * @returns {Array} regions Removed regions
-   * @example
-   * // regions that have 'region-A' or 'region-B' will be removed.
-   * chart.regions.remove({
-   *   classes: [
-   *     "region-A", "region-B"
-   *   ]
-   * });
-   *
-   * // all of regions will be removed.
-   * chart.regions.remove();
-   */
-  remove: function(optionsValue) {
-    const $$ = this.internal;
-    const { config, $T } = $$;
-    const options = optionsValue || {};
-    const classes = getOption(options, "classes", [$REGION.region]);
-    let regions2 = $$.$el.main.select(`.${$REGION.regions}`).selectAll(classes.map((c) => `.${c}`));
-    $T(regions2).style("opacity", "0").remove();
-    regions2 = config.regions;
-    if (Object.keys(options).length) {
-      regions2 = regions2.filter((region) => {
-        let found = false;
-        if (!region.class) {
-          return true;
-        }
-        region.class.split(" ").forEach((c) => {
-          if (classes.indexOf(c) >= 0) {
-            found = true;
-          }
-        });
-        return !found;
-      });
-      config.regions = regions2;
-    } else {
-      config.regions = [];
-    }
-    return regions2;
-  }
-});
-/* harmony default export */ var api_regions = ({ regions });
 
 ;// ./src/Chart/api/x.ts
 
@@ -17079,6 +17872,7 @@ var __pow = Math.pow;
    * @private
    */
   selectRectForMultipleXs(context, triggerEvent = true) {
+    var _a;
     const $$ = this;
     const { config, state } = $$;
     const targetsToShow = $$.filterTargetsToShow($$.data.targets);
@@ -17099,7 +17893,7 @@ var __pow = Math.pow;
     const selectedData = sameXData.map((d) => $$.addName(d));
     $$.showTooltip(selectedData, context);
     $$.setExpand(closest.index, closest.id, true);
-    $$.showGridFocus(selectedData);
+    (_a = $$.showGridFocus) == null ? void 0 : _a.call($$, selectedData);
     const dist = $$.dist(closest, mouse);
     if ($$.isBarType(closest.id) || dist < $$.getPointSensitivity(closest)) {
       $$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", "pointer");
@@ -17114,11 +17908,12 @@ var __pow = Math.pow;
    * @private
    */
   unselectRect() {
+    var _a;
     const $$ = this;
     const { $el: { circle, tooltip } } = $$;
     $$.state._lastTooltipMouse = null;
     $$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", null);
-    $$.hideGridFocus();
+    (_a = $$.hideGridFocus) == null ? void 0 : _a.call($$);
     if (tooltip) {
       $$.hideTooltip();
       $$._handleLinkedCharts(false);
@@ -17272,187 +18067,6 @@ var __pow = Math.pow;
   }
 });
 
-;// ./src/ChartInternal/interactions/flow.ts
-
-
-
-/* harmony default export */ var interactions_flow = ({
-  /**
-   * Generate flow
-   * @param {object} args option object
-   * @returns {function}
-   * @private
-   */
-  generateFlow(args) {
-    const $$ = this;
-    const { data, state, $el } = $$;
-    return function() {
-      const flowLength = args.flow.length;
-      state.flowing = true;
-      data.targets.forEach((d) => {
-        d.values.splice(0, flowLength);
-      });
-      state.dataGeneration++;
-      if ($$.updateXGrid) {
-        $$.updateXGrid(true);
-      }
-      const elements = {};
-      [
-        "axis.x",
-        "grid.x",
-        "gridLines.x",
-        "region.list",
-        "text",
-        "bar",
-        "line",
-        "area",
-        "circle"
-      ].forEach((v) => {
-        const name = v.split(".");
-        let node = $el[name[0]];
-        if (node && name.length > 1) {
-          node = node[name[1]];
-        }
-        if (node == null ? void 0 : node.size()) {
-          elements[v] = node;
-        }
-      });
-      $$.hideGridFocus();
-      $$.setFlowList(elements, args);
-    };
-  },
-  /**
-   * Set flow list
-   * @param {object} elements Target elements
-   * @param {object} args option object
-   * @private
-   */
-  setFlowList(elements, args) {
-    const $$ = this;
-    const { flow, targets } = args;
-    const {
-      duration = args.duration,
-      index: flowIndex,
-      length: flowLength,
-      orgDataCount
-    } = flow;
-    const transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength);
-    const wait = generateWait();
-    let n;
-    wait.add(Object.keys(elements).map((v) => {
-      n = elements[v].transition().ease((t) => +t).duration(duration);
-      if (v === "axis.x") {
-        n = n.call((g) => {
-          $$.axis.x.setTransition(g).create(g);
-        });
-      } else if (v === "region.list") {
-        n = n.filter($$.isRegionOnX).attr("transform", transform);
-      } else {
-        n = n.attr("transform", transform);
-      }
-      return n;
-    }));
-    n.call(wait, () => {
-      $$.cleanUpFlow(elements, args);
-    });
-  },
-  /**
-   * Clean up flow
-   * @param {object} elements Target elements
-   * @param {object} args option object
-   * @private
-   */
-  cleanUpFlow(elements, args) {
-    const $$ = this;
-    const { config, state, $el: { svg } } = $$;
-    const isRotated = config.axis_rotated;
-    const { flow, shape, xv } = args;
-    const { cx, cy, xForText, yForText } = shape.pos;
-    const {
-      done = () => {
-      },
-      length: flowLength
-    } = flow;
-    if (flowLength) {
-      ["circle", "text", "shape", "eventRect"].forEach((v) => {
-        const target = [];
-        for (let i = 0; i < flowLength; i++) {
-          target.push(`.${classes[v]}-${i}`);
-        }
-        svg.selectAll(`.${classes[`${v}s`]}`).selectAll(target).remove();
-      });
-      svg.select(`.${classes.xgrid}`).remove();
-    }
-    Object.keys(elements).forEach((v) => {
-      const n = elements[v];
-      if (v !== "axis.x") {
-        n.attr("transform", null);
-      }
-      if (v === "grid.x") {
-        n.attr(state.xgridAttr);
-      } else if (v === "gridLines.x") {
-        n.attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? state.width : xv);
-        n.select("text").attr("x", isRotated ? state.width : 0).attr("y", xv);
-      } else if (/^(area|bar|line)$/.test(v)) {
-        n.attr("d", shape.type[v]);
-      } else if (v === "text") {
-        n.attr("x", xForText).attr("y", yForText).style("fill-opacity", $$.opacityForText.bind($$));
-      } else if (v === "circle") {
-        if ($$.isCirclePoint()) {
-          n.attr("cx", cx).attr("cy", cy);
-        } else {
-          const xFunc = (d) => cx(d) - config.point_r;
-          const yFunc = (d) => cy(d) - config.point_r;
-          n.attr("x", xFunc).attr("y", yFunc);
-        }
-      } else if (v === "region.list") {
-        n.select("rect").filter($$.isRegionOnX).attr("x", $$.regionX.bind($$)).attr("width", $$.regionWidth.bind($$));
-      }
-    });
-    config.interaction_enabled && $$.redrawEventRect();
-    done.call($$.api);
-    state.flowing = false;
-  },
-  /**
-   * Get flow transform value
-   * @param {object} targets target
-   * @param {number} orgDataCount original data count
-   * @param {number} flowIndex flow index
-   * @param {number} flowLength flow length
-   * @returns {string}
-   * @private
-   */
-  getFlowTransform(targets, orgDataCount, flowIndex, flowLength) {
-    const $$ = this;
-    const { data, scale: { x } } = $$;
-    const dataValues = data.targets[0].values;
-    let flowStart = $$.getValueOnIndex(dataValues, flowIndex);
-    let flowEnd = $$.getValueOnIndex(dataValues, flowIndex + flowLength);
-    let translateX;
-    const orgDomain = x.domain();
-    const domain = $$.updateXDomain(targets, true, true);
-    if (!orgDataCount) {
-      if (dataValues.length !== 1) {
-        translateX = x(orgDomain[0]) - x(domain[0]);
-      } else {
-        if ($$.axis.isTimeSeries()) {
-          flowStart = $$.getValueOnIndex(dataValues, 0);
-          flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
-          translateX = x(flowStart.x) - x(flowEnd.x);
-        } else {
-          translateX = diffDomain(domain) / 2;
-        }
-      }
-    } else if (orgDataCount === 1 || (flowStart == null ? void 0 : flowStart.x) === (flowEnd == null ? void 0 : flowEnd.x)) {
-      translateX = x(orgDomain[0]) - x(domain[0]);
-    } else {
-      translateX = $$.axis.isTimeSeries() ? x(orgDomain[0]) - x(domain[0]) : x((flowStart == null ? void 0 : flowStart.x) || 0) - x(flowEnd.x);
-    }
-    const scaleX = diffDomain(orgDomain) / diffDomain(domain);
-    return `translate(${translateX},0) scale(${scaleX},1)`;
-  }
-});
-
 ;// ./src/ChartInternal/internals/clip.ts
 /* harmony default export */ var clip = ({
   initClip() {
@@ -17544,480 +18158,6 @@ var __pow = Math.pow;
     if (svg) {
       svg.select(`#${clip.idXAxisTickTexts} rect`).attr("width", current.maxTickSize.x.clipPath).attr("height", 30);
     }
-  }
-});
-
-;// ./src/ChartInternal/internals/grid.ts
-
-
-
-const _getGridTextAnchor = (d) => isValue(d.position) || "end";
-const _getGridTextDx = (d) => d.position === "start" ? 4 : d.position === "middle" ? 0 : -4;
-function _getGridTextX(isX, width, height) {
-  return (d) => {
-    let x = isX ? 0 : width;
-    if (d.position === "start") {
-      x = isX ? -height : 0;
-    } else if (d.position === "middle") {
-      x = (isX ? -height : width) / 2;
-    }
-    return x;
-  };
-}
-function _smoothLines(el, type) {
-  if (type === "grid") {
-    el.each(function() {
-      const g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
-      ["x1", "x2", "y1", "y2"].forEach((v) => g.attr(v, +g.attr(v)));
-    });
-  }
-}
-/* harmony default export */ var internals_grid = ({
-  hasGrid() {
-    const { config } = this;
-    return ["x", "y"].some((v) => config[`grid_${v}_show`] || config[`grid_${v}_lines`].length);
-  },
-  initGrid() {
-    const $$ = this;
-    $$.hasGrid() && $$.initGridLines();
-    $$.initFocusGrid();
-  },
-  initGridLines() {
-    const $$ = this;
-    const { config, state: { clip }, $el } = $$;
-    if (config.grid_x_lines.length || config.grid_y_lines.length) {
-      $el.gridLines.main = $el.main.insert(
-        "g",
-        `.${$COMMON.chart}${config.grid_lines_front ? " + *" : ""}`
-      ).attr("clip-path", clip.pathGrid).attr("class", `${$GRID.grid} ${$GRID.gridLines}`);
-      $el.gridLines.main.append("g").attr("class", $GRID.xgridLines);
-      $el.gridLines.main.append("g").attr("class", $GRID.ygridLines);
-      $el.gridLines.x = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.selectAll)([]);
-    }
-  },
-  updateXGrid(withoutUpdate) {
-    const $$ = this;
-    const { config, scale, state, $el: { main, grid } } = $$;
-    const isRotated = config.axis_rotated;
-    const xgridData = $$.generateGridData(config.grid_x_type, scale.x);
-    const tickOffset = $$.axis.isCategorized() ? $$.axis.x.tickOffset() : 0;
-    const pos = (d) => (scale.zoom || scale.x)(d) + tickOffset * (isRotated ? -1 : 1);
-    state.xgridAttr = isRotated ? {
-      x1: 0,
-      x2: state.width,
-      y1: pos,
-      y2: pos
-    } : {
-      x1: pos,
-      x2: pos,
-      y1: 0,
-      y2: state.height
-    };
-    grid.x = main.select(`.${$GRID.xgrids}`).selectAll(`.${$GRID.xgrid}`).data(xgridData);
-    grid.x.exit().remove();
-    grid.x = grid.x.enter().append("line").attr("class", $GRID.xgrid).merge(grid.x);
-    if (!withoutUpdate) {
-      grid.x.each(function() {
-        const grid2 = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
-        Object.keys(state.xgridAttr).forEach((id) => {
-          grid2.attr(id, state.xgridAttr[id]).style("opacity", () => grid2.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ? "0" : null);
-        });
-      });
-    }
-  },
-  updateYGrid() {
-    const $$ = this;
-    const { axis, config, scale, state, $el: { grid, main } } = $$;
-    const isRotated = config.axis_rotated;
-    const pos = (d) => scale.y(d);
-    const gridValues = axis.y.getGeneratedTicks(config.grid_y_ticks) || $$.scale.y.ticks(config.grid_y_ticks);
-    grid.y = main.select(`.${$GRID.ygrids}`).selectAll(`.${$GRID.ygrid}`).data(gridValues);
-    grid.y.exit().remove();
-    grid.y = grid.y.enter().append("line").attr("class", $GRID.ygrid).merge(grid.y);
-    grid.y.attr("x1", isRotated ? pos : 0).attr("x2", isRotated ? pos : state.width).attr("y1", isRotated ? 0 : pos).attr("y2", isRotated ? state.height : pos);
-    _smoothLines(grid.y, "grid");
-  },
-  updateGrid() {
-    const $$ = this;
-    const { $el: { grid, gridLines } } = $$;
-    !gridLines.main && $$.initGridLines();
-    grid.main.style("visibility", $$.hasArcType() ? "hidden" : null);
-    $$.hideGridFocus();
-    $$.updateGridLines("x");
-    $$.updateGridLines("y");
-  },
-  /**
-   * Update Grid lines
-   * @param {string} type x | y
-   * @private
-   */
-  updateGridLines(type) {
-    const $$ = this;
-    const { config, $el: { gridLines, main }, $T } = $$;
-    const isRotated = config.axis_rotated;
-    const isX = type === "x";
-    config[`grid_${type}_show`] && $$[`update${type.toUpperCase()}Grid`]();
-    let lines = main.select(`.${$GRID[`${type}gridLines`]}`).selectAll(`.${$GRID[`${type}gridLine`]}`).data(config[`grid_${type}_lines`]);
-    $T(lines.exit()).style("opacity", "0").remove();
-    const gridLine = lines.enter().append("g");
-    gridLine.append("line").style("opacity", "0");
-    lines = gridLine.merge(lines);
-    lines.each(function(d) {
-      const g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
-      if (g.select("text").empty() && d.text) {
-        g.append("text").style("opacity", "0");
-      }
-    });
-    $T(lines.attr("class", (d) => `${$GRID[`${type}gridLine`]} ${d.class || ""}`.trim()).select("text").attr("text-anchor", _getGridTextAnchor).attr(
-      "transform",
-      () => isX ? isRotated ? null : "rotate(-90)" : isRotated ? "rotate(-90)" : null
-    ).attr("dx", _getGridTextDx).attr("dy", -5)).text(function(d) {
-      var _a;
-      return (_a = d.text) != null ? _a : this.remove();
-    });
-    gridLines[type] = lines;
-  },
-  redrawGrid(withTransition) {
-    const $$ = this;
-    const {
-      config: { axis_rotated: isRotated },
-      state: { width, height },
-      $el: { gridLines },
-      $T
-    } = $$;
-    const xv = $$.xv.bind($$);
-    const yv = $$.yv.bind($$);
-    let xLines = gridLines.x.select("line");
-    let xTexts = gridLines.x.select("text");
-    let yLines = gridLines.y.select("line");
-    let yTexts = gridLines.y.select("text");
-    xLines = $T(xLines, withTransition).attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? width : xv).attr("y1", isRotated ? xv : 0).attr("y2", isRotated ? xv : height);
-    xTexts = $T(xTexts, withTransition).attr("x", _getGridTextX(!isRotated, width, height)).attr("y", xv);
-    yLines = $T(yLines, withTransition).attr("x1", isRotated ? yv : 0).attr("x2", isRotated ? yv : width).attr("y1", isRotated ? 0 : yv).attr("y2", isRotated ? height : yv);
-    yTexts = $T(yTexts, withTransition).attr("x", _getGridTextX(isRotated, width, height)).attr("y", yv);
-    return [
-      xLines.style("opacity", null),
-      xTexts.style("opacity", null),
-      yLines.style("opacity", null),
-      yTexts.style("opacity", null)
-    ];
-  },
-  initFocusGrid() {
-    const $$ = this;
-    const { config, state, state: { clip }, $el } = $$;
-    state._gridFocusEl = null;
-    const isFront = config.grid_front;
-    const className = `.${isFront && $el.gridLines.main ? $GRID.gridLines : $COMMON.chart}${isFront ? " + *" : ""}`;
-    const grid = $el.main.insert("g", className).attr("clip-path", clip.pathGrid).attr("class", $GRID.grid);
-    $el.grid.main = grid;
-    config.grid_x_show && grid.append("g").attr("class", $GRID.xgrids);
-    config.grid_y_show && grid.append("g").attr("class", $GRID.ygrids);
-    if (config.axis_tooltip) {
-      const axis = grid.append("g").attr("class", "bb-axis-tooltip");
-      axis.append("line").attr("class", "bb-axis-tooltip-x");
-      axis.append("line").attr("class", "bb-axis-tooltip-y");
-    }
-    if (config.interaction_enabled && config.grid_focus_show && !config.axis_tooltip) {
-      grid.append("g").attr("class", $FOCUS.xgridFocus).append("line").attr("class", $FOCUS.xgridFocus);
-      if (config.grid_focus_y && !config.tooltip_grouped) {
-        grid.append("g").attr("class", $FOCUS.ygridFocus).append("line").attr("class", $FOCUS.ygridFocus);
-      }
-    }
-  },
-  showAxisGridFocus() {
-    var _a, _b;
-    const $$ = this;
-    const { config, format, state: { event, width, height } } = $$;
-    const isRotated = config.axis_rotated;
-    const [x, y] = getPointer(event, (_a = $$.$el.eventRect) == null ? void 0 : _a.node());
-    const pos = { x, y };
-    for (const [axis, node] of Object.entries($$.$el.axisTooltip)) {
-      const attr = axis === "x" && !isRotated || axis !== "x" && isRotated ? "x" : "y";
-      const value = pos[attr];
-      let scaleText = (_b = $$.scale[axis]) == null ? void 0 : _b.invert(value);
-      if (scaleText) {
-        scaleText = axis === "x" && $$.axis.isTimeSeries() ? format.xAxisTick(scaleText) : scaleText == null ? void 0 : scaleText.toFixed(2);
-        node == null ? void 0 : node.attr(attr, value).text(scaleText);
-      }
-    }
-    $$.$el.main.selectAll(
-      `line.bb-axis-tooltip-x, line.bb-axis-tooltip-y`
-    ).style("visibility", null).each(function(d, i) {
-      const line = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
-      if (i === 0) {
-        line.attr("x1", x).attr("x2", x).attr("y1", i ? 0 : height).attr("y2", i ? height : 0);
-      } else {
-        line.attr("x1", i ? 0 : width).attr("x2", i ? width : 0).attr("y1", y).attr("y2", y);
-      }
-    });
-  },
-  hideAxisGridFocus() {
-    const $$ = this;
-    $$.$el.main.selectAll(
-      `line.${$AXIS.axisTooltipX}, line.${$AXIS.axisTooltipY}`
-    ).style("visibility", "hidden");
-    Object.values($$.$el.axisTooltip).forEach((v) => v == null ? void 0 : v.style("display", "none"));
-  },
-  /**
-   * Show grid focus line
-   * @param {Array} data Selected data
-   * @private
-   */
-  showGridFocus(data) {
-    var _a, _b;
-    const $$ = this;
-    const { config, state, state: { width, height } } = $$;
-    const isRotated = config.axis_rotated;
-    const focusEl = ((_a = state._gridFocusEl) == null ? void 0 : _a.size()) ? state._gridFocusEl : state._gridFocusEl = $$.$el.main.selectAll(
-      `line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`
-    );
-    const dataToShow = (data || [focusEl.datum()]).filter(
-      (d) => d && isValue($$.getBaseValue(d))
-    );
-    if (!config.tooltip_show || dataToShow.length === 0 || !config.axis_x_forceAsSingle && $$.hasType("bubble") || $$.hasArcType()) {
-      return;
-    }
-    const isEdge = config.grid_focus_edge && !config.tooltip_grouped;
-    const xx = $$.xx.bind($$);
-    focusEl.style("visibility", null).data(dataToShow.concat(dataToShow)).each(function(d) {
-      const el = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
-      const pos = {
-        x: xx(d),
-        y: $$.getYScaleById(d.id)(d.value)
-      };
-      let xy;
-      if (el.classed($FOCUS.xgridFocus)) {
-        xy = isRotated ? [
-          null,
-          // x1
-          pos.x,
-          // y1
-          isEdge ? pos.y : width,
-          // x2
-          pos.x
-          // y2
-        ] : [
-          pos.x,
-          isEdge ? pos.y : null,
-          pos.x,
-          height
-        ];
-      } else {
-        const isY2 = $$.axis.getId(d.id) === "y2";
-        xy = isRotated ? [
-          pos.y,
-          // x1
-          isEdge && !isY2 ? pos.x : null,
-          // y1
-          pos.y,
-          // x2
-          isEdge && isY2 ? pos.x : height
-          // y2
-        ] : [
-          isEdge && isY2 ? pos.x : null,
-          pos.y,
-          isEdge && !isY2 ? pos.x : width,
-          pos.y
-        ];
-      }
-      ["x1", "y1", "x2", "y2"].forEach((v, i) => el.attr(v, xy[i]));
-    });
-    _smoothLines(focusEl, "grid");
-    (_b = $$.showCircleFocus) == null ? void 0 : _b.call($$, data);
-  },
-  hideGridFocus() {
-    var _a, _b;
-    const $$ = this;
-    const { state, state: { inputType, resizing }, $el: { main } } = $$;
-    if (inputType === "mouse" || !resizing) {
-      const focusEl = ((_a = state._gridFocusEl) == null ? void 0 : _a.size()) ? state._gridFocusEl : state._gridFocusEl = main.selectAll(
-        `line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`
-      );
-      focusEl.style("visibility", "hidden");
-      (_b = $$.hideCircleFocus) == null ? void 0 : _b.call($$);
-    }
-  },
-  updateGridFocus() {
-    var _a;
-    const $$ = this;
-    const { state: { inputType, width, height, resizing }, $el: { grid } } = $$;
-    const xgridFocus = grid.main.select(`line.${$FOCUS.xgridFocus}`);
-    if (inputType === "touch") {
-      if (xgridFocus.empty()) {
-        resizing && ((_a = $$.showCircleFocus) == null ? void 0 : _a.call($$));
-      } else {
-        $$.showGridFocus();
-      }
-    } else {
-      const isRotated = $$.config.axis_rotated;
-      xgridFocus.attr("x1", isRotated ? 0 : -10).attr("x2", isRotated ? width : -10).attr("y1", isRotated ? -10 : 0).attr("y2", isRotated ? -10 : height);
-    }
-    return true;
-  },
-  generateGridData(type, scale) {
-    const $$ = this;
-    const tickNum = $$.$el.main.select(`.${$AXIS.axisX}`).selectAll(".tick").size();
-    let gridData = [];
-    if (type === "year") {
-      const xDomain = $$.getXDomain();
-      const [firstYear, lastYear] = xDomain.map((v) => v.getFullYear());
-      for (let i = firstYear; i <= lastYear; i++) {
-        gridData.push(/* @__PURE__ */ new Date(`${i}-01-01 00:00:00`));
-      }
-    } else {
-      gridData = scale.ticks(10);
-      if (gridData.length > tickNum) {
-        gridData = gridData.filter((d) => String(d).indexOf(".") < 0);
-      }
-    }
-    return gridData;
-  },
-  getGridFilterToRemove(params) {
-    return params ? (line) => {
-      let found = false;
-      (isArray(params) ? params.concat() : [params]).forEach((param) => {
-        if ("value" in param && line.value === param.value || "class" in param && line.class === param.class) {
-          found = true;
-        }
-      });
-      return found;
-    } : () => true;
-  },
-  removeGridLines(params, forX) {
-    const $$ = this;
-    const { config, $T } = $$;
-    const toRemove = $$.getGridFilterToRemove(params);
-    const toShow = (line) => !toRemove(line);
-    const classLines = forX ? $GRID.xgridLines : $GRID.ygridLines;
-    const classLine = forX ? $GRID.xgridLine : $GRID.ygridLine;
-    $T($$.$el.main.select(`.${classLines}`).selectAll(`.${classLine}`).filter(toRemove)).style("opacity", "0").remove();
-    const gridLines = `grid_${forX ? "x" : "y"}_lines`;
-    config[gridLines] = config[gridLines].filter(toShow);
-  }
-});
-
-;// ./src/ChartInternal/internals/region.ts
-
-
-
-/* harmony default export */ var region = ({
-  initRegion() {
-    const $$ = this;
-    const { $el } = $$;
-    $el.region.main = $el.main.insert("g", ":first-child").attr("clip-path", $$.state.clip.path).attr("class", $REGION.regions);
-  },
-  updateRegion() {
-    const $$ = this;
-    const { config, $el: { region }, $T } = $$;
-    if (!region.main) {
-      $$.initRegion();
-    }
-    region.main.style("visibility", $$.hasArcType() ? "hidden" : null);
-    const regions = region.main.selectAll(`.${$REGION.region}`).data(config.regions);
-    $T(regions.exit()).style("opacity", "0").remove();
-    const regionsEnter = regions.enter().append("g");
-    regionsEnter.append("rect").style("fill-opacity", "0");
-    region.list = regionsEnter.merge(regions).attr("class", $$.classRegion.bind($$));
-    region.list.each(function(d) {
-      var _a;
-      const g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
-      if (g.select("text").empty() && ((_a = d.label) == null ? void 0 : _a.text)) {
-        (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).append("text").style("opacity", "0");
-      }
-    });
-  },
-  redrawRegion(withTransition) {
-    const $$ = this;
-    const { $el: { region }, $T } = $$;
-    const regionX = $$.regionX.bind($$);
-    const regionY = $$.regionY.bind($$);
-    const attr = ["width", "height"];
-    let regions = region.list.select("rect");
-    let label = region.list.selectAll("text");
-    regions = $T(regions, withTransition).attr("x", regionX).attr("y", regionY).attr("width", $$.regionWidth.bind($$)).attr("height", $$.regionHeight.bind($$));
-    label = $T(label, withTransition).text((d) => {
-      var _a;
-      return (_a = d.label) == null ? void 0 : _a.text;
-    }).attr("transform", ({ label: label2 }) => label2.rotated ? ` rotate(-90)` : null).attr("transform", function(d) {
-      var _a;
-      const { x = 0, y = 0, center = false, rotated = false } = (_a = d.label) != null ? _a : {};
-      const rect = this.previousElementSibling;
-      const pos = { x: 0, y: 0 };
-      if (isString(center)) {
-        ["x", "y"].forEach((v, i) => {
-          if (center.indexOf(v) > -1) {
-            pos[v] = (+rect.getAttribute(attr[i]) - getBoundingRect(this)[attr[i]]) / 2;
-          }
-        });
-      }
-      return `translate(${regionX(d) + pos.x + x}, ${regionY(d) + pos.y + y})${rotated ? ` rotate(-90)` : ``}`;
-    }).attr("text-anchor", ({ label: label2 }) => (label2 == null ? void 0 : label2.rotated) ? "end" : null).attr("dy", "1em").style("fill", ({ label: label2 }) => {
-      var _a;
-      return (_a = label2 == null ? void 0 : label2.color) != null ? _a : null;
-    });
-    return [
-      regions.style("fill-opacity", (d) => isValue(d.opacity) ? d.opacity : null).on("end", function() {
-        (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this.parentNode).selectAll("rect:not([x])").remove();
-      }),
-      label.style("opacity", null)
-    ];
-  },
-  regionX(d) {
-    return this.getRegionSize("x", d);
-  },
-  regionY(d) {
-    return this.getRegionSize("y", d);
-  },
-  regionWidth(d) {
-    return this.getRegionSize("width", d);
-  },
-  regionHeight(d) {
-    return this.getRegionSize("height", d);
-  },
-  /**
-   * Get Region size according start/end position
-   * @param {string} type Type string
-   * @param {ojbect} d Data object
-   * @returns {number}
-   * @private
-   */
-  getRegionSize(type, d) {
-    const $$ = this;
-    const { config, scale, state } = $$;
-    const isRotated = config.axis_rotated;
-    const isAxisType = /(x|y|y2)/.test(type);
-    const isType = isAxisType ? type === "x" : type === "width";
-    const start = !isAxisType && $$[isType ? "regionX" : "regionY"](d);
-    let key = isAxisType ? "start" : "end";
-    let pos = isAxisType ? 0 : state[type];
-    let currScale;
-    if (d.axis === "y" || d.axis === "y2") {
-      if (!isAxisType && !isType) {
-        key = "start";
-      } else if (isAxisType && !isType) {
-        key = "end";
-      }
-      if ((isType ? isRotated : !isRotated) && key in d) {
-        currScale = scale[d.axis];
-      }
-    } else if ((isType ? !isRotated : isRotated) && key in d) {
-      currScale = scale.zoom || scale.x;
-    }
-    if (currScale) {
-      let offset = 0;
-      pos = d[key];
-      if ($$.axis.isTimeSeries(d.axis)) {
-        pos = parseDate.call($$, pos);
-      } else if (/(x|width)/.test(type) && $$.axis.isCategorized() && isNaN(pos)) {
-        pos = config.axis_x_categories.indexOf(pos);
-        offset = $$.axis.x.tickOffset() * (key === "start" ? -1 : 1);
-      }
-      pos = currScale(pos) + offset;
-    }
-    return isAxisType ? pos : pos < start ? 0 : pos - start;
-  },
-  isRegionOnX(d) {
-    return !d.axis || d.axis === "x";
   }
 });
 
@@ -19992,79 +20132,6 @@ var axis_spreadValues = (a, b) => {
   axis_tooltip: false
 }, axis_x), y), y2));
 
-;// ./src/config/Options/common/grid.ts
-/* harmony default export */ var common_grid = ({
-  /**
-   * Set related options
-   * @name grid
-   * @memberof Options
-   * @type {object}
-   * @property {boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
-   * @property {object} x Grid x object
-   * @property {boolean} [x.show=false] Show grids along x axis.
-   * @property {Array} [x.lines=[]] Show additional grid lines along x axis.<br>
-   *  This option accepts array including object that has value, text, position and class. text, position and class are optional. For position, start, middle and end (default) are available.
-   *  If x axis is category axis, value can be category name. If x axis is timeseries axis, value can be date string, Date object and unixtime integer.
-   * @property {object} y Grid y object
-   * @property {boolean} [y.show=false] Show grids along x axis.
-   * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
-   *  This option accepts array including object that has value, text, position and class.
-   * @property {number} [y.ticks=undefined] Number of y grids to be shown.
-   * @property {object} focus Grid focus object
-   * @property {boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
-   * @property {boolean} [focus.show=true] Show grid line when focus.
-   * @property {boolean} [focus.y=false] Show y coordinate focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
-   * @property {object} lines Grid lines object
-   * @property {boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
-   * @default undefined
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Grid.GridLines)
-   * @see [Demo: X Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalXGridLines)
-   * @see [Demo: Y Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalYGridLines)
-   * @example
-   * grid: {
-   *   x: {
-   *     show: true,
-   *     lines: [
-   *       {value: 2, text: "Label on 2"},
-   *       {value: 5, text: "Label on 5", class: "label-5"},
-   *       {value: 6, text: "Label on 6", position: "start"}
-   *     ]
-   *   },
-   *   y: {
-   *     show: true,
-   *     lines: [
-   *       {value: 100, text: "Label on 100"},
-   *       {value: 200, text: "Label on 200", class: "label-200"},
-   *       {value: 300, text: "Label on 300", position: 'middle'}
-   *     ],
-   *     ticks: 5
-   *   },
-   *   front: true,
-   *   focus: {
-   *      show: false,
-   *
-   *      // Below options are available when 'tooltip.grouped=false' option is set
-   *      edge: true,
-   *      y: true
-   *   },
-   *   lines: {
-   *      front: false
-   *   }
-   * }
-   */
-  grid_x_show: false,
-  grid_x_type: "tick",
-  grid_x_lines: [],
-  grid_y_show: false,
-  grid_y_lines: [],
-  grid_y_ticks: void 0,
-  grid_focus_edge: false,
-  grid_focus_show: true,
-  grid_focus_y: false,
-  grid_front: false,
-  grid_lines_front: true
-});
-
 ;// ./src/config/Options/data/axis.ts
 /* harmony default export */ var data_axis = ({
   /**
@@ -20245,36 +20312,20 @@ var axis_spreadValues = (a, b) => {
 
 
 
-
-
-
-
-
-
-
-
 const api = [
   api_axis,
-  api_category,
-  flow,
-  api_grid,
   group,
-  api_regions,
   x
 ];
 const internal = {
   axis: Axis,
   clip: clip,
   eventrect: eventrect,
-  flow: interactions_flow,
-  grid: internals_grid,
-  region: region,
   sizeAxis: size_axis
 };
 const options = {
   optDataAxis: data_axis,
-  optAxis: axis_axis,
-  optGrid: common_grid
+  optAxis: axis_axis
 };
 
 ;// ./src/config/resolver/shape/axis.helpers.ts
@@ -20443,12 +20494,42 @@ function _getConnectLineType(id) {
    */
   generateDrawBar(barIndices, isSub) {
     const $$ = this;
-    const { config } = $$;
+    const { config, data, state } = $$;
     const getPoints = $$.generateGetBarPoints(barIndices, isSub);
     const isRotated = config.axis_rotated;
     const barRadius = config.bar_radius;
     const barRadiusRatio = config.bar_radius_ratio;
     const getRadius = isNumber(barRadius) && barRadius > 0 ? () => barRadius : isNumber(barRadiusRatio) ? (w) => w * barRadiusRatio : null;
+    const stackingRadiusSet = /* @__PURE__ */ new Set();
+    if (getRadius && config.data_groups.length) {
+      const orderedBarTargets = $$.orderTargets(
+        $$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))
+      );
+      for (const group of config.data_groups) {
+        const groupSet = new Set(group);
+        const groupTargets = orderedBarTargets.filter((t) => groupSet.has(t.id));
+        const lastPosByIndex = /* @__PURE__ */ new Map();
+        const lastNegByIndex = /* @__PURE__ */ new Map();
+        for (const target of groupTargets) {
+          for (const v of target.values) {
+            if (v.value === null || v.value === 0) {
+              continue;
+            }
+            if (v.value > 0) {
+              lastPosByIndex.set(v.index, target.id);
+            } else {
+              lastNegByIndex.set(v.index, target.id);
+            }
+          }
+        }
+        for (const [idx, id] of lastPosByIndex) {
+          stackingRadiusSet.add(`${id}:${idx}`);
+        }
+        for (const [idx, id] of lastNegByIndex) {
+          stackingRadiusSet.add(`${id}:${idx}`);
+        }
+      }
+    }
     return (d, i) => {
       const points = getPoints(d, i);
       const indexX = +isRotated;
@@ -20458,7 +20539,10 @@ function _getConnectLineType(id) {
       const isNegative = !isInverted && isUnderZero || isInverted && !isUnderZero;
       const pathRadius = ["", ""];
       const isGrouped = $$.isGrouped(d.id);
-      const isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
+      const isRadiusData = getRadius && isGrouped && d.value !== 0 ? (
+        // Hidden bars: DOM fallback (can't be pre-computed)
+        state.hiddenTargetIds.has(d.id) ? $$.isStackingRadiusData(d) : stackingRadiusSet.has(`${d.id}:${d.index}`)
+      ) : false;
       const init = [
         points[0][indexX],
         points[0][indexY]
@@ -24346,7 +24430,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260414010553",
+  version: "3.18.0-nightly-20260418010022",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
@@ -24479,8 +24563,18 @@ const bb = {
 ;// ./src/index.ts
 
 
+
+
+
+
+
 Object.keys(resolver_shape_namespaceObject).forEach((v) => resolver_shape_namespaceObject[v]());
 Object.keys(resolver_interaction_namespaceObject).forEach((v) => resolver_interaction_namespaceObject[v]());
+exportApi();
+flow_flow();
+grid_grid();
+regions_regions();
+category_category();
 
 
 }();
