@@ -84,11 +84,11 @@ export default {
 			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
 			$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
 
-			// grid
-			$$.hasGrid() && $$.updateGrid();
+			// grid (optional module — guarded for tree-shakable grid resolver)
+			$$.hasGrid?.() && $$.updateGrid();
 
-			// rect for regions
-			config.regions.length && $$.updateRegion();
+			// rect for regions (optional module — updateRegion installed by regions resolver)
+			config.regions.length && $$.updateRegion?.();
 
 			["bar", "candlestick", "line", "area"].forEach(v => {
 				const name = capitalize(v);
@@ -231,11 +231,11 @@ export default {
 		const list: Function[] = [];
 
 		if (hasAxis) {
-			if (config.grid_x_lines.length || config.grid_y_lines.length) {
+			if ($$.redrawGrid && (config.grid_x_lines.length || config.grid_y_lines.length)) {
 				list.push($$.redrawGrid(withTransition));
 			}
 
-			if (config.regions.length) {
+			if ($$.redrawRegion && config.regions.length) {
 				list.push($$.redrawRegion(withTransition));
 			}
 
@@ -248,7 +248,7 @@ export default {
 				}
 			}
 
-			!flow && grid.main && list.push($$.updateGridFocus());
+			!flow && grid.main && $$.updateGridFocus && list.push($$.updateGridFocus());
 		}
 
 		if (!$$.hasArcType() || hasRadar) {

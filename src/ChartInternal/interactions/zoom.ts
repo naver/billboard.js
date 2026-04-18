@@ -379,6 +379,16 @@ export default {
 			index: isRotated ? 1 : 0
 		};
 
+		// Clamp pointer position to a valid range. When axis.x.extent is
+		// configured it takes precedence; otherwise fall back to chart bounds
+		// so that releasing outside the chart (issue #4131) still produces a
+		// usable end value instead of being silently dropped by withinRange().
+		const clampPointer = (v: number): number => {
+			const [lo, hi] = extent ?? [0, isRotated ? state.height : state.width];
+
+			return Math.min(Math.max(v, lo), hi);
+		};
+
 		$$.zoomBehaviour = d3Drag()
 			.clickDistance(4)
 			.on("start", function(event) {
@@ -397,16 +407,7 @@ export default {
 						.attr("height", isRotated ? 0 : state.height);
 				}
 
-				start = getPointer(event, this as SVGAElement)[prop.index];
-
-				if (extent) {
-					if (start < extent[0]) {
-						start = extent[0];
-					} else if (start > extent[1]) {
-						start = extent[1];
-					}
-				}
-
+				start = clampPointer(getPointer(event, this as SVGAElement)[prop.index]);
 				end = start;
 
 				zoomRect
@@ -416,15 +417,7 @@ export default {
 				$$.onZoomStart(event);
 			})
 			.on("drag", function(event) {
-				end = getPointer(event, this as SVGAElement)[prop.index];
-
-				if (extent) {
-					if (end > extent[1]) {
-						end = extent[1];
-					} else if (end < extent[0]) {
-						end = extent[0];
-					}
-				}
+				end = clampPointer(getPointer(event, this as SVGAElement)[prop.index]);
 
 				zoomRect
 					.attr(prop.axis, Math.min(start, end))
@@ -434,6 +427,10 @@ export default {
 				const scale = $$.scale.zoom || $$.scale.x;
 
 				state.event = event;
+				// Final clamp: when release happens outside the chart, the
+				// last pointer value may still be out-of-range (e.g. no drag
+				// event fired between the last in-bounds move and release).
+				end = clampPointer(end);
 
 				zoomRect
 					.attr(prop.axis, 0)

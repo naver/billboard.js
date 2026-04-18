@@ -200,10 +200,13 @@ export default {
 				flow && sel.attr("cx", cx);
 
 				// Only animate circles that already have a position; new circles jump directly
-				// to avoid them sliding in from the origin (cx=0)
+				// to avoid them sliding in from the origin (cx=0).
+				// Use a distinct transition name from the opacity transition below —
+				// reusing the same name would interrupt the cx/cy transition before
+				// it can commit, leaving circles stranded at their old scale positions.
 				$T(sel.filter(function() {
 					return !!this.getAttribute("cx");
-				}), true, t)
+				}), true, `${t}-pos`)
 					.attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
 
 				sel.filter(function() {
