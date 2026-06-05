@@ -3,6 +3,34 @@
  * billboard.js project is licensed under the MIT license
  */
 
+import {
+	axisBottom as d3AxisBottom,
+	axisLeft as d3AxisLeft,
+	axisRight as d3AxisRight,
+	axisTop as d3AxisTop
+} from "d3-axis";
+import type {AxisType} from "../../../types/types";
+import {$AXIS, $COMMON} from "../../config/classes";
+import {AXIS_TICK_LINE_OVERLAP_PADDING, AXIS_TICK_SIZE} from "../../config/const";
+import {KEY} from "../../module/Cache";
+import {
+	capitalize,
+	getBoundingRect,
+	isArray,
+	isEmpty,
+	isFunction,
+	isNumber,
+	isObjectType,
+	isString,
+	isValue,
+	mergeObj,
+	notEmpty,
+	parseDate,
+	sortValue
+} from "../../module/util";
+import {getScale} from "../internals/scale";
+import AxisRenderer from "./AxisRenderer";
+
 /**
  * Sample representative tick nodes to avoid N forced reflows in getMaxTickSize
  * @param {SVGTextElement[]} nodes All tick text nodes
@@ -38,32 +66,344 @@ function _sampleTickNodes(nodes: SVGTextElement[]): SVGTextElement[] {
 
 	return sampled;
 }
-import {
-	axisBottom as d3AxisBottom,
-	axisLeft as d3AxisLeft,
-	axisRight as d3AxisRight,
-	axisTop as d3AxisTop
-} from "d3-axis";
-import type {AxisType} from "../../../types/types";
-import {$AXIS, $COMMON} from "../../config/classes";
-import {KEY} from "../../module/Cache";
-import {
-	capitalize,
-	getBoundingRect,
-	isArray,
-	isEmpty,
-	isFunction,
-	isNumber,
-	isObjectType,
-	isString,
-	isValue,
-	mergeObj,
-	notEmpty,
-	parseDate,
-	sortValue
-} from "../../module/util";
-import {getScale} from "../internals/scale";
-import AxisRenderer from "./AxisRenderer";
+
+const MAX_TICK_MEASURE_VALUES = 50;
+const TICK_WIDTH_FALLBACK = Symbol("tickWidthFallback");
+type TickWidthArray = (number | string)[] & {[TICK_WIDTH_FALLBACK]?: number};
+
+/**
+ * Get SVG tick line stroke width.
+ * @param {object} tickNodes Tick node selection
+ * @returns {number} Tick line stroke width
+ * @private
+ */
+function _getTickLineWidth(tickNodes): number {
+	const line = tickNodes.select("line").node();
+	const strokeWidth = line?.ownerDocument?.defaultView?.getComputedStyle ?
+		parseFloat(line.ownerDocument.defaultView.getComputedStyle(line).strokeWidth) :
+		parseFloat(line?.getAttribute?.("stroke-width"));
+
+	return Number.isFinite(strokeWidth) && strokeWidth > 0 ? strokeWidth : 1;
+}
+
+/**
+ * Check whether adjacent tick line intervals overlap on the rendered axis.
+ * @param {object} axis Axis renderer
+ * @param {Array} tickValues Sorted tick values
+ * @param {number} tickLineWidth Tick line stroke width
+ * @returns {boolean} Whether tick lines should be culled with tick text
+ * @private
+ */
+function _hasOverlappedTickLineIntervals(
+	axis: AxisRenderer | undefined,
+	tickValues,
+	tickLineWidth: number
+): boolean {
+	const scale = axis?.scale?.() as any;
+
+	if (!scale || tickValues.length < 2) {
+		return false;
+	}
+
+	const halfWidth = Math.max(1, tickLineWidth) / 2;
+	const positions = tickValues
+		.map(value => +scale(value))
+		.filter(Number.isFinite)
+		.sort((a, b) => a - b);
+
+	if (positions.length < 2) {
+		return false;
+	}
+
+	let previousEnd = positions[0] + halfWidth;
+
+	for (let i = 1; i < positions.length; i++) {
+		const start = positions[i] - halfWidth;
+		const end = positions[i] + halfWidth;
+
+		if (start <= previousEnd + AXIS_TICK_LINE_OVERLAP_PADDING) {
+			return true;
+		}
+
+		previousEnd = Math.max(previousEnd, end);
+	}
+
+	return false;
+}
+
+/**
+ * Sample representative tick values before creating dummy tick DOM nodes.
+ * @param {Array} values All tick values
+ * @param {function} format Tick format function
+ * @returns {Array} Sampled tick values
+ * @private
+ */
+function _sampleTickValues<T>(values: T[], format?: (value: T) => unknown): T[] {
+	if (values.length <= MAX_TICK_MEASURE_VALUES) {
+		return values;
+	}
+
+	const sampled = new Map<number, T>();
+	const add = (index: number): void => {
+		if (index >= 0 && index < values.length) {
+			sampled.set(index, values[index]);
+		}
+	};
+
+	add(0);
+	add(values.length - 1);
+	add(Math.floor(values.length / 2));
+
+	const step = Math.max(1, Math.floor(values.length / (MAX_TICK_MEASURE_VALUES - 3)));
+	let maxLength = -1;
+	let maxIndex = 0;
+
+	for (let i = 0; i < values.length; i += step) {
+		add(i);
+
+		const value = values[i];
+		const text = format ? format(value) : value;
+		const length = Array.isArray(text) ? text.join("").length : String(text ?? "").length;
+
+		if (length > maxLength) {
+			maxLength = length;
+			maxIndex = i;
+		}
+	}
+
+	add(maxIndex);
+
+	return Array.from(sampled.keys())
+		.sort((a, b) => a - b)
+		.map(index => sampled.get(index)!);
+}
+
+/**
+ * Get compact tick values for cache fingerprinting.
+ * @param {Array|function} values Tick values
+ * @returns {Array|object|string} Cache fingerprint value
+ * @private
+ */
+function _getTickValuesCacheValue(values) {
+	if (isFunction(values)) {
+		return _getCacheReferenceId(values);
+	}
+
+	if (!Array.isArray(values) || values.length <= MAX_TICK_MEASURE_VALUES) {
+		return values;
+	}
+
+	return {
+		length: values.length,
+		first: values[0],
+		middle: values[Math.floor(values.length / 2)],
+		last: values[values.length - 1]
+	};
+}
+
+/**
+ * Get compact tick width fallback.
+ * @param {Array} ticks Tick width array
+ * @returns {number|undefined} Fallback width
+ * @private
+ */
+function _getTickWidthFallback(ticks): number | undefined {
+	return (ticks as TickWidthArray)[TICK_WIDTH_FALLBACK];
+}
+
+/**
+ * Set compact tick width fallback.
+ * @param {Array} ticks Tick width array
+ * @param {number} width Fallback width
+ * @private
+ */
+function _setTickWidthFallback(ticks, width?: number): void {
+	if (isNumber(width)) {
+		Object.defineProperty(ticks, TICK_WIDTH_FALLBACK, {
+			configurable: true,
+			value: width,
+			writable: true
+		});
+	} else {
+		delete (ticks as TickWidthArray)[TICK_WIDTH_FALLBACK];
+	}
+}
+
+/**
+ * Reset tick widths and compact metadata.
+ * @param {Array} ticks Tick width array
+ * @private
+ */
+function _clearTickWidths(ticks): void {
+	ticks.length = 0;
+	_setTickWidthFallback(ticks);
+}
+
+/**
+ * Store large uniform tick widths without filling the array.
+ * @param {Array} ticks Tick width array
+ * @param {number} length Tick count
+ * @param {number} width Uniform fallback width
+ * @private
+ */
+function _compactTickWidths(ticks, length: number, width: number): void {
+	_clearTickWidths(ticks);
+	ticks.length = length;
+	_setTickWidthFallback(ticks, width);
+}
+
+/**
+ * Clone tick widths while preserving sparse compact storage.
+ * @param {Array} ticks Tick width array
+ * @returns {Array} Cloned tick width array
+ * @private
+ */
+function _cloneTickWidths(ticks): TickWidthArray {
+	const clone: TickWidthArray = [];
+
+	clone.length = ticks.length;
+	Object.keys(ticks).forEach(key => {
+		const index = +key;
+
+		clone[index] = ticks[index];
+	});
+	_setTickWidthFallback(clone, _getTickWidthFallback(ticks));
+
+	return clone;
+}
+
+/**
+ * Restore cached tick widths into current mutable state.
+ * @param {Array} target Current tick width array
+ * @param {Array} source Cached tick width array
+ * @private
+ */
+function _restoreTickWidths(target, source): void {
+	_clearTickWidths(target);
+	target.length = source.length;
+	Object.keys(source).forEach(key => {
+		const index = +key;
+
+		target[index] = source[index];
+	});
+	_setTickWidthFallback(target, _getTickWidthFallback(source));
+}
+
+/**
+ * Get a tick width from dense or compact storage.
+ * @param {Array} ticks Tick width array
+ * @param {number} index Tick index
+ * @param {number} fallback Fallback width
+ * @returns {number} Tick width
+ * @private
+ */
+function _getTickWidth(ticks, index: number, fallback: number): number {
+	const value = ticks[index];
+
+	if (isNumber(value)) {
+		return value;
+	}
+
+	const numericValue = Number(value);
+
+	return Number.isFinite(numericValue) ? numericValue : fallback;
+}
+
+const cacheReferenceIds = new WeakMap<object, number>();
+let cacheReferenceUid = 0;
+
+/**
+ * Get stable identity for non-serializable cache inputs.
+ * @param {function|object|string|number|boolean|null|undefined} value Value to identify
+ * @returns {string} Stable reference id
+ * @private
+ */
+function _getCacheReferenceId(value): string {
+	if (!value || !/^(function|object)$/.test(typeof value)) {
+		return `${typeof value}:${String(value)}`;
+	}
+
+	let id = cacheReferenceIds.get(value);
+
+	if (!id) {
+		id = ++cacheReferenceUid;
+		cacheReferenceIds.set(value, id);
+	}
+
+	return `${typeof value}:${id}`;
+}
+
+/**
+ * Stringify axis measurement inputs for cache matching.
+ * @param {Date|Array|function|object|string|number|boolean|null|undefined} value Value to stringify
+ * @returns {string} Stringified value
+ * @private
+ */
+function _stringifyCacheValue(value): string {
+	if (value instanceof Date) {
+		return `date:${+value}`;
+	} else if (Array.isArray(value)) {
+		return `[${value.map(v => _stringifyCacheValue(v)).join(",")}]`;
+	} else if (value && typeof value === "object") {
+		return `{${
+			Object.keys(value).sort().map(key => `${key}:${_stringifyCacheValue(value[key])}`).join(
+				","
+			)
+		}}`;
+	} else if (typeof value === "function") {
+		return _getCacheReferenceId(value);
+	}
+
+	return `${typeof value}:${String(value)}`;
+}
+
+/**
+ * Clone array/date cache values before storing state snapshots.
+ * @param {Date|Array|object|string|number|boolean|null|undefined} value Value to clone
+ * @returns {Date|Array|object|string|number|boolean|null|undefined} Cloned value
+ * @private
+ */
+function _cloneCacheValue(value) {
+	return value instanceof Date ? new Date(+value) : (
+		Array.isArray(value) ? value.map(v => _cloneCacheValue(v)) : value
+	);
+}
+
+/**
+ * Clone tick measurement state without mutable array side effects.
+ * @param {object} tickSize Tick measurement state
+ * @returns {object} Cloned measurement state
+ * @private
+ */
+function _cloneMaxTickSize(tickSize) {
+	return {
+		width: tickSize.width,
+		height: tickSize.height,
+		ticks: tickSize.ticks && _cloneTickWidths(tickSize.ticks),
+		clipPath: tickSize.clipPath,
+		domain: _cloneCacheValue(tickSize.domain)
+	};
+}
+
+/**
+ * Restore cached tick measurement into current mutable state.
+ * @param {object} target Current tick measurement state
+ * @param {object} source Cached tick measurement state
+ * @returns {object} Current tick measurement state
+ * @private
+ */
+function _restoreMaxTickSize(target, source) {
+	target.width = source.width;
+	target.height = source.height;
+	target.clipPath = source.clipPath;
+	target.domain = _cloneCacheValue(source.domain);
+
+	if (target.ticks && source.ticks) {
+		_restoreTickWidths(target.ticks, source.ticks);
+	}
+
+	return target;
+}
 
 export default {
 	getAxisInstance: function() {
@@ -253,7 +593,7 @@ class Axis {
 							isFunction(tick.format) ? tick.format.bind($$.api) : ((x: any) => x)
 						)
 						.tickValues(tick.values)
-						.tickSizeOuter(tick.outer === false ? 0 : 6)
+						.tickSizeOuter(tick.outer === false ? 0 : AXIS_TICK_SIZE)
 				);
 			});
 		}
@@ -641,6 +981,78 @@ class Axis {
 		return dy;
 	}
 
+	private getTickFormatCacheValue(id: AxisType) {
+		const $$ = this.owner;
+		const {config} = $$;
+		const isX = id === "x";
+
+		return isX ?
+			{
+				format: config.axis_x_tick_format,
+				type: config.axis_x_type,
+				localtime: config.axis_x_localtime,
+				categories: config.axis_x_categories
+			} :
+			{
+				format: config[`axis_${id}_tick_format`],
+				normalized: $$.isStackNormalized(),
+				grouped: $$.hasAxisGroupedData(id),
+				type: config[`axis_${id}_type`]
+			};
+	}
+
+	private getMaxTickSizeFingerprint(
+		id: AxisType,
+		scale,
+		domain,
+		axis: AxisRenderer,
+		tickRotate,
+		withoutRecompute?: boolean
+	): string {
+		const $$ = this.owner;
+		const {config, state} = $$;
+		const isX = id === "x";
+		const configPrefix = isX ? "axis_x" : `axis_${id}`;
+		const tickValues = axis.tickValues();
+
+		return _stringifyCacheValue({
+			id,
+			withoutRecompute: !!withoutRecompute,
+			dataGeneration: state.dataGeneration,
+			size: [state.current.width, state.current.height],
+			range: scale.range?.(),
+			domain,
+			type: scale.type,
+			orient: this.orient[id],
+			axisRotated: config.axis_rotated,
+			evalTextSize: config.axis_evalTextSize,
+			format: this.getTickFormatCacheValue(id),
+			ticks: {
+				values: _getTickValuesCacheValue(tickValues),
+				rawValues: config[`${configPrefix}_tick_values`],
+				arguments: axis.ticks(),
+				count: config[`${configPrefix}_tick_count`],
+				rotate: tickRotate,
+				show: config[`${configPrefix}_tick_show`],
+				textShow: config[`${configPrefix}_tick_text_show`],
+				textPosition: config[`${configPrefix}_tick_text_position`],
+				inner: config[`${configPrefix}_tick_inner`],
+				culling: config[`${configPrefix}_tick_culling`],
+				cullingMax: config[`${configPrefix}_tick_culling_max`],
+				cullingLines: config[`${configPrefix}_tick_culling_lines`],
+				cullingReverse: config[`${configPrefix}_tick_culling_reverse`],
+				stepSize: !isX && config[`${configPrefix}_tick_stepSize`],
+				timeValue: !isX && config[`${configPrefix}_tick_time_value`],
+				fit: isX && config.axis_x_tick_fit,
+				autorotate: isX && config.axis_x_tick_autorotate,
+				centered: isX && config.axis_x_tick_centered,
+				inverted: isX && config.axis_x_inverted,
+				multiline: isX && config.axis_x_tick_multiline,
+				width: isX && config.axis_x_tick_width
+			}
+		});
+	}
+
 	/**
 	 * Get max tick size
 	 * @param {string} id axis id string
@@ -652,21 +1064,23 @@ class Axis {
 		const $$ = this.owner;
 		const {config, state, $el: {svg, chart}} = $$;
 		const {current, resizing} = state;
+		const currentTickMax = current.maxTickSize[id];
 
-		// Generation-based cache: skip redundant measurements within same redraw cycle
+		// First keep the existing per-redraw fast path, then use the fingerprint below
+		// to avoid rebuilding dummy axes across redraws when axis inputs are stable.
 		const cacheKey = `${KEY.maxTickSize}_${id}_${!!withoutRecompute}`;
 		const cached = $$.cache.get(cacheKey);
 
 		if (cached && cached.generation === state.redrawGeneration) {
-			return cached.value;
+			return currentTickMax;
 		}
 
-		const currentTickMax = current.maxTickSize[id];
 		const configPrefix = `axis_${id}`;
 		const max = {
 			width: 0,
 			height: 0
 		};
+		let fingerprint;
 
 		if (
 			resizing || withoutRecompute || !config[`${configPrefix}_show`] || (
@@ -676,7 +1090,7 @@ class Axis {
 			return currentTickMax;
 		}
 
-		if (svg) {
+		if ((svg || config.render_mode === "canvas") && $$.scale[id]?.copy) {
 			const isYAxis = /^y2?$/.test(id);
 			const targetsToShow = $$.getTargetsToShow();
 			const scale = $$.scale[id].copy().domain(
@@ -698,7 +1112,7 @@ class Axis {
 
 			// reset old max state value to prevent from new data loading
 			if (!isYAxis) {
-				currentTickMax.ticks.splice(0);
+				_clearTickWidths(currentTickMax.ticks);
 			}
 
 			const axis = this.getAxis(id, scale, false, false, true);
@@ -722,6 +1136,33 @@ class Axis {
 
 			!isYAxis && this.updateXAxisTickValues(targetsToShow, axis);
 
+			fingerprint = this.getMaxTickSizeFingerprint(
+				id,
+				scale,
+				domain,
+				axis,
+				tickRotate,
+				withoutRecompute
+			);
+
+			if (cached?.fingerprint === fingerprint) {
+				$$.cache.add(cacheKey, {
+					...cached,
+					generation: state.redrawGeneration
+				});
+
+				return _restoreMaxTickSize(currentTickMax, cached.value);
+			}
+
+			const originalTickValues = axis.tickValues();
+			const hasLargeTickValues = !isYAxis &&
+				Array.isArray(originalTickValues) &&
+				originalTickValues.length > MAX_TICK_MEASURE_VALUES;
+
+			hasLargeTickValues && axis.tickValues(
+				_sampleTickValues(originalTickValues, (axis as any).tickFormat())
+			);
+
 			const dummy = chart.append("svg")
 				.style("visibility", "hidden")
 				.style("position", "fixed")
@@ -739,6 +1180,9 @@ class Axis {
 
 			const textSelection = dummy.selectAll("text")
 				.attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null);
+			const measuredTickCount = hasLargeTickValues ?
+				originalTickValues.length :
+				textSelection.size();
 
 			// Batch processing to minimize layout thrashing
 			if (sizeFor1Char) {
@@ -779,6 +1223,10 @@ class Axis {
 				}
 			}
 
+			if (!isYAxis && hasLargeTickValues) {
+				_compactTickWidths(currentTickMax.ticks, measuredTickCount, max.width);
+			}
+
 			dummy.remove();
 		}
 
@@ -788,8 +1236,11 @@ class Axis {
 			}
 		});
 
-		// Cache result for this redraw generation
-		$$.cache.add(cacheKey, {generation: state.redrawGeneration, value: currentTickMax});
+		$$.cache.add(cacheKey, {
+			fingerprint,
+			generation: state.redrawGeneration,
+			value: _cloneMaxTickSize(currentTickMax)
+		});
 
 		return currentTickMax;
 	}
@@ -831,6 +1282,8 @@ class Axis {
 
 		const tickTextWidths = state.current.maxTickSize.x.ticks;
 		const tickCount = tickTextWidths.length;
+		const fallbackTickTextWidth = _getTickWidthFallback(tickTextWidths) ??
+			state.current.maxTickSize.x.width;
 		const {left, right} = state.axis.x.padding;
 		let maxOverflow = 0;
 
@@ -839,7 +1292,7 @@ class Axis {
 		for (let i = 0; i < tickCount; i++) {
 			const tickIndex = i + 1;
 			const rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) *
-				tickTextWidths[i];
+				_getTickWidth(tickTextWidths, i, fallbackTickTextWidth);
 			const ticksBeforeTickText = tickIndex - (isTimeSeries ? 1 : 0.5) + left;
 
 			// Skip ticks if there are no ticks before them
@@ -1019,21 +1472,19 @@ class Axis {
 	}
 
 	/**
-	 * Redraw axis
+	 * Synchronize axis domains and tick values.
 	 * @param {Array} targetsToShow targets data to be shown
 	 * @param {object} wth option object
-	 * @param {d3.Transition} transitions Transition object
 	 * @param {object} flow flow object
-	 * @param {boolean} isInit called from initialization
 	 * @private
 	 */
-	redrawAxis(targetsToShow, wth, transitions, flow, isInit: boolean): void {
+	syncAxisDomains(targetsToShow, wth, flow): void {
 		const $$ = this.owner;
 		const {config, scale, $el} = $$;
 		const hasZoom = !!scale.zoom;
 		let xDomainForZoom;
 
-		if (!hasZoom && this.isCategorized() && targetsToShow.length === 0) {
+		if (!hasZoom && this.isCategorized() && targetsToShow.length === 0 && $el.axis.x) {
 			scale.x.domain([0, $el.axis.x.selectAll(".tick").size()]);
 		}
 
@@ -1079,6 +1530,27 @@ class Axis {
 			}
 		});
 
+		// Update sub domain
+		if (wth.Y) {
+			scale.subY?.domain($$.getYDomain(targetsToShow, "y"));
+			scale.subY2?.domain($$.getYDomain(targetsToShow, "y2"));
+		}
+	}
+
+	/**
+	 * Redraw axis
+	 * @param {Array} targetsToShow targets data to be shown
+	 * @param {object} wth option object
+	 * @param {d3.Transition} transitions Transition object
+	 * @param {object} flow flow object
+	 * @param {boolean} isInit called from initialization
+	 * @private
+	 */
+	redrawAxis(targetsToShow, wth, transitions, flow, isInit: boolean): void {
+		const $$ = this.owner;
+
+		this.syncAxisDomains(targetsToShow, wth, flow);
+
 		// axes
 		this.redraw(transitions, $$.hasArcType(), isInit);
 
@@ -1088,12 +1560,6 @@ class Axis {
 		// show/hide if manual culling needed
 		if ((wth.UpdateXDomain || wth.UpdateXAxis || wth.Y) && targetsToShow.length) {
 			this.setCulling();
-		}
-
-		// Update sub domain
-		if (wth.Y) {
-			scale.subY?.domain($$.getYDomain(targetsToShow, "y"));
-			scale.subY2?.domain($$.getYDomain(targetsToShow, "y2"));
 		}
 	}
 
@@ -1121,6 +1587,11 @@ class Axis {
 				const tickSize = tickValues.length;
 				const cullingMax = config[`${cullingOptionPrefix}_max`];
 				const lines = config[`${cullingOptionPrefix}_lines`];
+				const cullTickLine = !lines || _hasOverlappedTickLineIntervals(
+					this[type],
+					tickValues,
+					_getTickLineWidth(tickNodes)
+				);
 				let intervalForCulling;
 
 				if (tickSize) {
@@ -1140,7 +1611,7 @@ class Axis {
 
 					tickNodes
 						.each(function(d) {
-							const node = lines ? this.querySelector("text") : this;
+							const node = cullTickLine ? this : this.querySelector("text");
 
 							if (node) {
 								node.style.display =

@@ -2,36 +2,36 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import Chart from "../../../Chart/Chart";
-import ChartInternal from "../../../ChartInternal/ChartInternal";
+import shapePointCommon from "../../../ChartInternal/shape/core/point";
 import shapeLine from "../../../ChartInternal/shape/line";
 import shapePoint from "../../../ChartInternal/shape/point";
-import shapePointCommon from "../../../ChartInternal/shape/point.common";
-import {extend} from "../../../module/util";
 import optPoint from "../../Options/common/point";
-import Options from "../../Options/Options";
 import optLine from "../../Options/shape/line";
-import {api as axisAPI, internal as axisInternal, options as axisOptions} from "../axis";
+import {extendAxisModules} from "../axis.core";
+
+type ModuleValue = any | any[];
 
 /**
  * Extend Axis
- * @param {Array} module Module to be extended
- * @param {Array} option Option object to be extended
+ * @param {Array<object>} module Module to be extended
+ * @param {Array<object>} option Option object to be extended
  * @private
  */
-export function extendAxis(module, option?): void {
-	extend(ChartInternal.prototype, Object.values(axisInternal).concat(module));
-	extend(Chart.prototype, axisAPI);
-	Options.setOptions(Object.values(axisOptions).concat(option || []));
+export function extendAxis(module: any[] = [], option: any[] = []): void {
+	extendAxisModules(module, option);
 }
 
 /**
  * Extend Line type modules
- * @param {object} module Module to be extended
- * @param {Array} option Option object to be extended
+ * @param {object|Array<object>} module Module to be extended
+ * @param {Array<object>} option Option object to be extended
  * @private
  */
-export function extendLine(module?, option?): void {
-	extendAxis([shapePointCommon, shapePoint, shapeLine].concat(module || []));
-	Options.setOptions([optPoint, optLine].concat(option || []));
+export function extendLine(module?: ModuleValue, option: any[] = []): void {
+	const modules = Array.isArray(module) ? module : (module ? [module] : []);
+
+	extendAxisModules(
+		[shapePointCommon, shapePoint, shapeLine].concat(modules),
+		[optPoint, optLine].concat(option)
+	);
 }

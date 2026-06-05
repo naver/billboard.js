@@ -2,9 +2,31 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import type {GridLineOptions} from "../../../types/options";
 import {extend, isTabVisible} from "../../module/util";
 
-type GridsParam = {value?: number, class?: string, text?: string}[];
+type GridLine = Partial<GridLineOptions>;
+type GridsParam = GridLine | GridLine[];
+
+/**
+ * Normalize grid argument to array.
+ * @param {Array|object} grids Grid lines
+ * @returns {Array} Grid lines
+ * @private
+ */
+function toGrids(grids: GridsParam): GridLine[] {
+	return Array.isArray(grids) ? grids : [grids];
+}
+
+/**
+ * Redraw canvas after grid API mutation.
+ * @param {object} $$ ChartInternal instance
+ * @private
+ */
+function redrawCanvasGrid($$): void {
+	$$.state.canvasShape = null;
+	$$.renderCanvasFrame?.(undefined, null, false);
+}
 
 /**
  * Update grid lines.
@@ -23,7 +45,13 @@ function grid(grids: GridsParam, axisId: "x" | "y"): GridsParam {
 		return config[gridPropLines];
 	}
 
-	config[gridPropLines] = grids;
+	config[gridPropLines] = toGrids(grids);
+
+	if ($$.state.isCanvasMode) {
+		redrawCanvasGrid($$);
+
+		return config[gridPropLines];
+	}
 
 	$$.updateGrid();
 	$$.redrawGrid(withTransition);
@@ -42,7 +70,7 @@ function add(grids: GridsParam, axisId: "x" | "y"): GridsParam {
 	const gridPropLines = `grid_${axisId}_lines`;
 
 	return grid.bind(this)(
-		this.internal.config[gridPropLines].concat(grids || []),
+		this.internal.config[gridPropLines].concat(grids ? toGrids(grids) : []),
 		axisId
 	);
 }
@@ -54,7 +82,18 @@ function add(grids: GridsParam, axisId: "x" | "y"): GridsParam {
  * @private
  */
 function remove(grids: GridsParam | undefined, isXAxis: boolean): void {
-	this.internal.removeGridLines(grids, isXAxis);
+	const $$ = this.internal;
+
+	if ($$.state.isCanvasMode) {
+		const toRemove = $$.getGridFilterToRemove?.(grids) || (() => true);
+		const gridLines = `grid_${isXAxis ? "x" : "y"}_lines`;
+
+		$$.config[gridLines] = $$.config[gridLines].filter(line => !toRemove(line));
+		redrawCanvasGrid($$);
+		return;
+	}
+
+	$$.removeGridLines(grids, isXAxis);
 }
 
 /**

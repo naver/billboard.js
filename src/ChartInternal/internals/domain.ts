@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {TYPE, TYPE_BY_CATEGORY} from "../../config/const";
+import {KEY} from "../../module/Cache";
 import {
 	brushEmpty,
 	diffDomain,
@@ -19,6 +20,159 @@ import {
 } from "../../module/util";
 import type {IData, TDomainRange} from "../data/IData";
 
+type DomainMinMax = [number | Date | undefined, number | Date | undefined];
+type MinMaxAccumulator = {min: any, max: any};
+
+/**
+ * Build a compact cache key for target-domain scans.
+ * @param {object} $$ ChartInternal instance
+ * @param {Array} targets Data targets
+ * @returns {string} Cache key
+ * @private
+ */
+function getTargetDomainCacheKey($$, targets: IData[]): string {
+	return targets.map(target => {
+		const {values} = target;
+		const first = values[0];
+		const last = values[values.length - 1];
+		const firstX = first ? $$.getXCacheKey?.(first.x) ?? first.x : "";
+		const lastX = last ? $$.getXCacheKey?.(last.x) ?? last.x : "";
+
+		return `${target.id}:${values.length}:${firstX}:${lastX}`;
+	}).join("|");
+}
+
+/**
+ * Check whether domain result can be cached without accumulating zoom-window entries.
+ * @param {object} $$ ChartInternal instance
+ * @param {Array} targets Data targets
+ * @returns {boolean} Whether the targets use original value arrays
+ * @private
+ */
+function canCacheTargetDomain($$, targets: IData[]): boolean {
+	const sourceTargets = $$.data?.targets;
+
+	if (!sourceTargets) {
+		return false;
+	}
+
+	for (let i = 0; i < targets.length; i++) {
+		const target = targets[i];
+		const source = sourceTargets.find(v => v.id === target.id);
+
+		if (!source || source.values !== target.values) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/**
+ * Update a min/max accumulator with a scalar domain value.
+ * @param {object} minMax Min/max accumulator
+ * @param {number|Date|null|undefined} value Domain value
+ * @private
+ */
+function updateMinMax(minMax: MinMaxAccumulator, value): void {
+	if (!notEmpty(value)) {
+		return;
+	}
+
+	if (minMax.min === undefined || value < minMax.min) {
+		minMax.min = value;
+	}
+
+	if (minMax.max === undefined || value > minMax.max) {
+		minMax.max = value;
+	}
+}
+
+/**
+ * Update a min/max accumulator from an array-like value.
+ * @param {object} minMax Min/max accumulator
+ * @param {Array} values Domain values
+ * @private
+ */
+function updateMinMaxFromValues(minMax: MinMaxAccumulator, values): void {
+	for (let i = 0; i < values.length; i++) {
+		updateMinMax(minMax, values[i]);
+	}
+}
+
+/**
+ * Compute target value min/max without allocating intermediate value arrays.
+ * @param {object} $$ ChartInternal instance
+ * @param {Array} targets Data targets
+ * @returns {Array} Min/max tuple
+ * @private
+ */
+function getTargetValueMinMax($$, targets: IData[]): DomainMinMax {
+	const minMax = {min: undefined, max: undefined};
+	const hasAxis = $$.state.hasAxis;
+
+	for (let i = 0; i < targets.length; i++) {
+		const target = targets[i];
+		const isCandlestick = $$.isCandlestickType?.(target);
+		const {values} = target;
+
+		for (let j = 0; j < values.length; j++) {
+			const row = values[j];
+			let value: any = row.value;
+
+			if (!(isValue(value) || value === null)) {
+				continue;
+			}
+
+			if (value !== null && isCandlestick) {
+				value = Array.isArray(value) ?
+					value.slice(0, 4) :
+					[value.open, value.high, value.low, value.close];
+			}
+
+			if (Array.isArray(value)) {
+				updateMinMaxFromValues(minMax, value);
+			} else if (isObject(value) && "high" in value) {
+				updateMinMaxFromValues(minMax, Object.values(value));
+			} else if ($$.isBubbleZType?.(row)) {
+				updateMinMax(minMax, hasAxis && $$.getBubbleZData(value, "y"));
+			} else {
+				updateMinMax(minMax, value);
+			}
+		}
+	}
+
+	return [minMax.min, minMax.max];
+}
+
+/**
+ * Compute x-domain min or max without allocating intermediate x arrays.
+ * @param {Array} targets Data targets
+ * @param {string} type Min/max type
+ * @returns {number|Date|undefined} Domain value
+ * @private
+ */
+function getTargetXMinMax(targets: IData[], type: "min" | "max") {
+	let result;
+
+	for (let i = 0; i < targets.length; i++) {
+		const {values} = targets[i];
+
+		for (let j = 0; j < values.length; j++) {
+			const {x} = values[j];
+
+			if (
+				notEmpty(x) &&
+				(result === undefined || (type === "min" ? x < result : x > result))
+			) {
+				result = x;
+			}
+		}
+	}
+
+	return result;
+}
+
 export default {
 	/**
 	 * Get both min and max Y domain values in a single pass.
@@ -29,13 +183,24 @@ export default {
 	 */
 	getYDomainMinMaxBoth(targets): [number | Date | undefined, number | Date | undefined] {
 		const $$ = this;
-		const {axis, config} = $$;
+		const {axis, cache, config, state} = $$;
+		const canCache = canCacheTargetDomain($$, targets);
+		const cacheKey = canCache ?
+			`${KEY.domainMinMax}_y_${getTargetDomainCacheKey($$, targets)}` :
+			null;
+		const cached = cacheKey && cache.get(cacheKey);
+
+		if (cached && cached.generation === state.dataGeneration) {
+			return cached.value;
+		}
+
 		const dataGroups = config.data_groups;
 		const ids = $$.mapToIds(targets);
 		const idsSet = toSet(ids);
-		const rawYs = $$.getValuesAsIdKeyed(targets);
+		let result: DomainMinMax;
 
 		if (dataGroups.length > 0) {
+			const rawYs = $$.getValuesAsIdKeyed(targets);
 			const hasNegative = targets.some(t => t.values.some(v => v.value < 0));
 			const hasPositive = targets.some(t => t.values.some(v => v.value > 0));
 			const axisIdMap = new Map(ids.map(id => [id, axis.getId(id)]));
@@ -105,25 +270,22 @@ export default {
 				maxVals.push(getMinMax("max", ysMax[key]));
 			}
 
-			return [
+			result = [
 				getMinMax("min", minVals),
 				getMinMax("max", maxVals)
 			];
+		} else {
+			result = getTargetValueMinMax($$, targets);
 		}
 
-		// No groups — compute min/max directly from rawYs without cloning
-		const minVals: number[] = [];
-		const maxVals: number[] = [];
-
-		for (const key in rawYs) {
-			minVals.push(getMinMax("min", rawYs[key]));
-			maxVals.push(getMinMax("max", rawYs[key]));
+		if (cacheKey) {
+			cache.add(cacheKey, {
+				generation: state.dataGeneration,
+				value: result
+			});
 		}
 
-		return [
-			getMinMax("min", minVals),
-			getMinMax("max", maxVals)
-		];
+		return result;
 	},
 
 	/**
@@ -297,9 +459,23 @@ export default {
 
 	getXDomainMinMax(targets, type) {
 		const $$ = this;
+		const {cache, state} = $$;
 		const configValue = $$.config[`axis_x_${type}`];
-		const dataValue = getMinMax(type,
-			targets.map(t => getMinMax(type, t.values.map(v => v.x))));
+		const canCache = canCacheTargetDomain($$, targets);
+		const cacheKey = canCache ?
+			`${KEY.domainMinMax}_x_${type}_${getTargetDomainCacheKey($$, targets)}` :
+			null;
+		const cached = cacheKey && cache.get(cacheKey);
+		let dataValue = cached?.generation === state.dataGeneration ? cached.value : undefined;
+
+		if (dataValue === undefined) {
+			dataValue = getTargetXMinMax(targets, type);
+			cacheKey && cache.add(cacheKey, {
+				generation: state.dataGeneration,
+				value: dataValue
+			});
+		}
+
 		let value = isObject(configValue) ? configValue.value : configValue;
 
 		value = isDefined(value) && $$.axis?.isTimeSeries() ? parseDate.bind(this)(value) : value;

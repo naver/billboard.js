@@ -114,7 +114,7 @@ function getRectSegList(path: SVGGraphicsElement): {x: number, y: number}[] {
 	 *   |               |
 	 * seg0 ---------- seg3
 	 */
-	const {x, y, width, height} = path.getBBox();
+	const {x, y, width, height} = getBBox(path, true);
 
 	return [
 		{x, y: y + height}, // seg0
@@ -220,7 +220,7 @@ function getCssRules(styleSheets: any[]) {
 				rules = rules.concat(toArray(sheet.cssRules));
 			}
 		} catch (e) {
-			window.console?.warn(`Error while reading rules from ${sheet.href}: ${e.toString()}`);
+			window.console?.warn(`Error while reading rules from ${sheet.href}: ${String(e)}`);
 		}
 	});
 

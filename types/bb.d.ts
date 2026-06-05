@@ -58,3 +58,13 @@ export function treemap(): "treemap";
 export function selection(): true;
 export function subchart(): true;
 export function zoom(): true;
+
+// render modules
+export function canvas(): "canvas";
+
+// optional API modules
+export function category(): Record<string, never>;
+export function exportApi(): Record<string, never>;
+export function flow(): Record<string, never>;
+export function grid(): Record<string, never>;
+export function regions(): Record<string, never>;

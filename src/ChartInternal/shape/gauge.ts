@@ -122,8 +122,6 @@ export default {
 	},
 
 	getPaddingBottomForGauge() {
-		const $$ = this;
-
-		return $$.getGaugeLabelHeight() * ($$.config.gauge_label_show ? 2 : 2.5);
+		return this.getGaugeLabelHeight() * 2;
 	}
 };

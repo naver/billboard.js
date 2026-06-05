@@ -3,6 +3,9 @@
 
 $font-family: Helvetica, 'Apple SD Gothic Neo', Arial, sans-serif, "nanumgothic", "Dotum";
 $axis-color: #8c8c8c;
+
+@use "../canvas-legend" as canvasLegend;
+
 @mixin select-none {
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -200,6 +203,8 @@ rect.bb-circle, use.bb-circle {
 
 /*-- Select - Drag --*/
 /*-- Legend --*/
+@include canvasLegend.styles($font-family: $font-family, $font-size: 12px, $color: #555);
+
 .bb-legend-item {
     user-select: none;
 }

@@ -140,7 +140,7 @@ export default {
 				}
 			}
 
-			return fn(v, ratio, id, index);
+			return (fn as Function)(v, ratio, id, index);
 		};
 
 		const order = config.tooltip_order;
@@ -359,7 +359,7 @@ export default {
 				eventRect?.node(),
 				currPos
 			) ?? (
-				hasViewBox(svg) ?
+				(svg && hasViewBox(svg)) ?
 					$$.getTooltipPositionViewBox.bind($$)(width, height, currPos) :
 					$$.getTooltipPosition.bind($$)(width, height, currPos)
 			);
@@ -449,7 +449,7 @@ export default {
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const isRotated = config.axis_rotated;
 		const hasArcType = $$.hasArcType();
-		const svgLeft = $$.getSvgLeft(true);
+		const svgLeft = state.isCanvasMode ? 0 : $$.getSvgLeft(true);
 		let chartRight = svgLeft + current.width - $$.getCurrentPaddingByDirection("right");
 
 		const size = 20;
@@ -519,19 +519,46 @@ export default {
 	showTooltip(selectedData: IDataRow[], eventTarget: SVGElement): void {
 		const $$ = this;
 		const {config, $el: {tooltip}} = $$;
-		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
 
-		if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
+		if (!tooltip || !config.tooltip_show) {
+			return;
+		}
+
+		let dataToShow: IDataRow[] | null = null;
+		let dataToShowCount = 0;
+		let dataStr = `${$$.data.targets.length}:`;
+		let firstData: IDataRow | undefined;
+
+		for (let i = 0; i < selectedData.length; i++) {
+			const d = selectedData[i];
+
+			i > 0 && (dataStr += ",");
+			dataStr += `${d?.index}|${d?.id}|${d?.value}`;
+			!firstData && d && (firstData = d);
+
+			if (d && isValue($$.getBaseValue(d))) {
+				dataToShowCount++;
+				dataToShow?.push(d);
+			} else if (!dataToShow) {
+				dataToShow = selectedData.slice(0, i);
+			}
+		}
+
+		if (dataToShowCount === 0 || !firstData) {
 			return;
 		}
 
 		const datum = tooltip.datum();
-		const dataStr = `${$$.data.targets.length}:${
-			selectedData.map(d => `${d?.index}|${d?.id}|${d?.value}`).join()
-		}`;
+		let positionData = dataToShow;
 
 		if (!datum || datum.current !== dataStr) {
-			const {index, x} = selectedData.concat().sort()[0];
+			const {index, x} = firstData;
+
+			// getTooltipHTML() may sort selectedData in-place for display ordering.
+			// Keep the original order for tooltip.position without copying on repeated hovers.
+			if (!positionData) {
+				positionData = selectedData.slice();
+			}
 
 			callFn(config.tooltip_onshow, $$.api, selectedData);
 
@@ -559,7 +586,7 @@ export default {
 			$$._handleLinkedCharts(true, index);
 		}
 
-		$$.setTooltipPosition(dataToShow, eventTarget);
+		$$.setTooltipPosition(positionData || selectedData, eventTarget);
 	},
 
 	/**
@@ -630,7 +657,7 @@ export default {
 			charts
 				.filter(c => c !== $$.api)
 				.forEach(c => {
-					const {config, $el} = c.internal;
+					const {config, $el, state} = c.internal;
 					const isLinked = config.tooltip_linked;
 					const name = config.tooltip_linked_name;
 					const isInDom = document.body.contains($el.chart.node());
@@ -640,9 +667,13 @@ export default {
 						const isNotSameIndex = index !== data?.index;
 
 						try {
-							c.tooltip[
-								show && isNotSameIndex ? "show" : "hide"
-							]({index});
+							if (show && isNotSameIndex && state.isCanvasMode) {
+								c.internal.showCanvasLinkedTooltip?.(index);
+							} else {
+								c.tooltip[
+									show && isNotSameIndex ? "show" : "hide"
+								]({index});
+							}
 						} catch {}
 					}
 				});
@@ -663,6 +694,10 @@ export default {
 			$el: {eventRect, svg, tooltip},
 			state: {event, hasAxis, hasRadar, hasTreemap}
 		} = $$;
+
+		if ($$.state.isCanvasMode) {
+			return;
+		}
 
 		// Update tooltip, when tooltip is in shown state
 		if (tooltip?.style("display") === "block" && event) {

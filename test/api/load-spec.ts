@@ -67,6 +67,9 @@ describe("API load", function() {
 			const className = "abcd";
 			const color = "red";
 			const categories = ["cat1", "cat2", "cat3", "cat4", "cat5"];
+			const regions = {
+				data2: [{start: 1, end: 3, style: {dasharray: "4 2"}}]
+			};
 
 			setTimeout(() => {
 				chart.load({
@@ -86,6 +89,7 @@ describe("API load", function() {
 					axes: {
 						data2: "y2"
 					},
+					regions,
 					done: function() {
 						const main = chart.$.main;
 
@@ -104,10 +108,27 @@ describe("API load", function() {
 						// updated axes?
 						expect(+main.selectAll(".bb-axis-y2 .tick tspan").nodes().pop().textContent).to.be.equal(1000);
 
+						// updated data.regions?
+						expect(chart.internal.config.data_regions).to.deep.equal(regions);
+
 						done(1);
 					}
 				});
 			}, 350);
+		}));
+
+		it("should update data.regions without loading data", () => new Promise(done => {
+			const regions = {
+				data1: [{start: 1, end: 2, style: {dasharray: "5 2"}}]
+			};
+
+			chart.load({
+				regions,
+				done() {
+					expect(chart.internal.config.data_regions).to.deep.equal(regions);
+					done(1);
+				}
+			});
 		}));
 	});
 

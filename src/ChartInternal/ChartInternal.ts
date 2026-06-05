@@ -286,6 +286,10 @@ export default class ChartInternal {
 		const $$ = <any>this;
 		const {config, format, state} = $$;
 
+		if (config.render_mode === "canvas") {
+			$$.prepareCanvasConfig?.();
+		}
+
 		// color settings
 		$$.color = $$.generateColor();
 		$$.levelColor = $$.generateLevelColor();
@@ -298,7 +302,7 @@ export default class ChartInternal {
 			config.subchart_show = false;
 		}
 
-		if ($$.hasPointType() || $$.hasLegendDefsPoint?.()) {
+		if (config.render_mode !== "canvas" && ($$.hasPointType() || $$.hasLegendDefsPoint?.())) {
 			$$.point = $$.generatePoint();
 		}
 
@@ -410,6 +414,45 @@ export default class ChartInternal {
 				y2.domain($$.getYDomain($$.data.targets, "y2"));
 				subY2 && subY2.domain(y2.domain());
 			}
+		}
+
+		if (config.render_mode === "canvas") {
+			if (!$$.initCanvas) {
+				throw Error(
+					"[billboard.js] Please import and call canvas() to use render.mode='canvas'."
+				);
+			}
+
+			// Bind resize event before tooltip init because tooltip position registers resize hooks.
+			$$.bindResize();
+			$$.initCanvas();
+
+			config.tooltip_show && $$.initTooltip();
+
+			$$.callPluginHook("$init");
+
+			// oninit callback
+			callFn(config.oninit, $$.api);
+
+			$$.redraw({
+				withTransition: false,
+				withTransform: true,
+				withUpdateXDomain: true,
+				withUpdateOrgXDomain: true,
+				withTransitionForAxis: false,
+				initializing: true
+			});
+
+			// data.onmin/max callback
+			if (config.data_onmin || config.data_onmax) {
+				const minMax = $$.getMinMaxData();
+
+				callFn(config.data_onmin, $$.api, minMax.min);
+				callFn(config.data_onmax, $$.api, minMax.max);
+			}
+
+			state.rendered = true;
+			return;
 		}
 
 		// -- Basic Elements --
@@ -612,6 +655,8 @@ export default class ChartInternal {
 				tooltip,
 				legend,
 				title,
+				canvas,
+				eventOverlay,
 				grid,
 				needle,
 				arcs: arc,
@@ -628,6 +673,8 @@ export default class ChartInternal {
 		$$.api.$ = {
 			chart,
 			svg,
+			canvas,
+			eventOverlay,
 			defs,
 			main,
 			tooltip,
@@ -806,7 +853,7 @@ export default class ChartInternal {
 				// https://github.com/naver/billboard.js/issues/2650
 				if (config.legend_show) {
 					$$.updateSizes();
-					$$.updateLegend();
+					state.isCanvasMode ? $$.updateHtmlLegend?.() : $$.updateLegend();
 				}
 
 				$$.api.flush(false);

@@ -120,7 +120,7 @@ export default {
 	 */
 	destroy(): null {
 		const $$ = this.internal;
-		const {$el: {chart, style, svg}} = $$;
+		const {state, $el: {chart, style, svg}} = $$;
 
 		if (notEmpty($$)) {
 			$$.callPluginHook("$willDestroy");
@@ -134,15 +134,24 @@ export default {
 			$$.unbindAllEvents();
 
 			// clear timers && pending transition
-			svg.select("*").interrupt();
-			$$.resizeFunction.clear();
+			svg?.select("*").interrupt();
+			state.canvasFlowFrame !== null &&
+				window.cancelAnimationFrame?.(state.canvasFlowFrame);
+			state.canvasFlowFrame = null;
+			state.canvasFlowFinish = null;
+			$$.canvasEngine?.destroy();
+			$$.resizeFunction?.clear();
 
-			$$.resizeFunction.resizeObserver?.disconnect();
-			window.removeEventListener("resize", $$.resizeFunction);
+			$$.resizeFunction?.resizeObserver?.disconnect();
+			$$.resizeFunction && window.removeEventListener("resize", $$.resizeFunction);
 			chart.classed("bb", false)
-				.style("position", null)
-				.selectChildren()
-				.remove();
+				.style("position", null);
+
+			if (state.isCanvasMode) {
+				chart.style("min-height", state.canvasInlineStyle.minHeight || null);
+			}
+
+			chart.selectChildren().remove();
 
 			// remove <style> element added by boost.useCssRule option
 			style && style.parentNode.removeChild(style);

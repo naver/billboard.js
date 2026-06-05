@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>billboard.js canvas rendering demo</title>
+	<link rel="stylesheet" href="../dist/billboard.css">
+	<style>
+		body {
+			font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+			margin: 24px;
+		}
+		.controls {
+			align-items: center;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 12px;
+			margin-bottom: 16px;
+		}
+		label {
+			align-items: center;
+			display: inline-flex;
+			gap: 6px;
+		}
+		input,
+		select,
+		button {
+			font: inherit;
+		}
+		#chart {
+			height: 420px;
+			width: 900px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Canvas rendering demo</h1>
+	<div class="controls">
+		<label>
+			Type
+			<select id="type">
+				<option value="bar">bar</option>
+				<option value="line">line</option>
+				<option value="area">area</option>
+			</select>
+		</label>
+		<label>
+			Series
+			<input id="series" type="number" min="1" value="5">
+		</label>
+		<label>
+			Points
+			<input id="points" type="number" min="1" value="1000">
+		</label>
+		<button id="render">Render</button>
+		<button id="export">Export</button>
+		<span id="time"></span>
+	</div>
+	<div id="chart"></div>
+	<script src="../dist/billboard.pkgd.min.js"></script>
+	<script>
+		var chart;
+		var type = document.getElementById("type");
+		var series = document.getElementById("series");
+		var points = document.getElementById("points");
+		var time = document.getElementById("time");
+
+		function getData(seriesCount, pointCount) {
+			var columns = [];
+
+			for (var i = 0; i < seriesCount; i++) {
+				var column = ["data" + i];
+
+				for (var j = 0; j < pointCount; j++) {
+					column.push(Math.round(Math.random() * 900) + 100);
+				}
+				columns.push(column);
+			}
+
+			return columns;
+		}
+
+		function render() {
+			chart && chart.destroy();
+
+			var started = performance.now();
+
+			chart = bb.generate({
+				render: {
+					mode: "canvas"
+				},
+				bindto: "#chart",
+				size: {
+					width: 900,
+					height: 420
+				},
+				data: {
+					columns: getData(+series.value, +points.value),
+					type: type.value
+				},
+				transition: {
+					duration: 0
+				},
+				point: {
+					focus: {
+						only: true
+					}
+				},
+				grid: {
+					y: {
+						show: true
+					}
+				},
+				onrendered: function() {
+					time.textContent = "Rendered in " + (performance.now() - started).toFixed(1) + " ms";
+				}
+			});
+		}
+
+		document.getElementById("render").addEventListener("click", render);
+		document.getElementById("export").addEventListener("click", function() {
+			if (!chart) {
+				return;
+			}
+
+			var link = document.createElement("a");
+
+			link.download = "billboard-canvas.png";
+			link.href = chart.export();
+			link.click();
+		});
+
+		render();
+	</script>
+</body>
+</html>

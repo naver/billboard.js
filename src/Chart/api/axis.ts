@@ -105,7 +105,11 @@ const axis = {
 				$$.axis.setLabelText(axisId, labels[axisId]);
 			});
 
-			$$.axis.updateLabels();
+			if ($$.state.isCanvasMode) {
+				$$.renderCanvasFrame?.(undefined, null, false);
+			} else {
+				$$.axis.updateLabels();
+			}
 		}
 
 		["x", "y", "y2"].forEach(v => {

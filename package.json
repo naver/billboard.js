@@ -13,6 +13,11 @@
 			"import": "./dist-esm/index.esm.js",
 			"require": "./dist/billboard.pkgd.js"
 		},
+		"./canvas": {
+			"types": "./types/canvas.d.ts",
+			"import": "./dist-esm/index.canvas.js",
+			"require": "./dist/billboard.pkgd.js"
+		},
 		"./dist/plugin/*": {
 			"types": "./types/plugin/*.d.ts",
 			"import": "./dist-esm/plugin/*.js",

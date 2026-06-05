@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-import {getRange, isEmpty, isFunction, isString, parseDate} from "../../module/util";
+import {getBBox, getRange, isEmpty, isFunction, isString, parseDate} from "../../module/util";
 
 /**
  * Check if point is in region
@@ -110,6 +110,7 @@ function getCentroid(points) {
 
 export {
 	compareEpochs,
+	getBBox,
 	getCentroid,
 	getRange,
 	getRegionArea,
