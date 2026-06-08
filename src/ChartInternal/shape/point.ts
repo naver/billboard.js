@@ -10,14 +10,52 @@ import {
 	getBoundingRect,
 	getPointer,
 	getRandom,
-	isFunction,
 	isObject,
 	isUndefined,
 	isValue
 } from "../../module/util";
-import type {IDataPoint, IDataRow} from "../data/IData";
+import type {IDataRow} from "../data/IData";
 
 const getTransitionName = () => getRandom();
+const pointBBoxCache = new WeakMap<
+	SVGElement,
+	{
+		attrHeight: string | null,
+		attrWidth: string | null,
+		height: number,
+		href: string | null,
+		width: number
+	}
+>();
+
+/**
+ * Get cached dimensions for non-circle point elements.
+ * @param {SVGElement} node Point element
+ * @returns {object} Width/height pair
+ * @private
+ */
+function getPointBBox(node: SVGElement): {width: number, height: number} {
+	const attrHeight = node.getAttribute("height");
+	const attrWidth = node.getAttribute("width");
+	const href = node.getAttribute("href") || node.getAttribute("xlink:href");
+	const cached = pointBBoxCache.get(node);
+
+	if (
+		cached &&
+		cached.attrHeight === attrHeight &&
+		cached.attrWidth === attrWidth &&
+		cached.href === href
+	) {
+		return cached;
+	}
+
+	const {width, height} = getBBox(node);
+	const bbox = {attrHeight, attrWidth, height, href, width};
+
+	pointBBoxCache.set(node, bbox);
+
+	return bbox;
+}
 
 export default {
 	initialOpacityForCircle(d): string | number | null {
@@ -111,7 +149,7 @@ export default {
 				const parent = d3Select(this.parentNode);
 
 				// if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
-				return parent.attr("class").indexOf($CIRCLE.chartCircles) > -1 ? "0" : null;
+				return parent.classed($CIRCLE.chartCircles) ? "0" : null;
 			});
 
 		// Update date for selected circles
@@ -147,15 +185,17 @@ export default {
 
 			circles.exit().remove();
 
+			const pointR = $$.pointR.bind($$);
+			const updateCircleColor = $$.updateCircleColor.bind($$);
+			const initialOpacityForCircle = $$.initialOpacityForCircle.bind($$);
+
 			circles.enter()
 				.filter(Boolean)
-				.append(
-					$$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$))
-				);
+				.append($$.point("create", this, pointR, updateCircleColor));
 
 			$root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`)
 				.style("stroke", $$.getStylePropValue($$.color))
-				.style("opacity", $$.initialOpacityForCircle.bind($$));
+				.style("opacity", initialOpacityForCircle);
 		}
 	},
 
@@ -182,12 +222,50 @@ export default {
 			return [];
 		}
 
-		const fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition,
-			flow, selectedCircles);
 		const posAttr = $$.isCirclePoint() ? "c" : "";
-
 		const t = getRandom();
 		const opacityStyleFn = $$.opacityForCircle.bind($$);
+
+		// For standard circle type, batch the update across all circles in one pass
+		if ($$.isCirclePoint()) {
+			const sel = $root.circle;
+
+			if ($$.hasType("bubble")) {
+				sel.attr("r", $$.pointR.bind($$));
+			}
+
+			if (withTransition) {
+				flow && sel.attr("cx", cx);
+
+				// Only animate circles that already have a position; new circles jump directly
+				// to avoid them sliding in from the origin (cx=0).
+				// Use a distinct transition name from the opacity transition below —
+				// reusing the same name would interrupt the cx/cy transition before
+				// it can commit, leaving circles stranded at their old scale positions.
+				$T(sel.filter(function() {
+					return !!this.getAttribute("cx");
+				}), true, `${t}-pos`)
+					.attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+
+				sel.filter(function() {
+					return !this.getAttribute("cx");
+				})
+					.attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+			} else {
+				sel.attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+			}
+
+			const result = $T(sel, withTransition || !rendered, t)
+				.style("opacity", opacityStyleFn);
+
+			return [
+				[result],
+				$T(selectedCircles, withTransition).attr("cx", cx).attr("cy", cy)
+			];
+		}
+
+		const fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition,
+			flow, selectedCircles);
 		const mainCircles: any[] = [];
 
 		$root.circle.each(function(d) {
@@ -265,23 +343,6 @@ export default {
 		}
 	},
 
-	circleX(d): number | null {
-		return this.xx(d);
-	},
-
-	updateCircleY(isSub = false): Function {
-		const $$ = this;
-		const getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), isSub);
-
-		return (d, i) => {
-			const id = d.id;
-
-			return $$.isGrouped(id) ?
-				getPoints(d, i)[0][1] :
-				$$.getYScaleById(id, isSub)($$.getBaseValue(d));
-		};
-	},
-
 	expandCircles(i: number, id: string, reset?: boolean): void {
 		const $$ = this;
 		const r = $$.pointExpandedR.bind($$);
@@ -302,7 +363,7 @@ export default {
 				if (this.tagName === "circle") {
 					point.attr("r", r);
 				} else {
-					const {width, height} = getBBox(this);
+					const {width, height} = getPointBBox(this);
 					const x = ratio * (+point.attr("x") + width / 2);
 					const y = ratio * (+point.attr("y") + height / 2);
 
@@ -331,52 +392,6 @@ export default {
 		}
 	},
 
-	pointR(d): number {
-		const $$ = this;
-		const {config} = $$;
-		const pointR = config.point_r;
-		let r = pointR;
-
-		if ($$.isBubbleType(d)) {
-			r = $$.getBubbleR(d);
-		} else if (isFunction(pointR)) {
-			r = pointR.bind($$.api)(d);
-		}
-
-		d.r = r;
-
-		return r;
-	},
-
-	pointExpandedR(d): number {
-		const $$ = this;
-		const {config} = $$;
-		const scale = $$.isBubbleType(d) ? 1.15 : 1.75;
-
-		return config.point_focus_expand_enabled ?
-			(config.point_focus_expand_r || $$.pointR(d) * scale) :
-			$$.pointR(d);
-	},
-
-	pointSelectR(d): number {
-		const $$ = this;
-		const selectR = $$.config.point_select_r;
-
-		return isFunction(selectR) ? selectR(d) : (selectR || $$.pointR(d) * 4);
-	},
-
-	/**
-	 * Check if point.focus.only option can be applied.
-	 * @returns {boolean}
-	 * @private
-	 */
-	isPointFocusOnly(): boolean {
-		const $$ = this;
-
-		return $$.config.point_focus_only &&
-			!$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
-	},
-
 	isWithinCircle(node: SVGElement, r?: number): boolean {
 		const {state} = this;
 		const mouse = getPointer(state.event, node);
@@ -398,26 +413,6 @@ export default {
 		return Math.sqrt(
 			Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)
 		) < (r || pointSensitivity);
-	},
-
-	/**
-	 * Get data point sensitivity radius
-	 * @param {object} d Data point object
-	 * @returns {number} return the sensitivity value
-	 */
-	getPointSensitivity(d: IDataPoint) {
-		const $$ = this;
-		let sensitivity = $$.config.point_sensitivity;
-
-		if (!d) {
-			return sensitivity;
-		} else if (isFunction(sensitivity)) {
-			sensitivity = sensitivity.call($$.api, d);
-		} else if (sensitivity === "radius") {
-			sensitivity = d.r;
-		}
-
-		return sensitivity;
 	},
 
 	updatePointClass(d) {
@@ -442,41 +437,6 @@ export default {
 		return pointClass;
 	},
 
-	generateGetLinePoints(lineIndices, isSub?: boolean): Function { // partial duplication of generateGetBarPoints
-		const $$ = this;
-		const {config} = $$;
-		const x = $$.getShapeX(0, lineIndices, isSub);
-		const y = $$.getShapeY(isSub);
-		const lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub);
-		const yScale = $$.getYScaleById.bind($$);
-
-		return (d, i) => {
-			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
-			const offset = lineOffset(d, i) || y0; // offset is for stacked area chart
-			const posX = x(d);
-			let posY = y(d);
-
-			// fix posY not to overflow opposite quadrant
-			if (
-				config.axis_rotated && (
-					(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
-				)
-			) {
-				posY = y0;
-			}
-
-			// 1 point that marks the line position
-			const point = [posX, posY - (y0 - offset)];
-
-			return [
-				point,
-				point, // from here and below, needed for compatibility
-				point,
-				point
-			];
-		};
-	},
-
 	custom: {
 		create(element, id, fillStyleFn) {
 			return element.append("use")
@@ -488,7 +448,7 @@ export default {
 
 		update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
 			const $$ = this;
-			const {width, height} = getBBox(element.node());
+			const {width, height} = getPointBBox(element.node());
 
 			const xPosFn2 = d => (isValue(d.value) ? xPosFn(d) - width / 2 : 0);
 			const yPosFn2 = d => (isValue(d.value) ? yPosFn(d) - height / 2 : 0);

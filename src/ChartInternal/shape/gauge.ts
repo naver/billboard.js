@@ -81,10 +81,10 @@ export default {
 				let y = 0;
 				let transform = "";
 
-				if (hiddenTargetIds.indexOf(d.data.id) < 0) {
+				if (!hiddenTargetIds.has(d.data.id)) {
 					const updated = $$.updateAngle(d);
 					const innerLineLength = state.gaugeArcWidth /
-						$$.filterTargetsToShow($$.data.targets).length *
+						$$.getTargetsToShow().length *
 						(updated.index + 1);
 					const lineAngle = updated.endAngle - Math.PI / 2;
 					const arcInnerRadius = state.radius - innerLineLength;
@@ -122,8 +122,6 @@ export default {
 	},
 
 	getPaddingBottomForGauge() {
-		const $$ = this;
-
-		return $$.getGaugeLabelHeight() * ($$.config.gauge_label_show ? 2 : 2.5);
+		return this.getGaugeLabelHeight() * 2;
 	}
 };

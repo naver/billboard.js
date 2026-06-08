@@ -6,6 +6,7 @@
 import {select as d3Select} from "d3-selection";
 import type {d3Selection} from "../../../types/types";
 import {$COMMON} from "../../config/classes";
+import {AXIS_TICK_LENGTH, AXIS_TICK_PADDING, AXIS_TICK_SIZE} from "../../config/const";
 import {isArray, isFunction, isNumber, isString, toArray} from "../../module/util";
 import Helper from "./AxisRendererHelper";
 
@@ -14,21 +15,21 @@ export default class AxisRenderer {
 	private config;
 	private params;
 	private g;
-	private generatedTicks: (Date | number)[];
+	private generatedTicks: (Date | number)[] = [];
 
 	constructor(params: any = {}) {
 		const config = {
-			innerTickSize: 6,
-			outerTickSize: params.outerTick ? 6 : 0,
+			innerTickSize: AXIS_TICK_SIZE,
+			outerTickSize: params.outerTick ? AXIS_TICK_SIZE : 0,
 			orient: "bottom",
 			range: [],
 			tickArguments: null,
 			tickCentered: null,
 			tickCulling: true,
 			tickFormat: null,
-			tickLength: 9,
+			tickLength: AXIS_TICK_LENGTH,
 			tickOffset: 0,
-			tickPadding: 3,
+			tickPadding: AXIS_TICK_PADDING,
 			tickValues: null,
 			transition: null,
 			noTransition: params.noTransition
@@ -537,26 +538,29 @@ export default class AxisRenderer {
 		let interval;
 
 		if (this.params.isCategory) {
-			interval = tickOffset * 2;
+			const scale = this.params.owner.scale.zoom ?? this.helper.scale;
+
+			interval = tickOffset * 2 || Math.abs(scale(1) - scale(0));
 		} else {
 			const scale = this.params.owner.scale.zoom ?? this.helper.scale;
-			const length = this.g.select("path.domain")
-				.node()
-				.getTotalLength() - outerTickSize * 2;
+			const length = this.g ?
+				this.g.select("path.domain")
+					.node()
+					.getTotalLength() - outerTickSize * 2 :
+				Math.abs(scale.range()[1] - scale.range()[0]);
 
-			interval = length / (size || this.g.selectAll("line").size());
+			interval = length / (size || this.g?.selectAll("line").size() || 1);
 
 			// get the interval by its values
-			const intervalByValue = tickValues ?
-				tickValues
-					.map((v, i, arr) => {
-						const next = i + 1;
+			if (tickValues) {
+				for (let i = 0; i < tickValues.length - 1; i++) {
+					const intervalByValue = scale(tickValues[i + 1]) - scale(tickValues[i]);
 
-						return next < arr.length ? scale(arr[next]) - scale(v) : null;
-					}).filter(Boolean) :
-				[];
-
-			interval = Math.min(...intervalByValue, interval);
+					if (intervalByValue && intervalByValue < interval) {
+						interval = intervalByValue;
+					}
+				}
+			}
 		}
 
 		return interval === Infinity ? 0 : interval;

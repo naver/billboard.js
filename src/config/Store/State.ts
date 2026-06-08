@@ -42,6 +42,15 @@ export default class State {
 			hasFunnel: false,
 			hasRadar: false,
 			hasTreemap: false,
+			isCanvasMode: false,
+			canvasSubchartBrushDragging: false,
+			canvasSubchartBrushMode: <"select" | "move" | "resize-start" | "resize-end" | null>null,
+			canvasSubchartBrushStart: <number | null>null,
+			canvasSubchartBrushOrigin: <[number, number] | null>null,
+			canvasSubchartBrushMoved: false,
+			canvasFlowFrame: <number | null>null,
+			canvasFlowFinish: <(() => void) | null>null,
+			canvasFocusMainRedraw: false,
 
 			// for data CSS rule index (used when boost.useCssRule is true)
 			cssRule: {},
@@ -88,6 +97,16 @@ export default class State {
 			legendItemWidth: 0,
 			legendItemHeight: 0,
 			legendHasRendered: false,
+			canvasInlineStyle: {
+				minHeight: ""
+			},
+			canvasSelection: new Set<string>(),
+			canvasSelectionDragStart: <number[] | null>null,
+			canvasSelectionDragIncluded: new Set<string>(),
+			canvasSelectionDragging: false,
+			canvasSelectionDragMoved: false,
+			canvasSelectionDragMoveHandler: null,
+			canvasSelectionDragEndHandler: null,
 
 			eventReceiver: {
 				currentIdx: -1, // current event interaction index
@@ -148,11 +167,11 @@ export default class State {
 			orgAreaOpacity: "0.2",
 			orgConfig: {}, // user original genration config
 
-			// ID strings
-			hiddenTargetIds: <string[]>[],
-			hiddenLegendIds: <string[]>[],
-			focusedTargetIds: <string[]>[],
-			defocusedTargetIds: <string[]>[],
+			// ID strings (Set for O(1) lookup — see isTargetToShow, classFocused, etc.)
+			hiddenTargetIds: new Set<string>(),
+			hiddenLegendIds: new Set<string>(),
+			focusedTargetIds: new Set<string>(),
+			defocusedTargetIds: new Set<string>(),
 
 			// value for Arc
 			radius: 0,
@@ -188,13 +207,19 @@ export default class State {
 			// Performance: cached values for reuse within redraw cycle
 			_targetsToShow: <any[] | null>null,
 			_cachedDrawShape: <any>null,
+			_canvasVisibleRangeCache: <Map<string, any> | null>null,
+			_canvasXDataTickCache: <any>null,
+			_canvasXTickValuesCache: <Map<string, any> | null>null,
 			_eventRectFingerprint: <string | null>null,
 
 			// Performance: throttle tooltip position updates on mousemove
 			_lastTooltipMouse: <number[] | null>null,
 
 			// Performance: cached grid focus D3 selection
-			_gridFocusEl: <any>null
+			_gridFocusEl: <any>null,
+
+			// Performance: generateClass() result cache (series IDs are fixed per chart)
+			generateClassCache: new Map<string, string>()
 		};
 	}
 }

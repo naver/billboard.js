@@ -9,7 +9,6 @@ import {extend, isFunction, notEmpty} from "../module/util";
 import apiChart from "./api/chart";
 import apiColor from "./api/color";
 import apiData from "./api/data";
-import apiExport from "./api/export";
 import apiFocus from "./api/focus";
 import apiLegend from "./api/legend";
 import apiLoad from "./api/load";
@@ -156,7 +155,6 @@ extend(Chart.prototype, [
 	apiChart,
 	apiColor,
 	apiData,
-	apiExport,
 	apiFocus,
 	apiLegend,
 	apiLoad,

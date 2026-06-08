@@ -132,20 +132,23 @@ export default {
 				color = colors[id];
 			} else {
 				// if not specified, choose from pattern
-				if (ids.indexOf(id) < 0) {
+				let idx = ids.indexOf(id);
+
+				if (idx < 0) {
 					ids.push(id);
+					idx = ids.length - 1;
 				}
 
 				color = isLine ?
-					originalColorPattern[ids.indexOf(id) % originalColorPattern.length] :
-					pattern[ids.indexOf(id) % pattern.length];
+					originalColorPattern[idx % originalColorPattern.length] :
+					pattern[idx % pattern.length];
 
 				colors[id] = color;
 			}
 
 			color = isFunction(callback) ? callback.call($$.api, color, d) : color;
 
-			if (hasGradient) {
+			if (hasGradient && $el.defs) {
 				const stop = $$.$el.defs.selectAll(
 					`[id$='-gradient${$$.getTargetSelectorSuffix(id)}'] stop`
 				);

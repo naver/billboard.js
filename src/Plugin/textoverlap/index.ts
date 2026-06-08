@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import type {d3Selection} from "billboard.js/types/types";
 import {Delaunay as d3Delaunay} from "d3-delaunay";
+import type {d3Selection} from "../../../types/types";
 import {polygonArea, polygonCentroid} from "../../module/polygon";
 import Plugin from "../Plugin";
 import Options from "./Options";

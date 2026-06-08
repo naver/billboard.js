@@ -205,7 +205,13 @@ function updateTextImage(): void {
 
 			return true;
 		}).each(function(d) {
-			const {url, width, height, pos} = getDataLabelImgUrl.call($$, d);
+			const image = getDataLabelImgUrl.call($$, d);
+
+			if (!image) {
+				return;
+			}
+
+			const {url, width, height, pos} = image;
 
 			if (url) {
 				const parentNode = d3Select(this.parentNode);
@@ -268,9 +274,14 @@ function getDataLabelImgUrl(
  * @param {object} pos Position object
  * @param {number} pos.x X coordinate
  * @param {number} pos.y Y coordinate
+ * @param {DOMRect|SVGRect} textRect Optional cached text dimensions
  * @private
  */
-function updateTextImagePos(textNode: SVGTextElement, pos: {x: number, y: number}): void {
+function updateTextImagePos(
+	textNode: SVGTextElement,
+	pos: {x: number, y: number},
+	textRect?: DOMRect | SVGRect
+): void {
 	const $$ = this;
 	const {config, state: {arcWidth, hasTreemap}} = $$;
 	const isRotated = config.axis_rotated;
@@ -283,18 +294,18 @@ function updateTextImagePos(textNode: SVGTextElement, pos: {x: number, y: number
 	};
 
 	if (!image.empty() && image.node()?.tagName === "image") {
-		const textRect = getBoundingRect(textNode);
+		const textDimension = textRect || getBoundingRect(textNode);
 		const w = +image.attr("width") / 2;
 		const h = +image.attr("height") / 2;
 		let x = pos.x - w;
-		let y = pos.y - h - textRect.height / 2;
+		let y = pos.y - h - textDimension.height / 2;
 
 		if (isRotated) {
 			pos.x += w;
 		} else {
 			if (hasTreemap) {
 				x = -w;
-				y = -(h * 2 + textRect.height);
+				y = -(h * 2 + textDimension.height);
 			}
 
 			// exclude pie & polar type

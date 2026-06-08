@@ -270,10 +270,12 @@ export default {
 		const isRotated = config.axis_rotated;
 		const isMultipleX = $$.isMultipleX();
 
-		// Skip recalculation if scale domain hasn't changed
+		// Skip recalculation if scale domain or visibility hasn't changed
 		const xDomain = xScale?.domain();
 		const fingerprint = xDomain ?
-			`${xDomain[0]}_${xDomain[1]}_${$$.data.targets.length}` :
+			`${xDomain[0]}_${xDomain[1]}_${$$.data.targets.length}_${
+				[...state.hiddenTargetIds].join(",")
+			}` :
 			null;
 
 		if (fingerprint && fingerprint === state._eventRectFingerprint) {
@@ -445,7 +447,7 @@ export default {
 	selectRectForMultipleXs(context: SVGRectElement, triggerEvent = true): void {
 		const $$ = this;
 		const {config, state} = $$;
-		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+		const targetsToShow = $$.getTargetsToShow();
 
 		// do nothing when dragging
 		if (state.dragging || $$.hasArcType(targetsToShow)) {
@@ -479,8 +481,8 @@ export default {
 		// expand points
 		$$.setExpand(closest.index, closest.id, true);
 
-		// Show xgrid focus line
-		$$.showGridFocus(selectedData);
+		// Show xgrid focus line (optional module — grid resolver)
+		$$.showGridFocus?.(selectedData);
 
 		const dist = $$.dist(closest, mouse);
 
@@ -507,11 +509,18 @@ export default {
 	 */
 	unselectRect(): void {
 		const $$ = this;
-		const {$el: {circle, tooltip}} = $$;
+		const {state, $el: {circle, tooltip}} = $$;
 
-		$$.state._lastTooltipMouse = null;
+		state._lastTooltipMouse = null;
+
+		if (state.isCanvasMode) {
+			$$.clearCanvasFocus?.();
+			tooltip && $$.hideTooltip();
+			return;
+		}
+
 		$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", null);
-		$$.hideGridFocus();
+		$$.hideGridFocus?.();
 
 		if (tooltip) {
 			$$.hideTooltip();
@@ -711,7 +720,7 @@ export default {
 	clickHandlerForMultipleXS(ctx): void {
 		const $$ = ctx;
 		const {config, state} = $$;
-		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+		const targetsToShow = $$.getTargetsToShow();
 
 		if ($$.hasArcType(targetsToShow)) {
 			return;

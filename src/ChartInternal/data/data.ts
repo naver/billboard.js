@@ -345,8 +345,8 @@ export default {
 			const data = $$.data.targets.map(t => t.values);
 			const minMax = $$.getMinMaxValue(data);
 
-			let min = [];
-			let max = [];
+			const min: IDataRow[] = [];
+			const max: IDataRow[] = [];
 
 			// Cache the getFilteredDataByValue function calls
 			const {min: minVal, max: maxVal} = minMax;
@@ -356,11 +356,15 @@ export default {
 				const maxData = $$.getFilteredDataByValue(v, maxVal);
 
 				if (minData.length) {
-					min = min.concat(minData);
+					for (let i = 0; i < minData.length; i++) {
+						min.push(minData[i]);
+					}
 				}
 
 				if (maxData.length) {
-					max = max.concat(maxData);
+					for (let i = 0; i < maxData.length; i++) {
+						max.push(maxData[i]);
+					}
 				}
 			});
 
@@ -455,8 +459,8 @@ export default {
 		const {api, state: {hiddenTargetIds}} = $$;
 		let total = 0;
 
-		if (hiddenTargetIds.length) {
-			total = api.data.values.bind(api)(hiddenTargetIds)
+		if (hiddenTargetIds.size) {
+			total = api.data.values.bind(api)([...hiddenTargetIds])
 				.reduce((p, c) => p + c);
 		}
 
@@ -555,11 +559,17 @@ export default {
 	},
 
 	isTargetToShow(targetId): boolean {
-		return this.state.hiddenTargetIds.indexOf(targetId) < 0;
+		return !this.state.hiddenTargetIds.has(targetId);
 	},
 
 	isLegendToShow(targetId): boolean {
-		return this.state.hiddenLegendIds.indexOf(targetId) < 0;
+		return !this.state.hiddenLegendIds.has(targetId);
+	},
+
+	getTargetsToShow(): any[] {
+		const {state} = this;
+
+		return state._targetsToShow ?? this.filterTargetsToShow();
 	},
 
 	filterTargetsToShow(targets?) {
@@ -612,12 +622,9 @@ export default {
 	 */
 	addTargetIds(type: string, targetIds: string[] | string): void {
 		const {state} = this;
-		const ids = (isArray(targetIds) ? targetIds : [targetIds]) as [];
+		const ids = (isArray(targetIds) ? targetIds : [targetIds]) as string[];
 
-		ids.forEach(v => {
-			state[type].indexOf(v) < 0 &&
-				state[type].push(v);
-		});
+		ids.forEach(v => state[type].add(v));
 	},
 
 	/**
@@ -628,13 +635,9 @@ export default {
 	 */
 	removeTargetIds(type: string, targetIds: string[] | string): void {
 		const {state} = this;
-		const ids = (isArray(targetIds) ? targetIds : [targetIds]) as [];
+		const ids = (isArray(targetIds) ? targetIds : [targetIds]) as string[];
 
-		ids.forEach(v => {
-			const index = state[type].indexOf(v);
-
-			index >= 0 && state[type].splice(index, 1);
-		});
+		ids.forEach(v => state[type].delete(v));
 	},
 
 	addHiddenTargetIds(targetIds: string[]): void {
@@ -777,7 +780,7 @@ export default {
 	},
 
 	filterByX(targets, x) {
-		return mergeArray(targets.map(t => t.values)).filter(v => v.x - x === 0);
+		return this.getValuesByX(targets).get(this.getXCacheKey(x)) || [];
 	},
 
 	filterNullish(data) {
@@ -880,9 +883,37 @@ export default {
 	getDataLabelLength(min: number, max: number, key: "width" | "height"): number[] {
 		const $$ = this;
 		const paddingCoef = 1.3;
+		const values = [min, max].map(v => $$.dataLabelFormat()(v));
+
+		if ($$.config.render_mode === "canvas" && !$$.$el.svg) {
+			const chart = $$.$el.chart?.node?.();
+			const doc = chart?.ownerDocument;
+			const svg = doc?.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+			if (chart && svg) {
+				const texts = values.map(value => {
+					const text = doc.createElementNS("http://www.w3.org/2000/svg", "text");
+
+					text.textContent = value;
+					svg.appendChild(text);
+
+					return text;
+				});
+
+				svg.style.cssText =
+					"position:absolute;visibility:hidden;left:-10000px;top:-10000px;";
+				chart.appendChild(svg);
+
+				const lengths = texts.map(text => text.getBoundingClientRect()[key] * paddingCoef);
+
+				svg.remove();
+
+				return lengths;
+			}
+		}
 
 		return $$.getTextRect(
-			[min, max].map(v => $$.dataLabelFormat()(v))
+			values
 		)?.map((rect: DOMRect) => rect[key] * paddingCoef) || [0, 0];
 	},
 
@@ -918,18 +949,179 @@ export default {
 		return sames;
 	},
 
-	findClosestFromTargets(targets, pos: [number, number]): IDataRow | undefined {
-		const $$ = this;
-		const candidates = targets.map(target => $$.findClosest(target.values, pos)); // map to array of closest points of each target
-
-		// decide closest point and return
-		return $$.findClosest(candidates, pos);
+	/**
+	 * Get normalized x value cache key.
+	 * @param {Date|number|string} x X value
+	 * @returns {number|string} Cache key value
+	 * @private
+	 */
+	getXCacheKey(x: Date | number | string): number | string {
+		return isString(x) ? x : +x;
 	},
 
-	findClosest(values, pos: [number, number]): IDataRow | undefined {
+	/**
+	 * Get data rows grouped by x value.
+	 * @param {Array} targets Data targets
+	 * @returns {Map} X-value keyed data rows
+	 * @private
+	 */
+	getValuesByX(targets): Map<number | string, IDataRow[]> {
+		const $$ = this;
+		const {cache, state} = $$;
+		const targetKey = targets.map(t => {
+			const {values} = t;
+			const first = values[0];
+			const last = values[values.length - 1];
+
+			return `${t.id}:${values.length}:${first ? $$.getXCacheKey(first.x) : ""}:${
+				last ? $$.getXCacheKey(last.x) : ""
+			}`;
+		}).join("|");
+		const cached = cache.get(KEY.valuesByX);
+
+		if (
+			cached &&
+			cached.generation === state.dataGeneration &&
+			cached.targetKey === targetKey
+		) {
+			return cached.value;
+		}
+
+		const valueMap = new Map<number | string, IDataRow[]>();
+
+		for (let i = 0; i < targets.length; i++) {
+			const values = targets[i].values;
+
+			for (let j = 0; j < values.length; j++) {
+				const v = values[j];
+				const x = $$.getXCacheKey(v.x);
+				const rows = valueMap.get(x);
+
+				rows ? rows.push(v) : valueMap.set(x, [v]);
+			}
+		}
+
+		cache.add(KEY.valuesByX, {
+			generation: state.dataGeneration,
+			targetKey,
+			value: valueMap
+		});
+
+		return valueMap;
+	},
+
+	/**
+	 * Get candidate values near the current pointer position.
+	 * @param {Array} values Data values
+	 * @param {Array} pos Pointer position
+	 * @param {boolean} useSortedIndex Whether values are sorted target values
+	 * @returns {Array} Candidate values
+	 * @private
+	 */
+	getClosestCandidates(values, pos: [number, number], useSortedIndex = true): IDataRow[] {
+		const $$ = this;
+		const {config, scale} = $$;
+		const len = values.length;
+		const first = values[0];
+
+		if (!useSortedIndex || len < 200 || !first || !config.data_xSort) {
+			return values;
+		}
+
+		const isBar = $$.isBarType(first.id);
+		const isCandle = $$.isCandlestickType(first.id);
+		const sensitivity = config.point_sensitivity;
+
+		if (!(isBar || isCandle) && !isNumber(sensitivity)) {
+			return values;
+		}
+
+		const xScale = scale.zoom || scale.x;
+		const pointerX = pos[+config.axis_rotated];
+		const isAscending = xScale(values[0].x) <= xScale(values[len - 1].x);
+		let start = 0;
+		let end = len - 1;
+
+		while (start < end) {
+			const mid = (start + end) >> 1;
+			const x = xScale(values[mid].x);
+
+			if (isAscending ? x < pointerX : x > pointerX) {
+				start = mid + 1;
+			} else {
+				end = mid;
+			}
+		}
+
+		const candidates: IDataRow[] = [];
+		const visited = new Set<number>();
+		const add = (index: number) => {
+			if (index >= 0 && index < len && !visited.has(index)) {
+				visited.add(index);
+				candidates.push(values[index]);
+			}
+		};
+		const addSameX = (index: number) => {
+			if (index < 0 || index >= len) {
+				return;
+			}
+
+			const x = $$.getXCacheKey(values[index].x);
+			let i = index;
+
+			while (i >= 0 && $$.getXCacheKey(values[i].x) === x) {
+				add(i--);
+			}
+
+			i = index + 1;
+			while (i < len && $$.getXCacheKey(values[i].x) === x) {
+				add(i++);
+			}
+		};
+
+		if (isBar || isCandle) {
+			for (let i = start - 2; i <= start + 2; i++) {
+				addSameX(i);
+			}
+		} else {
+			const maxDx = sensitivity as number;
+			const scan = (index: number, direction: number) => {
+				for (let i = index; i >= 0 && i < len; i += direction) {
+					const v = values[i];
+
+					if (Math.abs(xScale(v.x) - pointerX) > maxDx) {
+						break;
+					}
+
+					add(i);
+				}
+			};
+
+			scan(start, 1);
+			scan(start - 1, -1);
+		}
+
+		return candidates;
+	},
+
+	findClosestFromTargets(targets, pos: [number, number]): IDataRow | undefined {
+		const $$ = this;
+		const candidates: IDataRow[] = [];
+
+		for (let i = 0; i < targets.length; i++) {
+			const closest = $$.findClosest(targets[i].values, pos);
+
+			closest && candidates.push(closest);
+		}
+
+		// decide closest point and return
+		return $$.findClosest(candidates, pos, false);
+	},
+
+	findClosest(values, pos: [number, number], useSortedIndex = true): IDataRow | undefined {
 		const $$ = this;
 		const {$el: {main}} = $$;
-		const data = values.filter(v => v && isValue(v.value));
+		const data = $$.getClosestCandidates(values, pos, useSortedIndex);
 
 		let minDist;
 		let closest;
@@ -938,6 +1130,11 @@ export default {
 		// https://github.com/naver/billboard.js/issues/2434
 		for (let i = 0; i < data.length; i++) {
 			const v = data[i];
+
+			if (!v || !isValue(v.value)) {
+				continue;
+			}
+
 			const isBar = $$.isBarType(v.id);
 			const isCandle = $$.isCandlestickType(v.id);
 
@@ -1148,9 +1345,9 @@ export default {
 					return ratio;
 				}
 
-				if (hiddenTargetIds.length) {
+				if (hiddenTargetIds.size) {
 					// When normalized per group, only subtract hidden data from the same group
-					let hiddenIds = hiddenTargetIds;
+					let hiddenIds: string[] = [...hiddenTargetIds];
 
 					if ($$.isStackNormalizedPerGroup() && d.id) {
 						const group = config.data_groups.find(g => g.indexOf(d.id) >= 0);

@@ -53,7 +53,10 @@ const bbPlugins = readdirSync(resolvePath("../src/Plugin/"), {
 
 export default [
     {
-        input: "src/index.esm.ts",
+        input: [
+            "src/index.esm.ts",
+            "src/index.canvas.ts"
+        ],
         output: {
             dir: distPath,
             format: "es",

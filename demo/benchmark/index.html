@@ -48,7 +48,12 @@
 	<input type="checkbox" id="useWorker" /> boost.useWorker
   </p>
   <p>
-	6) Run! - 
+	6) Render mode:
+	<label><input type="radio" name="render-mode" value="svg" checked> svg</label>
+	<label><input type="radio" name="render-mode" value="canvas"> canvas</label>
+  </p>
+  <p>
+	7) Run! -
 	<button onclick="bench.generate()">Generate only</button> 
 	<button onclick="bench.generate('load')">Load Start</button> 
 	<button onclick="bench.generate('resize')">Resize Start</button> 

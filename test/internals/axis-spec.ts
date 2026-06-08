@@ -3341,6 +3341,42 @@ describe("AXIS", function() {
 			checkTickValues();
 		});
 
+		it("should cull overlapped x tick lines with x tick text", () => {
+			chart.destroy();
+			chart = util.generate({
+				size: {
+					width: 360,
+					height: 240
+				},
+					data: {
+						columns: [
+							["data1", ...Array.from({length: 500}, (_, i) => i)]
+						]
+					},
+				axis: {
+					x: {
+						tick: {
+							culling: {
+								max: 10
+							}
+						}
+					}
+				}
+			});
+
+			const tickNodes = chart.internal.$el.axis.x.selectAll(".tick");
+			const visibleTicks = tickNodes.filter(function() {
+				return this.style.display !== "none";
+			});
+
+			expect(tickNodes.size()).to.be.equal(500);
+			expect(visibleTicks.size()).to.be.lessThan(30);
+
+			visibleTicks.each(function() {
+				expect(d3Select(this).select("line").empty()).to.be.false;
+			});
+		});
+
 		it("set options axis.rotated=true", () => {
 			args.axis.rotated = true;
 		});

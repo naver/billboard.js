@@ -2,10 +2,23 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import type {RegionOptions} from "../../../types/options";
 import {$REGION} from "../../config/classes";
 import {extend, getOption, isTabVisible} from "../../module/util";
 
-type RegionsParam = {axis?: "add" | "update", class?: string, start?: number, end?: number}[];
+type RegionsParam = RegionOptions[];
+type RegionsAddParam = RegionOptions | RegionOptions[];
+type RegionsRemoveParam = {classes?: string[]};
+
+/**
+ * Redraw canvas after region API mutation.
+ * @param {object} $$ ChartInternal instance
+ * @private
+ */
+function redrawCanvasRegions($$): void {
+	$$.state.canvasShape = null;
+	$$.renderCanvasFrame?.(undefined, null, false);
+}
 
 /**
  * Region add/update function
@@ -14,7 +27,7 @@ type RegionsParam = {axis?: "add" | "update", class?: string, start?: number, en
  * @returns {Array} regions
  * @private
  */
-function regionsFn(regions: RegionsParam, isAdd = false): RegionsParam {
+function regionsFn(regions: RegionsParam | RegionsAddParam, isAdd = false): RegionsParam {
 	const $$ = this.internal;
 	const {config} = $$;
 	const withTransition = config.transition_duration && isTabVisible();
@@ -23,12 +36,18 @@ function regionsFn(regions: RegionsParam, isAdd = false): RegionsParam {
 		return config.regions;
 	}
 
-	config.regions = isAdd ? config.regions.concat(regions) : regions;
+	config.regions = isAdd ? config.regions.concat(regions) : regions as RegionsParam;
+
+	if ($$.state.isCanvasMode) {
+		redrawCanvasRegions($$);
+
+		return config.regions;
+	}
 
 	$$.updateRegion();
 	$$.redrawRegion(withTransition);
 
-	return isAdd ? config.regions : regions;
+	return config.regions;
 }
 
 /**
@@ -94,7 +113,7 @@ extend(regions, {
 	 *    }
 	 * ]);
 	 */
-	add: function(regions: RegionsParam): RegionsParam {
+	add: function(regions: RegionsAddParam): RegionsParam {
 		return regionsFn.bind(this)(regions, true);
 	},
 
@@ -117,20 +136,48 @@ extend(regions, {
 	 * // all of regions will be removed.
 	 * chart.regions.remove();
 	 */
-	remove: function(optionsValue: RegionsParam): RegionsParam {
+	remove: function(optionsValue: RegionsRemoveParam): RegionsParam {
 		const $$ = this.internal;
 		const {config, $T} = $$;
 
 		const options = optionsValue || {};
 		const classes = getOption(options, "classes", [$REGION.region]);
-		let regions = $$.$el.main.select(`.${$REGION.regions}`)
+		let regions = config.regions;
+
+		if ($$.state.isCanvasMode) {
+			if (Object.keys(options).length) {
+				regions = regions.filter(region => {
+					let found = false;
+
+					if (!region.class) {
+						return true;
+					}
+
+					region.class.split(" ").forEach(c => {
+						if (classes.indexOf(c) >= 0) {
+							found = true;
+						}
+					});
+
+					return !found;
+				});
+
+				config.regions = regions;
+			} else {
+				config.regions = [];
+			}
+
+			redrawCanvasRegions($$);
+
+			return config.regions;
+		}
+
+		const regionNodes = $$.$el.main.select(`.${$REGION.regions}`)
 			.selectAll(classes.map(c => `.${c}`));
 
-		$T(regions)
+		$T(regionNodes)
 			.style("opacity", "0")
 			.remove();
-
-		regions = config.regions;
 
 		if (Object.keys(options).length) {
 			regions = regions.filter(region => {

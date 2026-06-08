@@ -162,7 +162,7 @@ function _getRadiusFn(expandRate = 0) {
 	const $$ = this;
 	const {config, state} = $$;
 	const hasMultiArcGauge = $$.hasMultiArcGauge();
-	const singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
+	const singleArcWidth = state.gaugeArcWidth / $$.getTargetsToShow().length;
 	const expandWidth = expandRate ?
 		(
 			Math.min(
@@ -304,7 +304,7 @@ export default {
 		const dataType = config.data_type;
 		const padding = config[`${dataType}_padding`];
 		const w = config.gauge_width || config.donut_width;
-		const gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length *
+		const gaugeArcWidth = $$.getTargetsToShow().length *
 			config.gauge_arcs_minWidth;
 
 		// Radius reduction ratio when labels are present
@@ -485,7 +485,7 @@ export default {
 		const $$ = this;
 		const {inner, outer, corner} = _getRadiusFn.call($$);
 
-		const arc = d3Arc()
+		const arc = d3Arc<any, IArcData>()
 			.innerRadius(inner)
 			.outerRadius(outer);
 
@@ -521,7 +521,7 @@ export default {
 		const $$ = this;
 		const {inner, outer, corner} = _getRadiusFn.call($$, rate);
 
-		const arc = d3Arc()
+		const arc = d3Arc<any, IArcData>()
 			.innerRadius(inner)
 			.outerRadius(outer);
 
@@ -534,7 +534,7 @@ export default {
 				cornerR = corner(updated, outerR);
 			}
 
-			return updated ? <string>arc.cornerRadius(cornerR)(updated) : "M 0 0";
+			return updated ? arc.cornerRadius(cornerR)(updated) || "M 0 0" : "M 0 0";
 		};
 	},
 
@@ -1036,7 +1036,7 @@ export default {
 		const $$ = this;
 		const {$el, config, state: {hiddenTargetIds, radius}} = $$;
 		const length = (radius - 1) / 100 * config.arc_needle_length;
-		const hasDataToShow = hiddenTargetIds.length !== $$.data.targets.length;
+		const hasDataToShow = hiddenTargetIds.size !== $$.data.targets.length;
 		let needle = $$.$el.arcs.select(`.${$ARC.needle}`);
 
 		// needle options
@@ -1139,7 +1139,7 @@ export default {
 		const {config, state} = $$;
 		const hasMultiArcGauge = $$.hasMultiArcGauge();
 		const isFullCircle = config.gauge_fullCircle;
-		const showEmptyTextLabel = $$.filterTargetsToShow($$.data.targets).length === 0 &&
+		const showEmptyTextLabel = $$.getTargetsToShow().length === 0 &&
 			!!config.data_empty_label_text;
 
 		const startAngle = $$.getStartingAngle();
@@ -1163,7 +1163,7 @@ export default {
 				.merge(backgroundArc)
 				.style("fill", (config.gauge_background) || null)
 				.attr("d", ({id}) => {
-					if (showEmptyTextLabel || state.hiddenTargetIds.indexOf(id) >= 0) {
+					if (showEmptyTextLabel || state.hiddenTargetIds.has(id)) {
 						return "M 0 0";
 					}
 

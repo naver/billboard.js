@@ -45,7 +45,6 @@ import Plugin from "../Plugin";
 
 export default class BubbleCompare extends Plugin {
 	static version = `0.0.1`;
-	public $$;
 
 	constructor(options) {
 		super(options);

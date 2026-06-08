@@ -51,8 +51,65 @@ export default {
 		const durationForExit = wth.TransitionForExit ? duration : 0;
 		const durationForAxis = wth.TransitionForAxis ? duration : 0;
 		const transitions = $$.axis?.generateTransitions(durationForAxis);
+		// Shape DOM updates (D3 data join: enter/update/exit) are only needed when data or
+		// visibility changes. Zoom/brush only need redraw*() (position recalculation via
+		// getRedrawList), not update*(). New APIs that modify data must set dirty flags.
+		const needShapeUpdate = dirtySnapshot.data || dirtySnapshot.visibility || initializing;
+
+		if (state.isCanvasMode) {
+			$$.setContainerSize();
+			$$.updateHtmlLegend?.();
+		}
 
 		$$.updateSizes(initializing);
+
+		if (state.isCanvasMode) {
+			const zoomScale = $$.scale.zoom;
+			const zoomDomain = zoomScale?.domain();
+
+			zoomScale && ($$.scale.zoom = null);
+			$$.updateScales(initializing, wth.UpdateXDomain);
+
+			if (zoomScale) {
+				zoomScale.range($$.scale.x.range());
+				zoomDomain && zoomScale.domain(zoomDomain);
+				$$.scale.zoom = $$.getCustomizedXScale(zoomScale);
+				$$.axis.x.scale($$.scale.zoom);
+				$$.scale.x.domain(config.zoom_rescale ? zoomDomain : $$.org.xDomain);
+				$$.scale.subX.domain($$.org.xDomain);
+			}
+
+			state.hasAxis && $$.axis.syncAxisDomains(targetsToShow, wth, flow);
+			state.hasAxis && $$.applyCanvasSubchartDomain?.();
+
+			const shape = needShapeUpdate ?
+				$$.getDrawShape() :
+				(state._cachedDrawShape || $$.getDrawShape());
+
+			if (needShapeUpdate) {
+				state._cachedDrawShape = shape;
+			}
+
+			$$.updateHtmlLegend?.();
+			$$.resizeCanvas?.();
+
+			state.canvasFocusKey = null;
+			$$.renderCanvasFrame(shape, null, true);
+
+			initializing && $$.updateTypesElements();
+			$$.callPluginHook("$redraw", options, 0);
+
+			state.redrawing = false;
+			state._targetsToShow = null;
+			state._cachedDrawShape = null;
+
+			$$.mapToIds($$.data.targets).forEach(id => {
+				state.withoutFadeIn[id] = true;
+			});
+
+			callFn(config.onrendered, $$.api);
+			return;
+		}
 
 		// update legend and transform each g
 		if (wth.Legend && config.legend_show) {
@@ -74,21 +131,16 @@ export default {
 		// title - position early so other elements can calculate correct padding
 		$$.redrawTitle?.();
 
-		// Shape DOM updates (D3 data join: enter/update/exit) are only needed when data or
-		// visibility changes. Zoom/brush only need redraw*() (position recalculation via
-		// getRedrawList), not update*(). New APIs that modify data must set dirty flags.
-		const needShapeUpdate = dirtySnapshot.data || dirtySnapshot.visibility || initializing;
-
 		// update axis
 		if (state.hasAxis) {
 			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
 			$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
 
-			// grid
-			$$.hasGrid() && $$.updateGrid();
+			// grid (optional module — guarded for tree-shakable grid resolver)
+			$$.hasGrid?.() && $$.updateGrid();
 
-			// rect for regions
-			config.regions.length && $$.updateRegion();
+			// rect for regions (optional module — updateRegion installed by regions resolver)
+			config.regions.length && $$.updateRegion?.();
 
 			["bar", "candlestick", "line", "area"].forEach(v => {
 				const name = capitalize(v);
@@ -231,11 +283,11 @@ export default {
 		const list: Function[] = [];
 
 		if (hasAxis) {
-			if (config.grid_x_lines.length || config.grid_y_lines.length) {
+			if ($$.redrawGrid && (config.grid_x_lines.length || config.grid_y_lines.length)) {
 				list.push($$.redrawGrid(withTransition));
 			}
 
-			if (config.regions.length) {
+			if ($$.redrawRegion && config.regions.length) {
 				list.push($$.redrawRegion(withTransition));
 			}
 
@@ -248,7 +300,7 @@ export default {
 				}
 			}
 
-			!flow && grid.main && list.push($$.updateGridFocus());
+			!flow && grid.main && $$.updateGridFocus && list.push($$.updateGridFocus());
 		}
 
 		if (!$$.hasArcType() || hasRadar) {

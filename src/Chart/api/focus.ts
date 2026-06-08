@@ -47,8 +47,8 @@ export default {
 
 		$$.toggleFocusLegend(targetIds, true);
 
-		state.focusedTargetIds = targetIds;
-		state.defocusedTargetIds = state.defocusedTargetIds.filter(id => targetIds.indexOf(id) < 0);
+		state.focusedTargetIds = new Set(targetIds);
+		targetIds.forEach(id => state.defocusedTargetIds.delete(id));
 	},
 
 	/**
@@ -87,8 +87,8 @@ export default {
 
 		$$.toggleFocusLegend(targetIds, false);
 
-		state.focusedTargetIds = state.focusedTargetIds.filter(id => targetIds.indexOf(id) < 0);
-		state.defocusedTargetIds = targetIds;
+		targetIds.forEach(id => state.focusedTargetIds.delete(id));
+		state.defocusedTargetIds = new Set(targetIds);
 	},
 
 	/**
@@ -127,7 +127,7 @@ export default {
 				.classed($FOCUS.legendItemFocused, false);
 		}
 
-		state.focusedTargetIds = [];
-		state.defocusedTargetIds = [];
+		state.focusedTargetIds = new Set();
+		state.defocusedTargetIds = new Set();
 	}
 };

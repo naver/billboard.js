@@ -340,6 +340,36 @@ describe("API zoom", function() {
 		});
 	});
 
+	describe("zoom on non-axis chart", () => {
+		it("should not enable zoom for treemap", () => {
+			const treemapChart = util.generate({
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50]
+					],
+					type: "treemap"
+				},
+				zoom: {
+					enabled: true
+				},
+				transition: {
+					duration: 0
+				}
+			});
+
+			expect(() => treemapChart.zoom()).to.not.throw();
+			expect(treemapChart.zoom()).to.be.undefined;
+
+			treemapChart.zoom.enable(true);
+
+			expect(treemapChart.internal.config.zoom_enabled).to.be.false;
+			expect(treemapChart.internal.zoom).to.be.undefined;
+
+			treemapChart.destroy();
+		});
+	});
+
 	describe("zoom.min/max/range()", () => {
 		chart = util.generate({
 			data: {

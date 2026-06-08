@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {$TEXT} from "../../config/classes";
-import {getBBox, getElementPos, isNumber, setTextValue} from "../../module/util";
+import {getBBox, getBoundingRect, getElementPos, isNumber, setTextValue} from "../../module/util";
 
 /**
  * Get the text position
@@ -22,6 +22,43 @@ function _getTextXPos(pos = "left", width?: number): number | "start" | "middle"
 		return isNum ? width : "end";
 	}
 	return isNum ? 0 : "start";
+}
+
+/**
+ * Get estimated canvas title height.
+ * @param {object} $$ ChartInternal instance
+ * @returns {number} Title height
+ * @private
+ */
+function _getCanvasTitleHeight($$): number {
+	const {config, $el} = $$;
+	const font = $$.canvasTheme?.style?.title?.font ||
+		$$.canvasTheme?.style?.label?.font ||
+		"14px sans-serif";
+	const chart = $el.chart?.node?.();
+	const doc = chart?.ownerDocument;
+
+	if (chart && doc && config.title_text) {
+		const svg = doc.createElementNS("http://www.w3.org/2000/svg", "svg");
+		const text = doc.createElementNS("http://www.w3.org/2000/svg", "text");
+
+		svg.style.cssText = "position:absolute;visibility:hidden;left:-10000px;top:-10000px;";
+		text.setAttribute("class", $TEXT.title);
+		text.style.font = font;
+		text.textContent = String(config.title_text);
+		svg.appendChild(text);
+		chart.appendChild(svg);
+
+		const height = getBoundingRect(text).height;
+
+		svg.remove();
+
+		if (height) {
+			return height;
+		}
+	}
+
+	return config.title_text ? (parseFloat(font) || 14) : 0;
 }
 
 export default {
@@ -69,9 +106,13 @@ export default {
 	 */
 	getTitlePadding(): number {
 		const $$ = this;
-		const {$el: {title}, config} = $$;
+		const {$el: {title}, config, state} = $$;
 		const paddingTop = config.title_padding.top || 0;
 		const paddingBottom = config.title_padding.bottom || 0;
+
+		if (state.isCanvasMode && config.title_text) {
+			return paddingTop + _getCanvasTitleHeight($$) + paddingBottom;
+		}
 
 		if (!title?.node()) {
 			return paddingTop + paddingBottom;

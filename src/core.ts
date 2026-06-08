@@ -53,43 +53,108 @@ const bb = {
 	 *  // ex) get the data of 'data1'
 	 *  chart.data("data1");
 	 * @example
-	 * // Generate chart by importing ESM
-	 * // Import types to be used only, where this will make smaller bundle size.
+	 * // Generate chart by importing ESM.
+	 * // Import only the shape and API resolvers you use for a smaller bundle.
 	 * import bb, {
-	 *   area,
-	 *   areaLineRange,
-	 *   areaSpline,
-	 *   areaSplineRange,
-	 *   areaStep,
 	 *   bar,
-	 *   bubble,
-	 *   donut,
-	 *   gauge,
+	 *   category,
+	 *   exportApi,
+	 *   flow,
+	 *   grid,
 	 *   line,
-	 *   pie,
-	 *   polar,
-	 *   radar,
-	 *   scatter,
-	 *   spline,
+	 *   regions,
 	 *   step
-	 * }
+	 * } from "billboard.js";
 	 *
-	 * bb.generate({
-	 *      "bindto": "#LineChart"
-	 *      "data": {
-	 *          "columns": [
-	 *              ["data1", 30, 200, 100, 400, 150, 250],
-	 *              ["data2", 50, 20, 10, 40, 15, 25]
-	 *           ]
-	 *      },
-	 *      type: line(),
+	 * const chart = bb.generate({
+	 *   ...category(),
+	 *   ...exportApi(),
+	 *   ...flow(),
+	 *   ...grid(),
+	 *   ...regions(),
+	 *   bindto: "#LineChart",
+	 *   data: {
+	 *     columns: [
+	 *       ["data1", 30, 200, 100, 400, 150, 250],
+	 *       ["data2", 50, 20, 10, 40, 15, 25]
+	 *     ],
+	 *     type: line(),
 	 *
-	 *      // or
-	 *      types: {
-	 *        data1: bar(),
-	 *        data2: step()
-	 *      }
+	 *     // or specify per-series types
+	 *     types: {
+	 *       data1: bar(),
+	 *       data2: step()
+	 *     }
+	 *   },
+	 *   axis: {
+	 *     x: {
+	 *       type: "category",
+	 *       categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
+	 *     }
+	 *   },
+	 *   grid: {
+	 *     x: {show: true}
+	 *   },
+	 *   regions: [
+	 *     {axis: "x", start: "Feb", end: "Apr"}
+	 *   ]
 	 * });
+	 *
+	 * chart.export();
+	 * @example
+	 * // Generate a canvas-rendered chart by importing the canvas ESM entry.
+	 * import bb, {
+	 *   bar,
+	 *   canvas,
+	 *   category,
+	 *   exportApi,
+	 *   flow,
+	 *   grid,
+	 *   regions,
+	 *   subchart
+	 * } from "billboard.js/canvas";
+	 *
+	 * const chart = bb.generate({
+	 *   render: {
+	 *     mode: canvas()
+	 *   },
+	 *   ...category(),
+	 *   ...exportApi(),
+	 *   ...flow(),
+	 *   ...grid(),
+	 *   ...regions(),
+	 *   bindto: "#LineChart",
+	 *   data: {
+	 *     columns: [
+	 *       ["data1", 30, 200, 100, 400]
+	 *     ],
+	 *     type: bar()
+	 *   },
+	 *   axis: {
+	 *     x: {
+	 *       type: "category",
+	 *       categories: ["Jan", "Feb", "Mar", "Apr"]
+	 *     }
+	 *   },
+	 *   grid: {
+	 *     x: {show: true, lines: [{value: "Feb", text: "Milestone"}]},
+	 *     y: {show: true}
+	 *   },
+	 *   regions: [
+	 *     {axis: "x", start: "Feb", end: "Mar", label: {text: "Campaign"}}
+	 *   ],
+	 *   subchart: {
+	 *     show: subchart()
+	 *   }
+	 * });
+	 *
+	 * chart.xgrids([{value: "Mar", text: "API grid"}]);
+	 * chart.regions([{axis: "x", start: "Jan", end: "Feb"}]);
+	 * chart.flow({columns: [["data1", 120]]});
+	 * chart.export();
+	 *
+	 * // Arc-family chart types (`pie`, `donut`, `gauge`, `polar`, `radar`)
+	 * // stay SVG-only because canvas mode doesn't provide meaningful benefit.
 	 */
 	generate(config) {
 		const options = mergeObj(Object.create(null), defaults, config);

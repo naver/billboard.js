@@ -36,8 +36,13 @@ import {extend, getMinMax, isDefined, isObject, parseDate} from "../../module/ut
 const zoom = function<T = TDomainRange>(domainValue?: T): T | undefined {
 	const $$ = this.internal;
 	const {axis, config, org, scale, state} = $$;
-	const isCategorized = axis.isCategorized();
 	let domain;
+
+	if (!axis) {
+		return undefined;
+	}
+
+	const isCategorized = axis.isCategorized();
 
 	if (config.zoom_enabled) {
 		domain = domainValue;
@@ -104,7 +109,12 @@ extend(zoom, {
 	 */
 	enable(enabled: boolean | "wheel" | "drag" | any): void {
 		const $$ = this.internal;
-		const {config} = $$;
+		const {axis, config} = $$;
+
+		if (!axis) {
+			config.zoom_enabled = false;
+			return;
+		}
 
 		if (/^(drag|wheel)$/.test(enabled)) {
 			config.zoom_type = enabled;
@@ -114,9 +124,13 @@ extend(zoom, {
 
 		if (!$$.zoom) {
 			$$.initZoom();
-			$$.bindZoomEvent();
 		} else if (enabled === false) {
 			$$.bindZoomEvent(false);
+		}
+
+		if (enabled !== false) {
+			config.zoom_type === "drag" && !$$.zoomBehaviour && $$.initZoomBehaviour?.();
+			$$.bindZoomEvent();
 		}
 
 		$$.updateAndRedraw();
@@ -214,7 +228,8 @@ export default {
 	 */
 	unzoom(): void {
 		const $$ = this.internal;
-		const {config, $el: {eventRect, zoomResetBtn}, scale: {zoom}, state} = $$;
+		const {config, $el: {canvas, eventRect, zoomResetBtn}, scale: {zoom}, state} = $$;
+		const target = state.isCanvasMode ? canvas : eventRect;
 
 		if (zoom) {
 			config.subchart_show ?
@@ -225,8 +240,8 @@ export default {
 			zoomResetBtn?.style("display", "none");
 
 			// reset transform
-			if (d3ZoomTransform(eventRect.node()) !== d3ZoomIdentity) {
-				$$.zoom.transform(eventRect, d3ZoomIdentity);
+			if (target?.node() && d3ZoomTransform(target.node()) !== d3ZoomIdentity) {
+				$$.zoom.transform(target, d3ZoomIdentity);
 			}
 
 			state.domain = undefined;

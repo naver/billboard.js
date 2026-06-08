@@ -2,19 +2,12 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {line as d3Line} from "d3-shape";
 import {$LINE} from "../../config/classes";
-import {
-	getPointer,
-	getRandom,
-	isArray,
-	isDefined,
-	isUndefined,
-	isValue,
-	parseDate
-} from "../../module/util";
+import {getPointer, getRandom, isArray, isUndefined, isValue} from "../../module/util";
 import type {IDataRow} from "../data/IData";
 import {getScale} from "../internals/scale";
+import {getDataRegionStyle, normalizeDataRegions} from "./core/dataRegion";
+import {generateDrawLinePath} from "./core/path";
 import {initShapeElement, updateTargetsForShape} from "./shape";
 
 /**
@@ -47,37 +40,6 @@ function _getStrokeDashArray(start: number, end: number, pattern: [number, numbe
 		dash: dash.join(" "),
 		length: dash.reduce((a, b) => a + b, 0)
 	};
-}
-
-/**
- * Get regions data
- * @param {Array} d Data object
- * @param {object} _regions regions to be set
- * @param {boolean} isTimeSeries whether is time series
- * @returns {object} Regions data
- * @private
- */
-function _getRegions(d, _regions, isTimeSeries) {
-	const $$ = this;
-	const regions: {start: number | string, end: number | string, style: string}[] = [];
-	const dasharray = "2 2"; // default value
-
-	// Check start/end of regions
-	if (isDefined(_regions)) {
-		const getValue = (v: Date | any, def: number | Date): Date | any => (
-			isUndefined(v) ? def : (isTimeSeries ? parseDate.call($$, v) : v)
-		);
-
-		for (let i = 0, reg; (reg = _regions[i]); i++) {
-			const start = getValue(reg.start, d[0].x);
-			const end = getValue(reg.end, d[d.length - 1].x);
-			const style = reg.style || {dasharray};
-
-			regions[i] = {start, end, style};
-		}
-	}
-
-	return regions;
 }
 
 export default {
@@ -129,6 +91,11 @@ export default {
 	 */
 	updateLine(withTransition: boolean, isSub = false): void {
 		const $$ = this;
+
+		if ($$.state.isCanvasMode) {
+			return;
+		}
+
 		const {format: {extraLineClasses}, $el, $T} = $$;
 		const $root = isSub ? $el.subchart : $el;
 
@@ -159,6 +126,11 @@ export default {
 	 */
 	redrawLine(drawFn, withTransition?: boolean, isSub = false) {
 		const $$ = this;
+
+		if ($$.state.isCanvasMode) {
+			return [];
+		}
+
 		const {$el, $T} = $$;
 		const {line} = isSub ? $el.subchart : $el;
 
@@ -213,63 +185,8 @@ export default {
 
 	generateDrawLine(lineIndices, isSub?: boolean): (d) => string {
 		const $$ = this;
-		const {config, scale} = $$;
-		const lineConnectNull = config.line_connectNull;
-		const isRotated = config.axis_rotated;
 
-		const getPoints = $$.generateGetLinePoints(lineIndices, isSub);
-		const yScale = $$.getYScaleById.bind($$);
-
-		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
-		const yValue = (d, i) => (
-			$$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)($$.getBaseValue(d))
-		);
-
-		let line = d3Line();
-
-		line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
-
-		if (!lineConnectNull) {
-			line = line.defined(d => $$.getBaseValue(d) !== null);
-		}
-
-		const x = isSub ? scale.subX : scale.x;
-
-		return d => {
-			const y = yScale(d.id, isSub);
-			let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
-
-			let x0 = 0;
-			let y0 = 0;
-			let path;
-
-			if ($$.isLineType(d)) {
-				const regions = config.data_regions[d.id];
-
-				if (regions) {
-					if ($$.isAreaRangeType(d)) {
-						values = values.map(dv => ({...dv, value: $$.getRangedData(dv, "mid")}));
-					}
-
-					path = $$.lineWithRegions(values, scale.zoom || x, y, regions);
-				} else {
-					if ($$.isStepType(d)) {
-						values = $$.convertValuesToStep(values);
-					}
-
-					path = line.curve($$.getCurve(d))(values);
-				}
-			} else {
-				if (values[0]) {
-					x0 = x(values[0].x);
-					y0 = y(values[0].value);
-				}
-
-				path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
-			}
-
-			return path || "M 0 0";
-		};
+		return generateDrawLinePath($$, lineIndices, isSub) as (d) => string;
 	},
 
 	/**
@@ -287,7 +204,7 @@ export default {
 		const isRotated = config.axis_rotated;
 		const isTimeSeries = $$.axis.isTimeSeries();
 		const dasharray = "2 2"; // default value
-		const regions = _getRegions.bind($$)(d, _regions, isTimeSeries);
+		const regions = normalizeDataRegions($$, d, _regions);
 
 		// when contains null data, can't apply style dashed
 		const hasNullDataValue = $$.hasNullDataValue(d);
@@ -447,14 +364,8 @@ export default {
 		return path;
 	},
 
-	isWithinRegions(withinX, withinRegions): boolean {
-		for (let i = 0, reg; (reg = withinRegions[i]); i++) {
-			if (reg.start < withinX && withinX <= reg.end) {
-				return reg.style;
-			}
-		}
-
-		return false;
+	isWithinRegions(withinX, withinRegions) {
+		return getDataRegionStyle(withinX, withinRegions);
 	},
 
 	isWithinStep(that, y: number): boolean {

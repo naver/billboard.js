@@ -63,7 +63,7 @@ export default {
 					}
 				});
 
-			$$.hideGridFocus();
+			$$.hideGridFocus?.();
 			$$.setFlowList(elements, args);
 		};
 	},

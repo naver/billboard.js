@@ -2746,7 +2746,7 @@ var demos = {
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart = bb.generate({
+						var options = {
 							bindto: "#JSONData",
 							data: {
 								type: "line",
@@ -2766,7 +2766,9 @@ var demos = {
 									// type: "category"
 								}
 							}
-						});
+						};
+
+						chart = bb.generate(billboardDemo.applyRenderMode(options));
 					}, 1000),
 
 					setTimeout(function() {
@@ -4220,11 +4222,11 @@ d3.select(".chart_area")
 			options: {
 				data: {
 					columns: [
-						["data1", 100],
-						["data2", 300],
-						["data3", 200]
+						["data1", 100, 180, 140, 220],
+						["data2", 300, 240, 280, 180],
+						["data3", 200, 120, 160, 260]
 					],
-					type: "pie"
+					type: "line"
 				},
 				legend: {
 					contents: {
@@ -4238,11 +4240,11 @@ d3.select(".chart_area")
 			options: {
 				data: {
 					columns: [
-						["data1", 100],
-						["data2", 300],
-						["data3", 200]
+						["data1", 100, 180, 140, 220],
+						["data2", 300, 240, 280, 180],
+						["data3", 200, 120, 160, 260]
 					],
-					type: "pie"
+					type: "line"
 				},
 				legend: {
 					contents: {

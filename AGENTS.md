@@ -75,6 +75,14 @@ Package manager: `yarn@4.3.1` (corepack)
 
 `src/module/` — Shared utilities: `util.ts` (main helpers), `Cache.ts`, `browser.ts` (window/document refs), `generator.ts`, `sanitize.ts`
 
+### Canvas File Naming
+
+`src/canvas/` filenames follow the exported module name:
+
+- Files whose primary export is a class must match the class name exactly, e.g. `CanvasAxisRenderer.ts`, `CanvasEngine.ts`, `HitDetector.ts`, `CanvasPainter.ts`, `CanvasRenderer.ts`, `CanvasTheme.ts`.
+- Non-class helper modules start with a lowercase letter, e.g. `util.ts`.
+- When adding or renaming canvas files, keep imports aligned with this rule.
+
 ### Styles
 
 `src/scss/` — SCSS sources for base theme and theme variants (dark, datalab, graph, insight, modern)

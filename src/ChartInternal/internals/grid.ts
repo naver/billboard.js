@@ -5,6 +5,7 @@
 import {select as d3Select, selectAll as d3SelectAll} from "d3-selection";
 import type {d3Selection} from "../../../types/types";
 import {$AXIS, $COMMON, $FOCUS, $GRID} from "../../config/classes";
+import {AXIS_DEFAULT_TICK_COUNT} from "../../config/const";
 import {getPointer, isArray, isValue} from "../../module/util";
 
 // Grid position and text anchor helpers
@@ -279,7 +280,10 @@ export default {
 
 	initFocusGrid(): void {
 		const $$ = this;
-		const {config, state: {clip}, $el} = $$;
+		const {config, state, state: {clip}, $el} = $$;
+
+		// Invalidate cached D3 selection in case grid is re-initialized
+		state._gridFocusEl = null;
 		const isFront = config.grid_front;
 		const className = `.${isFront && $el.gridLines.main ? $GRID.gridLines : $COMMON.chart}${
 			isFront ? " + *" : ""
@@ -520,7 +524,7 @@ export default {
 				gridData.push(new Date(`${i}-01-01 00:00:00`));
 			}
 		} else {
-			gridData = scale.ticks(10);
+			gridData = scale.ticks(AXIS_DEFAULT_TICK_COUNT);
 
 			if (gridData.length > tickNum) { // use only int
 				gridData = gridData.filter(d => String(d).indexOf(".") < 0);

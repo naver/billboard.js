@@ -48,7 +48,7 @@ export default {
 	 * @returns {string|null}
 	 * @private
 	 */
-	getStylePropValue(v: Function | string): string | null {
+	getStylePropValue(v: Function | string): Function | string | null {
 		const {config: {boost_useCssRule: useCssRule}} = this;
 
 		return useCssRule ? null : isFunction(v) ? v.bind(this) : v as string;

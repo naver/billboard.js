@@ -264,9 +264,10 @@ export default {
 	 */
 	unbindZoomEvent(): void {
 		const $$ = this;
-		const {$el: {eventRect, zoomResetBtn}} = $$;
+		const {$el: {canvas, eventRect, zoomResetBtn}} = $$;
 
 		eventRect?.on(".zoom wheel.zoom .drag", null);
+		canvas?.on(".zoom wheel.zoom .drag", null);
 
 		zoomResetBtn?.on("click", null)
 			.style("display", "none");

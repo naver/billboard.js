@@ -9,7 +9,8 @@ window.bench = {
         type: document.getElementById("type"),
         dataSeries: document.getElementById("data-series"),
         dataSize: document.getElementById("data-size"),
-        transition: document.getElementById("transition")
+        transition: document.getElementById("transition"),
+        renderModes: document.querySelectorAll("[name=render-mode]")
     },
     init() {
         if (/^(127\.|localhost)/.test(location.host)) {
@@ -44,6 +45,9 @@ window.bench = {
         
         //console.log(JSON.stringify(data));
         return data;
+    },
+    getRenderMode() {
+        return [].slice.call(this.$el.renderModes).find(v => v.checked)?.value || "svg";
     },
     loadBillboard: function() {
         const version = document.getElementById("version").value;
@@ -87,10 +91,14 @@ window.bench = {
         }
 
         const chartType = this.$el.type.value;
+        const renderMode = this.getRenderMode();
 
         this.perf(false, "Generate");
 
         this.chart = bb.generate({
+            render: {
+                mode: renderMode
+            },
             boost: {
                 useCssRule: document.getElementById("useCssRule").checked,
                 useWorker: document.getElementById("useWorker").checked

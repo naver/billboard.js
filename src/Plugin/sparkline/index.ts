@@ -4,6 +4,7 @@
  */
 import type {IData} from "../../ChartInternal/data/IData";
 import {$COMMON} from "../../config/classes";
+import {getBoundingRect} from "../../module/util";
 import Plugin from "../Plugin";
 import Options from "./Options";
 
@@ -205,7 +206,7 @@ export default class Sparkline extends Plugin {
 		const {$$} = this;
 		const {state: {eventReceiver}} = $$;
 
-		eventReceiver.rect = e.target.getBoundingClientRect();
+		eventReceiver.rect = getBoundingRect(e.target, true);
 	}
 
 	moveHandler(e): void {
