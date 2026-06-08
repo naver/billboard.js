@@ -2,22 +2,14 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	hierarchy as d3Hierarchy,
-	treemap as d3Treemap,
-	treemapBinary as d3TreemapBinary,
-	treemapDice as d3TreemapDice,
-	treemapResquarify as d3TreemapResquarify,
-	treemapSlice as d3TreemapSlice,
-	treemapSliceDice as d3TreemapSliceDice,
-	treemapSquarify as d3TreemapSquarify
-} from "d3-hierarchy";
 import {select as d3Select} from "d3-selection";
 import type {d3Selection} from "../../../types/types";
 import {$COMMON, $TREEMAP} from "../../config/classes";
 import {getRandom, isFunction} from "../../module/util";
-import type {IData, IDataRow, ITreemapData} from "../data/IData";
+import type {IData, IDataRow} from "../data/IData";
 import {meetsLabelThreshold} from "../internals/text.util";
+import {getTreemapNodeRect} from "./core/geometry";
+import shapeTreemapCommon from "./core/treemap";
 
 /**
  * Get treemap elements' position
@@ -27,62 +19,21 @@ import {meetsLabelThreshold} from "../internals/text.util";
  */
 function position(group, root): void {
 	const $$ = this;
-	const {scale: {x, y}, state: {width}} = $$;
 
 	group.selectAll("g")
-		.attr("transform", d => (
-			`translate(${d === root ? "0,0" : `${x(d.x0)},${y(d.y0)}`})`
-		))
+		.attr("transform", d => {
+			const rect = getTreemapNodeRect($$, d, root);
+
+			return `translate(${rect.x},${rect.y})`;
+		})
 		.select("rect")
-		.attr("width", d => (
-			d === root ? width : x(d.x1) - x(d.x0)
-		))
-		.attr("height", d => (
-			d === root ? 0 : y(d.y1) - y(d.y0)
-		));
-}
-
-/**
- * Convert data for treemap hierarchy
- * @param {object} data Data object
- * @returns {Array} Array of data for treemap hierarchy
- * @private
- */
-function convertDataToTreemapData(data: IData[]): ITreemapData[] {
-	const $$ = this;
-
-	return data.map(d => {
-		const {id, values} = d;
-		const {value} = values[0];
-
-		return {
-			name: id,
-			id, // needed to keep compatibility on whole code logic
-			value,
-			ratio: $$.getRatio("treemap", values[0])
-		} as ITreemapData;
-	});
-}
-
-/**
- * Get hierarchy data
- * @param {object} data Data object
- * @returns {Array} Array of hierarchy data
- * @private
- */
-function getHierachyData(data) {
-	const $$ = this;
-	const hierarchyData = d3Hierarchy(data).sum(d => d.value);
-	const sortFn = $$.getSortCompareFn(true);
-
-	return [
-		$$.treemap(
-			sortFn ? hierarchyData.sort(sortFn) : hierarchyData
-		)
-	];
+		.attr("width", d => getTreemapNodeRect($$, d, root).w)
+		.attr("height", d => getTreemapNodeRect($$, d, root).h);
 }
 
 export default {
+	...shapeTreemapCommon,
+
 	initTreemap(): void {
 		const $$ = this;
 		const {
@@ -96,8 +47,7 @@ export default {
 
 		clip.id = `${datetimeId}-clip`;
 
-		$$.treemap = d3Treemap()
-			.tile($$.getTreemapTile());
+		$$.initTreemapLayout();
 
 		$el.defs
 			.append("clipPath")
@@ -157,60 +107,14 @@ export default {
 	},
 
 	/**
-	 * Get tiling function
-	 * @returns {function}
-	 * @private
-	 */
-	getTreemapTile() {
-		const $$ = this;
-		const {config, state: {current: {width, height}}} = $$;
-		const tile = {
-			binary: d3TreemapBinary,
-			dice: d3TreemapDice,
-			slice: d3TreemapSlice,
-			sliceDice: d3TreemapSliceDice,
-			squarify: d3TreemapSquarify,
-			resquarify: d3TreemapResquarify
-		}[config.treemap_tile ?? "binary"] ?? d3TreemapBinary;
-
-		return (node, x0, y0, x1, y1) => {
-			tile(node, 0, 0, width, height);
-
-			for (const child of node.children) {
-				child.x0 = x0 + child.x0 / width * (x1 - x0);
-				child.x1 = x0 + child.x1 / width * (x1 - x0);
-				child.y0 = y0 + child.y0 / height * (y1 - y0);
-				child.y1 = y0 + child.y1 / height * (y1 - y0);
-			}
-		};
-	},
-
-	/**
-	 * Get treemap hierarchy data
-	 * @param {Array} targets Data targets
-	 * @returns {object}
-	 * @private
-	 */
-	getTreemapData(targets: IData[]): ITreemapData {
-		const $$ = this;
-
-		return {
-			name: "root",
-			children: convertDataToTreemapData.bind($$)(
-				$$.filterTargetsToShow(targets.filter($$.isTreemapType, $$))
-			)
-		};
-	},
-
-	/**
 	 * Update treemap data
 	 * @param {Array} targets Data targets
 	 * @private
 	 */
-	updateTargetsForTreemap(targets: IData): void {
+	updateTargetsForTreemap(targets: IData[]): void {
 		const $$ = this;
 		const {$el: {treemap}} = $$;
-		const treemapData = getHierachyData.call($$, $$.getTreemapData(targets ?? $$.data.targets));
+		const treemapData = [$$.getTreemapRoot(targets ?? $$.data.targets)];
 
 		// using $el.treemap reference can alter data, so select treemap <g> again
 		treemap.data($$.filterNullish(treemapData));
@@ -254,13 +158,15 @@ export default {
 	 */
 	generateGetTreemapPoints(): (d: IDataRow) => [number, number][] {
 		const $$ = this;
-		const {$el, scale: {x, y}} = $$;
+		const {$el} = $$;
 		const points = {};
 
 		$el.treemap.selectAll("g").each(d => {
+			const rect = getTreemapNodeRect($$, d);
+
 			points[d.data.name] = [
-				[x(d.x0), y(d.y0)],
-				[x(d.x1), y(d.y1)]
+				[rect.x, rect.y],
+				[rect.x + rect.w, rect.y + rect.h]
 			];
 		});
 

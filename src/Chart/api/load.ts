@@ -38,6 +38,7 @@ export default {
 	 *    | keys | Object |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
 	 *    | mimeType | string |  Set 'json' if loading JSON via url.<br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
 	 *    | names | Object | Same as data.names() |
+	 *    | regions | Object | The regions specified by data.regions will be updated. regions must be Object that has target id as keys. |
 	 *    | resizeAfter | boolean | Resize after the load. Default value is `false`.<br>- This option won't call `onresize` neither `onresized`.<br>- When set to 'true', will call `.flush(true)` at the end of load. |
 	 *    | type | string | The type of targets will be updated. |
 	 *    | types | Object | The types of targets will be updated. |
@@ -176,8 +177,25 @@ export default {
 			config.data_colors[id] = args.colors[id];
 		});
 
+		// update regions if exists
+		"regions" in args && (config.data_regions = args.regions || {});
+
+		const hasDataToLoad = ["data", "columns", "rows", "json", "url"]
+			.some(key => key in args);
+		const hasUnload = "unload" in args && args.unload !== false;
+
+		if ("regions" in args && !hasDataToLoad && !hasUnload) {
+			$$.redraw({
+				withUpdateOrgXDomain: true,
+				withUpdateXDomain: true,
+				withLegend: true
+			});
+			callDone.call($$, args.done, args.resizeAfter);
+			return;
+		}
+
 		// unload if needed
-		if ("unload" in args && args.unload !== false) {
+		if (hasUnload) {
 			// TODO: do not unload if target will load (included in url/rows/columns)
 			$$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), () => {
 				// to mitigate improper rendering for multiple consecutive calls

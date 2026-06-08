@@ -7,8 +7,8 @@ import type {d3Selection, DataRow} from "../../../types/types";
 import {$BAR, $COMMON} from "../../config/classes";
 import {getRandom, isNumber} from "../../module/util";
 import type {IBarData} from "../data/IData";
+import {getBarRadiusInfo, getBarRadiusResolver, getStackingBarRadiusSet} from "./core/barRadius";
 import {getShapeColorWithGradient, updateTargetsForShape} from "./shape";
-import type {IOffset} from "./shape";
 
 type BarTypeDataRow = DataRow<number | number[]>;
 type BarConnectLine = {x: number, y: number, width: number, height: number};
@@ -88,6 +88,11 @@ export default {
 	 */
 	updateBar(withTransition: boolean, isSub = false): void {
 		const $$ = this;
+
+		if ($$.state.isCanvasMode) {
+			return;
+		}
+
 		const {config, $el, $T} = $$;
 		const $root = isSub ? $el.subchart : $el;
 		const classBar = $$.getClass("bar", true);
@@ -136,6 +141,11 @@ export default {
 	 */
 	redrawBar(drawFn, withTransition?: boolean, isSub = false) {
 		const $$ = this;
+
+		if ($$.state.isCanvasMode) {
+			return [];
+		}
+
 		const {bar} = isSub ? $$.$el.subchart : $$.$el;
 		const barPath: BarConnectLine[] = [];
 		const connectLineCache = new Map<string, string | null>();
@@ -199,136 +209,50 @@ export default {
 	 */
 	generateDrawBar(barIndices, isSub?: boolean): (d: IBarData, i: number) => BarPath {
 		const $$ = this;
-		const {config, data, state} = $$;
+		const {config} = $$;
 		const getPoints = $$.generateGetBarPoints(barIndices, isSub);
-		const isRotated = config.axis_rotated;
-		const barRadius = config.bar_radius;
-		const barRadiusRatio = config.bar_radius_ratio;
-
-		// get the bar radius
-		const getRadius = isNumber(barRadius) && barRadius > 0 ? () => barRadius : (
-			isNumber(barRadiusRatio) ? w => w * barRadiusRatio : null
-		);
-
-		// Pre-compute stacking radius positions once (O(n)) for O(1) lookup per bar.
-		// Key: "id:index" — only the top-of-stack bar for each sign (pos/neg) per group per index.
-		const stackingRadiusSet = new Set<string>();
-
-		if (getRadius && config.data_groups.length) {
-			const orderedBarTargets = $$.orderTargets(
-				$$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))
-			);
-
-			for (const group of config.data_groups) {
-				const groupSet = new Set(group);
-				const groupTargets = orderedBarTargets.filter(t => groupSet.has(t.id));
-
-				// Iterate in order: last write wins → top-of-stack for each (index, sign)
-				const lastPosByIndex = new Map<number, string>();
-				const lastNegByIndex = new Map<number, string>();
-
-				for (const target of groupTargets) {
-					for (const v of target.values) {
-						if (v.value === null || v.value === 0) {
-							continue;
-						}
-
-						if (v.value > 0) {
-							lastPosByIndex.set(v.index, target.id);
-						} else {
-							lastNegByIndex.set(v.index, target.id);
-						}
-					}
-				}
-
-				for (const [idx, id] of lastPosByIndex) {
-					stackingRadiusSet.add(`${id}:${idx}`);
-				}
-
-				for (const [idx, id] of lastNegByIndex) {
-					stackingRadiusSet.add(`${id}:${idx}`);
-				}
-			}
-		}
+		const getRadius = getBarRadiusResolver($$);
+		const stackingRadiusSet = getRadius ? getStackingBarRadiusSet($$) : new Set<string>();
 
 		return (d: IBarData, i: number): BarPath => {
 			// 4 points that make a bar
 			const points = getPoints(d, i);
-
-			// switch points if axis is rotated, not applicable for sub chart
-			const indexX = +isRotated;
-			const indexY = +!indexX;
-
-			const isUnderZero = d.value as number < 0;
-			const isInverted = config[`axis_${$$.axis.getId(d.id)}_inverted`];
-			const isNegative = (!isInverted && isUnderZero) || (isInverted && !isUnderZero);
-
+			const {
+				indexX,
+				indexY,
+				isNegative,
+				pos,
+				radius,
+				clipPath
+			} = getBarRadiusInfo(
+				$$,
+				d,
+				points,
+				getRadius,
+				stackingRadiusSet,
+				$$.isStackingRadiusData.bind($$)
+			);
 			const pathRadius = ["", ""];
-			const isGrouped = $$.isGrouped(d.id);
-			const isRadiusData = getRadius && isGrouped && d.value !== 0 ?
-				(
-					// Hidden bars: DOM fallback (can't be pre-computed)
-					state.hiddenTargetIds.has(d.id) ?
-						$$.isStackingRadiusData(d) :
-						stackingRadiusSet.has(`${d.id}:${d.index}`)
-				) :
-				false;
-			const init = [
-				points[0][indexX],
-				points[0][indexY]
-			];
-			let radius = 0;
 
 			// initialize as null to not set attribute if isn't needed
-			d.clipPath = null;
+			d.clipPath = clipPath;
 
 			if (getRadius) {
-				const index = isRotated ? indexY : indexX;
-				const barW = points[2][index] - points[0][index];
+				const arc = `a${radius} ${radius} ${isNegative ? "1 0 0" : "0 0 1"} `;
 
-				radius = !isGrouped || isRadiusData ? getRadius(barW) : 0;
-
-				const arc = `a${radius} ${radius} ${isNegative ? `1 0 0` : `0 0 1`} `;
-
-				pathRadius[+!isRotated] = `${arc}${radius},${radius}`;
-				pathRadius[+isRotated] = `${arc}${
-					[-radius, radius][isRotated ? "sort" : "reverse"]()
+				pathRadius[indexY] = `${arc}${radius},${radius}`;
+				pathRadius[indexX] = `${arc}${
+					[-radius, radius][
+						config.axis_rotated ? "sort" : "reverse"
+					]()
 				}`;
 
 				isNegative && pathRadius.reverse();
 			}
 
-			const pos = isRotated ?
-				points[1][indexX] + (isNegative ? radius : -radius) :
-				points[1][indexY] + (isNegative ? -radius : radius);
-
-			// Apply clip-path in case of radius angle surpass the bar shape
-			// https://github.com/naver/billboard.js/issues/3903
-			if (radius) {
-				let clipPath = "";
-
-				if (isRotated) {
-					if (isNegative && init[0] < pos) {
-						clipPath = `0 ${pos - init[0]}px 0 0`;
-					} else if (!isNegative && init[0] > pos) {
-						clipPath = `0 0 0 ${init[0] - pos}px`;
-					}
-				} else {
-					if (isNegative && init[1] > pos) {
-						clipPath = `${init[1] - pos}px 0 0 0`;
-					} else if (!isNegative && init[1] < pos) {
-						clipPath = `0 0 ${pos - init[1]}px 0`;
-					}
-				}
-
-				if (clipPath) {
-					d.clipPath = `inset(${clipPath})`;
-				}
-			}
-
 			// path string data shouldn't be containing new line chars
 			// https://github.com/naver/billboard.js/issues/530
-			const path = isRotated ?
+			const path = config.axis_rotated ?
 				`H${pos} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${
 					points[3][indexX]
 				}` :
@@ -339,7 +263,7 @@ export default {
 			const coords: BarPath = [`M${points[0][indexX]},${points[0][indexY]}${path}z`];
 
 			if (_getConnectLineType.call($$, d.id)) {
-				coords.push(isRotated ?
+				coords.push(config.axis_rotated ?
 					{
 						x: points[0][indexX],
 						y: points[0][indexY],
@@ -400,60 +324,6 @@ export default {
 
 		// If the given id stays in the last position, then radius should be applied.
 		return value !== 0 && (sortedIds.indexOf(id) === sortedIds.length - 1);
-	},
-
-	/**
-	 * Generate bar coordinate points data
-	 * @param {object} barIndices Data order within x axis.
-	 * @param {boolean} isSub If is for subchart
-	 * @returns {Array} Array of coordinate points
-	 * @private
-	 */
-	generateGetBarPoints(barIndices,
-		isSub?: boolean): (d: IBarData, i: number) => [number, number][] {
-		const $$ = this;
-		const {config} = $$;
-		const axis = isSub ? $$.axis.subX : $$.axis.x;
-		const barTargetsNum = $$.getIndicesMax(barIndices) + 1;
-		const barW: IOffset = $$.getBarW("bar", axis, barTargetsNum);
-		const barX = $$.getShapeX(barW, barIndices, !!isSub);
-		const barY = $$.getShapeY(!!isSub);
-		const barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);
-		const yScale = $$.getYScaleById.bind($$);
-
-		return (d: IBarData, i: number) => {
-			const {id} = d;
-			const y0 = yScale.call($$, id, isSub)($$.getShapeYMin(id));
-			const offset = barOffset(d, i) || y0; // offset is for stacked bar chart
-			const width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
-			const isInverted = config[`axis_${$$.axis.getId(id)}_inverted`];
-			const value = d.value as number;
-			const posX = barX(d);
-			let posY = barY(d);
-
-			// fix posY not to overflow opposite quadrant
-			if (
-				config.axis_rotated && !isInverted && (
-					(value > 0 && posY < y0) || (value < 0 && y0 < posY)
-				)
-			) {
-				posY = y0;
-			}
-
-			if (!$$.isBarRangeType(d)) {
-				posY -= y0 - offset;
-			}
-
-			const startPosX = posX + width;
-
-			// 4 points that make a bar
-			return [
-				[posX, offset],
-				[posX, posY],
-				[startPosX, posY],
-				[startPosX, offset]
-			];
-		};
 	},
 
 	/**

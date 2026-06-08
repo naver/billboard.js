@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
  */
+import {canvas} from "./config/resolver/canvas";
 import {category} from "./config/resolver/category";
 import {exportApi} from "./config/resolver/export";
 import {flow} from "./config/resolver/flow";
@@ -24,5 +25,6 @@ flow();
 grid();
 regions();
 category();
+canvas();
 
 export {bb, default} from "./core";

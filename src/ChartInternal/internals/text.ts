@@ -31,6 +31,8 @@ import {
 	updateTextImagePos
 } from "./text.util";
 
+type TTextLabelDimension = {bbox?: DOMRect | SVGRect, rect: DOMRect | SVGRect};
+
 export default {
 	opacityForText(d): null | "0" {
 		const $$ = this;
@@ -241,62 +243,64 @@ export default {
 		const anchorString = getRotateAnchor(angle);
 		const rotateString = angle ? `rotate(${angle})` : "";
 
-		// Phase 1: Batch getBBox() calls to avoid layout thrashing
-		// Pre-compute all text bounding boxes in a single read phase
-		let bboxCache = new Map();
-
-		if (config.data_labels.centered) {
-			// Collect all elements that need bbox measurement
-			const elementsToMeasure: SVGTextElement[] = [];
-
-			$$.$el.text.each(function(d) {
-				if (($$.isBarType(d) || $$.isTreemapType(d))) {
-					elementsToMeasure.push(this as SVGTextElement);
-				}
-			});
-
-			// Batch all getBBox() calls together in a single read phase
-			if (elementsToMeasure.length > 0) {
-				bboxCache = batchGetBBox(elementsToMeasure);
-			}
-		}
-
-		// Phase 2: Apply cached bbox values during position calculation
-		$$.$el.text
+		const text = $$.$el.text
 			.style("fill", $$.getStylePropValue($$.updateTextColor))
 			.attr("filter",
 				d => $$.updateTextBGColor.bind($$)(d, config.data_labels_backgroundColors))
-			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
-			.each(function(d: IDataRow, i: number) {
-				// Get cached bbox for this element (undefined if not cached)
-				const cachedBbox = bboxCache.get(this);
-				// do not apply transition for newly added text elements
-				const node = $T(hasTreemap && this.childElementCount ? this.parentNode : this,
-					!!(withTransition &&
-						(this.getAttribute("x") || this.getAttribute("transform"))), t);
-				const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
-				let pos = {
-					x: getX.bind(this)(d, i, cachedBbox),
-					y: getY.bind(this)(d, i, cachedBbox)
-				};
+			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$));
 
-				if (angle) {
-					pos = setRotatePos.bind($$)(d, pos, anchorString, isRotated, isInverted);
-					node.attr("text-anchor", anchorString);
-				}
+		// Phase 1: collect text dimensions before mutating label positions.
+		const dimensions = new Map<SVGTextElement, TTextLabelDimension>();
+		const elementsToMeasure: SVGTextElement[] = [];
 
-				updateTextImagePos.call($$, this, pos);
+		text.each(function(d) {
+			const element = this as SVGTextElement;
 
-				// when is multiline
-				if (this.childElementCount || angle) {
-					node.attr("transform", `translate(${pos.x} ${pos.y}) ${rotateString}`);
-				} else {
-					node.attr("x", pos.x).attr("y", pos.y);
-				}
+			dimensions.set(element, {rect: getBoundingRect(element)});
 
-				config.data_labels.border &&
-					updateTextBorder.call($$, node.node(), pos, `${$TEXT.textBorderRect}-${i}`);
+			if (config.data_labels.centered && ($$.isBarType(d) || $$.isTreemapType(d))) {
+				elementsToMeasure.push(element);
+			}
+		});
+
+		if (elementsToMeasure.length > 0) {
+			batchGetBBox(elementsToMeasure).forEach((bbox, element) => {
+				const dimension = dimensions.get(element);
+
+				dimension && (dimension.bbox = bbox);
 			});
+		}
+
+		// Phase 2: apply cached dimensions during position calculation.
+		text.each(function(d: IDataRow, i: number) {
+			const labelDimension = dimensions.get(this);
+			// do not apply transition for newly added text elements
+			const node = $T(hasTreemap && this.childElementCount ? this.parentNode : this,
+				!!(withTransition &&
+					(this.getAttribute("x") || this.getAttribute("transform"))), t);
+			const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
+			let pos = {
+				x: getX.bind(this)(d, i, labelDimension),
+				y: getY.bind(this)(d, i, labelDimension)
+			};
+
+			if (angle) {
+				pos = setRotatePos.bind($$)(d, pos, anchorString, isRotated, isInverted);
+				node.attr("text-anchor", anchorString);
+			}
+
+			updateTextImagePos.call($$, this, pos, labelDimension?.rect);
+
+			// when is multiline
+			if (this.childElementCount || angle) {
+				node.attr("transform", `translate(${pos.x} ${pos.y}) ${rotateString}`);
+			} else {
+				node.attr("x", pos.x).attr("y", pos.y);
+			}
+
+			config.data_labels.border &&
+				updateTextBorder.call($$, node.node(), pos, `${$TEXT.textBorderRect}-${i}`);
+		});
 
 		// need to return 'true' as of being pushed to the redraw list
 		// ref: getRedrawList()
@@ -356,10 +360,11 @@ export default {
 	 * Gets the x or y coordinate of the text
 	 * @param {object} indices Indices values
 	 * @param {boolean} forX whether or not to x
-	 * @returns {number} coordinates
+	 * @returns {function} coordinates
 	 * @private
 	 */
-	generateXYForText(indices, forX?: boolean): (d, i) => number {
+	generateXYForText(indices,
+		forX?: boolean): (d, i, labelDimension?: TTextLabelDimension) => number {
 		const $$ = this;
 		const {state: {hasRadar, hasFunnel, hasTreemap}} = $$;
 		const types = Object.keys(indices);
@@ -374,7 +379,7 @@ export default {
 			points[v] = $$[`generateGet${capitalize(v)}Points`](indices[v], false);
 		});
 
-		return function(d, i) {
+		return function(d, i, labelDimension?: TTextLabelDimension) {
 			const type = ($$.isAreaType(d) && "area") ||
 				($$.isBarType(d) && "bar") ||
 				($$.isCandlestickType(d) && "candlestick") ||
@@ -382,7 +387,7 @@ export default {
 				($$.isRadarType(d) && "radar") ||
 				($$.isTreemapType(d) && "treemap") || "line";
 
-			return getter.call($$, points[type](d, i), d, this);
+			return getter.call($$, points[type](d, i), d, this, labelDimension);
 		};
 	},
 
@@ -392,12 +397,12 @@ export default {
 	 * @param {Array} points Data points position
 	 * @param {HTMLElement} textElement Data label text element
 	 * @param {string} type 'x' or 'y'
-	 * @param {DOMRect} cachedBbox Optional cached bounding box (from getBBox batching)
+	 * @param {object} labelDimension Optional cached label dimensions
 	 * @returns {number} Position value
 	 * @private
 	 */
 	getCenteredTextPos(d, points, textElement: SVGTextElement, type: "x" | "y",
-		cachedBbox?: DOMRect): number {
+		labelDimension?: TTextLabelDimension): number {
 		const $$ = this;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
@@ -405,8 +410,7 @@ export default {
 		const isTreemapType = $$.isTreemapType(d);
 
 		if (config.data_labels.centered && (isBarType || isTreemapType)) {
-			// Use cached bbox from parameter to avoid layout thrashing, fallback to getBBox if not provided
-			const rect = cachedBbox || getBBox(textElement);
+			const rect = labelDimension?.bbox || getBBox(textElement);
 
 			if (isBarType) {
 				const isPositive = $$.getRangedData(d, null, "bar") >= 0;
@@ -443,11 +447,11 @@ export default {
 	 * @param {object} points Data points position
 	 * @param {object} d Data object
 	 * @param {HTMLElement} textElement Data label text element
-	 * @param {DOMRect} cachedBbox Optional cached bounding box (from getBBox batching)
+	 * @param {object} labelDimension Optional cached label dimensions
 	 * @returns {number} x coordinate
 	 * @private
 	 */
-	getXForText(points, d: IDataRow, textElement, cachedBbox?: DOMRect): number {
+	getXForText(points, d: IDataRow, textElement, labelDimension?: TTextLabelDimension): number {
 		const $$ = this;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
@@ -486,7 +490,7 @@ export default {
 		}
 
 		if (isRotated || isTreemapType || isFunnelType) {
-			xPos += $$.getCenteredTextPos(d, points, textElement, "x", cachedBbox);
+			xPos += $$.getCenteredTextPos(d, points, textElement, "x", labelDimension);
 		}
 
 		return xPos + getTextPos.call(this, d, "x");
@@ -497,11 +501,11 @@ export default {
 	 * @param {object} points Data points position
 	 * @param {object} d Data object
 	 * @param {HTMLElement} textElement Data label text element
-	 * @param {DOMRect} cachedBbox Optional cached bounding box (from getBBox batching)
+	 * @param {object} labelDimension Optional cached label dimensions
 	 * @returns {number} y coordinate
 	 * @private
 	 */
-	getYForText(points, d, textElement, cachedBbox?: DOMRect): number {
+	getYForText(points, d, textElement, labelDimension?: TTextLabelDimension): number {
 		const $$ = this;
 		const {axis, config, state} = $$;
 		const isRotated = config.axis_rotated;
@@ -510,7 +514,7 @@ export default {
 		const isFunnelType = $$.isFunnelType(d);
 		const isTreemapType = $$.isTreemapType(d);
 		const r = config.point_r;
-		const rect = getBoundingRect(textElement);
+		const rect = labelDimension?.rect || getBoundingRect(textElement);
 		let {value} = d;
 		let baseY = 3;
 		let yPos;
@@ -573,7 +577,7 @@ export default {
 		}
 
 		if (!isRotated || isTreemapType) {
-			yPos += $$.getCenteredTextPos(d, points, textElement, "y", cachedBbox);
+			yPos += $$.getCenteredTextPos(d, points, textElement, "y", labelDimension);
 		}
 
 		return yPos + getTextPos.call(this, d, "y");

@@ -29,6 +29,21 @@ const subchart = function<T = TDomain[]>(domainValue?: T): T | undefined {
 	const {axis, brush, config, scale: {x, subX}, state} = $$;
 	let domain;
 
+	if (state.isCanvasMode) {
+		if (config.subchart_show) {
+			domain = domainValue;
+
+			if (Array.isArray(domain)) {
+				domain = axis.isTimeSeries() ? domain.map(x => parseDate.bind($$)(x)) : domain;
+				domain = $$.setCanvasSubchartDomain(domain) || state.domain;
+			} else {
+				domain = state.domain ?? x.orgDomain();
+			}
+		}
+
+		return domain as T;
+	}
+
 	if (config.subchart_show) {
 		domain = domainValue;
 
@@ -89,6 +104,13 @@ extend(subchart, {
 		const show = config.subchart_show;
 
 		if (!show) {
+			if ($$.state.isCanvasMode) {
+				$$.unbindZoomEvent?.();
+				config.subchart_show = true;
+				this.resize();
+				return;
+			}
+
 			// unbind zoom event bound to chart rect area
 			$$.unbindZoomEvent();
 
@@ -124,6 +146,16 @@ extend(subchart, {
 	hide(): void {
 		const $$ = this.internal;
 		const {$el: {subchart: {main}}, config} = $$;
+
+		if ($$.state.isCanvasMode) {
+			if (config.subchart_show) {
+				config.subchart_show = false;
+				this.resize();
+				$$.bindZoomEvent?.();
+			}
+
+			return;
+		}
 
 		if (config.subchart_show && main?.style("display") !== "none") {
 			config.subchart_show = false;
@@ -163,6 +195,11 @@ extend(subchart, {
 	reset(): void {
 		const $$ = this.internal;
 		const {brush} = $$;
+
+		if ($$.state.isCanvasMode) {
+			$$.clearCanvasSubchartDomain?.(true, false);
+			return;
+		}
 
 		brush.clear(brush.getSelection());
 	}

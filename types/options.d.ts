@@ -42,6 +42,23 @@ export type PositionFunction = (
 	texts: d3Selection
 ) => number;
 
+export interface CanvasThemeSelectorStyle {
+	[key: string]: string | number | number[] | null | undefined;
+}
+
+export interface CanvasThemeOptions {
+	/**
+	 * Canvas drawing style overrides keyed by supported billboard.js SVG selectors.
+	 *
+	 * These selector keys are compatibility aliases for supported canvas primitives,
+	 * not a full DOM/CSS selector engine. Unsupported or per-data selectors are ignored.
+	 * See CANVAS_THEME_SELECTORS.md for the supported selector and property list.
+	 */
+	selectors?: Record<string, CanvasThemeSelectorStyle>;
+
+	[key: string]: any;
+}
+
 export interface ChartOptions {
 	/**
 	 * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.
@@ -263,6 +280,7 @@ export interface ChartOptions {
 		/**
 		 * Set duration of transition (in milliseconds) for chart animation.
 		 * Note: If 0 or null set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
+		 * Note: In canvas mode, this option is ignored. Canvas frames are redrawn synchronously. For canvas flow(), pass duration to the flow() call when an x-domain interpolation is required.
 		 */
 		duration?: number;
 	};
@@ -378,6 +396,23 @@ export interface ChartOptions {
 		 * When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
 		 */
 		observe?: boolean;
+
+		/**
+		 * Select rendering backend.
+		 *
+		 * In canvas mode, chart primitives are rendered to a single `<canvas>` instead of SVG nodes.
+		 * Per-shape, per-tick, grid, region and label SVG DOM nodes/classes are not created, so
+		 * per-node SVG CSS selectors do not style canvas-drawn primitives.
+		 */
+		mode?: "svg" | "canvas";
+	};
+
+	canvas?: {
+		/**
+		 * Override canvas drawing style values read from supported SVG CSS probes.
+		 * Use `theme.selectors` to style supported canvas primitives with familiar billboard.js SVG selectors.
+		 */
+		theme?: CanvasThemeOptions;
 	};
 
 	title?: {
@@ -421,6 +456,7 @@ export interface RegionOptions {
 	start?: string | number | Date;
 	end?: string | number | Date;
 	class?: string;
+	opacity?: number;
 	label?: {
 		text?: string;
 		x?: number;

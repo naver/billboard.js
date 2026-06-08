@@ -137,7 +137,7 @@ export default {
 
 	updateDimension(withoutAxis?: boolean): void {
 		const $$ = this;
-		const {config, state: {hasAxis}, $el} = $$;
+		const {config, state: {hasAxis, isCanvasMode}, $el} = $$;
 
 		if (hasAxis && !withoutAxis && $$.axis.x && config.axis_rotated) {
 			$$.axis.subX?.create($el.axis.subX);
@@ -145,6 +145,12 @@ export default {
 
 		// pass 'withoutAxis' param to not animate at the init rendering
 		$$.updateScales(withoutAxis);
+
+		if (isCanvasMode) {
+			$$.resizeCanvas?.();
+			return;
+		}
+
 		$$.updateSvgSize();
 		$$.transformAll(false);
 	},
@@ -152,6 +158,11 @@ export default {
 	updateSvgSize(): void {
 		const $$ = this;
 		const {config, state: {clip, current, hasAxis, width, height}, $el: {svg}} = $$;
+
+		if (!svg) {
+			$$.resizeCanvas?.();
+			return;
+		}
 
 		if (config.resize_auto === "viewBox") {
 			svg
@@ -202,7 +213,7 @@ export default {
 	getCurrentPaddingByDirection(type: "top" | "bottom" | "left" | "right",
 		withoutRecompute = false, withXAxisTickTextOverflow = false): number {
 		const $$ = this;
-		const {config, $el, state: {hasAxis}} = $$;
+		const {config, $el, state: {hasAxis, isCanvasMode}} = $$;
 		const isRotated = config.axis_rotated;
 		const isFitPadding = config.padding?.mode === "fit";
 		const paddingOption = isNumber(config[`padding_${type}`]) ?
@@ -270,7 +281,7 @@ export default {
 			}
 		} else {
 			if (type === "top") {
-				if ($el.title && $el.title.node()) {
+				if (($el.title && $el.title.node()) || (isCanvasMode && config.title_text)) {
 					padding += $$.getTitlePadding();
 				}
 

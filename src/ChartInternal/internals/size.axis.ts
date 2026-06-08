@@ -139,7 +139,7 @@ export default {
 			}
 
 			if (
-				$el.svg &&
+				($el.svg || state.isCanvasMode) &&
 				config.axis_x_tick_autorotate &&
 				config.axis_x_tick_fit &&
 				!config.axis_x_tick_multiline &&

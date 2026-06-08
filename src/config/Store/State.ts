@@ -42,6 +42,15 @@ export default class State {
 			hasFunnel: false,
 			hasRadar: false,
 			hasTreemap: false,
+			isCanvasMode: false,
+			canvasSubchartBrushDragging: false,
+			canvasSubchartBrushMode: <"select" | "move" | "resize-start" | "resize-end" | null>null,
+			canvasSubchartBrushStart: <number | null>null,
+			canvasSubchartBrushOrigin: <[number, number] | null>null,
+			canvasSubchartBrushMoved: false,
+			canvasFlowFrame: <number | null>null,
+			canvasFlowFinish: <(() => void) | null>null,
+			canvasFocusMainRedraw: false,
 
 			// for data CSS rule index (used when boost.useCssRule is true)
 			cssRule: {},
@@ -88,6 +97,16 @@ export default class State {
 			legendItemWidth: 0,
 			legendItemHeight: 0,
 			legendHasRendered: false,
+			canvasInlineStyle: {
+				minHeight: ""
+			},
+			canvasSelection: new Set<string>(),
+			canvasSelectionDragStart: <number[] | null>null,
+			canvasSelectionDragIncluded: new Set<string>(),
+			canvasSelectionDragging: false,
+			canvasSelectionDragMoved: false,
+			canvasSelectionDragMoveHandler: null,
+			canvasSelectionDragEndHandler: null,
 
 			eventReceiver: {
 				currentIdx: -1, // current event interaction index
@@ -188,6 +207,9 @@ export default class State {
 			// Performance: cached values for reuse within redraw cycle
 			_targetsToShow: <any[] | null>null,
 			_cachedDrawShape: <any>null,
+			_canvasVisibleRangeCache: <Map<string, any> | null>null,
+			_canvasXDataTickCache: <any>null,
+			_canvasXTickValuesCache: <Map<string, any> | null>null,
 			_eventRectFingerprint: <string | null>null,
 
 			// Performance: throttle tooltip position updates on mousemove

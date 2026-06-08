@@ -1,14 +1,13 @@
 {
 	"compilerOptions": {
-		"module": "ES2015",
+		"module": "es2020",
 		"moduleResolution": "bundler",
 		"noImplicitAny": false,
 		"noImplicitThis": false,
 		"strictNullChecks": true,
 		"strictFunctionTypes": false,
-		"baseUrl": "../",
 		"lib": [
-			"es6", "dom"
+			"es2017", "dom"
 		]
 	},
 	"include": [

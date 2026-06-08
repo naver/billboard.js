@@ -46,6 +46,16 @@ export const API_MODULE_NEEDED = {
 };
 
 /**
+ * Axis rendering constants shared by SVG and canvas renderers.
+ * @private
+ */
+export const AXIS_DEFAULT_TICK_COUNT = 10;
+export const AXIS_TICK_SIZE = 6;
+export const AXIS_TICK_PADDING = 3;
+export const AXIS_TICK_LENGTH = AXIS_TICK_SIZE + AXIS_TICK_PADDING;
+export const AXIS_TICK_LINE_OVERLAP_PADDING = 1;
+
+/**
  * Chart type module and its method from ChartInternal class, needed to be initialized.
  * @private
  */

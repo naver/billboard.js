@@ -28,7 +28,6 @@ import CLASS from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {
 	capitalize,
-	getBBox,
 	getPointer,
 	getRectSegList,
 	getUnique,
@@ -74,8 +73,43 @@ export type {
 } from "./IShape";
 
 /**
+ * Check if a target can use line-like grouped point offsets.
+ * @param {object} $$ ChartInternal instance
+ * @param {object|string} d Data value, target or id
+ * @returns {boolean} Whether target uses point-like y coordinates
+ * @private
+ */
+function isLinePointGroupType($$, d): boolean {
+	return $$.isLineType(d) || $$.isScatterType?.(d) || $$.isBubbleType?.(d);
+}
+
+/**
+ * Get type filter for grouped line-like point offsets.
+ * @param {object} $$ ChartInternal instance
+ * @returns {function} Type filter
+ * @private
+ */
+function getLinePointGroupTypeFilter($$): Function {
+	return d => isLinePointGroupType($$, d);
+}
+
+/**
+ * Get numeric value used for stacked offset calculation.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} d Data row
+ * @returns {number|Array|object|null} Offset value
+ * @private
+ */
+function getShapeOffsetValue($$, d) {
+	if ($$.isCandlestickType?.(d)) {
+		return $$.getCandlestickData?.(d)?.close;
+	}
+
+	return $$.getBaseValue(d);
+}
+
+/**
  * Get grouped data point function for y coordinate
- * - Note: Grouped(stacking) works only for line and bar types
  * @param {object} d data vlaue
  * @returns {function|undefined}
  * @private
@@ -84,10 +118,14 @@ function _getGroupedDataPointsFn(d) {
 	const $$ = this;
 	let fn;
 
-	if ($$.isLineType(d)) {
-		fn = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType));
+	if (isLinePointGroupType($$, d)) {
+		const typeFilter = getLinePointGroupTypeFilter($$);
+
+		fn = $$.generateGetLinePoints($$.getShapeIndices(typeFilter), false, typeFilter);
 	} else if ($$.isBarType(d)) {
 		fn = $$.generateGetBarPoints($$.getShapeIndices($$.isBarType));
+	} else if ($$.isCandlestickType?.(d)) {
+		fn = $$.generateGetCandlestickPoints?.($$.getShapeIndices($$.isCandlestickType));
 	}
 
 	return fn;
@@ -206,6 +244,8 @@ export default {
 		if (!$$.hasArcType() || hasRadar || hasTreemap) {
 			let cx;
 			let cy;
+			let xForText;
+			let yForText;
 
 			// generate circle x/y functions depending on updated params
 			if (!hasTreemap) {
@@ -213,9 +253,16 @@ export default {
 				cy = hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY);
 			}
 
+			if (hasTreemap && $$.state.isCanvasMode) {
+				xForText = yForText = function() {};
+			} else {
+				xForText = $$.generateXYForText(shape.indices, true);
+				yForText = $$.generateXYForText(shape.indices, false);
+			}
+
 			shape.pos = {
-				xForText: $$.generateXYForText(shape.indices, true),
-				yForText: $$.generateXYForText(shape.indices, false),
+				xForText,
+				yForText,
 				cx: (cx || function() {}).bind($$),
 				cy: (cy || function() {}).bind($$)
 			};
@@ -475,9 +522,10 @@ export default {
 
 			const rowValueMapByXValue = rowValues.reduce((out, d) => {
 				const key = Number(d.x);
+				const value = getShapeOffsetValue($$, d);
 
 				out[key] = d;
-				values[key] = isStackNormalized ? $$.getRatio("index", d, true) : d.value;
+				values[key] = isStackNormalized ? $$.getRatio("index", d, true) : value;
 
 				return out;
 			}, {});
@@ -530,6 +578,7 @@ export default {
 
 		return (d, idx) => {
 			const {id, value, x} = d;
+			const baseValue = getShapeOffsetValue($$, d);
 			const ind = $$.getIndices(indices, d);
 			const scale = $$.getYScaleById(id, isSub);
 
@@ -563,8 +612,15 @@ export default {
 						row = rowValueMapByXValue[dataXAsNumber];
 					}
 
-					if (row?.value * value >= 0 && isNumber(rValue)) {
-						const addOffset = value === 0 ?
+					const rowValue = row && getShapeOffsetValue($$, row);
+
+					if (
+						isNumber(rowValue) &&
+						isNumber(baseValue) &&
+						rowValue * baseValue >= 0 &&
+						isNumber(rValue)
+					) {
+						const addOffset = baseValue === 0 ?
 							(
 								(groupsZeroAs === "positive" &&
 									rValue > 0) ||
@@ -580,6 +636,143 @@ export default {
 			}
 
 			return offset;
+		};
+	},
+
+	/**
+	 * Generate line coordinate points from shared geometry.
+	 * @param {object} lineIndices Data order within x axis
+	 * @param {boolean} isSub Whether the coordinates are for subchart
+	 * @param {function} typeFilter Type filter for offset targets
+	 * @returns {function} Line point generator
+	 * @private
+	 */
+	generateGetLinePoints(lineIndices, isSub?: boolean, typeFilter?: Function): Function {
+		const $$ = this;
+		const {config} = $$;
+		const x = $$.getShapeX(0, lineIndices, isSub);
+		const y = $$.getShapeY(isSub);
+		const lineOffset = $$.getShapeOffset(typeFilter || $$.isLineType, lineIndices, isSub);
+		const yScale = $$.getYScaleById.bind($$);
+
+		return (d, i) => {
+			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
+			const offset = lineOffset(d, i) || y0;
+			const posX = x(d);
+			let posY = y(d);
+
+			if (
+				config.axis_rotated && (
+					(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
+				)
+			) {
+				posY = y0;
+			}
+
+			const point = [posX, posY - (y0 - offset)];
+
+			return [
+				point,
+				point,
+				point,
+				point
+			];
+		};
+	},
+
+	/**
+	 * Generate area coordinate points from shared geometry.
+	 * @param {object} areaIndices Data order within x axis
+	 * @param {boolean} isSub Whether the coordinates are for subchart
+	 * @returns {function} Area point generator
+	 * @private
+	 */
+	generateGetAreaPoints(
+		areaIndices: TIndices,
+		isSub?: boolean
+	): (d: IDataRow, i: number) => [number, number][] {
+		const $$ = this;
+		const {config} = $$;
+		const x = $$.getShapeX(0, areaIndices, isSub);
+		const y = $$.getShapeY(!!isSub);
+		const areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, isSub);
+		const yScale = $$.getYScaleById.bind($$);
+
+		return function(d, i) {
+			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
+			const offset = areaOffset(d, i) || y0;
+			const posX = x(d);
+			const value = d.value as number;
+			let posY = y(d);
+
+			if (
+				config.axis_rotated && (
+					(value > 0 && posY < y0) || (value < 0 && y0 < posY)
+				)
+			) {
+				posY = y0;
+			}
+
+			return [
+				[posX, offset],
+				[posX, posY - (y0 - offset)],
+				[posX, posY - (y0 - offset)],
+				[posX, offset]
+			];
+		};
+	},
+
+	/**
+	 * Generate bar coordinate points from shared geometry.
+	 * @param {object} barIndices Data order within x axis
+	 * @param {boolean} isSub Whether the coordinates are for subchart
+	 * @returns {function} Bar point generator
+	 * @private
+	 */
+	generateGetBarPoints(
+		barIndices,
+		isSub?: boolean
+	): (d, i: number) => [number, number][] {
+		const $$ = this;
+		const {config} = $$;
+		const axis = isSub ? $$.axis.subX : $$.axis.x;
+		const barTargetsNum = $$.getIndicesMax(barIndices) + 1;
+		const barW: IOffset = $$.getBarW("bar", axis, barTargetsNum);
+		const barX = $$.getShapeX(barW, barIndices, !!isSub);
+		const barY = $$.getShapeY(!!isSub);
+		const barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);
+		const yScale = $$.getYScaleById.bind($$);
+
+		return (d, i) => {
+			const {id} = d;
+			const y0 = yScale.call($$, id, isSub)($$.getShapeYMin(id));
+			const offset = barOffset(d, i) || y0;
+			const width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
+			const isInverted = config[`axis_${$$.axis.getId(id)}_inverted`];
+			const value = d.value as number;
+			const posX = barX(d);
+			let posY = barY(d);
+
+			if (
+				config.axis_rotated && !isInverted && (
+					(value > 0 && posY < y0) || (value < 0 && y0 < posY)
+				)
+			) {
+				posY = y0;
+			}
+
+			if (!$$.isBarRangeType(d)) {
+				posY -= y0 - offset;
+			}
+
+			const startPosX = posX + width;
+
+			return [
+				[posX, offset],
+				[posX, posY],
+				[startPosX, posY],
+				[startPosX, offset]
+			];
 		};
 	},
 
@@ -602,6 +795,122 @@ export default {
 		return points ? points(d, i)[0][1] : $$.getYScaleById(id)($$.getBaseValue(d));
 	},
 
+	/**
+	 * Get data point x coordinate.
+	 * @param {object} d Data row
+	 * @returns {number|null} X coordinate
+	 * @private
+	 */
+	circleX(d): number | null {
+		return this.xx(d);
+	},
+
+	/**
+	 * Generate data point y coordinate accessor.
+	 * @param {boolean} isSub Whether the coordinates are for subchart
+	 * @returns {function} Y coordinate accessor
+	 * @private
+	 */
+	updateCircleY(isSub = false): Function {
+		const $$ = this;
+		const typeFilter = getLinePointGroupTypeFilter($$);
+		const getPoints = $$.generateGetLinePoints($$.getShapeIndices(typeFilter), isSub,
+			typeFilter);
+
+		return (d, i) => {
+			const id = d.id;
+
+			return $$.isGrouped(id) && isLinePointGroupType($$, d) ?
+				getPoints(d, i)[0][1] :
+				$$.getYScaleById(id, isSub)($$.getBaseValue(d));
+		};
+	},
+
+	/**
+	 * Get point radius.
+	 * @param {object} d Data row
+	 * @returns {number} Point radius
+	 * @private
+	 */
+	pointR(d): number {
+		const $$ = this;
+		const {config} = $$;
+		const pointR = config.point_r;
+		let r = pointR;
+
+		if ($$.isBubbleType(d)) {
+			r = $$.getBubbleR(d);
+		} else if (isFunction(pointR)) {
+			r = pointR.bind($$.api)(d);
+		}
+
+		d.r = r;
+
+		return r;
+	},
+
+	/**
+	 * Get focused point radius.
+	 * @param {object} d Data row
+	 * @returns {number} Focused point radius
+	 * @private
+	 */
+	pointExpandedR(d): number {
+		const $$ = this;
+		const {config} = $$;
+		const scale = $$.isBubbleType(d) ? 1.15 : 1.75;
+
+		return config.point_focus_expand_enabled ?
+			(config.point_focus_expand_r || $$.pointR(d) * scale) :
+			$$.pointR(d);
+	},
+
+	/**
+	 * Get selected point radius.
+	 * @param {object} d Data row
+	 * @returns {number} Selected point radius
+	 * @private
+	 */
+	pointSelectR(d): number {
+		const $$ = this;
+		const selectR = $$.config.point_select_r;
+
+		return isFunction(selectR) ? selectR(d) : (selectR || $$.pointR(d) * 4);
+	},
+
+	/**
+	 * Check if point.focus.only option can be applied.
+	 * @returns {boolean} Whether focus-only point rendering is active
+	 * @private
+	 */
+	isPointFocusOnly(): boolean {
+		const $$ = this;
+
+		return $$.config.point_focus_only &&
+			!$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
+	},
+
+	/**
+	 * Get data point sensitivity radius.
+	 * @param {object} d Data point
+	 * @returns {number} Sensitivity radius
+	 * @private
+	 */
+	getPointSensitivity(d) {
+		const $$ = this;
+		let sensitivity = $$.config.point_sensitivity;
+
+		if (!d) {
+			return sensitivity;
+		} else if (isFunction(sensitivity)) {
+			sensitivity = sensitivity.call($$.api, d);
+		} else if (sensitivity === "radius") {
+			sensitivity = d.r;
+		}
+
+		return sensitivity;
+	},
+
 	getBarW(type, axis, targetsNum: number): number | IOffset {
 		const $$ = this;
 		const {config, org, scale, state} = $$;
@@ -609,10 +918,13 @@ export default {
 		const isGrouped = type === "bar" && config.data_groups?.length;
 		const configName = `${type}_width`;
 		const {k} = $$.getZoomTransform?.() ?? {k: 1};
-		const xMinMax = <[number, number]>[
+		const xMinMax = [
 			config.axis_x_min ?? org.xDomain[0],
 			config.axis_x_max ?? org.xDomain[1]
-		].map($$.axis.isTimeSeries() ? parseDate.bind($$) : Number);
+		].map(v => ($$.axis.isTimeSeries() ? parseDate.call($$, v) : Number(v))) as [
+			number,
+			number
+		];
 
 		let tickInterval = axis.tickInterval(maxDataCount);
 
@@ -715,6 +1027,43 @@ export default {
 		return CURVE_MAP[interpolation];
 	},
 
+	/**
+	 * Get curve generator for line-like shapes.
+	 * @param {object} d Data target
+	 * @returns {function} Curve generator
+	 * @private
+	 */
+	getCurve(d): Function {
+		const $$ = this;
+		const isRotatedStepType = $$.config.axis_rotated && $$.isStepType(d);
+
+		return isRotatedStepType ?
+			context => {
+				const step = $$.getInterpolate(d)(context);
+
+				step.orgPoint = step.point;
+
+				step.pointRotated = function(x, y) {
+					this._point === 1 && (this._point = 2);
+
+					const y1 = this._y * (1 - this._t) + y * this._t;
+
+					this._context.lineTo(this._x, y1);
+					this._context.lineTo(x, y1);
+
+					this._x = x;
+					this._y = y;
+				};
+
+				step.point = function(x, y) {
+					this._point === 0 ? this.orgPoint(x, y) : this.pointRotated(x, y);
+				};
+
+				return step;
+			} :
+			$$.getInterpolate(d);
+	},
+
 	getInterpolateType(d) {
 		const $$ = this;
 		const {config} = $$;
@@ -729,11 +1078,12 @@ export default {
 	isWithinBar(that): boolean {
 		const mouse = getPointer(this.state.event, that);
 		const list = getRectSegList(that);
-		const [seg0, seg1] = list;
+		const [seg0, seg1, seg2] = list;
 		const x = Math.min(seg0.x, seg1.x);
 		const y = Math.min(seg0.y, seg1.y);
 		const offset = this.config.bar_sensitivity;
-		const {width, height} = getBBox(that, true);
+		const width = Math.abs(seg2.x - seg1.x);
+		const height = Math.abs(seg0.y - seg1.y);
 		const sx = x - offset;
 		const ex = x + width + offset;
 		const sy = y + height + offset;

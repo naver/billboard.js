@@ -31,10 +31,20 @@ export {
 	step,
 	treemap,
 
+	// render modules
+	canvas,
+
 	// interaction modules
 	selection,
 	subchart,
-	zoom
+	zoom,
+
+	// optional API modules
+	category,
+	exportApi,
+	flow,
+	grid,
+	regions
 } from "./bb.js";
 export * from "./axis.js";
 export * from "./chart.js";

@@ -93,6 +93,15 @@ export default {
 		$$.legendItemTextBox = {};
 		$$.state.legendHasRendered = false;
 
+		if ($$.state.isCanvasMode) {
+			if (config.legend_show) {
+				$$.updateHtmlLegend?.();
+			} else {
+				$$.state.hiddenLegendIds = new Set($$.mapToIds($$.data.targets));
+			}
+			return;
+		}
+
 		if (config.legend_show) {
 			if (!config.legend_contents_bindto) {
 				$el.legend = $$.$el.svg.append("g")
@@ -307,10 +316,11 @@ export default {
 		const $$ = this;
 		const {current, isLegendRight, legendItemHeight, legendStep} = $$.state;
 		const isFitPadding = $$.config.padding?.mode === "fit";
+		const minHeight = isFitPadding ? 10 : 20;
 		const height = $$.config.legend_show ?
 			(
 				isLegendRight ? current.height : (
-					Math.max(isFitPadding ? 10 : 20, legendItemHeight)
+					Math.max(minHeight, legendItemHeight)
 				) * (legendStep + 1)
 			) :
 			0;

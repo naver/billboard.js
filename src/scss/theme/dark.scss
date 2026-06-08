@@ -3,6 +3,8 @@
 
 $font-family: Helvetica, Arial, sans-serif, "nanumgothic", "Dotum";
 
+@use "../canvas-legend" as canvasLegend;
+
 /*-- Default color pattern --*/
 .bb-color-pattern {
     background-image: url("#4a7fff;#b02c2c;#1ca46c;#b47300;#49baf3;#ed7e13;#cfaa00;#a6cd19;#dccb52;#f5d194;");
@@ -205,6 +207,8 @@ rect.bb-circle, use.bb-circle {
 
 /*-- Select - Drag --*/
 /*-- Legend --*/
+@include canvasLegend.styles($font-family: $font-family, $font-size: 11px, $color: #8d9cab);
+
 .bb-legend-item {
     user-select: none;
 
