@@ -148,7 +148,7 @@ export default {
 
 			color = isFunction(callback) ? callback.call($$.api, color, d) : color;
 
-			if (hasGradient) {
+			if (hasGradient && $el.defs) {
 				const stop = $$.$el.defs.selectAll(
 					`[id$='-gradient${$$.getTargetSelectorSuffix(id)}'] stop`
 				);

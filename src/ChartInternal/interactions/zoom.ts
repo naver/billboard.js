@@ -12,6 +12,81 @@ import {$COMMON, $ZOOM} from "../../config/classes";
 import {window} from "../../module/browser";
 import {callFn, diffDomain, getPointer, isFunction, scheduleRAFUpdate} from "../../module/util";
 
+/**
+ * Get the element that owns zoom interaction state.
+ * @param {object} $$ ChartInternal instance
+ * @returns {object} d3 selection
+ * @private
+ */
+function getZoomTarget($$) {
+	return $$.state.isCanvasMode ? $$.$el.canvas : $$.$el.eventRect;
+}
+
+/**
+ * Convert a canvas-space transform to plot-space transform.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} transform d3 zoom transform
+ * @returns {object} Plot-space transform
+ * @private
+ */
+function toPlotZoomTransform($$, transform) {
+	if (!$$.state.isCanvasMode) {
+		return transform;
+	}
+
+	const {margin} = $$.state;
+
+	return d3ZoomIdentity
+		.translate(
+			transform.x + (transform.k - 1) * margin.left,
+			transform.y + (transform.k - 1) * margin.top
+		)
+		.scale(transform.k);
+}
+
+/**
+ * Convert a plot-space transform to canvas-space transform.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} transform d3 zoom transform
+ * @returns {object} Canvas-space transform
+ * @private
+ */
+function toCanvasZoomTransform($$, transform) {
+	if (!$$.state.isCanvasMode) {
+		return transform;
+	}
+
+	const {margin} = $$.state;
+
+	return d3ZoomIdentity
+		.translate(
+			transform.x - (transform.k - 1) * margin.left,
+			transform.y - (transform.k - 1) * margin.top
+		)
+		.scale(transform.k);
+}
+
+/**
+ * Get plot-local pointer coordinates for zoom drag.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} event Event object
+ * @param {HTMLElement|SVGElement} element Event element
+ * @returns {Array} Plot-local pointer
+ * @private
+ */
+function getZoomDragPointer($$, event, element): number[] {
+	const pointer = getPointer(event, element);
+
+	if ($$.state.isCanvasMode) {
+		const {margin} = $$.state;
+
+		pointer[0] -= margin.left;
+		pointer[1] -= margin.top;
+	}
+
+	return pointer;
+}
+
 export default {
 	/**
 	 * Initialize zoom.
@@ -90,12 +165,13 @@ export default {
 		zoom.updateTransformScale = (transform: d3ZoomTransform,
 			correctTransform: boolean): void => {
 			const isRotated = config.axis_rotated;
+			const transformForScale = toPlotZoomTransform($$, transform);
 
 			// in case of resize, update range of orgXScale
 			org.xScale?.range(scale.x.range());
 
 			// rescale from the original scale
-			const newScale = transform[
+			const newScale = transformForScale[
 				isRotated ? "rescaleY" : "rescaleX"
 			](org.xScale || scale.x);
 
@@ -113,11 +189,14 @@ export default {
 			// https://github.com/naver/billboard.js/issues/2588
 			if (correctTransform) {
 				const t = newScale(scale.x.domain()[0]);
-				const tX = isRotated ? transform.x : t;
-				const tY = isRotated ? t : transform.y;
+				const tX = isRotated ? transformForScale.x : t;
+				const tY = isRotated ? t : transformForScale.y;
+				const targetTransform = toCanvasZoomTransform(
+					$$,
+					d3ZoomIdentity.translate(tX, tY).scale(transform.k)
+				);
 
-				$$.$el.eventRect.property("__zoom",
-					d3ZoomIdentity.translate(tX, tY).scale(transform.k));
+				getZoomTarget($$)?.property("__zoom", targetTransform);
 			}
 
 			scale.zoom = $$.getCustomizedXScale(newScale);
@@ -246,7 +325,13 @@ export default {
 	onZoomEnd(event): void {
 		const $$ = this;
 		const {config, state} = $$;
-		let {startEvent} = $$.zoom;
+		const zoom = $$.zoom;
+
+		if (!zoom) {
+			return;
+		}
+
+		let {startEvent} = zoom;
 		let e = event?.sourceEvent;
 		const isUnZoom = event?.transform === d3ZoomIdentity;
 
@@ -265,7 +350,7 @@ export default {
 		}
 
 		state.zooming = false;
-		$$.redrawEventRect();
+		!state.isCanvasMode && $$.redrawEventRect();
 		$$.updateZoom();
 
 		// do not call event cb when is .unzoom() is called
@@ -319,7 +404,7 @@ export default {
 	 */
 	updateCurrentZoomTransform(x, domain: [number, number]): void {
 		const $$ = this;
-		const {$el: {eventRect}, config} = $$;
+		const {config} = $$;
 		const isRotated = config.axis_rotated;
 
 		// Get transform from given domain value
@@ -333,7 +418,7 @@ export default {
 				...(isRotated ? translate.reverse() : translate) as [number, number]
 			);
 
-		eventRect.call($$.zoom.transform, transform);
+		getZoomTarget($$)?.call($$.zoom.transform, toCanvasZoomTransform($$, transform));
 	},
 
 	/**
@@ -342,21 +427,26 @@ export default {
 	 */
 	bindZoomOnEventRect(): void {
 		const $$ = this;
-		const {config, $el: {eventRect, svg}} = $$;
+		const {config, $el: {svg}} = $$;
+		const target = getZoomTarget($$);
 		const behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
+
+		$$.state.isCanvasMode &&
+			behaviour?.touchable?.(() => config.interaction_inputType_touch !== false);
 
 		// On Safari, event can't be built inside the svg content
 		// for workaround, register wheel event on <svg> element first
 		// https://bugs.webkit.org/show_bug.cgi?id=226683#c3
 		// https://stackoverflow.com/questions/67836886/wheel-event-is-not-fired-on-a-svg-group-element-in-safari
 		if (
+			!$$.state.isCanvasMode &&
 			window.GestureEvent &&
 			/^((?!chrome|android|mobile).)*safari/i.test(window.navigator?.userAgent)
 		) {
 			svg.on("wheel", () => {});
 		}
 
-		eventRect?.call(behaviour)
+		target?.call(behaviour)
 			.on("dblclick.zoom", null);
 	},
 
@@ -390,6 +480,7 @@ export default {
 		};
 
 		$$.zoomBehaviour = d3Drag()
+			.touchable(() => !state.isCanvasMode || config.interaction_inputType_touch !== false)
 			.clickDistance(4)
 			.on("start", function(event) {
 				// get extent at first zooming, when is zoomed do not consider
@@ -399,7 +490,7 @@ export default {
 				$$.setDragStatus(true);
 				$$.unselectRect();
 
-				if (!zoomRect) {
+				if (!state.isCanvasMode && !zoomRect) {
 					zoomRect = $$.$el.main.append("rect")
 						.attr("clip-path", state.clip.path)
 						.attr("class", $ZOOM.zoomBrush)
@@ -407,19 +498,19 @@ export default {
 						.attr("height", isRotated ? 0 : state.height);
 				}
 
-				start = clampPointer(getPointer(event, this as SVGAElement)[prop.index]);
+				start = clampPointer(getZoomDragPointer($$, event, this)[prop.index]);
 				end = start;
 
-				zoomRect
+				state.isCanvasMode ? $$.renderCanvasZoomBrush?.(start, end) : zoomRect
 					.attr(prop.axis, start)
 					.attr(prop.attr, 0);
 
 				$$.onZoomStart(event);
 			})
 			.on("drag", function(event) {
-				end = clampPointer(getPointer(event, this as SVGAElement)[prop.index]);
+				end = clampPointer(getZoomDragPointer($$, event, this)[prop.index]);
 
-				zoomRect
+				state.isCanvasMode ? $$.renderCanvasZoomBrush?.(start, end) : zoomRect
 					.attr(prop.axis, Math.min(start, end))
 					.attr(prop.attr, Math.abs(end - start));
 			})
@@ -432,7 +523,7 @@ export default {
 				// event fired between the last in-bounds move and release).
 				end = clampPointer(end);
 
-				zoomRect
+				state.isCanvasMode ? $$.clearCanvasZoomBrush?.() : zoomRect
 					.attr(prop.axis, 0)
 					.attr(prop.attr, 0);
 
@@ -477,8 +568,9 @@ export default {
 
 	getZoomTransform() {
 		const $$ = this;
-		const {$el: {eventRect}} = $$;
+		const target = getZoomTarget($$);
+		const node = target?.node();
 
-		return eventRect?.node() ? d3ZoomTransform(eventRect.node()) : {k: 1};
+		return node ? toPlotZoomTransform($$, d3ZoomTransform(node)) : {k: 1};
 	}
 };

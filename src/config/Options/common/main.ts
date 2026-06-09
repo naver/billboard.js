@@ -331,6 +331,7 @@ export default {
 	/**
 	 * Set duration of transition (in milliseconds) for chart animation.<br><br>
 	 * - **NOTE:** If `0` or `null` is set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
+	 * - **NOTE:** In canvas mode, `transition.duration` is ignored. Canvas frames are redrawn synchronously. For canvas `flow()`, pass `duration` to the `flow()` call when an x-domain interpolation is required.
 	 * @name transition
 	 * @memberof Options
 	 * @type {object}
@@ -368,11 +369,20 @@ export default {
 	 *   - Enabled by default when bind element's visibility is hidden.
 	 *   - When set to `false`, will initialize the chart regardless the bind element's visibility state, but in this case chart can't be guaranteed to be rendered properly.
 	 * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visibility` inline css property or class value) & render when it is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
+	 * @property {"svg"|"canvas"} [render.mode="svg"] Select rendering backend. Available values are `"svg"` and `"canvas"`. In canvas mode, chart primitives are rendered to a single `<canvas>` instead of SVG nodes.
+	 * - **NOTE:** Canvas mode doesn't create per-shape, per-tick, grid, region and label SVG DOM nodes/classes. SVG CSS selectors that depend on those nodes, such as `.bb-target-data1 .bb-bar`, `.bb-bar-0` or `.bb-axis .tick text`, won't style canvas-drawn primitives. Use chart options, supported CSS theme probes or `canvas.theme` overrides.
+	 * - **NOTE:** Arc chart types (`pie`, `donut`, `gauge`, `polar` and `radar`) don't get meaningful rendering benefit from canvas mode. They are rendered as SVG only and `render.mode="canvas"` is ignored for those types.
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
 	 * @example
 	 *  render: {
 	 *    lazy: true,
-	 *    observe: true
+	 *    observe: true,
+	 *    mode: "svg"
+	 * }
+	 *
+	 * @example
+	 *  render: {
+	 *    mode: "canvas"
 	 * }
 	 *
 	 * @example
@@ -400,7 +410,42 @@ export default {
 	 *  // call at any point when you want to render
 	 *  chart.flush();
 	 */
-	render: <{lazy?: boolean, observe?: boolean}>{},
+	render: <{lazy?: boolean, observe?: boolean, mode?: "svg" | "canvas"}>{},
+	render_mode: <"svg" | "canvas">"svg",
+
+	/**
+	 * Override canvas drawing style values read from supported SVG CSS probes.
+	 * Use this for canvas-specific styling that can't be represented by per-node SVG CSS selectors.
+	 * @name canvas
+	 * @memberof Options
+	 * @type {object}
+	 * @property {object} [canvas] Canvas options.
+	 * @property {object} [canvas.theme] Canvas theme override.
+	 * @property {object} [canvas.theme.selectors] Canvas theme overrides keyed by supported billboard.js SVG selectors. Use this to style canvas-rendered primitives with familiar CSS selectors and CSS property names.
+	 * - **NOTE:** `canvas.theme.selectors` keys are compatibility aliases for supported canvas primitives, not a full DOM/CSS selector engine. They don't match live SVG nodes 1:1 in canvas mode, and unsupported or per-data selectors such as `.bb-target-data1 .bb-bar` or `.bb-bar-0` are ignored. Use `canvas.theme` direct overrides or chart options for styles that need exact per-node behavior.
+	 * @see [Canvas theme selector reference](https://github.com/naver/billboard.js/blob/master/CANVAS_THEME_SELECTORS.md)
+	 * @example
+	 *  canvas: {
+	 *    theme: {
+	 *      selectors: {
+	 *        ".bb-axis .tick text": {
+	 *          fill: "#555",
+	 *          font: "12px sans-serif"
+	 *        },
+	 *        ".bb-grid line": {
+	 *          stroke: "#ddd",
+	 *          "stroke-width": 1,
+	 *          "stroke-dasharray": "2 2"
+	 *        },
+	 *        ".bb-bar": {
+	 *          stroke: "#fff",
+	 *          "stroke-width": 1
+	 *        }
+	 *      }
+	 *    }
+	 *  }
+	 */
+	canvas_theme: {},
 
 	/**
 	 * Show rectangles inside the chart.<br><br>
@@ -437,6 +482,7 @@ export default {
 	 *      start: 1,
 	 *      end: 4,
 	 *      class: "region-1-4",
+	 *      opacity: 0.2,
 	 *      label: {
 	 *      	text: "Region Text",
 	 *      	x: 5,  // position relative of the initial x coordinate

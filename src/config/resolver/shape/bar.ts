@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import shapeBar from "../../../ChartInternal/shape/bar";
-import shapePointCommon from "../../../ChartInternal/shape/point.common";
+import shapePointCommon from "../../../ChartInternal/shape/core/point";
 import {TYPE} from "../../const";
 import optPoint from "../../Options/common/point";
 import optBar from "../../Options/shape/bar";

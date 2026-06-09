@@ -5,6 +5,8 @@ $font-family: "Sans Pro",Arial,sans-serif, "nanumgothic", "Dotum";
 $line-stroke-widdth: 0.7px;
 $text-font-size: 11px;
 
+@use "../canvas-legend" as canvasLegend;
+
 /*-- Default color pattern --*/
 .bb-color-pattern {
     background-image: url("#2ac4b3;#feaf29;#ff617b;#73a2ef;#b180d0;#3064cf;#d0a45f;#8aaec7;#ef65a2;#8aaec7;");
@@ -188,6 +190,8 @@ $text-font-size: 11px;
 }
 
 /*-- Legend --*/
+@include canvasLegend.styles($font-family: $font-family, $font-size: $text-font-size, $color: #555);
+
 .bb-legend-item {
     user-select: none;
 

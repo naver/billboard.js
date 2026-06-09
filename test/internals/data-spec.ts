@@ -19,6 +19,25 @@ describe("DATA", () => {
 		chart = util.generate(args);
 	});
 
+	const waitUntil = (predicate, timeout = 3000, interval = 25) => new Promise<void>((resolve, reject) => {
+		const started = Date.now();
+		const check = () => {
+			try {
+				if (predicate()) {
+					resolve();
+				} else if (Date.now() - started > timeout) {
+					reject(new Error("Timed out waiting for condition."));
+				} else {
+					setTimeout(check, interval);
+				}
+			} catch (e) {
+				reject(e);
+			}
+		};
+
+		check();
+	});
+
 	const checkXY = function(x, y, prefix = "c", delta: any = {x: 1, y: 1}) {
 		if (isNumber(delta)) {
 			delta = {x: delta, y: delta};
@@ -221,16 +240,14 @@ describe("DATA", () => {
 			};
 		});
 
-		it("check for CSV file loading", () => new Promise(done => {
-			setTimeout(() => {
-				const data = chart.data();
+		it("check for CSV file loading", async () => {
+			await waitUntil(() => chart.data().length === 3);
 
-				expect(data).to.not.be.null;
-				expect(data.length).to.be.equal(3);
+			const data = chart.data();
 
-				done(1);
-			}, 350);
-		}));
+			expect(data).to.not.be.null;
+			expect(data.length).to.be.equal(3);
+		});
 
 		it("set options data.mimeType='json'", () => {
 			args = {
@@ -241,17 +258,15 @@ describe("DATA", () => {
 			}
 		});
 
-		it("check for JSON file loading", () => new Promise(done => {
-			setTimeout(() => {
-				const data = chart.data();
+		it("check for JSON file loading", async () => {
+			await waitUntil(() => chart.data().length === 3);
 
-				expect(data).to.not.be.null;
-				expect(data.length).to.be.equal(3);
-				expect(chart.data.values("data1")).to.deep.equal([220, 240, 270, 250, 280]);
+			const data = chart.data();
 
-				done(1);
-			}, 350);
-		}));
+			expect(data).to.not.be.null;
+			expect(data.length).to.be.equal(3);
+			expect(chart.data.values("data1")).to.deep.equal([220, 240, 270, 250, 280]);
+		});
 	});
 
 	describe("check data.order", () => {

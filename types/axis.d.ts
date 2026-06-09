@@ -4,6 +4,10 @@ import {Chart} from "./chart.js";
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+export type AxisTickValue = number | string | Date;
+export type AxisTickValues = AxisTickValue[] | ((this: Chart) => AxisTickValue[]);
+export type AxisTickFormat = (value: AxisTickValue) => unknown;
+
 export interface Axis {
 	/**
 	 * Setup the way to evaluate tick text size.
@@ -278,7 +282,7 @@ export interface XTickConfiguration {
 	 * If this option is provided, the position of the ticks will be determined based on those values.
 	 * This option works with timeseries data and the x values will be parsed according to the type of the value and data.xFormat option.
 	 */
-	values?: Array<number|string> | ((this: Chart) => number[]);
+	values?: AxisTickValues;
 
 	/**
 	 * Rotate x axis tick text.
@@ -375,7 +379,7 @@ export interface YTickConfiguration {
 	/**
 	 * Set the y values of ticks manually.
 	 */
-	values?: number[] | ((this: Chart) => number[]);
+	values?: AxisTickValues;
 
 	/**
 	 * Rotate y(or y2) axis tick text.
@@ -484,6 +488,6 @@ export interface AxesConfiguration {
 		/**
 		 * Set tick values manually
 		 */
-		values?: Array<number|string|Date>;
+		values?: AxisTickValue[];
 	};
 }

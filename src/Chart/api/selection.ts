@@ -80,6 +80,10 @@ export default {
 		const $$ = this.internal;
 		const dataPoint: DataItem[] = [];
 
+		if ($$.state.isCanvasMode) {
+			return $$.getCanvasSelectedData?.(targetId) || dataPoint;
+		}
+
 		$$.$el.main.selectAll(`.${$SHAPE.shapes + $$.getTargetSelectorSuffix(targetId)}`)
 			.selectAll(`.${$SHAPE.shape}`)
 			.filter(function() {
@@ -117,6 +121,11 @@ export default {
 	select(ids?: string[] | string, indices?: number[], resetOther?: boolean): void {
 		const $$ = this.internal;
 
+		if ($$.state.isCanvasMode) {
+			$$.setCanvasSelection?.(true, ids, indices, resetOther);
+			return;
+		}
+
 		setSelection.bind($$)(true, ids, indices, resetOther);
 	},
 
@@ -139,6 +148,11 @@ export default {
 	 */
 	unselect(ids?: string | string[], indices?: number[]): void {
 		const $$ = this.internal;
+
+		if ($$.state.isCanvasMode) {
+			$$.setCanvasSelection?.(false, ids, indices);
+			return;
+		}
 
 		setSelection.bind($$)(false, ids, indices);
 	}

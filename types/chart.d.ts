@@ -3,7 +3,15 @@
  * billboard.js project is licensed under the MIT license
  */
 import {Data, RegionOptions} from "./options.js";
-import {ArrayOrString, d3Selection, DataArray, DataItem, PrimitiveArray, TargetIds} from "./types.js";
+import {
+	ArrayOrString,
+	d3Selection,
+	DataArray,
+	DataItem,
+	DataRegionsType,
+	PrimitiveArray,
+	TargetIds
+} from "./types.js";
 
 export interface Chart {
 	$: {
@@ -378,6 +386,7 @@ export interface Chart {
 		categories?: string[];
 		axes?: { [key: string]: string | string[] };
 		colors?: { [key: string]: string };
+		regions?: DataRegionsType;
 		headers?: { [key: string]: string };
 		keys?: { [key: string]: string | string[] };
 		mimeType?: string;

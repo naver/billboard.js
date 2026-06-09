@@ -80,6 +80,8 @@ export default {
 				return;
 			}
 
+			$$.flushCanvasFlow?.();
+
 			const notfoundIds: string[] = [];
 			const orgDataCount = $$.getMaxDataCount();
 			const targets = $$.convertDataToTargets(data, true);
@@ -97,17 +99,20 @@ export default {
 							tail = t.values[t.values.length - 1].index + 1;
 						}
 
-						length = targets[i].values.length;
+						const values = targets[i].values;
+
+						length = values.length;
 
 						for (let j = 0; j < length; j++) {
-							targets[i].values[j].index = tail + j;
+							values[j].index = tail + j;
 
 							if (!isTimeSeries) {
-								targets[i].values[j].x = tail + j;
+								values[j].x = tail + j;
 							}
+
+							t.values.push(values[j]);
 						}
 
-						t.values = t.values.concat(targets[i].values);
 						targets.splice(i, 1);
 						break;
 					}
@@ -137,30 +142,45 @@ export default {
 			// Generate null values for new target
 			if ($$.data.targets.length) {
 				targets.forEach(t => {
-					const missing: any[] = [];
+					const firstIndex = $$.data.targets[0].values[0].index;
+					const values = t.values;
+					const valueLength = values.length;
+					const missingLength = Math.max(tail - firstIndex, 0);
 
-					for (let i = $$.data.targets[0].values[0].index; i < tail; i++) {
-						missing.push({
-							id: t.id,
-							index: i,
-							x: isTimeSeries ? $$.getOtherTargetX(i) : i,
-							value: null
-						});
+					if (missingLength) {
+						values.length = valueLength + missingLength;
+
+						for (let i = valueLength - 1; i >= 0; i--) {
+							values[i + missingLength] = values[i];
+						}
+
+						for (let i = 0; i < missingLength; i++) {
+							const index = firstIndex + i;
+
+							values[i] = {
+								id: t.id,
+								index,
+								x: isTimeSeries ? $$.getOtherTargetX(index) : index,
+								value: null
+							};
+						}
 					}
 
-					t.values.forEach(v => {
+					for (let i = missingLength; i < values.length; i++) {
+						const v = values[i];
+
 						v.index += tail;
 
 						if (!isTimeSeries) {
 							v.x += tail;
 						}
-					});
-
-					t.values = missing.concat(t.values);
+					}
 				});
 			}
 
-			$$.data.targets = $$.data.targets.concat(targets); // add remained
+			for (let i = 0; i < targets.length; i++) {
+				$$.data.targets.push(targets[i]); // add remained
+			}
 
 			// check data count because behavior needs to change when it"s only one
 			// const dataCount = $$.getMaxDataCount();
@@ -196,6 +216,45 @@ export default {
 			}
 
 			domain && $$.updateXDomain(null, true, true, false, domain);
+
+			if ($$.state.isCanvasMode) {
+				const duration = isValue(args.duration) ?
+					args.duration :
+					$$.config.transition_duration;
+				const animated = $$.animateCanvasFlow?.({
+					done: args.done,
+					duration,
+					length,
+					orgDataCount
+				});
+
+				if (animated) {
+					return;
+				}
+
+				// Canvas mode has no retained SVG nodes to transition. Mutate the data to the
+				// post-flow state, then redraw the final frame.
+				if (length && orgDataCount) {
+					$$.data.targets.forEach(d => {
+						d.values.splice(0, length);
+					});
+				}
+
+				$$.state.dirty.data = true;
+				$$.state._eventRectFingerprint = null;
+
+				$$.redraw({
+					withLegend: true,
+					withTransition: false,
+					withTrimXDomain: false,
+					withUpdateOrgXDomain: true,
+					withUpdateXAxis: true,
+					withUpdateXDomain: true
+				});
+				$$.updateTypesElements();
+				args.done?.call($$.api);
+				return;
+			}
 
 			// Set targets
 			$$.updateTargets($$.data.targets);

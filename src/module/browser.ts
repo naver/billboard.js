@@ -15,7 +15,6 @@
 function getGlobal() {
 	return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object &&
 		globalThis) ||
-		(typeof global === "object" && global !== null && global.Object === Object && global) ||
 		(typeof self === "object" && self !== null && self.Object === Object && self) ||
 		Function("return this")();
 }

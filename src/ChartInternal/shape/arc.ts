@@ -485,7 +485,7 @@ export default {
 		const $$ = this;
 		const {inner, outer, corner} = _getRadiusFn.call($$);
 
-		const arc = d3Arc()
+		const arc = d3Arc<any, IArcData>()
 			.innerRadius(inner)
 			.outerRadius(outer);
 
@@ -521,7 +521,7 @@ export default {
 		const $$ = this;
 		const {inner, outer, corner} = _getRadiusFn.call($$, rate);
 
-		const arc = d3Arc()
+		const arc = d3Arc<any, IArcData>()
 			.innerRadius(inner)
 			.outerRadius(outer);
 
@@ -534,7 +534,7 @@ export default {
 				cornerR = corner(updated, outerR);
 			}
 
-			return updated ? <string>arc.cornerRadius(cornerR)(updated) : "M 0 0";
+			return updated ? arc.cornerRadius(cornerR)(updated) || "M 0 0" : "M 0 0";
 		};
 	},
 

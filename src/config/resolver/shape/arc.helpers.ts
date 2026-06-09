@@ -4,7 +4,7 @@
  */
 import ChartInternal from "../../../ChartInternal/ChartInternal";
 import shapeArc from "../../../ChartInternal/shape/arc";
-import shapePointCommon from "../../../ChartInternal/shape/point.common";
+import shapePointCommon from "../../../ChartInternal/shape/core/point";
 import {extend} from "../../../module/util";
 import optPoint from "../../Options/common/point";
 import Options from "../../Options/Options";

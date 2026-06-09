@@ -108,7 +108,13 @@ export default {
 	 */
 	getCustomizedXScale(scaleValue: Function | any, offsetValue): Function {
 		const $$ = this;
-		const offset = offsetValue || (() => $$.axis.x.tickOffset());
+		const offset = () => {
+			const value = offsetValue ? offsetValue() : $$.axis.x.tickOffset();
+
+			return value || (
+				$$.axis.isCategorized() ? (scaleValue(1) - scaleValue(0)) / 2 : 0
+			);
+		};
 		const isInverted = $$.config.axis_x_inverted;
 
 		/**
@@ -187,8 +193,12 @@ export default {
 
 			// update scales
 			// x Axis
-			const xDomain = updateXDomain && scale.x?.orgDomain();
-			const xSubDomain = updateXDomain && org.xDomain;
+			const xDomain = updateXDomain ?
+				scale.x?.orgDomain() :
+				(scale.zoom ? undefined : scale.x?.domain?.());
+			const xSubDomain = updateXDomain ?
+				org.xDomain :
+				(scale.zoom ? undefined : scale.subX?.domain?.());
 
 			scale.x = $$.getXScale(min.x, max.x, xDomain, () => axis.x.tickOffset());
 			scale.subX = $$.getXScale(min.x, max.x, xSubDomain, d => (

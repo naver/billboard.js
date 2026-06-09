@@ -1,0 +1,69 @@
+@mixin styles($font-family: null, $font-size: null, $color: null) {
+	div.bb-canvas-legend {
+		position: absolute;
+		z-index: 1;
+		box-sizing: border-box;
+		display: block;
+		overflow: visible;
+		pointer-events: auto;
+
+		@if $font-family != null {
+			font-family: $font-family;
+		}
+
+		@if $font-size != null {
+			font-size: $font-size;
+		}
+
+		@if $color != null {
+			color: $color;
+		}
+
+		&.bb-canvas-legend-bottom {
+			right: 0;
+			bottom: 6px;
+			left: 0;
+		}
+
+		&.bb-canvas-legend-right {
+			overflow: visible;
+		}
+	}
+
+	button.bb-legend-item {
+		position: absolute;
+		display: block;
+		box-sizing: border-box;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: inherit;
+		font-family: inherit;
+		font-size: inherit;
+		line-height: normal;
+		text-align: left;
+
+		&.bb-legend-item-interactive {
+			cursor: pointer;
+		}
+	}
+
+	.bb-canvas-legend .bb-legend-item-title {
+		position: absolute;
+		white-space: nowrap;
+		pointer-events: none;
+	}
+
+	.bb-canvas-legend .bb-legend-item-tile {
+		position: absolute;
+		display: block;
+		box-sizing: border-box;
+		width: 10px;
+		height: 10px;
+
+		&.bb-legend-item-tile-circle {
+			border-radius: 50%;
+		}
+	}
+}

@@ -51,7 +51,15 @@ export default {
 			data.targets.forEach(d => {
 				for (let i = 0; i < targets.length; i++) {
 					if (d.id === targets[i].id) {
-						d.values = append ? d.values.concat(targets[i].values) : targets[i].values;
+						if (append) {
+							const values = targets[i].values;
+
+							for (let j = 0; j < values.length; j++) {
+								d.values.push(values[j]);
+							}
+						} else {
+							d.values = targets[i].values;
+						}
 
 						targets.splice(i, 1);
 						break;
@@ -59,7 +67,21 @@ export default {
 				}
 			});
 
-			data.targets = data.targets.concat(targets); // add remained
+			for (let i = 0; i < targets.length; i++) {
+				data.targets.push(targets[i]); // add remained
+			}
+		}
+
+		if ($$.state.isCanvasMode) {
+			$$.redraw({
+				withUpdateOrgXDomain: true,
+				withUpdateXDomain: true,
+				withLegend: true
+			});
+			$$.updateTypesElements();
+
+			callDone.call($$, args.done, args.resizeAfter);
+			return;
 		}
 
 		// Set targets
@@ -166,6 +188,20 @@ export default {
 
 		// If no target, call done and return
 		if (!targetIds || targetIds.length === 0) {
+			done();
+			return;
+		}
+
+		if (state.isCanvasMode) {
+			targetIds.forEach(id => {
+				state.withoutFadeIn[id] = false;
+				$$.data.targets = $$.data.targets.filter(t => t.id !== id);
+			});
+
+			$$.removeHiddenTargetIds(targetIds);
+			$$.removeHiddenLegendIds(targetIds);
+			$$.updateTypesElements();
+
 			done();
 			return;
 		}

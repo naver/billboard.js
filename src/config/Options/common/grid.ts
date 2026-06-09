@@ -2,10 +2,12 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import type {GridLineOptions} from "../../../../types/options";
+
 /**
  * grid config options
  */
-type Lines = {value?: number, text?: string, class?: string, position?: string}[];
+type Lines = GridLineOptions[];
 
 export default {
 	/**

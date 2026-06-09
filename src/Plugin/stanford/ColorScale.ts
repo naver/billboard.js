@@ -5,7 +5,7 @@
 import {axisRight as d3AxisRight} from "d3-axis";
 import {scaleSequential as d3ScaleSequential, scaleSymlog as d3ScaleSymlog} from "d3-scale";
 import CLASS from "./classes";
-import {getRange, isFunction} from "./util";
+import {getBBox, getRange, isFunction} from "./util";
 
 /**
  * Simple number formatter.
@@ -109,7 +109,7 @@ export default class ColorScale {
 
 	xForColorScale(): number {
 		return this.owner.config.padding_right +
-			this.colorScale.node().getBBox().width;
+			getBBox(this.colorScale.node(), true).width;
 	}
 
 	getColorScalePadding(): number {

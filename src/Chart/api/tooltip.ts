@@ -124,8 +124,14 @@ const tooltip = {
 	 */
 	hide: function(): void {
 		const $$ = this.internal;
-		const {state: {inputType}, $el: {tooltip}} = $$;
+		const {state: {inputType, isCanvasMode}, $el: {tooltip}} = $$;
 		const data = tooltip?.datum();
+
+		if (isCanvasMode) {
+			$$.hideTooltip(true);
+			$$.clearCanvasFocus?.();
+			return;
+		}
 
 		if (data?.data?.[0]) {
 			const {index} = data.data[0];

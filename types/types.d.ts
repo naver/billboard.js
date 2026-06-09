@@ -58,11 +58,11 @@ export interface DataItem<T=number> {
 export type DataArray = DataRow[];
 
 export interface DataRegionsType {
-	[key: string]: {
-		start?: number;
-		end?: number;
+	[key: string]: Array<{
+		start?: number | string | Date;
+		end?: number | string | Date;
 		style?: {
 			dasharray?: string;
 		}
-	};
+	}>;
 }

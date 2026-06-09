@@ -447,7 +447,7 @@ export default {
 	selectRectForMultipleXs(context: SVGRectElement, triggerEvent = true): void {
 		const $$ = this;
 		const {config, state} = $$;
-		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+		const targetsToShow = $$.getTargetsToShow();
 
 		// do nothing when dragging
 		if (state.dragging || $$.hasArcType(targetsToShow)) {
@@ -509,9 +509,16 @@ export default {
 	 */
 	unselectRect(): void {
 		const $$ = this;
-		const {$el: {circle, tooltip}} = $$;
+		const {state, $el: {circle, tooltip}} = $$;
 
-		$$.state._lastTooltipMouse = null;
+		state._lastTooltipMouse = null;
+
+		if (state.isCanvasMode) {
+			$$.clearCanvasFocus?.();
+			tooltip && $$.hideTooltip();
+			return;
+		}
+
 		$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", null);
 		$$.hideGridFocus?.();
 
@@ -713,7 +720,7 @@ export default {
 	clickHandlerForMultipleXS(ctx): void {
 		const $$ = ctx;
 		const {config, state} = $$;
-		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+		const targetsToShow = $$.getTargetsToShow();
 
 		if ($$.hasArcType(targetsToShow)) {
 			return;

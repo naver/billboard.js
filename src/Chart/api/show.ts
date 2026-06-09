@@ -13,7 +13,12 @@ import {callFn, endall} from "../../module/util";
  * @param {boolean} [skipRedraw=false] whether or not skip redraw after show/hide
  * @private
  */
-function showHide(show: boolean, targetIdsValue: string[], options: any, skipRedraw = false): void {
+function showHide(
+	show: boolean,
+	targetIdsValue: string[] | string | undefined,
+	options: any,
+	skipRedraw = false
+): void {
 	const $$ = this.internal;
 	const targetIds = $$.mapToTargetIds(targetIdsValue);
 	const targetIdSet = new Set(targetIds);
@@ -23,6 +28,25 @@ function showHide(show: boolean, targetIdsValue: string[], options: any, skipRed
 	$$.state.dirty.visibility = true;
 
 	$$[`${show ? "remove" : "add"}HiddenTargetIds`](targetIds);
+
+	if ($$.state.isCanvasMode) {
+		if (show && hiddenIds.length) {
+			callFn($$.config.data_onshown, this, hiddenIds);
+		} else if (!show && hiddenIds.length === 0) {
+			callFn($$.config?.data_onhidden, this, targetIds);
+		}
+
+		if (!skipRedraw) {
+			$$.redraw({
+				withUpdateOrgXDomain: true,
+				withUpdateXDomain: true,
+				withLegend: true
+			});
+		}
+
+		$$.state.toggling = false;
+		return;
+	}
 
 	const targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds));
 	const opacity = show ? null : "0";
@@ -100,7 +124,7 @@ export default {
 	 * // hide 'data1' and 'data3'
 	 * chart.hide(["data1", "data3"]);
 	 */
-	hide(targetIdsValue?: string[], options = {}): void {
+	hide(targetIdsValue?: string[] | string, options = {}): void {
 		showHide.call(this, false, targetIdsValue, options);
 	},
 

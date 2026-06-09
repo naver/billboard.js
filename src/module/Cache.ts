@@ -12,6 +12,7 @@ import {isString, isValue} from "./util";
  */
 export const KEY = {
 	bubbleBaseLength: "$baseLength",
+	bubbleMaxValue: "$bubbleMaxValue",
 	colorPattern: "__colorPattern__",
 	dataMinMax: "$dataMinMax",
 	dataTotalSum: "$dataTotalSum",
@@ -20,6 +21,7 @@ export const KEY = {
 	filteredTargets: "$filteredTargets",
 	filteredNullish: "$filteredNullish",
 	svgLeft: "$svgLeft",
+	valuesByX: "$valuesByX",
 	legendItemTextBox: "legendItemTextBox",
 	legendItemMap: "$legendItemMap",
 	radarPoints: "$radarPoints",
