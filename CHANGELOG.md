@@ -1,3 +1,10 @@
+# [4.0.0-next.2](https://github.com/naver/billboard.js/compare/4.0.0-next.1...4.0.0-next.2) (2026-06-09)
+
+
+### Bug Fixes
+
+* **canvas:** address canvas render review issues ([70df3f6](https://github.com/naver/billboard.js/commit/70df3f6d52afb63a320d02bc9af14d887de5aa90))
+
 # [4.0.0-next.1](https://github.com/naver/billboard.js/compare/3.18.0...4.0.0-next.1) (2026-06-09)
 
 
