@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 // @ts-nocheck
-import {describe, expect, it} from "vitest";
+import {describe, expect, it, vi} from "vitest";
 
 import CanvasRenderer from "../../src/canvas/CanvasRenderer";
 import {TYPE} from "../../src/config/const";
@@ -283,6 +283,71 @@ describe("ESM canvas renderer coverage", () => {
 		expect(renderer.ctx).to.not.be.null;
 	});
 
+	it("covers background and label image cache helper branches", () => {
+		const {renderer} = makeRenderer();
+		const ctx = makeContext();
+		const container = document.createElement("div");
+		const style = document.createElement("style");
+
+		document.body.appendChild(container);
+		document.head.appendChild(style);
+		style.textContent = ".canvas-bg-probe{opacity:.35;transform:matrix(1,0,0,1,6,7)}";
+		ctx.$el = {
+			chart: {
+				node: () => container
+			}
+		};
+		ctx.redraw = vi.fn();
+		ctx.renderCanvasFrame = vi.fn();
+
+		expect(renderer.getLabelImage("", ctx)).to.be.null;
+		expect(renderer.getBackgroundImage("", ctx)).to.be.null;
+
+		const labelEntry = renderer.getLabelImage("/label-cache.png", ctx);
+
+		expect(labelEntry.loading).to.be.true;
+		expect(renderer.getLabelImage("/label-cache.png", ctx)).to.equal(labelEntry);
+		labelEntry.image.onload();
+		expect(labelEntry.loaded).to.be.true;
+		expect(labelEntry.loading).to.be.false;
+		expect(ctx.redraw).toHaveBeenCalledTimes(1);
+		labelEntry.image.onerror();
+		expect(labelEntry.loaded).to.be.false;
+
+		const backgroundEntry = renderer.getBackgroundImage("/background-cache.png", ctx);
+
+		expect(backgroundEntry.loading).to.be.true;
+		expect(renderer.getBackgroundImage("/background-cache.png", ctx)).to.equal(backgroundEntry);
+		backgroundEntry.image.onload();
+		expect(backgroundEntry.loaded).to.be.true;
+		expect(backgroundEntry.loading).to.be.false;
+		expect(ctx.renderCanvasFrame).toHaveBeenCalledWith(undefined, null, false);
+		backgroundEntry.image.onerror();
+		expect(backgroundEntry.loaded).to.be.false;
+
+		ctx.config.background = {
+			color: "#135790"
+		};
+		renderer.drawBackground(ctx);
+
+		ctx.config.background = {
+			class: "canvas-bg-probe",
+			color: "#246801"
+		};
+		renderer.drawBackground(ctx);
+		renderer.drawBackground(ctx);
+
+		ctx.config.background = {
+			class: "canvas-bg-probe",
+			imgUrl: "/background-pending.png"
+		};
+		renderer.drawBackground(ctx);
+
+		style.remove();
+		container.remove();
+		expect(renderer.backgroundClassStyleCache.has("canvas-bg-probe")).to.be.true;
+	});
+
 	it("draws point focus, circles and data labels", () => {
 		const {renderer} = makeRenderer();
 		const ctx = makeContext();
@@ -347,6 +412,170 @@ describe("ESM canvas renderer coverage", () => {
 		expect(renderer.ctx).to.not.be.null;
 	});
 
+	it("covers focus label skip cases and loaded label images", () => {
+		const {renderer} = makeRenderer();
+		const ctx = makeContext();
+		const valid = ctx.data.targets[2].values[0];
+		const noText = ctx.data.targets[2].values[1];
+		const invalidPosition = makeRow("scatter", 2, 30);
+
+		ctx.canvasEngine = {ctx: renderer.ctx};
+		ctx.canvasTheme = renderer.theme;
+		ctx.config.data_labels = {
+			image: {
+				height: 8,
+				pos: {x: 1, y: -1},
+				url: "/label-image.png",
+				width: 10
+			},
+			rotate: 0
+		};
+		ctx.config.data_labels_backgroundColors = () => null;
+		ctx.config.data_labels_position = (type, value, id, index) =>
+			index === 2 && type === "x" ? Infinity : 0;
+		ctx.config.grid_focus_show = false;
+		ctx.config.tooltip_show = true;
+		ctx.dataLabelFormat = () => (value, id, index) =>
+			index === 1 ? null : `focus:${value}`;
+		ctx.hasDataLabel = () => false;
+		ctx.pointExpandedR = () => 9;
+		ctx.updateTextColor = () => undefined;
+
+		renderer.drawFocus(ctx, [valid]);
+
+		ctx.hasDataLabel = () => true;
+		renderer.drawFocus(ctx, [ctx.data.targets[0].values[0]]);
+		renderer.drawFocus(ctx, [valid, noText, invalidPosition]);
+
+		const entry = renderer.labelImageCache.get("/label-image.png");
+
+		expect(entry.loaded).to.be.false;
+		entry.loaded = true;
+		renderer.drawFocus(ctx, [valid]);
+
+		ctx.config.axis_rotated = true;
+		renderer.drawFocus(ctx, [valid]);
+
+		expect(renderer.ctx).to.not.be.null;
+	});
+
+	it("draws data labels for rotated, centered and negative shapes", () => {
+		const {renderer} = makeRenderer();
+		const ctx = makeContext();
+		const shape = {
+			indices: {
+				[TYPE.BAR]: {},
+				[TYPE.CANDLESTICK]: {}
+			},
+			pos: {
+				cx: (d, i) => i * 18 + 5,
+				cy: d => d.value
+			}
+		};
+
+		ctx.canvasEngine = {ctx: renderer.ctx};
+		ctx.canvasTheme = renderer.theme;
+		ctx.config.data_labels = {
+			border: true,
+			centered: false,
+			rotate: 0
+		};
+		ctx.config.data_labels_backgroundColors = {
+			bar: "#ffeeee",
+			candle: null,
+			scatter: undefined
+		};
+		ctx.config.data_labels_position = {
+			bar: {x: -1, y: 1},
+			x: 2,
+			y: -2
+		};
+		ctx.data.targets[0].values = [
+			makeRow("bar", 0, -10),
+			makeRow("bar", 1, 20)
+		];
+		ctx.data.targets[1].values = [
+			makeRow("candle", 0, 10),
+			makeRow("candle", 1, 20)
+		];
+		ctx.data.targets[2].values = [
+			makeRow("scatter", 0, -5),
+			makeRow("scatter", 1, 0)
+		];
+		ctx.dataLabelFormat = () => value => `value:${value}`;
+		ctx.generateGetBarPoints = () => (d, i) => [
+			[i * 22, 0],
+			[i * 22, d.value],
+			[i * 22 + 14, d.value],
+			[i * 22 + 14, 0]
+		];
+		ctx.hasDataLabel = () => true;
+		ctx.labelishData = target => target.values;
+		ctx.state.hasNegativeValue = true;
+		ctx.state.hasPositiveValue = false;
+
+		renderer.drawLabels(ctx, shape);
+
+		ctx.config.axis_rotated = true;
+		renderer.drawLabels(ctx, shape);
+
+		ctx.config.data_labels.centered = true;
+		renderer.drawLabels(ctx, shape);
+
+		ctx.config.data_labels.rotate = 220;
+		ctx.config.axis_y_inverted = true;
+		renderer.drawLabels(ctx, shape);
+
+		expect(renderer.ctx).to.not.be.null;
+	});
+
+	it("covers subchart target skip branches for optional generators", () => {
+		const {renderer} = makeRenderer();
+		const ctx = makeContext();
+		const shape = {
+			indices: {
+				[TYPE.AREA]: {},
+				[TYPE.BAR]: {},
+				[TYPE.CANDLESTICK]: {},
+				[TYPE.LINE]: {}
+			},
+			pos: {}
+		};
+
+		ctx.config.data_types = {
+			area: TYPE.AREA,
+			bar: TYPE.BAR,
+			candle: TYPE.CANDLESTICK,
+			line: TYPE.LINE
+		};
+		ctx.data.targets = [
+			{id: "area", values: [makeRow("area", 0, null)]},
+			{id: "line", values: [makeRow("line", 0, null)]},
+			ctx.data.targets[0],
+			ctx.data.targets[1]
+		];
+		ctx.generateGetBarPoints = () => null;
+		ctx.generateGetCandlestickPoints = () => null;
+		ctx.updateCircleY = () => null;
+		renderer.drawSubchart(ctx, shape);
+
+		ctx.generateGetBarPoints = () => (d, i) => [
+			[i * 12, 0],
+			[i * 12 + 6, d.value]
+		];
+		ctx.generateGetCandlestickPoints = () => (d, i) => [
+			[i * 12, 1],
+			[i * 12 + 5, 9],
+			[i * 12 + 2, 0, 10]
+		];
+		ctx.getCandlestickData = () => null;
+		ctx.subxx = null;
+		ctx.updateCircleY = () => (d, i) => i * 5;
+		renderer.drawSubchart(ctx, shape);
+
+		expect(renderer.ctx).to.not.be.null;
+	});
+
 	it("draws bar and candlestick foreground paths", () => {
 		const {renderer} = makeRenderer();
 		const ctx = makeContext();
@@ -379,5 +608,118 @@ describe("ESM canvas renderer coverage", () => {
 		renderer.drawCandlesticks(ctx, shape, [ctx.data.targets[1].values[0]]);
 
 		expect(renderer.ctx).to.not.be.null;
+	});
+
+	it("draws connect line variants and rounded bars", () => {
+		const {renderer} = makeRenderer();
+		const ctx = makeContext();
+		const shape = {
+			indices: {
+				[TYPE.BAR]: {}
+			},
+			pos: {}
+		};
+		const connectLineTypes = ["start-start", "start-end", "end-start", "end-end"];
+
+		ctx.canvasTheme = renderer.theme;
+		ctx.config.bar_radius = 3;
+		ctx.config.data_groups = [["bar"]];
+		ctx.generateGetBarPoints = () => (d, i) => [
+			[i * 20, 0],
+			[i * 20, d.value],
+			[i * 20 + 12, d.value],
+			[i * 20 + 12, 0]
+		];
+		ctx.isGrouped = id => id === "bar";
+		renderer.theme.style.shape.barLineWidth = 1;
+
+		for (const axisRotated of [false, true]) {
+			ctx.config.axis_rotated = axisRotated;
+
+			for (const type of connectLineTypes) {
+				ctx.config.bar_connectLine = type;
+				renderer.drawBars(ctx, shape, [ctx.data.targets[0].values[1]]);
+			}
+		}
+
+		expect(renderer.ctx).to.not.be.null;
+	});
+
+	it("draws rotated focus grid and treemap labels", () => {
+		const {renderer} = makeRenderer();
+		const ctx = makeContext();
+		const focus = ctx.data.targets[2].values[0];
+
+		ctx.config.axis_rotated = true;
+		ctx.config.axis_tooltip = false;
+		ctx.config.color_onover = "#ff00ff";
+		ctx.config.grid_focus_edge = true;
+		ctx.config.grid_focus_show = true;
+		ctx.config.grid_focus_y = true;
+		ctx.config.point_show = true;
+		ctx.config.tooltip_grouped = false;
+		ctx.config.tooltip_show = true;
+		ctx.axis.getId = () => "y2";
+		ctx.canvasTheme = renderer.theme;
+		ctx.state.canvasFocusMainRedraw = false;
+
+		renderer.drawFocus(ctx, [focus]);
+
+		ctx.config.axis_rotated = false;
+		ctx.config.data_type = TYPE.TREEMAP;
+		ctx.config.data_types = {
+			ignored: TYPE.LINE,
+			tile: TYPE.TREEMAP
+		};
+		ctx.config.treemap_label_format = (value, ratio, id) =>
+			id === "empty" ? null : `${id}:${value}:${ratio}`;
+		ctx.config.treemap_label_show = true;
+		ctx.config.treemap_label_threshold = 0.2;
+		ctx.data.targets = [];
+		ctx.getTreemapRoot = () => ({
+			children: [
+				{data: {id: "ignored", name: "ignored", ratio: 1, value: 1}, x0: 0, x1: 1, y0: 0, y1: 1},
+				{data: {id: "tile", name: "tile", ratio: 0.1, value: 1}, x0: 0, x1: 1, y0: 0, y1: 1},
+				{data: {id: "empty", name: "empty", ratio: 0.8, value: 2}, x0: 1, x1: 2, y0: 1, y1: 2},
+				{data: {id: "tile", name: "tile", ratio: 0.8, value: 3}, x0: 2, x1: 4, y0: 2, y1: 4},
+				{data: {id: "tile", name: "tile", ratio: 0.9, value: 4}, x0: 4, x1: 2, y0: 4, y1: 2}
+			]
+		});
+		ctx.scale.x = value => value * 20;
+		ctx.scale.y = value => value * 15;
+
+		renderer.drawTreemaps(ctx);
+
+		expect(renderer.ctx).to.not.be.null;
+	});
+
+	it("clears image caches on destroy", () => {
+		const {renderer} = makeRenderer();
+		const labelImage = new Image();
+		const backgroundImage = new Image();
+
+		labelImage.onload = () => {};
+		labelImage.onerror = () => {};
+		backgroundImage.onload = () => {};
+		backgroundImage.onerror = () => {};
+		renderer.labelImageCache.set("/label.png", {
+			image: labelImage,
+			loaded: false,
+			loading: true
+		});
+		renderer.backgroundImageCache.set("/bg.png", {
+			image: backgroundImage,
+			loaded: false,
+			loading: true
+		});
+		renderer.backgroundClassStyleCache.set("bg", {opacity: 0.5});
+
+		renderer.destroy();
+
+		expect(labelImage.onload).to.be.null;
+		expect(backgroundImage.onerror).to.be.null;
+		expect(renderer.labelImageCache.size).to.be.equal(0);
+		expect(renderer.backgroundImageCache.size).to.be.equal(0);
+		expect(renderer.backgroundClassStyleCache.size).to.be.equal(0);
 	});
 });

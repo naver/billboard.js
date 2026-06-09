@@ -43,6 +43,8 @@ export default class State {
 			hasRadar: false,
 			hasTreemap: false,
 			isCanvasMode: false,
+			canvasShape: null,
+			canvasFocusKey: <string | null>null,
 			canvasSubchartBrushDragging: false,
 			canvasSubchartBrushMode: <"select" | "move" | "resize-start" | "resize-end" | null>null,
 			canvasSubchartBrushStart: <number | null>null,

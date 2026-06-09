@@ -42,6 +42,8 @@ export type PositionFunction = (
 	texts: d3Selection
 ) => number;
 
+export type DataEventElement = SVGElement | HTMLCanvasElement;
+
 export interface CanvasThemeSelectorStyle {
 	[key: string]: string | number | number[] | null | undefined;
 }
@@ -1512,33 +1514,36 @@ export interface Data {
 	/**
 	 * Set a callback for click event on each data point.
 	 * This callback will be called when each data point clicked and will receive d and element as the arguments.
-	 * - d is the data clicked and element is the element clicked. In this callback, this will be the Chart object.
+	 * - d is the data clicked and element is the element clicked. In canvas mode, element is the shared `<canvas>` element.
+	 * In this callback, this will be the Chart object.
 	 */
-	onclick?(this: Chart, d: DataItem, element: SVGElement): void;
+	onclick?(this: Chart, d: DataItem, element: DataEventElement): void;
 
 	/**
 	 * Set a callback for mouse/touch over event on each data point.
 	 * This callback will be called when mouse cursor or via touch moves onto each data point and will receive d as the argument.
-	 * - d is the data where mouse cursor moves onto. In this callback, this will be the Chart object.
+	 * - d is the data where mouse cursor moves onto. In canvas mode, element is the shared `<canvas>` element.
+	 * In this callback, this will be the Chart object.
 	 */
-	onover?(this: Chart, d: DataItem, element?: SVGElement): void;
+	onover?(this: Chart, d: DataItem, element?: DataEventElement): void;
 
 	/**
 	 * Set a callback for mouse/touch event on each data point.
 	 * This callback will be called when mouse cursor moves out each data point and will receive d as the argument.
-	 * - d is the data where mouse cursor moves out. In this callback, this will be the Chart object.
+	 * - d is the data where mouse cursor moves out. In canvas mode, element is the shared `<canvas>` element.
+	 * In this callback, this will be the Chart object.
 	 */
-	onout?(this: Chart, d: DataItem, element?: SVGElement): void;
+	onout?(this: Chart, d: DataItem, element?: DataEventElement): void;
 
 	/**
 	 * Set a callback for on data selection.
 	 */
-	onselected?(this: Chart, d: DataItem, element?: SVGElement): void;
+	onselected?(this: Chart, d: DataItem, element?: DataEventElement): void;
 
 	/**
 	 * Set a callback for on data un-selection.
 	 */
-	onunselected?(this: Chart, d: DataItem, element?: SVGElement): void;
+	onunselected?(this: Chart, d: DataItem, element?: DataEventElement): void;
 
 	/**
 	 * Set a callback for minimum data

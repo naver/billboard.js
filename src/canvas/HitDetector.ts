@@ -422,6 +422,45 @@ export default class HitDetector {
 	}
 
 	/**
+	 * Find the nearest directly hit shape row, excluding grouped index fallback.
+	 * @param {number} mx Mouse x coordinate
+	 * @param {number} my Mouse y coordinate
+	 * @returns {object|null} Matching data row
+	 * @private
+	 */
+	findNearestShape(mx: number, my: number): any | null {
+		for (const item of getGridItems(this.barGrid, mx, my, BAR_CELL_SIZE)) {
+			const {w = 0, h = 0} = item;
+
+			if (
+				mx >= item.x &&
+				mx <= item.x + w &&
+				my >= item.y &&
+				my <= item.y + h
+			) {
+				return item.data;
+			}
+		}
+
+		let nearest: HitItem | null = null;
+		let min = Number.POSITIVE_INFINITY;
+
+		for (const item of getGridItems(this.pointGrid, mx, my, this.pointCellSize, 1)) {
+			const dx = item.x - mx;
+			const dy = item.y - my;
+			const dist = Math.sqrt(dx * dx + dy * dy);
+			const sensitivity = item.sensitivity ?? HIT_DISTANCE;
+
+			if (dist <= sensitivity && dist < min) {
+				min = dist;
+				nearest = item;
+			}
+		}
+
+		return nearest?.data ?? null;
+	}
+
+	/**
 	 * Find the nearest grouped x-index row for an axis-adjacent pointer coordinate.
 	 * @param {number} mx Mouse x coordinate
 	 * @param {number} my Mouse y coordinate

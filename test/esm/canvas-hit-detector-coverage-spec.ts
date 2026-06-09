@@ -124,6 +124,30 @@ describe("ESM canvas hit detector coverage", () => {
 		expect(detector.findNearest(20, 20)).to.be.null;
 	});
 
+	it("finds directly hit point apart from grouped index fallback", () => {
+		const detector = new HitDetector();
+		const ctx = makeContext(TYPE.LINE, {
+			data: {
+				targets: [
+					{id: "data1", values: [makeRow("data1", 0, 10)]},
+					{id: "data2", values: [makeRow("data2", 0, 40)]}
+				]
+			}
+		});
+		const shape = {
+			indices: {},
+			pos: {
+				cx: () => 0,
+				cy: d => d.value
+			}
+		};
+
+		detector.rebuild(ctx, shape);
+
+		expect(detector.findNearest(10, 60)).to.be.equal(ctx.data.targets[0].values[0]);
+		expect(detector.findNearestShape(10, 60)).to.be.equal(ctx.data.targets[1].values[0]);
+	});
+
 	it("indexes candlesticks and rotated grouped selections", () => {
 		const detector = new HitDetector();
 		const ctx = makeContext(TYPE.CANDLESTICK, {
@@ -162,5 +186,97 @@ describe("ESM canvas hit detector coverage", () => {
 		expect(detector.findNearest(120, 100)).to.be.null;
 		expect(detector.findInRect({x: 0, y: 0, w: 100, h: 100}).map(d => d.id))
 			.to.be.deep.equal(["data1"]);
+	});
+
+	it("skips invalid geometry and falls back through grouped index hits", () => {
+		const detector = new HitDetector();
+		const ctx = makeContext(TYPE.BAR, {
+			config: {
+				data_selection_enabled: true,
+				data_selection_grouped: true
+			},
+			data: {
+				targets: [{
+					id: "data1",
+					values: [
+						makeRow("data1", 0, 10),
+						makeRow("data1", 1, null),
+						makeRow("data1", 2, 30)
+					]
+				}]
+			}
+		});
+
+		ctx.generateGetBarPoints = () => (d, i) =>
+			i === 2 ? [[Infinity, 0], [Infinity, 10]] : [[i * 30, 0], [i * 30 + 12, 18]];
+
+		detector.rebuild(ctx, {indices: {[TYPE.BAR]: {}}, pos: {}});
+
+		expect(detector.findNearest(80, 60)).to.be.equal(ctx.data.targets[0].values[0]);
+		expect(detector.findInRect({x: 80, y: 80, w: -100, h: -100}, true).map(d => d.index))
+			.to.deep.equal([0]);
+		expect(detector.findNearestIndexByCoord(500, 500)).to.be.equal(ctx.data.targets[0].values[0]);
+	});
+
+	it("handles point culling, invalid coordinates and default sensitivity", () => {
+		const detector = new HitDetector();
+		const targets = [{
+			id: "data1",
+			values: Array.from({length: 100002}, (_, index) => makeRow("data1", index, index))
+		}];
+		const ctx = makeContext(TYPE.SCATTER, {
+			config: {
+				data_selection_enabled: false,
+				point_r: 4,
+				point_sensitivity: 3,
+				tooltip_grouped: false
+			},
+			data: {targets},
+			getPointSensitivity: () => Number.NaN
+		});
+		const shape = {
+			indices: {},
+			pos: {
+				cx: (d, i) => i === 1 ? Number.NaN : i % 2,
+				cy: (d, i) => i % 2
+			}
+		};
+
+		detector.rebuild(ctx, shape);
+
+		expect(detector.findNearest(10, 20)).to.be.equal(targets[0].values[0]);
+		expect(detector.findNearest(50, 50)).to.be.null;
+
+		ctx.config.point_sensitivity = undefined;
+		ctx.getPointSensitivity = () => Number.NaN;
+		ctx.data.targets = [{
+			id: "data1",
+			values: [makeRow("data1", 0, 10), makeRow("data1", 1, 20)]
+		}];
+		detector.rebuild(ctx, shape);
+		expect(detector.findNearest(10, 20)).to.be.equal(ctx.data.targets[0].values[0]);
+	});
+
+	it("handles empty and invalid treemap roots", () => {
+		const detector = new HitDetector();
+		const ctx = makeContext(TYPE.TREEMAP, {
+			state: {
+				hasTreemap: true
+			}
+		});
+
+		ctx.getTreemapRoot = () => null;
+		detector.rebuild(ctx, {indices: {}, pos: {}});
+		expect(detector.findNearest(20, 20)).to.be.null;
+
+		ctx.getTreemapRoot = () => ({
+			children: [
+				{data: makeRow("data1", 0, 10), x0: Number.NaN, x1: 1, y0: 0, y1: 1}
+			]
+		});
+		ctx.scale.x = value => value;
+		ctx.scale.y = value => value;
+		detector.rebuild(ctx, {indices: {}, pos: {}});
+		expect(detector.findInRect({x: 0, y: 0, w: 100, h: 100})).to.be.empty;
 	});
 });
