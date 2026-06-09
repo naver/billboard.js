@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260418010022
+ * @version 3.18.0-nightly-20260609012137
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23049,7 +23049,6 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 ;// ./node_modules/d3-color/src/define.js
-Object.defineProperty(src_define, "name", { value: "default", configurable: true });
 /* harmony default export */ function src_define(constructor, factory, prototype) {
   constructor.prototype = factory.prototype = prototype;
   prototype.constructor = constructor;
@@ -23391,7 +23390,6 @@ function hsl2rgb(h, m1, m2) {
 
 ;// ./node_modules/d3-interpolate/src/constant.js
 /* harmony default export */ var constant = ((x) => () => x);
-(Object.getOwnPropertyDescriptor(constant, "name") || {}).writable || Object.defineProperty(constant, "name", { value: "default", configurable: true });
 
 ;// ./node_modules/d3-interpolate/src/color.js
 
@@ -23438,7 +23436,6 @@ function hsl_hsl(hue2) {
 var hslLong = hsl_hsl(nogamma);
 
 ;// ./node_modules/d3-interpolate/src/basis.js
-Object.defineProperty(src_basis, "name", { value: "default", configurable: true });
 function basis(t1, v0, v1, v2, v3) {
   var t2 = t1 * t1, t3 = t2 * t1;
   return ((1 - 3 * t1 + 3 * t2 - t3) * v0 + (4 - 6 * t2 + 3 * t3) * v1 + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2 + t3 * v3) / 6;
@@ -23452,7 +23449,6 @@ function basis(t1, v0, v1, v2, v3) {
 }
 
 ;// ./node_modules/d3-interpolate/src/basisClosed.js
-Object.defineProperty(basisClosed, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function basisClosed(values) {
   var n = values.length;
@@ -23507,7 +23503,6 @@ var rgbBasis = rgbSpline(src_basis);
 var rgbBasisClosed = rgbSpline(basisClosed);
 
 ;// ./node_modules/d3-interpolate/src/numberArray.js
-Object.defineProperty(numberArray, "name", { value: "default", configurable: true });
 /* harmony default export */ function numberArray(a, b) {
   if (!b) b = [];
   var n = a ? Math.min(b.length, a.length) : 0, c = b.slice(), i;
@@ -23521,7 +23516,6 @@ function isNumberArray(x) {
 }
 
 ;// ./node_modules/d3-interpolate/src/array.js
-Object.defineProperty(array, "name", { value: "default", configurable: true });
 
 
 /* harmony default export */ function array(a, b) {
@@ -23538,7 +23532,6 @@ function genericArray(a, b) {
 }
 
 ;// ./node_modules/d3-interpolate/src/date.js
-Object.defineProperty(date, "name", { value: "default", configurable: true });
 /* harmony default export */ function date(a, b) {
   var d = /* @__PURE__ */ new Date();
   return a = +a, b = +b, function(t) {
@@ -23547,7 +23540,6 @@ Object.defineProperty(date, "name", { value: "default", configurable: true });
 }
 
 ;// ./node_modules/d3-interpolate/src/number.js
-Object.defineProperty(number, "name", { value: "default", configurable: true });
 /* harmony default export */ function number(a, b) {
   return a = +a, b = +b, function(t) {
     return a * (1 - t) + b * t;
@@ -23555,7 +23547,6 @@ Object.defineProperty(number, "name", { value: "default", configurable: true });
 }
 
 ;// ./node_modules/d3-interpolate/src/object.js
-Object.defineProperty(object, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function object(a, b) {
   var i = {}, c = {}, k;
@@ -23575,7 +23566,6 @@ Object.defineProperty(object, "name", { value: "default", configurable: true });
 }
 
 ;// ./node_modules/d3-interpolate/src/string.js
-Object.defineProperty(string, "name", { value: "default", configurable: true });
 
 var reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g, reB = new RegExp(reA.source, "g");
 function zero(b) {
@@ -23618,7 +23608,6 @@ function one(b) {
 }
 
 ;// ./node_modules/d3-interpolate/src/value.js
-Object.defineProperty(value, "name", { value: "default", configurable: true });
 
 
 
@@ -23634,7 +23623,6 @@ Object.defineProperty(value, "name", { value: "default", configurable: true });
 }
 
 ;// ./node_modules/d3-interpolate/src/round.js
-Object.defineProperty(round, "name", { value: "default", configurable: true });
 /* harmony default export */ function round(a, b) {
   return a = +a, b = +b, function(t) {
     return Math.round(a * (1 - t) + b * t);
@@ -23946,7 +23934,6 @@ FormatSpecifier.prototype.toString = function() {
 };
 
 ;// ./node_modules/d3-format/src/formatDecimal.js
-Object.defineProperty(formatDecimal, "name", { value: "default", configurable: true });
 /* harmony default export */ function formatDecimal(x) {
   return Math.abs(x = Math.round(x)) >= 1e21 ? x.toLocaleString("en").replace(/,/g, "") : x.toString(10);
 }
@@ -23960,21 +23947,18 @@ function formatDecimalParts(x, p) {
 }
 
 ;// ./node_modules/d3-format/src/exponent.js
-Object.defineProperty(exponent, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function exponent(x) {
   return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
 }
 
 ;// ./node_modules/d3-format/src/precisionPrefix.js
-Object.defineProperty(precisionPrefix, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function precisionPrefix(step, value) {
   return Math.max(0, Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3 - exponent(Math.abs(step)));
 }
 
 ;// ./node_modules/d3-format/src/formatGroup.js
-Object.defineProperty(formatGroup, "name", { value: "default", configurable: true });
 /* harmony default export */ function formatGroup(grouping, thousands) {
   return function(value, width) {
     var i = value.length, t = [], j = 0, g = grouping[0], length = 0;
@@ -23989,7 +23973,6 @@ Object.defineProperty(formatGroup, "name", { value: "default", configurable: tru
 }
 
 ;// ./node_modules/d3-format/src/formatNumerals.js
-Object.defineProperty(formatNumerals, "name", { value: "default", configurable: true });
 /* harmony default export */ function formatNumerals(numerals) {
   return function(value) {
     return value.replace(/[0-9]/g, function(i) {
@@ -23999,7 +23982,6 @@ Object.defineProperty(formatNumerals, "name", { value: "default", configurable: 
 }
 
 ;// ./node_modules/d3-format/src/formatTrim.js
-Object.defineProperty(formatTrim, "name", { value: "default", configurable: true });
 /* harmony default export */ function formatTrim(s) {
   out: for (var n = s.length, i = 1, i0 = -1, i1; i < n; ++i) {
     switch (s[i]) {
@@ -24020,7 +24002,6 @@ Object.defineProperty(formatTrim, "name", { value: "default", configurable: true
 }
 
 ;// ./node_modules/d3-format/src/formatPrefixAuto.js
-Object.defineProperty(formatPrefixAuto, "name", { value: "default", configurable: true });
 
 var prefixExponent;
 /* harmony default export */ function formatPrefixAuto(x, p) {
@@ -24031,7 +24012,6 @@ var prefixExponent;
 }
 
 ;// ./node_modules/d3-format/src/formatRounded.js
-Object.defineProperty(formatRounded, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function formatRounded(x, p) {
   var d = formatDecimalParts(x, p);
@@ -24061,13 +24041,11 @@ Object.defineProperty(formatRounded, "name", { value: "default", configurable: t
 });
 
 ;// ./node_modules/d3-format/src/identity.js
-Object.defineProperty(src_identity, "name", { value: "default", configurable: true });
 /* harmony default export */ function src_identity(x) {
   return x;
 }
 
 ;// ./node_modules/d3-format/src/locale.js
-Object.defineProperty(locale, "name", { value: "default", configurable: true });
 
 
 
@@ -24166,7 +24144,6 @@ function defaultLocale(definition) {
 }
 
 ;// ./node_modules/d3-format/src/precisionRound.js
-Object.defineProperty(precisionRound, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function precisionRound(step, max) {
   step = Math.abs(step), max = Math.abs(max) - step;
@@ -24174,7 +24151,6 @@ Object.defineProperty(precisionRound, "name", { value: "default", configurable: 
 }
 
 ;// ./node_modules/d3-format/src/precisionFixed.js
-Object.defineProperty(precisionFixed, "name", { value: "default", configurable: true });
 
 /* harmony default export */ function precisionFixed(step) {
   return Math.max(0, -exponent(Math.abs(step)));
@@ -24839,10 +24815,9 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260418010022");
+__publicField(Plugin, "version", "3.18.0-nightly-20260609012137");
 
 ;// ./node_modules/d3-axis/src/identity.js
-Object.defineProperty(d3_axis_src_identity, "name", { value: "default", configurable: true });
 /* harmony default export */ function d3_axis_src_identity(x) {
   return x;
 }
@@ -24957,7 +24932,7 @@ function axisLeft(scale) {
 
 ;// ./src/module/browser.ts
 function getGlobal() {
-  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
+  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
 }
 function getFallback(w) {
   const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function";
@@ -25535,6 +25510,283 @@ function toMap(items, keyFn, valueFn = ((item) => item)) {
 }
 
 
+;// ./node_modules/d3-selection/src/sourceEvent.js
+/* harmony default export */ function sourceEvent(event) {
+  let sourceEvent;
+  while (sourceEvent = event.sourceEvent) event = sourceEvent;
+  return event;
+}
+
+;// ./node_modules/d3-selection/src/pointer.js
+
+/* harmony default export */ function src_pointer(event, node) {
+  event = sourceEvent(event);
+  if (node === void 0) node = event.currentTarget;
+  if (node) {
+    var svg = node.ownerSVGElement || node;
+    if (svg.createSVGPoint) {
+      var point = svg.createSVGPoint();
+      point.x = event.clientX, point.y = event.clientY;
+      point = point.matrixTransform(node.getScreenCTM().inverse());
+      return [point.x, point.y];
+    }
+    if (node.getBoundingClientRect) {
+      var rect = node.getBoundingClientRect();
+      return [event.clientX - rect.left - node.clientLeft, event.clientY - rect.top - node.clientTop];
+    }
+  }
+  return [event.pageX, event.pageY];
+}
+
+;// ./src/module/util/dom.ts
+
+
+
+
+const RE_CSS_BB = /\s?(bb-)/g;
+const RE_CSS_DOTS = /\.+/g;
+function getCssSelector(s) {
+  return s.replace(RE_CSS_BB, ".$1").replace(RE_CSS_DOTS, ".");
+}
+function _getRect(relativeViewport, node, forceEval = false) {
+  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+  if (forceEval) {
+    return _(node);
+  } else {
+    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
+    return needEvaluate ? node.rect = _(node) : node.rect;
+  }
+}
+function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
+  if (!node || !isString(text)) {
+    return;
+  }
+  if (text.indexOf("\n") === -1) {
+    node.text(text);
+  } else {
+    const diff = [node.text(), text].map((v) => v.replace(/[\s\n]/g, ""));
+    if (diff[0] !== diff[1]) {
+      const multiline = text.split("\n");
+      const len = toMiddle ? multiline.length - 1 : 1;
+      node.html("");
+      multiline.forEach((v, i) => {
+        node.append("tspan").attr("x", 0).attr("dy", `${i === 0 ? dy[0] * len : dy[1]}em`).text(v);
+      });
+    }
+  }
+}
+function getRectSegList(path) {
+  const { x, y, width, height } = getBBox(path, true);
+  return [
+    { x, y: y + height },
+    // seg0
+    { x, y },
+    // seg1
+    { x: x + width, y },
+    // seg2
+    { x: x + width, y: y + height }
+    // seg3
+  ];
+}
+function getPathBox(path) {
+  const { width, height } = getBoundingRect(path);
+  const items = getRectSegList(path);
+  const x = items[0].x;
+  const y = Math.min(items[0].y, items[1].y);
+  return {
+    x,
+    y,
+    width,
+    height
+  };
+}
+function getPointer(event, element) {
+  var _a;
+  const touches = event && ((_a = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _a[0]);
+  let pointer = [0, 0];
+  try {
+    pointer = src_pointer(touches || event, element);
+  } catch (e) {
+  }
+  return pointer.map((v) => isNaN(v) ? 0 : v);
+}
+function getBoundingRect(node, forceEval = false) {
+  return _getRect(true, node, forceEval);
+}
+function getBBox(node, forceEval = false) {
+  return _getRect(false, node, forceEval);
+}
+function addCssRules(style, selector, prop) {
+  const { rootSelector = "", sheet } = style;
+  const rule = `${rootSelector} ${getCssSelector(selector)} {${prop.join(";")}}`;
+  return sheet[sheet.insertRule ? "insertRule" : "addRule"](
+    rule,
+    sheet.cssRules.length
+  );
+}
+function getCssRules(styleSheets) {
+  let rules = [];
+  styleSheets.forEach((sheet) => {
+    var _a;
+    try {
+      if (sheet.cssRules && sheet.cssRules.length) {
+        rules = rules.concat(toArray(sheet.cssRules));
+      }
+    } catch (e) {
+      (_a = win.console) == null ? void 0 : _a.warn(`Error while reading rules from ${sheet.href}: ${String(e)}`);
+    }
+  });
+  return rules;
+}
+function getScrollPosition(node) {
+  var _a, _b, _c, _d, _e, _f;
+  return {
+    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + ((_c = node.scrollLeft) != null ? _c : 0),
+    y: ((_e = (_d = win.pageYOffset) != null ? _d : win.scrollY) != null ? _e : 0) + ((_f = node.scrollTop) != null ? _f : 0)
+  };
+}
+function getTransformCTM(node, x = 0, y = 0, inverse = true) {
+  const point = new DOMPoint(x, y);
+  const screen = node.getScreenCTM();
+  const res = point.matrixTransform(
+    inverse ? screen == null ? void 0 : screen.inverse() : screen
+  );
+  if (inverse === false) {
+    const rect = getBoundingRect(node);
+    res.x -= rect.x;
+    res.y -= rect.y;
+  }
+  return res;
+}
+function getTranslation(node) {
+  const transform = node ? node.transform : null;
+  const baseVal = transform && transform.baseVal;
+  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
+}
+function getElementPos(element, type) {
+  var _a;
+  const attr = (_a = element == null ? void 0 : element.getAttribute) == null ? void 0 : _a.call(element, type);
+  if (attr) {
+    return parseFloat(attr);
+  }
+  const matrix = getTranslation(element);
+  return type === "x" ? matrix.e : matrix.f;
+}
+function hasViewBox(svg) {
+  const attr = svg.attr("viewBox");
+  return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
+}
+function hasStyle(node, condition, all = false) {
+  const isD3Node = !!node.node;
+  let has = false;
+  for (const [key, value] of Object.entries(condition)) {
+    has = isD3Node ? node.style(key) === value : node.style[key] === value;
+    if (all === false && has) {
+      break;
+    }
+  }
+  return has;
+}
+function isTabVisible() {
+  var _a, _b;
+  return ((_a = doc) == null ? void 0 : _a.hidden) === false || ((_b = doc) == null ? void 0 : _b.visibilityState) === "visible";
+}
+function convertInputType(mouse, touch) {
+  const { DocumentTouch, matchMedia, navigator } = win;
+  const hasPointerCoarse = matchMedia == null ? void 0 : matchMedia("(pointer:coarse)").matches;
+  let hasTouch = false;
+  if (touch) {
+    if (navigator && "maxTouchPoints" in navigator) {
+      hasTouch = navigator.maxTouchPoints > 0;
+    } else if ("ontouchmove" in win || DocumentTouch && doc instanceof DocumentTouch) {
+      hasTouch = true;
+    } else {
+      if (hasPointerCoarse) {
+        hasTouch = true;
+      } else {
+        const UA = navigator.userAgent;
+        hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
+      }
+    }
+  }
+  const hasMouse = mouse && !hasPointerCoarse && (matchMedia == null ? void 0 : matchMedia("(pointer:fine)").matches);
+  return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
+}
+function scheduleRAFUpdate(rafState, callback) {
+  if (rafState.pendingRaf !== null) {
+    win.cancelAnimationFrame(rafState.pendingRaf);
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+      callback();
+    });
+  } else {
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+    });
+    callback();
+  }
+}
+const emulateEvent = {
+  mouse: (() => {
+    const getParams = () => ({
+      bubbles: false,
+      cancelable: false,
+      screenX: 0,
+      screenY: 0,
+      clientX: 0,
+      clientY: 0
+    });
+    try {
+      new MouseEvent("t");
+      return (el, eventType, params = getParams()) => {
+        el.dispatchEvent(new MouseEvent(eventType, params));
+      };
+    } catch (e) {
+      return (el, eventType, params = getParams()) => {
+        const mouseEvent = doc.createEvent("MouseEvent");
+        mouseEvent.initMouseEvent(
+          eventType,
+          params.bubbles,
+          params.cancelable,
+          win,
+          0,
+          // the event's mouse click count
+          params.screenX,
+          params.screenY,
+          params.clientX,
+          params.clientY,
+          false,
+          false,
+          false,
+          false,
+          0,
+          null
+        );
+        el.dispatchEvent(mouseEvent);
+      };
+    }
+  })(),
+  touch: (el, eventType, params) => {
+    const touchObj = new Touch(mergeObj({
+      identifier: Date.now(),
+      target: el,
+      radiusX: 2.5,
+      radiusY: 2.5,
+      rotationAngle: 10,
+      force: 0.5
+    }, params));
+    el.dispatchEvent(new TouchEvent(eventType, {
+      cancelable: true,
+      bubbles: true,
+      shiftKey: true,
+      touches: [touchObj],
+      targetTouches: [],
+      changedTouches: [touchObj]
+    }));
+  }
+};
+
+
 ;// ./src/Plugin/stanford/ColorScale.ts
 var ColorScale_defProp = Object.defineProperty;
 var ColorScale_defNormalProp = (obj, key, value) => key in obj ? ColorScale_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -25591,7 +25843,7 @@ class ColorScale {
     );
   }
   xForColorScale() {
-    return this.owner.config.padding_right + this.colorScale.node().getBBox().width;
+    return this.owner.config.padding_right + getBBox(this.colorScale.node(), true).width;
   }
   getColorScalePadding() {
     return this.xForColorScale() + this.owner.config.padding_left + 20;

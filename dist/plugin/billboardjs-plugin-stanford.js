@@ -5,25 +5,30 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260418010022
+ * @version 3.18.0-nightly-20260609012137
  * @requires billboard.js
  * @summary billboard.js plugin
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-interpolate"), require("d3-scale"), require("d3-axis"));
+		module.exports = factory(require("d3-interpolate"), require("d3-scale"), require("d3-axis"), require("d3-selection"));
 	else if(typeof define === 'function' && define.amd)
-		define("bb", ["d3-interpolate", "d3-scale", "d3-axis"], factory);
+		define("bb", ["d3-interpolate", "d3-scale", "d3-axis", "d3-selection"], factory);
 	else if(typeof exports === 'object')
-		exports["bb"] = factory(require("d3-interpolate"), require("d3-scale"), require("d3-axis"));
+		exports["bb"] = factory(require("d3-interpolate"), require("d3-scale"), require("d3-axis"), require("d3-selection"));
 	else
-		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["stanford"] = factory(root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__6__) {
+		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["stanford"] = factory(root["d3"], root["d3"], root["d3"], root["d3"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__1__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
 /* 0 */,
-/* 1 */,
+/* 1 */
+/***/ (function(module) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
+
+/***/ }),
 /* 2 */,
 /* 3 */,
 /* 4 */
@@ -403,7 +408,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260418010022");
+__publicField(Plugin, "version", "3.18.0-nightly-20260609012137");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(6);
@@ -419,7 +424,7 @@ var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack
 
 ;// ./src/module/browser.ts
 function getGlobal() {
-  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
+  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
 }
 function getFallback(w) {
   const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function";
@@ -997,6 +1002,257 @@ function toMap(items, keyFn, valueFn = ((item) => item)) {
 }
 
 
+// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
+var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
+;// ./src/module/util/dom.ts
+
+
+
+
+const RE_CSS_BB = /\s?(bb-)/g;
+const RE_CSS_DOTS = /\.+/g;
+function getCssSelector(s) {
+  return s.replace(RE_CSS_BB, ".$1").replace(RE_CSS_DOTS, ".");
+}
+function _getRect(relativeViewport, node, forceEval = false) {
+  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+  if (forceEval) {
+    return _(node);
+  } else {
+    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
+    return needEvaluate ? node.rect = _(node) : node.rect;
+  }
+}
+function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
+  if (!node || !isString(text)) {
+    return;
+  }
+  if (text.indexOf("\n") === -1) {
+    node.text(text);
+  } else {
+    const diff = [node.text(), text].map((v) => v.replace(/[\s\n]/g, ""));
+    if (diff[0] !== diff[1]) {
+      const multiline = text.split("\n");
+      const len = toMiddle ? multiline.length - 1 : 1;
+      node.html("");
+      multiline.forEach((v, i) => {
+        node.append("tspan").attr("x", 0).attr("dy", `${i === 0 ? dy[0] * len : dy[1]}em`).text(v);
+      });
+    }
+  }
+}
+function getRectSegList(path) {
+  const { x, y, width, height } = getBBox(path, true);
+  return [
+    { x, y: y + height },
+    // seg0
+    { x, y },
+    // seg1
+    { x: x + width, y },
+    // seg2
+    { x: x + width, y: y + height }
+    // seg3
+  ];
+}
+function getPathBox(path) {
+  const { width, height } = getBoundingRect(path);
+  const items = getRectSegList(path);
+  const x = items[0].x;
+  const y = Math.min(items[0].y, items[1].y);
+  return {
+    x,
+    y,
+    width,
+    height
+  };
+}
+function getPointer(event, element) {
+  var _a;
+  const touches = event && ((_a = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _a[0]);
+  let pointer = [0, 0];
+  try {
+    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
+  } catch (e) {
+  }
+  return pointer.map((v) => isNaN(v) ? 0 : v);
+}
+function getBoundingRect(node, forceEval = false) {
+  return _getRect(true, node, forceEval);
+}
+function getBBox(node, forceEval = false) {
+  return _getRect(false, node, forceEval);
+}
+function addCssRules(style, selector, prop) {
+  const { rootSelector = "", sheet } = style;
+  const rule = `${rootSelector} ${getCssSelector(selector)} {${prop.join(";")}}`;
+  return sheet[sheet.insertRule ? "insertRule" : "addRule"](
+    rule,
+    sheet.cssRules.length
+  );
+}
+function getCssRules(styleSheets) {
+  let rules = [];
+  styleSheets.forEach((sheet) => {
+    var _a;
+    try {
+      if (sheet.cssRules && sheet.cssRules.length) {
+        rules = rules.concat(toArray(sheet.cssRules));
+      }
+    } catch (e) {
+      (_a = win.console) == null ? void 0 : _a.warn(`Error while reading rules from ${sheet.href}: ${String(e)}`);
+    }
+  });
+  return rules;
+}
+function getScrollPosition(node) {
+  var _a, _b, _c, _d, _e, _f;
+  return {
+    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + ((_c = node.scrollLeft) != null ? _c : 0),
+    y: ((_e = (_d = win.pageYOffset) != null ? _d : win.scrollY) != null ? _e : 0) + ((_f = node.scrollTop) != null ? _f : 0)
+  };
+}
+function getTransformCTM(node, x = 0, y = 0, inverse = true) {
+  const point = new DOMPoint(x, y);
+  const screen = node.getScreenCTM();
+  const res = point.matrixTransform(
+    inverse ? screen == null ? void 0 : screen.inverse() : screen
+  );
+  if (inverse === false) {
+    const rect = getBoundingRect(node);
+    res.x -= rect.x;
+    res.y -= rect.y;
+  }
+  return res;
+}
+function getTranslation(node) {
+  const transform = node ? node.transform : null;
+  const baseVal = transform && transform.baseVal;
+  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
+}
+function getElementPos(element, type) {
+  var _a;
+  const attr = (_a = element == null ? void 0 : element.getAttribute) == null ? void 0 : _a.call(element, type);
+  if (attr) {
+    return parseFloat(attr);
+  }
+  const matrix = getTranslation(element);
+  return type === "x" ? matrix.e : matrix.f;
+}
+function hasViewBox(svg) {
+  const attr = svg.attr("viewBox");
+  return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
+}
+function hasStyle(node, condition, all = false) {
+  const isD3Node = !!node.node;
+  let has = false;
+  for (const [key, value] of Object.entries(condition)) {
+    has = isD3Node ? node.style(key) === value : node.style[key] === value;
+    if (all === false && has) {
+      break;
+    }
+  }
+  return has;
+}
+function isTabVisible() {
+  var _a, _b;
+  return ((_a = doc) == null ? void 0 : _a.hidden) === false || ((_b = doc) == null ? void 0 : _b.visibilityState) === "visible";
+}
+function convertInputType(mouse, touch) {
+  const { DocumentTouch, matchMedia, navigator } = win;
+  const hasPointerCoarse = matchMedia == null ? void 0 : matchMedia("(pointer:coarse)").matches;
+  let hasTouch = false;
+  if (touch) {
+    if (navigator && "maxTouchPoints" in navigator) {
+      hasTouch = navigator.maxTouchPoints > 0;
+    } else if ("ontouchmove" in win || DocumentTouch && doc instanceof DocumentTouch) {
+      hasTouch = true;
+    } else {
+      if (hasPointerCoarse) {
+        hasTouch = true;
+      } else {
+        const UA = navigator.userAgent;
+        hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
+      }
+    }
+  }
+  const hasMouse = mouse && !hasPointerCoarse && (matchMedia == null ? void 0 : matchMedia("(pointer:fine)").matches);
+  return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
+}
+function scheduleRAFUpdate(rafState, callback) {
+  if (rafState.pendingRaf !== null) {
+    win.cancelAnimationFrame(rafState.pendingRaf);
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+      callback();
+    });
+  } else {
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+    });
+    callback();
+  }
+}
+const emulateEvent = {
+  mouse: (() => {
+    const getParams = () => ({
+      bubbles: false,
+      cancelable: false,
+      screenX: 0,
+      screenY: 0,
+      clientX: 0,
+      clientY: 0
+    });
+    try {
+      new MouseEvent("t");
+      return (el, eventType, params = getParams()) => {
+        el.dispatchEvent(new MouseEvent(eventType, params));
+      };
+    } catch (e) {
+      return (el, eventType, params = getParams()) => {
+        const mouseEvent = doc.createEvent("MouseEvent");
+        mouseEvent.initMouseEvent(
+          eventType,
+          params.bubbles,
+          params.cancelable,
+          win,
+          0,
+          // the event's mouse click count
+          params.screenX,
+          params.screenY,
+          params.clientX,
+          params.clientY,
+          false,
+          false,
+          false,
+          false,
+          0,
+          null
+        );
+        el.dispatchEvent(mouseEvent);
+      };
+    }
+  })(),
+  touch: (el, eventType, params) => {
+    const touchObj = new Touch(mergeObj({
+      identifier: Date.now(),
+      target: el,
+      radiusX: 2.5,
+      radiusY: 2.5,
+      rotationAngle: 10,
+      force: 0.5
+    }, params));
+    el.dispatchEvent(new TouchEvent(eventType, {
+      cancelable: true,
+      bubbles: true,
+      shiftKey: true,
+      touches: [touchObj],
+      targetTouches: [],
+      changedTouches: [touchObj]
+    }));
+  }
+};
+
+
 ;// ./src/Plugin/stanford/ColorScale.ts
 var ColorScale_defProp = Object.defineProperty;
 var ColorScale_defNormalProp = (obj, key, value) => key in obj ? ColorScale_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -1053,7 +1309,7 @@ class ColorScale {
     );
   }
   xForColorScale() {
-    return this.owner.config.padding_right + this.colorScale.node().getBBox().width;
+    return this.owner.config.padding_right + getBBox(this.colorScale.node(), true).width;
   }
   getColorScalePadding() {
     return this.xForColorScale() + this.owner.config.padding_left + 20;

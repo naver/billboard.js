@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260418010022
+ * @version 3.18.0-nightly-20260609012137
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -47,6 +47,29 @@ const isEmpty = (o) => (isUndefined(o) || o === null ||
     (isString(o) && o.length === 0) ||
     (isObjectType(o) && !(o instanceof Date) && isEmptyObject(o)) ||
     (isNumber(o) && isNaN(o)));
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Window object
+ * @private
+ */
+/* eslint-disable no-new-func, no-undef */
+/**
+ * Get global object
+ * @returns {object} window object
+ * @private
+ */
+function getGlobal() {
+    return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object &&
+        globalThis) ||
+        (typeof self === "object" && self !== null && self.Object === Object && self) ||
+        Function("return this")();
+}
+const win = getGlobal();
+const doc = win?.document;
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -96,6 +119,75 @@ function parseDate(date) {
     }
     return parsedDate;
 }
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+// ====================================
+// Internal Helper (Not Exported)
+// ====================================
+/**
+ * Get boundingClientRect or BBox with caching.
+ * Internal helper for getBoundingRect() and getBBox()
+ * @param {boolean} relativeViewport Relative to viewport - true: will use .getBoundingClientRect(), false: will use .getBBox()
+ * @param {SVGElement} node Target element
+ * @param {boolean} forceEval Force evaluation
+ * @returns {object}
+ * @private
+ */
+function _getRect(relativeViewport, node, forceEval = false) {
+    const _ = n => n["getBBox"]();
+    if (forceEval) {
+        return _(node);
+    }
+    else {
+        // will cache the value if the element is not a SVGElement or the width is not set
+        const needEvaluate = !("rect" in node) || ("rect" in node && node.hasAttribute("width") &&
+            node.rect.width !== +(node.getAttribute("width") || 0));
+        return needEvaluate ? (node.rect = _(node)) : node.rect;
+    }
+}
+/**
+ * Get BBox.
+ * @param {SVGElement} node Target element
+ * @param {boolean} forceEval Force evaluation
+ * @returns {object}
+ * @private
+ */
+function getBBox(node, forceEval = false) {
+    return _getRect(false, node, forceEval);
+}
+// emulate event
+({
+    mouse: (() => {
+        const getParams = () => ({
+            bubbles: false,
+            cancelable: false,
+            screenX: 0,
+            screenY: 0,
+            clientX: 0,
+            clientY: 0
+        });
+        try {
+            // eslint-disable-next-line no-new
+            new MouseEvent("t");
+            return (el, eventType, params = getParams()) => {
+                el.dispatchEvent(new MouseEvent(eventType, params));
+            };
+        }
+        catch {
+            // Polyfills DOM4 MouseEvent
+            return (el, eventType, params = getParams()) => {
+                const mouseEvent = doc.createEvent("MouseEvent");
+                // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
+                mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
+                params.screenX, params.screenY, params.clientX, params.clientY, false, false, false, false, 0, null);
+                el.dispatchEvent(mouseEvent);
+            };
+        }
+    })()});
 
 /**
  * Load configuration option
@@ -153,7 +245,7 @@ class Plugin {
     $$;
     options;
     config;
-    static version = "3.18.0-nightly-20260418010022";
+    static version = "3.18.0-nightly-20260609012137";
     /**
      * Constructor
      * @param {Any} options config option object
@@ -398,7 +490,7 @@ class ColorScale {
     }
     xForColorScale() {
         return this.owner.config.padding_right +
-            this.colorScale.node().getBBox().width;
+            getBBox(this.colorScale.node(), true).width;
     }
     getColorScalePadding() {
         return this.xForColorScale() + this.owner.config.padding_left + 20;

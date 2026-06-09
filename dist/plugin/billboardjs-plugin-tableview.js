@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260418010022
+ * @version 3.18.0-nightly-20260609012137
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -52,7 +52,7 @@ __webpack_require__.d(__webpack_exports__, {
 
 ;// ./src/module/browser.ts
 function getGlobal() {
-  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
+  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
 }
 function getFallback(w) {
   const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function";
@@ -743,7 +743,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260418010022");
+__publicField(Plugin, "version", "3.18.0-nightly-20260609012137");
 
 ;// ./src/Plugin/tableview/const.ts
 

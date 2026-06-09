@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260418010022
+ * @version 3.18.0-nightly-20260609012137
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -119,7 +119,7 @@ class Plugin {
     $$;
     options;
     config;
-    static version = "3.18.0-nightly-20260418010022";
+    static version = "3.18.0-nightly-20260609012137";
     /**
      * Constructor
      * @param {Any} options config option object
@@ -218,6 +218,10 @@ class Options {
     }
 }
 
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 /**
  * TextOverlap plugin<br>
  * Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram).

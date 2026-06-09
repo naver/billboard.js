@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260418010022
+ * @version 3.18.0-nightly-20260609012137
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -198,7 +198,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260418010022");
+__publicField(Plugin, "version", "3.18.0-nightly-20260609012137");
 
 ;// ./src/Plugin/bubblecompare/index.ts
 var bubblecompare_defProp = Object.defineProperty;
@@ -209,7 +209,6 @@ var bubblecompare_publicField = (obj, key, value) => bubblecompare_defNormalProp
 const _BubbleCompare = class _BubbleCompare extends Plugin {
   constructor(options) {
     super(options);
-    bubblecompare_publicField(this, "$$");
     return this;
   }
   $init() {
