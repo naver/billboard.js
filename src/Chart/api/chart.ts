@@ -139,6 +139,7 @@ export default {
 				window.cancelAnimationFrame?.(state.canvasFlowFrame);
 			state.canvasFlowFrame = null;
 			state.canvasFlowFinish = null;
+			$$.canvasRenderer?.destroy();
 			$$.canvasEngine?.destroy();
 			$$.resizeFunction?.clear();
 
