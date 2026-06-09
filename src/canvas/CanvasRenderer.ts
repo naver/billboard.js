@@ -16,7 +16,7 @@ import {
 	getTreemapNodeRect
 } from "../ChartInternal/shape/core/geometry";
 import {generateDrawAreaPath, generateDrawLinePath} from "../ChartInternal/shape/core/path";
-import {TYPE} from "../config/const";
+import {SUBCHART_BRUSH_HANDLE_PATH, TYPE} from "../config/const";
 import {window} from "../module/browser";
 import {isFunction, isNumber, isObject, isString} from "../module/util";
 import CanvasEngine from "./CanvasEngine";
@@ -68,16 +68,6 @@ const RENDERER_GROUPED_TYPE_FILTERS = [
 // Small point series are faster as one batched path; beyond this, huge paths make
 // fill() expensive, so canvas draws circles individually. SVG has no equivalent knob.
 const MAX_BATCHED_CIRCLE_POINTS = 1000;
-const SUBCHART_BRUSH_HANDLE_PATH = {
-	x: {
-		start: "M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z",
-		end: "M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"
-	},
-	y: {
-		start: "M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z",
-		end: "M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"
-	}
-};
 const canvasFocusLookupCache = new WeakMap<any[], Map<string, any>>();
 const subchartBrushHandlePathCache = new Map<string, Path2D>();
 
