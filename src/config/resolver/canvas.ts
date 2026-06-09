@@ -381,13 +381,18 @@ function getCanvasEventClientPoint(event: MouseEvent | PointerEvent | TouchEvent
  * Get data row under a canvas pointer event.
  * @param {object} $$ ChartInternal instance
  * @param {Event} event Input event
+ * @param {boolean} shapeOnly Whether to skip grouped x-index fallback
  * @returns {object|null} Hit data row
  * @private
  */
-function getCanvasEventDatum($$, event: MouseEvent | PointerEvent | TouchEvent) {
+function getCanvasEventDatum($$, event: MouseEvent | PointerEvent | TouchEvent, shapeOnly = false) {
 	const point = getCanvasEventPoint($$, event);
 
-	return point ? $$.hitDetector.findNearest(point[0], point[1]) : null;
+	return point ?
+		(shapeOnly ?
+			$$.hitDetector.findNearestShape?.(point[0], point[1]) :
+			$$.hitDetector.findNearest(point[0], point[1])) :
+		null;
 }
 
 /**
@@ -474,6 +479,20 @@ function getCanvasTooltipData($$, d): any[] {
 					targetsToShow.map(target => target.values[d.index]).filter(Boolean)) :
 				[d])))
 		.map(v => $$.addName?.(v) || v);
+}
+
+/**
+ * Get data rows for canvas focus rendering.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} d Hover data row
+ * @param {Array} selectedData Tooltip data rows
+ * @returns {Array} Focus data rows
+ * @private
+ */
+function getCanvasFocusData($$, d, selectedData): any[] {
+	return $$.isMultipleX?.() && !isCanvasPointBasedInteraction($$, d) ?
+		[$$.addName?.(d) || d] :
+		selectedData;
 }
 
 /**
@@ -1330,6 +1349,7 @@ const canvasInternal = {
 				!isSupportedCanvasYType(config.axis_y2_type),
 				"axis.y2.type other than indexed/log/timeseries"
 			],
+			[config.boost_useCssRule, "boost.useCssRule"],
 			[this.hasArcType?.(), "arc charts"],
 			[this.hasType?.("radar"), "radar chart"],
 			[this.hasType?.("polar"), "polar chart"],
@@ -1337,7 +1357,7 @@ const canvasInternal = {
 		];
 
 		unsupported.forEach(([condition, name]) => {
-			condition && warn(`canvas mode: ${name} is not supported in v1.`);
+			condition && warn(`canvas mode: ${name} is not yet supported.`);
 		});
 	},
 
@@ -2178,7 +2198,7 @@ const canvasInternal = {
 		const $$ = this;
 		const {config, $el} = $$;
 		const canvas = $el.canvas.node();
-		const d = getCanvasEventDatum($$, event);
+		const d = getCanvasEventDatum($$, event, true);
 
 		if (!d || isDuplicateCanvasInputClick($$, d)) {
 			return d;
@@ -2741,11 +2761,12 @@ const canvasInternal = {
 		$$.dispatchCanvasDataOver(d, canvas);
 
 		const selectedData = getCanvasTooltipData($$, d);
-		const focusKey = selectedData.map(v => `${v.id}:${v.index}`).join("|");
+		const focusData = getCanvasFocusData($$, d, selectedData);
+		const focusKey = focusData.map(v => `${v.id}:${v.index}`).join("|");
 
 		if (state.canvasFocusKey !== focusKey || config.axis_tooltip) {
 			state.canvasFocusKey = focusKey;
-			$$.renderCanvasFocus(selectedData, point);
+			$$.renderCanvasFocus(focusData, point);
 		}
 
 		$$.showTooltip?.(selectedData, canvas);

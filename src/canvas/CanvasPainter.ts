@@ -299,15 +299,18 @@ export default class CanvasPainter {
 		this.withState(ctx => {
 			const lines = text.split("\n");
 			const lineHeight = parseFloat(style?.font || ctx.font) || 12;
+			const firstLineY = lines.length > 1 ? -((lines.length - 1) * lineHeight) : 0;
 
 			this.applyStyle(style);
 			ctx.translate(x, y);
 			style?.angle && ctx.rotate(style.angle * Math.PI / 180);
 
 			lines.forEach((line, i) => {
+				const lineY = firstLineY + (i * lineHeight);
+
 				style?.maxWidth === undefined ?
-					ctx.fillText(line, 0, i * lineHeight) :
-					ctx.fillText(line, 0, i * lineHeight, style.maxWidth);
+					ctx.fillText(line, 0, lineY) :
+					ctx.fillText(line, 0, lineY, style.maxWidth);
 			});
 		});
 	}

@@ -35,12 +35,18 @@ import {drawPointPattern} from "../../src/canvas/pointPattern";
 import {
 	drawLabelDecorations,
 	getCanvasTextAlign,
+	getExpandedFocusMatcher,
 	getLabelBackgroundColor,
+	getLabelBorderOption,
+	getLabelColor,
+	getLabelDecorationBox,
 	getLabelImageOption,
 	getLabelImagePosition,
 	getLabelImageUrl,
 	getLabelPosition,
 	getLabelRotateAnchor,
+	getLabelText,
+	getLabelValue,
 	getPointLabelAnchor,
 	getRotatedLabelPosition
 } from "../../src/canvas/labels";
@@ -216,6 +222,35 @@ describe("ESM canvas helper coverage", () => {
 			expect(painter.context).to.not.be.null;
 		});
 
+		it("positions multiline text using SVG tspan offsets", () => {
+			const ctx = getContext();
+			const painter = new CanvasPainter(ctx);
+			const calls = [];
+			const originalFillText = ctx.fillText;
+
+			ctx.fillText = function(text, x, y, maxWidth) {
+				calls.push([`${text}`, x, y, maxWidth]);
+			};
+
+			try {
+				painter.textLines("a\nb", 10, 20);
+				expect(calls).to.deep.equal([
+					["a", 0, -10, undefined],
+					["b", 0, 0, undefined]
+				]);
+
+				calls.length = 0;
+				painter.textLines("a\nb\nc", 10, 20, {font: "12px sans-serif", maxWidth: 30});
+				expect(calls).to.deep.equal([
+					["a", 0, -24, 30],
+					["b", 0, -12, 30],
+					["c", 0, 0, 30]
+				]);
+			} finally {
+				ctx.fillText = originalFillText;
+			}
+		});
+
 		it("returns null for non-finite canvas geometry", () => {
 			const $$ = {
 				config: {axis_rotated: false}
@@ -267,9 +302,152 @@ describe("ESM canvas helper coverage", () => {
 
 			expect(ctx).to.not.be.null;
 		});
+
+		it("draws additional custom SVG point pattern primitives", () => {
+			const ctx = getContext();
+			const painter = new CanvasPainter(ctx);
+			const pattern = `
+				<svg>
+					<defs>
+						<radialGradient id="rg" cx="50%" cy="bad" r="100%" fx="bad" fy="25%" fr="bad">
+							<stop offset="150%" stop-color="#f00" stop-opacity=".5" />
+							<stop offset="-1" style="stop-color:#0f0;stop-opacity:.25" />
+						</radialGradient>
+						<g id="loop"><use href="#loop" /></g>
+					</defs>
+					<g transform="translate(1 2) scale(2) rotate(45) matrix(1 0 0 1 1 1)">
+						<circle cx="4" cy="4" r="2" fill="url(#rg)" />
+						<ellipse cx="5" cy="6" rx="3" ry="2" stroke="url(#missing)" />
+						<polygon points="0,0 4,4 8,0" />
+						<line x1="0" y1="8" x2="8" y2="8" />
+						<rect width="0" height="5" />
+						<path />
+					</g>
+					<use xlink:href="#missing" />
+					<use href="#loop" />
+				</svg>
+			`;
+
+			drawPointPattern(painter, pattern, 10, 10, 6, {
+				fill: "#111",
+				stroke: "#222",
+				lineWidth: 2
+			});
+			drawPointPattern(painter, pattern, 10, 10, 3, {
+				fill: "#111",
+				stroke: "#222",
+				lineWidth: 2
+			});
+			drawPointPattern(painter, "circle", 10, 10, 4, {fill: "#111"});
+			drawPointPattern(painter, "circle", 10, 10, 0, {fill: "#111"});
+
+			expect(ctx).to.not.be.null;
+		});
+
+		it("draws custom SVG point patterns with inherited styles and transform edge cases", () => {
+			const ctx = getContext();
+			const painter = new CanvasPainter(ctx);
+			const originalPath2D = window.Path2D;
+			const pattern = `
+				<g fill="none" stroke="url(#lg)" opacity=".5"
+					transform="translate(2) scale(1.5) rotate(30 4 4) skewX(10) skewY(5) matrix(1 0 0 1 1 1)">
+					<defs>
+						<linearGradient id="empty"></linearGradient>
+						<linearGradient id="lg" x1="2" y1="3" x2="8" y2="bad">
+							<stop offset=".25" style="stop-color:#f00;stop-opacity:.8" />
+							<stop offset="bad" stop-color="#00f" />
+						</linearGradient>
+					</defs>
+					<polyline points="0,0 5,5 10" />
+					<polygon points="" />
+					<circle r="0" />
+					<ellipse rx="0" ry="2" />
+					<rect x="bad" y="2" width="3" height="4" fill="none" stroke="#111"
+						stroke-width="2" fill-opacity=".2" stroke-opacity=".4" />
+					<line x1="1" y1="2" x2="bad" y2="4" fill="#222" stroke="none" />
+					<path d="M0 0 L5 5" fill="none" stroke="#333" />
+					<use href="" xlink:href="#missing" />
+				</g>
+			`;
+
+			drawPointPattern(painter, pattern, 10, 10, 8, {
+				fill: "#aaa",
+				stroke: "#bbb",
+				lineWidth: 1
+			}, 4);
+			drawPointPattern(painter, pattern, 10, 10, 4, {
+				fill: "#aaa",
+				stroke: "#bbb",
+				lineWidth: 1
+			}, 0);
+
+			window.Path2D = undefined;
+			drawPointPattern(painter, pattern, 10, 10, 5, {
+				fill: "#aaa",
+				stroke: "#bbb",
+				lineWidth: 1
+			});
+			window.Path2D = originalPath2D;
+
+			expect(ctx).to.not.be.null;
+		});
 	});
 
 	describe("labels", () => {
+		it("resolves label values, text and expanded focus matchers", () => {
+			const datum = {id: "data1", index: 1, value: 10};
+			const bubble = {
+				...getInternal(),
+				isBubbleZType: () => true
+			};
+			const candle = {
+				...getInternal(),
+				isCandlestickType: () => true,
+				getCandlestickData: () => ({close: 99})
+			};
+			const emptyCandle = {
+				...getInternal(),
+				isCandlestickType: () => true,
+				getCandlestickData: () => null
+			};
+
+			expect(getLabelValue(bubble, {value: {z: 7}})).to.be.equal(7);
+			expect(getLabelValue(candle, datum)).to.be.equal(99);
+			expect(getLabelValue(emptyCandle, datum)).to.be.equal(10);
+			expect(getLabelText({
+				...getInternal(),
+				dataLabelFormat: () => () => null
+			}, datum)).to.be.null;
+			expect(getLabelText({
+				...getInternal(),
+				dataLabelFormat: () => () => undefined
+			}, datum)).to.be.null;
+			expect(getLabelText({
+				...getInternal(),
+				dataLabelFormat: () => () => 123
+			}, datum)).to.be.equal("123");
+
+			const groupedMatcher = getExpandedFocusMatcher(getInternal({
+				tooltip_grouped: true
+			}), [
+				{id: "data1", index: 2},
+				{id: "data2", index: 2}
+			], () => true);
+
+			expect(getExpandedFocusMatcher(getInternal(), null, () => true)(datum)).to.be.false;
+			expect(groupedMatcher({id: "data3", index: 2})).to.be.true;
+			expect(groupedMatcher({id: "data3", index: 3})).to.be.false;
+
+			const matcher = getExpandedFocusMatcher(getInternal(), [
+				{id: "data1", index: 1},
+				null,
+				{id: "data2", index: 1}
+			], ($$, d) => d.id === "data1");
+
+			expect(matcher(datum)).to.be.true;
+			expect(matcher({id: "data2", index: 1})).to.be.false;
+		});
+
 		it("resolves label position and image options", () => {
 			const datum = {id: "data1", index: 2, value: 10};
 			const $$ = getInternal({
@@ -293,10 +471,27 @@ describe("ESM canvas helper coverage", () => {
 			const image = getLabelImageOption($$, datum);
 
 			expect(getLabelPosition($$, datum, "x", [])).to.be.equal(12);
+			expect(getLabelPosition(getInternal({
+				data_labels_position: {
+					other: {x: 5},
+					x: 7
+				}
+			}), datum, "x", [])).to.be.equal(7);
 			expect(image).to.include({url: "/img/{=ID}.png", width: 2, height: 5});
 			expect(getLabelImageUrl(image!, datum)).to.be.equal("/img/data1.png");
+			expect(getLabelImageOption($$, {...datum, value: 0})).to.be.null;
 			expect(getLabelImageOption(getInternal({data_labels: {image: {url: "/static.png"}}}), datum))
 				.to.deep.include({url: "/static.png", width: 0, height: 0});
+			expect(getLabelImageOption(getInternal({
+				data_labels: {
+					image: {
+						height: 4,
+						pos: {x: 1},
+						width: 3
+					}
+				}
+			}), datum)).to.deep.include({url: "", width: 3, height: 4});
+			expect(getLabelImageOption(getInternal({data_labels: false}), datum)).to.be.null;
 		});
 
 		it("positions label images for rotated and non-rotated axes", () => {
@@ -309,6 +504,8 @@ describe("ESM canvas helper coverage", () => {
 			expect(normal.textY).to.be.equal(65);
 			expect(rotated.textX).to.be.equal(60);
 			expect(rotated.textY).to.be.equal(60);
+			expect(getLabelImagePosition(getInternal(), {url: "/img.png"}, "label", 20, 30))
+				.to.deep.include({textX: 20, textY: 30});
 		});
 
 		it("resolves label background colors and draws decorations", () => {
@@ -344,6 +541,14 @@ describe("ESM canvas helper coverage", () => {
 			};
 
 			expect(getLabelBackgroundColor($$, datum)).to.be.equal("#eeeeee");
+			expect(getLabelColor({
+				color: () => null,
+				updateTextColor: () => "#101010"
+			}, datum, "#202020")).to.be.equal("#101010");
+			expect(getLabelColor({
+				color: () => null,
+				updateTextColor: () => null
+			}, datum, "#202020")).to.be.equal("#202020");
 			expect(getLabelBackgroundColor(getInternal({
 				data_labels_backgroundColors(color, d) {
 					return `${color}:${d.id}`;
@@ -403,6 +608,57 @@ describe("ESM canvas helper coverage", () => {
 				y: 12,
 				textAlign: "center"
 			});
+			expect(getRotatedLabelPosition(getInternal({
+				axis_rotated: true,
+				data_labels: {rotate: 180}
+			}), {id: "data1", value: 10}, 10, 20)).to.deep.equal({
+				x: 18,
+				y: 12,
+				textAlign: "center"
+			});
+			expect(getRotatedLabelPosition(getInternal({
+				axis_rotated: true,
+				data_labels: {rotate: 90}
+			}), {id: "data1", value: 10}, 10, 20)).to.deep.equal({
+				x: 10,
+				y: 24,
+				textAlign: "right"
+			});
+			expect(getRotatedLabelPosition(getInternal({
+				axis_y_inverted: true,
+				data_labels: {rotate: 90}
+			}), {id: "data1", value: -10}, 10, 20)).to.deep.equal({
+				x: 6,
+				y: 19,
+				textAlign: "right"
+			});
+			expect(getRotatedLabelPosition(getInternal({
+				data_labels: {rotate: 90}
+			}), {id: "data1", value: 10}, 10, 20)).to.deep.equal({
+				x: 6,
+				y: 20,
+				textAlign: "right"
+			});
+			expect(getRotatedLabelPosition(getInternal({
+				axis_y_inverted: true,
+				data_labels: {rotate: 200}
+			}), {id: "data1", value: 10}, 10, 20)).to.deep.equal({
+				x: 14,
+				y: 27,
+				textAlign: "left"
+			});
+			expect(getRotatedLabelPosition({
+				...getInternal({
+					axis_y_inverted: true,
+					data_labels: {rotate: 200},
+					data_type: TYPE.CANDLESTICK
+				}),
+				getCandlestickData: () => ({_isUp: true})
+			}, {id: "data1", value: [1, 2, 3, 4]}, 10, 20)).to.deep.equal({
+				x: 14,
+				y: 33,
+				textAlign: "left"
+			});
 		});
 
 		it("resolves point label anchors for rotated, bubble and line-like data", () => {
@@ -432,6 +688,60 @@ describe("ESM canvas helper coverage", () => {
 				point_r: 10
 			}), negativeCtx, {id: "data1", value: -1}, 10, 20).y).to.be.lessThan(20);
 			expect(negativeCtx.textBaseline).to.be.equal("bottom");
+		});
+
+		it("covers label border defaults, boxes and inverted anchors", () => {
+			const ctx = getContext();
+
+			ctx.textAlign = "right";
+			ctx.textBaseline = "bottom";
+			expect(getLabelBorderOption(false)).to.be.null;
+			expect(getLabelBorderOption(true)).to.deep.include({
+				radius: 10,
+				stroke: "#000",
+				strokeWidth: 1,
+				fill: "none"
+			});
+			expect(getLabelBorderOption({
+				padding: {top: 1, right: 2, bottom: 3, left: 4},
+				radius: "bad",
+				strokeWidth: "bad"
+			}).padding.left).to.be.equal(4);
+			expect(getLabelDecorationBox(ctx, "abc", 20, 30).x).to.be.lessThan(20);
+
+			ctx.textAlign = "center";
+			ctx.textBaseline = "middle";
+			expect(getLabelDecorationBox(ctx, "a\nb", 20, 30, {
+				top: 1,
+				right: 2,
+				bottom: 3,
+				left: 4
+			}).h).to.be.greaterThan(20);
+			expect(getLabelDecorationBox({
+				font: "bad",
+				measureText: () => ({}),
+				textAlign: "start",
+				textBaseline: "top"
+			}, "", 20, 30).h).to.be.equal(12);
+
+			const invertedPositive = getContext();
+			const zeroNegative = getContext();
+
+			expect(getPointLabelAnchor(getInternal({
+				axis_y_inverted: true,
+				data_type: "line"
+			}), invertedPositive, {id: "data1", value: 1}, 10, 20).y).to.be.greaterThan(20);
+			expect(invertedPositive.textBaseline).to.be.equal("top");
+			expect(getPointLabelAnchor({
+				...getInternal({
+					data_type: "line"
+				}),
+				state: {
+					hasNegativeValue: true,
+					hasPositiveValue: false
+				}
+			}, zeroNegative, {id: "data1", value: 0}, 10, 20).y).to.be.greaterThan(20);
+			expect(zeroNegative.textBaseline).to.be.equal("top");
 		});
 	});
 
@@ -541,6 +851,127 @@ describe("ESM canvas helper coverage", () => {
 			expect(theme.style.emptyLabel).to.deep.include({color: "#151515", font: "18px serif"});
 			expect(theme.style.label).to.deep.include({color: "#161616", font: "19px serif"});
 			expect(theme.style.title).to.deep.include({color: "#171717", font: "20px serif"});
+
+			container.remove();
+		});
+
+		it("reloads cached theme inputs and maps selector aliases", () => {
+			const container = document.createElement("div");
+			const theme = new CanvasTheme();
+			let loadCount = 0;
+
+			document.body.appendChild(container);
+			theme.load(container);
+
+			const originalLoad = theme.load.bind(theme);
+
+			theme.load = (...args) => {
+				loadCount++;
+				return originalLoad(...args);
+			};
+			theme.reload(container);
+			expect(loadCount).to.be.equal(0);
+
+			container.className = "theme-a";
+			theme.reload(container);
+			expect(loadCount).to.be.equal(1);
+
+			container.setAttribute("style", "color: rgb(1, 2, 3)");
+			theme.reload(container, {
+				selectors: {
+					".bb-axis .domain": {stroke: "transparent", strokeWidth: "bad"},
+					".bb-axis .tick line": {stroke: "none", strokeWidth: 0},
+					".bb-axis .tick text": {
+						fill: "rgba(0, 0, 0, 0)",
+						fontSize: "",
+						fontFamily: "Arial"
+					},
+					".tick._active_ text": {fill: "#123123"},
+					".bb-grid .bb-xgrid": {stroke: "#010203", strokeDasharray: "0 bad 8"},
+					".bb-xgrid-focus line": {stroke: "#020304"},
+					".bb-region rect": {fill: "#030405", fillOpacity: 0.25},
+					".bb-brush .extent": {fill: "#040506", fillOpacity: 0.5},
+					".bb-chart-treemaps rect": {stroke: "#050607"}
+				}
+			});
+
+			expect(loadCount).to.be.equal(2);
+			expect(theme.style.axis.activeLabelColor).to.be.equal("#123123");
+			expect(theme.style.grid.dashArray).to.deep.equal([8]);
+			expect(theme.style.region.opacity).to.be.equal(0.25);
+			expect(theme.style.subchartBrush.opacity).to.be.equal(0.5);
+
+			container.remove();
+		});
+
+		it("normalizes theme override fallbacks and composed font selector values", () => {
+			const container = document.createElement("div");
+			const theme = new CanvasTheme();
+
+			document.body.appendChild(container);
+			theme.load(container, {
+				selectors: {
+					".bb-axis text": {
+						fontSize: "13px",
+						fontFamily: "Arial",
+						fontStyle: "italic",
+						fontVariant: "small-caps",
+						fontWeight: "700",
+						lineHeight: "18px"
+					},
+					".bb-grid line": {strokeDasharray: [0, 4, Number.NaN, 6]},
+					".bb-circle": {stroke: "transparent", strokeWidth: "bad"},
+					".bb-brush .handle--custom": {stroke: "transparent", strokeWidth: "bad"}
+				},
+				axis: {
+					labelColor: "#334455",
+					labelFont: "15px serif"
+				},
+				focusGrid: {
+					lineWidth: "bad",
+					dashArray: "bad 9"
+				},
+				region: {
+					opacity: "bad"
+				},
+				shape: {
+					barOpacity: "bad",
+					barExpandedOpacity: "bad",
+					barLineWidth: "bad",
+					candlestickLineWidth: "bad",
+					candlestickExpandedOpacity: "bad",
+					lineWidth: "bad",
+					lineFocusedWidth: "bad",
+					areaOpacity: "bad",
+					targetDefocusedOpacity: "bad",
+					pointLineWidth: "bad"
+				},
+				selectedPoint: {
+					lineWidth: "bad"
+				},
+				focusPoint: {
+					lineWidth: "bad"
+				},
+				zoomBrush: {
+					opacity: "bad"
+				},
+				subchartBrush: {
+					opacity: "bad",
+					handleOpacity: "bad"
+				},
+				treemap: {
+					lineWidth: "bad"
+				}
+			});
+
+			expect(theme.style.axis.xTickFont).to.be.equal("15px serif");
+			expect(theme.style.axis.y2TickFont).to.be.equal("15px serif");
+			expect(theme.style.axis.xLabelColor).to.be.equal("#334455");
+			expect(theme.style.axis.y2LabelColor).to.be.equal("#334455");
+			expect(theme.style.grid.dashArray).to.deep.equal([4, 6]);
+			expect(theme.style.focusGrid.dashArray).to.deep.equal([9]);
+			expect(theme.style.shape.pointLineWidth).to.be.undefined;
+			expect(theme.style.subchartBrush.handleLineWidth).to.be.equal(1);
 
 			container.remove();
 		});

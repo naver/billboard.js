@@ -60,6 +60,45 @@ import typeInternals from "./internals/type";
 import shape from "./shape/shape";
 
 /**
+ * Get SVG-only chart type reason for canvas render fallback.
+ * @param {object} $$ ChartInternal instance
+ * @returns {string|null} Unsupported chart type reason
+ * @private
+ */
+function getUnsupportedCanvasRenderType($$): string | null {
+	if ($$.hasArcType()) {
+		return "arc charts";
+	}
+
+	if ($$.hasType("funnel")) {
+		return "funnel chart";
+	}
+
+	return null;
+}
+
+/**
+ * Fall back to SVG when canvas mode is requested for unsupported chart types.
+ * @param {object} $$ ChartInternal instance
+ * @private
+ */
+function fallbackUnsupportedCanvasRenderMode($$): void {
+	const {config} = $$;
+	const unsupportedType = config.render_mode === "canvas" ?
+		getUnsupportedCanvasRenderType($$) :
+		null;
+
+	if (!unsupportedType) {
+		return;
+	}
+
+	window.console?.warn?.(
+		`[billboard.js] render.mode='canvas' is ignored for ${unsupportedType}; falling back to SVG.`
+	);
+	config.render_mode = "svg";
+}
+
+/**
  * Internal chart class.
  * - Note: Instantiated internally, not exposed for public.
  * @class ChartInternal
@@ -194,6 +233,7 @@ export default class ChartInternal {
 		const {boost_useCssRule, bindto} = config;
 
 		checkModuleImport($$);
+		fallbackUnsupportedCanvasRenderMode($$);
 
 		const hasArcType = $$.hasArcType();
 		state.hasRadar = !state.hasAxis && $$.hasType("radar");

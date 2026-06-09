@@ -35,6 +35,7 @@ import {$CANVAS} from "../../src/canvas/classes";
 import CanvasTheme from "../../src/canvas/CanvasTheme";
 import {$AXIS, $COMMON, $FOCUS, $LEGEND} from "../../src/config/classes";
 import {AXIS_TICK_PADDING, AXIS_TICK_SIZE, TYPE} from "../../src/config/const";
+import {funnel, pie} from "../../src/config/resolver/shape";
 
 describe("ESM canvas", function() {
 	let chart;
@@ -118,6 +119,14 @@ describe("ESM canvas", function() {
 			x: Math.min(...xs) + (Math.max(...xs) - Math.min(...xs)) / 2,
 			y: Math.min(...ys) + (Math.max(...ys) - Math.min(...ys)) / 2
 		};
+	}
+
+	function normalizeCanvasColor(color) {
+		const ctx = document.createElement("canvas").getContext("2d");
+
+		ctx.strokeStyle = color;
+
+		return String(ctx.strokeStyle);
 	}
 
 	function getPngSize(dataUrl) {
@@ -222,6 +231,33 @@ describe("ESM canvas", function() {
 				expect(container.querySelector(".bb-legend")).to.not.be.null;
 			}
 			expect(chart.internal.state.isCanvasMode).to.be.true;
+		});
+	});
+
+	it("should fall back to SVG for chart types unsupported by canvas mode", () => {
+		const unsupportedCases: Array<[() => string, string]> = [
+			[pie, "arc charts"],
+			[funnel, "funnel chart"]
+		];
+
+		unsupportedCases.forEach(([resolver, warningText]) => {
+			const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
+			const currentChart = generate(resolver());
+			const currentContainer = container;
+
+			expect(currentChart.internal.config.render_mode).to.equal("svg");
+			expect(currentChart.internal.state.isCanvasMode).to.be.false;
+			expect(container.querySelector(`canvas.${$CANVAS.canvas}`)).to.be.null;
+			expect(container.querySelector("svg")).to.not.be.null;
+			expect(warning).toHaveBeenCalledWith(
+				expect.stringContaining(warningText)
+			);
+
+			warning.mockRestore();
+			currentChart.destroy();
+			currentContainer.remove();
+			chart = null;
+			container = null;
 		});
 	});
 
@@ -761,14 +797,78 @@ describe("ESM canvas", function() {
 	it("should draw candlesticks on canvas", () => {
 		const fillRect = vi.spyOn(CanvasRenderingContext2D.prototype, "fillRect");
 		const lineTo = vi.spyOn(CanvasRenderingContext2D.prototype, "lineTo");
+		const strokeRectRecords: Array<{lineWidth: number, strokeStyle: string}> = [];
+		const originalStrokeRect = CanvasRenderingContext2D.prototype.strokeRect;
+		const strokeRect = vi.spyOn(CanvasRenderingContext2D.prototype, "strokeRect")
+			.mockImplementation(function(
+				this: CanvasRenderingContext2D,
+				x: number,
+				y: number,
+				w: number,
+				h: number
+			) {
+				strokeRectRecords.push({
+					lineWidth: this.lineWidth,
+					strokeStyle: String(this.strokeStyle)
+				});
+
+				return originalStrokeRect.call(this, x, y, w, h);
+			});
 
 		generate(candlestick(), candlestickColumns);
 
 		expect(fillRect).toHaveBeenCalled();
 		expect(lineTo).toHaveBeenCalled();
+		expect(strokeRectRecords.some(({lineWidth, strokeStyle}) =>
+			lineWidth === chart.internal.canvasTheme.style.shape.candlestickLineWidth &&
+			strokeStyle === normalizeCanvasColor(
+				chart.internal.canvasTheme.style.shape.candlestickStrokeColor
+			)
+		)).to.be.true;
 
+		strokeRect.mockRestore();
 		fillRect.mockRestore();
 		lineTo.mockRestore();
+	});
+
+	it("should draw x focus grid line on canvas candlestick hover", () => {
+		const strokeRecords: Array<{lineWidth: number, strokeStyle: string}> = [];
+		const originalStroke = CanvasRenderingContext2D.prototype.stroke;
+		const stroke = vi.spyOn(CanvasRenderingContext2D.prototype, "stroke")
+			.mockImplementation(function(this: CanvasRenderingContext2D, ...args) {
+				strokeRecords.push({
+					lineWidth: this.lineWidth,
+					strokeStyle: String(this.strokeStyle)
+				});
+
+				return originalStroke.apply(this, args as []);
+			});
+
+		generate(candlestick(), candlestickColumns);
+
+		const canvasEl = container.querySelector(`canvas.${$CANVAS.canvas}`);
+		const rect = canvasEl.getBoundingClientRect();
+		const {margin} = chart.internal.state;
+		const d = chart.internal.data.targets[0].values[0];
+		const indices = chart.internal.getShapeIndices(chart.internal.isCandlestickType);
+		const points = chart.internal.generateGetCandlestickPoints(indices, false)(d, 0);
+		const center = getCanvasRectCenter([points[0], points[1]], false);
+		const focusGrid = chart.internal.canvasTheme.style.focusGrid;
+		const focusGridColor = normalizeCanvasColor(focusGrid.lineColor);
+
+		strokeRecords.length = 0;
+		canvasEl.dispatchEvent(new MouseEvent("mousemove", {
+			bubbles: true,
+			clientX: rect.left + margin.left + center.x,
+			clientY: rect.top + margin.top + center.y
+		}));
+
+		expect(strokeRecords.some(({lineWidth, strokeStyle}) =>
+			lineWidth === focusGrid.lineWidth &&
+			strokeStyle === focusGridColor
+		)).to.be.true;
+
+		stroke.mockRestore();
 	});
 
 	it("should draw treemap tiles on canvas without unsupported warnings", () => {
@@ -1054,6 +1154,100 @@ describe("ESM canvas", function() {
 			fillText.mockRestore();
 			lineTo.mockRestore();
 			translate.mockRestore();
+		}
+	});
+
+	it("should draw canvas axis edge ticks outside when inner ticks are enabled", () => {
+		const segments: Array<{x1: number, y1: number, x2: number, y2: number}> = [];
+		const originalMoveTo = CanvasRenderingContext2D.prototype.moveTo;
+		const originalLineTo = CanvasRenderingContext2D.prototype.lineTo;
+		const current = new WeakMap<CanvasRenderingContext2D, {x: number, y: number}>();
+		const moveTo = vi.spyOn(CanvasRenderingContext2D.prototype, "moveTo")
+			.mockImplementation(function(this: CanvasRenderingContext2D, x: number, y: number) {
+				current.set(this, {x, y});
+
+				return originalMoveTo.call(this, x, y);
+			});
+		const lineTo = vi.spyOn(CanvasRenderingContext2D.prototype, "lineTo")
+			.mockImplementation(function(this: CanvasRenderingContext2D, x: number, y: number) {
+				const start = current.get(this);
+
+				if (start) {
+					segments.push({
+						x1: start.x,
+						y1: start.y,
+						x2: x,
+						y2: y
+					});
+					current.set(this, {x, y});
+				}
+
+				return originalLineTo.call(this, x, y);
+			});
+
+		try {
+			generateWithOptions({
+				data: {
+					columns,
+					type: line(),
+					axes: {
+						data2: "y2"
+					}
+				},
+				axis: {
+					x: {
+						tick: {
+							inner: true
+						}
+					},
+					y: {
+						tick: {
+							inner: true
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							inner: true
+						}
+					}
+				}
+			});
+
+			const {height, margin, width} = chart.internal.state;
+			const {axis} = chart.internal.canvasTheme.style;
+			const axisX = getCrisp(margin.left, axis.lineWidth);
+			const axisY2X = getCrisp(margin.left + width, axis.lineWidth);
+			const axisY = getCrisp(margin.top + height, axis.lineWidth);
+			const top = margin.top;
+			const bottom = margin.top + height;
+			const left = margin.left;
+			const right = margin.left + width;
+			const close = (a, b) => Math.abs(a - b) < 0.1;
+			const hasSegment = (x1, y1, x2, y2) => segments.some(segment =>
+				close(segment.x1, x1) &&
+				close(segment.y1, y1) &&
+				close(segment.x2, x2) &&
+				close(segment.y2, y2)
+			);
+
+			expect(hasSegment(left, axisY, left, axisY + AXIS_TICK_SIZE)).to.be.true;
+			expect(hasSegment(right, axisY, right, axisY + AXIS_TICK_SIZE)).to.be.true;
+			expect(hasSegment(left, axisY, left, axisY - AXIS_TICK_SIZE)).to.be.false;
+			expect(hasSegment(right, axisY, right, axisY - AXIS_TICK_SIZE)).to.be.false;
+
+			expect(hasSegment(axisX, top, axisX - AXIS_TICK_SIZE, top)).to.be.true;
+			expect(hasSegment(axisX, bottom, axisX - AXIS_TICK_SIZE, bottom)).to.be.true;
+			expect(hasSegment(axisX, top, axisX + AXIS_TICK_SIZE, top)).to.be.false;
+			expect(hasSegment(axisX, bottom, axisX + AXIS_TICK_SIZE, bottom)).to.be.false;
+
+			expect(hasSegment(axisY2X, top, axisY2X + AXIS_TICK_SIZE, top)).to.be.true;
+			expect(hasSegment(axisY2X, bottom, axisY2X + AXIS_TICK_SIZE, bottom)).to.be.true;
+			expect(hasSegment(axisY2X, top, axisY2X - AXIS_TICK_SIZE, top)).to.be.false;
+			expect(hasSegment(axisY2X, bottom, axisY2X - AXIS_TICK_SIZE, bottom)).to.be.false;
+		} finally {
+			moveTo.mockRestore();
+			lineTo.mockRestore();
 		}
 	});
 
@@ -2574,6 +2768,79 @@ describe("ESM canvas", function() {
 		fillText.mockRestore();
 	});
 
+	it("should cull canvas y and y2 ticks like SVG", () => {
+		const records: string[] = [];
+		const originalFillText = CanvasRenderingContext2D.prototype.fillText;
+		const lineTo = vi.spyOn(CanvasRenderingContext2D.prototype, "lineTo");
+		const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText")
+			.mockImplementation(function(this: CanvasRenderingContext2D, text, ...args) {
+				records.push(String(text));
+
+				return originalFillText.call(this, text, ...args);
+			});
+
+		try {
+			generateWithOptions({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 200, 250, 250, 150, 230, 300, 200, 300, 250, 150, 330, 100, 200, 100, 350, 50, 100, 200, 300, 250, 150]
+					],
+					axes: {
+						data2: "y2"
+					},
+					types: {
+						data1: bar(),
+						data2: line()
+					}
+				},
+				axis: {
+					y: {
+						tick: {
+							culling: {
+								max: 3
+							},
+							format: value => `y:${value}`
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							culling: true,
+							format: value => `y2:${value}`
+						}
+					}
+				}
+			});
+
+			const yTexts = records.filter(text => text.indexOf("y:") === 0);
+			const y2Texts = records.filter(text => text.indexOf("y2:") === 0);
+			const {height, margin, width} = chart.internal.state;
+			const axisY = getCrisp(margin.left, chart.internal.canvasTheme.style.axis.lineWidth);
+			const axisY2 = getCrisp(
+				margin.left + width,
+				chart.internal.canvasTheme.style.axis.lineWidth
+			);
+			const getTickLinePositions = (x: number) => new Set(
+				lineTo.mock.calls
+					.filter(([tx, ty]) =>
+						Math.abs(tx - x) < 1.5 &&
+						ty >= margin.top - 1 &&
+						ty <= margin.top + height + 1
+					)
+					.map(([, ty]) => Math.round(ty))
+			);
+
+			expect(yTexts).to.deep.equal(["y:0", "y:200", "y:400"]);
+			expect(y2Texts).to.deep.equal(["y2:50", "y2:150", "y2:250", "y2:350"]);
+			expect(getTickLinePositions(axisY - AXIS_TICK_SIZE).size).to.be.at.least(5);
+			expect(getTickLinePositions(axisY2 + AXIS_TICK_SIZE).size).to.be.at.least(4);
+		} finally {
+			fillText.mockRestore();
+			lineTo.mockRestore();
+		}
+	});
+
 	it("should keep canvas x tick lines when x tick text is culled", () => {
 		const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText");
 		const lineTo = vi.spyOn(CanvasRenderingContext2D.prototype, "lineTo");
@@ -2895,6 +3162,46 @@ describe("ESM canvas", function() {
 		});
 
 		expect(fillText.mock.calls.some(([text]) => text === "v:400")).to.be.true;
+
+		fillText.mockRestore();
+	});
+
+	it("should align multiline canvas line data labels with SVG tspan offsets", () => {
+		const records: Array<{text: string, textBaseline: string, absY: number}> = [];
+		const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText")
+			.mockImplementation(function(this: CanvasRenderingContext2D, text: string, x: number, y: number) {
+				const transform = this.getTransform();
+
+				records.push({
+					text: String(text),
+					textBaseline: this.textBaseline,
+					absY: transform.f + Number(y)
+				});
+			});
+
+		generateWithOptions({
+			data: {
+				columns: [
+					["data1", 120]
+				],
+				type: line(),
+				labels: {
+					format: () => "first\nsecond"
+				}
+			}
+		});
+
+		const {margin} = chart.internal.state;
+		const datum = chart.internal.data.targets[0].values[0];
+		const lineHeight = parseFloat(chart.internal.canvasTheme.style.label.font) || 12;
+		const anchorY = margin.top + chart.internal.circleY(datum, datum.index) - 6;
+		const firstLine = records.find(({text}) => text === "first");
+		const secondLine = records.find(({text}) => text === "second");
+
+		expect(firstLine?.textBaseline).to.be.equal("bottom");
+		expect(firstLine?.absY).to.be.closeTo(anchorY - lineHeight, 0.1);
+		expect(secondLine?.textBaseline).to.be.equal("bottom");
+		expect(secondLine?.absY).to.be.closeTo(anchorY, 0.1);
 
 		fillText.mockRestore();
 	});
@@ -3868,6 +4175,33 @@ describe("ESM canvas", function() {
 		});
 
 		expect(fillText).not.toHaveBeenCalled();
+
+		fillText.mockRestore();
+	});
+
+	it("should hide canvas treemap text labels when data label image is configured", () => {
+		const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText");
+
+		generateWithOptions({
+			data: {
+				columns: [
+					["data1", 30],
+					["data2", 120],
+					["data3", 90]
+				],
+				type: treemap(),
+				labels: {
+					centered: true,
+					image: {
+						url: "./assets/{=ID}.svg",
+						width: 40,
+						height: 40
+					}
+				}
+			}
+		});
+
+		expect(fillText.mock.calls.some(([text]) => /data[123]|%/.test(String(text)))).to.be.false;
 
 		fillText.mockRestore();
 	});
@@ -5779,6 +6113,73 @@ describe("ESM canvas", function() {
 		expect(tooltip.textContent).not.to.contain("50");
 	});
 
+	it("should expand only the hovered point for grouped multiple x canvas tooltip", () => {
+		const arcRecords: Array<{canvasClass: string, r: number}> = [];
+		const originalArc = CanvasRenderingContext2D.prototype.arc;
+		const arc = vi.spyOn(CanvasRenderingContext2D.prototype, "arc")
+			.mockImplementation(function(
+				this: CanvasRenderingContext2D,
+				x: number,
+				y: number,
+				r: number,
+				startAngle: number,
+				endAngle: number,
+				counterclockwise?: boolean
+			) {
+				arcRecords.push({
+					canvasClass: String(this.canvas?.className || ""),
+					r
+				});
+
+				return originalArc.call(this, x, y, r, startAngle, endAngle, counterclockwise);
+			});
+
+		try {
+			generateWithOptions({
+				data: {
+					xs: {
+						data1: "x1",
+						data2: "x2"
+					},
+					columns: [
+						["x1", 10, 30, 45],
+						["x2", 30, 50, 75],
+						["data1", 30, 200, 100],
+						["data2", 20, 180, 240]
+					],
+					type: line()
+				}
+			});
+
+			const canvasEl = container.querySelector(`canvas.${$CANVAS.canvas}`);
+			const rect = canvasEl.getBoundingClientRect();
+			const {margin} = chart.internal.state;
+			const d = chart.internal.data.targets[0].values[1];
+			const expandedR = chart.internal.pointExpandedR(d);
+			const tooltip = container.querySelector(".bb-tooltip-container");
+
+			arcRecords.length = 0;
+			canvasEl.dispatchEvent(new MouseEvent("mousemove", {
+				bubbles: true,
+				clientX: rect.left + margin.left + chart.internal.circleX(d, d.index),
+				clientY: rect.top + margin.top + chart.internal.circleY(d, d.index)
+			}));
+
+			const expandedPointArcs = arcRecords.filter(({canvasClass, r}) =>
+				canvasClass.includes($CANVAS.canvas) &&
+				Math.abs(r - expandedR) < 1e-6
+			);
+
+			expect(tooltip.textContent).to.contain("data1");
+			expect(tooltip.textContent).to.contain("200");
+			expect(tooltip.textContent).to.contain("data2");
+			expect(tooltip.textContent).to.contain("20");
+			expect(expandedPointArcs).to.have.length(1);
+		} finally {
+			arc.mockRestore();
+		}
+	});
+
 	it("should show linked canvas tooltip by index", () => {
 		generateWithOptions({
 			data: {
@@ -6455,6 +6856,46 @@ describe("ESM canvas", function() {
 		}));
 
 		expect(chart.selected("data1").map(d => d.index)).to.deep.equal([0]);
+	});
+
+	it("should toggle the clicked canvas line point instead of another series at the same x", () => {
+		chart = generateWithOptions({
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400, 150, 250],
+					["data2", 230, 280, 320, 218, 250, 150]
+				],
+				type: line(),
+				selection: {
+					enabled: true,
+					draggable: true
+				}
+			}
+		});
+
+		const {internal} = chart;
+		const canvas = chart.$.canvas.node();
+		const rect = canvas.getBoundingClientRect();
+		const d = internal.data.targets[1].values[3];
+		const x = internal.circleX(d, d.index);
+		const y = internal.circleY(d, d.index);
+
+		canvas.dispatchEvent(new MouseEvent("click", {
+			bubbles: true,
+			clientX: rect.left + internal.state.margin.left + x,
+			clientY: rect.top + internal.state.margin.top + y
+		}));
+
+		expect(chart.selected("data1")).to.have.length(0);
+		expect(chart.selected("data2").map(d => d.index)).to.deep.equal([3]);
+
+		canvas.dispatchEvent(new MouseEvent("click", {
+			bubbles: true,
+			clientX: rect.left + internal.state.margin.left + x,
+			clientY: rect.top + internal.state.margin.top + y
+		}));
+
+		expect(chart.selected()).to.have.length(0);
 	});
 
 	it("should support canvas data selection dragging", () => new Promise(done => {

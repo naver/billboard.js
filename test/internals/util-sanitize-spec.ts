@@ -65,6 +65,24 @@ describe("UTIL: sanitize", () => {
 		expect(sanitize("<a href='vbscript:alert(1)'>link</a>")).to.not.include("vbscript:");
 	});
 
+	it("should preserve safe URI forms and sanitize style URLs", () => {
+		expect(sanitize("<a href='#point'>point</a>")).to.be.equal("<a href='#point'>point</a>");
+		expect(sanitize("<img src=/chart.png>")).to.be.equal('<img src="/chart.png">');
+		expect(sanitize("<img src=./chart.png>")).to.be.equal('<img src="./chart.png">');
+		expect(sanitize("<img src=../chart.png>")).to.be.equal('<img src="../chart.png">');
+		expect(sanitize("<a href=mailto:test@example.com>mail</a>"))
+			.to.be.equal('<a href="mailto:test@example.com">mail</a>');
+
+		expect(sanitize("<div style=\"background:url(/safe.png);color:red\">x</div>"))
+			.to.be.equal("<div style=\"background:url(/safe.png);color:red\">x</div>");
+		expect(sanitize("<div style='background:url(javascript:alert(1))'>x</div>"))
+			.to.be.equal("<div>x</div>");
+		expect(sanitize("<div style='width: expression(alert(1))'>x</div>"))
+			.to.be.equal("<div>x</div>");
+		expect(sanitize('<div style=color:red"width:1px>x</div>'))
+			.to.be.equal('<div style="color:red&quot;width:1px">x</div>');
+	});
+
 	it("should block HTML entity bypass attacks in URLs", () => {
 		// Named entity bypass: &colon; for ":"
 		expect(sanitize("<a href='javascript&colon;alert(1)'>click</a>")).to.not.include("href");
@@ -232,6 +250,14 @@ describe("UTIL: sanitize", () => {
 		expect(sanitize("<DIV>text</DIV>")).to.be.equal("<div>text</div>");
 		expect(sanitize("<SPAN class='x'>text</SPAN>")).to.be.equal("<span class='x'>text</span>");
 		expect(sanitize("<Div>text</Div>")).to.be.equal("<div>text</div>");
+	});
+
+	it("should handle malformed tags, comments and boolean attributes", () => {
+		expect(sanitize("a<!-- hidden --><b>x</b>")).to.be.equal("a<b>x</b>");
+		expect(sanitize("<bad></bad>ipt>")).to.be.equal("&lt;bad>&lt;/bad>ipt&gt;");
+		expect(sanitize("< div>bad</ div>")).to.be.equal("&lt; div>bad&lt;/ div>");
+		expect(sanitize("<div class>text</div>")).to.be.equal("<div class>text</div>");
+		expect(sanitize("<div unknown>text</div>")).to.be.equal("<div>text</div>");
 	});
 
 	it("should prevent nested tag bypass attacks", () => {

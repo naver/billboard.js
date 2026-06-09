@@ -209,6 +209,7 @@ function makeContext(overrides = {}) {
 		hitDetector: {
 			findInRect: () => [targets[0].values[0], targets[1].values[0]],
 			findNearest: () => targets[0].values[0],
+			findNearestShape: () => targets[0].values[0],
 			findNearestIndexByCoord: () => targets[0].values[1],
 			rebuild: vi.fn()
 		},
@@ -439,6 +440,67 @@ describe("ESM canvas internal coverage", () => {
 		ctx.$el.chart.node().remove();
 	});
 
+	it("handles HTML legend formatter, point icons and interaction variants", () => {
+		const formatted = makeContext({
+			color: id => id === "data1" ? "#1<2" : "#345678",
+			config: {
+				data_names: {
+					data1: "Named & Data"
+				},
+				legend_format(text, id) {
+					return `${text}:${id || "self"}`;
+				},
+				legend_item_interaction: {dblclick: true},
+				legend_item_tile_type: "circle",
+				legend_usePoint: true,
+				point_pattern: ["rectangle", "", "<path d='M0 0L8 8' />"]
+			}
+		});
+
+		call("updateHtmlLegend", formatted);
+
+		const formattedItems = Array.from(formatted.$el.legend.node().querySelectorAll("button"));
+
+		expect(formattedItems[0].getAttribute("title")).to.be.equal("Named & Data:data1");
+		expect(formattedItems[0].querySelector("rect")).to.not.be.null;
+		expect(formattedItems[1].querySelector("circle")).to.not.be.null;
+
+		dispatchMouse(formattedItems[0], "dblclick", 12, 12);
+		expect(formatted.api.hide).toHaveBeenCalled();
+		expect(formatted.api.show).toHaveBeenCalledWith("data1");
+		formatted.$el.chart.node().remove();
+
+		const handled = makeContext({
+			config: {
+				legend_item_onclick: () => true,
+				legend_item_onout: () => true,
+				legend_item_onover: () => true
+			}
+		});
+
+		call("updateHtmlLegend", handled);
+
+		const handledItem = handled.$el.legend.node().querySelector("button");
+
+		dispatchMouse(handledItem, "mouseover", 12, 12);
+		dispatchMouse(handledItem, "mouseout", 12, 12);
+		dispatchMouse(handledItem, "click", 12, 12);
+		expect(handled.state.focusedTargetIds).to.be.undefined;
+		expect(handled.api.toggle).not.toHaveBeenCalled();
+		handled.$el.chart.node().remove();
+
+		const disabled = makeContext({
+			config: {
+				interaction_enabled: false
+			}
+		});
+
+		call("updateHtmlLegend", disabled);
+		dispatchMouse(disabled.$el.legend.node().querySelector("button"), "click", 12, 12);
+		expect(disabled.api.toggle).not.toHaveBeenCalled();
+		disabled.$el.chart.node().remove();
+	});
+
 	it("renders template legends and handles measurement fallbacks", () => {
 		const bindto = document.createElement("div");
 		const ctx = makeContext({
@@ -562,6 +624,43 @@ describe("ESM canvas internal coverage", () => {
 		ctx.$el.chart.node().remove();
 	});
 
+	it("handles selection disabled, reset and grouped toggle variants", () => {
+		const disabled = makeContext({
+			config: {
+				data_selection_enabled: false
+			}
+		});
+
+		call("setCanvasSelection", disabled, true);
+		call("toggleCanvasSelection", disabled, [disabled.data.targets[0].values[0]]);
+		expect(disabled.state.canvasSelection.size).to.be.equal(0);
+		disabled.$el.chart.node().remove();
+
+		const reset = makeContext();
+
+		call("setCanvasSelection", reset, true, ["data1", "data2"], [0, 1], false);
+		expect(reset.state.canvasSelection.size).to.be.equal(4);
+		call("setCanvasSelection", reset, true, "data1", [0], true);
+		expect(reset.state.canvasSelection.has("data1:0")).to.be.false;
+		expect(reset.state.canvasSelection.has("data2:1")).to.be.false;
+		reset.$el.chart.node().remove();
+
+		const grouped = makeContext({
+			config: {
+				data_selection_grouped: true,
+				data_selection_multiple: false
+			}
+		});
+
+		call("toggleCanvasSelection", grouped, [grouped.data.targets[0].values[0]]);
+		call("toggleCanvasSelection", grouped, [grouped.data.targets[1].values[0]]);
+		expect(grouped.state.canvasSelection.has("data1:0")).to.be.true;
+		expect(grouped.state.canvasSelection.has("data2:0")).to.be.true;
+		call("toggleCanvasSelection", grouped, [grouped.data.targets[0].values[0]]);
+		expect(grouped.state.canvasSelection.has("data1:0")).to.be.true;
+		grouped.$el.chart.node().remove();
+	});
+
 	it("dispatches canvas data callbacks, duplicate clicks and hover state", () => {
 		const ctx = makeContext();
 		const canvas = ctx.$el.canvas.node();
@@ -592,8 +691,54 @@ describe("ESM canvas internal coverage", () => {
 		call("dispatchCanvasDataOut", ctx, canvas);
 		expect(ctx.callbacks.out).to.have.length(1);
 
-		ctx.hitDetector.findNearest = () => null;
+		ctx.hitDetector.findNearestShape = () => null;
 		expect(call("dispatchCanvasDataClick", ctx, event)).to.be.null;
+		ctx.$el.chart.node().remove();
+	});
+
+	it("handles canvas mouse move cleanup and axis tooltip fallback branches", () => {
+		const ctx = makeContext();
+		const canvas = ctx.$el.canvas.node();
+
+		vi.spyOn(canvas, "getBoundingClientRect").mockReturnValue({
+			bottom: 150,
+			height: 150,
+			left: 0,
+			right: 240,
+			top: 0,
+			width: 240,
+			x: 0,
+			y: 0
+		});
+
+		ctx.state.flowing = true;
+		call("onCanvasMouseMove", ctx, new MouseEvent("mousemove", {clientX: 20, clientY: 20}));
+		ctx.state.flowing = false;
+		ctx.state.canvasSelectionDragging = true;
+		call("onCanvasMouseMove", ctx, new MouseEvent("mousemove", {clientX: 20, clientY: 20}));
+		ctx.state.canvasSelectionDragging = false;
+
+		ctx.clearCanvasFocus = vi.fn();
+		ctx.dispatchCanvasDataOut = vi.fn();
+		ctx.hideTooltip = vi.fn();
+		ctx.state.canvasFocusKey = "data1:0";
+		ctx.updateCanvasSubchartCursor = () => true;
+		call("onCanvasMouseMove", ctx, new MouseEvent("mousemove", {clientX: 20, clientY: 20}));
+		expect(ctx.state.canvasFocusKey).to.be.null;
+		expect(ctx.clearCanvasFocus).toHaveBeenCalled();
+
+		ctx.updateCanvasSubchartCursor = () => false;
+		ctx.hitDetector.findNearest = () => null;
+		ctx.hitDetector.findNearestIndexByCoord = () => null;
+		ctx.config.axis_tooltip = true;
+		ctx.clearCanvasFocus.mockClear();
+		call("onCanvasMouseMove", ctx, new MouseEvent("mousemove", {clientX: 30, clientY: 30}));
+		expect(ctx.canvasAxisRenderer.drawAxisTooltip).toHaveBeenCalled();
+
+		ctx.state.canvasFocusKey = null;
+		ctx.config.axis_tooltip = true;
+		call("onCanvasMouseOut", ctx);
+		expect(ctx.clearCanvasFocus).toHaveBeenCalled();
 		ctx.$el.chart.node().remove();
 	});
 

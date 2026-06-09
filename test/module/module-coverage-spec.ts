@@ -19,20 +19,29 @@ import {
 	brushEmpty,
 	callFn,
 	camelize,
+	convertInputType,
 	deepClone,
 	emulateEvent,
 	endall,
 	extend,
 	findIndex,
+	getBBox,
 	getBrushSelection,
+	getBoundingRect,
+	getCssRules,
 	getElementPos,
 	getMinMax,
 	getOption,
+	getPathBox,
+	getPointer,
 	getRange,
 	getScrollPosition,
+	getTransformCTM,
+	getTranslation,
 	hasStyle,
 	hasValue,
 	hasViewBox,
+	isTabVisible,
 	mergeArray,
 	mergeObj,
 	parseShorthand,
@@ -389,9 +398,12 @@ describe("MODULE coverage helpers", () => {
 			const svg = select(document.body).append("svg");
 			const text = svg.append("text");
 
+			setTextValue(null, "ignored");
+			setTextValue(text, 123);
 			setTextValue(text, "single");
 			expect(text.text()).to.be.equal("single");
 
+			setTextValue(text, "one\ntwo\nthree", [-0.5, 1.5], true);
 			setTextValue(text, "one\ntwo\nthree", [-0.5, 1.5], true);
 
 			expect(text.selectAll("tspan").nodes()).to.have.length(3);
@@ -412,6 +424,20 @@ describe("MODULE coverage helpers", () => {
 
 			expect(index).to.be.equal(0);
 			expect(style.sheet.cssRules[0].cssText).to.include(".bb .bb-chart .bb-line");
+			expect(getCssRules([style.sheet])).to.have.length(1);
+
+			const fakeSheet = {
+				cssRules: [],
+				addRule(rule, index) {
+					this.cssRules.splice(index, 0, {cssText: rule});
+
+					return index;
+				}
+			};
+
+			expect(addCssRules({sheet: fakeSheet}, "bb-axis..bb-y", ["fill: blue"]))
+				.to.be.equal(0);
+			expect(fakeSheet.cssRules[0].cssText).to.include(".bb-axis.bb-y");
 
 			const div = document.createElement("div");
 
@@ -431,10 +457,13 @@ describe("MODULE coverage helpers", () => {
 			expect(getElementPos(rect, "x")).to.be.equal(7);
 			expect(getElementPos(group.node(), "x")).to.be.equal(12);
 			expect(getElementPos(group.node(), "y")).to.be.equal(34);
+			expect(getElementPos(undefined, "x")).to.be.equal(0);
 
 			const scroller = {scrollLeft: 3, scrollTop: 4};
 			expect(getScrollPosition(scroller)).to.include({x: window.pageXOffset + 3});
 			expect(getScrollPosition(scroller)).to.include({y: window.pageYOffset + 4});
+			expect(getScrollPosition({})).to.include({x: window.pageXOffset});
+			expect(getScrollPosition({})).to.include({y: window.pageYOffset});
 
 			const state = {pendingRaf: null};
 			let calls = 0;
@@ -469,6 +498,108 @@ describe("MODULE coverage helpers", () => {
 			emulateEvent.touch(div, "touchstart", {clientX: 9, clientY: 10});
 
 			expect(events).to.be.deep.equal(["click", "touchstart:9"]);
+		});
+
+		it("covers rect caches, pointer fallback and transform helpers", () => {
+			const svg = select(document.body).append("svg");
+			const rect = svg.append("rect").attr("width", 10).node();
+			const bbox = {x: 1, y: 2, width: 10, height: 20};
+			const clientRect = {x: 3, y: 4, width: 30, height: 40};
+
+			rect.getBBox = vi.fn(() => bbox);
+			rect.getBoundingClientRect = vi.fn(() => clientRect);
+
+			expect(getBBox(rect)).to.be.equal(bbox);
+			expect(getBBox(rect)).to.be.equal(bbox);
+			rect.setAttribute("width", "11");
+			expect(getBBox(rect).width).to.be.equal(10);
+			expect(getBBox(rect, true)).to.be.equal(bbox);
+			expect(getBoundingRect(rect)).to.be.equal(clientRect);
+			expect(getBoundingRect(rect, true)).to.be.equal(clientRect);
+
+			const circle = svg.append("circle").node();
+
+			circle.getBBox = vi.fn(() => bbox);
+			expect(getBBox(circle)).to.be.equal(bbox);
+			expect(getBBox(circle)).to.be.equal(bbox);
+
+			const pathBox = getPathBox(rect);
+
+			expect(pathBox).to.include({x: 1, y: 2, width: 30, height: 40});
+			expect(getPointer(null)).to.deep.equal([0, 0]);
+			expect(getPointer({touches: [{clientX: NaN, clientY: NaN}]}, rect)).to.deep.equal([0, 0]);
+			expect(getPointer({sourceEvent: {touches: [{clientX: 4, clientY: 5}]}}, rect))
+				.to.have.length(2);
+			expect(getTranslation(null)).to.include({e: 0, f: 0});
+			expect(getTranslation({
+				transform: {
+					baseVal: {
+						numberOfItems: 1,
+						getItem: () => ({matrix: {e: 5, f: 6}})
+					}
+				}
+			})).to.include({e: 5, f: 6});
+			expect(hasViewBox(svg.attr("viewBox", "bad"))).to.be.false;
+			expect(isTabVisible()).to.be.true;
+
+			const ctmNode = rect as any;
+
+			ctmNode.getScreenCTM = () => new DOMMatrix().translate(10, 20);
+			ctmNode.getBoundingClientRect = () => ({x: 2, y: 3, width: 10, height: 10});
+			expect(Math.round(getTransformCTM(ctmNode, 12, 23, false).x)).to.be.equal(20);
+			expect(Math.round(getTransformCTM(ctmNode, 12, 23).x)).to.be.equal(2);
+
+			svg.remove();
+		});
+
+		it("covers css rule error and input type detection branches", () => {
+			const warn = vi.spyOn(window.console, "warn").mockImplementation(() => {});
+			const throwingSheet = {
+				href: "mock.css",
+				get cssRules() {
+					throw new Error("blocked");
+				}
+			};
+
+			expect(getCssRules([throwingSheet])).to.deep.equal([]);
+			expect(warn).toHaveBeenCalled();
+
+			const originalMatchMedia = window.matchMedia;
+			const originalNavigator = window.navigator;
+
+			window.matchMedia = query => ({
+				matches: query.includes("fine"),
+				media: query
+			});
+			expect(convertInputType(true, false)).to.be.equal("mouse");
+
+			Object.defineProperty(window, "navigator", {
+				configurable: true,
+				value: {
+					maxTouchPoints: 1,
+					userAgent: "Mock"
+				}
+			});
+			window.matchMedia = query => ({
+				matches: query.includes("coarse"),
+				media: query
+			});
+			expect(convertInputType(true, true)).to.be.equal("touch");
+
+			Object.defineProperty(window, "navigator", {
+				configurable: true,
+				value: {
+					userAgent: "iPhone"
+				}
+			});
+			window.matchMedia = () => ({matches: false});
+			expect(convertInputType(false, true)).to.be.equal("touch");
+
+			Object.defineProperty(window, "navigator", {
+				configurable: true,
+				value: originalNavigator
+			});
+			window.matchMedia = originalMatchMedia;
 		});
 	});
 });
