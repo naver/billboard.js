@@ -18,7 +18,7 @@ import {
 import {generateDrawAreaPath, generateDrawLinePath} from "../ChartInternal/shape/core/path";
 import {SUBCHART_BRUSH_HANDLE_PATH, TYPE} from "../config/const";
 import {window} from "../module/browser";
-import {isFunction, isNumber, isObject, isString} from "../module/util";
+import {asHalfPixel, isFunction, isNumber, isObject, isString} from "../module/util";
 import CanvasEngine from "./CanvasEngine";
 import CanvasPainter, {CanvasRect} from "./CanvasPainter";
 import CanvasTheme from "./CanvasTheme";
@@ -140,6 +140,21 @@ function getPreservedAspectRatioRect(
 		y: (height - h) / 2,
 		w,
 		h
+	};
+}
+
+/**
+ * Get SVG main group translate offset for canvas background image parity.
+ * @param {object} $$ ChartInternal instance
+ * @returns {object} Main group offset
+ * @private
+ */
+function getBackgroundImageOffset($$): {x: number, y: number} {
+	const {state} = $$;
+
+	return state.hasFunnel || state.hasTreemap ? {x: 0, y: 0} : {
+		x: asHalfPixel(state.margin.left),
+		y: asHalfPixel(state.margin.top)
 	};
 }
 
@@ -966,21 +981,23 @@ export default class CanvasRenderer {
 				ctx.globalAlpha *= classStyle.opacity;
 			}
 
-			applyCssMatrixTransform(ctx, classStyle.transform);
-
 			if (bg.imgUrl) {
 				const entry = this.getBackgroundImage(bg.imgUrl, $$);
 
 				if (entry?.loaded) {
+					const offset = getBackgroundImageOffset($$);
 					const rect = getPreservedAspectRatioRect(
 						entry.image,
 						current.width,
 						current.height
 					);
 
+					ctx.translate(offset.x, offset.y);
+					applyCssMatrixTransform(ctx, classStyle.transform);
 					ctx.drawImage(entry.image, rect.x, rect.y, rect.w, rect.h);
 				}
 			} else if (bg.color) {
+				applyCssMatrixTransform(ctx, classStyle.transform);
 				painter.fillRect({
 					x: margin.left,
 					y: margin.top,

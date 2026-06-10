@@ -5332,7 +5332,13 @@ describe("ESM canvas", function() {
 	});
 
 	it("should draw chart background image on canvas preserving aspect ratio after load", () => new Promise(done => {
+		const style = document.createElement("style");
 		const drawImage = vi.spyOn(CanvasRenderingContext2D.prototype, "drawImage");
+		const translate = vi.spyOn(CanvasRenderingContext2D.prototype, "translate");
+		const transform = vi.spyOn(CanvasRenderingContext2D.prototype, "transform");
+
+		style.textContent = ".canvas-bg-image-matrix { transform: matrix(1, 0, 0, 1, 2, 3); }";
+		document.head.appendChild(style);
 
 		generateWithOptions({
 			data: {
@@ -5340,6 +5346,7 @@ describe("ESM canvas", function() {
 				type: line()
 			},
 			background: {
+				class: "canvas-bg-image-matrix",
 				imgUrl: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='10'%3E%3Crect width='40' height='10' fill='red'/%3E%3C/svg%3E"
 			}
 		});
@@ -5353,13 +5360,22 @@ describe("ESM canvas", function() {
 					call[3] === 320 &&
 					call[4] === 80
 				);
+				const {margin} = chart.internal.state;
 
 				expect(backgroundCall).not.to.be.undefined;
+				expect(translate).toHaveBeenCalledWith(
+					Math.ceil(margin.left) + 0.5,
+					Math.ceil(margin.top) + 0.5
+				);
+				expect(transform).toHaveBeenCalledWith(1, 0, 0, 1, 2, 3);
 				done();
 			} catch (error) {
 				done(error);
 			} finally {
+				style.remove();
 				drawImage.mockRestore();
+				translate.mockRestore();
+				transform.mockRestore();
 			}
 		}, 50);
 	}));
