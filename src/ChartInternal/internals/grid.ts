@@ -9,8 +9,26 @@ import {AXIS_DEFAULT_TICK_COUNT} from "../../config/const";
 import {getPointer, isArray, isValue} from "../../module/util";
 
 // Grid position and text anchor helpers
+const GRID_FOCUS_SELECTOR = `line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`;
 const _getGridTextAnchor = d => isValue(d.position) || "end";
 const _getGridTextDx = d => (d.position === "start" ? 4 : (d.position === "middle" ? 0 : -4));
+
+/**
+ * Get current grid focus line selection.
+ * @param {object} $$ ChartInternal context
+ * @returns {d3.selection} Grid focus line selection
+ * @private
+ */
+function _getGridFocusEl($$): d3Selection {
+	const {state, $el: {main}} = $$;
+	const cached = state._gridFocusEl;
+	const mainNode = main.node();
+	const cachedNodes = cached?.nodes?.() || [];
+
+	return cachedNodes.length && cachedNodes.every(node => mainNode?.contains(node)) ?
+		cached :
+		(state._gridFocusEl = main.selectAll(GRID_FOCUS_SELECTOR));
+}
 
 /**
  * Get grid text x value getter function
@@ -389,15 +407,11 @@ export default {
 	 */
 	showGridFocus(data?): void {
 		const $$ = this;
-		const {config, state, state: {width, height}} = $$;
+		const {config, state: {width, height}} = $$;
 		const isRotated = config.axis_rotated;
 
 		// Cache grid focus selection to avoid repeated DOM queries on mousemove
-		const focusEl = state._gridFocusEl?.size() ?
-			state._gridFocusEl :
-			(state._gridFocusEl = $$.$el.main.selectAll(
-				`line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`
-			));
+		const focusEl = _getGridFocusEl($$);
 
 		const dataToShow = (data || [focusEl.datum()]).filter(d =>
 			d && isValue($$.getBaseValue(d))
@@ -467,16 +481,12 @@ export default {
 		$$.showCircleFocus?.(data);
 	},
 
-	hideGridFocus(): void {
+	hideGridFocus(force = false): void {
 		const $$ = this;
-		const {state, state: {inputType, resizing}, $el: {main}} = $$;
+		const {state: {inputType, resizing}} = $$;
 
-		if (inputType === "mouse" || !resizing) {
-			const focusEl = state._gridFocusEl?.size() ?
-				state._gridFocusEl :
-				(state._gridFocusEl = main.selectAll(
-					`line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`
-				));
+		if (force || inputType === "mouse" || !resizing) {
+			const focusEl = _getGridFocusEl($$);
 
 			focusEl.style("visibility", "hidden");
 			$$.hideCircleFocus?.();
