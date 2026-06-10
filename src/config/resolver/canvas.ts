@@ -41,6 +41,8 @@ const CANVAS_SELECTABLE_TYPE_FILTERS = [
 	isCanvasCandlestickType,
 	isCanvasTreemapType
 ];
+const CANVAS_LEGEND_TOUCH_TAP_THRESHOLD = 10;
+const CANVAS_LEGEND_TOUCH_CLICK_TIMEOUT = 750;
 const CANVAS_SUBCHART_HANDLE_SIZE = 6;
 const CANVAS_SUBCHART_CLICK_TOLERANCE = 2;
 const CANVAS_FLOW_ANIMATION_MAX_VALUES = 100000;
@@ -238,6 +240,103 @@ function revertCanvasLegendTargetFocus($$): void {
 }
 
 /**
+ * Get touch point from a canvas legend touch event.
+ * @param {TouchEvent} event Touch event
+ * @returns {Touch | undefined} Touch point
+ * @private
+ */
+function getCanvasLegendTouchPoint(event): Touch | undefined {
+	return event.changedTouches?.[0] || event.touches?.[0];
+}
+
+/**
+ * Store the touch start position for canvas legend tap detection.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} id Legend data id
+ * @param {TouchEvent} event Touch event
+ * @private
+ */
+function setCanvasLegendTouchStart($$, id: string, event): void {
+	const touch = getCanvasLegendTouchPoint(event);
+
+	$$.state.canvasLegendTouch = touch ?
+		{
+			id,
+			x: touch.clientX,
+			y: touch.clientY,
+			moved: false
+		} :
+		null;
+}
+
+/**
+ * Update whether the current canvas legend touch moved beyond tap tolerance.
+ * @param {object} $$ ChartInternal instance
+ * @param {TouchEvent} event Touch event
+ * @private
+ */
+function updateCanvasLegendTouchMove($$, event): void {
+	const start = $$.state.canvasLegendTouch;
+	const touch = start && getCanvasLegendTouchPoint(event);
+
+	if (touch) {
+		start.moved = start.moved ||
+			Math.abs(touch.clientX - start.x) > CANVAS_LEGEND_TOUCH_TAP_THRESHOLD ||
+			Math.abs(touch.clientY - start.y) > CANVAS_LEGEND_TOUCH_TAP_THRESHOLD;
+	}
+}
+
+/**
+ * Determine whether a touch sequence is a canvas legend tap.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} id Legend data id
+ * @param {TouchEvent} event Touch event
+ * @returns {boolean} Whether the touch sequence is a tap
+ * @private
+ */
+function isCanvasLegendTouchTap($$, id: string, event): boolean {
+	updateCanvasLegendTouchMove($$, event);
+
+	const start = $$.state.canvasLegendTouch;
+
+	$$.state.canvasLegendTouch = null;
+
+	return !!start && start.id === id && !start.moved;
+}
+
+/**
+ * Mark a canvas legend touch tap so the following compatibility click can be skipped.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} id Legend data id
+ * @private
+ */
+function markCanvasLegendTouchClick($$, id: string): void {
+	$$.state.canvasLegendLastTouchClickId = id;
+	$$.state.canvasLegendLastTouchClickTime = Date.now();
+}
+
+/**
+ * Check if a canvas legend click duplicates a recent touch tap.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} id Legend data id
+ * @returns {boolean} Whether the click is duplicate
+ * @private
+ */
+function isDuplicateCanvasLegendTouchClick($$, id: string): boolean {
+	const {state} = $$;
+	const duplicate = state.canvasLegendLastTouchClickId === id &&
+		Date.now() - (state.canvasLegendLastTouchClickTime || 0) <
+			CANVAS_LEGEND_TOUCH_CLICK_TIMEOUT;
+
+	if (duplicate) {
+		state.canvasLegendLastTouchClickId = null;
+		state.canvasLegendLastTouchClickTime = 0;
+	}
+
+	return duplicate;
+}
+
+/**
  * Bind canvas HTML legend interactions without invoking SVG focus paths.
  * @param {object} $$ ChartInternal instance
  * @param {object} item Legend item selection
@@ -246,11 +345,7 @@ function revertCanvasLegendTargetFocus($$): void {
 function bindCanvasHtmlLegendInteractions($$, item): void {
 	const {api, config, state} = $$;
 
-	item
-		.on("click", null)
-		.on("dblclick", null)
-		.on("mouseover", null)
-		.on("mouseout", null);
+	item.on("click dblclick mouseover mouseout touchstart touchmove touchend", null);
 
 	if (!config.interaction_enabled) {
 		return;
@@ -260,45 +355,75 @@ function bindCanvasHtmlLegendInteractions($$, item): void {
 	const eventType = typeof interaction === "object" && interaction?.dblclick ?
 		"dblclick" :
 		"click";
+	const isTouch = state.inputType === "touch";
+	const hasClickInteraction = interaction || isFunction(config.legend_item_onclick);
 
-	item.on(eventType, interaction || isFunction(config.legend_item_onclick) ?
+	const handleCanvasLegendToggle = function(event, id): void {
+		if (
+			!callFn(config.legend_item_onclick, api, id, !state.hiddenTargetIds.has(id))
+		) {
+			const selected = d3Select(this);
+
+			if (event.type === "dblclick" || event.altKey) {
+				if (
+					state.hiddenTargetIds.size &&
+					!selected.classed($LEGEND.legendItemHidden)
+				) {
+					api.show();
+				} else {
+					api.hide();
+					api.show(id);
+				}
+			} else {
+				api.toggle(id);
+				selected.classed($FOCUS.legendItemFocused, false);
+			}
+			revertCanvasLegendTargetFocus($$);
+		}
+
+		isTouch && $$.hideTooltip?.();
+	};
+
+	item.on(eventType, hasClickInteraction ?
 		function(event, id) {
 			if (
-				!callFn(config.legend_item_onclick, api, id, !state.hiddenTargetIds.has(id))
+				isTouch && event.type === "click" &&
+				isDuplicateCanvasLegendTouchClick($$, id)
 			) {
-				const selected = d3Select(this);
-
-				if (event.type === "dblclick" || event.altKey) {
-					if (
-						state.hiddenTargetIds.size &&
-						!selected.classed($LEGEND.legendItemHidden)
-					) {
-						api.show();
-					} else {
-						api.hide();
-						api.show(id);
-					}
-				} else {
-					api.toggle(id);
-					selected.classed($FOCUS.legendItemFocused, false);
-				}
-				revertCanvasLegendTargetFocus($$);
+				return;
 			}
+
+			handleCanvasLegendToggle.call(this, event, id);
 		} :
-		null)
-		.on("mouseover",
-			interaction || isFunction(config.legend_item_onover) ?
-				function(event, id) {
-					if (
-						!callFn(config.legend_item_onover, api, id, !state.hiddenTargetIds.has(id))
-					) {
-						setCanvasHtmlLegendFocus($$, id);
-						!state.transiting &&
-							$$.isTargetToShow(id) &&
-							setCanvasLegendTargetFocus($$, id);
-					}
-				} :
-				null)
+		null);
+
+	isTouch && eventType === "click" && hasClickInteraction && item
+		.on("touchstart", function(event, id) {
+			setCanvasLegendTouchStart($$, id, event);
+		}, {passive: true})
+		.on("touchmove", event => {
+			updateCanvasLegendTouchMove($$, event);
+		}, {passive: true})
+		.on("touchend", function(event, id) {
+			if (isCanvasLegendTouchTap($$, id, event)) {
+				markCanvasLegendTouchClick($$, id);
+				handleCanvasLegendToggle.call(this, event, id);
+			}
+		}, {passive: true});
+
+	!isTouch && item
+		.on("mouseover", interaction || isFunction(config.legend_item_onover) ?
+			function(event, id) {
+				if (
+					!callFn(config.legend_item_onover, api, id, !state.hiddenTargetIds.has(id))
+				) {
+					setCanvasHtmlLegendFocus($$, id);
+					!state.transiting &&
+						$$.isTargetToShow(id) &&
+						setCanvasLegendTargetFocus($$, id);
+				}
+			} :
+			null)
 		.on("mouseout", interaction || isFunction(config.legend_item_onout) ?
 			function(event, id) {
 				if (
@@ -2673,7 +2798,7 @@ const canvasInternal = {
 		}
 
 		this.dispatchCanvasDataClick(event, true);
-		this.onCanvasMouseOut();
+		this.dispatchCanvasDataOut(this.$el.canvas.node());
 		this.config.onout?.bind(this.api)(event);
 	},
 
