@@ -4140,11 +4140,28 @@ describe("ESM canvas", function() {
 				type: scatter()
 			},
 			point: {
+				r: 20,
 				radialGradient: true
 			}
 		});
 
+		const {cx, cy} = chart.internal.getDrawShape().pos;
+		const d = chart.internal.data.targets[0].values[0];
+		const x = cx(d);
+		const y = cy(d);
+		const gradientX = x + (0.3 - 0.5) * 20 * 2;
+		const gradientY = y + (0.3 - 0.5) * 20 * 2;
+
 		expect(createRadialGradient).toHaveBeenCalled();
+
+		const args = createRadialGradient.mock.calls[0].map(Number);
+
+		expect(args[0]).to.be.closeTo(gradientX, 0.1);
+		expect(args[1]).to.be.closeTo(gradientY, 0.1);
+		expect(args[2]).to.be.equal(0);
+		expect(args[3]).to.be.closeTo(gradientX, 0.1);
+		expect(args[4]).to.be.closeTo(gradientY, 0.1);
+		expect(args[5]).to.be.closeTo(20 * 0.7 * 2, 0.1);
 
 		createRadialGradient.mockRestore();
 	});
@@ -6823,49 +6840,83 @@ describe("ESM canvas", function() {
 	});
 
 	it("should keep category bar width when x tick text is rotated on canvas", () => {
-		generateWithOptions({
-			data: {
-				x: "x",
-				columns: [
-					[
-						"x",
-						"www.somesitename1.com",
-						"www.somesitename2.com",
-						"www.somesitename3.com",
-						"www.somesitename4.com",
-						"www.somesitename5.com",
-						"www.somesitename6.com",
-						"www.somesitename7.com",
-						"www.somesitename8.com",
-						"www.somesitename9.com",
-						"www.somesitename10.com",
-						"www.somesitename11.com",
-						"www.somesitename12.com"
+		const records: Array<{
+			text: string,
+			x: number,
+			y: number,
+			font: string,
+			textAlign: string,
+			textBaseline: string
+		}> = [];
+		const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText")
+			.mockImplementation(function(this: CanvasRenderingContext2D, text, x, y) {
+				records.push({
+					text: String(text),
+					x: Number(x),
+					y: Number(y),
+					font: this.font,
+					textAlign: this.textAlign,
+					textBaseline: this.textBaseline
+				});
+			});
+
+		try {
+			generateWithOptions({
+				data: {
+					x: "x",
+					columns: [
+						[
+							"x",
+							"www.somesitename1.com",
+							"www.somesitename2.com",
+							"www.somesitename3.com",
+							"www.somesitename4.com",
+							"www.somesitename5.com",
+							"www.somesitename6.com",
+							"www.somesitename7.com",
+							"www.somesitename8.com",
+							"www.somesitename9.com",
+							"www.somesitename10.com",
+							"www.somesitename11.com",
+							"www.somesitename12.com"
+						],
+						["pv", 90, 100, 140, 200, 100, 400, 90, 100, 140, 200, 100, 400]
 					],
-					["pv", 90, 100, 140, 200, 100, 400, 90, 100, 140, 200, 100, 400]
-				],
-				type: bar()
-			},
-			axis: {
-				x: {
-					type: "category",
-					tick: {
-						rotate: -70,
-						multiline: false,
-						tooltip: true
+					type: bar()
+				},
+				axis: {
+					x: {
+						type: "category",
+						tick: {
+							rotate: -70,
+							multiline: false,
+							tooltip: true
+						}
 					}
 				}
-			}
-		});
+			});
 
-		const $$ = chart.internal;
-		const barIndices = $$.getShapeIndices($$.isBarType);
-		const getPoints = $$.generateGetBarPoints(barIndices, false);
-		const points = getPoints($$.data.targets[0].values[0], 0);
-		const barWidth = Math.abs(points[2][0] - points[0][0]);
+			const $$ = chart.internal;
+			const barIndices = $$.getShapeIndices($$.isBarType);
+			const getPoints = $$.generateGetBarPoints(barIndices, false);
+			const points = getPoints($$.data.targets[0].values[0], 0);
+			const barWidth = Math.abs(points[2][0] - points[0][0]);
+			const firstTick = records.find(({text}) => text === "www.somesitename1.com");
+			const fontSize = parseFloat(/(\d+(?:\.\d+)?)px/.exec(firstTick?.font || "")?.[1] || "10");
+			const rotate = -70;
+			const expectedX = 8 * Math.sin(Math.PI * (rotate / 180));
+			const expectedY = 11.5 - 2.5 * (rotate / 15) * -1 + (0.71 * fontSize);
 
-		expect($$.axis.x.tickInterval($$.getMaxDataCount())).to.be.greaterThan(0);
-		expect(barWidth).to.be.greaterThan(5);
+			expect($$.axis.x.tickInterval($$.getMaxDataCount())).to.be.greaterThan(0);
+			expect(barWidth).to.be.greaterThan(5);
+			expect(firstTick?.textAlign).to.be.equal("right");
+			expect(firstTick?.textBaseline).to.be.equal("alphabetic");
+			expect(firstTick?.x).to.be.closeTo(expectedX, 0.1);
+			expect(firstTick?.y).to.be.closeTo(expectedY, 1);
+			expect(firstTick?.y).to.be.lessThan(AXIS_TICK_SIZE + AXIS_TICK_PADDING);
+		} finally {
+			fillText.mockRestore();
+		}
 	});
 
 	it("should render timeseries y and y2 axes on canvas", () => {
@@ -8403,7 +8454,7 @@ describe("ESM canvas", function() {
 		expect(labels).not.to.contain("x:4.0");
 		expect(labels).not.to.contain("x:11.0");
 		expect(rect.mock.calls.some(([x, y, w, h]) =>
-			x === margin.left - 10 && y === 0 && w === width + 20 && h === current.height
+			x === margin.left - 20 && y === 0 && w === width + 40 && h === current.height
 		)).to.be.true;
 
 		rect.mockRestore();

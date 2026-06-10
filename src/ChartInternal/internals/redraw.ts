@@ -353,6 +353,6 @@ export default {
 		}
 
 		// Draw with new sizes & scales
-		$$.redraw(options, transitions);
+		$$.redraw(options);
 	}
 };

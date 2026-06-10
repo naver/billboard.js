@@ -197,7 +197,15 @@ export default {
 		// unload if needed
 		if (hasUnload) {
 			// TODO: do not unload if target will load (included in url/rows/columns)
-			$$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), () => {
+			const unloadIds = $$.mapToTargetIds(args.unload === true ? null : args.unload);
+
+			$$.unload(unloadIds, () => {
+				if (!$$.config || !$$.cache) {
+					return;
+				}
+
+				$$.cache.remove(unloadIds);
+
 				// to mitigate improper rendering for multiple consecutive calls
 				// https://github.com/naver/billboard.js/issues/2121
 				requestIdleCallback(() => $$.loadFromArgs(args));
@@ -251,6 +259,10 @@ export default {
 		$$.state._eventRectFingerprint = null;
 
 		$$.unload(ids, () => {
+			if (!$$.config || !$$.cache) {
+				return;
+			}
+
 			$$.redraw({
 				withUpdateOrgXDomain: true,
 				withUpdateXDomain: true,

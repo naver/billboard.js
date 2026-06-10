@@ -154,15 +154,11 @@ function getGlyph(svg: SVGElement): TTextGlyph[] {
 			};
 
 			if (t.childElementCount > 1) {
-				const text: TTextGlyph[] = [];
-
 				toArray(t.querySelectorAll("tspan"))
 					.filter(filterFn)
 					.forEach((ts: SVGTSpanElement) => {
 						glyph.push(getStyleFn(ts));
 					});
-
-				return text;
 			} else {
 				glyph.push(getStyleFn(t));
 			}

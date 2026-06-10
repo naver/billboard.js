@@ -46,6 +46,9 @@ export default class CanvasEngine {
 		const width = Math.max(0, w);
 		const height = Math.max(0, h);
 
+		// re-read: dpr changes when the window moves across monitors or zoom changes
+		this.dpr = window.devicePixelRatio || 1;
+
 		this.canvas.width = width * this.dpr;
 		this.canvas.height = height * this.dpr;
 		this.canvas.style.width = `${width}px`;
@@ -127,10 +130,17 @@ export default class CanvasEngine {
 				return;
 			}
 
-			frame.width = canvas.width;
-			frame.height = canvas.height;
+			// assigning width/height reallocates and clears the backing store,
+			// so only assign on size change and clearRect otherwise
 			frameCtx.setTransform(1, 0, 0, 1, 0, 0);
-			frameCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+			if (frame.width !== canvas.width || frame.height !== canvas.height) {
+				frame.width = canvas.width;
+				frame.height = canvas.height;
+			} else {
+				frameCtx.clearRect(0, 0, canvas.width, canvas.height);
+			}
+
 			frameCtx.drawImage(canvas, 0, 0);
 		}
 	}

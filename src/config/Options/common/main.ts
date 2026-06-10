@@ -336,7 +336,7 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} [transition] transition object
-	 * @property {number} [transition.duration=350] duration in milliseconds
+	 * @property {number} [transition.duration=250] duration in milliseconds
 	 * @example
 	 * transition: {
 	 *    duration: 500

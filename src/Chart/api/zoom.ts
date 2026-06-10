@@ -59,7 +59,9 @@ const zoom = function<T = TDomainRange>(domainValue?: T): T | undefined {
 			);
 
 			if (isWithinRange) {
-				state.domain = domain;
+				// store a copy: brush events mutate state.domain in place,
+				// which would corrupt the caller-passed array
+				state.domain = domain.slice();
 
 				domain = $$.getZoomDomainValue(domain);
 
@@ -67,9 +69,13 @@ const zoom = function<T = TDomainRange>(domainValue?: T): T | undefined {
 				$$.api.tooltip.hide();
 
 				if (config.subchart_show) {
-					const x = scale.zoom || scale.x;
+					if (state.isCanvasMode) {
+						$$.setCanvasSubchartDomain?.(domain, true, false);
+					} else {
+						const x = scale.zoom || scale.x;
 
-					$$.brush.getSelection().call($$.brush.move, domain.map(x));
+						$$.brush.getSelection().call($$.brush.move, domain.map(x));
+					}
 					// resultDomain = domain;
 				} else {
 					// in case of 'config.zoom_rescale=true', use org.xScale
@@ -231,9 +237,11 @@ export default {
 		const {config, $el: {canvas, eventRect, zoomResetBtn}, scale: {zoom}, state} = $$;
 		const target = state.isCanvasMode ? canvas : eventRect;
 
-		if (zoom) {
+		if (zoom || (state.isCanvasMode && config.subchart_show && state.domain)) {
 			config.subchart_show ?
-				$$.brush.getSelection().call($$.brush.move, null) :
+				(state.isCanvasMode ?
+					$$.clearCanvasSubchartDomain?.(true, false) :
+					$$.brush.getSelection().call($$.brush.move, null)) :
 				$$.zoom.updateTransformScale(d3ZoomIdentity);
 
 			$$.updateZoom(true);

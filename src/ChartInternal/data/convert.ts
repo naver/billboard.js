@@ -63,8 +63,8 @@ function _setXS(
 				xsData = ((params.appendXs && $$.data.xs[id]) || [])
 					.concat(
 						data.map((d, i) => {
-							const rawX = isValue(d[xKey]);
-							return rawX ? $$.generateTargetX(rawX, id, i) : false;
+							const rawX = d[xKey];
+							return isValue(rawX) ? $$.generateTargetX(rawX, id, i) : false;
 						}).filter(v => v !== false)
 					);
 			} else if (config.data_x) {
@@ -107,7 +107,7 @@ export default {
 		if (args.bindto) {
 			data = {};
 
-			["url", "mimeType", "headers", "keys", "json", "keys", "rows", "columns"]
+			["url", "mimeType", "headers", "keys", "json", "rows", "columns"]
 				.forEach(v => {
 					const key = `data_${v}`;
 
@@ -163,7 +163,6 @@ export default {
 		const params = {
 			appendXs,
 			xs,
-			idConverter: config.data_idConverter.bind($$.api),
 			categorized: axis?.isCategorized(),
 			timeSeries: axis?.isTimeSeries(),
 			customX: axis?.isCustomX()
@@ -179,13 +178,14 @@ export default {
 				null;
 
 		// convert to target
+		const idConverter = config.data_idConverter.bind($$.api);
 		const targets = ids.map((id, index) => {
-			const convertedId = config.data_idConverter.bind($$.api)(id);
+			const convertedId = idConverter(id);
 			const xKey = $$.getXKey(id);
 			const isCategory = params.customX && params.categorized;
-			const hasCategory = isCategory && (() => {
+			const hasCategory = isCategory && index === 0 && (() => {
 				const categorySet = toSet(config.axis_x_categories);
-				return data.every(v => categorySet.has(v.x));
+				return data.every(v => categorySet.has(v[xKey]));
 			})();
 
 			// when .load() with 'append' option is used for indexed axis
@@ -207,7 +207,7 @@ export default {
 
 					// use x as categories if custom x and categorized
 					if ((isCategory || state.hasRadar) && index === 0 && !isUndefined(rawX)) {
-						if (!hasCategory && index === 0 && i === 0 && !isDataAppend) {
+						if (!hasCategory && i === 0 && !isDataAppend) {
 							config.axis_x_categories = [];
 
 							if (categoryIndexMap) {

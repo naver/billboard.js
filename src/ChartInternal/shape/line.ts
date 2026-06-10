@@ -142,47 +142,6 @@ export default {
 		];
 	},
 
-	/**
-	 * Get the curve interpolate
-	 * @param {Array} d Data object
-	 * @returns {function}
-	 * @private
-	 */
-	getCurve(d): Function {
-		const $$ = this;
-		const isRotatedStepType = $$.config.axis_rotated && $$.isStepType(d);
-
-		// when is step & rotated, should be computed in different way
-		// https://github.com/naver/billboard.js/issues/471
-		return isRotatedStepType ?
-			context => {
-				const step = $$.getInterpolate(d)(context);
-
-				// keep the original method
-				step.orgPoint = step.point;
-
-				// to get rotated path data
-				step.pointRotated = function(x, y) {
-					this._point === 1 && (this._point = 2);
-
-					const y1 = this._y * (1 - this._t) + y * this._t;
-
-					this._context.lineTo(this._x, y1);
-					this._context.lineTo(x, y1);
-
-					this._x = x;
-					this._y = y;
-				};
-
-				step.point = function(x, y) {
-					this._point === 0 ? this.orgPoint(x, y) : this.pointRotated(x, y);
-				};
-
-				return step;
-			} :
-			$$.getInterpolate(d);
-	},
-
 	generateDrawLine(lineIndices, isSub?: boolean): (d) => string {
 		const $$ = this;
 
@@ -267,6 +226,11 @@ export default {
 		// Generate
 		const axisType = {x: $$.axis.getAxisType("x"), y: $$.axis.getAxisType("y")};
 		let path = "";
+
+		// empty or all-null series has nothing to draw
+		if (!d.length) {
+			return path;
+		}
 
 		// clone the line path to be used to get length value
 		const target = $$.$el.line.filter(({id}) => id === d[0].id);
@@ -357,9 +321,11 @@ export default {
 			// if not last x tick, then should draw rest of path that is not drawn yet
 			!isLastX && dashArray.dash.push(getLength(tempNode, path));
 
-			tempNode.remove();
 			target.attr("stroke-dasharray", dashArray.dash.join(" "));
 		}
+
+		// make sure the cloned node is removed even when no dash segment was produced
+		tempNode.remove();
 
 		return path;
 	},

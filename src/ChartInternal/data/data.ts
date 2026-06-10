@@ -29,6 +29,12 @@ import {
 } from "../../module/util";
 import type {IData, IDataPoint, IDataRow} from "./IData";
 
+// ranged data key-to-index lookup, used by getRangedData()
+const rangedDataKeyIndex: Record<string, Record<string, number>> = {
+	areaRange: {high: 0, mid: 1, low: 2},
+	candlestick: {open: 0, high: 1, low: 2, close: 3, volume: 4}
+};
+
 export default {
 	isX(key) {
 		const $$ = this;
@@ -413,7 +419,7 @@ export default {
 						sum[i] = 0;
 					}
 
-					sum[i] += ~~v.value;
+					sum[i] += isNumber(v.value) ? v.value : 0;
 				});
 			});
 
@@ -461,7 +467,7 @@ export default {
 
 		if (hiddenTargetIds.size) {
 			total = api.data.values.bind(api)([...hiddenTargetIds])
-				.reduce((p, c) => p + c);
+				.reduce((p, c) => p + c, 0);
 		}
 
 		return total;
@@ -1266,13 +1272,9 @@ export default {
 			if (type === "bar") {
 				return value.reduce((a, c) => c - a);
 			} else {
-				// @ts-ignore
-				const index = {
-					areaRange: ["high", "mid", "low"],
-					candlestick: ["open", "high", "low", "close", "volume"]
-				}[type].indexOf(key);
+				const index = rangedDataKeyIndex[type]?.[key as string] ?? -1;
 
-				return index >= 0 && value ? value[index] : undefined;
+				return index >= 0 ? value[index] : undefined;
 			}
 		} else if (value && key) {
 			return value[key];
@@ -1362,7 +1364,9 @@ export default {
 
 						if (hiddenSum.length) {
 							hiddenSum = hiddenSum
-								.reduce((acc, curr) => acc.map((v, i) => ~~v + curr[i]));
+								.reduce((acc, curr) =>
+									acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i])
+								);
 
 							total = total.map((v, i) => v - hiddenSum[i]);
 						}

@@ -84,7 +84,7 @@ function endall(transition, cb: Function): void {
 	let n = 0;
 
 	const end = function(...args) {
-		!--n && cb.apply(this, ...args);
+		!--n && cb.apply(this, args);
 	};
 
 	// if is transition selection
@@ -137,7 +137,9 @@ const toArray = (v: CSSStyleDeclaration | any): any => [].slice.call(v);
  */
 function deepClone(...objectN) {
 	const clone = v => {
-		if (isObject(v) && v.constructor) {
+		if (isArray(v)) {
+			return v.map(clone);
+		} else if (isObject(v) && v.constructor) {
 			const r = new v.constructor();
 
 			for (const k in v) {
@@ -302,7 +304,7 @@ const getRange = (start: number, end: number, step = 1): number[] => {
 	const res: number[] = [];
 	const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
 
-	for (let i = start; i < n; i++) {
+	for (let i = 0; i < n; i++) {
 		res.push(start + i * step);
 	}
 

@@ -4,6 +4,7 @@
  */
 import {window} from "../../module/browser";
 import {isDefined, isEmpty, notEmpty} from "../../module/util";
+import {cleanupWorkers} from "../../module/worker";
 
 export default {
 	/**
@@ -130,6 +131,9 @@ export default {
 
 			$$.charts.splice($$.charts.indexOf(this), 1);
 
+			// release cached web workers/Object URLs when no chart instance remains
+			$$.charts.length === 0 && cleanupWorkers();
+
 			// detach events
 			$$.unbindAllEvents();
 
@@ -139,6 +143,8 @@ export default {
 				window.cancelAnimationFrame?.(state.canvasFlowFrame);
 			state.canvasFlowFrame = null;
 			state.canvasFlowFinish = null;
+			state.pendingRaf !== null && window.cancelAnimationFrame?.(state.pendingRaf);
+			state.pendingRaf = null;
 			$$.canvasRenderer?.destroy();
 			$$.canvasEngine?.destroy();
 			$$.resizeFunction?.clear();

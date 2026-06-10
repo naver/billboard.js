@@ -73,7 +73,7 @@ describe("UTIL", function() {
 			});
 
 			// @ts-ignore
-			expect(document.body.rect).to.be.deep.equal(rect);
+			expect(document.body.rectClient).to.be.deep.equal(rect);
 		});
 	});
 

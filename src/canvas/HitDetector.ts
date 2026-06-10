@@ -170,7 +170,7 @@ export default class HitDetector {
 	 */
 	rebuild($$, shape): void {
 		const {current, margin, width, height} = $$.state;
-		const targets = $$.filterTargetsToShow($$.data.targets);
+		const targets = $$.filterTargetsToShow();
 
 		this.bars = [];
 		this.points = [];
@@ -375,13 +375,13 @@ export default class HitDetector {
 	}
 
 	/**
-	 * Find the nearest data row for the given canvas coordinates.
+	 * Hit-test bars at the given canvas coordinates.
 	 * @param {number} mx Mouse x coordinate
 	 * @param {number} my Mouse y coordinate
 	 * @returns {object|null} Matching data row
 	 * @private
 	 */
-	findNearest(mx: number, my: number): any | null {
+	private hitBar(mx: number, my: number): any | null {
 		for (const item of getGridItems(this.barGrid, mx, my, BAR_CELL_SIZE)) {
 			const {w = 0, h = 0} = item;
 
@@ -395,14 +395,17 @@ export default class HitDetector {
 			}
 		}
 
-		if (!this.pointBased && this.grouped && this.isWithinPlot(mx, my)) {
-			const item = this.findNearestIndexItem(mx, my);
+		return null;
+	}
 
-			if (item) {
-				return item.data;
-			}
-		}
-
+	/**
+	 * Find the nearest point within sensitivity at the given canvas coordinates.
+	 * @param {number} mx Mouse x coordinate
+	 * @param {number} my Mouse y coordinate
+	 * @returns {object|null} Matching data row
+	 * @private
+	 */
+	private hitPoint(mx: number, my: number): any | null {
 		let nearest: HitItem | null = null;
 		let min = Number.POSITIVE_INFINITY;
 
@@ -422,6 +425,31 @@ export default class HitDetector {
 	}
 
 	/**
+	 * Find the nearest data row for the given canvas coordinates.
+	 * @param {number} mx Mouse x coordinate
+	 * @param {number} my Mouse y coordinate
+	 * @returns {object|null} Matching data row
+	 * @private
+	 */
+	findNearest(mx: number, my: number): any | null {
+		const bar = this.hitBar(mx, my);
+
+		if (bar) {
+			return bar;
+		}
+
+		if (!this.pointBased && this.grouped && this.isWithinPlot(mx, my)) {
+			const item = this.findNearestIndexItem(mx, my);
+
+			if (item) {
+				return item.data;
+			}
+		}
+
+		return this.hitPoint(mx, my);
+	}
+
+	/**
 	 * Find the nearest directly hit shape row, excluding grouped index fallback.
 	 * @param {number} mx Mouse x coordinate
 	 * @param {number} my Mouse y coordinate
@@ -429,35 +457,7 @@ export default class HitDetector {
 	 * @private
 	 */
 	findNearestShape(mx: number, my: number): any | null {
-		for (const item of getGridItems(this.barGrid, mx, my, BAR_CELL_SIZE)) {
-			const {w = 0, h = 0} = item;
-
-			if (
-				mx >= item.x &&
-				mx <= item.x + w &&
-				my >= item.y &&
-				my <= item.y + h
-			) {
-				return item.data;
-			}
-		}
-
-		let nearest: HitItem | null = null;
-		let min = Number.POSITIVE_INFINITY;
-
-		for (const item of getGridItems(this.pointGrid, mx, my, this.pointCellSize, 1)) {
-			const dx = item.x - mx;
-			const dy = item.y - my;
-			const dist = Math.sqrt(dx * dx + dy * dy);
-			const sensitivity = item.sensitivity ?? HIT_DISTANCE;
-
-			if (dist <= sensitivity && dist < min) {
-				min = dist;
-				nearest = item;
-			}
-		}
-
-		return nearest?.data ?? null;
+		return this.hitBar(mx, my) ?? this.hitPoint(mx, my);
 	}
 
 	/**

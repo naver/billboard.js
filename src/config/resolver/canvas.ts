@@ -124,7 +124,7 @@ function getCanvasLegendPointIcon($$, id: string): string {
 		"style=\"display:block;width:100%;height:100%;overflow:visible;pointer-events:none\"";
 	const paintAttrs = `fill="${color}" stroke="${color}"`;
 
-	if (/^rect(angle)?$/i.test(pattern) || pattern === "rectangle") {
+	if (/^rect(angle)?$/i.test(pattern)) {
 		return `<svg ${svgAttrs}><rect x="1" y="1" width="6" height="6" ${paintAttrs}></rect></svg>`;
 	}
 
@@ -3020,16 +3020,24 @@ const canvasInternal = {
 		state._canvasXTickValuesCache = null;
 
 		$$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());
-		$$.canvasRenderer.drawBackground($$);
-		$$.canvasAxisRenderer.drawTitle($$);
-		state.hasAxis && $$.canvasAxisRenderer.draw($$);
-		$$.canvasRenderer.draw($$, drawShape);
-		state.hasAxis && $$.config.grid_lines_front && $$.canvasAxisRenderer.drawGridLines($$);
-		$$.canvasRenderer.drawSubchart($$, drawShape);
-		state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
-		$$.canvasRenderer.drawEmptyLabel($$);
-		rebuildHit && $$.hitDetector.rebuild($$, drawShape);
-		$$.canvasEngine.endFrame();
+
+		try {
+			// user callbacks (tick format, data label format, etc.) run within:
+			// guard so a throwing formatter can't leak the saved context state
+			$$.canvasRenderer.drawBackground($$);
+			$$.canvasAxisRenderer.drawTitle($$);
+			state.hasAxis && $$.canvasAxisRenderer.draw($$);
+			$$.canvasRenderer.draw($$, drawShape);
+			state.hasAxis && $$.config.grid_lines_front &&
+				$$.canvasAxisRenderer.drawGridLines($$);
+			$$.canvasRenderer.drawSubchart($$, drawShape);
+			state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
+			$$.canvasRenderer.drawEmptyLabel($$);
+			rebuildHit && $$.hitDetector.rebuild($$, drawShape);
+		} finally {
+			$$.canvasEngine.endFrame();
+		}
+
 		$$.canvasEngine.clearOverlay();
 		state.canvasFocusMainRedraw = false;
 		focusData && $$.renderCanvasFocus(focusData);
@@ -3050,15 +3058,20 @@ const canvasInternal = {
 			const drawShape = state.canvasShape || $$.getDrawShape();
 
 			$$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());
-			$$.canvasRenderer.drawBackground($$);
-			$$.canvasAxisRenderer.drawTitle($$);
-			state.hasAxis && $$.canvasAxisRenderer.draw($$);
-			$$.canvasRenderer.draw($$, drawShape, focusData);
-			state.hasAxis && $$.config.grid_lines_front && $$.canvasAxisRenderer.drawGridLines($$);
-			$$.canvasRenderer.drawSubchart($$, drawShape);
-			state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
-			$$.canvasRenderer.drawEmptyLabel($$);
-			$$.canvasEngine.endFrame();
+
+			try {
+				$$.canvasRenderer.drawBackground($$);
+				$$.canvasAxisRenderer.drawTitle($$);
+				state.hasAxis && $$.canvasAxisRenderer.draw($$);
+				$$.canvasRenderer.draw($$, drawShape, focusData);
+				state.hasAxis && $$.config.grid_lines_front &&
+					$$.canvasAxisRenderer.drawGridLines($$);
+				$$.canvasRenderer.drawSubchart($$, drawShape);
+				state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
+				$$.canvasRenderer.drawEmptyLabel($$);
+			} finally {
+				$$.canvasEngine.endFrame();
+			}
 		}
 
 		state.canvasFocusMainRedraw = !!withMainRedraw;

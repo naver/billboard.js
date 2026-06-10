@@ -7,6 +7,7 @@ import type {d3Selection} from "../../../types/types";
 import {$AXIS, $COMMON, $FOCUS, $GRID} from "../../config/classes";
 import {AXIS_DEFAULT_TICK_COUNT} from "../../config/const";
 import {getPointer, isArray, isValue} from "../../module/util";
+import type {IDataRow} from "../data/IData";
 
 // Grid position and text anchor helpers
 const GRID_FOCUS_SELECTOR = `line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`;
@@ -142,13 +143,15 @@ export default {
 				const grid = d3Select(this);
 
 				Object.keys(state.xgridAttr).forEach(id => {
-					grid.attr(id, state.xgridAttr[id])
-						.style("opacity", () => (
-							grid.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ?
-								"0" :
-								null
-						));
+					grid.attr(id, state.xgridAttr[id]);
 				});
+
+				// hide the gridline overlapping the axis line (attr() returns a string)
+				grid.style("opacity", () => (
+					+grid.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ?
+						"0" :
+						null
+				));
 			});
 		}
 	},
@@ -413,7 +416,7 @@ export default {
 		// Cache grid focus selection to avoid repeated DOM queries on mousemove
 		const focusEl = _getGridFocusEl($$);
 
-		const dataToShow = (data || [focusEl.datum()]).filter(d =>
+		const dataToShow: IDataRow[] = (data || [focusEl.datum()]).filter(d =>
 			d && isValue($$.getBaseValue(d))
 		);
 
@@ -527,7 +530,7 @@ export default {
 		let gridData: Date[] = [];
 
 		if (type === "year") {
-			const xDomain = $$.getXDomain();
+			const xDomain = $$.getXDomain($$.data.targets);
 			const [firstYear, lastYear] = xDomain.map(v => v.getFullYear());
 
 			for (let i = firstYear; i <= lastYear; i++) {

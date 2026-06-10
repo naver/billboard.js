@@ -192,7 +192,9 @@ function makeContext(overrides = {}) {
 		},
 		data: {targets},
 		filterByX: (list, x) => list.flatMap(target => target.values.filter(v => v.x === x)),
-		filterTargetsToShow: list => list,
+		filterTargetsToShow(list) {
+			return list ?? this.data.targets;
+		},
 		generateClass: (base, id) => `${base} ${base}-${id}`,
 		getBaseValue: d => d.value,
 		getCanvasSurfaceHeight() {

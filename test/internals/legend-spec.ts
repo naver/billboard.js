@@ -524,6 +524,12 @@ describe("LEGEND", () => {
 				// check if referenced defs node exists
 				if (pointTagName[idx] === "use") {					
 					expect($el.defs.select(this.getAttribute("href")).size()).to.be.equal(1);
+					expect(this.getAttribute("transform")).to.contain("scale(1.25 1.25)");
+				} else if (pointTagName[idx] === "circle") {
+					expect(+this.getAttribute("r")).to.be.equal(3.75);
+				} else if (pointTagName[idx] === "rect") {
+					expect(+this.getAttribute("width")).to.be.equal(7.5);
+					expect(+this.getAttribute("height")).to.be.equal(7.5);
 				}
 
 				expect(nodeName).to.be.equal(pointTagName[idx]);
