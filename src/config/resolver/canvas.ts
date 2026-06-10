@@ -357,6 +357,7 @@ function bindCanvasHtmlLegendInteractions($$, item): void {
 		"click";
 	const isTouch = state.inputType === "touch";
 	const hasClickInteraction = interaction || isFunction(config.legend_item_onclick);
+	const touchOption = isTouch ? getCanvasTouchListenerOption(config) : undefined;
 
 	const handleCanvasLegendToggle = function(event, id): void {
 		if (
@@ -400,16 +401,16 @@ function bindCanvasHtmlLegendInteractions($$, item): void {
 	isTouch && eventType === "click" && hasClickInteraction && item
 		.on("touchstart", function(event, id) {
 			setCanvasLegendTouchStart($$, id, event);
-		}, {passive: true})
+		}, touchOption)
 		.on("touchmove", event => {
 			updateCanvasLegendTouchMove($$, event);
-		}, {passive: true})
+		}, touchOption)
 		.on("touchend", function(event, id) {
 			if (isCanvasLegendTouchTap($$, id, event)) {
 				markCanvasLegendTouchClick($$, id);
 				handleCanvasLegendToggle.call(this, event, id);
 			}
-		}, {passive: true});
+		}, touchOption);
 
 	!isTouch && item
 		.on("mouseover", interaction || isFunction(config.legend_item_onover) ?

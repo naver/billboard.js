@@ -9,6 +9,7 @@ import {KEY} from "../../module/Cache";
 import {
 	callFn,
 	getOption,
+	isBoolean,
 	isDefined,
 	isEmpty,
 	isFunction,
@@ -178,6 +179,22 @@ function _isDuplicateLegendTouchClick($$, id: string): boolean {
 	}
 
 	return duplicate;
+}
+
+/**
+ * Get touch listener passive option following interaction.inputType.touch.preventDefault.
+ * @param {object} $$ ChartInternal context
+ * @returns {object} Touch listener option
+ * @private
+ */
+function _getLegendTouchOption($$): {passive: boolean} {
+	const preventDefault = $$.config.interaction_inputType_touch?.preventDefault;
+	const isPrevented = (isBoolean(preventDefault) && preventDefault) || false;
+	const preventThreshold = (!isNaN(preventDefault) && preventDefault) || null;
+
+	return {
+		passive: !isPrevented && preventThreshold === null
+	};
 }
 
 export default {
@@ -557,6 +574,7 @@ export default {
 		const interaction = config.legend_item_interaction;
 		const eventType = interaction.dblclick ? "dblclick" : "click";
 		const hasClickInteraction = interaction || isFunction(config.legend_item_onclick);
+		const touchOption = isTouch ? _getLegendTouchOption($$) : undefined;
 
 		const handleLegendToggle = function(event, id): void {
 			if (
@@ -630,16 +648,16 @@ export default {
 			isTouch && eventType === "click" && hasClickInteraction && item
 				.on("touchstart", function(event, id) {
 					_setLegendTouchStart($$, id, event);
-				}, {passive: true})
+				}, touchOption)
 				.on("touchmove", event => {
 					_updateLegendTouchMove($$, event);
-				}, {passive: true})
+				}, touchOption)
 				.on("touchend", function(event, id) {
 					if (_isLegendTouchTap($$, id, event)) {
 						_markLegendTouchClick($$, id);
 						handleLegendToggle.call(this, event, id);
 					}
-				}, {passive: true});
+				}, touchOption);
 
 			!isTouch && item
 				.on("mouseout", interaction || isFunction(config.legend_item_onout) ?
