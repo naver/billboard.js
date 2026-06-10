@@ -795,47 +795,54 @@ export function getXTickLineValues($$, textTicks: AxisTickValue[],
  * @param {object} $$ ChartInternal context
  * @param {string} id Axis id
  * @param {number} count Optional tick count override
+ * @param {boolean} culling Whether to apply tick culling
  * @returns {Array} Tick values
  * @private
  */
-export function getYTickValues($$, id: YAxisId = "y", count?: number): AxisTickValue[] {
+export function getYTickValues(
+	$$,
+	id: YAxisId = "y",
+	count?: number,
+	culling = true
+): AxisTickValue[] {
 	const {axis, config, scale} = $$;
 	const prefix = `axis_${id}`;
 	const targetScale = scale[id];
 	const explicit = getOptionTickValues(config[`${prefix}_tick_values`], $$.api);
+	const maybeCull = (ticks: AxisTickValue[]) => culling ? cullAxisTicks($$, id, ticks) : ticks;
 
 	if (explicit) {
-		return normalizeYTickValues($$, explicit, id);
+		return maybeCull(normalizeYTickValues($$, explicit, id));
 	}
 
 	const stepTicks = getStepTicks(targetScale.domain(), config[`${prefix}_tick_stepSize`]);
 
 	if (stepTicks.length) {
-		return stepTicks;
+		return maybeCull(stepTicks);
 	}
 
 	const tickCount = count ?? config[`${prefix}_tick_count`];
 
 	if (axis?.isTimeSeries?.(id) && config[`${prefix}_tick_time_value`]) {
-		return getScaleTicks(targetScale, config[`${prefix}_tick_time_value`]);
+		return maybeCull(getScaleTicks(targetScale, config[`${prefix}_tick_time_value`]));
 	}
 
 	if (axis?.isLog?.(id)) {
-		return getLogScaleTicks(targetScale, tickCount);
+		return maybeCull(getLogScaleTicks(targetScale, tickCount));
 	}
 
 	if (tickCount) {
 		const domain = targetScale.domain();
 
-		return generateTickValues(
+		return maybeCull(generateTickValues(
 			$$,
 			domain,
 			domain.every(v => v === 0) ? 1 : tickCount,
 			axis?.isTimeSeries?.(id)
-		);
+		));
 	}
 
-	return getScaleTicks(targetScale, AXIS_DEFAULT_TICK_COUNT);
+	return maybeCull(getScaleTicks(targetScale, AXIS_DEFAULT_TICK_COUNT));
 }
 
 /**
@@ -917,6 +924,53 @@ function cullTicks(ticks: AxisTickValue[], count?: number): AxisTickValue[] {
 	}
 
 	return ticks;
+}
+
+/**
+ * Cull axis ticks following SVG manual culling.
+ * @param {object} $$ ChartInternal context
+ * @param {string} id Axis id
+ * @param {Array} ticks Tick values
+ * @returns {Array} Culled tick values
+ * @private
+ */
+function cullAxisTicks($$, id: AxisType, ticks: AxisTickValue[]): AxisTickValue[] {
+	const {config} = $$;
+	const prefix = `axis_${id}_tick_culling`;
+
+	if (!config[prefix]) {
+		return ticks;
+	}
+
+	const sortedTicks = ticks.slice().sort((a, b) => {
+		const av = +a;
+		const bv = +b;
+		const order = Number.isFinite(av) && Number.isFinite(bv) ?
+			av - bv :
+			String(a).localeCompare(String(b));
+
+		return config[`${prefix}_reverse`] ? -order : order;
+	});
+	const tickSize = sortedTicks.length;
+	const cullingMax = config[`${prefix}_max`] || AXIS_DEFAULT_TICK_COUNT;
+	let intervalForCulling = 0;
+
+	for (let i = 1; i < tickSize; i++) {
+		if (tickSize / i < cullingMax) {
+			intervalForCulling = i;
+			break;
+		}
+	}
+
+	if (!intervalForCulling) {
+		return ticks;
+	}
+
+	const visible = new Set(
+		sortedTicks.filter((_, i) => i % intervalForCulling === 0)
+	);
+
+	return ticks.filter(tick => visible.has(tick));
 }
 
 /**
@@ -1017,6 +1071,6 @@ export function getYGridTickValues($$): AxisTickValue[] {
 	}
 
 	return config.grid_y_ticks ?
-		cullTicks(getYTickValues($$, "y"), config.grid_y_ticks) :
-		getYTickValues($$);
+		cullTicks(getYTickValues($$, "y", undefined, false), config.grid_y_ticks) :
+		getYTickValues($$, "y", undefined, false);
 }

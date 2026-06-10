@@ -42,6 +42,7 @@ export interface CanvasThemeStyle {
 		barLineWidth: number,
 		barConnectLineColor: string,
 		barConnectLineWidth: number,
+		candlestickStrokeColor: string,
 		candlestickLineWidth: number,
 		candlestickExpandedOpacity: number,
 		lineWidth: number,
@@ -524,6 +525,7 @@ function applySelectorStyle(
 			break;
 		case ".bb-candlestick":
 			mergeThemeSection(target, "shape", {
+				candlestickStrokeColor: readColorValue(style, "stroke"),
 				candlestickLineWidth: readNumberValue(style, "stroke-width")
 			});
 			break;
@@ -666,11 +668,35 @@ function getThemeOverride(
 }
 
 /**
+ * Build a stable enough cache key for theme reloads.
+ * @param {HTMLElement} container Chart container
+ * @param {object} userOverride Canvas theme override
+ * @returns {string|null} Cache key
+ * @private
+ */
+function getThemeCacheKey(
+	container: HTMLElement,
+	userOverride?: CanvasThemeOverride
+): string | null {
+	try {
+		return JSON.stringify({
+			className: container.className,
+			style: container.getAttribute("style") || "",
+			override: userOverride || null
+		});
+	} catch {
+		return null;
+	}
+}
+
+/**
  * Resolve canvas drawing styles from the existing SVG CSS theme.
  * @private
  */
 export default class CanvasTheme {
 	public style!: CanvasThemeStyle;
+	private cacheContainer: HTMLElement | null = null;
+	private cacheKey: string | null = null;
 
 	/**
 	 * Read theme values from temporary SVG probes.
@@ -847,7 +873,7 @@ export default class CanvasTheme {
 		const regionLabel = probeIn("bb-region", "text", "", ["fill", "font"]);
 		const bar = probe("path", "bb-bar", ["opacity", "fill-opacity", "stroke", "stroke-width"]);
 		const barExpanded = probe("path", "bb-bar _expanded_", ["opacity", "fill-opacity"]);
-		const candlestick = probe("path", "bb-candlestick", ["stroke-width"]);
+		const candlestick = probe("path", "bb-candlestick", ["stroke", "stroke-width"]);
 		const candlestickExpanded = probe("path", "bb-candlestick _expanded_", [
 			"opacity",
 			"fill-opacity"
@@ -955,6 +981,7 @@ export default class CanvasTheme {
 				barLineWidth: toNumber(bar["stroke-width"], 0),
 				barConnectLineColor: toColor(line.stroke, "#000"),
 				barConnectLineWidth: toNumber(line["stroke-width"], 1),
+				candlestickStrokeColor: toColor(candlestick.stroke, "#000"),
 				candlestickLineWidth: toNumber(candlestick["stroke-width"], 1),
 				candlestickExpandedOpacity: toNumber(
 					toPaintOpacity(candlestickExpanded, 1),
@@ -1067,6 +1094,10 @@ export default class CanvasTheme {
 			style.shape.candlestickLineWidth,
 			defaultStyle.shape.candlestickLineWidth
 		);
+		style.shape.candlestickStrokeColor = toColor(
+			style.shape.candlestickStrokeColor,
+			defaultStyle.shape.candlestickStrokeColor
+		);
 		style.shape.candlestickExpandedOpacity = toNumber(
 			style.shape.candlestickExpandedOpacity,
 			defaultStyle.shape.candlestickExpandedOpacity
@@ -1106,6 +1137,8 @@ export default class CanvasTheme {
 		style.treemap.lineWidth = toNumber(style.treemap.lineWidth, defaultStyle.treemap.lineWidth);
 
 		this.style = style;
+		this.cacheContainer = container;
+		this.cacheKey = getThemeCacheKey(container, userOverride);
 
 		svg.remove();
 	}
@@ -1117,6 +1150,17 @@ export default class CanvasTheme {
 	 * @private
 	 */
 	reload(container: HTMLElement, userOverride?: CanvasThemeOverride): void {
+		const key = getThemeCacheKey(container, userOverride);
+
+		if (
+			key !== null &&
+			this.style &&
+			this.cacheContainer === container &&
+			this.cacheKey === key
+		) {
+			return;
+		}
+
 		this.load(container, userOverride);
 	}
 }

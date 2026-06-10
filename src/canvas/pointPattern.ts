@@ -91,6 +91,7 @@ type CustomPointShape =
 	| {
 		type: "path",
 		d: string,
+		path2D?: Path2D,
 		box: CustomPointBox,
 		matrix: CustomPointMatrix,
 		style: CustomPointStyle
@@ -864,7 +865,7 @@ export function drawPointPattern(
 
 			if (shape.type === "path") {
 				if (window.Path2D) {
-					const path = new window.Path2D(shape.d);
+					const path = shape.path2D || (shape.path2D = new window.Path2D(shape.d));
 
 					shouldFill && ctx.fill(path);
 					shouldStroke && ctx.stroke(path);

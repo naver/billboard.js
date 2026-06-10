@@ -16,7 +16,7 @@ import {
 	getTreemapNodeRect
 } from "../ChartInternal/shape/core/geometry";
 import {generateDrawAreaPath, generateDrawLinePath} from "../ChartInternal/shape/core/path";
-import {TYPE} from "../config/const";
+import {SUBCHART_BRUSH_HANDLE_PATH, TYPE} from "../config/const";
 import {window} from "../module/browser";
 import {isFunction, isNumber, isObject, isString} from "../module/util";
 import CanvasEngine from "./CanvasEngine";
@@ -68,16 +68,8 @@ const RENDERER_GROUPED_TYPE_FILTERS = [
 // Small point series are faster as one batched path; beyond this, huge paths make
 // fill() expensive, so canvas draws circles individually. SVG has no equivalent knob.
 const MAX_BATCHED_CIRCLE_POINTS = 1000;
-const SUBCHART_BRUSH_HANDLE_PATH = {
-	x: {
-		start: "M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z",
-		end: "M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"
-	},
-	y: {
-		start: "M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z",
-		end: "M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"
-	}
-};
+const canvasFocusLookupCache = new WeakMap<any[], Map<string, any>>();
+const subchartBrushHandlePathCache = new Map<string, Path2D>();
 
 type BarConnectLineType = "start-start" | "start-end" | "end-start" | "end-end";
 type CanvasBarConnectLineBox = {x: number, y: number, width: number, height: number};
@@ -149,22 +141,6 @@ function drawCanvasArea($$, target, indices, painter: CanvasPainter, isSub = fal
 }
 
 /**
- * Check whether focused data row matches a rendered datum.
- * @param {object} focus Focused data row
- * @param {object} d Rendered data row or target
- * @returns {boolean}
- * @private
- */
-function isFocusedCanvasDatum(focus, d): boolean {
-	return Boolean(
-		focus &&
-			d &&
-			focus.id === d.id &&
-			("index" in d ? focus.index === d.index : true)
-	);
-}
-
-/**
  * Get focused row for a datum or target.
  * @param {Array} focusData Focused data rows
  * @param {object} d Rendered data row or target
@@ -172,7 +148,65 @@ function isFocusedCanvasDatum(focus, d): boolean {
  * @private
  */
 function getFocusedCanvasDatum(focusData, d) {
-	return focusData?.find(focus => isFocusedCanvasDatum(focus, d)) || null;
+	if (!focusData?.length || !d?.id) {
+		return null;
+	}
+
+	let lookup = canvasFocusLookupCache.get(focusData);
+
+	if (!lookup) {
+		lookup = new Map();
+
+		for (const focus of focusData) {
+			if (!focus?.id) {
+				continue;
+			}
+
+			const targetKey = `${focus.id}:*`;
+
+			if (!lookup.has(targetKey)) {
+				lookup.set(targetKey, focus);
+			}
+
+			if ("index" in focus) {
+				lookup.set(`${focus.id}:${focus.index}`, focus);
+			}
+		}
+
+		canvasFocusLookupCache.set(focusData, lookup);
+	}
+
+	return "index" in d ?
+		lookup.get(`${d.id}:${d.index}`) || null :
+		lookup.get(`${d.id}:*`) || null;
+}
+
+/**
+ * Get cached Path2D for a subchart brush handle.
+ * @param {string} axis Brush axis
+ * @param {string} type Brush handle side
+ * @returns {Path2D|null}
+ * @private
+ */
+function getSubchartBrushHandlePath(axis: "x" | "y", type: "start" | "end"): Path2D | null {
+	const Path2DCtor = window.Path2D;
+
+	if (!Path2DCtor) {
+		return null;
+	}
+
+	const key = `${axis}:${type}`;
+	const cached = subchartBrushHandlePathCache.get(key);
+
+	if (cached) {
+		return cached;
+	}
+
+	const path = new Path2DCtor(SUBCHART_BRUSH_HANDLE_PATH[axis][type]);
+
+	subchartBrushHandlePathCache.set(key, path);
+
+	return path;
 }
 
 /**
@@ -745,6 +779,23 @@ export default class CanvasRenderer {
 	 */
 	withContext(ctx: CanvasRenderingContext2D, draw: () => void): void {
 		this.painter.withContext(ctx, draw);
+	}
+
+	/**
+	 * Release renderer caches that can hold chart or DOM references.
+	 * @private
+	 */
+	destroy(): void {
+		const clearImageHandler = (entry: LabelImageCacheEntry) => {
+			entry.image.onload = null;
+			entry.image.onerror = null;
+		};
+
+		this.labelImageCache.forEach(clearImageHandler);
+		this.backgroundImageCache.forEach(clearImageHandler);
+		this.labelImageCache.clear();
+		this.backgroundImageCache.clear();
+		this.backgroundClassStyleCache.clear();
 	}
 
 	/**
@@ -1325,9 +1376,11 @@ export default class CanvasRenderer {
 		const stroke = style.subchartBrush.handleStroke;
 		const x = isRotated ? margin2.left + (width2 / 2) : margin2.left + coord;
 		const y = isRotated ? margin2.top + coord : margin2.top + (height2 / 2);
-		const path = new Path2D(
-			SUBCHART_BRUSH_HANDLE_PATH[isRotated ? "y" : "x"][type]
-		);
+		const path = getSubchartBrushHandlePath(isRotated ? "y" : "x", type);
+
+		if (!path) {
+			return;
+		}
 
 		painter.withState(() => {
 			ctx.translate(x, y);
@@ -1490,6 +1543,8 @@ export default class CanvasRenderer {
 			for (const target of targets) {
 				const range = getCanvasTargetVisibleRange($$, target);
 				const targetOpacity = getCanvasTargetFocusOpacity($$, target);
+				const lineWidth = style.shape.candlestickLineWidth;
+				const strokeColor = style.shape.candlestickStrokeColor || "#000";
 
 				for (let i = range.start; i < range.end; i++) {
 					const d = target.values[i];
@@ -1509,15 +1564,20 @@ export default class CanvasRenderer {
 
 					ctx.fillStyle = getCanvasOverColor($$, getFocusedCanvasDatum(focusData, d)) ||
 						getCandlestickColor($$, d, value);
-					ctx.strokeStyle = ctx.fillStyle;
+					ctx.strokeStyle = strokeColor;
 					ctx.globalAlpha = targetOpacity;
-					painter.strokePath(() => {
+					lineWidth > 0 && painter.strokePath(() => {
 						painter.traceLine(wickStart[0], wickStart[1], wickEnd[0], wickEnd[1]);
 					});
 					painter.fillRect(rect, {
 						alpha: (
 							isExpanded(d) ? style.shape.candlestickExpandedOpacity : 1
 						) * targetOpacity
+					});
+					lineWidth > 0 && painter.strokeRect(rect, {
+						alpha: targetOpacity,
+						lineWidth,
+						stroke: strokeColor
 					});
 				}
 			}
@@ -2205,6 +2265,10 @@ export default class CanvasRenderer {
 					continue;
 				}
 
+				if (getLabelImageOption($$, data)?.url) {
+					continue;
+				}
+
 				const label = getTreemapLabelText($$, data, w, h);
 
 				if (!label) {
@@ -2257,23 +2321,30 @@ export default class CanvasRenderer {
 			) {
 				const {x, y} = getRenderDataPoint($$, focus);
 				const axisLineWidth = style.axis.lineWidth;
+				const isRotated = $$.config.axis_rotated;
+				const hasIndexCoordinate = Number.isFinite(isRotated ? y : x);
+				const hasValueCoordinate = Number.isFinite(isRotated ? x : y);
 				const crispEdgeX = value =>
 					painter.crisp(margin.left + value, axisLineWidth) - margin.left;
 				const crispEdgeY = value =>
 					painter.crisp(margin.top + value, axisLineWidth) - margin.top;
 				const isEdge = $$.config.grid_focus_edge && !$$.config.tooltip_grouped;
 
-				if (isFiniteCanvasCoordinate(x, y)) {
+				if (hasIndexCoordinate) {
 					painter.strokePath(() => {
-						if ($$.config.axis_rotated) {
+						if (isRotated) {
 							painter.traceLine(
 								crispEdgeX(0),
 								y,
-								isEdge ? x : crispEdgeX($$.state.width),
+								isEdge && hasValueCoordinate ? x : crispEdgeX($$.state.width),
 								y
 							);
 
-							if ($$.config.grid_focus_y && !$$.config.tooltip_grouped) {
+							if (
+								hasValueCoordinate &&
+								$$.config.grid_focus_y &&
+								!$$.config.tooltip_grouped
+							) {
 								const isY2 = $$.axis?.getId(focus.id) === "y2";
 
 								painter.traceLine(
@@ -2286,12 +2357,16 @@ export default class CanvasRenderer {
 						} else {
 							painter.traceLine(
 								x,
-								isEdge ? y : crispEdgeY(0),
+								isEdge && hasValueCoordinate ? y : crispEdgeY(0),
 								x,
 								crispEdgeY($$.state.height)
 							);
 
-							if ($$.config.grid_focus_y && !$$.config.tooltip_grouped) {
+							if (
+								hasValueCoordinate &&
+								$$.config.grid_focus_y &&
+								!$$.config.tooltip_grouped
+							) {
 								const isY2 = $$.axis?.getId(focus.id) === "y2";
 
 								painter.traceLine(

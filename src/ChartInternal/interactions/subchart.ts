@@ -5,6 +5,7 @@
 import {brushSelection as d3BrushSelection, brushX as d3BrushX, brushY as d3BrushY} from "d3-brush";
 import {select as d3Select} from "d3-selection";
 import CLASS from "../../config/classes";
+import {SUBCHART_BRUSH_HANDLE_PATH} from "../../config/const";
 import {brushEmpty, capitalize, isArray} from "../../module/util";
 
 export default {
@@ -194,16 +195,7 @@ export default {
 		const initRange = config.subchart_init_range;
 		const customHandleClass = "handle--custom";
 
-		// brush handle shape's path
-		const path = isRotated ?
-			[
-				"M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z",
-				"M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"
-			] :
-			[
-				"M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z",
-				"M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"
-			];
+		const path = SUBCHART_BRUSH_HANDLE_PATH[isRotated ? "y" : "x"];
 
 		$$.brush.handle = brush.selectAll(`.${customHandleClass}`)
 			.data(isRotated ? [{type: "n"}, {type: "s"}] : [{type: "w"}, {type: "e"}])
@@ -211,7 +203,7 @@ export default {
 			.append("path")
 			.attr("class", customHandleClass)
 			.attr("cursor", `${isRotated ? "ns" : "ew"}-resize`)
-			.attr("d", d => path[+/[se]/.test(d.type)])
+			.attr("d", d => path[/[se]/.test(d.type) ? "end" : "start"])
 			.attr("display", initRange ? null : "none");
 	},
 
