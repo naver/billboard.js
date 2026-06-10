@@ -9,6 +9,7 @@ import {KEY} from "../../module/Cache";
 import {
 	callFn,
 	getOption,
+	isBoolean,
 	isDefined,
 	isEmpty,
 	isFunction,
@@ -16,6 +17,9 @@ import {
 	toMap,
 	tplProcess
 } from "../../module/util";
+
+const LEGEND_TOUCH_TAP_THRESHOLD = 10;
+const LEGEND_TOUCH_CLICK_TIMEOUT = 750;
 
 /**
  * Get color string for given data id
@@ -79,6 +83,118 @@ function _buildLegendItemMap($$, legendItems): void {
 
 	// Cache the map
 	$$.cache.add(KEY.legendItemMap, itemMap);
+}
+
+/**
+ * Get touch point from a touch event.
+ * @param {TouchEvent} event Touch event
+ * @returns {Touch | undefined} Touch point
+ * @private
+ */
+function _getLegendTouchPoint(event): Touch | undefined {
+	return event.changedTouches?.[0] || event.touches?.[0];
+}
+
+/**
+ * Store the touch start position for legend tap detection.
+ * @param {object} $$ ChartInternal context
+ * @param {string} id Legend data id
+ * @param {TouchEvent} event Touch event
+ * @private
+ */
+function _setLegendTouchStart($$, id: string, event): void {
+	const touch = _getLegendTouchPoint(event);
+
+	$$.state.legendTouch = touch ?
+		{
+			id,
+			x: touch.clientX,
+			y: touch.clientY,
+			moved: false
+		} :
+		null;
+}
+
+/**
+ * Update whether the current legend touch moved beyond tap tolerance.
+ * @param {object} $$ ChartInternal context
+ * @param {TouchEvent} event Touch event
+ * @private
+ */
+function _updateLegendTouchMove($$, event): void {
+	const start = $$.state.legendTouch;
+	const touch = start && _getLegendTouchPoint(event);
+
+	if (touch) {
+		start.moved = start.moved ||
+			Math.abs(touch.clientX - start.x) > LEGEND_TOUCH_TAP_THRESHOLD ||
+			Math.abs(touch.clientY - start.y) > LEGEND_TOUCH_TAP_THRESHOLD;
+	}
+}
+
+/**
+ * Determine whether a touch sequence is a legend tap.
+ * @param {object} $$ ChartInternal context
+ * @param {string} id Legend data id
+ * @param {TouchEvent} event Touch event
+ * @returns {boolean} Whether the touch sequence is a tap
+ * @private
+ */
+function _isLegendTouchTap($$, id: string, event): boolean {
+	_updateLegendTouchMove($$, event);
+
+	const start = $$.state.legendTouch;
+
+	$$.state.legendTouch = null;
+
+	return !!start && start.id === id && !start.moved;
+}
+
+/**
+ * Mark a touch legend tap so the following compatibility click can be skipped.
+ * @param {object} $$ ChartInternal context
+ * @param {string} id Legend data id
+ * @private
+ */
+function _markLegendTouchClick($$, id: string): void {
+	$$.state.legendLastTouchClickId = id;
+	$$.state.legendLastTouchClickTime = Date.now();
+}
+
+/**
+ * Check if a click duplicates a recent touch legend tap.
+ * @param {object} $$ ChartInternal context
+ * @param {string} id Legend data id
+ * @returns {boolean} Whether the click is duplicate
+ * @private
+ */
+function _isDuplicateLegendTouchClick($$, id: string): boolean {
+	const {state} = $$;
+	const duplicate = state.legendLastTouchClickId === id &&
+		Date.now() - (state.legendLastTouchClickTime || 0) < LEGEND_TOUCH_CLICK_TIMEOUT;
+
+	if (duplicate) {
+		state.legendLastTouchClickId = null;
+		state.legendLastTouchClickTime = 0;
+	}
+
+	return duplicate;
+}
+
+/**
+ * Get touch listener passive option following interaction.inputType.touch.preventDefault.
+ * @param {object} $$ ChartInternal context
+ * @returns {object} Touch listener option
+ * @private
+ */
+function _getLegendTouchOption($$): {passive: boolean} {
+	const preventDefault = $$.config.interaction_inputType_touch?.preventDefault;
+	const isPrevented = (isBoolean(preventDefault) && preventDefault) || false;
+	const preventThreshold = (!isNaN(preventDefault) && preventDefault) || null;
+
+	return {
+		passive: !isPrevented && preventThreshold === null
+	};
 }
 
 export default {
@@ -456,6 +572,40 @@ export default {
 		const hasGauge = $$.hasType("gauge");
 		const useCssRule = config.boost_useCssRule;
 		const interaction = config.legend_item_interaction;
+		const eventType = interaction.dblclick ? "dblclick" : "click";
+		const hasClickInteraction = interaction || isFunction(config.legend_item_onclick);
+		const touchOption = isTouch ? _getLegendTouchOption($$) : undefined;
+
+		const handleLegendToggle = function(event, id): void {
+			if (
+				!callFn(config.legend_item_onclick, api, id, !state.hiddenTargetIds.has(id))
+			) {
+				const {altKey, type} = event;
+				const selected = d3Select(this);
+
+				if (type === "dblclick" || altKey) {
+					// when focused legend is clicked(with altKey or double clicked), reset all hiding.
+					if (
+						state.hiddenTargetIds.size &&
+						!selected.classed($LEGEND.legendItemHidden)
+					) {
+						api.show();
+					} else {
+						api.hide();
+						api.show(id);
+					}
+				} else {
+					api.toggle(id);
+
+					selected.classed($FOCUS.legendItemFocused, false);
+				}
+			}
+
+			if (isTouch) {
+				$$.hideTooltip();
+				$$.hideGridFocus?.(true);
+			}
+		};
 
 		item
 			.attr("class", function(id) {
@@ -482,39 +632,32 @@ export default {
 			}
 
 			item
-				.on(interaction.dblclick ? "dblclick" : "click",
-					interaction || isFunction(config.legend_item_onclick) ?
-						function(event, id) {
-							if (
-								!callFn(config.legend_item_onclick, api, id,
-									!state.hiddenTargetIds.has(id))
-							) {
-								const {altKey, target, type} = event;
+				.on(eventType, hasClickInteraction ?
+					function(event, id) {
+						if (
+							isTouch && event.type === "click" &&
+							_isDuplicateLegendTouchClick($$, id)
+						) {
+							return;
+						}
 
-								if (type === "dblclick" || altKey) {
-									// when focused legend is clicked(with altKey or double clicked), reset all hiding.
-									if (
-										state.hiddenTargetIds.size &&
-										target.parentNode.getAttribute("class").indexOf(
-												$LEGEND.legendItemHidden
-											) === -1
-									) {
-										api.show();
-									} else {
-										api.hide();
-										api.show(id);
-									}
-								} else {
-									api.toggle(id);
+						handleLegendToggle.call(this, event, id);
+					} :
+					null);
 
-									d3Select(this)
-										.classed($FOCUS.legendItemFocused, false);
-								}
-							}
-
-							isTouch && $$.hideTooltip();
-						} :
-						null);
+			isTouch && eventType === "click" && hasClickInteraction && item
+				.on("touchstart", function(event, id) {
+					_setLegendTouchStart($$, id, event);
+				}, touchOption)
+				.on("touchmove", event => {
+					_updateLegendTouchMove($$, event);
+				}, touchOption)
+				.on("touchend", function(event, id) {
+					if (_isLegendTouchTap($$, id, event)) {
+						_markLegendTouchClick($$, id);
+						handleLegendToggle.call(this, event, id);
+					}
+				}, touchOption);
 
 			!isTouch && item
 				.on("mouseout", interaction || isFunction(config.legend_item_onout) ?

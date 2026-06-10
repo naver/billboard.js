@@ -165,17 +165,21 @@ export function getLabelImageUrl(option: LabelImageOption, d): string {
  * @param {string} text Label text
  * @param {number} x Text x coordinate
  * @param {number} y Text y coordinate
+ * @param {object} d Data row
  * @returns {object} Image and text positions
  * @private
  */
 export function getLabelImagePosition($$, option: LabelImageOption, text: string, x: number,
-	y: number): LabelImagePosition {
+	y: number, d?): LabelImagePosition {
 	const {width = 0, height = 0, pos} = option;
 	const w = width / 2;
 	const h = height / 2;
 	const textHeight = getLabelDecorationBox($$.canvasEngine.ctx, text, x, y).h;
+	const fontSize = parseFloat($$.canvasEngine.ctx.font) || 12;
 	const imageX = x - w;
-	const imageY = y - h - textHeight / 2;
+	const imageY = y - h - (
+		$$.isTreemapType?.(d) ? fontSize * 0.7 : textHeight / 2
+	);
 	let textX = x;
 	let textY = y;
 
@@ -204,7 +208,9 @@ export function getLabelImagePosition($$, option: LabelImageOption, text: string
 export function getLabelColor($$, d, fallback: string): string {
 	const color = $$.updateTextColor?.(d);
 
-	return typeof color === "string" ? color : ($$.color?.(d) || fallback);
+	return typeof color === "string" ?
+		color :
+		($$.isTreemapType?.(d) ? fallback : ($$.color?.(d) || fallback));
 }
 
 /**
