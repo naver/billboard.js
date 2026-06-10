@@ -655,6 +655,65 @@ describe("TREEMAP", () => {
 					expect(isFinite(bbox.height)).to.be.true;
 				});
 			});
+
+			it("should center labels when chart is vertically offset", () => {
+				const container = util.sandbox("treemap-label-offset", {
+					style: "position:absolute;top:720px;left:0;width:640px;height:480px;"
+				});
+				const treemap = util.generate({
+					bindto: "#treemap-label-offset",
+					data: {
+						rows: [
+							["data1", "data2", "data3", "data4"],
+							[300, 200, 500, 380]
+						],
+						type: "treemap",
+						labels: {
+							centered: true
+						}
+					},
+					treemap: {
+						tile: "dice",
+						label: {
+							format: value => value
+						}
+					}
+				});
+
+				let checked = 0;
+
+				treemap.internal.$el.treemap.selectAll("g").each(function(d) {
+					const rect = this.querySelector("rect");
+					const text = treemap.$.text.texts
+						.filter(textData => textData.id === d.data.id)
+						.node();
+
+					if (!rect || !text) {
+						return;
+					}
+
+					const [tileX, tileY] = this
+						.getAttribute("transform")
+						.trim()
+						.split(",")
+						.map(parseNum);
+					const rectWidth = +rect.getAttribute("width");
+					const rectHeight = +rect.getAttribute("height");
+					const textX = +text.getAttribute("x");
+					const textY = +text.getAttribute("y");
+
+					checked++;
+					expect(textX).to.be.greaterThan(tileX);
+					expect(textX).to.be.lessThan(tileX + rectWidth);
+					expect(textY).to.be.greaterThan(tileY);
+					expect(textY).to.be.lessThan(tileY + rectHeight);
+				});
+
+				expect(checked).to.be.equal(4);
+
+				treemap.destroy();
+				container.remove();
+			});
 		});
 
 		describe("with centered labels disabled", () => {

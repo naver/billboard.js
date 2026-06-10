@@ -261,6 +261,18 @@ describe("ESM canvas", function() {
 		});
 	});
 
+	it("should keep the canvas surface in normal flow", () => {
+		generate(line());
+
+		const canvasEl = chart.$.canvas.node();
+
+		expect(canvasEl.style.display).to.be.equal("block");
+		expect(canvasEl.style.position).to.be.equal("");
+		expect(canvasEl.style.top).to.be.equal("");
+		expect(canvasEl.style.left).to.be.equal("");
+		expect(canvasEl.style.zIndex).to.be.equal("");
+	});
+
 	it("should not create SVG structural nodes or generated shape classes in canvas mode", () => {
 		generateWithOptions({
 			data: {
@@ -936,6 +948,90 @@ describe("ESM canvas", function() {
 
 		expect(chart.internal.state.hiddenTargetIds.has("data1")).to.be.true;
 		expect(legendItem.classList.contains("bb-legend-item-hidden")).to.be.true;
+	});
+
+	it("should toggle only touched target from the HTML legend on touch input", () => {
+		window.$$TEST$$.convertInputType = "touch";
+
+		try {
+			const chart = generateWithOptions({
+				data: {
+					columns,
+					type: line()
+				},
+				interaction: {
+					inputType: {
+						touch: true
+					}
+				}
+			});
+			const item1 = container.querySelector("button[data-id='data1']") as HTMLElement;
+			const item2 = container.querySelector("button[data-id='data2']") as HTMLElement;
+			const {x, y} = item2.getBoundingClientRect();
+			const legendTouch = new Touch({
+				identifier: Date.now(),
+				target: item2,
+				clientX: x,
+				clientY: y
+			});
+			const dispatchTouch = type => item2.dispatchEvent(new TouchEvent(type, {
+				bubbles: true,
+				cancelable: true,
+				touches: type === "touchend" ? [] : [legendTouch],
+				targetTouches: type === "touchend" ? [] : [legendTouch],
+				changedTouches: [legendTouch]
+			}));
+
+			item2.dispatchEvent(new MouseEvent("mouseover", {
+				bubbles: true
+			}));
+
+			expect(item1.style.opacity).to.be.equal("");
+
+			const canvas = chart.$.canvas.node();
+			const rect = canvas.getBoundingClientRect();
+			const {margin} = chart.internal.state;
+			const datum = chart.internal.data.targets[0].values[1];
+			const canvasTouch = new Touch({
+				identifier: Date.now() + 1,
+				target: canvas,
+				clientX: rect.left + margin.left + chart.internal.xx(datum),
+				clientY: rect.top + margin.top + chart.internal.circleY(datum, datum.index)
+			});
+
+			canvas.dispatchEvent(new TouchEvent("touchstart", {
+				bubbles: true,
+				cancelable: true,
+				touches: [canvasTouch],
+				targetTouches: [canvasTouch],
+				changedTouches: [canvasTouch]
+			}));
+
+			expect(chart.$.tooltip.style("display")).to.be.equal("block");
+
+			dispatchTouch("touchstart");
+			dispatchTouch("touchend");
+
+			expect(chart.$.tooltip.style("display")).to.be.equal("none");
+			expect(chart.internal.state.hiddenTargetIds.has("data2")).to.be.true;
+			expect(item2.classList.contains("bb-legend-item-hidden")).to.be.true;
+			expect(item1.style.opacity).to.be.equal("");
+
+			item2.dispatchEvent(new MouseEvent("click", {
+				bubbles: true
+			}));
+
+			expect(chart.internal.state.hiddenTargetIds.has("data2")).to.be.true;
+
+			dispatchTouch("touchstart");
+			dispatchTouch("touchend");
+
+			expect(chart.internal.state.hiddenTargetIds.has("data2")).to.be.false;
+			expect(item2.classList.contains("bb-legend-item-hidden")).to.be.false;
+			expect(item1.style.opacity).to.be.equal("");
+		} finally {
+			delete window.$$TEST$$.convertInputType;
+		}
 	});
 
 	it("should apply hover opacity to other canvas HTML legend items", () => {
@@ -4179,31 +4275,102 @@ describe("ESM canvas", function() {
 		fillText.mockRestore();
 	});
 
-	it("should hide canvas treemap text labels when data label image is configured", () => {
-		const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText");
+	it("should draw treemap label images on canvas", async () => {
+		const calls: Array<{
+			type: string,
+			text?: string,
+			x?: number,
+			y?: number,
+			w?: number,
+			h?: number,
+			fillStyle?: string
+		}> = [];
+		let loadImage;
+
+		vi.stubGlobal("Image", class {
+			onload = null;
+			onerror = null;
+
+			set src(value) {
+				this._src = value;
+				loadImage = () => this.onload?.();
+			}
+
+			get src() {
+				return this._src;
+			}
+		});
+
+		const drawImage = vi
+			.spyOn(CanvasRenderingContext2D.prototype, "drawImage")
+			.mockImplementation(function(...args) {
+				if (args.length === 5) {
+					calls.push({
+						type: "image",
+						x: Number(args[1]),
+						y: Number(args[2]),
+						w: Number(args[3]),
+						h: Number(args[4])
+					});
+				}
+			});
+		const fillText = vi
+			.spyOn(CanvasRenderingContext2D.prototype, "fillText")
+			.mockImplementation(function(text, x, y) {
+				const value = String(text);
+
+				if (value === "data1" || value === "100.00%") {
+					calls.push({
+						type: "text",
+						text: value,
+						x: Number(x),
+						y: Number(y),
+						fillStyle: String(this.fillStyle)
+					});
+				}
+			});
 
 		generateWithOptions({
 			data: {
 				columns: [
-					["data1", 30],
-					["data2", 120],
-					["data3", 90]
+					["data1", 30]
 				],
 				type: treemap(),
 				labels: {
-					centered: true,
 					image: {
-						url: "./assets/{=ID}.svg",
-						width: 40,
-						height: 40
-					}
+						url: "/treemap-{=ID}.png",
+						width: 20,
+						height: 10
+					},
+					centered: true
 				}
 			}
 		});
 
-		expect(fillText.mock.calls.some(([text]) => /data[123]|%/.test(String(text)))).to.be.false;
+		expect(calls.some(call => call.type === "image")).to.be.false;
 
+		loadImage();
+		await Promise.resolve();
+
+		const imageIndex = calls.findIndex(call => call.type === "image");
+		const textIndex = calls.findIndex((call, index) =>
+			index > imageIndex && call.type === "text" && call.text === "data1"
+		);
+		const image = calls[imageIndex];
+		const text = calls[textIndex];
+
+		expect(imageIndex).to.be.greaterThan(-1);
+		expect(textIndex).to.be.greaterThan(-1);
+		expect(imageIndex).to.be.lessThan(textIndex);
+		expect(image.w).to.be.equal(20);
+		expect(image.h).to.be.equal(10);
+		expect(image.y).to.be.lessThan(text.y);
+		expect(text.y - (image.y + image.h)).to.be.lessThan(20);
+		expect(text.fillStyle).to.be.equal("#000000");
+
+		drawImage.mockRestore();
 		fillText.mockRestore();
+		vi.unstubAllGlobals();
 	});
 
 	it("should keep data groups for stacked area targets", () => {
@@ -4849,6 +5016,53 @@ describe("ESM canvas", function() {
 		expect(onout).toHaveBeenCalledWith(d, canvas);
 	});
 
+	it("should keep canvas tooltip visible after touch drag ends", () => {
+		generateWithOptions({
+			data: {
+				columns,
+				type: scatter()
+			},
+			interaction: {
+				inputType: {
+					touch: true
+				}
+			},
+			tooltip: {
+				grouped: false
+			}
+		});
+
+		const canvas = chart.$.canvas.node();
+		const rect = canvas.getBoundingClientRect();
+		const {margin} = chart.internal.state;
+		const getTouch = (d, identifier = 1) => new Touch({
+			identifier,
+			target: canvas,
+			clientX: rect.left + margin.left + chart.internal.xx(d),
+			clientY: rect.top + margin.top + chart.internal.circleY(d, d.index)
+		});
+		const start = chart.internal.data.targets[0].values[0];
+		const end = chart.internal.data.targets[0].values[1];
+		const startTouch = getTouch(start);
+		const endTouch = getTouch(end);
+		const dispatchTouch = (type, touch) => canvas.dispatchEvent(new TouchEvent(type, {
+			cancelable: true,
+			bubbles: true,
+			touches: type === "touchend" ? [] : [touch],
+			targetTouches: type === "touchend" ? [] : [touch],
+			changedTouches: [touch]
+		}));
+
+		dispatchTouch("touchstart", startTouch);
+		dispatchTouch("touchmove", endTouch);
+
+		expect(chart.$.tooltip.style("display")).to.be.equal("block");
+
+		dispatchTouch("touchend", endTouch);
+
+		expect(chart.$.tooltip.style("display")).to.be.equal("block");
+	});
+
 	it("should prevent default for canvas touch events when configured", () => {
 		generateWithOptions({
 			data: {
@@ -5117,7 +5331,7 @@ describe("ESM canvas", function() {
 		}
 	});
 
-	it("should draw chart background image on canvas after load", () => new Promise(done => {
+	it("should draw chart background image on canvas preserving aspect ratio after load", () => new Promise(done => {
 		const drawImage = vi.spyOn(CanvasRenderingContext2D.prototype, "drawImage");
 
 		generateWithOptions({
@@ -5126,13 +5340,21 @@ describe("ESM canvas", function() {
 				type: line()
 			},
 			background: {
-				imgUrl: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='red'/%3E%3C/svg%3E"
+				imgUrl: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='10'%3E%3Crect width='40' height='10' fill='red'/%3E%3C/svg%3E"
 			}
 		});
 
 		setTimeout(() => {
 			try {
-				expect(drawImage).toHaveBeenCalled();
+				const backgroundCall = drawImage.mock.calls.find(call =>
+					call.length === 5 &&
+					call[1] === 0 &&
+					call[2] === 80 &&
+					call[3] === 320 &&
+					call[4] === 80
+				);
+
+				expect(backgroundCall).not.to.be.undefined;
 				done();
 			} catch (error) {
 				done(error);

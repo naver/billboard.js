@@ -499,6 +499,10 @@ describe("ESM canvas helper coverage", () => {
 			const option = {url: "/img.png", width: 20, height: 10, pos: {x: 1, y: 2}};
 			const normal = getLabelImagePosition(getInternal(), option, "label", 50, 60);
 			const rotated = getLabelImagePosition(getInternal({axis_rotated: true}), option, "label", 50, 60);
+			const treemap = getLabelImagePosition({
+				...getInternal(),
+				isTreemapType: () => true
+			}, option, "label", 50, 60, datum);
 
 			expect(normal.textX).to.be.equal(50);
 			expect(normal.textY).to.be.equal(65);
@@ -506,6 +510,9 @@ describe("ESM canvas helper coverage", () => {
 			expect(rotated.textY).to.be.equal(60);
 			expect(getLabelImagePosition(getInternal(), {url: "/img.png"}, "label", 20, 30))
 				.to.deep.include({textX: 20, textY: 30});
+			expect(treemap.textX).to.be.equal(normal.textX);
+			expect(treemap.textY).to.be.equal(normal.textY);
+			expect(treemap.y).to.be.lessThan(normal.y);
 		});
 
 		it("resolves label background colors and draws decorations", () => {

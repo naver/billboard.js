@@ -74,6 +74,7 @@ const subchartBrushHandlePathCache = new Map<string, Path2D>();
 type BarConnectLineType = "start-start" | "start-end" | "end-start" | "end-end";
 type CanvasBarConnectLineBox = {x: number, y: number, width: number, height: number};
 type CanvasBackgroundClassStyle = {opacity?: number, transform?: string};
+type CanvasBackgroundImageRect = {x: number, y: number, w: number, h: number};
 type CanvasLinearGradientShape = "area" | "bar";
 type CanvasLinearGradientOption = boolean | {
 	x?: [number, number],
@@ -108,6 +109,38 @@ function applyCssMatrixTransform(ctx: CanvasRenderingContext2D, transform?: stri
 			values.every(Number.isFinite) &&
 			ctx.transform(values[0], values[1], values[4], values[5], values[12], values[13]);
 	}
+}
+
+/**
+ * Get SVG image equivalent destination rect for canvas background.
+ * @param {HTMLImageElement} image Image element
+ * @param {number} width Background viewport width
+ * @param {number} height Background viewport height
+ * @returns {object} Destination rect
+ * @private
+ */
+function getPreservedAspectRatioRect(
+	image: HTMLImageElement,
+	width: number,
+	height: number
+): CanvasBackgroundImageRect {
+	const imageWidth = image.naturalWidth || image.width;
+	const imageHeight = image.naturalHeight || image.height;
+
+	if (!imageWidth || !imageHeight || !width || !height) {
+		return {x: 0, y: 0, w: width, h: height};
+	}
+
+	const scale = Math.min(width / imageWidth, height / imageHeight);
+	const w = imageWidth * scale;
+	const h = imageHeight * scale;
+
+	return {
+		x: (width - w) / 2,
+		y: (height - h) / 2,
+		w,
+		h
+	};
 }
 
 /**
@@ -939,7 +972,13 @@ export default class CanvasRenderer {
 				const entry = this.getBackgroundImage(bg.imgUrl, $$);
 
 				if (entry?.loaded) {
-					ctx.drawImage(entry.image, 0, 0, current.width, current.height);
+					const rect = getPreservedAspectRatioRect(
+						entry.image,
+						current.width,
+						current.height
+					);
+
+					ctx.drawImage(entry.image, rect.x, rect.y, rect.w, rect.h);
 				}
 			} else if (bg.color) {
 				painter.fillRect({
@@ -970,7 +1009,7 @@ export default class CanvasRenderer {
 		}
 
 		const url = getLabelImageUrl(option, d);
-		const position = getLabelImagePosition($$, option, text, x, y);
+		const position = getLabelImagePosition($$, option, text, x, y, d);
 		const entry = this.getLabelImage(url, $$);
 
 		if (entry?.loaded) {
@@ -2265,10 +2304,6 @@ export default class CanvasRenderer {
 					continue;
 				}
 
-				if (getLabelImageOption($$, data)?.url) {
-					continue;
-				}
-
 				const label = getTreemapLabelText($$, data, w, h);
 
 				if (!label) {
@@ -2277,15 +2312,17 @@ export default class CanvasRenderer {
 
 				const lines = label.split("\n");
 				const lineHeight = 12;
-				const centerY = y + h / 2 - (lines.length - 1) * lineHeight / 2;
+				let textX = x + w / 2;
+				let textY = y + h / 2 - (lines.length - 1) * lineHeight / 2;
 
-				ctx.fillStyle = getLabelColor($$, data, style.label.color);
 				ctx.font = style.label.font;
 				ctx.textAlign = "center";
 				ctx.textBaseline = "middle";
+				({x: textX, y: textY} = this.drawLabelImage($$, data, label, textX, textY));
+				ctx.fillStyle = getLabelColor($$, data, style.label.color);
 
 				lines.forEach((line, i) => {
-					painter.text(line, x + w / 2, centerY + i * lineHeight, {
+					painter.text(line, textX, textY + i * lineHeight, {
 						maxWidth: Math.max(0, w - 8)
 					});
 				});

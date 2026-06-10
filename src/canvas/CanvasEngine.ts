@@ -27,10 +27,6 @@ export default class CanvasEngine {
 	init(container: HTMLElement, w: number, h: number): void {
 		this.canvas = document.createElement("canvas");
 		this.canvas.className = $CANVAS.canvas;
-		this.canvas.style.position = "absolute";
-		this.canvas.style.top = "0";
-		this.canvas.style.left = "0";
-		this.canvas.style.zIndex = "0";
 		this.canvas.style.display = "block";
 
 		container.appendChild(this.canvas);
