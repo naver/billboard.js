@@ -43,7 +43,9 @@ function makeContext(type, overrides = {}) {
 			tooltip_grouped: true
 		},
 		data: {targets},
-		filterTargetsToShow: list => list,
+		filterTargetsToShow(list) {
+			return list ?? this.data.targets;
+		},
 		generateGetBarPoints: () => (d, i) => [[i * 30, 0], [i * 30 + 12, 18]],
 		generateGetCandlestickPoints: () => (d, i) => [[i * 30, 4], [i * 30 + 10, 16], [i * 30 + 5, 0, 20]],
 		getBaseValue: d => d.value,

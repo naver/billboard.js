@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {getFontSize} from "./util";
 
 export type CanvasRect = {x: number, y: number, w: number, h: number};
 export type CanvasRectRadius = number | {tl?: number, tr?: number, br?: number, bl?: number};
@@ -298,7 +299,7 @@ export default class CanvasPainter {
 		style?: CanvasStyle & {angle?: number, maxWidth?: number}): void {
 		this.withState(ctx => {
 			const lines = text.split("\n");
-			const lineHeight = parseFloat(style?.font || ctx.font) || 12;
+			const lineHeight = getFontSize(style?.font || ctx.font);
 			const firstLineY = lines.length > 1 ? -((lines.length - 1) * lineHeight) : 0;
 
 			this.applyStyle(style);

@@ -494,7 +494,7 @@ export default {
 					mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
 				}
 
-				selectedCircles && $$.$T(mainCircles, withTransition, getTransitionName());
+				selectedCircles && $$.$T(selectedCircles, withTransition, getTransitionName());
 			}
 
 			return mainCircles

@@ -8,20 +8,15 @@ type PathContext = CanvasRenderingContext2D | null | undefined;
 type PathResult = string | void;
 
 /**
- * Get values with null/step handling for line-like paths.
+ * Get values with step handling for line-like paths.
  * @param {object} $$ ChartInternal instance
- * @param {object} target Data target
+ * @param {object} d Data target (needs `.id` for per-series step type detection)
+ * @param {Array} values Null-filtered values to draw
  * @returns {Array} Drawable values
  * @private
  */
-function getLineValues($$, target): any[] {
-	let values = $$.config.line_connectNull ? $$.filterRemoveNull(target.values) : target.values;
-
-	if ($$.isStepType(target)) {
-		values = $$.convertValuesToStep(values);
-	}
-
-	return values;
+function getLineValues($$, d, values): any[] {
+	return $$.isStepType(d) ? $$.convertValuesToStep(values) : values;
 }
 
 /**
@@ -84,7 +79,7 @@ export function generateDrawLinePath(
 
 				path = $$.lineWithRegions(values, scale.zoom || x, y, regions);
 			} else {
-				path = line.curve($$.getCurve(d))(getLineValues($$, {values}));
+				path = line.curve($$.getCurve(d))(getLineValues($$, d, values));
 			}
 		} else {
 			if (values[0]) {

@@ -218,6 +218,7 @@ export default {
 	...$FOCUS,
 	...$FUNNEL,
 	...$GRID,
+	...$LEVEL,
 	...$RADAR,
 	...$REGION,
 	...$SELECT,

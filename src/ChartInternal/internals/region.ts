@@ -78,6 +78,7 @@ export default {
 
 		label = $T(label, withTransition)
 			.text(d => d.label?.text)
+			// pre-rotate so that the centering math below measures the rotated bounding box
 			.attr("transform", ({label}) => label.rotated ? ` rotate(-90)` : null)
 			.attr("transform", function(d) {
 				const {x = 0, y = 0, center = false, rotated = false} = d.label ?? {};

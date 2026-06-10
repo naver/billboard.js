@@ -56,6 +56,21 @@ export const AXIS_TICK_LENGTH = AXIS_TICK_SIZE + AXIS_TICK_PADDING;
 export const AXIS_TICK_LINE_OVERLAP_PADDING = 1;
 
 /**
+ * Subchart brush handle path constants shared by SVG and canvas renderers.
+ * @private
+ */
+export const SUBCHART_BRUSH_HANDLE_PATH = {
+	x: {
+		start: "M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z",
+		end: "M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"
+	},
+	y: {
+		start: "M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z",
+		end: "M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"
+	}
+} as const;
+
+/**
  * Chart type module and its method from ChartInternal class, needed to be initialized.
  * @private
  */

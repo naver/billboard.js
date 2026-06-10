@@ -26,6 +26,7 @@ import {
 	getOption,
 	getRandom,
 	hasStyle,
+	isBoolean,
 	isFunction,
 	isObject,
 	isString,
@@ -503,11 +504,19 @@ export default class ChartInternal {
 		if (hasInteraction && state.inputType) {
 			const isTouch = state.inputType === "touch";
 			const {onclick, onover, onout} = config;
+			const preventDefault = config.interaction_inputType_touch?.preventDefault;
+			const isPrevented = (isBoolean(preventDefault) && preventDefault) || false;
+			const preventThreshold = (!isNaN(preventDefault) && preventDefault) || null;
+			const touchOption = isTouch ?
+				{
+					passive: !isPrevented && preventThreshold === null
+				} :
+				undefined;
 
 			$el.svg
 				.on("click", onclick?.bind($$.api) || null)
 				.on(isTouch ? "touchstart" : "mouseenter", onover?.bind($$.api) || null,
-					isTouch ? {passive: true} : undefined)
+					touchOption)
 				.on(isTouch ? "touchend" : "mouseleave", onout?.bind($$.api) || null);
 		}
 

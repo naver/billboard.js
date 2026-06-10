@@ -100,6 +100,15 @@ export default {
 	},
 
 	/**
+	 * Get canvas title height using the same SVG text measurement as title padding.
+	 * @returns {number} Title height
+	 * @private
+	 */
+	getCanvasTitleHeight(): number {
+		return _getCanvasTitleHeight(this);
+	},
+
+	/**
 	 * Get title padding
 	 * @returns {number} padding value
 	 * @private
@@ -111,7 +120,7 @@ export default {
 		const paddingBottom = config.title_padding.bottom || 0;
 
 		if (state.isCanvasMode && config.title_text) {
-			return paddingTop + _getCanvasTitleHeight($$) + paddingBottom;
+			return paddingTop + $$.getCanvasTitleHeight() + paddingBottom;
 		}
 
 		if (!title?.node()) {

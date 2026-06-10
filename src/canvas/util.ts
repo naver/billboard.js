@@ -16,6 +16,20 @@ export type CanvasPointOccupancyGrid = {
 };
 
 /**
+ * Get font size from canvas font shorthand.
+ * `parseFloat()` alone fails for style/weight-prefixed shorthands like "bold 20px sans-serif".
+ * @param {string} font Canvas font shorthand
+ * @returns {number} Font size
+ * @private
+ */
+export function getFontSize(font: string): number {
+	const match = /(\d+(?:\.\d+)?)px/.exec(font);
+	const size = match ? parseFloat(match[1]) : parseFloat(font);
+
+	return Number.isFinite(size) ? size : 12;
+}
+
+/**
  * Get cached or generated shape indices for a canvas target type.
  * @param {object} $$ ChartInternal instance
  * @param {object} shape Cached draw shape object

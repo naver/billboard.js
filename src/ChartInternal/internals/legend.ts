@@ -9,6 +9,7 @@ import {KEY} from "../../module/Cache";
 import {
 	callFn,
 	getOption,
+	isBoolean,
 	isDefined,
 	isEmpty,
 	isFunction,
@@ -16,6 +17,9 @@ import {
 	toMap,
 	tplProcess
 } from "../../module/util";
+
+const LEGEND_TOUCH_TAP_THRESHOLD = 10;
+const LEGEND_TOUCH_CLICK_TIMEOUT = 750;
 
 /**
  * Get color string for given data id
@@ -63,6 +67,14 @@ function _buildLegendItemMap($$, legendItems): void {
 		return;
 	}
 
+	// rebuild from all rendered items, not the passed (possibly enter-only) selection,
+	// so existing items aren't dropped from the map when new series are loaded
+	const allItems = $$.$el.legend?.selectAll(`.${$LEGEND.legendItem}`);
+
+	if (allItems && !allItems.empty()) {
+		legendItems = allItems;
+	}
+
 	// Convert D3 selection to array of [id, node] pairs
 	const items: Array<{id: string, node: HTMLElement}> = [];
 
@@ -79,6 +91,118 @@ function _buildLegendItemMap($$, legendItems): void {
 
 	// Cache the map
 	$$.cache.add(KEY.legendItemMap, itemMap);
+}
+
+/**
+ * Get touch point from a touch event.
+ * @param {TouchEvent} event Touch event
+ * @returns {Touch | undefined} Touch point
+ * @private
+ */
+function _getLegendTouchPoint(event): Touch | undefined {
+	return event.changedTouches?.[0] || event.touches?.[0];
+}
+
+/**
+ * Store the touch start position for legend tap detection.
+ * @param {object} $$ ChartInternal context
+ * @param {string} id Legend data id
+ * @param {TouchEvent} event Touch event
+ * @private
+ */
+function _setLegendTouchStart($$, id: string, event): void {
+	const touch = _getLegendTouchPoint(event);
+
+	$$.state.legendTouch = touch ?
+		{
+			id,
+			x: touch.clientX,
+			y: touch.clientY,
+			moved: false
+		} :
+		null;
+}
+
+/**
+ * Update whether the current legend touch moved beyond tap tolerance.
+ * @param {object} $$ ChartInternal context
+ * @param {TouchEvent} event Touch event
+ * @private
+ */
+function _updateLegendTouchMove($$, event): void {
+	const start = $$.state.legendTouch;
+	const touch = start && _getLegendTouchPoint(event);
+
+	if (touch) {
+		start.moved = start.moved ||
+			Math.abs(touch.clientX - start.x) > LEGEND_TOUCH_TAP_THRESHOLD ||
+			Math.abs(touch.clientY - start.y) > LEGEND_TOUCH_TAP_THRESHOLD;
+	}
+}
+
+/**
+ * Determine whether a touch sequence is a legend tap.
+ * @param {object} $$ ChartInternal context
+ * @param {string} id Legend data id
+ * @param {TouchEvent} event Touch event
+ * @returns {boolean} Whether the touch sequence is a tap
+ * @private
+ */
+function _isLegendTouchTap($$, id: string, event): boolean {
+	_updateLegendTouchMove($$, event);
+
+	const start = $$.state.legendTouch;
+
+	$$.state.legendTouch = null;
+
+	return !!start && start.id === id && !start.moved;
+}
+
+/**
+ * Mark a touch legend tap so the following compatibility click can be skipped.
+ * @param {object} $$ ChartInternal context
+ * @param {string} id Legend data id
+ * @private
+ */
+function _markLegendTouchClick($$, id: string): void {
+	$$.state.legendLastTouchClickId = id;
+	$$.state.legendLastTouchClickTime = Date.now();
+}
+
+/**
+ * Check if a click duplicates a recent touch legend tap.
+ * @param {object} $$ ChartInternal context
+ * @param {string} id Legend data id
+ * @returns {boolean} Whether the click is duplicate
+ * @private
+ */
+function _isDuplicateLegendTouchClick($$, id: string): boolean {
+	const {state} = $$;
+	const duplicate = state.legendLastTouchClickId === id &&
+		Date.now() - (state.legendLastTouchClickTime || 0) < LEGEND_TOUCH_CLICK_TIMEOUT;
+
+	if (duplicate) {
+		state.legendLastTouchClickId = null;
+		state.legendLastTouchClickTime = 0;
+	}
+
+	return duplicate;
+}
+
+/**
+ * Get touch listener passive option following interaction.inputType.touch.preventDefault.
+ * @param {object} $$ ChartInternal context
+ * @returns {object} Touch listener option
+ * @private
+ */
+function _getLegendTouchOption($$): {passive: boolean} {
+	const preventDefault = $$.config.interaction_inputType_touch?.preventDefault;
+	const isPrevented = (isBoolean(preventDefault) && preventDefault) || false;
+	const preventThreshold = (!isNaN(preventDefault) && preventDefault) || null;
+
+	return {
+		passive: !isPrevented && preventThreshold === null
+	};
 }
 
 export default {
@@ -142,8 +266,7 @@ export default {
 		} else if (!state.hasTreemap) {
 			$$.updateLegendElement(
 				targetIds || $$.mapToIds($$.data.targets),
-				optionz,
-				transitions
+				optionz
 			);
 		}
 
@@ -406,11 +529,13 @@ export default {
 
 		if (config.legend_show && isEmpty(targetIds)) {
 			config.legend_show = false;
-			legend.style("visibility", "hidden");
+			legend?.style("visibility", "hidden");
 		}
 
 		$$.addHiddenLegendIds(targetIds);
-		legend.selectAll($$.selectorLegends(targetIds))
+
+		// legend element isn't created when the chart was generated with legend.show=false
+		legend?.selectAll($$.selectorLegends(targetIds))
 			.style("opacity", "0")
 			.style("visibility", "hidden");
 	},
@@ -456,6 +581,40 @@ export default {
 		const hasGauge = $$.hasType("gauge");
 		const useCssRule = config.boost_useCssRule;
 		const interaction = config.legend_item_interaction;
+		const eventType = interaction.dblclick ? "dblclick" : "click";
+		const hasClickInteraction = interaction || isFunction(config.legend_item_onclick);
+		const touchOption = isTouch ? _getLegendTouchOption($$) : undefined;
+
+		const handleLegendToggle = function(event, id): void {
+			if (
+				!callFn(config.legend_item_onclick, api, id, !state.hiddenTargetIds.has(id))
+			) {
+				const {altKey, type} = event;
+				const selected = d3Select(this);
+
+				if (type === "dblclick" || altKey) {
+					// when focused legend is clicked(with altKey or double clicked), reset all hiding.
+					if (
+						state.hiddenTargetIds.size &&
+						!selected.classed($LEGEND.legendItemHidden)
+					) {
+						api.show();
+					} else {
+						api.hide();
+						api.show(id);
+					}
+				} else {
+					api.toggle(id);
+
+					selected.classed($FOCUS.legendItemFocused, false);
+				}
+			}
+
+			if (isTouch) {
+				$$.hideTooltip();
+				$$.hideGridFocus?.(true);
+			}
+		};
 
 		item
 			.attr("class", function(id) {
@@ -482,39 +641,32 @@ export default {
 			}
 
 			item
-				.on(interaction.dblclick ? "dblclick" : "click",
-					interaction || isFunction(config.legend_item_onclick) ?
-						function(event, id) {
-							if (
-								!callFn(config.legend_item_onclick, api, id,
-									!state.hiddenTargetIds.has(id))
-							) {
-								const {altKey, target, type} = event;
+				.on(eventType, hasClickInteraction ?
+					function(event, id) {
+						if (
+							isTouch && event.type === "click" &&
+							_isDuplicateLegendTouchClick($$, id)
+						) {
+							return;
+						}
 
-								if (type === "dblclick" || altKey) {
-									// when focused legend is clicked(with altKey or double clicked), reset all hiding.
-									if (
-										state.hiddenTargetIds.size &&
-										target.parentNode.getAttribute("class").indexOf(
-												$LEGEND.legendItemHidden
-											) === -1
-									) {
-										api.show();
-									} else {
-										api.hide();
-										api.show(id);
-									}
-								} else {
-									api.toggle(id);
+						handleLegendToggle.call(this, event, id);
+					} :
+					null);
 
-									d3Select(this)
-										.classed($FOCUS.legendItemFocused, false);
-								}
-							}
-
-							isTouch && $$.hideTooltip();
-						} :
-						null);
+			isTouch && eventType === "click" && hasClickInteraction && item
+				.on("touchstart", function(event, id) {
+					_setLegendTouchStart($$, id, event);
+				}, touchOption)
+				.on("touchmove", event => {
+					_updateLegendTouchMove($$, event);
+				}, touchOption)
+				.on("touchend", function(event, id) {
+					if (_isLegendTouchTap($$, id, event)) {
+						_markLegendTouchClick($$, id);
+						handleLegendToggle.call(this, event, id);
+					}
+				}, touchOption);
 
 			!isTouch && item
 				.on("mouseout", interaction || isFunction(config.legend_item_onout) ?
@@ -923,41 +1075,55 @@ export default {
 		if (usePoint) {
 			const tiles = legend.selectAll(`.${$LEGEND.legendItemPoint}`)
 				.data(targetIdz);
+			const isRectangleTile = config.legend_item_tile_type !== "circle";
+			const tileWidth = isRectangleTile ?
+				config.legend_item_tile_width :
+				config.legend_item_tile_r * 2;
+			const tileHeight = isRectangleTile ?
+				config.legend_item_tile_height :
+				config.legend_item_tile_r * 2;
+			const iconWidth = tileWidth * 0.75;
+			const iconHeight = tileHeight * 0.75;
+			const customScaleX = tileWidth / 8;
+			const customScaleY = tileHeight / 8;
 
 			$T(tiles, withTransition)
 				.each(function() {
 					const nodeName = this.nodeName.toLowerCase();
-					const pointR = config.point_r;
 					let x = "x";
 					let y = "y";
-					let xOffset = 2;
-					let yOffset = 2.5;
-					let radius = null;
+					let radius = <number | null>null;
 					let width = <number | null>null;
 					let height = <number | null>null;
 
 					if (nodeName === "circle") {
-						const size = pointR * 0.2;
-
 						x = "cx";
 						y = "cy";
-						radius = pointR + size;
-						xOffset = pointR * 2;
-						yOffset = -size;
+						radius = Math.min(iconWidth, iconHeight) / 2;
 					} else if (nodeName === "rect") {
-						const size = pointR * 2.5;
-
-						width = size;
-						height = size;
-						yOffset = 3;
+						width = iconWidth;
+						height = iconHeight;
 					}
 
-					d3Select(this)
-						.attr(x, d => posFn.x1Tile(d) + xOffset)
-						.attr(y, d => posFn.yTile(d) - yOffset)
+					const tile = d3Select(this)
+						.attr("transform", null)
+						.attr("x", null)
+						.attr("y", null)
+						.attr("cx", null)
+						.attr("cy", null)
 						.attr("r", radius)
 						.attr("width", width)
 						.attr("height", height);
+
+					if (nodeName === "use") {
+						tile.attr("transform", d =>
+							`translate(${posFn.x1Tile(d)} ${posFn.yTile(d) - tileHeight / 2}) ` +
+							`scale(${customScaleX} ${customScaleY})`);
+					} else {
+						tile
+							.attr(x, d => posFn.x1Tile(d) + ((tileWidth - (width || 0)) / 2))
+							.attr(y, d => posFn.yTile(d) - ((height || 0) / 2));
+					}
 				});
 		} else {
 			const tiles = legend.selectAll(`.${$LEGEND.legendItemTile}`)

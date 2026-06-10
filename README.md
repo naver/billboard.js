@@ -33,6 +33,9 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on [
   - [Migration Guide to v2](https://github.com/naver/billboard.js/wiki/Migration-Guide-to-v2)
 - v3 updates:
   - [billboard.js 3.0 release: D3.js v6 support & new candlestick type!](https://netil.medium.com/billboard-js-3-0-release-d3-js-v6-support-new-candlestick-type-9bd74af6a753)
+- v4 updates:
+  - [v4 CHANGELOG](CHANGELOG-v4.md)
+  - [Canvas rendering mode](CHANGELOG-v4.md#canvas-rendering-mode)
 
 ## Questions?
 If you have any questions, check out the previous posts or create a new one at:
@@ -41,6 +44,11 @@ If you have any questions, check out the previous posts or create a new one at:
 
 ## Supported chart types
 <img src="https://naver.github.io/billboard.js/img/chart-types.png?v=15" width=800>
+
+> [!NOTE]
+> v4 adds an opt-in canvas rendering mode for high-density axis charts. See the
+> [Canvas rendering mode](CHANGELOG-v4.md#canvas-rendering-mode) notes for supported chart types,
+> ESM import usage, interactions and SVG parity scope.
 
 ## Download and Installation
 
@@ -175,6 +183,7 @@ If you want to use 'billboard.js' without installation, load files directly from
 
 > [!IMPORTANT]
 > - Basically will work on all SVG and ES6+ supported browsers.
+> - Canvas rendering mode additionally requires browser Canvas 2D API support.
 > - <sup>*</sup>Notes for legacy browsers:
 >   - Recommended to use the `packaged` build or construct your own build following [`How to bundle for legacy browsers?`](https://github.com/naver/billboard.js/wiki/How-to-bundle-for-legacy-browsers%3F) instructions.
 >   - D3.js has dropped support for legacy browsers since [v6](https://observablehq.com/@d3/d3v6-migration-guide).
@@ -224,6 +233,25 @@ import "billboard.js/dist/billboard.css";
 
 // or theme style. Find more themes from 'theme' folder
 import "billboard.js/dist/theme/insight.css"
+```
+
+For canvas rendering mode, import from the `/canvas` ESM entry and set `render.mode` with
+`canvas()`.
+
+```js
+import bb, {bar, canvas} from "billboard.js/canvas";
+
+bb.generate({
+  render: {
+    mode: canvas()
+  },
+  data: {
+    columns: [
+      ["data1", 30, 200, 100, 400]
+    ],
+    type: bar()
+  }
+});
 ```
 
 > [!NOTE]

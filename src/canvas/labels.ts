@@ -5,6 +5,7 @@
 import {isFunction, isNumber, isObject, isString, parseShorthand, tplProcess} from "../module/util";
 import CanvasPainter, {CanvasRect} from "./CanvasPainter";
 import {
+	getFontSize,
 	isCanvasBubbleType,
 	isCanvasCandlestickType,
 	isCanvasLineType,
@@ -165,17 +166,21 @@ export function getLabelImageUrl(option: LabelImageOption, d): string {
  * @param {string} text Label text
  * @param {number} x Text x coordinate
  * @param {number} y Text y coordinate
+ * @param {object} d Data row
  * @returns {object} Image and text positions
  * @private
  */
 export function getLabelImagePosition($$, option: LabelImageOption, text: string, x: number,
-	y: number): LabelImagePosition {
+	y: number, d?): LabelImagePosition {
 	const {width = 0, height = 0, pos} = option;
 	const w = width / 2;
 	const h = height / 2;
 	const textHeight = getLabelDecorationBox($$.canvasEngine.ctx, text, x, y).h;
+	const fontSize = getFontSize($$.canvasEngine.ctx.font);
 	const imageX = x - w;
-	const imageY = y - h - textHeight / 2;
+	const imageY = y - h - (
+		$$.isTreemapType?.(d) ? fontSize * 0.7 : textHeight / 2
+	);
 	let textX = x;
 	let textY = y;
 
@@ -204,7 +209,9 @@ export function getLabelImagePosition($$, option: LabelImageOption, text: string
 export function getLabelColor($$, d, fallback: string): string {
 	const color = $$.updateTextColor?.(d);
 
-	return typeof color === "string" ? color : ($$.color?.(d) || fallback);
+	return typeof color === "string" ?
+		color :
+		($$.isTreemapType?.(d) ? fallback : ($$.color?.(d) || fallback));
 }
 
 /**
@@ -279,10 +286,13 @@ export function getLabelDecorationBox(
 	const lines = text.split("\n");
 	const metrics = lines.map(line => ctx.measureText(line));
 	const width = Math.max(...metrics.map(metric => metric.width), 0);
-	const fontSize = parseFloat(ctx.font) || 12;
+	const fontSize = getFontSize(ctx.font);
 	const lineHeight = fontSize * LABEL_LINE_HEIGHT_RATIO;
 	const fontBoundingHeight = metrics[0] ?
 		(metrics[0].fontBoundingBoxAscent || 0) + (metrics[0].fontBoundingBoxDescent || 0) :
+		0;
+	const baselineDescent = metrics[0] ?
+		metrics[0].fontBoundingBoxDescent || metrics[0].actualBoundingBoxDescent || 0 :
 		0;
 	const height = lines.length > 1 ? lineHeight * lines.length : Math.max(
 		fontSize,
@@ -300,10 +310,11 @@ export function getLabelDecorationBox(
 
 	if (ctx.textBaseline === "middle") {
 		textY -= height / 2;
+	} else if (ctx.textBaseline === "alphabetic") {
+		textY -= height - baselineDescent;
 	} else if (
 		ctx.textBaseline === "bottom" ||
-		ctx.textBaseline === "ideographic" ||
-		ctx.textBaseline === "alphabetic"
+		ctx.textBaseline === "ideographic"
 	) {
 		textY -= height;
 	}

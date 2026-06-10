@@ -225,7 +225,7 @@ export default {
 		const shape = {type: <TShape>{}, indices: <TShape>{}, pos: {}};
 
 		!hasTreemap && ["bar", "candlestick", "line", "area"].forEach(v => {
-			const name = capitalize(/^(bubble|scatter)$/.test(v) ? "line" : v);
+			const name = capitalize(v);
 
 			if (
 				$$.hasType(v) || $$.hasTypeOf(name) || (
@@ -1037,12 +1037,16 @@ export default {
 		const $$ = this;
 		const isRotatedStepType = $$.config.axis_rotated && $$.isStepType(d);
 
+		// when is step & rotated, should be computed in different way
+		// https://github.com/naver/billboard.js/issues/471
 		return isRotatedStepType ?
 			context => {
 				const step = $$.getInterpolate(d)(context);
 
+				// keep the original method
 				step.orgPoint = step.point;
 
+				// to get rotated path data
 				step.pointRotated = function(x, y) {
 					this._point === 1 && (this._point = 2);
 

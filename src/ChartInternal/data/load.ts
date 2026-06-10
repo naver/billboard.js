@@ -47,29 +47,29 @@ export default {
 				});
 			}
 
-			// Update/Add data
+			// Update/Add data: index incoming targets by id to avoid O(n×m) scans
+			const incoming = new Map<string, any>(targets.map(t => [t.id, t]));
+
 			data.targets.forEach(d => {
-				for (let i = 0; i < targets.length; i++) {
-					if (d.id === targets[i].id) {
-						if (append) {
-							const values = targets[i].values;
+				const t = incoming.get(d.id);
 
-							for (let j = 0; j < values.length; j++) {
-								d.values.push(values[j]);
-							}
-						} else {
-							d.values = targets[i].values;
+				if (t) {
+					if (append) {
+						const values = t.values;
+
+						for (let j = 0; j < values.length; j++) {
+							d.values.push(values[j]);
 						}
-
-						targets.splice(i, 1);
-						break;
+					} else {
+						d.values = t.values;
 					}
+
+					incoming.delete(d.id);
 				}
 			});
 
-			for (let i = 0; i < targets.length; i++) {
-				data.targets.push(targets[i]); // add remained
-			}
+			// add remained
+			incoming.forEach(t => data.targets.push(t));
 		}
 
 		if ($$.state.isCanvasMode) {
@@ -187,17 +187,20 @@ export default {
 		targetIds = targetIds.filter(id => $$.hasTarget($$.data.targets, id));
 
 		// If no target, call done and return
-		if (!targetIds || targetIds.length === 0) {
+		if (targetIds.length === 0) {
 			done();
 			return;
 		}
 
+		// remove in a single pass instead of re-filtering per id
+		const unloadIds = new Set(targetIds);
+
 		if (state.isCanvasMode) {
 			targetIds.forEach(id => {
 				state.withoutFadeIn[id] = false;
-				$$.data.targets = $$.data.targets.filter(t => t.id !== id);
 			});
 
+			$$.data.targets = $$.data.targets.filter(t => !unloadIds.has(t.id));
 			$$.removeHiddenTargetIds(targetIds);
 			$$.removeHiddenLegendIds(targetIds);
 			$$.updateTypesElements();
@@ -217,12 +220,12 @@ export default {
 				$el.legend.selectAll(`.${$LEGEND.legendItem}${suffixId}`).remove();
 			}
 
-			// Remove target
-			$$.data.targets = $$.data.targets.filter(t => t.id !== id);
-
 			// Remove custom point def element
 			hasLegendDefsPoint && $el.defs?.select(`#${$$.getDefsPointId(suffixId)}`).remove();
 		});
+
+		// Remove targets
+		$$.data.targets = $$.data.targets.filter(t => !unloadIds.has(t.id));
 
 		// since treemap uses different data types, it needs to be transformed
 		state.hasFunnel && $$.updateFunnel($$.data.targets);

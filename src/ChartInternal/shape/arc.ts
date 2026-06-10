@@ -433,8 +433,9 @@ export default {
 		const radius = config.gauge_fullCircle || (forRange && !hasGauge) ?
 			$$.getArcLength() :
 			gStart * -2;
+		const isSingleArcGauge = d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge();
 
-		if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
+		if (isSingleArcGauge) {
 			const {gauge_min: gMin, gauge_max: gMax} = config;
 
 			// to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
@@ -449,14 +450,37 @@ export default {
 		}
 
 		if (forRange === false) {
-			pie($$.filterTargetsToShow())
-				.forEach((t, i) => {
-					if (!found && t.data.id === d.data?.id) {
-						found = true;
-						d = t;
-						d.index = i;
-					}
-				});
+			// cache the pie layout per redraw: updateAngle() is called per arc/label,
+			// recomputing the full layout each time makes redraw O(n²) for many slices.
+			// The single arc gauge layout isn't cacheable: its angles depend on
+			// state.rendered, which can flip within the same redraw generation.
+			let layout;
+
+			if (isSingleArcGauge) {
+				layout = pie($$.filterTargetsToShow());
+			} else {
+				const cacheKey = "$arcPieLayout";
+				let cached = $$.cache.get(cacheKey);
+
+				if (!cached || cached.generation !== state.redrawGeneration) {
+					cached = {
+						generation: state.redrawGeneration,
+						layout: pie($$.filterTargetsToShow())
+					};
+
+					$$.cache.add(cacheKey, cached);
+				}
+
+				layout = cached.layout;
+			}
+
+			layout.forEach((t, i) => {
+				if (!found && t.data.id === d.data?.id) {
+					found = true;
+					d = t;
+					d.index = i;
+				}
+			});
 		}
 
 		if (isNaN(d.startAngle)) {
@@ -565,7 +589,7 @@ export default {
 			let rangeText = arcs.selectAll(`.${$ARC.arcRange}`)
 				.data(values);
 
-			rangeText.exit();
+			rangeText.exit().remove();
 
 			rangeText = $T(rangeText.enter()
 				.append("text")
@@ -678,7 +702,8 @@ export default {
 		// MEMO: avoid to cancel transition
 		if (transiting) {
 			const interval = setInterval(() => {
-				if (!transiting) {
+				// check the live state value: the destructured one is stale within this closure
+				if (!$$.state.transiting) {
 					clearInterval(interval);
 
 					$el.legend.selectAll(`.${$FOCUS.legendItemFocused}`).size() > 0 &&
@@ -1013,6 +1038,15 @@ export default {
 				}
 
 				state.transiting = false;
+
+				// release the redraw snapshot when a no-transition redraw skipped
+				// afterRedraw() because this arc transition was still running
+				if (state.redrawing) {
+					state.redrawing = false;
+					state._targetsToShow = null;
+					state._cachedDrawShape = null;
+				}
+
 				callFn(config.onrendered, $$.api);
 			});
 
@@ -1128,7 +1162,8 @@ export default {
 
 			radian = radius * ((value - min) / (max - min));
 		} else {
-			radian = arcLength * (value / total);
+			// guard against 0/0 = NaN when all data is zero or hidden
+			radian = total ? arcLength * (value / total) : 0;
 		}
 
 		return (startingAngle + radian) * (180 / Math.PI);

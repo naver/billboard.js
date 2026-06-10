@@ -53,7 +53,17 @@ describe("ESM canvas axis and title", () => {
 	}
 
 	it("draws title text on canvas and reserves top padding", () => {
-		const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText");
+		const titleRecords: Array<{baseline: string, y: number}> = [];
+		const fillText = vi
+			.spyOn(CanvasRenderingContext2D.prototype, "fillText")
+			.mockImplementation(function(text, _x, y) {
+				if (text === "Canvas Title") {
+					titleRecords.push({
+						baseline: this.textBaseline,
+						y: Number(y)
+					});
+				}
+			});
 
 		generateWithOptions({});
 		const topWithoutTitle = chart.internal.state.margin.top;
@@ -74,6 +84,11 @@ describe("ESM canvas axis and title", () => {
 		});
 
 		expect(fillText.mock.calls.some(([text]) => text === "Canvas Title")).to.be.true;
+		expect(titleRecords[0]?.baseline).to.be.equal("alphabetic");
+		expect(titleRecords[0]?.y).to.be.closeTo(
+			8 + chart.internal.getCanvasTitleHeight(),
+			0.1
+		);
 		expect(chart.internal.state.margin.top).to.be.greaterThan(topWithoutTitle);
 	});
 
@@ -262,9 +277,9 @@ describe("ESM canvas axis and title", () => {
 		const {current, margin, width} = chart.internal.state;
 
 		expect(records.some(record =>
-			record.x === margin.left - 10 &&
+			record.x === margin.left - 20 &&
 			record.y === 0 &&
-			record.w === width + 20 &&
+			record.w === width + 40 &&
 			record.h === current.height
 		)).to.be.true;
 
@@ -296,9 +311,9 @@ describe("ESM canvas axis and title", () => {
 
 		expect(records.some(record =>
 			record.x === 0 &&
-			record.y === margin.top - 10 &&
+			record.y === margin.top - 15 &&
 			record.w === current.width &&
-			record.h === height + 20
+			record.h === height + 30
 		)).to.be.true;
 
 		rect.mockRestore();
