@@ -194,7 +194,9 @@ export default {
 		for (i = 0; i < len; i++) {
 			row = d[i];
 
-			if (!row || !(getRowValue(row) || getRowValue(row) === 0)) {
+			const rowValue = row && getRowValue(row);
+
+			if (!row || !(rowValue || rowValue === 0)) {
 				continue;
 			}
 

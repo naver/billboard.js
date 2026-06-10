@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 // @ts-nocheck
-import {describe, expect, it} from "vitest";
+import {describe, expect, it, vi} from "vitest";
 
 import CanvasAxisRenderer from "../../src/canvas/CanvasAxisRenderer";
 
@@ -140,7 +140,9 @@ function makeContext(overrides = {}) {
 				}))
 			}]
 		},
-		filterTargetsToShow: targets => targets,
+		filterTargetsToShow(targets) {
+			return targets ?? this.data.targets;
+		},
 		config: {
 			axis_rotated: false,
 			axis_tooltip: {backgroundColor: {x: "#111", y: "#222", y2: "#333"}},
@@ -246,6 +248,27 @@ describe("ESM canvas axis renderer coverage", () => {
 		renderer.drawAxisTooltip(ctx, [70, 60]);
 
 		expect(renderer.ctx).to.not.be.null;
+	});
+
+	it("adds extra horizontal clip padding for rotated x tick text", () => {
+		const {renderer} = makeAxisRenderer();
+		const ctx = makeContext();
+		const rects: Array<{x: number, y: number, w: number, h: number}> = [];
+		const rect = vi.spyOn(CanvasRenderingContext2D.prototype, "rect")
+			.mockImplementation(function(x, y, w, h) {
+				rects.push({x, y, w, h});
+			});
+
+		renderer.draw(ctx);
+
+		expect(rects.some(({x, y, w, h}) =>
+			x === 10 &&
+			y === 0 &&
+			w === 160 &&
+			h === 220
+		)).to.be.true;
+
+		rect.mockRestore();
 	});
 
 	it("draws rotated axes, category regions and rotated axis tooltips", () => {

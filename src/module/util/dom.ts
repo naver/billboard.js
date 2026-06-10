@@ -38,21 +38,25 @@ function getCssSelector(s: string): string {
  */
 function _getRect(
 	relativeViewport: boolean,
-	node: SVGElement & Partial<{rect: DOMRect | SVGRect}>,
+	node: SVGElement & Partial<{rectClient: DOMRect, rectBBox: SVGRect}>,
 	forceEval = false
 ): DOMRect | SVGRect {
 	const _ = n => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+
+	// cache per API: getBoundingClientRect(viewport coords) and getBBox(local coords)
+	// return different values for the same node and must not share one slot
+	const cacheKey = relativeViewport ? "rectClient" : "rectBBox";
 
 	if (forceEval) {
 		return _(node);
 	} else {
 		// will cache the value if the element is not a SVGElement or the width is not set
-		const needEvaluate = !("rect" in node) || (
-			"rect" in node && node.hasAttribute("width") &&
-			node.rect!.width !== +(node.getAttribute("width") || 0)
+		const needEvaluate = !(cacheKey in node) || (
+			node.hasAttribute("width") &&
+			node[cacheKey]!.width !== +(node.getAttribute("width") || 0)
 		);
 
-		return needEvaluate ? (node.rect = _(node)) : node.rect!;
+		return needEvaluate ? (node[cacheKey] = _(node)) : node[cacheKey]!;
 	}
 }
 
@@ -307,7 +311,8 @@ function getElementPos(element: SVGElement | undefined, type: "x" | "y"): number
 function hasViewBox(svg: d3Selection): boolean {
 	const attr = svg.attr("viewBox");
 
-	return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
+	// a valid viewBox has 4 numeric tokens: "min-x min-y width height"
+	return attr ? attr.trim().split(/[\s,]+/).length === 4 : false;
 }
 
 /**
@@ -324,7 +329,8 @@ function hasStyle(node, condition: Record<string, string>, all = false): boolean
 	for (const [key, value] of Object.entries(condition)) {
 		has = isD3Node ? node.style(key) === value : node.style[key] === value;
 
-		if (all === false && has) {
+		// any-mode: stop on first match / all-mode: stop on first mismatch
+		if (all ? !has : has) {
 			break;
 		}
 	}

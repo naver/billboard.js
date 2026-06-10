@@ -576,6 +576,27 @@ describe("ESM canvas helper coverage", () => {
 			]);
 		});
 
+		it("includes alphabetic baseline descent in label decoration boxes", () => {
+			const ctx = {
+				font: "10px sans-serif",
+				textAlign: "center",
+				textBaseline: "alphabetic",
+				measureText: () => ({
+					width: 20,
+					fontBoundingBoxAscent: 10,
+					fontBoundingBoxDescent: 2
+				})
+			};
+			const box = getLabelDecorationBox(ctx, "30", 50, 60);
+
+			expect(box).to.deep.equal({
+				x: 40,
+				y: 50,
+				w: 20,
+				h: 12
+			});
+		});
+
 		it("resolves rotated label anchors and positions", () => {
 			expect(getLabelRotateAnchor(90)).to.be.equal("end");
 			expect(getLabelRotateAnchor(180)).to.be.equal("middle");

@@ -67,6 +67,14 @@ function _buildLegendItemMap($$, legendItems): void {
 		return;
 	}
 
+	// rebuild from all rendered items, not the passed (possibly enter-only) selection,
+	// so existing items aren't dropped from the map when new series are loaded
+	const allItems = $$.$el.legend?.selectAll(`.${$LEGEND.legendItem}`);
+
+	if (allItems && !allItems.empty()) {
+		legendItems = allItems;
+	}
+
 	// Convert D3 selection to array of [id, node] pairs
 	const items: Array<{id: string, node: HTMLElement}> = [];
 
@@ -258,8 +266,7 @@ export default {
 		} else if (!state.hasTreemap) {
 			$$.updateLegendElement(
 				targetIds || $$.mapToIds($$.data.targets),
-				optionz,
-				transitions
+				optionz
 			);
 		}
 
@@ -522,11 +529,13 @@ export default {
 
 		if (config.legend_show && isEmpty(targetIds)) {
 			config.legend_show = false;
-			legend.style("visibility", "hidden");
+			legend?.style("visibility", "hidden");
 		}
 
 		$$.addHiddenLegendIds(targetIds);
-		legend.selectAll($$.selectorLegends(targetIds))
+
+		// legend element isn't created when the chart was generated with legend.show=false
+		legend?.selectAll($$.selectorLegends(targetIds))
 			.style("opacity", "0")
 			.style("visibility", "hidden");
 	},
@@ -1066,41 +1075,55 @@ export default {
 		if (usePoint) {
 			const tiles = legend.selectAll(`.${$LEGEND.legendItemPoint}`)
 				.data(targetIdz);
+			const isRectangleTile = config.legend_item_tile_type !== "circle";
+			const tileWidth = isRectangleTile ?
+				config.legend_item_tile_width :
+				config.legend_item_tile_r * 2;
+			const tileHeight = isRectangleTile ?
+				config.legend_item_tile_height :
+				config.legend_item_tile_r * 2;
+			const iconWidth = tileWidth * 0.75;
+			const iconHeight = tileHeight * 0.75;
+			const customScaleX = tileWidth / 8;
+			const customScaleY = tileHeight / 8;
 
 			$T(tiles, withTransition)
 				.each(function() {
 					const nodeName = this.nodeName.toLowerCase();
-					const pointR = config.point_r;
 					let x = "x";
 					let y = "y";
-					let xOffset = 2;
-					let yOffset = 2.5;
 					let radius = null;
 					let width = <number | null>null;
 					let height = <number | null>null;
 
 					if (nodeName === "circle") {
-						const size = pointR * 0.2;
-
 						x = "cx";
 						y = "cy";
-						radius = pointR + size;
-						xOffset = pointR * 2;
-						yOffset = -size;
+						radius = Math.min(iconWidth, iconHeight) / 2;
 					} else if (nodeName === "rect") {
-						const size = pointR * 2.5;
-
-						width = size;
-						height = size;
-						yOffset = 3;
+						width = iconWidth;
+						height = iconHeight;
 					}
 
-					d3Select(this)
-						.attr(x, d => posFn.x1Tile(d) + xOffset)
-						.attr(y, d => posFn.yTile(d) - yOffset)
+					const tile = d3Select(this)
+						.attr("transform", null)
+						.attr("x", null)
+						.attr("y", null)
+						.attr("cx", null)
+						.attr("cy", null)
 						.attr("r", radius)
 						.attr("width", width)
 						.attr("height", height);
+
+					if (nodeName === "use") {
+						tile.attr("transform", d =>
+							`translate(${posFn.x1Tile(d)} ${posFn.yTile(d) - tileHeight / 2}) ` +
+							`scale(${customScaleX} ${customScaleY})`);
+					} else {
+						tile
+							.attr(x, d => posFn.x1Tile(d) + ((tileWidth - (width || 0)) / 2))
+							.attr(y, d => posFn.yTile(d) - ((height || 0) / 2));
+					}
 				});
 		} else {
 			const tiles = legend.selectAll(`.${$LEGEND.legendItemTile}`)

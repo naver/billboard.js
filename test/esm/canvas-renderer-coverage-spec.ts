@@ -113,7 +113,9 @@ function makeContext() {
 			subchart_showHandle: true
 		},
 		data: {targets},
-		filterTargetsToShow: list => list,
+		filterTargetsToShow(list) {
+			return list ?? this.data.targets;
+		},
 		generateGetBarPoints: () => (d, i) => [[i * 28, 0], [i * 28 + 12, 18]],
 		generateGetCandlestickPoints: () => (d, i) => [[i * 28, 4], [i * 28 + 10, 16], [i * 28 + 5, 0, 20]],
 		getBaseValue: d => d.value,
@@ -691,6 +693,88 @@ describe("ESM canvas renderer coverage", () => {
 		renderer.drawTreemaps(ctx);
 
 		expect(renderer.ctx).to.not.be.null;
+	});
+
+	it("positions treemap labels using SVG-compatible centered option", () => {
+		const {renderer} = makeRenderer();
+		const ctx = makeContext();
+		const records: Array<{
+			text: string,
+			x: number,
+			y: number,
+			textAlign: string,
+			textBaseline: string
+		}> = [];
+		const fillText = vi
+			.spyOn(CanvasRenderingContext2D.prototype, "fillText")
+			.mockImplementation(function(text, x, y) {
+				records.push({
+					text: String(text),
+					x: Number(x),
+					y: Number(y),
+					textAlign: this.textAlign,
+					textBaseline: this.textBaseline
+				});
+			});
+		const left = 20;
+		const top = 10;
+		const width = 100;
+		const height = 70;
+		const lineHeight = 10;
+		renderer.ctx.font = "10px sans-serif";
+		const metrics = renderer.ctx.measureText("tile");
+		const fontBoundingHeight = (
+			(metrics.fontBoundingBoxAscent || 0) +
+			(metrics.fontBoundingBoxDescent || 0)
+		) || (
+			(metrics.actualBoundingBoxAscent || 0) +
+			(metrics.actualBoundingBoxDescent || 0)
+		);
+		const textHeight = Math.max(lineHeight, fontBoundingHeight) + lineHeight;
+
+		ctx.config.data_type = TYPE.TREEMAP;
+		ctx.config.data_types = {tile: TYPE.TREEMAP};
+		ctx.config.data_labels = {centered: false};
+		ctx.config.treemap_label_format = () => "tile\n80%";
+		ctx.config.treemap_label_show = true;
+		ctx.config.treemap_label_threshold = 0;
+		ctx.getTreemapRoot = () => ({
+			children: [{
+				data: {id: "tile", name: "tile", ratio: 0.8, value: 3},
+				x0: 1,
+				x1: 6,
+				y0: 1,
+				y1: 8
+			}]
+		});
+		ctx.scale.x = value => value * 20;
+		ctx.scale.y = value => value * 10;
+
+		renderer.drawTreemaps(ctx);
+
+		const nonCentered = records.find(record => record.text === "tile");
+		const nonCenteredSecondLine = records.find(record => record.text === "80%");
+
+		expect(nonCentered?.x).to.be.equal(left + 5);
+		expect(nonCentered?.y).to.be.equal(top + textHeight + 5 - lineHeight);
+		expect(nonCenteredSecondLine?.y).to.be.equal(top + textHeight + 5);
+		expect(nonCentered?.textAlign).to.be.equal("left");
+		expect(nonCentered?.textBaseline).to.be.equal("alphabetic");
+
+		records.length = 0;
+		ctx.config.data_labels.centered = true;
+		renderer.drawTreemaps(ctx);
+
+		const centered = records.find(record => record.text === "tile");
+		const centeredSecondLine = records.find(record => record.text === "80%");
+
+		expect(centered?.x).to.be.equal(left + width / 2);
+		expect(centered?.y).to.be.equal(top + height / 2 - 5);
+		expect(centeredSecondLine?.y).to.be.equal(top + height / 2 + 5);
+		expect(centered?.textAlign).to.be.equal("center");
+		expect(centered?.textBaseline).to.be.equal("middle");
+
+		fillText.mockRestore();
 	});
 
 	it("clears image caches on destroy", () => {

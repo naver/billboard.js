@@ -296,6 +296,11 @@ export default {
 		const useRAF = sourceEvent && isMousemove && config.zoom_type !== "wheel";
 
 		const executeRedraw = () => {
+			// chart can be destroyed before a RAF-deferred frame fires
+			if (!$$.config) {
+				return;
+			}
+
 			$$.redraw({
 				withTransition: doTransition,
 				withY: config.zoom_rescale,
@@ -497,6 +502,12 @@ export default {
 						.attr("width", isRotated ? state.width : 0)
 						.attr("height", isRotated ? 0 : state.height);
 				}
+
+				// refresh the fixed dimension: the chart may have been resized since creation
+				zoomRect?.attr(
+					isRotated ? "width" : "height",
+					isRotated ? state.width : state.height
+				);
 
 				start = clampPointer(getZoomDragPointer($$, event, this)[prop.index]);
 				end = start;

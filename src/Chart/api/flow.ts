@@ -125,6 +125,11 @@ export default {
 			$$.data.targets.forEach(t => {
 				for (let i = 0; i < notfoundIds.length; i++) {
 					if (t.id === notfoundIds[i]) {
+						// target can have no values when fully flowed out
+						if (!t.values[t.values.length - 1]) {
+							continue;
+						}
+
 						tail = t.values[t.values.length - 1].index + 1;
 
 						for (let j = 0; j < length; j++) {

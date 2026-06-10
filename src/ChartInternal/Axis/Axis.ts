@@ -759,7 +759,7 @@ class Axis {
 		let count = config.axis_x_tick_count;
 		let values;
 
-		if (fit || (count && fit)) {
+		if (fit) {
 			values = $$.mapTargetsToUniqueXs(targets);
 
 			// if given count is greater than the value length, then limit the count.
@@ -1105,7 +1105,7 @@ class Axis {
 
 			// do not compute if domain or currentMaxTickDomain is same
 			if (isDomainSame || isCurrentMaxTickDomainSame) {
-				return currentTickMax.size;
+				return currentTickMax;
 			} else {
 				currentTickMax.domain = domain;
 			}
@@ -1601,6 +1601,9 @@ class Axis {
 							break;
 						}
 					}
+
+					// culling.max <= 1 or a single tick can't satisfy the loop condition
+					intervalForCulling = intervalForCulling ?? tickSize;
 
 					// Build index map once: O(n) instead of O(n²) indexOf per tick
 					const tickIndexMap = new Map();

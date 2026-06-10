@@ -142,18 +142,28 @@ describe("MODULE coverage helpers", () => {
 			const terminated: string[] = [];
 
 			class MockWorker {
-				onmessage = null;
 				onerror = null;
 				src;
+				listeners: Function[] = [];
 
 				constructor(src) {
 					this.src = src;
 					created.push(src);
 				}
 
-				postMessage(args) {
+				addEventListener(type, fn) {
+					this.listeners.push(fn);
+				}
+
+				removeEventListener(type, fn) {
+					this.listeners = this.listeners.filter(f => f !== fn);
+				}
+
+				postMessage(data) {
 					setTimeout(() => {
-						this.onmessage?.({data: args[0] * 3});
+						const e = {data: {id: data.id, result: data.args[0] * 3}};
+
+						this.listeners.slice().forEach(fn => fn(e));
 					});
 				}
 
@@ -327,7 +337,7 @@ describe("MODULE coverage helpers", () => {
 			expect(getMinMax("min", dates)).to.be.deep.equal(new Date(1));
 			expect(getMinMax("max", [])).to.be.undefined;
 			expect(getRange(0, 5)).to.be.deep.equal([0, 1, 2, 3, 4]);
-			expect(getRange(1, 6, 2)).to.be.deep.equal([3, 5]);
+			expect(getRange(1, 6, 2)).to.be.deep.equal([1, 3, 5]);
 			expect(findIndex(boxes, 11, 0, boxes.length - 1, false)).to.be.equal(1);
 			expect(findIndex(boxes, 7, 0, boxes.length - 1, false)).to.be.equal(-1);
 			expect(findIndex(rotatedBoxes, 21, 0, rotatedBoxes.length - 1, true)).to.be.equal(2);

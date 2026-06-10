@@ -226,7 +226,8 @@ export default {
 			// value 4, is to adjust coordinate value set from: scale.ts - updateScales(): $$.getResettedPadding(1)
 			let y = top + (mouse ? mouse[1] : 0) + (isRotated ? 4 : 0);
 
-			if (hasViewBox(svg)) {
+			// eventRect doesn't exist for radar/funnel/treemap charts
+			if (hasViewBox(svg) && $$.$el.eventRect) {
 				const ctm = getTransformCTM($$.$el.eventRect.node(), x, y, false);
 
 				x = ctm.x;
@@ -264,10 +265,13 @@ export default {
 	 */
 	unbindZoomEvent(): void {
 		const $$ = this;
-		const {$el: {canvas, eventRect, zoomResetBtn}} = $$;
+		const {$el: {canvas, eventRect, svg, zoomResetBtn}} = $$;
 
 		eventRect?.on(".zoom wheel.zoom .drag", null);
 		canvas?.on(".zoom wheel.zoom .drag", null);
+
+		// remove the Safari wheel workaround listener bound in bindZoomOnEventRect()
+		svg?.on("wheel", null);
 
 		zoomResetBtn?.on("click", null)
 			.style("display", "none");

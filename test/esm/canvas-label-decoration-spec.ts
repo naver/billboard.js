@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* global describe, afterEach, beforeAll, it, expect */
 import {afterEach, beforeAll, describe, expect, it, vi} from "vitest";
-import bb, {bar, canvas, line} from "../../src/index.canvas";
+import bb, {bar, canvas, line, treemap} from "../../src/index.canvas";
 
 describe("ESM canvas data label decorations", () => {
 	let chart;
@@ -15,6 +15,7 @@ describe("ESM canvas data label decorations", () => {
 		canvas();
 		bar();
 		line();
+		treemap();
 	});
 
 	afterEach(() => {
@@ -52,6 +53,17 @@ describe("ESM canvas data label decorations", () => {
 		}));
 	}
 
+	function getTransformedRect(ctx, x, y, w, h) {
+		const matrix = ctx.getTransform();
+
+		return {
+			x: (matrix.a * x) + (matrix.c * y) + matrix.e,
+			y: (matrix.b * x) + (matrix.d * y) + matrix.f,
+			w: matrix.a * w,
+			h: matrix.d * h
+		};
+	}
+
 	it("draws label backgrounds before canvas label text", () => {
 		const calls = [];
 		let boundApi;
@@ -83,6 +95,81 @@ describe("ESM canvas data label decorations", () => {
 		const textIndex = calls.findIndex(call => call.type === "text" && call.text === "30");
 
 		expect(boundApi).to.equal(chart);
+		expect(backgroundIndex).to.be.greaterThan(-1);
+		expect(textIndex).to.be.greaterThan(-1);
+		expect(backgroundIndex).to.be.lessThan(textIndex);
+	});
+
+	it("aligns bar label background bounds with SVG alphabetic baseline", () => {
+		const rects = [];
+
+		vi.spyOn(CanvasRenderingContext2D.prototype, "fillRect")
+			.mockImplementation(function(x, y, w, h) {
+				rects.push({
+					style: String(this.fillStyle),
+					rect: getTransformedRect(this, x, y, w, h)
+				});
+			});
+
+		generateWithOptions({
+			data: {
+				columns: [
+					["data1", 30, -200],
+					["data2", -50, 150]
+				],
+				type: bar(),
+				labels: {
+					backgroundColors: "yellow",
+					colors: "red"
+				}
+			}
+		});
+
+		const blueBars = rects.filter(({style}) => style === "#1f77b4");
+		const yellowLabels = rects.filter(({style}) => style === "#ffff00");
+		const positiveGap = blueBars[0].rect.y -
+			(yellowLabels[0].rect.y + yellowLabels[0].rect.h);
+		const negativeOverlap = (blueBars[1].rect.y + blueBars[1].rect.h) -
+			yellowLabels[1].rect.y;
+
+		expect(positiveGap).to.be.closeTo(1, 1);
+		expect(negativeOverlap).to.be.closeTo(1, 1);
+	});
+
+	it("draws treemap label backgrounds before canvas label text", () => {
+		const calls = [];
+
+		vi.spyOn(CanvasRenderingContext2D.prototype, "fillRect").mockImplementation(function() {
+			calls.push({type: "fillRect", style: String(this.fillStyle)});
+		});
+		vi.spyOn(CanvasRenderingContext2D.prototype, "fillText").mockImplementation(function(text) {
+			calls.push({type: "text", text: String(text), style: String(this.fillStyle)});
+		});
+
+		generateWithOptions({
+			data: {
+				columns: [
+					["data1", 30],
+					["data2", 20]
+				],
+				type: treemap(),
+				labels: {
+					backgroundColors: "yellow",
+					colors: "#000"
+				}
+			},
+			treemap: {
+				label: {
+					threshold: 0
+				}
+			}
+		});
+
+		const backgroundIndex = calls.findIndex(call =>
+			call.type === "fillRect" && call.style === "#ffff00"
+		);
+		const textIndex = calls.findIndex(call => call.type === "text" && call.text === "data1");
+
 		expect(backgroundIndex).to.be.greaterThan(-1);
 		expect(textIndex).to.be.greaterThan(-1);
 		expect(backgroundIndex).to.be.lessThan(textIndex);

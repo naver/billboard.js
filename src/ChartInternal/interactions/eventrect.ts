@@ -270,10 +270,11 @@ export default {
 		const isRotated = config.axis_rotated;
 		const isMultipleX = $$.isMultipleX();
 
-		// Skip recalculation if scale domain or visibility hasn't changed
+		// Skip recalculation if scale domain, plot size or visibility hasn't changed.
+		// width/height must be part of the key: resize keeps the domain but moves coords.
 		const xDomain = xScale?.domain();
 		const fingerprint = xDomain ?
-			`${xDomain[0]}_${xDomain[1]}_${$$.data.targets.length}_${
+			`${xDomain[0]}_${xDomain[1]}_${state.width}_${state.height}_${$$.data.targets.length}_${
 				[...state.hiddenTargetIds].join(",")
 			}` :
 			null;
@@ -324,9 +325,6 @@ export default {
 							(xScale(x.prev) + xScale(d.x)) / 2
 						);
 					} else {
-						x.prev = x.prev ?? xDomain[0];
-						x.next = x.next ?? xDomain[1];
-
 						val = Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
 					}
 
@@ -488,7 +486,7 @@ export default {
 
 		// Show cursor as pointer if point is close to mouse position
 		if ($$.isBarType(closest.id) || dist < $$.getPointSensitivity(closest)) {
-			$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", "pointer");
+			$$.$el.eventRect.style("cursor", "pointer");
 
 			if (
 				triggerEvent && (
@@ -519,7 +517,7 @@ export default {
 			return;
 		}
 
-		$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", null);
+		$$.$el.eventRect?.style("cursor", null);
 		$$.hideGridFocus?.();
 
 		if (tooltip) {
@@ -639,9 +637,9 @@ export default {
 				.on("mouseout", event => {
 					state.event = event;
 
-					// chart is destroyed
+					// chart is destroyed ($$.config, not the closure-captured one, becomes null)
 					if (
-						!config || $$.hasArcType() || eventReceiver.currentIdx === -1 ||
+						!$$.config || $$.hasArcType() || eventReceiver.currentIdx === -1 ||
 						!config.interaction_onout
 					) {
 						return;
@@ -728,11 +726,12 @@ export default {
 
 		const mouse = getPointer(state.event, this);
 		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
-		const sensitivity = $$.getPointSensitivity(closest);
 
 		if (!closest) {
 			return;
 		}
+
+		const sensitivity = $$.getPointSensitivity(closest);
 
 		// select if selection enabled
 		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < sensitivity) {

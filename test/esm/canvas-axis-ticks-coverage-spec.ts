@@ -109,7 +109,9 @@ function getInternal(overrides = {}) {
 			grid_y_ticks: undefined
 		},
 		data: {targets: [target]},
-		filterTargetsToShow: targets => targets,
+		filterTargetsToShow(targets) {
+			return targets ?? this.data.targets;
+		},
 		format: {
 			dataTime: () => value => new Date(`${value}T00:00:00Z`)
 		},

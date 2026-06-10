@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import type {DataRow} from "../../types/types";
-import {isString, isValue} from "./util";
+import {isString} from "./util";
 
 /**
  * Constant for cache key
@@ -86,9 +86,8 @@ export default class Cache {
 
 			return targets;
 		} else {
-			const value = this.cache.get(key as string);
-
-			return isValue(value) ? value : null;
+			// use .has() so stored falsy values (false, "", 0) aren't reported as a miss
+			return this.cache.has(key as string) ? this.cache.get(key as string) : null;
 		}
 	}
 

@@ -507,8 +507,7 @@ function getStepTicks(domain: number[], stepSize: number): number[] {
 export function getXTickValues($$, cull = true): AxisTickValue[] {
 	const {axis, config} = $$;
 	const targetScale = getXScale($$);
-	const targetsToShow = $$.getTargetsToShow?.() ||
-		$$.filterTargetsToShow($$.data.targets);
+	const targetsToShow = $$.getTargetsToShow?.() || $$.filterTargetsToShow();
 	const cache = $$.state._canvasXTickValuesCache ||
 		($$.state._canvasXTickValuesCache = new Map<string, AxisTickValue[]>());
 	const cacheKey = getXTickCacheKey($$, cull);
@@ -603,8 +602,7 @@ function getSubXTickCullMax($$): number | undefined {
 export function getSubXTickValues($$): AxisTickValue[] {
 	const {axis, config, scale} = $$;
 	const targetScale = scale.subX;
-	const targetsToShow = $$.getTargetsToShow?.() ||
-		$$.filterTargetsToShow($$.data.targets);
+	const targetsToShow = $$.getTargetsToShow?.() || $$.filterTargetsToShow();
 	const cullMax = getSubXTickCullMax($$);
 	const cull = (ticks: AxisTickValue[]): AxisTickValue[] => cullTicks(ticks, cullMax);
 

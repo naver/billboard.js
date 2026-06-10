@@ -59,7 +59,9 @@ const subchart = function<T = TDomain[]>(domainValue?: T): T | undefined {
 			);
 
 			if (isWithinRange) {
-				state.domain = domain;
+				// store a copy: brush events mutate state.domain in place,
+				// which would corrupt the caller-passed array
+				state.domain = domain.slice();
 
 				brush.move(
 					brush.getSelection(),
