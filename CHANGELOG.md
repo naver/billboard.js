@@ -1,3 +1,11 @@
+# [4.0.0-next.3](https://github.com/naver/billboard.js/compare/4.0.0-next.2...4.0.0-next.3) (2026-06-10)
+
+
+### Bug Fixes
+
+* **background:** Correct background image position in canvas ([34009de](https://github.com/naver/billboard.js/commit/34009de310a2f1370388b291cc08a18d1cc9981c))
+* **canvas:** align rendering and touch interaction parity ([5944cab](https://github.com/naver/billboard.js/commit/5944cab8ddf4808faf9744d8a6b573996eb1903e))
+
 # [4.0.0-next.2](https://github.com/naver/billboard.js/compare/4.0.0-next.1...4.0.0-next.2) (2026-06-09)
 
 
