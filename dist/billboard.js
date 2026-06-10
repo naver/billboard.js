@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260609012137
+ * @version 3.18.0-nightly-20260610012637
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -235,6 +235,16 @@ const AXIS_TICK_SIZE = 6;
 const AXIS_TICK_PADDING = 3;
 const AXIS_TICK_LENGTH = AXIS_TICK_SIZE + AXIS_TICK_PADDING;
 const AXIS_TICK_LINE_OVERLAP_PADDING = 1;
+const SUBCHART_BRUSH_HANDLE_PATH = {
+  x: {
+    start: "M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z",
+    end: "M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"
+  },
+  y: {
+    start: "M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z",
+    end: "M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"
+  }
+};
 const TYPE_METHOD_NEEDED = {
   AREA: "initArea",
   AREA_LINE_RANGE: "initArea",
@@ -1707,36 +1717,37 @@ function getXTickLineValues($$, textTicks, tickLineWidth = 1) {
   const lineTicks = getXTickValues($$, false);
   return hasOverlappedXTickLineIntervals($$, lineTicks, tickLineWidth) ? textTicks : dedupeXTickLineValues($$, lineTicks);
 }
-function getYTickValues($$, id = "y", count) {
+function getYTickValues($$, id = "y", count, culling = true) {
   var _a, _b, _c;
   const { axis, config, scale } = $$;
   const prefix = `axis_${id}`;
   const targetScale = scale[id];
   const explicit = getOptionTickValues(config[`${prefix}_tick_values`], $$.api);
+  const maybeCull = (ticks) => culling ? cullAxisTicks($$, id, ticks) : ticks;
   if (explicit) {
-    return normalizeYTickValues($$, explicit, id);
+    return maybeCull(normalizeYTickValues($$, explicit, id));
   }
   const stepTicks = getStepTicks(targetScale.domain(), config[`${prefix}_tick_stepSize`]);
   if (stepTicks.length) {
-    return stepTicks;
+    return maybeCull(stepTicks);
   }
   const tickCount = count != null ? count : config[`${prefix}_tick_count`];
   if (((_a = axis == null ? void 0 : axis.isTimeSeries) == null ? void 0 : _a.call(axis, id)) && config[`${prefix}_tick_time_value`]) {
-    return getScaleTicks(targetScale, config[`${prefix}_tick_time_value`]);
+    return maybeCull(getScaleTicks(targetScale, config[`${prefix}_tick_time_value`]));
   }
   if ((_b = axis == null ? void 0 : axis.isLog) == null ? void 0 : _b.call(axis, id)) {
-    return getLogScaleTicks(targetScale, tickCount);
+    return maybeCull(getLogScaleTicks(targetScale, tickCount));
   }
   if (tickCount) {
     const domain = targetScale.domain();
-    return generateTickValues(
+    return maybeCull(generateTickValues(
       $$,
       domain,
       domain.every((v) => v === 0) ? 1 : tickCount,
       (_c = axis == null ? void 0 : axis.isTimeSeries) == null ? void 0 : _c.call(axis, id)
-    );
+    ));
   }
-  return getScaleTicks(targetScale, AXIS_DEFAULT_TICK_COUNT);
+  return maybeCull(getScaleTicks(targetScale, AXIS_DEFAULT_TICK_COUNT));
 }
 function getAdditionalAxisScale($$, id, axisConfig) {
   const baseScale = id === "x" ? getXScale($$) : $$.scale[id];
@@ -1773,6 +1784,35 @@ function cullTicks(ticks, count) {
     return Array.from({ length: count }, (_, i) => ticks[Math.round(i * last / (count - 1))]);
   }
   return ticks;
+}
+function cullAxisTicks($$, id, ticks) {
+  const { config } = $$;
+  const prefix = `axis_${id}_tick_culling`;
+  if (!config[prefix]) {
+    return ticks;
+  }
+  const sortedTicks = ticks.slice().sort((a, b) => {
+    const av = +a;
+    const bv = +b;
+    const order = Number.isFinite(av) && Number.isFinite(bv) ? av - bv : String(a).localeCompare(String(b));
+    return config[`${prefix}_reverse`] ? -order : order;
+  });
+  const tickSize = sortedTicks.length;
+  const cullingMax = config[`${prefix}_max`] || AXIS_DEFAULT_TICK_COUNT;
+  let intervalForCulling = 0;
+  for (let i = 1; i < tickSize; i++) {
+    if (tickSize / i < cullingMax) {
+      intervalForCulling = i;
+      break;
+    }
+  }
+  if (!intervalForCulling) {
+    return ticks;
+  }
+  const visible = new Set(
+    sortedTicks.filter((_, i) => i % intervalForCulling === 0)
+  );
+  return ticks.filter((tick) => visible.has(tick));
 }
 function cullDataTicks($$, ticks, sorted = false) {
   const { config } = $$;
@@ -1830,7 +1870,7 @@ function getYGridTickValues($$) {
   if (generated == null ? void 0 : generated.length) {
     return generated;
   }
-  return config.grid_y_ticks ? cullTicks(getYTickValues($$, "y"), config.grid_y_ticks) : getYTickValues($$);
+  return config.grid_y_ticks ? cullTicks(getYTickValues($$, "y", void 0, false), config.grid_y_ticks) : getYTickValues($$, "y", void 0, false);
 }
 
 ;// ./src/canvas/CanvasPainter.ts
@@ -2086,11 +2126,13 @@ class CanvasPainter {
     this.withState((ctx) => {
       const lines = text.split("\n");
       const lineHeight = parseFloat((style == null ? void 0 : style.font) || ctx.font) || 12;
+      const firstLineY = lines.length > 1 ? -((lines.length - 1) * lineHeight) : 0;
       this.applyStyle(style);
       ctx.translate(x, y);
       (style == null ? void 0 : style.angle) && ctx.rotate(style.angle * Math.PI / 180);
       lines.forEach((line, i) => {
-        (style == null ? void 0 : style.maxWidth) === void 0 ? ctx.fillText(line, 0, i * lineHeight) : ctx.fillText(line, 0, i * lineHeight, style.maxWidth);
+        const lineY = firstLineY + i * lineHeight;
+        (style == null ? void 0 : style.maxWidth) === void 0 ? ctx.fillText(line, 0, lineY) : ctx.fillText(line, 0, lineY, style.maxWidth);
       });
     });
   }
@@ -2368,7 +2410,7 @@ function splitTickTextByWidth(text, width, painter) {
       if (width < charWidth * (i + 1)) {
         const splitIndex = spaceIndex || i;
         return split(
-          lines.concat(value.substr(0, splitIndex)),
+          lines.concat(value.slice(0, splitIndex)),
           value.slice(spaceIndex ? spaceIndex + 1 : i)
         );
       }
@@ -2443,6 +2485,15 @@ function isDrawable(value) {
 }
 function isInAxisRange(value, start, end) {
   return isDrawable(value) && value >= Math.min(start, end) && value <= Math.max(start, end);
+}
+function getXOuterTickDirection(isRotated) {
+  return isRotated ? -1 : 1;
+}
+function getYOuterTickDirection(config, isRotated, isY2) {
+  if (isRotated) {
+    return isY2 ? config.axis_y2_inner ? 1 : -1 : config.axis_y_inner ? -1 : 1;
+  }
+  return isY2 ? config.axis_y2_inner ? -1 : 1 : config.axis_y_inner ? 1 : -1;
 }
 function getXPosition($$, value, targetScale = getXScale($$)) {
   return targetScale(normalizeXValue($$, value));
@@ -2593,6 +2644,7 @@ class CanvasAxisRenderer {
     const rangeEnd = isRotated ? y2 : x2;
     const ticks = getSubXTickValues($$);
     const tickDirection = isRotated ? config.axis_x_tick_inner ? 1 : -1 : config.axis_x_tick_inner ? -1 : 1;
+    const outerTickDirection = getXOuterTickDirection(isRotated);
     const tickTextDirection = getXTickTextDirection(isRotated);
     const tickTextPosition = config.axis_x_tick_text_position;
     const tickRotate = !isRotated ? ((_a = $$.getAxisTickRotate) == null ? void 0 : _a.call($$, "x")) || 0 : 0;
@@ -2616,11 +2668,11 @@ class CanvasAxisRenderer {
           }
           if (config.axis_x_tick_outer) {
             if (isRotated) {
-              painter.traceLine(x, y1, x + AXIS_TICK_SIZE * tickDirection, y1);
-              painter.traceLine(x, y2, x + AXIS_TICK_SIZE * tickDirection, y2);
+              painter.traceLine(x, y1, x + AXIS_TICK_SIZE * outerTickDirection, y1);
+              painter.traceLine(x, y2, x + AXIS_TICK_SIZE * outerTickDirection, y2);
             } else {
-              painter.traceLine(x1, y, x1, y + AXIS_TICK_SIZE * tickDirection);
-              painter.traceLine(x2, y, x2, y + AXIS_TICK_SIZE * tickDirection);
+              painter.traceLine(x1, y, x1, y + AXIS_TICK_SIZE * outerTickDirection);
+              painter.traceLine(x2, y, x2, y + AXIS_TICK_SIZE * outerTickDirection);
             }
           }
         });
@@ -3051,6 +3103,7 @@ class CanvasAxisRenderer {
     const format = (axisOptions == null ? void 0 : axisOptions.format) || axisInstance.getXAxisTickFormat();
     const outerTick = axisOptions ? axisOptions.outerTick : config.axis_x_tick_outer;
     const tickDirection = isRotated ? config.axis_x_tick_inner ? 1 : -1 : config.axis_x_tick_inner ? -1 : 1;
+    const outerTickDirection = getXOuterTickDirection(isRotated);
     const tickTextDirection = getXTickTextDirection(isRotated);
     const tickTextPosition = config.axis_x_tick_text_position;
     const tickRotate = !isRotated ? ((_a = $$.getAxisTickRotate) == null ? void 0 : _a.call($$, "x")) || 0 : 0;
@@ -3067,11 +3120,11 @@ class CanvasAxisRenderer {
           }
           if (outerTick) {
             if (isRotated) {
-              painter.traceLine(x, y1, x + AXIS_TICK_SIZE * tickDirection, y1);
-              painter.traceLine(x, y2, x + AXIS_TICK_SIZE * tickDirection, y2);
+              painter.traceLine(x, y1, x + AXIS_TICK_SIZE * outerTickDirection, y1);
+              painter.traceLine(x, y2, x + AXIS_TICK_SIZE * outerTickDirection, y2);
             } else {
-              painter.traceLine(x1, y, x1, y + AXIS_TICK_SIZE * tickDirection);
-              painter.traceLine(x2, y, x2, y + AXIS_TICK_SIZE * tickDirection);
+              painter.traceLine(x1, y, x1, y + AXIS_TICK_SIZE * outerTickDirection);
+              painter.traceLine(x2, y, x2, y + AXIS_TICK_SIZE * outerTickDirection);
             }
           }
         });
@@ -3082,22 +3135,22 @@ class CanvasAxisRenderer {
         ctx.strokeStyle = axis.tickColor;
         ctx.lineWidth = axis.tickWidth;
         if (config.axis_x_tick_show) {
-          for (const tick of lineTicks) {
-            const tickPos = getXTickLinePosition($$, tick, targetScale);
-            const tx = margin.left + tickPos;
-            const ty = margin.top + tickPos;
-            const pos = isRotated ? ty : tx;
-            if (!isInAxisRange(pos, rangeStart, rangeEnd)) {
-              continue;
-            }
-            painter.strokePath(() => {
+          painter.strokePath(() => {
+            for (const tick of lineTicks) {
+              const tickPos = getXTickLinePosition($$, tick, targetScale);
+              const tx = margin.left + tickPos;
+              const ty = margin.top + tickPos;
+              const pos = isRotated ? ty : tx;
+              if (!isInAxisRange(pos, rangeStart, rangeEnd)) {
+                continue;
+              }
               if (isRotated) {
                 painter.traceLine(x, ty, x + AXIS_TICK_SIZE * tickDirection, ty);
               } else {
                 painter.traceLine(tx, y, tx, y + AXIS_TICK_SIZE * tickDirection);
               }
-            });
-          }
+            }
+          });
         }
         if (!axisOptions && !config.axis_x_tick_text_show) {
           return;
@@ -3371,9 +3424,11 @@ class CanvasAxisRenderer {
     const y1 = margin.top;
     const y2 = margin.top + height;
     const ticks = (axisOptions == null ? void 0 : axisOptions.ticks) || getYTickValues($$, id);
+    const lineTicks = (axisOptions == null ? void 0 : axisOptions.ticks) || (config[`${prefix}_tick_culling`] && config[`${prefix}_tick_culling_lines`] !== false ? getYTickValues($$, id, void 0, false) : ticks);
     const format = (axisOptions == null ? void 0 : axisOptions.format) || ((_c = (_b = (_a = $$.axis) == null ? void 0 : _a[id]) == null ? void 0 : _b.tickFormat) == null ? void 0 : _c.call(_b)) || ((_d = config[`${prefix}_tick_format`]) == null ? void 0 : _d.bind($$.api)) || ((v) => v);
     const outerTick = axisOptions ? axisOptions.outerTick : config[`${prefix}_tick_outer`];
     const tickDirection = isRotated ? isY2 ? config.axis_y2_tick_inner ? 1 : -1 : config.axis_y_tick_inner ? -1 : 1 : isY2 ? config.axis_y2_tick_inner ? -1 : 1 : config.axis_y_tick_inner ? 1 : -1;
+    const outerTickDirection = getYOuterTickDirection(config, isRotated, isY2);
     const tickTextDirection = getYTickTextDirection(isRotated, isY2);
     const tickTextPosition = config[`${prefix}_tick_text_position`];
     painter.withState(() => {
@@ -3387,11 +3442,11 @@ class CanvasAxisRenderer {
         }
         if (outerTick) {
           if (isRotated) {
-            painter.traceLine(x1, y, x1, y + AXIS_TICK_SIZE * tickDirection);
-            painter.traceLine(x2, y, x2, y + AXIS_TICK_SIZE * tickDirection);
+            painter.traceLine(x1, y, x1, y + AXIS_TICK_SIZE * outerTickDirection);
+            painter.traceLine(x2, y, x2, y + AXIS_TICK_SIZE * outerTickDirection);
           } else {
-            painter.traceLine(x, y1, x + AXIS_TICK_SIZE * tickDirection, y1);
-            painter.traceLine(x, y2, x + AXIS_TICK_SIZE * tickDirection, y2);
+            painter.traceLine(x, y1, x + AXIS_TICK_SIZE * outerTickDirection, y1);
+            painter.traceLine(x, y2, x + AXIS_TICK_SIZE * outerTickDirection, y2);
           }
         }
       });
@@ -3402,24 +3457,37 @@ class CanvasAxisRenderer {
       ctx.textBaseline = isRotated ? tickTextDirection > 0 ? "top" : "bottom" : "middle";
       ctx.strokeStyle = axis.tickColor;
       ctx.lineWidth = axis.tickWidth;
-      for (const tick of ticks) {
+      const drawableTicks = [];
+      const drawableLineTicks = [];
+      const addDrawableTick = (tick, target) => {
         const value = normalizeYValue($$, tick, id);
         const tx = margin.left + targetScale(value);
         const ty = margin.top + targetScale(value);
         const pos = isRotated ? tx : ty;
         if (!isDrawable(pos)) {
-          continue;
+          return;
         }
-        if (axisOptions || config[`${prefix}_tick_show`]) {
-          painter.strokePath(() => {
+        target.push({ tick, tx, ty });
+      };
+      for (const tick of ticks) {
+        addDrawableTick(tick, drawableTicks);
+      }
+      for (const tick of lineTicks) {
+        addDrawableTick(tick, drawableLineTicks);
+      }
+      if (axisOptions || config[`${prefix}_tick_show`]) {
+        painter.strokePath(() => {
+          for (const { tx, ty } of drawableLineTicks) {
             if (isRotated) {
               painter.traceLine(tx, y, tx, y + AXIS_TICK_SIZE * tickDirection);
             } else {
               painter.traceLine(x, ty, x + AXIS_TICK_SIZE * tickDirection, ty);
             }
-          });
-        }
-        if (axisOptions || config[`${prefix}_tick_text_show`]) {
+          }
+        });
+      }
+      if (axisOptions || config[`${prefix}_tick_text_show`]) {
+        for (const { tick, tx, ty } of drawableTicks) {
           if (isRotated) {
             painter.text(
               formatTick(format, tick),
@@ -4724,7 +4792,7 @@ function drawPointPattern(painter, pattern, x, y, r, style, baseR = r) {
       ctx.beginPath();
       if (shape.type === "path") {
         if (win.Path2D) {
-          const path = new win.Path2D(shape.d);
+          const path = shape.path2D || (shape.path2D = new win.Path2D(shape.d));
           shouldFill && ctx.fill(path);
           shouldStroke && ctx.stroke(path);
         }
@@ -4785,16 +4853,8 @@ const RENDERER_GROUPED_TYPE_FILTERS = [
   isCanvasCandlestickType
 ];
 const MAX_BATCHED_CIRCLE_POINTS = 1e3;
-const SUBCHART_BRUSH_HANDLE_PATH = {
-  x: {
-    start: "M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z",
-    end: "M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"
-  },
-  y: {
-    start: "M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z",
-    end: "M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"
-  }
-};
+const canvasFocusLookupCache = /* @__PURE__ */ new WeakMap();
+const subchartBrushHandlePathCache = /* @__PURE__ */ new Map();
 function applyCssMatrixTransform(ctx, transform) {
   if (!transform || transform === "none") {
     return;
@@ -4819,13 +4879,42 @@ function drawCanvasArea($$, target, indices, painter, isSub = false) {
     generateDrawAreaPath($$, indices, isSub, ctx)(target);
   });
 }
-function isFocusedCanvasDatum(focus, d) {
-  return Boolean(
-    focus && d && focus.id === d.id && ("index" in d ? focus.index === d.index : true)
-  );
-}
 function getFocusedCanvasDatum(focusData, d) {
-  return (focusData == null ? void 0 : focusData.find((focus) => isFocusedCanvasDatum(focus, d))) || null;
+  if (!(focusData == null ? void 0 : focusData.length) || !(d == null ? void 0 : d.id)) {
+    return null;
+  }
+  let lookup = canvasFocusLookupCache.get(focusData);
+  if (!lookup) {
+    lookup = /* @__PURE__ */ new Map();
+    for (const focus of focusData) {
+      if (!(focus == null ? void 0 : focus.id)) {
+        continue;
+      }
+      const targetKey = `${focus.id}:*`;
+      if (!lookup.has(targetKey)) {
+        lookup.set(targetKey, focus);
+      }
+      if ("index" in focus) {
+        lookup.set(`${focus.id}:${focus.index}`, focus);
+      }
+    }
+    canvasFocusLookupCache.set(focusData, lookup);
+  }
+  return "index" in d ? lookup.get(`${d.id}:${d.index}`) || null : lookup.get(`${d.id}:*`) || null;
+}
+function getSubchartBrushHandlePath(axis, type) {
+  const Path2DCtor = win.Path2D;
+  if (!Path2DCtor) {
+    return null;
+  }
+  const key = `${axis}:${type}`;
+  const cached = subchartBrushHandlePathCache.get(key);
+  if (cached) {
+    return cached;
+  }
+  const path = new Path2DCtor(SUBCHART_BRUSH_HANDLE_PATH[axis][type]);
+  subchartBrushHandlePathCache.set(key, path);
+  return path;
 }
 function getCanvasOverColor($$, d) {
   const onover = $$.config.color_onover;
@@ -5115,6 +5204,21 @@ class CanvasRenderer {
    */
   withContext(ctx, draw) {
     this.painter.withContext(ctx, draw);
+  }
+  /**
+   * Release renderer caches that can hold chart or DOM references.
+   * @private
+   */
+  destroy() {
+    const clearImageHandler = (entry) => {
+      entry.image.onload = null;
+      entry.image.onerror = null;
+    };
+    this.labelImageCache.forEach(clearImageHandler);
+    this.backgroundImageCache.forEach(clearImageHandler);
+    this.labelImageCache.clear();
+    this.backgroundImageCache.clear();
+    this.backgroundClassStyleCache.clear();
   }
   /**
    * Get cached image for data label.
@@ -5594,9 +5698,10 @@ class CanvasRenderer {
     const stroke = style.subchartBrush.handleStroke;
     const x = isRotated ? margin2.left + width2 / 2 : margin2.left + coord;
     const y = isRotated ? margin2.top + coord : margin2.top + height2 / 2;
-    const path = new Path2D(
-      SUBCHART_BRUSH_HANDLE_PATH[isRotated ? "y" : "x"][type]
-    );
+    const path = getSubchartBrushHandlePath(isRotated ? "y" : "x", type);
+    if (!path) {
+      return;
+    }
     painter.withState(() => {
       ctx.translate(x, y);
       ctx.fillStyle = fill;
@@ -5724,6 +5829,8 @@ class CanvasRenderer {
       for (const target of targets) {
         const range = getCanvasTargetVisibleRange($$, target);
         const targetOpacity = getCanvasTargetFocusOpacity($$, target);
+        const lineWidth = style.shape.candlestickLineWidth;
+        const strokeColor = style.shape.candlestickStrokeColor || "#000";
         for (let i = range.start; i < range.end; i++) {
           const d = target.values[i];
           const value = (_a2 = $$.getCandlestickData) == null ? void 0 : _a2.call($$, d);
@@ -5736,13 +5843,18 @@ class CanvasRenderer {
           }
           const { body: rect, wickStart, wickEnd } = geometry;
           ctx.fillStyle = getCanvasOverColor($$, getFocusedCanvasDatum(focusData, d)) || getCandlestickColor($$, d, value);
-          ctx.strokeStyle = ctx.fillStyle;
+          ctx.strokeStyle = strokeColor;
           ctx.globalAlpha = targetOpacity;
-          painter.strokePath(() => {
+          lineWidth > 0 && painter.strokePath(() => {
             painter.traceLine(wickStart[0], wickStart[1], wickEnd[0], wickEnd[1]);
           });
           painter.fillRect(rect, {
             alpha: (isExpanded(d) ? style.shape.candlestickExpandedOpacity : 1) * targetOpacity
+          });
+          lineWidth > 0 && painter.strokeRect(rect, {
+            alpha: targetOpacity,
+            lineWidth,
+            stroke: strokeColor
           });
         }
       }
@@ -6241,6 +6353,7 @@ class CanvasRenderer {
     const root = (_a = $$.getTreemapRoot) == null ? void 0 : _a.call($$, $$.data.targets);
     const nodes = (root == null ? void 0 : root.children) || [];
     painter.withState(() => {
+      var _a2;
       ctx.lineWidth = style.treemap.lineWidth;
       ctx.strokeStyle = style.treemap.stroke;
       for (const node of nodes) {
@@ -6257,6 +6370,9 @@ class CanvasRenderer {
         painter.fillRect(rect);
         painter.strokeRect(rect);
         if (!config.treemap_label_show || (data.ratio || 0) < (config.treemap_label_threshold || 0)) {
+          continue;
+        }
+        if ((_a2 = getLabelImageOption($$, data)) == null ? void 0 : _a2.url) {
           continue;
         }
         const label = getTreemapLabelText($$, data, w, h);
@@ -6298,20 +6414,23 @@ class CanvasRenderer {
       if ($$.config.tooltip_show && $$.config.grid_focus_show !== false && !$$.config.axis_tooltip && focus) {
         const { x, y } = getRenderDataPoint($$, focus);
         const axisLineWidth = style.axis.lineWidth;
+        const isRotated = $$.config.axis_rotated;
+        const hasIndexCoordinate = Number.isFinite(isRotated ? y : x);
+        const hasValueCoordinate = Number.isFinite(isRotated ? x : y);
         const crispEdgeX = (value) => painter.crisp(margin.left + value, axisLineWidth) - margin.left;
         const crispEdgeY = (value) => painter.crisp(margin.top + value, axisLineWidth) - margin.top;
         const isEdge = $$.config.grid_focus_edge && !$$.config.tooltip_grouped;
-        if (isFiniteCanvasCoordinate(x, y)) {
+        if (hasIndexCoordinate) {
           painter.strokePath(() => {
             var _a, _b;
-            if ($$.config.axis_rotated) {
+            if (isRotated) {
               painter.traceLine(
                 crispEdgeX(0),
                 y,
-                isEdge ? x : crispEdgeX($$.state.width),
+                isEdge && hasValueCoordinate ? x : crispEdgeX($$.state.width),
                 y
               );
-              if ($$.config.grid_focus_y && !$$.config.tooltip_grouped) {
+              if (hasValueCoordinate && $$.config.grid_focus_y && !$$.config.tooltip_grouped) {
                 const isY2 = ((_a = $$.axis) == null ? void 0 : _a.getId(focus.id)) === "y2";
                 painter.traceLine(
                   x,
@@ -6323,11 +6442,11 @@ class CanvasRenderer {
             } else {
               painter.traceLine(
                 x,
-                isEdge ? y : crispEdgeY(0),
+                isEdge && hasValueCoordinate ? y : crispEdgeY(0),
                 x,
                 crispEdgeY($$.state.height)
               );
-              if ($$.config.grid_focus_y && !$$.config.tooltip_grouped) {
+              if (hasValueCoordinate && $$.config.grid_focus_y && !$$.config.tooltip_grouped) {
                 const isY2 = ((_b = $$.axis) == null ? void 0 : _b.getId(focus.id)) === "y2";
                 painter.traceLine(
                   isEdge && isY2 ? x : crispEdgeX(0),
@@ -6654,6 +6773,7 @@ function applySelectorStyle(target, selector, style) {
       break;
     case ".bb-candlestick":
       mergeThemeSection(target, "shape", {
+        candlestickStrokeColor: readColorValue(style, "stroke"),
         candlestickLineWidth: readNumberValue(style, "stroke-width")
       });
       break;
@@ -6772,9 +6892,22 @@ function getThemeOverride(userOverride) {
   const _a = userOverride, { selectors } = _a, styleOverride = __objRest(_a, ["selectors"]);
   return mergeObj({}, getSelectorThemeOverride(selectors), styleOverride);
 }
+function getThemeCacheKey(container, userOverride) {
+  try {
+    return JSON.stringify({
+      className: container.className,
+      style: container.getAttribute("style") || "",
+      override: userOverride || null
+    });
+  } catch (e) {
+    return null;
+  }
+}
 class CanvasTheme {
   constructor() {
     CanvasTheme_publicField(this, "style");
+    CanvasTheme_publicField(this, "cacheContainer", null);
+    CanvasTheme_publicField(this, "cacheKey", null);
   }
   /**
    * Read theme values from temporary SVG probes.
@@ -6903,7 +7036,7 @@ class CanvasTheme {
     const regionLabel = probeIn("bb-region", "text", "", ["fill", "font"]);
     const bar = probe("path", "bb-bar", ["opacity", "fill-opacity", "stroke", "stroke-width"]);
     const barExpanded = probe("path", "bb-bar _expanded_", ["opacity", "fill-opacity"]);
-    const candlestick = probe("path", "bb-candlestick", ["stroke-width"]);
+    const candlestick = probe("path", "bb-candlestick", ["stroke", "stroke-width"]);
     const candlestickExpanded = probe("path", "bb-candlestick _expanded_", [
       "opacity",
       "fill-opacity"
@@ -7010,6 +7143,7 @@ class CanvasTheme {
         barLineWidth: toNumber(bar["stroke-width"], 0),
         barConnectLineColor: toColor(line.stroke, "#000"),
         barConnectLineWidth: toNumber(line["stroke-width"], 1),
+        candlestickStrokeColor: toColor(candlestick.stroke, "#000"),
         candlestickLineWidth: toNumber(candlestick["stroke-width"], 1),
         candlestickExpandedOpacity: toNumber(
           toPaintOpacity(candlestickExpanded, 1),
@@ -7115,6 +7249,10 @@ class CanvasTheme {
       style.shape.candlestickLineWidth,
       defaultStyle.shape.candlestickLineWidth
     );
+    style.shape.candlestickStrokeColor = toColor(
+      style.shape.candlestickStrokeColor,
+      defaultStyle.shape.candlestickStrokeColor
+    );
     style.shape.candlestickExpandedOpacity = toNumber(
       style.shape.candlestickExpandedOpacity,
       defaultStyle.shape.candlestickExpandedOpacity
@@ -7153,6 +7291,8 @@ class CanvasTheme {
     );
     style.treemap.lineWidth = toNumber(style.treemap.lineWidth, defaultStyle.treemap.lineWidth);
     this.style = style;
+    this.cacheContainer = container;
+    this.cacheKey = getThemeCacheKey(container, userOverride);
     svg.remove();
   }
   /**
@@ -7162,6 +7302,10 @@ class CanvasTheme {
    * @private
    */
   reload(container, userOverride) {
+    const key = getThemeCacheKey(container, userOverride);
+    if (key !== null && this.style && this.cacheContainer === container && this.cacheKey === key) {
+      return;
+    }
     this.load(container, userOverride);
   }
 }
@@ -7404,6 +7548,35 @@ class HitDetector {
     if (!this.pointBased && this.grouped && this.isWithinPlot(mx, my)) {
       const item = this.findNearestIndexItem(mx, my);
       if (item) {
+        return item.data;
+      }
+    }
+    let nearest = null;
+    let min = Number.POSITIVE_INFINITY;
+    for (const item of getGridItems(this.pointGrid, mx, my, this.pointCellSize, 1)) {
+      const dx = item.x - mx;
+      const dy = item.y - my;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const sensitivity = (_a = item.sensitivity) != null ? _a : HIT_DISTANCE;
+      if (dist <= sensitivity && dist < min) {
+        min = dist;
+        nearest = item;
+      }
+    }
+    return (_b = nearest == null ? void 0 : nearest.data) != null ? _b : null;
+  }
+  /**
+   * Find the nearest directly hit shape row, excluding grouped index fallback.
+   * @param {number} mx Mouse x coordinate
+   * @param {number} my Mouse y coordinate
+   * @returns {object|null} Matching data row
+   * @private
+   */
+  findNearestShape(mx, my) {
+    var _a, _b;
+    for (const item of getGridItems(this.barGrid, mx, my, BAR_CELL_SIZE)) {
+      const { w = 0, h = 0 } = item;
+      if (mx >= item.x && mx <= item.x + w && my >= item.y && my <= item.y + h) {
         return item.data;
       }
     }
@@ -8361,7 +8534,7 @@ const $ZOOM = {
    * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visibility` inline css property or class value) & render when it is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
    * @property {"svg"|"canvas"} [render.mode="svg"] Select rendering backend. Available values are `"svg"` and `"canvas"`. In canvas mode, chart primitives are rendered to a single `<canvas>` instead of SVG nodes.
    * - **NOTE:** Canvas mode doesn't create per-shape, per-tick, grid, region and label SVG DOM nodes/classes. SVG CSS selectors that depend on those nodes, such as `.bb-target-data1 .bb-bar`, `.bb-bar-0` or `.bb-axis .tick text`, won't style canvas-drawn primitives. Use chart options, supported CSS theme probes or `canvas.theme` overrides.
-   * - **NOTE:** Arc chart types (`pie`, `donut`, `gauge`, `polar` and `radar`) don't get meaningful rendering benefit from canvas mode. They are rendered as SVG only and `render.mode="canvas"` is ignored for those types.
+   * - **NOTE:** Arc chart types (`pie`, `donut`, `gauge`, `polar` and `radar`) and funnel charts don't get meaningful rendering benefit from canvas mode. They are rendered as SVG only and `render.mode="canvas"` is ignored for those types.
    * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
    * @example
    *  render: {
@@ -9930,6 +10103,8 @@ class State {
       hasRadar: false,
       hasTreemap: false,
       isCanvasMode: false,
+      canvasShape: null,
+      canvasFocusKey: null,
       canvasSubchartBrushDragging: false,
       canvasSubchartBrushMode: null,
       canvasSubchartBrushStart: null,
@@ -17122,6 +17297,28 @@ var ChartInternal_publicField = (obj, key, value) => ChartInternal_defNormalProp
 
 
 
+function getUnsupportedCanvasRenderType($$) {
+  if ($$.hasArcType()) {
+    return "arc charts";
+  }
+  if ($$.hasType("funnel")) {
+    return "funnel chart";
+  }
+  return null;
+}
+function fallbackUnsupportedCanvasRenderMode($$) {
+  var _a, _b;
+  const { config } = $$;
+  const unsupportedType = config.render_mode === "canvas" ? getUnsupportedCanvasRenderType($$) : null;
+  if (!unsupportedType) {
+    return;
+  }
+  (_b = (_a = win.console) == null ? void 0 : _a.warn) == null ? void 0 : _b.call(
+    _a,
+    `[billboard.js] render.mode='canvas' is ignored for ${unsupportedType}; falling back to SVG.`
+  );
+  config.render_mode = "svg";
+}
 class ChartInternal {
   constructor(api) {
     ChartInternal_publicField(this, "api");
@@ -17222,6 +17419,7 @@ class ChartInternal {
     const { config, state, $el } = $$;
     const { boost_useCssRule, bindto } = config;
     checkModuleImport($$);
+    fallbackUnsupportedCanvasRenderMode($$);
     const hasArcType = $$.hasArcType();
     state.hasRadar = !state.hasAxis && $$.hasType("radar");
     state.hasFunnel = !state.hasAxis && $$.hasType("funnel");
@@ -17916,9 +18114,10 @@ function getCanvasEventClientPoint(event) {
   const touch = ((_a = touchEvent.changedTouches) == null ? void 0 : _a[0]) || ((_b = touchEvent.touches) == null ? void 0 : _b[0]);
   return touch || ("clientX" in event ? event : null);
 }
-function getCanvasEventDatum($$, event) {
+function getCanvasEventDatum($$, event, shapeOnly = false) {
+  var _a, _b;
   const point = getCanvasEventPoint($$, event);
-  return point ? $$.hitDetector.findNearest(point[0], point[1]) : null;
+  return point ? shapeOnly ? (_b = (_a = $$.hitDetector).findNearestShape) == null ? void 0 : _b.call(_a, point[0], point[1]) : $$.hitDetector.findNearest(point[0], point[1]) : null;
 }
 function isCanvasXIndexHoverArea($$, point) {
   var _a;
@@ -17954,6 +18153,10 @@ function getCanvasTooltipData($$, d) {
     var _a2;
     return ((_a2 = $$.addName) == null ? void 0 : _a2.call($$, v)) || v;
   });
+}
+function getCanvasFocusData($$, d, selectedData) {
+  var _a, _b;
+  return ((_a = $$.isMultipleX) == null ? void 0 : _a.call($$)) && !isCanvasPointBasedInteraction($$, d) ? [((_b = $$.addName) == null ? void 0 : _b.call($$, d)) || d] : selectedData;
 }
 function getCanvasEventPoint($$, event) {
   const point = getCanvasEventClientPoint(event);
@@ -18456,13 +18659,14 @@ const canvasInternal = {
         !isSupportedCanvasYType(config.axis_y2_type),
         "axis.y2.type other than indexed/log/timeseries"
       ],
+      [config.boost_useCssRule, "boost.useCssRule"],
       [(_a = this.hasArcType) == null ? void 0 : _a.call(this), "arc charts"],
       [(_b = this.hasType) == null ? void 0 : _b.call(this, "radar"), "radar chart"],
       [(_c = this.hasType) == null ? void 0 : _c.call(this, "polar"), "polar chart"],
       [(_d = this.hasType) == null ? void 0 : _d.call(this, "funnel"), "funnel chart"]
     ];
     unsupported.forEach(([condition, name]) => {
-      condition && warn(`canvas mode: ${name} is not supported in v1.`);
+      condition && warn(`canvas mode: ${name} is not yet supported.`);
     });
   },
   /**
@@ -19104,7 +19308,7 @@ const canvasInternal = {
     const $$ = this;
     const { config, $el } = $$;
     const canvas2 = $el.canvas.node();
-    const d = getCanvasEventDatum($$, event);
+    const d = getCanvasEventDatum($$, event, true);
     if (!d || isDuplicateCanvasInputClick($$, d)) {
       return d;
     }
@@ -19577,10 +19781,11 @@ const canvasInternal = {
     }
     $$.dispatchCanvasDataOver(d, canvas2);
     const selectedData = getCanvasTooltipData($$, d);
-    const focusKey = selectedData.map((v) => `${v.id}:${v.index}`).join("|");
+    const focusData = getCanvasFocusData($$, d, selectedData);
+    const focusKey = focusData.map((v) => `${v.id}:${v.index}`).join("|");
     if (state.canvasFocusKey !== focusKey || config.axis_tooltip) {
       state.canvasFocusKey = focusKey;
-      $$.renderCanvasFocus(selectedData, point);
+      $$.renderCanvasFocus(focusData, point);
     }
     (_e = $$.showTooltip) == null ? void 0 : _e.call($$, selectedData, canvas2);
   },
@@ -19959,7 +20164,7 @@ function loadConfig(config) {
    * chart.destroy();
    */
   destroy() {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
     const $$ = this.internal;
     const { state, $el: { chart, style, svg } } = $$;
     if (notEmpty($$)) {
@@ -19971,9 +20176,10 @@ function loadConfig(config) {
       state.canvasFlowFrame !== null && ((_c = (_b = win).cancelAnimationFrame) == null ? void 0 : _c.call(_b, state.canvasFlowFrame));
       state.canvasFlowFrame = null;
       state.canvasFlowFinish = null;
-      (_d = $$.canvasEngine) == null ? void 0 : _d.destroy();
-      (_e = $$.resizeFunction) == null ? void 0 : _e.clear();
-      (_g = (_f = $$.resizeFunction) == null ? void 0 : _f.resizeObserver) == null ? void 0 : _g.disconnect();
+      (_d = $$.canvasRenderer) == null ? void 0 : _d.destroy();
+      (_e = $$.canvasEngine) == null ? void 0 : _e.destroy();
+      (_f = $$.resizeFunction) == null ? void 0 : _f.clear();
+      (_h = (_g = $$.resizeFunction) == null ? void 0 : _g.resizeObserver) == null ? void 0 : _h.disconnect();
       $$.resizeFunction && win.removeEventListener("resize", $$.resizeFunction);
       chart.classed("bb", false).style("position", null);
       if (state.isCanvasMode) {
@@ -22860,6 +23066,7 @@ extend(subchart, {
 
 
 
+
 /* harmony default export */ var interactions_subchart = ({
   /**
    * Initialize the brush.
@@ -22980,14 +23187,8 @@ extend(subchart, {
     const isRotated = config.axis_rotated;
     const initRange = config.subchart_init_range;
     const customHandleClass = "handle--custom";
-    const path = isRotated ? [
-      "M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z",
-      "M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"
-    ] : [
-      "M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z",
-      "M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"
-    ];
-    $$.brush.handle = brush.selectAll(`.${customHandleClass}`).data(isRotated ? [{ type: "n" }, { type: "s" }] : [{ type: "w" }, { type: "e" }]).enter().append("path").attr("class", customHandleClass).attr("cursor", `${isRotated ? "ns" : "ew"}-resize`).attr("d", (d) => path[+/[se]/.test(d.type)]).attr("display", initRange ? null : "none");
+    const path = SUBCHART_BRUSH_HANDLE_PATH[isRotated ? "y" : "x"];
+    $$.brush.handle = brush.selectAll(`.${customHandleClass}`).data(isRotated ? [{ type: "n" }, { type: "s" }] : [{ type: "w" }, { type: "e" }]).enter().append("path").attr("class", customHandleClass).attr("cursor", `${isRotated ? "ns" : "ew"}-resize`).attr("d", (d) => path[/[se]/.test(d.type) ? "end" : "start"]).attr("display", initRange ? null : "none");
   },
   /**
    * Update sub chart
@@ -34051,7 +34252,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260609012137",
+  version: "3.18.0-nightly-20260610012637",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
