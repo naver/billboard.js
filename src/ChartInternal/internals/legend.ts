@@ -1092,7 +1092,7 @@ export default {
 					const nodeName = this.nodeName.toLowerCase();
 					let x = "x";
 					let y = "y";
-					let radius = null;
+					let radius = <number | null>null;
 					let width = <number | null>null;
 					let height = <number | null>null;
 
