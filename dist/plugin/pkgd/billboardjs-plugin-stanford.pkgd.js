@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260610012637
+ * @version 3.18.0-nightly-20260611012945
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -24700,7 +24700,7 @@ const $ZOOM = {
   buttonZoomReset: "bb-zoom-reset",
   zoomBrush: "bb-zoom-brush"
 };
-/* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
+/* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $LEVEL), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
 ;// ./src/module/util/type-checks.ts
 const isValue = (v) => v || v === 0;
@@ -24815,7 +24815,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260610012637");
+__publicField(Plugin, "version", "3.18.0-nightly-20260611012945");
 
 ;// ./node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {
@@ -25324,7 +25324,7 @@ function callFn(fn, thisArg, ...args) {
 function endall(transition, cb) {
   let n = 0;
   const end = function(...args) {
-    !--n && cb.apply(this, ...args);
+    !--n && cb.apply(this, args);
   };
   if ("duration" in transition) {
     transition.each(() => ++n).on("end", end);
@@ -25340,7 +25340,9 @@ function camelize(str, separator = "-") {
 const toArray = (v) => [].slice.call(v);
 function deepClone(...objectN) {
   const clone = (v) => {
-    if (isObject(v) && v.constructor) {
+    if (isArray(v)) {
+      return v.map(clone);
+    } else if (isObject(v) && v.constructor) {
       const r = new v.constructor();
       for (const k in v) {
         r[k] = clone(v[k]);
@@ -25426,7 +25428,7 @@ function getMinMax(type, data) {
 const getRange = (start, end, step = 1) => {
   const res = [];
   const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
-  for (let i = start; i < n; i++) {
+  for (let i = 0; i < n; i++) {
     res.push(start + i * step);
   }
   return res;
@@ -25550,11 +25552,12 @@ function getCssSelector(s) {
 }
 function _getRect(relativeViewport, node, forceEval = false) {
   const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+  const cacheKey = relativeViewport ? "rectClient" : "rectBBox";
   if (forceEval) {
     return _(node);
   } else {
-    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
-    return needEvaluate ? node.rect = _(node) : node.rect;
+    const needEvaluate = !(cacheKey in node) || node.hasAttribute("width") && node[cacheKey].width !== +(node.getAttribute("width") || 0);
+    return needEvaluate ? node[cacheKey] = _(node) : node[cacheKey];
   }
 }
 function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
@@ -25674,14 +25677,14 @@ function getElementPos(element, type) {
 }
 function hasViewBox(svg) {
   const attr = svg.attr("viewBox");
-  return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
+  return attr ? attr.trim().split(/[\s,]+/).length === 4 : false;
 }
 function hasStyle(node, condition, all = false) {
   const isD3Node = !!node.node;
   let has = false;
   for (const [key, value] of Object.entries(condition)) {
     has = isD3Node ? node.style(key) === value : node.style[key] === value;
-    if (all === false && has) {
+    if (all ? !has : has) {
       break;
     }
   }

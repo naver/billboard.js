@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260610012637
+ * @version 3.18.0-nightly-20260611012945
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -468,7 +468,7 @@ function callFn(fn, thisArg, ...args) {
 function endall(transition, cb) {
   let n = 0;
   const end = function(...args) {
-    !--n && cb.apply(this, ...args);
+    !--n && cb.apply(this, args);
   };
   if ("duration" in transition) {
     transition.each(() => ++n).on("end", end);
@@ -484,7 +484,9 @@ function camelize(str, separator = "-") {
 const toArray = (v) => [].slice.call(v);
 function deepClone(...objectN) {
   const clone = (v) => {
-    if (isObject(v) && v.constructor) {
+    if (isArray(v)) {
+      return v.map(clone);
+    } else if (isObject(v) && v.constructor) {
       const r = new v.constructor();
       for (const k in v) {
         r[k] = clone(v[k]);
@@ -570,7 +572,7 @@ function getMinMax(type, data) {
 const getRange = (start, end, step = 1) => {
   const res = [];
   const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
-  for (let i = start; i < n; i++) {
+  for (let i = 0; i < n; i++) {
     res.push(start + i * step);
   }
   return res;
@@ -743,7 +745,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260610012637");
+__publicField(Plugin, "version", "3.18.0-nightly-20260611012945");
 
 ;// ./src/Plugin/tableview/const.ts
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260610012637
+ * @version 3.18.0-nightly-20260611012945
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -26792,7 +26792,7 @@ function callFn(fn, thisArg, ...args) {
 function endall(transition, cb) {
   let n = 0;
   const end = function(...args) {
-    !--n && cb.apply(this, ...args);
+    !--n && cb.apply(this, args);
   };
   if ("duration" in transition) {
     transition.each(() => ++n).on("end", end);
@@ -26808,7 +26808,9 @@ function camelize(str, separator = "-") {
 const toArray = (v) => [].slice.call(v);
 function deepClone(...objectN) {
   const clone = (v) => {
-    if (isObject(v) && v.constructor) {
+    if (isArray(v)) {
+      return v.map(clone);
+    } else if (isObject(v) && v.constructor) {
       const r = new v.constructor();
       for (const k in v) {
         r[k] = clone(v[k]);
@@ -26894,7 +26896,7 @@ function getMinMax(type, data) {
 const getRange = (start, end, step = 1) => {
   const res = [];
   const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
-  for (let i = start; i < n; i++) {
+  for (let i = 0; i < n; i++) {
     res.push(start + i * step);
   }
   return res;
@@ -27204,6 +27206,11 @@ function getScale(type = "linear", min, max) {
 ;// ./src/canvas/util.ts
 
 const DENSE_SCATTER_POINT_CULL_THRESHOLD = 1e5;
+function getFontSize(font) {
+  const match = /(\d+(?:\.\d+)?)px/.exec(font);
+  const size = match ? parseFloat(match[1]) : parseFloat(font);
+  return Number.isFinite(size) ? size : 12;
+}
 function getCanvasShapeIndices($$, shape, type, typeFilter) {
   return shape.indices[type] || $$.getShapeIndices(typeFilter);
 }
@@ -27608,7 +27615,7 @@ function getXTickValues($$, cull = true) {
   var _a, _b, _c, _d, _e, _f, _g;
   const { axis, config } = $$;
   const targetScale = getXScale($$);
-  const targetsToShow = ((_a = $$.getTargetsToShow) == null ? void 0 : _a.call($$)) || $$.filterTargetsToShow($$.data.targets);
+  const targetsToShow = ((_a = $$.getTargetsToShow) == null ? void 0 : _a.call($$)) || $$.filterTargetsToShow();
   const cache = $$.state._canvasXTickValuesCache || ($$.state._canvasXTickValuesCache = /* @__PURE__ */ new Map());
   const cacheKey = getXTickCacheKey($$, cull);
   const cached = cache.get(cacheKey);
@@ -27674,7 +27681,7 @@ function getSubXTickValues($$) {
   var _a, _b, _c, _d;
   const { axis, config, scale } = $$;
   const targetScale = scale.subX;
-  const targetsToShow = ((_a = $$.getTargetsToShow) == null ? void 0 : _a.call($$)) || $$.filterTargetsToShow($$.data.targets);
+  const targetsToShow = ((_a = $$.getTargetsToShow) == null ? void 0 : _a.call($$)) || $$.filterTargetsToShow();
   const cullMax = getSubXTickCullMax($$);
   const cull = (ticks) => cullTicks(ticks, cullMax);
   if (!targetScale || !(targetsToShow == null ? void 0 : targetsToShow.length)) {
@@ -27938,6 +27945,7 @@ function getYGridTickValues($$) {
 var CanvasPainter_defProp = Object.defineProperty;
 var CanvasPainter_defNormalProp = (obj, key, value) => key in obj ? CanvasPainter_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => CanvasPainter_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
 class CanvasPainter {
   /**
    * Constructor.
@@ -28186,7 +28194,7 @@ class CanvasPainter {
   textLines(text, x, y, style) {
     this.withState((ctx) => {
       const lines = text.split("\n");
-      const lineHeight = parseFloat((style == null ? void 0 : style.font) || ctx.font) || 12;
+      const lineHeight = getFontSize((style == null ? void 0 : style.font) || ctx.font);
       const firstLineY = lines.length > 1 ? -((lines.length - 1) * lineHeight) : 0;
       this.applyStyle(style);
       ctx.translate(x, y);
@@ -28354,7 +28362,9 @@ var CanvasAxisRenderer_publicField = (obj, key, value) => CanvasAxisRenderer_def
 
 
 
-const X_AXIS_TICK_TEXT_CLIP_PADDING = 10;
+
+const X_AXIS_TICK_TEXT_HORIZONTAL_CLIP_PADDING = 20;
+const X_AXIS_TICK_TEXT_VERTICAL_CLIP_PADDING = 15;
 function getXTickTextDirection(isRotated) {
   return isRotated ? -1 : 1;
 }
@@ -28363,18 +28373,18 @@ function getYTickTextDirection(isRotated, isY2) {
 }
 function getHorizontalXAxisClipRect(margin, width, height) {
   return {
-    x: margin.left - X_AXIS_TICK_TEXT_CLIP_PADDING,
+    x: margin.left - X_AXIS_TICK_TEXT_HORIZONTAL_CLIP_PADDING,
     y: 0,
-    w: width + X_AXIS_TICK_TEXT_CLIP_PADDING * 2,
+    w: width + X_AXIS_TICK_TEXT_HORIZONTAL_CLIP_PADDING * 2,
     h: height
   };
 }
 function getRotatedXAxisClipRect(margin, width, height) {
   return {
     x: 0,
-    y: margin.top - X_AXIS_TICK_TEXT_CLIP_PADDING,
+    y: margin.top - X_AXIS_TICK_TEXT_VERTICAL_CLIP_PADDING,
     w: width,
-    h: height + X_AXIS_TICK_TEXT_CLIP_PADDING * 2
+    h: height + X_AXIS_TICK_TEXT_VERTICAL_CLIP_PADDING * 2
   };
 }
 function getAxisTooltipBackgroundColor($$, id) {
@@ -28429,11 +28439,6 @@ function formatTick(format, tick) {
   const value = format ? format(tick) : tick;
   return value == null ? "" : String(value);
 }
-function getFontSize(font) {
-  const match = /(\d+(?:\.\d+)?)px/.exec(font);
-  const size = match ? parseFloat(match[1]) : parseFloat(font);
-  return Number.isFinite(size) ? size : 12;
-}
 function getAxisTickFont(axisStyle, id) {
   return axisStyle[`${id}TickFont`] || axisStyle.labelFont;
 }
@@ -28443,6 +28448,13 @@ function getXTickTextLineHeight(painter, fontSize) {
   const actualBoxHeight = (metrics.actualBoundingBoxAscent || 0) + (metrics.actualBoundingBoxDescent || 0);
   const svgFallbackHeight = (fontSize || 10) * (11.5 / 10);
   return Math.max(fontSize, fontBoxHeight, actualBoxHeight, svgFallbackHeight);
+}
+function getRotatedXTickTextY(rotate) {
+  const r2 = rotate / 15;
+  return 11.5 - 2.5 * r2 * (rotate > 0 ? 1 : -1);
+}
+function getRotatedXTickTextDx(rotate) {
+  return 8 * Math.sin(Math.PI * (rotate / 180));
 }
 function resolveTextOffset(value, fontSize) {
   if (typeof value === "number") {
@@ -28496,7 +28508,7 @@ function getXTickTextWidth($$, ticks, isRotated, targetScale) {
   }
   return 110;
 }
-function getXTickTextLines($$, painter, format, tick, ticks = [], isRotated = false, targetScale = getXScale($$)) {
+function getXTickTextLines($$, painter, format, tick, ticks = [], isRotated = false, targetScale = getXScale($$), maxWidth) {
   const value = format ? format(tick) : tick;
   if (value == null) {
     return [""];
@@ -28510,7 +28522,7 @@ function getXTickTextLines($$, painter, format, tick, ticks = [], isRotated = fa
   }
   return $$.config.axis_x_tick_multiline ? splitTickTextByWidth(
     text,
-    getXTickTextWidth($$, ticks, isRotated, targetScale),
+    maxWidth != null ? maxWidth : getXTickTextWidth($$, ticks, isRotated, targetScale),
     painter
   ) : [text];
 }
@@ -28744,6 +28756,8 @@ class CanvasAxisRenderer {
         ctx.textBaseline = isRotated ? "middle" : tickTextDirection > 0 ? "top" : "bottom";
         ctx.strokeStyle = axis.tickColor;
         ctx.lineWidth = axis.tickWidth;
+        const lineHeight = getXTickTextLineHeight(painter, getFontSize(tickFont));
+        const tickTextWidth = getXTickTextWidth($$, ticks, isRotated, scale.subX);
         for (const tick of ticks) {
           const tickPos = scale.subX(normalizeXValue($$, tick));
           const tx = margin2.left + tickPos;
@@ -28771,9 +28785,9 @@ class CanvasAxisRenderer {
             tick,
             ticks,
             isRotated,
-            scale.subX
+            scale.subX,
+            tickTextWidth
           );
-          const lineHeight = getXTickTextLineHeight(painter, getFontSize(tickFont));
           let textX;
           let textY;
           if (isRotated) {
@@ -28804,6 +28818,7 @@ class CanvasAxisRenderer {
    * @private
    */
   drawTitle($$) {
+    var _a, _b;
     const { ctx, painter, theme: { style: { title } } } = this;
     const { config, state: { current } } = $$;
     if (!config.title_text) {
@@ -28813,12 +28828,13 @@ class CanvasAxisRenderer {
     const fontSize = getFontSize(title.font);
     const lineHeight = fontSize * 1.5;
     const { x, align } = getTitleTextPosition(config.title_position, current.width);
-    const y = config.title_padding.top || 0;
+    const titleHeight = (_b = (_a = $$.getCanvasTitleHeight) == null ? void 0 : _a.call($$)) != null ? _b : fontSize;
+    const y = (config.title_padding.top || 0) + titleHeight;
     painter.withState(() => {
       ctx.font = title.font;
       ctx.fillStyle = title.color;
       ctx.textAlign = align;
-      ctx.textBaseline = "top";
+      ctx.textBaseline = "alphabetic";
       lines.forEach((line, i) => {
         ctx.fillText(line, x, y + (i ? fontSize + (i - 1) * lineHeight : 0));
       });
@@ -29216,14 +29232,20 @@ class CanvasAxisRenderer {
         if (!axisOptions && !config.axis_x_tick_text_show) {
           return;
         }
+        const tickFont = getAxisTickFont(axis, "x");
+        const tickLineHeight = getXTickTextLineHeight(painter, getFontSize(tickFont));
+        const tickTextWidth = getXTickTextWidth($$, ticks, isRotated, targetScale);
         ticks.forEach((tick, tickIndex) => {
           this.drawXAxisTickText($$, tick, format, axis.labelColor, {
             isRotated,
             rangeEnd,
             rangeStart,
             tickCount: ticks.length,
+            tickFont,
             tickIndex,
+            tickLineHeight,
             tickTextDirection,
+            tickTextWidth,
             tickRotate,
             tickTextPosition,
             targetScale,
@@ -29404,6 +29426,7 @@ class CanvasAxisRenderer {
    * @private
    */
   drawXAxisTickText($$, tick, format, fill, options) {
+    var _a, _b;
     const { ctx, painter, theme: { style: { axis } } } = this;
     const { state: { margin } } = $$;
     const {
@@ -29425,7 +29448,7 @@ class CanvasAxisRenderer {
     if (!isInAxisRange(pos, rangeStart, rangeEnd)) {
       return;
     }
-    const tickFont = getAxisTickFont(axis, "x");
+    const tickFont = (_a = options.tickFont) != null ? _a : getAxisTickFont(axis, "x");
     ctx.font = tickFont;
     ctx.fillStyle = fill;
     const lines = getXTickTextLines(
@@ -29435,9 +29458,10 @@ class CanvasAxisRenderer {
       tick,
       ticks,
       isRotated,
-      targetScale
+      targetScale,
+      options.tickTextWidth
     );
-    const lineHeight = getXTickTextLineHeight(painter, getFontSize(tickFont));
+    const lineHeight = (_b = options.tickLineHeight) != null ? _b : getXTickTextLineHeight(painter, getFontSize(tickFont));
     let textX;
     let textY;
     if (isRotated) {
@@ -29445,6 +29469,21 @@ class CanvasAxisRenderer {
       textY = ty + (tickTextPosition.y || 0);
       ctx.textAlign = getXTickTextAlign($$, options);
       ctx.textBaseline = "middle";
+    } else if (tickRotate) {
+      const fontSize = getFontSize(tickFont);
+      const firstDy = tickTextPosition.y ? resolveTextOffset(tickTextPosition.y, fontSize) : 0.71 * fontSize;
+      const textDx = getRotatedXTickTextDx(tickRotate) + (tickTextPosition.x || 0);
+      const textY2 = getRotatedXTickTextY(tickRotate) + firstDy;
+      ctx.textAlign = getXTickTextAlign($$, options);
+      ctx.textBaseline = "alphabetic";
+      painter.withState((textCtx) => {
+        textCtx.translate(tx, y);
+        textCtx.rotate(tickRotate * Math.PI / 180);
+        lines.forEach((line, i) => {
+          textCtx.fillText(line, textDx, textY2 + i * lineHeight);
+        });
+      });
+      return;
     } else {
       textX = tx + (tickTextPosition.x || 0);
       textY = y + (AXIS_TICK_SIZE + AXIS_TICK_PADDING) * tickTextDirection + (tickTextPosition.y || 0);
@@ -29606,10 +29645,6 @@ class CanvasEngine {
   init(container, w, h) {
     this.canvas = browser_doc.createElement("canvas");
     this.canvas.className = $CANVAS.canvas;
-    this.canvas.style.position = "absolute";
-    this.canvas.style.top = "0";
-    this.canvas.style.left = "0";
-    this.canvas.style.zIndex = "0";
     this.canvas.style.display = "block";
     container.appendChild(this.canvas);
     this.dpr = win.devicePixelRatio || 1;
@@ -29625,6 +29660,7 @@ class CanvasEngine {
   resize(w, h) {
     const width = Math.max(0, w);
     const height = Math.max(0, h);
+    this.dpr = win.devicePixelRatio || 1;
     this.canvas.width = width * this.dpr;
     this.canvas.height = height * this.dpr;
     this.canvas.style.width = `${width}px`;
@@ -29694,10 +29730,13 @@ class CanvasEngine {
       if (!frame || !frameCtx) {
         return;
       }
-      frame.width = canvas.width;
-      frame.height = canvas.height;
       frameCtx.setTransform(1, 0, 0, 1, 0, 0);
-      frameCtx.clearRect(0, 0, canvas.width, canvas.height);
+      if (frame.width !== canvas.width || frame.height !== canvas.height) {
+        frame.width = canvas.width;
+        frame.height = canvas.height;
+      } else {
+        frameCtx.clearRect(0, 0, canvas.width, canvas.height);
+      }
       frameCtx.drawImage(canvas, 0, 0);
     }
   }
@@ -30258,12 +30297,8 @@ var path_spreadValues = (a, b) => {
 };
 var path_spreadProps = (a, b) => path_defProps(a, path_getOwnPropDescs(b));
 
-function getLineValues($$, target) {
-  let values = $$.config.line_connectNull ? $$.filterRemoveNull(target.values) : target.values;
-  if ($$.isStepType(target)) {
-    values = $$.convertValuesToStep(values);
-  }
-  return values;
+function getLineValues($$, d, values) {
+  return $$.isStepType(d) ? $$.convertValuesToStep(values) : values;
 }
 function generateDrawLinePath($$, lineIndices, isSub, context) {
   const { config, scale } = $$;
@@ -30297,7 +30332,7 @@ function generateDrawLinePath($$, lineIndices, isSub, context) {
         }
         path = $$.lineWithRegions(values, scale.zoom || x, y, regions);
       } else {
-        path = line.curve($$.getCurve(d))(getLineValues($$, { values }));
+        path = line.curve($$.getCurve(d))(getLineValues($$, d, values));
       }
     } else {
       if (values[0]) {
@@ -30480,14 +30515,15 @@ function getLabelImageUrl(option, d) {
     ID: d.id
   });
 }
-function getLabelImagePosition($$, option, text, x, y) {
-  var _a, _b;
+function getLabelImagePosition($$, option, text, x, y, d) {
+  var _a, _b, _c;
   const { width = 0, height = 0, pos } = option;
   const w = width / 2;
   const h = height / 2;
   const textHeight = getLabelDecorationBox($$.canvasEngine.ctx, text, x, y).h;
+  const fontSize = getFontSize($$.canvasEngine.ctx.font);
   const imageX = x - w;
-  const imageY = y - h - textHeight / 2;
+  const imageY = y - h - (((_a = $$.isTreemapType) == null ? void 0 : _a.call($$, d)) ? fontSize * 0.7 : textHeight / 2);
   let textX = x;
   let textY = y;
   if ($$.config.axis_rotated) {
@@ -30496,16 +30532,16 @@ function getLabelImagePosition($$, option, text, x, y) {
     textY += h;
   }
   return {
-    x: imageX + ((_a = pos == null ? void 0 : pos.x) != null ? _a : 0),
-    y: imageY + ((_b = pos == null ? void 0 : pos.y) != null ? _b : 0),
+    x: imageX + ((_b = pos == null ? void 0 : pos.x) != null ? _b : 0),
+    y: imageY + ((_c = pos == null ? void 0 : pos.y) != null ? _c : 0),
     textX,
     textY
   };
 }
 function getLabelColor($$, d, fallback) {
-  var _a, _b;
+  var _a, _b, _c;
   const color = (_a = $$.updateTextColor) == null ? void 0 : _a.call($$, d);
-  return typeof color === "string" ? color : ((_b = $$.color) == null ? void 0 : _b.call($$, d)) || fallback;
+  return typeof color === "string" ? color : ((_b = $$.isTreemapType) == null ? void 0 : _b.call($$, d)) ? fallback : ((_c = $$.color) == null ? void 0 : _c.call($$, d)) || fallback;
 }
 function getLabelBackgroundColor($$, d) {
   var _a;
@@ -30543,9 +30579,10 @@ function getLabelDecorationBox(ctx, text, x, y, padding = { top: 0, right: 0, bo
   const lines = text.split("\n");
   const metrics = lines.map((line) => ctx.measureText(line));
   const width = Math.max(...metrics.map((metric) => metric.width), 0);
-  const fontSize = parseFloat(ctx.font) || 12;
+  const fontSize = getFontSize(ctx.font);
   const lineHeight = fontSize * LABEL_LINE_HEIGHT_RATIO;
   const fontBoundingHeight = metrics[0] ? (metrics[0].fontBoundingBoxAscent || 0) + (metrics[0].fontBoundingBoxDescent || 0) : 0;
+  const baselineDescent = metrics[0] ? metrics[0].fontBoundingBoxDescent || metrics[0].actualBoundingBoxDescent || 0 : 0;
   const height = lines.length > 1 ? lineHeight * lines.length : Math.max(
     fontSize,
     fontBoundingHeight,
@@ -30560,7 +30597,9 @@ function getLabelDecorationBox(ctx, text, x, y, padding = { top: 0, right: 0, bo
   }
   if (ctx.textBaseline === "middle") {
     textY -= height / 2;
-  } else if (ctx.textBaseline === "bottom" || ctx.textBaseline === "ideographic" || ctx.textBaseline === "alphabetic") {
+  } else if (ctx.textBaseline === "alphabetic") {
+    textY -= height - baselineDescent;
+  } else if (ctx.textBaseline === "bottom" || ctx.textBaseline === "ideographic") {
     textY -= height;
   }
   return {
@@ -31220,6 +31259,29 @@ function applyCssMatrixTransform(ctx, transform) {
     values.length === 16 && values.every(Number.isFinite) && ctx.transform(values[0], values[1], values[4], values[5], values[12], values[13]);
   }
 }
+function getPreservedAspectRatioRect(image, width, height) {
+  const imageWidth = image.naturalWidth || image.width;
+  const imageHeight = image.naturalHeight || image.height;
+  if (!imageWidth || !imageHeight || !width || !height) {
+    return { x: 0, y: 0, w: width, h: height };
+  }
+  const scale = Math.min(width / imageWidth, height / imageHeight);
+  const w = imageWidth * scale;
+  const h = imageHeight * scale;
+  return {
+    x: (width - w) / 2,
+    y: (height - h) / 2,
+    w,
+    h
+  };
+}
+function getBackgroundImageOffset($$) {
+  const { state } = $$;
+  return state.hasFunnel || state.hasTreemap ? { x: 0, y: 0 } : {
+    x: asHalfPixel(state.margin.left),
+    y: asHalfPixel(state.margin.top)
+  };
+}
 function drawCanvasLine($$, target, indices, painter, isSub = false) {
   painter.strokePath((ctx) => {
     generateDrawLinePath($$, indices, isSub, ctx)(target);
@@ -31445,12 +31507,14 @@ function getPointFillStyle($$, ctx, d, x, y, r, fallback) {
   const cy = isNumber(gradientOption.cy) ? gradientOption.cy : 0.3;
   const radius = isNumber(gradientOption.r) ? gradientOption.r : 0.7;
   const stops = Array.isArray(gradientOption.stops) ? gradientOption.stops : [[0.1, null, 1], [0.9, null, 0]];
+  const gradientX = x + (cx - 0.5) * r * 2;
+  const gradientY = y + (cy - 0.5) * r * 2;
   const gradient = ctx.createRadialGradient(
-    x + (cx - 0.5) * r * 2,
-    y + (cy - 0.5) * r * 2,
+    gradientX,
+    gradientY,
     0,
-    x,
-    y,
+    gradientX,
+    gradientY,
     Math.max(1, r * radius * 2)
   );
   stops.forEach(([offset, stopColor, stopOpacity]) => {
@@ -31458,7 +31522,9 @@ function getPointFillStyle($$, ctx, d, x, y, r, fallback) {
     if (!color) {
       color = fallback;
     }
-    gradient.addColorStop(offset, withOpacity(color, stopOpacity));
+    const numericOffset = Number(offset);
+    const parsedOffset = Number.isFinite(numericOffset) ? Math.max(0, Math.min(1, numericOffset)) : 0;
+    gradient.addColorStop(parsedOffset, withOpacity(color, stopOpacity));
   });
   return gradient;
 }
@@ -31685,13 +31751,21 @@ class CanvasRenderer {
       if (classStyle.opacity !== void 0) {
         ctx.globalAlpha *= classStyle.opacity;
       }
-      applyCssMatrixTransform(ctx, classStyle.transform);
       if (bg.imgUrl) {
         const entry = this.getBackgroundImage(bg.imgUrl, $$);
         if (entry == null ? void 0 : entry.loaded) {
-          ctx.drawImage(entry.image, 0, 0, current.width, current.height);
+          const offset = getBackgroundImageOffset($$);
+          const rect = getPreservedAspectRatioRect(
+            entry.image,
+            current.width,
+            current.height
+          );
+          ctx.translate(offset.x, offset.y);
+          applyCssMatrixTransform(ctx, classStyle.transform);
+          ctx.drawImage(entry.image, rect.x, rect.y, rect.w, rect.h);
         }
       } else if (bg.color) {
+        applyCssMatrixTransform(ctx, classStyle.transform);
         painter.fillRect({
           x: margin.left,
           y: margin.top,
@@ -31717,7 +31791,7 @@ class CanvasRenderer {
       return { x, y };
     }
     const url = getLabelImageUrl(option, d);
-    const position = getLabelImagePosition($$, option, text, x, y);
+    const position = getLabelImagePosition($$, option, text, x, y, d);
     const entry = this.getLabelImage(url, $$);
     if (entry == null ? void 0 : entry.loaded) {
       this.ctx.drawImage(
@@ -31848,7 +31922,7 @@ class CanvasRenderer {
     const { ctx, painter, theme: { style } } = this;
     const { margin2, width2, height2 } = state;
     const rect = { x: margin2.left, y: margin2.top, w: width2, h: height2 };
-    const targets = $$.filterTargetsToShow($$.data.targets).filter(isCanvasRenderableTarget.bind(null, $$));
+    const targets = $$.filterTargetsToShow().filter(isCanvasRenderableTarget.bind(null, $$));
     painter.withState(() => {
       ctx.strokeStyle = style.axis.lineColor;
       ctx.lineWidth = style.axis.lineWidth;
@@ -31918,7 +31992,7 @@ class CanvasRenderer {
             ctx.lineWidth = style.shape.candlestickLineWidth;
             for (const target of candlestickTargets) {
               target.values.forEach((d, i) => {
-                var _a2, _b2;
+                var _a2;
                 const value = (_a2 = $$.getCandlestickData) == null ? void 0 : _a2.call($$, d);
                 const geometry = value && getCanvasCandlestickGeometry(
                   $$,
@@ -31929,7 +32003,7 @@ class CanvasRenderer {
                 if (!geometry) {
                   return;
                 }
-                const color = value._isUp ? $$.color(target.id) : ((_b2 = config.candlestick_color_down) == null ? void 0 : _b2[target.id]) || config.candlestick_color_down || $$.color(target.id);
+                const color = getCandlestickColor($$, { id: target.id }, value);
                 ctx.strokeStyle = color;
                 ctx.fillStyle = color;
                 painter.strokePath(() => {
@@ -32075,7 +32149,7 @@ class CanvasRenderer {
     const { ctx, painter, theme: { style } } = this;
     const isBar = isCanvasBarType.bind(null, $$);
     const isExpanded = getExpandedFocusMatcher($$, focusData, isCanvasBarType);
-    const targets = $$.filterTargetsToShow($$.data.targets).filter(isBar).filter(isCanvasRenderableTarget.bind(null, $$));
+    const targets = $$.filterTargetsToShow().filter(isBar).filter(isCanvasRenderableTarget.bind(null, $$));
     const getPoints = $$.generateGetBarPoints(
       getCanvasShapeIndices($$, shape, TYPE.BAR, isBar),
       false
@@ -32164,7 +32238,7 @@ class CanvasRenderer {
     const { ctx, painter, theme: { style } } = this;
     const isCandlestick = isCanvasCandlestickType.bind(null, $$);
     const isExpanded = getExpandedFocusMatcher($$, focusData, isCanvasCandlestickType);
-    const targets = $$.filterTargetsToShow($$.data.targets).filter(isCandlestick).filter(isCanvasRenderableTarget.bind(null, $$));
+    const targets = $$.filterTargetsToShow().filter(isCandlestick).filter(isCanvasRenderableTarget.bind(null, $$));
     const getPoints = (_a = $$.generateGetCandlestickPoints) == null ? void 0 : _a.call(
       $$,
       getCanvasShapeIndices($$, shape, TYPE.CANDLESTICK, isCandlestick),
@@ -32233,7 +32307,7 @@ class CanvasRenderer {
   drawLines($$, shape) {
     const { ctx, painter, theme: { style } } = this;
     const isLine = isCanvasLineType.bind(null, $$);
-    const targets = $$.filterTargetsToShow($$.data.targets).filter(isLine).filter(isCanvasRenderableTarget.bind(null, $$));
+    const targets = $$.filterTargetsToShow().filter(isLine).filter(isCanvasRenderableTarget.bind(null, $$));
     const indices = getCanvasShapeIndices($$, shape, TYPE.LINE, isLine);
     const { margin } = $$.state;
     if (!$$.generateGetLinePoints) {
@@ -32263,7 +32337,7 @@ class CanvasRenderer {
   drawAreas($$, shape, focusData) {
     const { ctx, painter, theme: { style } } = this;
     const isArea = isCanvasAreaType.bind(null, $$);
-    const targets = $$.filterTargetsToShow($$.data.targets).filter(isArea).filter(isCanvasRenderableTarget.bind(null, $$));
+    const targets = $$.filterTargetsToShow().filter(isArea).filter(isCanvasRenderableTarget.bind(null, $$));
     const indices = getCanvasShapeIndices($$, shape, TYPE.AREA, isArea);
     const { margin } = $$.state;
     if (!$$.generateGetAreaPoints) {
@@ -32281,7 +32355,8 @@ class CanvasRenderer {
           ctx,
           target,
           "area",
-          getCanvasAreaBounds($$, target, indices),
+          // bounds computation is a full O(n) pass: skip when no gradient is set
+          $$.config.area_linearGradient ? getCanvasAreaBounds($$, target, indices) : null,
           color
         );
         drawCanvasArea($$, target, indices, painter);
@@ -32311,7 +32386,7 @@ class CanvasRenderer {
     }
     painter.withTranslation(margin.left, margin.top, () => {
       var _a2, _b, _c;
-      for (const target of $$.filterTargetsToShow($$.data.targets)) {
+      for (const target of $$.filterTargetsToShow()) {
         if (!isCanvasPointType($$, target) || !isCanvasRenderableTarget($$, target) || isCanvasLineType($$, target) && !shouldDrawPoints($$, target)) {
           continue;
         }
@@ -32542,39 +32617,36 @@ class CanvasRenderer {
       ),
       false
     ) : null;
-    const targets = $$.filterTargetsToShow($$.data.targets).filter(
+    const targets = $$.filterTargetsToShow().filter(
       (target) => (isCanvasBarType($$, target) || isCanvasPointType($$, target) || isCanvasAreaType($$, target) || isCanvasCandlestickType($$, target)) && isCanvasRenderableTarget($$, target)
     );
-    const labelRows = [];
-    const labelTexts = /* @__PURE__ */ new Map();
+    const targetRows = [];
+    let labelCount = 0;
     targets.forEach((target) => {
       const range = getCanvasTargetVisibleRange($$, target);
-      $$.labelishData(target).forEach((d) => {
+      const data = $$.labelishData(target);
+      const rows = [];
+      for (let i = 0; i < data.length; i++) {
+        const d = data[i];
         const text = getLabelText($$, d);
         if (text && d.index >= range.start && d.index < range.end && hasCanvasDrawableValue($$, d)) {
-          labelRows.push(d);
-          labelTexts.set(getLabelRowKey(d), text);
+          rows.push({ d, i, text });
         }
-      });
+      }
+      labelCount += rows.length;
+      rows.length && targetRows.push(rows);
     });
     const texts = {
-      size: () => labelRows.length
+      size: () => labelCount
     };
     painter.withTranslation(margin.left, margin.top, () => {
       ctx.font = style.label.font;
       ctx.textAlign = "center";
-      targets.forEach((target) => {
+      targetRows.forEach((rows) => {
         var _a2;
-        const data = $$.labelishData(target);
-        const range = getCanvasTargetVisibleRange($$, target);
-        for (let i = 0; i < data.length; i++) {
-          const d = data[i];
-          const text = labelTexts.get(getLabelRowKey(d));
+        for (const { d, i, text } of rows) {
           let x;
           let y;
-          if (!text || d.index < range.start || d.index >= range.end || !hasCanvasDrawableValue($$, d)) {
-            continue;
-          }
           if (isCanvasBarType($$, d) && barPoints) {
             const geometry = getCanvasBarGeometry($$, barPoints, d, i);
             if (!geometry) {
@@ -32627,7 +32699,7 @@ class CanvasRenderer {
    */
   drawEmptyLabel($$) {
     const text = $$.config.data_empty_label_text;
-    const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+    const targetsToShow = $$.filterTargetsToShow();
     if (!text || targetsToShow.length) {
       return;
     }
@@ -32723,22 +32795,34 @@ class CanvasRenderer {
         if (!config.treemap_label_show || (data.ratio || 0) < (config.treemap_label_threshold || 0)) {
           continue;
         }
-        if ((_a2 = getLabelImageOption($$, data)) == null ? void 0 : _a2.url) {
-          continue;
-        }
         const label = getTreemapLabelText($$, data, w, h);
         if (!label) {
           continue;
         }
         const lines = label.split("\n");
-        const lineHeight = 12;
-        const centerY = y + h / 2 - (lines.length - 1) * lineHeight / 2;
-        ctx.fillStyle = getLabelColor($$, data, style.label.color);
+        const isCentered = !!config.data_labels.centered;
         ctx.font = style.label.font;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        const lineHeight = getFontSize(ctx.font);
+        const metrics = ctx.measureText((_a2 = lines[0]) != null ? _a2 : "");
+        const fontBoundingHeight = (metrics.fontBoundingBoxAscent || 0) + (metrics.fontBoundingBoxDescent || 0) || (metrics.actualBoundingBoxAscent || 0) + (metrics.actualBoundingBoxDescent || 0);
+        const textHeight = Math.max(lineHeight, fontBoundingHeight) + (lines.length - 1) * lineHeight;
+        const blockY = isCentered ? y + h / 2 : y + textHeight + 5;
+        let textX = isCentered ? x + w / 2 : x + 5;
+        let textY = blockY - (lines.length - 1) * lineHeight / (isCentered ? 2 : 1);
+        ctx.textAlign = isCentered ? "center" : "left";
+        ctx.textBaseline = isCentered ? "middle" : "alphabetic";
+        ({ x: textX, y: textY } = this.drawLabelImage($$, data, label, textX, textY));
+        ctx.fillStyle = getLabelColor($$, data, style.label.color);
+        drawLabelDecorations(
+          $$,
+          painter,
+          data,
+          label,
+          textX,
+          isCentered ? textY + (lines.length - 1) * lineHeight / 2 : blockY
+        );
         lines.forEach((line, i) => {
-          painter.text(line, x + w / 2, centerY + i * lineHeight, {
+          painter.text(line, textX, textY + i * lineHeight, {
             maxWidth: Math.max(0, w - 8)
           });
         });
@@ -32823,14 +32907,15 @@ class CanvasRenderer {
           const { x, y } = getRenderDataPoint($$, d);
           const baseR = (_b = (_a = $$.pointR) == null ? void 0 : _a.call($$, d)) != null ? _b : 2.5;
           const r = (_d = (_c = $$.pointExpandedR) == null ? void 0 : _c.call($$, d)) != null ? _d : baseR * 1.75;
-          const color = getCanvasOverColor($$, d) || $$.color(d.id);
+          const overColor = getCanvasOverColor($$, d);
+          const color = overColor || $$.color(d.id);
           if (!isFiniteCanvasCoordinate(x, y)) {
             return;
           }
           drawPointPattern(painter, pointType, x, y, r, {
-            fill: getCanvasOverColor($$, d) || style.focusPoint.fill || style.shape.pointFillColor || color,
+            fill: overColor || style.focusPoint.fill || style.shape.pointFillColor || color,
             lineWidth: style.focusPoint.lineWidth,
-            stroke: getCanvasOverColor($$, d) || style.focusPoint.stroke || color,
+            stroke: overColor || style.focusPoint.stroke || color,
             alpha: getPointOpacity($$, d)
           }, baseR);
         });
@@ -33745,7 +33830,7 @@ class HitDetector {
   rebuild($$, shape) {
     var _a, _b, _c;
     const { current, margin, width, height } = $$.state;
-    const targets = $$.filterTargetsToShow($$.data.targets);
+    const targets = $$.filterTargetsToShow();
     this.bars = [];
     this.points = [];
     this.indices = [];
@@ -33882,26 +33967,30 @@ class HitDetector {
     this.indices = indexMap ? Array.from(indexMap.values()).sort((a, b) => a[this.indexAxis] - b[this.indexAxis]) : [];
   }
   /**
-   * Find the nearest data row for the given canvas coordinates.
+   * Hit-test bars at the given canvas coordinates.
    * @param {number} mx Mouse x coordinate
    * @param {number} my Mouse y coordinate
    * @returns {object|null} Matching data row
    * @private
    */
-  findNearest(mx, my) {
-    var _a, _b;
+  hitBar(mx, my) {
     for (const item of getGridItems(this.barGrid, mx, my, BAR_CELL_SIZE)) {
       const { w = 0, h = 0 } = item;
       if (mx >= item.x && mx <= item.x + w && my >= item.y && my <= item.y + h) {
         return item.data;
       }
     }
-    if (!this.pointBased && this.grouped && this.isWithinPlot(mx, my)) {
-      const item = this.findNearestIndexItem(mx, my);
-      if (item) {
-        return item.data;
-      }
-    }
+    return null;
+  }
+  /**
+   * Find the nearest point within sensitivity at the given canvas coordinates.
+   * @param {number} mx Mouse x coordinate
+   * @param {number} my Mouse y coordinate
+   * @returns {object|null} Matching data row
+   * @private
+   */
+  hitPoint(mx, my) {
+    var _a, _b;
     let nearest = null;
     let min = Number.POSITIVE_INFINITY;
     for (const item of getGridItems(this.pointGrid, mx, my, this.pointCellSize, 1)) {
@@ -33917,6 +34006,26 @@ class HitDetector {
     return (_b = nearest == null ? void 0 : nearest.data) != null ? _b : null;
   }
   /**
+   * Find the nearest data row for the given canvas coordinates.
+   * @param {number} mx Mouse x coordinate
+   * @param {number} my Mouse y coordinate
+   * @returns {object|null} Matching data row
+   * @private
+   */
+  findNearest(mx, my) {
+    const bar = this.hitBar(mx, my);
+    if (bar) {
+      return bar;
+    }
+    if (!this.pointBased && this.grouped && this.isWithinPlot(mx, my)) {
+      const item = this.findNearestIndexItem(mx, my);
+      if (item) {
+        return item.data;
+      }
+    }
+    return this.hitPoint(mx, my);
+  }
+  /**
    * Find the nearest directly hit shape row, excluding grouped index fallback.
    * @param {number} mx Mouse x coordinate
    * @param {number} my Mouse y coordinate
@@ -33924,26 +34033,8 @@ class HitDetector {
    * @private
    */
   findNearestShape(mx, my) {
-    var _a, _b;
-    for (const item of getGridItems(this.barGrid, mx, my, BAR_CELL_SIZE)) {
-      const { w = 0, h = 0 } = item;
-      if (mx >= item.x && mx <= item.x + w && my >= item.y && my <= item.y + h) {
-        return item.data;
-      }
-    }
-    let nearest = null;
-    let min = Number.POSITIVE_INFINITY;
-    for (const item of getGridItems(this.pointGrid, mx, my, this.pointCellSize, 1)) {
-      const dx = item.x - mx;
-      const dy = item.y - my;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const sensitivity = (_a = item.sensitivity) != null ? _a : HIT_DISTANCE;
-      if (dist <= sensitivity && dist < min) {
-        min = dist;
-        nearest = item;
-      }
-    }
-    return (_b = nearest == null ? void 0 : nearest.data) != null ? _b : null;
+    var _a;
+    return (_a = this.hitBar(mx, my)) != null ? _a : this.hitPoint(mx, my);
   }
   /**
    * Find the nearest grouped x-index row for an axis-adjacent pointer coordinate.
@@ -34251,7 +34342,7 @@ const $ZOOM = {
   buttonZoomReset: "bb-zoom-reset",
   zoomBrush: "bb-zoom-brush"
 };
-/* harmony default export */ var config_classes = (classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
+/* harmony default export */ var config_classes = (classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $LEVEL), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
 ;// ./src/config/Options/common/boost.ts
 /* harmony default export */ var boost = ({
@@ -34850,7 +34941,7 @@ const $ZOOM = {
    * @memberof Options
    * @type {object}
    * @property {object} [transition] transition object
-   * @property {number} [transition.duration=350] duration in milliseconds
+   * @property {number} [transition.duration=250] duration in milliseconds
    * @example
    * transition: {
    *    duration: 500
@@ -36718,8 +36809,7 @@ class Cache {
       }
       return targets;
     } else {
-      const value = this.cache.get(key);
-      return isValue(value) ? value : null;
+      return this.cache.has(key) ? this.cache.get(key) : null;
     }
   }
   /**
@@ -36864,11 +36954,12 @@ function getCssSelector(s) {
 }
 function _getRect(relativeViewport, node, forceEval = false) {
   const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+  const cacheKey = relativeViewport ? "rectClient" : "rectBBox";
   if (forceEval) {
     return _(node);
   } else {
-    const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +(node.getAttribute("width") || 0);
-    return needEvaluate ? node.rect = _(node) : node.rect;
+    const needEvaluate = !(cacheKey in node) || node.hasAttribute("width") && node[cacheKey].width !== +(node.getAttribute("width") || 0);
+    return needEvaluate ? node[cacheKey] = _(node) : node[cacheKey];
   }
 }
 function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
@@ -36988,14 +37079,14 @@ function getElementPos(element, type) {
 }
 function hasViewBox(svg) {
   const attr = svg.attr("viewBox");
-  return attr ? /(\d+(\.\d+)?){3}/.test(attr) : false;
+  return attr ? attr.trim().split(/[\s,]+/).length === 4 : false;
 }
 function hasStyle(node, condition, all = false) {
   const isD3Node = !!node.node;
   let has = false;
   for (const [key, value] of Object.entries(condition)) {
     has = isD3Node ? node.style(key) === value : node.style[key] === value;
-    if (all === false && has) {
+    if (all ? !has : has) {
       break;
     }
   }
@@ -37111,23 +37202,28 @@ function generateResize(option) {
   const callResizeFn = function() {
     callResizeFn.clear();
     if (option === false) {
-      requestIdleCallback(() => {
+      timeout = requestIdleCallback(() => {
+        timeout = null;
         fn.forEach((f) => f());
       }, { timeout: 200 });
     } else {
       timeout = generator_setTimeout(() => {
+        timeout = null;
         fn.forEach((f) => f());
       }, isNumber(option) ? option : 200);
     }
   };
   callResizeFn.clear = () => {
     if (timeout) {
-      generator_clearTimeout(timeout);
+      (option === false ? cancelIdleCallback : generator_clearTimeout)(timeout);
       timeout = null;
     }
   };
   callResizeFn.add = (f) => fn.push(f);
-  callResizeFn.remove = (f) => fn.splice(fn.indexOf(f), 1);
+  callResizeFn.remove = (f) => {
+    const index = fn.indexOf(f);
+    index !== -1 && fn.splice(index, 1);
+  };
   return callResizeFn;
 }
 function generateWait() {
@@ -37166,6 +37262,7 @@ function generateWait() {
 ;// ./src/module/worker.ts
 
 const cache = {};
+let messageId = 0;
 function getOrCreateWorkerResources(fn, depsFn) {
   var _a;
   const fnString = fn.toString();
@@ -37176,8 +37273,8 @@ function getOrCreateWorkerResources(fn, depsFn) {
       `${depsString}
 
 			self.onmessage=function({data}) {
-				const result = (${fnString}).apply(null, data);
-				self.postMessage(result);
+				const result = (${fnString}).apply(null, data.args);
+				self.postMessage({id: data.id, result});
 			};`
     ], {
       type: "text/javascript"
@@ -37214,10 +37311,16 @@ function runWorker(useWorker = true, fn, callback, depsFn) {
     const worker = getWorker(key, src);
     runFn = function(...args) {
       if (worker) {
-        worker.postMessage(args);
-        worker.onmessage = function(e) {
-          return callback(e.data);
+        const id = ++messageId;
+        const handler = function(e) {
+          var _a;
+          if (((_a = e.data) == null ? void 0 : _a.id) === id) {
+            worker.removeEventListener("message", handler);
+            callback(e.data.result);
+          }
         };
+        worker.addEventListener("message", handler);
+        worker.postMessage({ id, args });
       }
     };
   }
@@ -37489,8 +37592,8 @@ function _setXS(ids, data, params) {
       if (params.xs.indexOf(xKey) >= 0) {
         xsData = (params.appendXs && $$.data.xs[id] || []).concat(
           data.map((d, i) => {
-            const rawX = isValue(d[xKey]);
-            return rawX ? $$.generateTargetX(rawX, id, i) : false;
+            const rawX = d[xKey];
+            return isValue(rawX) ? $$.generateTargetX(rawX, id, i) : false;
           }).filter((v) => v !== false)
         );
       } else if (config.data_x) {
@@ -37521,7 +37624,7 @@ function _setXS(ids, data, params) {
     let data = args;
     if (args.bindto) {
       data = {};
-      ["url", "mimeType", "headers", "keys", "json", "keys", "rows", "columns"].forEach((v) => {
+      ["url", "mimeType", "headers", "keys", "json", "rows", "columns"].forEach((v) => {
         const key = `data_${v}`;
         if (key in args) {
           data[v] = args[key];
@@ -37572,20 +37675,20 @@ function _setXS(ids, data, params) {
     const params = {
       appendXs,
       xs,
-      idConverter: config.data_idConverter.bind($$.api),
       categorized: axis == null ? void 0 : axis.isCategorized(),
       timeSeries: axis == null ? void 0 : axis.isTimeSeries(),
       customX: axis == null ? void 0 : axis.isCustomX()
     };
     _setXS.bind($$)(ids, data, params);
     const categoryIndexMap = params.customX && params.categorized && config.axis_x_categories.length ? new Map(config.axis_x_categories.map((cat, i) => [cat, i])) : null;
+    const idConverter = config.data_idConverter.bind($$.api);
     const targets = ids.map((id, index) => {
-      const convertedId = config.data_idConverter.bind($$.api)(id);
+      const convertedId = idConverter(id);
       const xKey = $$.getXKey(id);
       const isCategory = params.customX && params.categorized;
-      const hasCategory = isCategory && (() => {
+      const hasCategory = isCategory && index === 0 && (() => {
         const categorySet = toSet(config.axis_x_categories);
-        return data.every((v) => categorySet.has(v.x));
+        return data.every((v) => categorySet.has(v[xKey]));
       })();
       const isDataAppend = data.__append__;
       const xIndex = xKey === null && isDataAppend ? $$.api.data.values(id).length : 0;
@@ -37599,7 +37702,7 @@ function _setXS(ids, data, params) {
           let x;
           value = value !== null && !isNaN(value) && !isObject(value) ? +value : isArray(value) || isObject(value) ? value : null;
           if ((isCategory || state.hasRadar) && index === 0 && !isUndefined(rawX)) {
-            if (!hasCategory && index === 0 && i === 0 && !isDataAppend) {
+            if (!hasCategory && i === 0 && !isDataAppend) {
               config.axis_x_categories = [];
               if (categoryIndexMap) {
                 categoryIndexMap.clear();
@@ -37661,6 +37764,10 @@ function _setXS(ids, data, params) {
 
 
 
+const rangedDataKeyIndex = {
+  areaRange: { high: 0, mid: 1, low: 2 },
+  candlestick: { open: 0, high: 1, low: 2, close: 3, volume: 4 }
+};
 /* harmony default export */ var ChartInternal_data_data = ({
   isX(key) {
     const $$ = this;
@@ -37936,7 +38043,7 @@ function _setXS(ids, data, params) {
           if (!sum[i]) {
             sum[i] = 0;
           }
-          sum[i] += ~~v.value;
+          sum[i] += isNumber(v.value) ? v.value : 0;
         });
       });
       $$.cache.add(cacheKey, sum);
@@ -37977,7 +38084,7 @@ function _setXS(ids, data, params) {
     const { api, state: { hiddenTargetIds } } = $$;
     let total = 0;
     if (hiddenTargetIds.size) {
-      total = api.data.values.bind(api)([...hiddenTargetIds]).reduce((p, c) => p + c);
+      total = api.data.values.bind(api)([...hiddenTargetIds]).reduce((p, c) => p + c, 0);
     }
     return total;
   },
@@ -38570,16 +38677,14 @@ function _setXS(ids, data, params) {
     return current;
   },
   getRangedData(d, key = "", type = "areaRange") {
+    var _a, _b;
     const value = d == null ? void 0 : d.value;
     if (isArray(value)) {
       if (type === "bar") {
         return value.reduce((a, c) => c - a);
       } else {
-        const index = {
-          areaRange: ["high", "mid", "low"],
-          candlestick: ["open", "high", "low", "close", "volume"]
-        }[type].indexOf(key);
-        return index >= 0 && value ? value[index] : void 0;
+        const index = (_b = (_a = rangedDataKeyIndex[type]) == null ? void 0 : _a[key]) != null ? _b : -1;
+        return index >= 0 ? value[index] : void 0;
       }
     } else if (value && key) {
       return value[key];
@@ -38644,7 +38749,9 @@ function _setXS(ids, data, params) {
           if (hiddenIds.length) {
             let hiddenSum = dataValues(hiddenIds, false);
             if (hiddenSum.length) {
-              hiddenSum = hiddenSum.reduce((acc, curr) => acc.map((v, i) => ~~v + curr[i]));
+              hiddenSum = hiddenSum.reduce(
+                (acc, curr) => acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i])
+              );
               total = total.map((v, i) => v - hiddenSum[i]);
             }
           }
@@ -38753,25 +38860,22 @@ function callDone(fn, resizeAfter = false) {
           $$.setTargetType(t.id, type);
         });
       }
+      const incoming = new Map(targets.map((t) => [t.id, t]));
       data.targets.forEach((d) => {
-        for (let i = 0; i < targets.length; i++) {
-          if (d.id === targets[i].id) {
-            if (append) {
-              const values = targets[i].values;
-              for (let j = 0; j < values.length; j++) {
-                d.values.push(values[j]);
-              }
-            } else {
-              d.values = targets[i].values;
+        const t = incoming.get(d.id);
+        if (t) {
+          if (append) {
+            const values = t.values;
+            for (let j = 0; j < values.length; j++) {
+              d.values.push(values[j]);
             }
-            targets.splice(i, 1);
-            break;
+          } else {
+            d.values = t.values;
           }
+          incoming.delete(d.id);
         }
       });
-      for (let i = 0; i < targets.length; i++) {
-        data.targets.push(targets[i]);
-      }
+      incoming.forEach((t) => data.targets.push(t));
     }
     if ($$.state.isCanvasMode) {
       $$.redraw({
@@ -38850,15 +38954,16 @@ function callDone(fn, resizeAfter = false) {
       };
     }
     targetIds = targetIds.filter((id) => $$.hasTarget($$.data.targets, id));
-    if (!targetIds || targetIds.length === 0) {
+    if (targetIds.length === 0) {
       done();
       return;
     }
+    const unloadIds = new Set(targetIds);
     if (state.isCanvasMode) {
       targetIds.forEach((id) => {
         state.withoutFadeIn[id] = false;
-        $$.data.targets = $$.data.targets.filter((t) => t.id !== id);
       });
+      $$.data.targets = $$.data.targets.filter((t) => !unloadIds.has(t.id));
       $$.removeHiddenTargetIds(targetIds);
       $$.removeHiddenLegendIds(targetIds);
       $$.updateTypesElements();
@@ -38872,9 +38977,9 @@ function callDone(fn, resizeAfter = false) {
       if ($el.legend) {
         $el.legend.selectAll(`.${$LEGEND.legendItem}${suffixId}`).remove();
       }
-      $$.data.targets = $$.data.targets.filter((t) => t.id !== id);
       hasLegendDefsPoint && ((_a2 = $el.defs) == null ? void 0 : _a2.select(`#${$$.getDefsPointId(suffixId)}`).remove());
     });
+    $$.data.targets = $$.data.targets.filter((t) => !unloadIds.has(t.id));
     state.hasFunnel && $$.updateFunnel($$.data.targets);
     state.hasTreemap && $$.updateTargetsForTreemap($$.data.targets);
     $$.updateTypesElements();
@@ -39335,7 +39440,7 @@ function defaultTouchable() {
       }
       let x = left + (mouse ? mouse[0] : 0) + (isMultipleX || isRotated ? 0 : width / 2);
       let y = top + (mouse ? mouse[1] : 0) + (isRotated ? 4 : 0);
-      if (hasViewBox(svg)) {
+      if (hasViewBox(svg) && $$.$el.eventRect) {
         const ctm = getTransformCTM($$.$el.eventRect.node(), x, y, false);
         x = ctm.x;
         y = ctm.y;
@@ -39367,9 +39472,10 @@ function defaultTouchable() {
    */
   unbindZoomEvent() {
     const $$ = this;
-    const { $el: { canvas, eventRect, zoomResetBtn } } = $$;
+    const { $el: { canvas, eventRect, svg, zoomResetBtn } } = $$;
     eventRect == null ? void 0 : eventRect.on(".zoom wheel.zoom .drag", null);
     canvas == null ? void 0 : canvas.on(".zoom wheel.zoom .drag", null);
+    svg == null ? void 0 : svg.on("wheel", null);
     zoomResetBtn == null ? void 0 : zoomResetBtn.on("click", null).style("display", "none");
   },
   /**
@@ -41934,6 +42040,8 @@ function _getFormat($$, typeValue, v) {
 
 
 
+const LEGEND_TOUCH_TAP_THRESHOLD = 10;
+const LEGEND_TOUCH_CLICK_TIMEOUT = 750;
 function _getLegendColor(id) {
   const $$ = this;
   const data = $$.getDataById(id);
@@ -41950,8 +42058,13 @@ function _getFormattedText(id, formatted = true) {
   return text;
 }
 function _buildLegendItemMap($$, legendItems) {
+  var _a;
   if (!legendItems || legendItems.empty()) {
     return;
+  }
+  const allItems = (_a = $$.$el.legend) == null ? void 0 : _a.selectAll(`.${$LEGEND.legendItem}`);
+  if (allItems && !allItems.empty()) {
+    legendItems = allItems;
   }
   const items = [];
   legendItems.each(function(id) {
@@ -41963,6 +42076,54 @@ function _buildLegendItemMap($$, legendItems) {
     (item) => item.node
   );
   $$.cache.add(KEY.legendItemMap, itemMap);
+}
+function _getLegendTouchPoint(event) {
+  var _a, _b;
+  return ((_a = event.changedTouches) == null ? void 0 : _a[0]) || ((_b = event.touches) == null ? void 0 : _b[0]);
+}
+function _setLegendTouchStart($$, id, event) {
+  const touch = _getLegendTouchPoint(event);
+  $$.state.legendTouch = touch ? {
+    id,
+    x: touch.clientX,
+    y: touch.clientY,
+    moved: false
+  } : null;
+}
+function _updateLegendTouchMove($$, event) {
+  const start = $$.state.legendTouch;
+  const touch = start && _getLegendTouchPoint(event);
+  if (touch) {
+    start.moved = start.moved || Math.abs(touch.clientX - start.x) > LEGEND_TOUCH_TAP_THRESHOLD || Math.abs(touch.clientY - start.y) > LEGEND_TOUCH_TAP_THRESHOLD;
+  }
+}
+function _isLegendTouchTap($$, id, event) {
+  _updateLegendTouchMove($$, event);
+  const start = $$.state.legendTouch;
+  $$.state.legendTouch = null;
+  return !!start && start.id === id && !start.moved;
+}
+function _markLegendTouchClick($$, id) {
+  $$.state.legendLastTouchClickId = id;
+  $$.state.legendLastTouchClickTime = Date.now();
+}
+function _isDuplicateLegendTouchClick($$, id) {
+  const { state } = $$;
+  const duplicate = state.legendLastTouchClickId === id && Date.now() - (state.legendLastTouchClickTime || 0) < LEGEND_TOUCH_CLICK_TIMEOUT;
+  if (duplicate) {
+    state.legendLastTouchClickId = null;
+    state.legendLastTouchClickTime = 0;
+  }
+  return duplicate;
+}
+function _getLegendTouchOption($$) {
+  var _a;
+  const preventDefault = (_a = $$.config.interaction_inputType_touch) == null ? void 0 : _a.preventDefault;
+  const isPrevented = isBoolean(preventDefault) && preventDefault || false;
+  const preventThreshold = !isNaN(preventDefault) && preventDefault || null;
+  return {
+    passive: !isPrevented && preventThreshold === null
+  };
 }
 /* harmony default export */ var internals_legend = ({
   /**
@@ -42015,8 +42176,7 @@ function _buildLegendItemMap($$, legendItems) {
     } else if (!state.hasTreemap) {
       $$.updateLegendElement(
         targetIds || $$.mapToIds($$.data.targets),
-        optionz,
-        transitions
+        optionz
       );
     }
     (_a = $el.legend) == null ? void 0 : _a.selectAll(`.${$LEGEND.legendItem}`).classed($LEGEND.legendItemHidden, function(id) {
@@ -42200,10 +42360,10 @@ function _buildLegendItemMap($$, legendItems) {
     const { config, $el: { legend } } = $$;
     if (config.legend_show && isEmpty(targetIds)) {
       config.legend_show = false;
-      legend.style("visibility", "hidden");
+      legend == null ? void 0 : legend.style("visibility", "hidden");
     }
     $$.addHiddenLegendIds(targetIds);
-    legend.selectAll($$.selectorLegends(targetIds)).style("opacity", "0").style("visibility", "hidden");
+    legend == null ? void 0 : legend.selectAll($$.selectorLegends(targetIds)).style("opacity", "0").style("visibility", "hidden");
   },
   /**
    * Get legend item textbox dimension
@@ -42239,6 +42399,31 @@ function _buildLegendItemMap($$, legendItems) {
     const hasGauge = $$.hasType("gauge");
     const useCssRule = config.boost_useCssRule;
     const interaction = config.legend_item_interaction;
+    const eventType = interaction.dblclick ? "dblclick" : "click";
+    const hasClickInteraction = interaction || isFunction(config.legend_item_onclick);
+    const touchOption = isTouch ? _getLegendTouchOption($$) : void 0;
+    const handleLegendToggle = function(event, id) {
+      var _a;
+      if (!callFn(config.legend_item_onclick, api, id, !state.hiddenTargetIds.has(id))) {
+        const { altKey, type } = event;
+        const selected = src_select(this);
+        if (type === "dblclick" || altKey) {
+          if (state.hiddenTargetIds.size && !selected.classed($LEGEND.legendItemHidden)) {
+            api.show();
+          } else {
+            api.hide();
+            api.show(id);
+          }
+        } else {
+          api.toggle(id);
+          selected.classed($FOCUS.legendItemFocused, false);
+        }
+      }
+      if (isTouch) {
+        $$.hideTooltip();
+        (_a = $$.hideGridFocus) == null ? void 0 : _a.call($$, true);
+      }
+    };
     item.attr("class", function(id) {
       const node = src_select(this);
       const itemClass = !node.empty() && node.attr("class") || "";
@@ -42257,33 +42442,22 @@ function _buildLegendItemMap($$, legendItems) {
           $$.setCssRule(false, selector, [props])($el.legend);
         });
       }
-      item.on(
-        interaction.dblclick ? "dblclick" : "click",
-        interaction || isFunction(config.legend_item_onclick) ? function(event, id) {
-          if (!callFn(
-            config.legend_item_onclick,
-            api,
-            id,
-            !state.hiddenTargetIds.has(id)
-          )) {
-            const { altKey, target, type } = event;
-            if (type === "dblclick" || altKey) {
-              if (state.hiddenTargetIds.size && target.parentNode.getAttribute("class").indexOf(
-                $LEGEND.legendItemHidden
-              ) === -1) {
-                api.show();
-              } else {
-                api.hide();
-                api.show(id);
-              }
-            } else {
-              api.toggle(id);
-              src_select(this).classed($FOCUS.legendItemFocused, false);
-            }
-          }
-          isTouch && $$.hideTooltip();
-        } : null
-      );
+      item.on(eventType, hasClickInteraction ? function(event, id) {
+        if (isTouch && event.type === "click" && _isDuplicateLegendTouchClick($$, id)) {
+          return;
+        }
+        handleLegendToggle.call(this, event, id);
+      } : null);
+      isTouch && eventType === "click" && hasClickInteraction && item.on("touchstart", function(event, id) {
+        _setLegendTouchStart($$, id, event);
+      }, touchOption).on("touchmove", (event) => {
+        _updateLegendTouchMove($$, event);
+      }, touchOption).on("touchend", function(event, id) {
+        if (_isLegendTouchTap($$, id, event)) {
+          _markLegendTouchClick($$, id);
+          handleLegendToggle.call(this, event, id);
+        }
+      }, touchOption);
       !isTouch && item.on("mouseout", interaction || isFunction(config.legend_item_onout) ? function(event, id) {
         if (!callFn(
           config.legend_item_onout,
@@ -42580,30 +42754,34 @@ function _buildLegendItemMap($$, legendItems) {
     const isRectangle = legendType !== "circle";
     if (usePoint) {
       const tiles = legend.selectAll(`.${$LEGEND.legendItemPoint}`).data(targetIdz);
+      const isRectangleTile = config.legend_item_tile_type !== "circle";
+      const tileWidth = isRectangleTile ? config.legend_item_tile_width : config.legend_item_tile_r * 2;
+      const tileHeight = isRectangleTile ? config.legend_item_tile_height : config.legend_item_tile_r * 2;
+      const iconWidth = tileWidth * 0.75;
+      const iconHeight = tileHeight * 0.75;
+      const customScaleX = tileWidth / 8;
+      const customScaleY = tileHeight / 8;
       $T(tiles, withTransition).each(function() {
         const nodeName = this.nodeName.toLowerCase();
-        const pointR = config.point_r;
         let x = "x";
         let y = "y";
-        let xOffset = 2;
-        let yOffset = 2.5;
         let radius = null;
         let width = null;
         let height = null;
         if (nodeName === "circle") {
-          const size = pointR * 0.2;
           x = "cx";
           y = "cy";
-          radius = pointR + size;
-          xOffset = pointR * 2;
-          yOffset = -size;
+          radius = Math.min(iconWidth, iconHeight) / 2;
         } else if (nodeName === "rect") {
-          const size = pointR * 2.5;
-          width = size;
-          height = size;
-          yOffset = 3;
+          width = iconWidth;
+          height = iconHeight;
         }
-        src_select(this).attr(x, (d) => posFn.x1Tile(d) + xOffset).attr(y, (d) => posFn.yTile(d) - yOffset).attr("r", radius).attr("width", width).attr("height", height);
+        const tile = src_select(this).attr("transform", null).attr("x", null).attr("y", null).attr("cx", null).attr("cy", null).attr("r", radius).attr("width", width).attr("height", height);
+        if (nodeName === "use") {
+          tile.attr("transform", (d) => `translate(${posFn.x1Tile(d)} ${posFn.yTile(d) - tileHeight / 2}) scale(${customScaleX} ${customScaleY})`);
+        } else {
+          tile.attr(x, (d) => posFn.x1Tile(d) + (tileWidth - (width || 0)) / 2).attr(y, (d) => posFn.yTile(d) - (height || 0) / 2);
+        }
       });
     } else {
       const tiles = legend.selectAll(`.${$LEGEND.legendItemTile}`).data(targetIdz);
@@ -42850,7 +43028,7 @@ function _buildLegendItemMap($$, legendItems) {
       $$.updateSvgSize();
       $$.transformAll(options.withTransitionForTransform, transitions);
     }
-    $$.redraw(options, transitions);
+    $$.redraw(options);
   }
 });
 
@@ -43404,7 +43582,7 @@ function batchGetBBox(elements) {
   return toMap(
     elements,
     (element) => element,
-    (element) => getBBox(element)
+    (element) => getBBox(element, true)
   );
 }
 
@@ -43418,7 +43596,7 @@ function batchGetBBox(elements) {
 /* harmony default export */ var internals_text = ({
   opacityForText(d) {
     const $$ = this;
-    return $$.isBarType(d) && !meetsLabelThreshold.call($$, Math.abs($$.getRatio("bar", d)), "bar") ? "0" : $$.hasDataLabel ? null : "0";
+    return $$.isBarType(d) && !meetsLabelThreshold.call($$, Math.abs($$.getRatio("bar", d)), "bar") ? "0" : $$.hasDataLabel() ? null : "0";
   },
   /**
    * Initializes the text
@@ -43588,8 +43766,8 @@ function batchGetBBox(elements) {
       );
       const isInverted = config[`axis_${axis == null ? void 0 : axis.getId(d.id)}_inverted`];
       let pos = {
-        x: getX.bind(this)(d, i, labelDimension),
-        y: getY.bind(this)(d, i, labelDimension)
+        x: getX.call(this, d, i, labelDimension),
+        y: getY.call(this, d, i, labelDimension)
       };
       if (angle) {
         pos = setRotatePos.bind($$)(d, pos, anchorString, isRotated, isInverted);
@@ -43916,6 +44094,14 @@ function _getCanvasTitleHeight($$) {
     }
   },
   /**
+   * Get canvas title height using the same SVG text measurement as title padding.
+   * @returns {number} Title height
+   * @private
+   */
+  getCanvasTitleHeight() {
+    return _getCanvasTitleHeight(this);
+  },
+  /**
    * Get title padding
    * @returns {number} padding value
    * @private
@@ -43926,7 +44112,7 @@ function _getCanvasTitleHeight($$) {
     const paddingTop = config.title_padding.top || 0;
     const paddingBottom = config.title_padding.bottom || 0;
     if (state.isCanvasMode && config.title_text) {
-      return paddingTop + _getCanvasTitleHeight($$) + paddingBottom;
+      return paddingTop + $$.getCanvasTitleHeight() + paddingBottom;
     }
     if (!(title == null ? void 0 : title.node())) {
       return paddingTop + paddingBottom;
@@ -44067,7 +44253,8 @@ const RE_TOOLTIP_TPL = /{{(.*)}}/;
     let i;
     for (i = 0; i < len; i++) {
       row = d[i];
-      if (!row || !(getRowValue(row) || getRowValue(row) === 0)) {
+      const rowValue = row && getRowValue(row);
+      if (!row || !(rowValue || rowValue === 0)) {
         continue;
       }
       if (isUndefined(text)) {
@@ -45744,7 +45931,7 @@ function updateTargetsForShape(targets, config) {
     const { hasRadar, hasTreemap } = $$.state;
     const shape = { type: {}, indices: {}, pos: {} };
     !hasTreemap && ["bar", "candlestick", "line", "area"].forEach((v) => {
-      const name = capitalize(/^(bubble|scatter)$/.test(v) ? "line" : v);
+      const name = capitalize(v);
       if ($$.hasType(v) || $$.hasTypeOf(name) || v === "line" && ($$.hasType("bubble") || $$.hasType("scatter"))) {
         const indices = $$.getShapeIndices($$[`is${name}Type`]);
         const drawFn = $$[`generateDraw${name}`];
@@ -46661,7 +46848,7 @@ class ChartInternal {
     );
   }
   initWithData(data2) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
     const $$ = this;
     const { config, scale: scale2, state, $el, org } = $$;
     const { hasAxis, hasFunnel, hasTreemap } = state;
@@ -46736,15 +46923,21 @@ class ChartInternal {
     if (hasInteraction && state.inputType) {
       const isTouch = state.inputType === "touch";
       const { onclick, onover, onout } = config;
+      const preventDefault = (_a = config.interaction_inputType_touch) == null ? void 0 : _a.preventDefault;
+      const isPrevented = isBoolean(preventDefault) && preventDefault || false;
+      const preventThreshold = !isNaN(preventDefault) && preventDefault || null;
+      const touchOption = isTouch ? {
+        passive: !isPrevented && preventThreshold === null
+      } : void 0;
       $el.svg.on("click", (onclick == null ? void 0 : onclick.bind($$.api)) || null).on(
         isTouch ? "touchstart" : "mouseenter",
         (onover == null ? void 0 : onover.bind($$.api)) || null,
-        isTouch ? { passive: true } : void 0
+        touchOption
       ).on(isTouch ? "touchend" : "mouseleave", (onout == null ? void 0 : onout.bind($$.api)) || null);
     }
     config.svg_classname && $el.svg.attr("class", config.svg_classname);
     const hasColorPatterns = isFunction(config.color_tiles) && $$.patterns;
-    if (hasAxis || hasColorPatterns || hasPolar || hasTreemap || labelsBGColor || ((_a = $$.hasLegendDefsPoint) == null ? void 0 : _a.call($$))) {
+    if (hasAxis || hasColorPatterns || hasPolar || hasTreemap || labelsBGColor || ((_b = $$.hasLegendDefsPoint) == null ? void 0 : _b.call($$))) {
       $el.defs = $el.svg.append("defs");
       if (hasAxis) {
         ["id", "idXAxis", "idYAxis", "idGrid"].forEach((v) => {
@@ -46768,16 +46961,16 @@ class ChartInternal {
       main.append("text").attr("class", `${$TEXT.text} ${$COMMON.empty}`).attr("text-anchor", "middle").attr("dominant-baseline", "middle");
     }
     if (hasAxis) {
-      config.regions.length && ((_b = $$.initRegion) == null ? void 0 : _b.call($$));
+      config.regions.length && ((_c = $$.initRegion) == null ? void 0 : _c.call($$));
       !config.clipPath && $$.axis.init();
     }
     main.append("g").classed($COMMON.chart, true).attr("clip-path", hasAxis ? state.clip.path : null);
     $$.callPluginHook("$init");
     $$.initChartElements();
     if (hasAxis) {
-      hasInteraction && ((_c = $$.initEventRect) == null ? void 0 : _c.call($$));
-      (_d = $$.initGrid) == null ? void 0 : _d.call($$);
-      config.clipPath && ((_e = $$.axis) == null ? void 0 : _e.init());
+      hasInteraction && ((_d = $$.initEventRect) == null ? void 0 : _d.call($$));
+      (_e = $$.initGrid) == null ? void 0 : _e.call($$);
+      config.clipPath && ((_f = $$.axis) == null ? void 0 : _f.init());
     }
     $$.updateTargets($$.data.targets);
     $$.updateDimension();
@@ -47087,6 +47280,8 @@ const CANVAS_SELECTABLE_TYPE_FILTERS = [
   isCanvasCandlestickType,
   isCanvasTreemapType
 ];
+const CANVAS_LEGEND_TOUCH_TAP_THRESHOLD = 10;
+const CANVAS_LEGEND_TOUCH_CLICK_TIMEOUT = 750;
 const CANVAS_SUBCHART_HANDLE_SIZE = 6;
 const CANVAS_SUBCHART_CLICK_TOLERANCE = 2;
 const CANVAS_FLOW_ANIMATION_MAX_VALUES = 1e5;
@@ -47124,7 +47319,7 @@ function getCanvasLegendPointIcon($$, id) {
   const pattern = getCanvasLegendPointPattern($$, id);
   const svgAttrs = 'viewBox="0 0 8 8" aria-hidden="true" focusable="false" style="display:block;width:100%;height:100%;overflow:visible;pointer-events:none"';
   const paintAttrs = `fill="${color}" stroke="${color}"`;
-  if (/^rect(angle)?$/i.test(pattern) || pattern === "rectangle") {
+  if (/^rect(angle)?$/i.test(pattern)) {
     return `<svg ${svgAttrs}><rect x="1" y="1" width="6" height="6" ${paintAttrs}></rect></svg>`;
   }
   if (!pattern || /^circle$/i.test(pattern)) {
@@ -47179,15 +47374,58 @@ function revertCanvasLegendTargetFocus($$) {
   state.defocusedTargetIds = /* @__PURE__ */ new Set();
   changed && ((_c = $$.renderCanvasFrame) == null ? void 0 : _c.call($$, void 0, null, false));
 }
+function getCanvasLegendTouchPoint(event) {
+  var _a, _b;
+  return ((_a = event.changedTouches) == null ? void 0 : _a[0]) || ((_b = event.touches) == null ? void 0 : _b[0]);
+}
+function setCanvasLegendTouchStart($$, id, event) {
+  const touch = getCanvasLegendTouchPoint(event);
+  $$.state.canvasLegendTouch = touch ? {
+    id,
+    x: touch.clientX,
+    y: touch.clientY,
+    moved: false
+  } : null;
+}
+function updateCanvasLegendTouchMove($$, event) {
+  const start = $$.state.canvasLegendTouch;
+  const touch = start && getCanvasLegendTouchPoint(event);
+  if (touch) {
+    start.moved = start.moved || Math.abs(touch.clientX - start.x) > CANVAS_LEGEND_TOUCH_TAP_THRESHOLD || Math.abs(touch.clientY - start.y) > CANVAS_LEGEND_TOUCH_TAP_THRESHOLD;
+  }
+}
+function isCanvasLegendTouchTap($$, id, event) {
+  updateCanvasLegendTouchMove($$, event);
+  const start = $$.state.canvasLegendTouch;
+  $$.state.canvasLegendTouch = null;
+  return !!start && start.id === id && !start.moved;
+}
+function markCanvasLegendTouchClick($$, id) {
+  $$.state.canvasLegendLastTouchClickId = id;
+  $$.state.canvasLegendLastTouchClickTime = Date.now();
+}
+function isDuplicateCanvasLegendTouchClick($$, id) {
+  const { state } = $$;
+  const duplicate = state.canvasLegendLastTouchClickId === id && Date.now() - (state.canvasLegendLastTouchClickTime || 0) < CANVAS_LEGEND_TOUCH_CLICK_TIMEOUT;
+  if (duplicate) {
+    state.canvasLegendLastTouchClickId = null;
+    state.canvasLegendLastTouchClickTime = 0;
+  }
+  return duplicate;
+}
 function bindCanvasHtmlLegendInteractions($$, item) {
   const { api, config, state } = $$;
-  item.on("click", null).on("dblclick", null).on("mouseover", null).on("mouseout", null);
+  item.on("click dblclick mouseover mouseout touchstart touchmove touchend", null);
   if (!config.interaction_enabled) {
     return;
   }
   const interaction = config.legend_item_interaction;
   const eventType = typeof interaction === "object" && (interaction == null ? void 0 : interaction.dblclick) ? "dblclick" : "click";
-  item.on(eventType, interaction || isFunction(config.legend_item_onclick) ? function(event, id) {
+  const isTouch = state.inputType === "touch";
+  const hasClickInteraction = interaction || isFunction(config.legend_item_onclick);
+  const touchOption = isTouch ? getCanvasTouchListenerOption(config) : void 0;
+  const handleCanvasLegendToggle = function(event, id) {
+    var _a;
     if (!callFn(config.legend_item_onclick, api, id, !state.hiddenTargetIds.has(id))) {
       const selected = src_select(this);
       if (event.type === "dblclick" || event.altKey) {
@@ -47203,15 +47441,30 @@ function bindCanvasHtmlLegendInteractions($$, item) {
       }
       revertCanvasLegendTargetFocus($$);
     }
-  } : null).on(
-    "mouseover",
-    interaction || isFunction(config.legend_item_onover) ? function(event, id) {
-      if (!callFn(config.legend_item_onover, api, id, !state.hiddenTargetIds.has(id))) {
-        setCanvasHtmlLegendFocus($$, id);
-        !state.transiting && $$.isTargetToShow(id) && setCanvasLegendTargetFocus($$, id);
-      }
-    } : null
-  ).on("mouseout", interaction || isFunction(config.legend_item_onout) ? function(event, id) {
+    isTouch && ((_a = $$.hideTooltip) == null ? void 0 : _a.call($$));
+  };
+  item.on(eventType, hasClickInteraction ? function(event, id) {
+    if (isTouch && event.type === "click" && isDuplicateCanvasLegendTouchClick($$, id)) {
+      return;
+    }
+    handleCanvasLegendToggle.call(this, event, id);
+  } : null);
+  isTouch && eventType === "click" && hasClickInteraction && item.on("touchstart", function(event, id) {
+    setCanvasLegendTouchStart($$, id, event);
+  }, touchOption).on("touchmove", (event) => {
+    updateCanvasLegendTouchMove($$, event);
+  }, touchOption).on("touchend", function(event, id) {
+    if (isCanvasLegendTouchTap($$, id, event)) {
+      markCanvasLegendTouchClick($$, id);
+      handleCanvasLegendToggle.call(this, event, id);
+    }
+  }, touchOption);
+  !isTouch && item.on("mouseover", interaction || isFunction(config.legend_item_onover) ? function(event, id) {
+    if (!callFn(config.legend_item_onover, api, id, !state.hiddenTargetIds.has(id))) {
+      setCanvasHtmlLegendFocus($$, id);
+      !state.transiting && $$.isTargetToShow(id) && setCanvasLegendTargetFocus($$, id);
+    }
+  } : null).on("mouseout", interaction || isFunction(config.legend_item_onout) ? function(event, id) {
     if (!callFn(config.legend_item_onout, api, id, !state.hiddenTargetIds.has(id))) {
       revertCanvasHtmlLegendFocus($$);
       revertCanvasLegendTargetFocus($$);
@@ -48857,7 +49110,7 @@ const canvasInternal = {
       return;
     }
     this.dispatchCanvasDataClick(event, true);
-    this.onCanvasMouseOut();
+    this.dispatchCanvasDataOut(this.$el.canvas.node());
     (_c = this.config.onout) == null ? void 0 : _c.bind(this.api)(event);
   },
   /**
@@ -49031,16 +49284,19 @@ const canvasInternal = {
     state._canvasVisibleRangeCache = null;
     state._canvasXTickValuesCache = null;
     $$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());
-    $$.canvasRenderer.drawBackground($$);
-    $$.canvasAxisRenderer.drawTitle($$);
-    state.hasAxis && $$.canvasAxisRenderer.draw($$);
-    $$.canvasRenderer.draw($$, drawShape);
-    state.hasAxis && $$.config.grid_lines_front && $$.canvasAxisRenderer.drawGridLines($$);
-    $$.canvasRenderer.drawSubchart($$, drawShape);
-    state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
-    $$.canvasRenderer.drawEmptyLabel($$);
-    rebuildHit && $$.hitDetector.rebuild($$, drawShape);
-    $$.canvasEngine.endFrame();
+    try {
+      $$.canvasRenderer.drawBackground($$);
+      $$.canvasAxisRenderer.drawTitle($$);
+      state.hasAxis && $$.canvasAxisRenderer.draw($$);
+      $$.canvasRenderer.draw($$, drawShape);
+      state.hasAxis && $$.config.grid_lines_front && $$.canvasAxisRenderer.drawGridLines($$);
+      $$.canvasRenderer.drawSubchart($$, drawShape);
+      state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
+      $$.canvasRenderer.drawEmptyLabel($$);
+      rebuildHit && $$.hitDetector.rebuild($$, drawShape);
+    } finally {
+      $$.canvasEngine.endFrame();
+    }
     $$.canvasEngine.clearOverlay();
     state.canvasFocusMainRedraw = false;
     focusData && $$.renderCanvasFocus(focusData);
@@ -49059,15 +49315,18 @@ const canvasInternal = {
     if (withMainRedraw) {
       const drawShape = state.canvasShape || $$.getDrawShape();
       $$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());
-      $$.canvasRenderer.drawBackground($$);
-      $$.canvasAxisRenderer.drawTitle($$);
-      state.hasAxis && $$.canvasAxisRenderer.draw($$);
-      $$.canvasRenderer.draw($$, drawShape, focusData);
-      state.hasAxis && $$.config.grid_lines_front && $$.canvasAxisRenderer.drawGridLines($$);
-      $$.canvasRenderer.drawSubchart($$, drawShape);
-      state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
-      $$.canvasRenderer.drawEmptyLabel($$);
-      $$.canvasEngine.endFrame();
+      try {
+        $$.canvasRenderer.drawBackground($$);
+        $$.canvasAxisRenderer.drawTitle($$);
+        state.hasAxis && $$.canvasAxisRenderer.draw($$);
+        $$.canvasRenderer.draw($$, drawShape, focusData);
+        state.hasAxis && $$.config.grid_lines_front && $$.canvasAxisRenderer.drawGridLines($$);
+        $$.canvasRenderer.drawSubchart($$, drawShape);
+        state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
+        $$.canvasRenderer.drawEmptyLabel($$);
+      } finally {
+        $$.canvasEngine.endFrame();
+      }
     }
     state.canvasFocusMainRedraw = !!withMainRedraw;
     $$.canvasEngine.withOverlay((ctx) => {
@@ -49209,6 +49468,7 @@ function loadConfig(config) {
 ;// ./src/Chart/api/chart.ts
 
 
+
 /* harmony default export */ var chart = ({
   /**
    * Resize the chart.
@@ -49300,22 +49560,25 @@ function loadConfig(config) {
    * chart.destroy();
    */
   destroy() {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
     const $$ = this.internal;
     const { state, $el: { chart, style, svg } } = $$;
     if (notEmpty($$)) {
       $$.callPluginHook("$willDestroy");
       (_a = $$.cache) == null ? void 0 : _a.remove(["setOverOut", "callOverOutForTouch"]);
       $$.charts.splice($$.charts.indexOf(this), 1);
+      $$.charts.length === 0 && cleanupWorkers();
       $$.unbindAllEvents();
       svg == null ? void 0 : svg.select("*").interrupt();
       state.canvasFlowFrame !== null && ((_c = (_b = win).cancelAnimationFrame) == null ? void 0 : _c.call(_b, state.canvasFlowFrame));
       state.canvasFlowFrame = null;
       state.canvasFlowFinish = null;
-      (_d = $$.canvasRenderer) == null ? void 0 : _d.destroy();
-      (_e = $$.canvasEngine) == null ? void 0 : _e.destroy();
-      (_f = $$.resizeFunction) == null ? void 0 : _f.clear();
-      (_h = (_g = $$.resizeFunction) == null ? void 0 : _g.resizeObserver) == null ? void 0 : _h.disconnect();
+      state.pendingRaf !== null && ((_e = (_d = win).cancelAnimationFrame) == null ? void 0 : _e.call(_d, state.pendingRaf));
+      state.pendingRaf = null;
+      (_f = $$.canvasRenderer) == null ? void 0 : _f.destroy();
+      (_g = $$.canvasEngine) == null ? void 0 : _g.destroy();
+      (_h = $$.resizeFunction) == null ? void 0 : _h.clear();
+      (_j = (_i = $$.resizeFunction) == null ? void 0 : _i.resizeObserver) == null ? void 0 : _j.disconnect();
       $$.resizeFunction && win.removeEventListener("resize", $$.resizeFunction);
       chart.classed("bb", false).style("position", null);
       if (state.isCanvasMode) {
@@ -49587,9 +49850,22 @@ object_extend(api_data_data, {
    * chart.focus();
    */
   focus(targetIdsValue) {
+    var _a;
     const $$ = this.internal;
     const { state } = $$;
     const targetIds = $$.mapToTargetIds(targetIdsValue);
+    if (state.isCanvasMode) {
+      const focusedIds = targetIds.filter($$.isTargetToShow, $$);
+      const focusedSet = new Set(focusedIds);
+      const defocusedIds = $$.mapToTargetIds().filter((id) => !focusedSet.has(id) && $$.isTargetToShow(id));
+      $$.revertLegend();
+      $$.toggleFocusLegend(defocusedIds, false);
+      $$.toggleFocusLegend(focusedIds, true);
+      state.focusedTargetIds = focusedSet;
+      state.defocusedTargetIds = new Set(defocusedIds);
+      (_a = $$.renderCanvasFrame) == null ? void 0 : _a.call($$, void 0, null, false);
+      return;
+    }
     const candidates = $$.$el.svg.selectAll(
       $$.selectorTargets(targetIds.filter($$.isTargetToShow, $$))
     );
@@ -49622,9 +49898,18 @@ object_extend(api_data_data, {
    * chart.defocus();
    */
   defocus(targetIdsValue) {
+    var _a;
     const $$ = this.internal;
     const { state } = $$;
     const targetIds = $$.mapToTargetIds(targetIdsValue);
+    if (state.isCanvasMode) {
+      const defocusedIds = targetIds.filter($$.isTargetToShow, $$);
+      $$.toggleFocusLegend(defocusedIds, false);
+      defocusedIds.forEach((id) => state.focusedTargetIds.delete(id));
+      state.defocusedTargetIds = new Set(defocusedIds);
+      (_a = $$.renderCanvasFrame) == null ? void 0 : _a.call($$, void 0, null, false);
+      return;
+    }
     const candidates = $$.$el.svg.selectAll(
       $$.selectorTargets(targetIds.filter($$.isTargetToShow, $$))
     );
@@ -49655,9 +49940,23 @@ object_extend(api_data_data, {
    * chart.revert();
    */
   revert(targetIdsValue) {
+    var _a, _b, _c;
     const $$ = this.internal;
     const { config, state, $el } = $$;
     const targetIds = $$.mapToTargetIds(targetIdsValue);
+    if (state.isCanvasMode) {
+      const changed = !!((_a = state.focusedTargetIds) == null ? void 0 : _a.size) || !!((_b = state.defocusedTargetIds) == null ? void 0 : _b.size);
+      if (config.legend_show) {
+        $$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
+        $el.legend.selectAll($$.selectorLegends(targetIds)).filter(function() {
+          return src_select(this).classed($FOCUS.legendItemFocused);
+        }).classed($FOCUS.legendItemFocused, false);
+      }
+      state.focusedTargetIds = /* @__PURE__ */ new Set();
+      state.defocusedTargetIds = /* @__PURE__ */ new Set();
+      changed && ((_c = $$.renderCanvasFrame) == null ? void 0 : _c.call($$, void 0, null, false));
+      return;
+    }
     const candidates = $el.svg.selectAll($$.selectorTargets(targetIds));
     candidates.classed($FOCUS.focused, false).classed($FOCUS.defocused, false);
     $$.hasArcType(null, ["polar"]) && $$.unexpandArc(targetIds);
@@ -49900,7 +50199,12 @@ const legend_legend = {
       return;
     }
     if (hasUnload) {
-      $$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), () => {
+      const unloadIds = $$.mapToTargetIds(args.unload === true ? null : args.unload);
+      $$.unload(unloadIds, () => {
+        if (!$$.config || !$$.cache) {
+          return;
+        }
+        $$.cache.remove(unloadIds);
         requestIdleCallback(() => $$.loadFromArgs(args));
       });
     } else {
@@ -49945,6 +50249,9 @@ const legend_legend = {
     $$.state.dirty.data = true;
     $$.state._eventRectFingerprint = null;
     $$.unload(ids, () => {
+      if (!$$.config || !$$.cache) {
+        return;
+      }
       $$.redraw({
         withUpdateOrgXDomain: true,
         withUpdateXDomain: true,
@@ -50151,7 +50458,7 @@ const tooltip_tooltip = {
    *  });
    */
   show: function(args) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
     const $$ = this.internal;
     const { $el, config, state: { eventReceiver, hasFunnel, hasTreemap, inputType } } = $$;
     let index;
@@ -50178,6 +50485,24 @@ const tooltip_tooltip = {
     } else if (isDefined(args.index)) {
       index = args.index;
     }
+    if ($$.state.isCanvasMode) {
+      const targets = ((_d = $$.filterTargetsToShow) == null ? void 0 : _d.call($$)) || $$.data.targets;
+      const selectedData = ((_e = args.data) == null ? void 0 : _e.id) && !config.tooltip_grouped ? targets.filter((target) => target.id === args.data.id).map((target) => target.values[index != null ? index : args.data.index]).filter(Boolean) : targets.map((target) => target.values[index]).filter(Boolean);
+      const canvas = (_g = (_f = $el.canvas) == null ? void 0 : _f.node) == null ? void 0 : _g.call(_f);
+      const shape = $$.state.canvasShape || ((_h = $$.getDrawShape) == null ? void 0 : _h.call($$));
+      const first = selectedData[0];
+      const point = mouse || (first && ((_i = shape == null ? void 0 : shape.pos) == null ? void 0 : _i.cx) && ((_j = shape == null ? void 0 : shape.pos) == null ? void 0 : _j.cy) ? [
+        $$.state.margin.left + shape.pos.cx(first),
+        $$.state.margin.top + shape.pos.cy(first)
+      ] : void 0);
+      if (!selectedData.length || !canvas) {
+        return;
+      }
+      $$.state.canvasFocusKey = selectedData.map((v) => `${v.id}:${v.index}`).join("|");
+      (_k = $$.renderCanvasFocus) == null ? void 0 : _k.call($$, selectedData, point);
+      (_l = $$.showTooltip) == null ? void 0 : _l.call($$, selectedData, canvas);
+      return;
+    }
     (inputType === "mouse" ? ["mouseover", "mousemove"] : ["touchstart"]).forEach((eventName) => {
       $$.dispatchEvent(eventName, index, mouse);
     });
@@ -50194,6 +50519,7 @@ const tooltip_tooltip = {
     const { state: { inputType, isCanvasMode }, $el: { tooltip: tooltip2 } } = $$;
     const data = tooltip2 == null ? void 0 : tooltip2.datum();
     if (isCanvasMode) {
+      $$.state.canvasFocusKey = null;
       $$.hideTooltip(true);
       (_a = $$.clearCanvasFocus) == null ? void 0 : _a.call($$);
       return;
@@ -50352,11 +50678,9 @@ function getGlyph(svg) {
       };
     };
     if (t.childElementCount > 1) {
-      const text = [];
       toArray(t.querySelectorAll("tspan")).filter(filterFn).forEach((ts) => {
         glyph.push(getStyleFn(ts));
       });
-      return text;
     } else {
       glyph.push(getStyleFn(t));
     }
@@ -50613,6 +50937,9 @@ let exportApi = () => {
       $$.data.targets.forEach((t) => {
         for (let i = 0; i < notfoundIds.length; i++) {
           if (t.id === notfoundIds[i]) {
+            if (!t.values[t.values.length - 1]) {
+              continue;
+            }
             tail = t.values[t.values.length - 1].index + 1;
             for (let j = 0; j < length; j++) {
               t.values.push({
@@ -51084,8 +51411,17 @@ object_extend(ygrids, {
 
 
 
+const GRID_FOCUS_SELECTOR = `line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`;
 const _getGridTextAnchor = (d) => isValue(d.position) || "end";
 const _getGridTextDx = (d) => d.position === "start" ? 4 : d.position === "middle" ? 0 : -4;
+function _getGridFocusEl($$) {
+  var _a;
+  const { state, $el: { main } } = $$;
+  const cached = state._gridFocusEl;
+  const mainNode = main.node();
+  const cachedNodes = ((_a = cached == null ? void 0 : cached.nodes) == null ? void 0 : _a.call(cached)) || [];
+  return cachedNodes.length && cachedNodes.every((node) => mainNode == null ? void 0 : mainNode.contains(node)) ? cached : state._gridFocusEl = main.selectAll(GRID_FOCUS_SELECTOR);
+}
 function _getGridTextX(isX, width, height) {
   return (d) => {
     let x = isX ? 0 : width;
@@ -51153,8 +51489,9 @@ function _smoothLines(el, type) {
       grid.x.each(function() {
         const grid2 = src_select(this);
         Object.keys(state.xgridAttr).forEach((id) => {
-          grid2.attr(id, state.xgridAttr[id]).style("opacity", () => grid2.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ? "0" : null);
+          grid2.attr(id, state.xgridAttr[id]);
         });
+        grid2.style("opacity", () => +grid2.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ? "0" : null);
       });
     }
   },
@@ -51297,13 +51634,11 @@ function _smoothLines(el, type) {
    * @private
    */
   showGridFocus(data) {
-    var _a, _b;
+    var _a;
     const $$ = this;
-    const { config, state, state: { width, height } } = $$;
+    const { config, state: { width, height } } = $$;
     const isRotated = config.axis_rotated;
-    const focusEl = ((_a = state._gridFocusEl) == null ? void 0 : _a.size()) ? state._gridFocusEl : state._gridFocusEl = $$.$el.main.selectAll(
-      `line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`
-    );
+    const focusEl = _getGridFocusEl($$);
     const dataToShow = (data || [focusEl.datum()]).filter(
       (d) => d && isValue($$.getBaseValue(d))
     );
@@ -51356,18 +51691,16 @@ function _smoothLines(el, type) {
       ["x1", "y1", "x2", "y2"].forEach((v, i) => el.attr(v, xy[i]));
     });
     _smoothLines(focusEl, "grid");
-    (_b = $$.showCircleFocus) == null ? void 0 : _b.call($$, data);
+    (_a = $$.showCircleFocus) == null ? void 0 : _a.call($$, data);
   },
-  hideGridFocus() {
-    var _a, _b;
+  hideGridFocus(force = false) {
+    var _a;
     const $$ = this;
-    const { state, state: { inputType, resizing }, $el: { main } } = $$;
-    if (inputType === "mouse" || !resizing) {
-      const focusEl = ((_a = state._gridFocusEl) == null ? void 0 : _a.size()) ? state._gridFocusEl : state._gridFocusEl = main.selectAll(
-        `line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`
-      );
+    const { state: { inputType, resizing } } = $$;
+    if (force || inputType === "mouse" || !resizing) {
+      const focusEl = _getGridFocusEl($$);
       focusEl.style("visibility", "hidden");
-      (_b = $$.hideCircleFocus) == null ? void 0 : _b.call($$);
+      (_a = $$.hideCircleFocus) == null ? void 0 : _a.call($$);
     }
   },
   updateGridFocus() {
@@ -51392,7 +51725,7 @@ function _smoothLines(el, type) {
     const tickNum = $$.$el.main.select(`.${$AXIS.axisX}`).selectAll(".tick").size();
     let gridData = [];
     if (type === "year") {
-      const xDomain = $$.getXDomain();
+      const xDomain = $$.getXDomain($$.data.targets);
       const [firstYear, lastYear] = xDomain.map((v) => v.getFullYear());
       for (let i = firstYear; i <= lastYear; i++) {
         gridData.push(/* @__PURE__ */ new Date(`${i}-01-01 00:00:00`));
@@ -51682,8 +52015,8 @@ function setSelection(isSelection = false, ids, indices, resetOther) {
         let isWithin;
         let toggle;
         if (shape.classed($CIRCLE.circle)) {
-          const x = +shape.attr("cx") * 1;
-          const y = +shape.attr("cy") * 1;
+          const x = +shape.attr("cx");
+          const y = +shape.attr("cy");
           toggle = $$.togglePoint;
           isWithin = minX < x && x < maxX && minY < y && y < maxY;
         } else if (shape.classed($BAR.bar)) {
@@ -52068,7 +52401,7 @@ const subchart = function(domainValue) {
         $$.getZoomDomain("subX")
       );
       if (isWithinRange) {
-        state.domain = domain;
+        state.domain = domain.slice();
         brush.move(
           brush.getSelection(),
           domain.map(subX)
@@ -52977,7 +53310,7 @@ function defaultConstrain(transform, extent, translateExtent) {
 
 
 const zoom = function(domainValue) {
-  var _a;
+  var _a, _b;
   const $$ = this.internal;
   const { axis, config, org, scale, state } = $$;
   let domain;
@@ -52997,12 +53330,16 @@ const zoom = function(domainValue) {
         $$.getZoomDomain("zoom")
       );
       if (isWithinRange) {
-        state.domain = domain;
+        state.domain = domain.slice();
         domain = $$.getZoomDomainValue(domain);
         $$.api.tooltip.hide();
         if (config.subchart_show) {
-          const x = scale.zoom || scale.x;
-          $$.brush.getSelection().call($$.brush.move, domain.map(x));
+          if (state.isCanvasMode) {
+            (_a = $$.setCanvasSubchartDomain) == null ? void 0 : _a.call($$, domain, true, false);
+          } else {
+            const x = scale.zoom || scale.x;
+            $$.brush.getSelection().call($$.brush.move, domain.map(x));
+          }
         } else {
           const x = isCategorized ? scale.x.orgScale() : org.xScale || scale.x;
           $$.updateCurrentZoomTransform(x, domain);
@@ -53013,7 +53350,7 @@ const zoom = function(domainValue) {
       domain = $$.zoom.getDomain();
     }
   }
-  return (_a = state.domain) != null ? _a : domain;
+  return (_b = state.domain) != null ? _b : domain;
 };
 object_extend(zoom, {
   /**
@@ -53137,11 +53474,12 @@ object_extend(zoom, {
    *  chart.unzoom();
    */
   unzoom() {
+    var _a;
     const $$ = this.internal;
     const { config, $el: { canvas, eventRect, zoomResetBtn }, scale: { zoom: zoom2 }, state } = $$;
     const target = state.isCanvasMode ? canvas : eventRect;
-    if (zoom2) {
-      config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(transform_identity);
+    if (zoom2 || state.isCanvasMode && config.subchart_show && state.domain) {
+      config.subchart_show ? state.isCanvasMode ? (_a = $$.clearCanvasSubchartDomain) == null ? void 0 : _a.call($$, true, false) : $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(transform_identity);
       $$.updateZoom(true);
       zoomResetBtn == null ? void 0 : zoomResetBtn.style("display", "none");
       if ((target == null ? void 0 : target.node()) && transform_transform(target.node()) !== transform_identity) {
@@ -53319,6 +53657,9 @@ function getZoomDragPointer($$, event, element) {
     const useRAF = sourceEvent && isMousemove && config.zoom_type !== "wheel";
     const executeRedraw = () => {
       var _a;
+      if (!$$.config) {
+        return;
+      }
       $$.redraw({
         withTransition: doTransition,
         withY: config.zoom_rescale,
@@ -53451,6 +53792,10 @@ function getZoomDragPointer($$, event, element) {
       if (!state.isCanvasMode && !zoomRect) {
         zoomRect = $$.$el.main.append("rect").attr("clip-path", state.clip.path).attr("class", $ZOOM.zoomBrush).attr("width", isRotated ? state.width : 0).attr("height", isRotated ? 0 : state.height);
       }
+      zoomRect == null ? void 0 : zoomRect.attr(
+        isRotated ? "width" : "height",
+        isRotated ? state.width : state.height
+      );
       start = clampPointer(getZoomDragPointer($$, event, this)[prop.index]);
       end = start;
       state.isCanvasMode ? (_a = $$.renderCanvasZoomBrush) == null ? void 0 : _a.call($$, start, end) : zoomRect.attr(prop.axis, start).attr(prop.attr, 0);
@@ -53572,7 +53917,6 @@ function getZoomDragPointer($$, event, element) {
   zoom_enabled: false,
   zoom_type: "wheel",
   zoom_extent: void 0,
-  zoom_privileged: false,
   zoom_rescale: false,
   zoom_onzoom: void 0,
   zoom_onzoomstart: void 0,
@@ -54254,32 +54598,6 @@ function _getStrokeDashArray(start, end, pattern, isLastX = false) {
       $T(line, withTransition, getRandom()).attr("d", drawFn).style("stroke", this.color).style("opacity", null)
     ];
   },
-  /**
-   * Get the curve interpolate
-   * @param {Array} d Data object
-   * @returns {function}
-   * @private
-   */
-  getCurve(d) {
-    const $$ = this;
-    const isRotatedStepType = $$.config.axis_rotated && $$.isStepType(d);
-    return isRotatedStepType ? (context) => {
-      const step = $$.getInterpolate(d)(context);
-      step.orgPoint = step.point;
-      step.pointRotated = function(x, y) {
-        this._point === 1 && (this._point = 2);
-        const y1 = this._y * (1 - this._t) + y * this._t;
-        this._context.lineTo(this._x, y1);
-        this._context.lineTo(x, y1);
-        this._x = x;
-        this._y = y;
-      };
-      step.point = function(x, y) {
-        this._point === 0 ? this.orgPoint(x, y) : this.pointRotated(x, y);
-      };
-      return step;
-    } : $$.getInterpolate(d);
-  },
   generateDrawLine(lineIndices, isSub) {
     const $$ = this;
     return generateDrawLinePath($$, lineIndices, isSub);
@@ -54338,6 +54656,9 @@ function _getStrokeDashArray(start, end, pattern, isLastX = false) {
     };
     const axisType = { x: $$.axis.getAxisType("x"), y: $$.axis.getAxisType("y") };
     let path = "";
+    if (!d.length) {
+      return path;
+    }
     const target = $$.$el.line.filter(({ id }) => id === d[0].id);
     const tempNode = target.clone().style("display", "none");
     const getLength = (node, path2) => node.attr("d", path2).node().getTotalLength();
@@ -54408,9 +54729,9 @@ function _getStrokeDashArray(start, end, pattern, isLastX = false) {
     }
     if (dashArray.dash.length) {
       !isLastX && dashArray.dash.push(getLength(tempNode, path));
-      tempNode.remove();
       target.attr("stroke-dasharray", dashArray.dash.join(" "));
     }
+    tempNode.remove();
     return path;
   },
   isWithinRegions(withinX, withinRegions) {
@@ -54742,7 +55063,7 @@ function getPointBBox(node) {
         if (mainCircles.attr("cx")) {
           mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
         }
-        selectedCircles && $$.$T(mainCircles, withTransition, getTransitionName());
+        selectedCircles && $$.$T(selectedCircles, withTransition, getTransitionName());
       }
       return mainCircles.attr("cx", xPosFn).attr("cy", yPosFn).style("fill", fillStyleFn);
     }
@@ -55485,10 +55806,6 @@ class AxisRendererHelper {
       } else {
         ticks = scale.ticks(...this.config.tickArguments || []);
       }
-      ticks = ticks.map((v) => {
-        const r = isString(v) && isNumber(v) && !isNaN(v) && Math.round(v * 10) / 10 || v;
-        return r;
-      });
     }
     return ticks;
   }
@@ -55621,7 +55938,13 @@ class AxisRenderer {
           sizeFor1Char = ctx.helper.getSizeFor1Char(orient, tickText, !!evalTextSize);
         }
         let tspan = tickText.selectAll("tspan").data((d, index) => {
-          const split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helper.textFormatted(d)) ? helper.textFormatted(d).concat() : [helper.textFormatted(d)];
+          let split;
+          if (params.tickMultiline) {
+            split = splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w);
+          } else {
+            const formatted = helper.textFormatted(d);
+            split = isArray(formatted) ? formatted.concat() : [formatted];
+          }
           counts[index] = split.length;
           return split.map((splitted) => ({ index, splitted }));
         });
@@ -56401,7 +56724,7 @@ class Axis_Axis {
     const fit = config.axis_x_tick_fit;
     let count = config.axis_x_tick_count;
     let values;
-    if (fit || count && fit) {
+    if (fit) {
       values = $$.mapTargetsToUniqueXs(targets);
       if (this.isCategorized() && count > values.length) {
         count = values.length;
@@ -56662,7 +56985,7 @@ class Axis_Axis {
       const isDomainSame = domain[0] === domain[1] && domain.every((v) => v > 0);
       const isCurrentMaxTickDomainSame = isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1] && currentTickMax.domain.every((v) => v > 0);
       if (isDomainSame || isCurrentMaxTickDomainSame) {
-        return currentTickMax.size;
+        return currentTickMax;
       } else {
         currentTickMax.domain = domain;
       }
@@ -57016,6 +57339,7 @@ class Axis_Axis {
               break;
             }
           }
+          intervalForCulling = intervalForCulling != null ? intervalForCulling : tickSize;
           const tickIndexMap = /* @__PURE__ */ new Map();
           for (let i = 0; i < tickValues.length; i++) {
             tickIndexMap.set(tickValues[i], i);
@@ -57243,7 +57567,7 @@ var eventrect_pow = Math.pow;
     const isRotated = config.axis_rotated;
     const isMultipleX = $$.isMultipleX();
     const xDomain = xScale == null ? void 0 : xScale.domain();
-    const fingerprint = xDomain ? `${xDomain[0]}_${xDomain[1]}_${$$.data.targets.length}_${[...state.hiddenTargetIds].join(",")}` : null;
+    const fingerprint = xDomain ? `${xDomain[0]}_${xDomain[1]}_${state.width}_${state.height}_${$$.data.targets.length}_${[...state.hiddenTargetIds].join(",")}` : null;
     if (fingerprint && fingerprint === state._eventRectFingerprint) {
       return;
     }
@@ -57270,7 +57594,6 @@ var eventrect_pow = Math.pow;
           next: $$.getNextX(index)
         });
         rectW = (d) => {
-          var _a, _b;
           const x2 = getPrevNextX(d);
           const xDomain2 = xScale.domain();
           let val;
@@ -57281,8 +57604,6 @@ var eventrect_pow = Math.pow;
           } else if (x2.next === null) {
             val = xScale(xDomain2[1]) - (xScale(x2.prev) + xScale(d.x)) / 2;
           } else {
-            x2.prev = (_a = x2.prev) != null ? _a : xDomain2[0];
-            x2.next = (_b = x2.next) != null ? _b : xDomain2[1];
             val = Math.max(0, (xScale(x2.next) - xScale(x2.prev)) / 2);
           }
           return val;
@@ -57396,7 +57717,7 @@ var eventrect_pow = Math.pow;
     (_a = $$.showGridFocus) == null ? void 0 : _a.call($$, selectedData);
     const dist = $$.dist(closest, mouse);
     if ($$.isBarType(closest.id) || dist < $$.getPointSensitivity(closest)) {
-      $$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", "pointer");
+      $$.$el.eventRect.style("cursor", "pointer");
       if (triggerEvent && (!state.mouseover || state.mouseover.x !== closest.x || state.mouseover.id !== closest.id)) {
         config.data_onover.call($$.api, closest);
         state.mouseover = closest;
@@ -57408,7 +57729,7 @@ var eventrect_pow = Math.pow;
    * @private
    */
   unselectRect() {
-    var _a, _b;
+    var _a, _b, _c;
     const $$ = this;
     const { state, $el: { circle, tooltip } } = $$;
     state._lastTooltipMouse = null;
@@ -57417,8 +57738,8 @@ var eventrect_pow = Math.pow;
       tooltip && $$.hideTooltip();
       return;
     }
-    $$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", null);
-    (_b = $$.hideGridFocus) == null ? void 0 : _b.call($$);
+    (_b = $$.$el.eventRect) == null ? void 0 : _b.style("cursor", null);
+    (_c = $$.hideGridFocus) == null ? void 0 : _c.call($$);
     if (tooltip) {
       $$.hideTooltip();
       $$._handleLinkedCharts(false);
@@ -57494,7 +57815,7 @@ var eventrect_pow = Math.pow;
         $$.setOverOut(index !== -1, index);
       }).on("mouseout", (event) => {
         state.event = event;
-        if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1 || !config.interaction_onout) {
+        if (!$$.config || $$.hasArcType() || eventReceiver.currentIdx === -1 || !config.interaction_onout) {
           return;
         }
         $$.hideAxisGridFocus();
@@ -57556,10 +57877,10 @@ var eventrect_pow = Math.pow;
     }
     const mouse = getPointer(state.event, this);
     const closest = $$.findClosestFromTargets(targetsToShow, mouse);
-    const sensitivity = $$.getPointSensitivity(closest);
     if (!closest) {
       return;
     }
+    const sensitivity = $$.getPointSensitivity(closest);
     if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < sensitivity) {
       $$.$el.main.selectAll(`.${$SHAPE.shapes}${$$.getTargetSelectorSuffix(closest.id)}`).selectAll(`.${$SHAPE.shape}-${closest.index}`).each(function() {
         var _a;
@@ -57637,8 +57958,8 @@ var eventrect_pow = Math.pow;
     if (defs && !clip.idXAxisTickTexts) {
       const clipId = `${clip.id}-xaxisticktexts`;
       $$.appendClip(defs, clipId);
-      clip.pathXAxisTickTexts = $$.getClipPath(clip.idXAxisTickTexts);
       clip.idXAxisTickTexts = clipId;
+      clip.pathXAxisTickTexts = $$.getClipPath(clip.idXAxisTickTexts);
     }
     if (!config.axis_x_tick_multiline && $$.getAxisTickRotate("x") && newXAxisHeight !== xAxisHeight) {
       $$.setXAxisTickClipWidth();
@@ -59982,15 +60303,15 @@ function _getConnectLineType(id) {
         }
         if (path.length > 1) {
           barPath.push(path[1]);
-          if (i === arr.length - 1) {
-            const barConnectLineNode = $$.$T(
-              src_select(this.parentNode.querySelector(`.${$BAR.barConnectLine}`)),
-              withTransition,
-              getRandom()
-            );
-            $$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
-            barPath.splice(0);
-          }
+        }
+        if (i === arr.length - 1 && barPath.length) {
+          const barConnectLineNode = $$.$T(
+            src_select(this.parentNode.querySelector(`.${$BAR.barConnectLine}`)),
+            withTransition,
+            getRandom()
+          );
+          $$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
+          barPath.splice(0);
         }
         return path[0];
       }).style("fill", $$.updateBarColor.bind($$)).style("clip-path", (d) => d.clipPath).style("opacity", null)
@@ -61622,14 +61943,30 @@ function _getAttrTweenFn(fn) {
     }
     const gStart = $$.getStartingAngle();
     const radius = config.gauge_fullCircle || forRange && !hasGauge ? $$.getArcLength() : gStart * -2;
-    if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
+    const isSingleArcGauge = d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge();
+    if (isSingleArcGauge) {
       const { gauge_min: gMin, gauge_max: gMax } = config;
       const totalSum = $$.getTotalDataSum(state.rendered);
       const gEnd = radius * ((totalSum - gMin) / (gMax - gMin));
       pie = pie.startAngle(gStart).endAngle(gEnd + gStart);
     }
     if (forRange === false) {
-      pie($$.filterTargetsToShow()).forEach((t, i) => {
+      let layout;
+      if (isSingleArcGauge) {
+        layout = pie($$.filterTargetsToShow());
+      } else {
+        const cacheKey = "$arcPieLayout";
+        let cached = $$.cache.get(cacheKey);
+        if (!cached || cached.generation !== state.redrawGeneration) {
+          cached = {
+            generation: state.redrawGeneration,
+            layout: pie($$.filterTargetsToShow())
+          };
+          $$.cache.add(cacheKey, cached);
+        }
+        layout = cached.layout;
+      }
+      layout.forEach((t, i) => {
         var _a2;
         if (!found && t.data.id === ((_a2 = d.data) == null ? void 0 : _a2.id)) {
           found = true;
@@ -61716,7 +62053,7 @@ function _getAttrTweenFn(fn) {
       }
       const pieData = $$.pie(values).map((d, i) => (d.index = i, d));
       let rangeText = arcs.selectAll(`.${$ARC.arcRange}`).data(values);
-      rangeText.exit();
+      rangeText.exit().remove();
       rangeText = $T(rangeText.enter().append("text").attr("class", $ARC.arcRange).style("text-anchor", "middle").style("pointer-events", "none").style("opacity", "0").text((v) => {
         const range = isPercent ? v / totalSum * 100 : v;
         return isFunction(format) ? format(range) : `${range}${isPercent ? "%" : ""}`;
@@ -61795,7 +62132,7 @@ function _getAttrTweenFn(fn) {
     const { state: { transiting }, $el } = $$;
     if (transiting) {
       const interval = setInterval(() => {
-        if (!transiting) {
+        if (!$$.state.transiting) {
           clearInterval(interval);
           $el.legend.selectAll(`.${$FOCUS.legendItemFocused}`).size() > 0 && $$.expandArc(targetIds);
         }
@@ -62005,6 +62342,11 @@ function _getAttrTweenFn(fn) {
         $$.updateLegendItemColor(d.data.id, path.style("fill"));
       }
       state.transiting = false;
+      if (state.redrawing) {
+        state.redrawing = false;
+        state._targetsToShow = null;
+        state._cachedDrawShape = null;
+      }
       callFn(config.onrendered, $$.api);
     });
     hasInteraction && $$.bindArcEvent(mainArc);
@@ -62082,7 +62424,7 @@ function _getAttrTweenFn(fn) {
       const { gauge_min: min, gauge_max: max } = config;
       radian = radius * ((value - min) / (max - min));
     } else {
-      radian = arcLength * (value / total);
+      radian = total ? arcLength * (value / total) : 0;
     }
     return (startingAngle + radian) * (180 / Math.PI);
   },
@@ -62462,7 +62804,7 @@ function _getSplineClipPath() {
     const getTarget = (event) => {
       var _a;
       const target = event.isTrusted ? event.target : (_a = state.eventReceiver.rect) == null ? void 0 : _a.node();
-      if (/^path$/i.test(target.tagName)) {
+      if (target && /^path$/i.test(target.tagName)) {
         state.event = event;
         return src_select(target).datum();
       }
@@ -62527,10 +62869,9 @@ function _getSplineClipPath() {
     const { top, left, width, height } = _getSize.call($$);
     const points = {};
     let accumulated = 0;
-    targets.each((d, i) => {
-      var _a;
+    targets.each((d) => {
       const start = accumulated;
-      const ratio = ((_a = targets == null ? void 0 : targets[i]) != null ? _a : d).ratio;
+      const { ratio } = d;
       accumulated += ratio;
       const offset = isRotated ? left : top;
       const segmentStart = offset + start;
@@ -64367,7 +64708,7 @@ function position(group, root) {
       var _a;
       const target = event.isTrusted ? event.target : (_a = state.eventReceiver.rect) == null ? void 0 : _a.node();
       let data;
-      if (/^rect$/i.test(target.tagName)) {
+      if (target && /^rect$/i.test(target.tagName)) {
         state.event = event;
         data = src_select(target).datum();
       }
@@ -64587,7 +64928,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260610012637",
+  version: "3.18.0-nightly-20260611012945",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

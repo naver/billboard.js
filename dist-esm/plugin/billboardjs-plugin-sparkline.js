@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260610012637
+ * @version 3.18.0-nightly-20260611012945
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -70,14 +70,17 @@ const doc = win?.document;
  */
 function _getRect(relativeViewport, node, forceEval = false) {
     const _ = n => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+    // cache per API: getBoundingClientRect(viewport coords) and getBBox(local coords)
+    // return different values for the same node and must not share one slot
+    const cacheKey = relativeViewport ? "rectClient" : "rectBBox";
     if (forceEval) {
         return _(node);
     }
     else {
         // will cache the value if the element is not a SVGElement or the width is not set
-        const needEvaluate = !("rect" in node) || ("rect" in node && node.hasAttribute("width") &&
-            node.rect.width !== +(node.getAttribute("width") || 0));
-        return needEvaluate ? (node.rect = _(node)) : node.rect;
+        const needEvaluate = !(cacheKey in node) || (node.hasAttribute("width") &&
+            node[cacheKey].width !== +(node.getAttribute("width") || 0));
+        return needEvaluate ? (node[cacheKey] = _(node)) : node[cacheKey];
     }
 }
 /**
@@ -176,7 +179,7 @@ class Plugin {
     $$;
     options;
     config;
-    static version = "3.18.0-nightly-20260610012637";
+    static version = "3.18.0-nightly-20260611012945";
     /**
      * Constructor
      * @param {Any} options config option object
