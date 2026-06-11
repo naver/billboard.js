@@ -7,6 +7,9 @@ import {window} from "./browser";
 // Store worker cache in memory
 const cache: {[key: string]: {src: string, worker: Worker | null}} = {};
 
+// Correlation id for worker request/response matching
+let messageId = 0;
+
 /**
  * Get or create cached worker resources (Object URL, Worker)
  * @param {function} fn Function to be executed in worker
@@ -26,8 +29,8 @@ function getOrCreateWorkerResources(fn: Function, depsFn?: Function[]): {key: st
 			`${depsString}
 
 			self.onmessage=function({data}) {
-				const result = (${fnString}).apply(null, data);
-				self.postMessage(result);
+				const result = (${fnString}).apply(null, data.args);
+				self.postMessage({id: data.id, result});
 			};`
 		], {
 			type: "text/javascript"
@@ -113,14 +116,19 @@ export function runWorker(
 
 		runFn = function(...args: unknown[]) {
 			if (worker) {
-				// trigger worker
-				worker.postMessage(args);
+				// workers are cached and shared: match the response by id so concurrent
+				// callers don't steal each other's result
+				const id = ++messageId;
 
-				// listen worker
-				worker.onmessage = function(e: MessageEvent) {
-					// Object URL and Worker are cached and reused
-					return callback(e.data);
+				const handler = function(e: MessageEvent) {
+					if (e.data?.id === id) {
+						worker.removeEventListener("message", handler);
+						callback(e.data.result);
+					}
 				};
+
+				worker.addEventListener("message", handler);
+				worker.postMessage({id, args});
 			}
 		};
 	}

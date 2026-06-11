@@ -320,7 +320,7 @@ export default {
 		const getTarget = event => {
 			const target = event.isTrusted ? event.target : state.eventReceiver.rect?.node();
 
-			if (/^path$/i.test(target.tagName)) {
+			if (target && /^path$/i.test(target.tagName)) {
 				state.event = event;
 				return d3Select(target).datum();
 			}
@@ -413,9 +413,9 @@ export default {
 
 		let accumulated = 0;
 
-		targets.each((d, i) => {
+		targets.each(d => {
 			const start = accumulated;
-			const ratio = (targets?.[i] ?? d).ratio;
+			const {ratio} = d;
 
 			accumulated += ratio;
 

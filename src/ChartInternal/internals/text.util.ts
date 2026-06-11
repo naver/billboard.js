@@ -334,7 +334,7 @@ function batchGetBBox(elements: SVGTextElement[]): Map<SVGTextElement, DOMRect> 
 	return toMap(
 		elements,
 		element => element,
-		element => getBBox(element)
+		element => getBBox(element, true)
 	);
 }
 

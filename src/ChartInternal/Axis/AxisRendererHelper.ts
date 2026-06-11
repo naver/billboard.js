@@ -4,7 +4,7 @@
  * @ignore
  */
 import type {d3Selection} from "../../../types/types";
-import {getBBox, isDefined, isNumber, isString, isValue} from "../../module/util";
+import {getBBox, isDefined, isValue} from "../../module/util";
 import {getScale} from "../internals/scale";
 
 export default class AxisRendererHelper {
@@ -133,15 +133,6 @@ export default class AxisRendererHelper {
 				ticks = scale
 					.ticks(...(this.config.tickArguments || []));
 			}
-
-			ticks = ticks
-				.map(v => {
-					// round the tick value if is number
-					const r = (isString(v) && isNumber(v) && !isNaN(v) &&
-						Math.round(v * 10) / 10) || v;
-
-					return r;
-				});
 		}
 
 		return ticks;

@@ -75,7 +75,7 @@ export default {
 			const target = event.isTrusted ? event.target : state.eventReceiver.rect?.node();
 			let data;
 
-			if (/^rect$/i.test(target.tagName)) {
+			if (target && /^rect$/i.test(target.tagName)) {
 				state.event = event;
 				data = d3Select(target).datum();
 			}

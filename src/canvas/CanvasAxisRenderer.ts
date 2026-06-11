@@ -25,6 +25,7 @@ import {
 import CanvasEngine from "./CanvasEngine";
 import CanvasPainter, {CanvasRect} from "./CanvasPainter";
 import CanvasTheme from "./CanvasTheme";
+import {getFontSize} from "./util";
 
 type GridLine = Partial<GridLineOptions>;
 type AdditionalAxisOptions = {
@@ -35,7 +36,8 @@ type AdditionalAxisOptions = {
 	outerTick: boolean
 };
 
-const X_AXIS_TICK_TEXT_CLIP_PADDING = 10;
+const X_AXIS_TICK_TEXT_HORIZONTAL_CLIP_PADDING = 20;
+const X_AXIS_TICK_TEXT_VERTICAL_CLIP_PADDING = 15;
 
 /**
  * Get x tick text direction. Text labels stay outside the chart even when tick lines are inner.
@@ -68,9 +70,9 @@ function getYTickTextDirection(isRotated: boolean, isY2: boolean): number {
  */
 function getHorizontalXAxisClipRect(margin, width: number, height: number): CanvasRect {
 	return {
-		x: margin.left - X_AXIS_TICK_TEXT_CLIP_PADDING,
+		x: margin.left - X_AXIS_TICK_TEXT_HORIZONTAL_CLIP_PADDING,
 		y: 0,
-		w: width + (X_AXIS_TICK_TEXT_CLIP_PADDING * 2),
+		w: width + (X_AXIS_TICK_TEXT_HORIZONTAL_CLIP_PADDING * 2),
 		h: height
 	};
 }
@@ -86,9 +88,9 @@ function getHorizontalXAxisClipRect(margin, width: number, height: number): Canv
 function getRotatedXAxisClipRect(margin, width: number, height: number): CanvasRect {
 	return {
 		x: 0,
-		y: margin.top - X_AXIS_TICK_TEXT_CLIP_PADDING,
+		y: margin.top - X_AXIS_TICK_TEXT_VERTICAL_CLIP_PADDING,
 		w: width,
-		h: height + (X_AXIS_TICK_TEXT_CLIP_PADDING * 2)
+		h: height + (X_AXIS_TICK_TEXT_VERTICAL_CLIP_PADDING * 2)
 	};
 }
 
@@ -205,19 +207,6 @@ function formatTick(format: AxisTickFormat, tick: AxisTickValue): string {
 }
 
 /**
- * Get font size from canvas font shorthand.
- * @param {string} font Canvas font shorthand
- * @returns {number} Font size
- * @private
- */
-function getFontSize(font: string): number {
-	const match = /(\d+(?:\.\d+)?)px/.exec(font);
-	const size = match ? parseFloat(match[1]) : parseFloat(font);
-
-	return Number.isFinite(size) ? size : 12;
-}
-
-/**
  * Get axis tick text font for a specific axis.
  * @param {object} axisStyle Canvas axis style
  * @param {string} id Axis id
@@ -244,6 +233,28 @@ function getXTickTextLineHeight(painter: CanvasPainter, fontSize: number): numbe
 	const svgFallbackHeight = (fontSize || 10) * (11.5 / 10);
 
 	return Math.max(fontSize, fontBoxHeight, actualBoxHeight, svgFallbackHeight);
+}
+
+/**
+ * Get SVG-compatible y position for rotated bottom x-axis tick text.
+ * @param {number} rotate Tick text rotation
+ * @returns {number} Local SVG text y coordinate
+ * @private
+ */
+function getRotatedXTickTextY(rotate: number): number {
+	const r2 = rotate / 15;
+
+	return 11.5 - 2.5 * r2 * (rotate > 0 ? 1 : -1);
+}
+
+/**
+ * Get SVG-compatible tspan dx for rotated bottom x-axis tick text.
+ * @param {number} rotate Tick text rotation
+ * @returns {number} Local tspan dx
+ * @private
+ */
+function getRotatedXTickTextDx(rotate: number): number {
+	return 8 * Math.sin(Math.PI * (rotate / 180));
 }
 
 /**
@@ -356,11 +367,13 @@ function getXTickTextWidth($$, ticks: AxisTickValue[], isRotated: boolean, targe
  * @param {Array} ticks X-axis tick values
  * @param {boolean} isRotated Whether axis is rotated
  * @param {function} targetScale X scale
+ * @param {number} [maxWidth] Pre-computed max tick text width (invariant per draw pass)
  * @returns {Array} Tick text lines
  * @private
  */
 function getXTickTextLines($$, painter: CanvasPainter, format: AxisTickFormat, tick: AxisTickValue,
-	ticks: AxisTickValue[] = [], isRotated = false, targetScale = getXScale($$)): string[] {
+	ticks: AxisTickValue[] = [], isRotated = false, targetScale = getXScale($$),
+	maxWidth?: number): string[] {
 	const value = format ? format(tick) : tick;
 
 	if (value == null) {
@@ -380,7 +393,7 @@ function getXTickTextLines($$, painter: CanvasPainter, format: AxisTickFormat, t
 	return $$.config.axis_x_tick_multiline ?
 		splitTickTextByWidth(
 			text,
-			getXTickTextWidth($$, ticks, isRotated, targetScale),
+			maxWidth ?? getXTickTextWidth($$, ticks, isRotated, targetScale),
 			painter
 		) :
 		[text];
@@ -794,6 +807,10 @@ export default class CanvasAxisRenderer {
 				ctx.strokeStyle = axis.tickColor;
 				ctx.lineWidth = axis.tickWidth;
 
+				// invariant across ticks: measure/resolve once per draw pass
+				const lineHeight = getXTickTextLineHeight(painter, getFontSize(tickFont));
+				const tickTextWidth = getXTickTextWidth($$, ticks, isRotated, scale.subX);
+
 				for (const tick of ticks) {
 					const tickPos = scale.subX(normalizeXValue($$, tick));
 					const tx = margin2.left + tickPos;
@@ -825,9 +842,9 @@ export default class CanvasAxisRenderer {
 						tick,
 						ticks,
 						isRotated,
-						scale.subX
+						scale.subX,
+						tickTextWidth
 					);
-					const lineHeight = getXTickTextLineHeight(painter, getFontSize(tickFont));
 					let textX;
 					let textY;
 
@@ -875,13 +892,14 @@ export default class CanvasAxisRenderer {
 		const fontSize = getFontSize(title.font);
 		const lineHeight = fontSize * 1.5;
 		const {x, align} = getTitleTextPosition(config.title_position, current.width);
-		const y = config.title_padding.top || 0;
+		const titleHeight = $$.getCanvasTitleHeight?.() ?? fontSize;
+		const y = (config.title_padding.top || 0) + titleHeight;
 
 		painter.withState(() => {
 			ctx.font = title.font;
 			ctx.fillStyle = title.color;
 			ctx.textAlign = align;
-			ctx.textBaseline = "top";
+			ctx.textBaseline = "alphabetic";
 
 			lines.forEach((line, i) => {
 				ctx.fillText(line, x, y + (i ? fontSize + ((i - 1) * lineHeight) : 0));
@@ -1369,14 +1387,22 @@ export default class CanvasAxisRenderer {
 					return;
 				}
 
+				// invariant across ticks: measure/resolve once per draw pass
+				const tickFont = getAxisTickFont(axis, "x");
+				const tickLineHeight = getXTickTextLineHeight(painter, getFontSize(tickFont));
+				const tickTextWidth = getXTickTextWidth($$, ticks, isRotated, targetScale);
+
 				ticks.forEach((tick, tickIndex) => {
 					this.drawXAxisTickText($$, tick, format, axis.labelColor, {
 						isRotated,
 						rangeEnd,
 						rangeStart,
 						tickCount: ticks.length,
+						tickFont,
 						tickIndex,
+						tickLineHeight,
 						tickTextDirection,
+						tickTextWidth,
 						tickRotate,
 						tickTextPosition,
 						targetScale,
@@ -1625,7 +1651,7 @@ export default class CanvasAxisRenderer {
 			return;
 		}
 
-		const tickFont = getAxisTickFont(axis, "x");
+		const tickFont = options.tickFont ?? getAxisTickFont(axis, "x");
 
 		ctx.font = tickFont;
 		ctx.fillStyle = fill;
@@ -1637,9 +1663,11 @@ export default class CanvasAxisRenderer {
 			tick,
 			ticks,
 			isRotated,
-			targetScale
+			targetScale,
+			options.tickTextWidth
 		);
-		const lineHeight = getXTickTextLineHeight(painter, getFontSize(tickFont));
+		const lineHeight = options.tickLineHeight ??
+			getXTickTextLineHeight(painter, getFontSize(tickFont));
 		let textX;
 		let textY;
 
@@ -1649,6 +1677,27 @@ export default class CanvasAxisRenderer {
 			textY = ty + (tickTextPosition.y || 0);
 			ctx.textAlign = getXTickTextAlign($$, options);
 			ctx.textBaseline = "middle";
+		} else if (tickRotate) {
+			const fontSize = getFontSize(tickFont);
+			const firstDy = tickTextPosition.y ?
+				resolveTextOffset(tickTextPosition.y, fontSize) :
+				0.71 * fontSize;
+			const textDx = getRotatedXTickTextDx(tickRotate) +
+				(tickTextPosition.x || 0);
+			const textY = getRotatedXTickTextY(tickRotate) + firstDy;
+
+			ctx.textAlign = getXTickTextAlign($$, options);
+			ctx.textBaseline = "alphabetic";
+			painter.withState(textCtx => {
+				textCtx.translate(tx, y);
+				textCtx.rotate(tickRotate * Math.PI / 180);
+
+				lines.forEach((line, i) => {
+					textCtx.fillText(line, textDx, textY + (i * lineHeight));
+				});
+			});
+
+			return;
 		} else {
 			textX = tx + (tickTextPosition.x || 0);
 			textY = y + ((AXIS_TICK_SIZE + AXIS_TICK_PADDING) * tickTextDirection) +

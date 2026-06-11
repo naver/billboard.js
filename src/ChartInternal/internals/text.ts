@@ -40,7 +40,7 @@ export default {
 		return $$.isBarType(d) &&
 				!meetsLabelThreshold.call($$, Math.abs($$.getRatio("bar", d)), "bar") ?
 			"0" :
-			($$.hasDataLabel ? null : "0");
+			($$.hasDataLabel() ? null : "0");
 	},
 
 	/**
@@ -280,8 +280,8 @@ export default {
 					(this.getAttribute("x") || this.getAttribute("transform"))), t);
 			const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
 			let pos = {
-				x: getX.bind(this)(d, i, labelDimension),
-				y: getY.bind(this)(d, i, labelDimension)
+				x: getX.call(this, d, i, labelDimension),
+				y: getY.call(this, d, i, labelDimension)
 			};
 
 			if (angle) {

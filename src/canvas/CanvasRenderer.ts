@@ -18,7 +18,7 @@ import {
 import {generateDrawAreaPath, generateDrawLinePath} from "../ChartInternal/shape/core/path";
 import {SUBCHART_BRUSH_HANDLE_PATH, TYPE} from "../config/const";
 import {window} from "../module/browser";
-import {isFunction, isNumber, isObject, isString} from "../module/util";
+import {asHalfPixel, isFunction, isNumber, isObject, isString} from "../module/util";
 import CanvasEngine from "./CanvasEngine";
 import CanvasPainter, {CanvasRect} from "./CanvasPainter";
 import CanvasTheme from "./CanvasTheme";
@@ -33,7 +33,6 @@ import {
 	getLabelImagePosition,
 	getLabelImageUrl,
 	getLabelPosition,
-	getLabelRowKey,
 	getLabelText,
 	getPointLabelAnchor,
 	getRotatedLabelPosition,
@@ -45,6 +44,7 @@ import {
 	DENSE_SCATTER_POINT_CULL_THRESHOLD,
 	getCanvasShapeIndices,
 	getCanvasTargetVisibleRange,
+	getFontSize,
 	hasCanvasDrawableValue,
 	isCanvasAreaType,
 	isCanvasBarType,
@@ -74,6 +74,7 @@ const subchartBrushHandlePathCache = new Map<string, Path2D>();
 type BarConnectLineType = "start-start" | "start-end" | "end-start" | "end-end";
 type CanvasBarConnectLineBox = {x: number, y: number, width: number, height: number};
 type CanvasBackgroundClassStyle = {opacity?: number, transform?: string};
+type CanvasBackgroundImageRect = {x: number, y: number, w: number, h: number};
 type CanvasLinearGradientShape = "area" | "bar";
 type CanvasLinearGradientOption = boolean | {
 	x?: [number, number],
@@ -108,6 +109,53 @@ function applyCssMatrixTransform(ctx: CanvasRenderingContext2D, transform?: stri
 			values.every(Number.isFinite) &&
 			ctx.transform(values[0], values[1], values[4], values[5], values[12], values[13]);
 	}
+}
+
+/**
+ * Get SVG image equivalent destination rect for canvas background.
+ * @param {HTMLImageElement} image Image element
+ * @param {number} width Background viewport width
+ * @param {number} height Background viewport height
+ * @returns {object} Destination rect
+ * @private
+ */
+function getPreservedAspectRatioRect(
+	image: HTMLImageElement,
+	width: number,
+	height: number
+): CanvasBackgroundImageRect {
+	const imageWidth = image.naturalWidth || image.width;
+	const imageHeight = image.naturalHeight || image.height;
+
+	if (!imageWidth || !imageHeight || !width || !height) {
+		return {x: 0, y: 0, w: width, h: height};
+	}
+
+	const scale = Math.min(width / imageWidth, height / imageHeight);
+	const w = imageWidth * scale;
+	const h = imageHeight * scale;
+
+	return {
+		x: (width - w) / 2,
+		y: (height - h) / 2,
+		w,
+		h
+	};
+}
+
+/**
+ * Get SVG main group translate offset for canvas background image parity.
+ * @param {object} $$ ChartInternal instance
+ * @returns {object} Main group offset
+ * @private
+ */
+function getBackgroundImageOffset($$): {x: number, y: number} {
+	const {state} = $$;
+
+	return state.hasFunnel || state.hasTreemap ? {x: 0, y: 0} : {
+		x: asHalfPixel(state.margin.left),
+		y: asHalfPixel(state.margin.top)
+	};
 }
 
 /**
@@ -606,12 +654,14 @@ function getPointFillStyle(
 	const stops = Array.isArray(gradientOption.stops) ?
 		gradientOption.stops :
 		[[0.1, null, 1], [0.9, null, 0]];
+	const gradientX = x + (cx - 0.5) * r * 2;
+	const gradientY = y + (cy - 0.5) * r * 2;
 	const gradient = ctx.createRadialGradient(
-		x + (cx - 0.5) * r * 2,
-		y + (cy - 0.5) * r * 2,
+		gradientX,
+		gradientY,
 		0,
-		x,
-		y,
+		gradientX,
+		gradientY,
 		Math.max(1, r * radius * 2)
 	);
 
@@ -622,7 +672,13 @@ function getPointFillStyle(
 			color = fallback;
 		}
 
-		gradient.addColorStop(offset, withOpacity(color, stopOpacity));
+		// addColorStop throws IndexSizeError for out-of-range offsets
+		const numericOffset = Number(offset);
+		const parsedOffset = Number.isFinite(numericOffset) ?
+			Math.max(0, Math.min(1, numericOffset)) :
+			0;
+
+		gradient.addColorStop(parsedOffset, withOpacity(color, stopOpacity));
 	});
 
 	return gradient;
@@ -933,15 +989,23 @@ export default class CanvasRenderer {
 				ctx.globalAlpha *= classStyle.opacity;
 			}
 
-			applyCssMatrixTransform(ctx, classStyle.transform);
-
 			if (bg.imgUrl) {
 				const entry = this.getBackgroundImage(bg.imgUrl, $$);
 
 				if (entry?.loaded) {
-					ctx.drawImage(entry.image, 0, 0, current.width, current.height);
+					const offset = getBackgroundImageOffset($$);
+					const rect = getPreservedAspectRatioRect(
+						entry.image,
+						current.width,
+						current.height
+					);
+
+					ctx.translate(offset.x, offset.y);
+					applyCssMatrixTransform(ctx, classStyle.transform);
+					ctx.drawImage(entry.image, rect.x, rect.y, rect.w, rect.h);
 				}
 			} else if (bg.color) {
+				applyCssMatrixTransform(ctx, classStyle.transform);
 				painter.fillRect({
 					x: margin.left,
 					y: margin.top,
@@ -970,7 +1034,7 @@ export default class CanvasRenderer {
 		}
 
 		const url = getLabelImageUrl(option, d);
-		const position = getLabelImagePosition($$, option, text, x, y);
+		const position = getLabelImagePosition($$, option, text, x, y, d);
 		const entry = this.getLabelImage(url, $$);
 
 		if (entry?.loaded) {
@@ -1131,7 +1195,7 @@ export default class CanvasRenderer {
 		const {ctx, painter, theme: {style}} = this;
 		const {margin2, width2, height2} = state;
 		const rect = {x: margin2.left, y: margin2.top, w: width2, h: height2};
-		const targets = $$.filterTargetsToShow($$.data.targets)
+		const targets = $$.filterTargetsToShow()
 			.filter(isCanvasRenderableTarget.bind(null, $$));
 
 		painter.withState(() => {
@@ -1222,11 +1286,7 @@ export default class CanvasRenderer {
 									return;
 								}
 
-								const color = value._isUp ?
-									$$.color(target.id) :
-									(config.candlestick_color_down?.[target.id] ||
-										config.candlestick_color_down ||
-										$$.color(target.id));
+								const color = getCandlestickColor($$, {id: target.id}, value);
 
 								ctx.strokeStyle = color;
 								ctx.fillStyle = color;
@@ -1405,7 +1465,7 @@ export default class CanvasRenderer {
 		const {ctx, painter, theme: {style}} = this;
 		const isBar = isCanvasBarType.bind(null, $$);
 		const isExpanded = getExpandedFocusMatcher($$, focusData, isCanvasBarType);
-		const targets = $$.filterTargetsToShow($$.data.targets)
+		const targets = $$.filterTargetsToShow()
 			.filter(isBar)
 			.filter(isCanvasRenderableTarget.bind(null, $$));
 		const getPoints = $$.generateGetBarPoints(
@@ -1524,7 +1584,7 @@ export default class CanvasRenderer {
 		const {ctx, painter, theme: {style}} = this;
 		const isCandlestick = isCanvasCandlestickType.bind(null, $$);
 		const isExpanded = getExpandedFocusMatcher($$, focusData, isCanvasCandlestickType);
-		const targets = $$.filterTargetsToShow($$.data.targets)
+		const targets = $$.filterTargetsToShow()
 			.filter(isCandlestick)
 			.filter(isCanvasRenderableTarget.bind(null, $$));
 		const getPoints = $$.generateGetCandlestickPoints?.(
@@ -1612,7 +1672,7 @@ export default class CanvasRenderer {
 	drawLines($$, shape): void {
 		const {ctx, painter, theme: {style}} = this;
 		const isLine = isCanvasLineType.bind(null, $$);
-		const targets = $$.filterTargetsToShow($$.data.targets)
+		const targets = $$.filterTargetsToShow()
 			.filter(isLine)
 			.filter(isCanvasRenderableTarget.bind(null, $$));
 		const indices = getCanvasShapeIndices($$, shape, TYPE.LINE, isLine);
@@ -1651,7 +1711,7 @@ export default class CanvasRenderer {
 	drawAreas($$, shape, focusData?): void {
 		const {ctx, painter, theme: {style}} = this;
 		const isArea = isCanvasAreaType.bind(null, $$);
-		const targets = $$.filterTargetsToShow($$.data.targets)
+		const targets = $$.filterTargetsToShow()
 			.filter(isArea)
 			.filter(isCanvasRenderableTarget.bind(null, $$));
 		const indices = getCanvasShapeIndices($$, shape, TYPE.AREA, isArea);
@@ -1675,7 +1735,8 @@ export default class CanvasRenderer {
 					ctx,
 					target,
 					"area",
-					getCanvasAreaBounds($$, target, indices),
+					// bounds computation is a full O(n) pass: skip when no gradient is set
+					$$.config.area_linearGradient ? getCanvasAreaBounds($$, target, indices) : null,
 					color
 				);
 				drawCanvasArea($$, target, indices, painter);
@@ -1707,7 +1768,7 @@ export default class CanvasRenderer {
 		}
 
 		painter.withTranslation(margin.left, margin.top, () => {
-			for (const target of $$.filterTargetsToShow($$.data.targets)) {
+			for (const target of $$.filterTargetsToShow()) {
 				if (
 					!isCanvasPointType($$, target) ||
 					!isCanvasRenderableTarget($$, target) ||
@@ -2002,7 +2063,7 @@ export default class CanvasRenderer {
 				false
 			) :
 			null;
-		const targets = $$.filterTargetsToShow($$.data.targets)
+		const targets = $$.filterTargetsToShow()
 			.filter(target =>
 				(
 					isCanvasBarType($$, target) ||
@@ -2012,13 +2073,17 @@ export default class CanvasRenderer {
 				) &&
 				isCanvasRenderableTarget($$, target)
 			);
-		const labelRows: any[] = [];
-		const labelTexts = new Map<string, string>();
+		// single filtering pass: keep target-local index `i`, it drives geometry lookup
+		const targetRows: Array<{d, i: number, text: string}[]> = [];
+		let labelCount = 0;
 
 		targets.forEach(target => {
 			const range = getCanvasTargetVisibleRange($$, target);
+			const data = $$.labelishData(target);
+			const rows: {d, i: number, text: string}[] = [];
 
-			$$.labelishData(target).forEach(d => {
+			for (let i = 0; i < data.length; i++) {
+				const d = data[i];
 				const text = getLabelText($$, d);
 
 				if (
@@ -2027,39 +2092,27 @@ export default class CanvasRenderer {
 					d.index < range.end &&
 					hasCanvasDrawableValue($$, d)
 				) {
-					labelRows.push(d);
-					labelTexts.set(getLabelRowKey(d), text);
+					rows.push({d, i, text});
 				}
-			});
+			}
+
+			labelCount += rows.length;
+			rows.length && targetRows.push(rows);
 		});
 
 		const texts = {
-			size: () => labelRows.length
+			size: () => labelCount
 		};
 
 		painter.withTranslation(margin.left, margin.top, () => {
 			ctx.font = style.label.font;
 			ctx.textAlign = "center";
 
-			targets
-				.forEach(target => {
-					const data = $$.labelishData(target);
-					const range = getCanvasTargetVisibleRange($$, target);
-
-					for (let i = 0; i < data.length; i++) {
-						const d = data[i];
-						const text = labelTexts.get(getLabelRowKey(d));
+			targetRows
+				.forEach(rows => {
+					for (const {d, i, text} of rows) {
 						let x;
 						let y;
-
-						if (
-							!text ||
-							d.index < range.start ||
-							d.index >= range.end ||
-							!hasCanvasDrawableValue($$, d)
-						) {
-							continue;
-						}
 
 						if (isCanvasBarType($$, d) && barPoints) {
 							const geometry = getCanvasBarGeometry($$, barPoints, d, i);
@@ -2142,7 +2195,7 @@ export default class CanvasRenderer {
 	 */
 	drawEmptyLabel($$): void {
 		const text = $$.config.data_empty_label_text;
-		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+		const targetsToShow = $$.filterTargetsToShow();
 
 		if (!text || targetsToShow.length) {
 			return;
@@ -2265,10 +2318,6 @@ export default class CanvasRenderer {
 					continue;
 				}
 
-				if (getLabelImageOption($$, data)?.url) {
-					continue;
-				}
-
 				const label = getTreemapLabelText($$, data, w, h);
 
 				if (!label) {
@@ -2276,16 +2325,39 @@ export default class CanvasRenderer {
 				}
 
 				const lines = label.split("\n");
-				const lineHeight = 12;
-				const centerY = y + h / 2 - (lines.length - 1) * lineHeight / 2;
+				const isCentered = !!config.data_labels.centered;
 
-				ctx.fillStyle = getLabelColor($$, data, style.label.color);
 				ctx.font = style.label.font;
-				ctx.textAlign = "center";
-				ctx.textBaseline = "middle";
+				const lineHeight = getFontSize(ctx.font);
+				const metrics = ctx.measureText(lines[0] ?? "");
+				const fontBoundingHeight = (
+					(metrics.fontBoundingBoxAscent || 0) +
+					(metrics.fontBoundingBoxDescent || 0)
+				) || (
+					(metrics.actualBoundingBoxAscent || 0) +
+					(metrics.actualBoundingBoxDescent || 0)
+				);
+				const textHeight = Math.max(lineHeight, fontBoundingHeight) +
+					((lines.length - 1) * lineHeight);
+				const blockY = isCentered ? y + h / 2 : y + textHeight + 5;
+				let textX = isCentered ? x + w / 2 : x + 5;
+				let textY = blockY - (lines.length - 1) * lineHeight / (isCentered ? 2 : 1);
+
+				ctx.textAlign = isCentered ? "center" : "left";
+				ctx.textBaseline = isCentered ? "middle" : "alphabetic";
+				({x: textX, y: textY} = this.drawLabelImage($$, data, label, textX, textY));
+				ctx.fillStyle = getLabelColor($$, data, style.label.color);
+				drawLabelDecorations(
+					$$,
+					painter,
+					data,
+					label,
+					textX,
+					isCentered ? textY + ((lines.length - 1) * lineHeight / 2) : blockY
+				);
 
 				lines.forEach((line, i) => {
-					painter.text(line, x + w / 2, centerY + i * lineHeight, {
+					painter.text(line, textX, textY + i * lineHeight, {
 						maxWidth: Math.max(0, w - 8)
 					});
 				});
@@ -2398,19 +2470,20 @@ export default class CanvasRenderer {
 						const {x, y} = getRenderDataPoint($$, d);
 						const baseR = $$.pointR?.(d) ?? 2.5;
 						const r = $$.pointExpandedR?.(d) ?? (baseR * 1.75);
-						const color = getCanvasOverColor($$, d) || $$.color(d.id);
+						const overColor = getCanvasOverColor($$, d);
+						const color = overColor || $$.color(d.id);
 
 						if (!isFiniteCanvasCoordinate(x, y)) {
 							return;
 						}
 
 						drawPointPattern(painter, pointType, x, y, r, {
-							fill: getCanvasOverColor($$, d) ||
+							fill: overColor ||
 								style.focusPoint.fill ||
 								style.shape.pointFillColor ||
 								color,
 							lineWidth: style.focusPoint.lineWidth,
-							stroke: getCanvasOverColor($$, d) || style.focusPoint.stroke || color,
+							stroke: overColor || style.focusPoint.stroke || color,
 							alpha: getPointOpacity($$, d)
 						}, baseR);
 					});

@@ -160,13 +160,15 @@ export default class AxisRenderer {
 				let tspan: d3Selection = tickText
 					.selectAll("tspan")
 					.data((d, index) => {
-						const split = params.tickMultiline ?
-							splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) :
-							(
-								isArray(helper.textFormatted(d)) ?
-									helper.textFormatted(d).concat() :
-									[helper.textFormatted(d)]
-							);
+						let split;
+
+						if (params.tickMultiline) {
+							split = splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w);
+						} else {
+							const formatted = helper.textFormatted(d);
+
+							split = isArray(formatted) ? formatted.concat() : [formatted];
+						}
 
 						counts[index] = split.length;
 

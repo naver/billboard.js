@@ -103,8 +103,8 @@ export default {
 			const clipId = `${clip.id}-xaxisticktexts`;
 
 			$$.appendClip(defs, clipId);
-			clip.pathXAxisTickTexts = $$.getClipPath(clip.idXAxisTickTexts);
 			clip.idXAxisTickTexts = clipId;
+			clip.pathXAxisTickTexts = $$.getClipPath(clip.idXAxisTickTexts);
 		}
 
 		if (

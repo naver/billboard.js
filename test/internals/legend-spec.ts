@@ -524,6 +524,12 @@ describe("LEGEND", () => {
 				// check if referenced defs node exists
 				if (pointTagName[idx] === "use") {					
 					expect($el.defs.select(this.getAttribute("href")).size()).to.be.equal(1);
+					expect(this.getAttribute("transform")).to.contain("scale(1.25 1.25)");
+				} else if (pointTagName[idx] === "circle") {
+					expect(+this.getAttribute("r")).to.be.equal(3.75);
+				} else if (pointTagName[idx] === "rect") {
+					expect(+this.getAttribute("width")).to.be.equal(7.5);
+					expect(+this.getAttribute("height")).to.be.equal(7.5);
 				}
 
 				expect(nodeName).to.be.equal(pointTagName[idx]);
@@ -682,6 +688,77 @@ describe("LEGEND", () => {
 			}, chart);
 
 			expect(legend.classed($FOCUS.legendItemFocused)).to.false;
+		});
+
+		it("should toggle only touched legend item on touch input", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, -200, 100, 200, 190, 280],
+						["data2", 30, 200, 120, 400, 150, 150]
+					]
+				},
+				interaction: {
+					inputType: {
+						touch: true
+					}
+				},
+				transition: {
+					duration: 0
+				}
+			};
+			chart.destroy();
+			chart = util.generate(args);
+
+			const legend1 = chart.$.legend.select(`.${$LEGEND.legendItem}-data1`);
+			const legend2 = chart.$.legend.select(`.${$LEGEND.legendItem}-data2`);
+			const node = legend2.node();
+			const {x, y} = node.getBoundingClientRect();
+			const touch = new Touch({
+				identifier: Date.now(),
+				target: node,
+				clientX: x,
+				clientY: y
+			});
+			const dispatchTouch = type => node.dispatchEvent(new TouchEvent(type, {
+				bubbles: true,
+				cancelable: true,
+				touches: type === "touchend" ? [] : [touch],
+				targetTouches: type === "touchend" ? [] : [touch],
+				changedTouches: [touch]
+			}));
+			const xgridFocus = chart.$.grid.main.select(`line.${$FOCUS.xgridFocus}`);
+
+			chart.tooltip.show({index: 1});
+
+			expect(chart.$.tooltip.style("display")).to.be.equal("block");
+			expect(xgridFocus.style("visibility")).to.not.be.equal("hidden");
+
+			dispatchTouch("touchstart");
+			dispatchTouch("touchend");
+
+			expect(chart.$.tooltip.style("display")).to.be.equal("none");
+			expect(chart.$.grid.main.select(`line.${$FOCUS.xgridFocus}`).style("visibility"))
+				.to.be.equal("hidden");
+			expect(legend2.classed($LEGEND.legendItemHidden)).to.be.true;
+			expect(+legend2.style("opacity")).to.be.equal(0.15);
+			expect(legend1.classed($LEGEND.legendItemHidden)).to.be.false;
+			expect(legend1.node().style.opacity).to.be.equal("");
+
+			util.fireEvent(node, "click", {
+				clientX: x,
+				clientY: y
+			}, chart);
+
+			expect(legend2.classed($LEGEND.legendItemHidden)).to.be.true;
+
+			dispatchTouch("touchstart");
+			dispatchTouch("touchend");
+
+			expect(legend2.classed($LEGEND.legendItemHidden)).to.be.false;
+			expect(legend2.node().style.opacity).to.be.equal("");
+			expect(legend1.classed($LEGEND.legendItemHidden)).to.be.false;
+			expect(legend1.node().style.opacity).to.be.equal("");
 		});
 	});
 

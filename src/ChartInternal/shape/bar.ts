@@ -163,20 +163,22 @@ export default {
 						connectLineCache.set(d.id, connectLineType);
 					}
 
-					// for bar.coonectLine option
+					// for bar.connectLine option
 					if (path.length > 1) {
 						barPath.push(path[1]);
+					}
 
-						if (i === arr.length - 1) {
-							const barConnectLineNode = $$.$T(
-								d3Select(this.parentNode.querySelector(`.${$BAR.barConnectLine}`)),
-								withTransition,
-								getRandom()
-							);
+					// flush per series even when the last datum is null,
+					// otherwise the accumulated path leaks into the next series
+					if (i === arr.length - 1 && barPath.length) {
+						const barConnectLineNode = $$.$T(
+							d3Select(this.parentNode.querySelector(`.${$BAR.barConnectLine}`)),
+							withTransition,
+							getRandom()
+						);
 
-							$$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
-							barPath.splice(0);
-						}
+						$$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
+						barPath.splice(0);
 					}
 
 					return path[0];

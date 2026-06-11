@@ -65,8 +65,8 @@ export default {
 					let toggle;
 
 					if (shape.classed($CIRCLE.circle)) {
-						const x: number = +shape.attr("cx") * 1;
-						const y: number = +shape.attr("cy") * 1;
+						const x: number = +shape.attr("cx");
+						const y: number = +shape.attr("cy");
 
 						toggle = $$.togglePoint;
 						isWithin = minX < x && x < maxX && minY < y && y < maxY;

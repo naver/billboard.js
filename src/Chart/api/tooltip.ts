@@ -111,6 +111,40 @@ const tooltip = {
 			index = args.index;
 		}
 
+		if ($$.state.isCanvasMode) {
+			const targets = $$.filterTargetsToShow?.() || $$.data.targets;
+			const selectedData = args.data?.id && !config.tooltip_grouped ?
+				targets
+					.filter(target => target.id === args.data.id)
+					.map(target => target.values[index ?? args.data.index])
+					.filter(Boolean) :
+				targets
+					.map(target => target.values[index])
+					.filter(Boolean);
+			const canvas = $el.canvas?.node?.();
+			const shape = $$.state.canvasShape || $$.getDrawShape?.();
+			const first = selectedData[0];
+			const point = mouse || (
+				first && shape?.pos?.cx && shape?.pos?.cy ?
+					[
+						$$.state.margin.left + shape.pos.cx(first),
+						$$.state.margin.top + shape.pos.cy(first)
+					] :
+					undefined
+			);
+
+			if (!selectedData.length || !canvas) {
+				return;
+			}
+
+			$$.state.canvasFocusKey = selectedData
+				.map(v => `${v.id}:${v.index}`)
+				.join("|");
+			$$.renderCanvasFocus?.(selectedData, point);
+			$$.showTooltip?.(selectedData, canvas);
+			return;
+		}
+
 		(inputType === "mouse" ? ["mouseover", "mousemove"] : ["touchstart"]).forEach(eventName => {
 			$$.dispatchEvent(eventName, index, mouse);
 		});
@@ -128,6 +162,7 @@ const tooltip = {
 		const data = tooltip?.datum();
 
 		if (isCanvasMode) {
+			$$.state.canvasFocusKey = null;
 			$$.hideTooltip(true);
 			$$.clearCanvasFocus?.();
 			return;
