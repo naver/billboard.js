@@ -18,6 +18,7 @@ describe("PLUGIN: TABLE-VIEW", () => {
 		categoryTitle: <string|undefined> undefined,
 		categoryFormat: <Function|undefined> undefined,
 		class: <string|undefined> undefined,
+		numberFormat: <Function|undefined> undefined,
 		style: true,
 		title: "어쩌고 저쩌고222",
 		updateOnToggle: true
@@ -325,6 +326,72 @@ describe("PLUGIN: TABLE-VIEW", () => {
 
 				if (/202(4|5|6)/.test(x)) {
 					expect(v.querySelectorAll("td")[x === "2026" ? 1 : 0].textContent).to.be.equal("N/A");
+				}
+			});
+		});
+	});
+
+	describe("numberFormat option", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2023", "2024", "2025", "2026"],
+						["data1", 1230, 1234, 1238, 1238],
+						["data2", 500, 120, 100, 80]
+					],
+				},
+				axis: {
+					x: {
+					  type: "category"
+					}
+				},
+				plugins: [
+					new TableView({
+						title: "My Yearly Data List",
+						categoryTitle: "Year",
+						style: true,
+						numberFormat: v => new Intl.NumberFormat("us-US", { style: "currency", currency: "USD" }).format(v)
+					})
+				]
+			};
+		});
+
+		it("check if numberFormat function is applied correctly.", () => {
+			const tr = document.querySelectorAll(".bb-tableview tr");
+			const formmater = new Intl.NumberFormat("us-US", { style: "currency", currency: "USD" });
+
+			[].slice.call(tr).forEach(v => {
+				const x = v.querySelector("th").textContent;
+
+				if (/202(3|4|5|6)/.test(x)) {
+					expect(v.querySelectorAll("td")[0].textContent).to.be.equal(formmater.format(x === "2023" ? 1230 : (x === "2024" ? 1234 : (x === "2025" ? 1238 : 1238))));
+					expect(v.querySelectorAll("td")[1].textContent).to.be.equal(formmater.format(x === "2023" ? 500 : (x === "2024" ? 120 : (x === "2025" ? 100 : 80))));
+				}
+			});
+		});
+
+		it("set options: numberFormat=undefined", () => {
+			args.plugins = [
+				new TableView({
+					title: "My Yearly Data List",
+					categoryTitle: "Year",
+					style: true,
+					numberFormat: undefined
+				})
+			];
+		});
+
+		it("when numberFormat function is set to undefined, should show raw number value.", () => {
+			const tr = document.querySelectorAll(".bb-tableview tr");
+
+			[].slice.call(tr).forEach(v => {
+				const x = v.querySelector("th").textContent;
+
+				if (/202(3|4|5|6)/.test(x)) {
+					expect(v.querySelectorAll("td")[0].textContent).to.be.equal(`${(x === "2023" ? 1230 : (x === "2024" ? 1234 : (x === "2025" ? 1238 : 1238)))}`);
+					expect(v.querySelectorAll("td")[1].textContent).to.be.equal(`${(x === "2023" ? 500 : (x === "2024" ? 120 : (x === "2025" ? 100 : 80)))}`);
 				}
 			});
 		});
