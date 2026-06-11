@@ -112,7 +112,23 @@ export default class Options {
 			 * @example
 			 *   nullString: "N/A"
 			 */
-			nullString: "-"
+			nullString: "-",
+
+			/**
+			 * Set number format function.
+			 * @name numberFormat
+			 * @memberof plugin-tableview
+			 * @type {function}
+			 * @returns {string}
+			 * @default function(v) { // will return formatted value according to locale settings }
+			 * @example
+			 *   numberFormat: function(v) {
+			 *     return v.toLocaleString();
+			 *   }
+			 */
+			numberFormat: function(v: number): string {
+				return v.toLocaleString();
+			}
 		};
 	}
 }

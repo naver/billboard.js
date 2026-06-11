@@ -40,4 +40,9 @@ export interface TableViewOptions {
 	 * Set how null value to be shown.
 	 */
 	nullString?: string;
+
+	/**
+	 * Set number format function.
+	 */
+	numberFormat?: (v: number) => string;
 }
