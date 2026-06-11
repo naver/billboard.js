@@ -360,14 +360,14 @@ describe("PLUGIN: TABLE-VIEW", () => {
 
 		it("check if numberFormat function is applied correctly.", () => {
 			const tr = document.querySelectorAll(".bb-tableview tr");
-			const formmater = new Intl.NumberFormat("us-US", { style: "currency", currency: "USD" });
+			const formatter = new Intl.NumberFormat("us-US", { style: "currency", currency: "USD" });
 
 			[].slice.call(tr).forEach(v => {
 				const x = v.querySelector("th").textContent;
 
 				if (/202(3|4|5|6)/.test(x)) {
-					expect(v.querySelectorAll("td")[0].textContent).to.be.equal(formmater.format(x === "2023" ? 1230 : (x === "2024" ? 1234 : (x === "2025" ? 1238 : 1238))));
-					expect(v.querySelectorAll("td")[1].textContent).to.be.equal(formmater.format(x === "2023" ? 500 : (x === "2024" ? 120 : (x === "2025" ? 100 : 80))));
+					expect(v.querySelectorAll("td")[0].textContent).to.be.equal(formatter.format(x === "2023" ? 1230 : (x === "2024" ? 1234 : (x === "2025" ? 1238 : 1238))));
+					expect(v.querySelectorAll("td")[1].textContent).to.be.equal(formatter.format(x === "2023" ? 500 : (x === "2024" ? 120 : (x === "2025" ? 100 : 80))));
 				}
 			});
 		});
@@ -383,15 +383,16 @@ describe("PLUGIN: TABLE-VIEW", () => {
 			];
 		});
 
-		it("when numberFormat function is set to undefined, should show raw number value.", () => {
+		it("when numberFormat function is set to undefined, should show number value as formatted by toLocaleString.", () => {
 			const tr = document.querySelectorAll(".bb-tableview tr");
+			const formatter = v => v.toLocaleString();
 
 			[].slice.call(tr).forEach(v => {
 				const x = v.querySelector("th").textContent;
 
 				if (/202(3|4|5|6)/.test(x)) {
-					expect(v.querySelectorAll("td")[0].textContent).to.be.equal(`${(x === "2023" ? 1230 : (x === "2024" ? 1234 : (x === "2025" ? 1238 : 1238)))}`);
-					expect(v.querySelectorAll("td")[1].textContent).to.be.equal(`${(x === "2023" ? 500 : (x === "2024" ? 120 : (x === "2025" ? 100 : 80)))}`);
+					expect(v.querySelectorAll("td")[0].textContent).to.be.equal(formatter(x === "2023" ? 1230 : (x === "2024" ? 1234 : (x === "2025" ? 1238 : 1238))));
+					expect(v.querySelectorAll("td")[1].textContent).to.be.equal(formatter(x === "2023" ? 500 : (x === "2024" ? 120 : (x === "2025" ? 100 : 80))));
 				}
 			});
 		});
