@@ -352,7 +352,7 @@ describe("PLUGIN: TABLE-VIEW", () => {
 						title: "My Yearly Data List",
 						categoryTitle: "Year",
 						style: true,
-						numberFormat: v => new Intl.NumberFormat("us-US", { style: "currency", currency: "USD" }).format(v)
+						numberFormat: v => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(v)
 					})
 				]
 			};
@@ -360,7 +360,7 @@ describe("PLUGIN: TABLE-VIEW", () => {
 
 		it("check if numberFormat function is applied correctly.", () => {
 			const tr = document.querySelectorAll(".bb-tableview tr");
-			const formatter = new Intl.NumberFormat("us-US", { style: "currency", currency: "USD" });
+			const formatter = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 
 			[].slice.call(tr).forEach(v => {
 				const x = v.querySelector("th").textContent;
