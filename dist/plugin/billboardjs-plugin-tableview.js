@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260611012945
+ * @version 3.18.0-nightly-20260612013216
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -745,7 +745,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260611012945");
+__publicField(Plugin, "version", "3.18.0-nightly-20260612013216");
 
 ;// ./src/Plugin/tableview/const.ts
 
@@ -881,7 +881,22 @@ class Options {
        * @example
        *   nullString: "N/A"
        */
-      nullString: "-"
+      nullString: "-",
+      /**
+       * Set number format function.
+       * @name numberFormat
+       * @memberof plugin-tableview
+       * @type {function}
+       * @returns {string}
+       * @default function(v) { // will return formatted value according to locale settings }
+       * @example
+       *   numberFormat: function(v) {
+       *     return v.toLocaleString();
+       *   }
+       */
+      numberFormat: function(v) {
+        return v.toLocaleString();
+      }
     };
   }
 }
@@ -969,7 +984,7 @@ class TableView extends Plugin {
     rows.forEach((v) => {
       tbody += `<tr>${v.map(
         (d, i) => tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
-          value: i === 0 ? config.categoryFormat.bind(this)(d) : isNumber(d) ? d.toLocaleString() : config.nullString
+          value: i === 0 ? config.categoryFormat.bind(this)(d) : isNumber(d) ? config.numberFormat.bind(this)(d) : config.nullString
         })
       ).join("")}</tr>`;
     });
