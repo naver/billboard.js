@@ -103,6 +103,26 @@ describe("UTIL: sanitize", () => {
 		expect(sanitize("<a href='javascript&COLON;alert(1)'>click</a>")).to.not.include("href");
 	});
 
+	it("should block numeric entity bypass with omitted trailing semicolon (GHSA-99x2-mmf4-24f9)", () => {
+		// Decimal numeric reference without trailing ';' - HTML5 decodes &#58 → ':'
+		expect(sanitize("<a href='javascript&#58alert(1)'>click</a>")).to.not.include("href");
+
+		// Leading-zero padded decimal reference without ';'
+		expect(sanitize("<a href='javascript&#0000058alert(1)'>click</a>")).to.not.include("href");
+
+		// Hex numeric reference with trailing ';' (the no-';' hex form is not a real
+		// vector: the HTML parser greedily consumes the following 'a', so no ':' is formed)
+		expect(sanitize("<a href='javascript&#x3a;alert(1)'>click</a>")).to.not.include("href");
+
+		// SVG anchor xlink:href via the same gap
+		expect(
+			sanitize("<svg><a xlink:href='javascript&#58alert(1)'><text x='10' y='20'>x</text></a></svg>")
+		).to.not.include("xlink:href");
+
+		// Semicolon-terminated forms remain blocked
+		expect(sanitize("<a href='javascript&#58;alert(1)'>click</a>")).to.not.include("href");
+	});
+
 	it("should handle mixed dangerous content", () => {
 		const input = "<div onclick='alert(1)'><script>evil()</script>safe content</div>";
 		const result = sanitize(input);
