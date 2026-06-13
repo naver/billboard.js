@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260612013216
+ * @version 3.18.0-nightly-20260613012908
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -250,7 +250,7 @@ const DANGEROUS_CSS_PATTERNS = [
   "-moz-binding:"
 ];
 function decodeHTMLEntities(str) {
-  return str.replace(/&colon;/gi, ":").replace(/&newline;/gi, "\n").replace(/&tab;/gi, "	").replace(/&nbsp;/gi, " ").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&apos;/gi, "'").replace(/&#(\d+);/gi, (_, code) => String.fromCharCode(parseInt(code, 10))).replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
+  return str.replace(/&colon;/gi, ":").replace(/&newline;/gi, "\n").replace(/&tab;/gi, "	").replace(/&nbsp;/gi, " ").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&apos;/gi, "'").replace(/&#(\d+);?/gi, (_, code) => String.fromCharCode(parseInt(code, 10))).replace(/&#x([0-9a-f]+);?/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
 }
 function isSafeURI(uri) {
   const decoded = decodeHTMLEntities(uri).trim();
@@ -258,15 +258,11 @@ function isSafeURI(uri) {
   if (!normalized || normalized.startsWith("#")) {
     return true;
   }
-  if (normalized.startsWith("/") || normalized.startsWith("./") || normalized.startsWith("../") || !normalized.includes(":")) {
-    return true;
+  const schemeMatch = normalized.match(/^[^/?#]*:/);
+  if (schemeMatch) {
+    return ALLOWED_URI_PROTOCOLS.has(schemeMatch[0]);
   }
-  const colonIndex = normalized.indexOf(":");
-  if (colonIndex > 0) {
-    const protocol = normalized.substring(0, colonIndex + 1);
-    return ALLOWED_URI_PROTOCOLS.has(protocol);
-  }
-  return false;
+  return true;
 }
 function sanitizeStyleValue(style) {
   const decoded = decodeHTMLEntities(style);
@@ -745,7 +741,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260612013216");
+__publicField(Plugin, "version", "3.18.0-nightly-20260613012908");
 
 ;// ./src/Plugin/tableview/const.ts
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.18.0-nightly-20260612013216
+ * @version 3.18.0-nightly-20260613012908
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -224,10 +224,10 @@ function decodeHTMLEntities(str) {
         .replace(/&amp;/gi, "&")
         .replace(/&quot;/gi, "\"")
         .replace(/&apos;/gi, "'")
-        // Numeric entities (decimal)
-        .replace(/&#(\d+);/gi, (_, code) => String.fromCharCode(parseInt(code, 10)))
-        // Numeric entities (hex)
-        .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
+        // Numeric entities (decimal) - trailing semicolon is optional per HTML5 tokenizer
+        .replace(/&#(\d+);?/gi, (_, code) => String.fromCharCode(parseInt(code, 10)))
+        // Numeric entities (hex) - trailing semicolon is optional per HTML5 tokenizer
+        .replace(/&#x([0-9a-f]+);?/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
 }
 /**
  * Check if a URI is safe (whitelist approach)
@@ -245,20 +245,16 @@ function isSafeURI(uri) {
     if (!normalized || normalized.startsWith("#")) {
         return true;
     }
-    // Relative paths are safe
-    if (normalized.startsWith("/") ||
-        normalized.startsWith("./") ||
-        normalized.startsWith("../") ||
-        !normalized.includes(":")) {
-        return true;
+    // A ':' appearing before the first '/', '?' or '#' denotes a URI scheme.
+    // Reject the value unless that scheme is whitelisted - do NOT infer safety
+    // merely from the absence of a literal colon (which could be reconstructed
+    // from an alternate encoding once assigned to innerHTML).
+    const schemeMatch = normalized.match(/^[^/?#]*:/);
+    if (schemeMatch) {
+        return ALLOWED_URI_PROTOCOLS.has(schemeMatch[0]);
     }
-    // Check if protocol is in whitelist
-    const colonIndex = normalized.indexOf(":");
-    if (colonIndex > 0) {
-        const protocol = normalized.substring(0, colonIndex + 1);
-        return ALLOWED_URI_PROTOCOLS.has(protocol);
-    }
-    return false;
+    // No scheme → relative path / query / fragment only → safe
+    return true;
 }
 /**
  * Check if a style value is safe (whitelist approach)
@@ -534,7 +530,7 @@ class Plugin {
     $$;
     options;
     config;
-    static version = "3.18.0-nightly-20260612013216";
+    static version = "3.18.0-nightly-20260613012908";
     /**
      * Constructor
      * @param {Any} options config option object
