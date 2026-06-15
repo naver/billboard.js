@@ -297,9 +297,10 @@ export default class AxisRenderer {
 					// Append <title> for tooltip display
 					if (params.tickTitle) {
 						const title = textUpdate.select("title");
+						const tickTitle = params.tickTitle;
 
 						(title.empty() ? textUpdate.append("title") : title)
-							.text(index => params.tickTitle[index]);
+							.text(index => tickTitle[Number(index)]);
 					}
 
 					if (scale1.bandwidth) {
