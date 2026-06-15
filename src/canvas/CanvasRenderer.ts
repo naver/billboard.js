@@ -189,6 +189,22 @@ function drawCanvasArea($$, target, indices, painter: CanvasPainter, isSub = fal
 }
 
 /**
+ * Get a target copy clipped to the current visible x range.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} target Data target
+ * @returns {object} Original target or a visible values copy
+ * @private
+ */
+function getVisibleCanvasTarget($$, target) {
+	const range = getCanvasTargetVisibleRange($$, target);
+
+	return range.start === 0 && range.end === target.values.length ? target : {
+		...target,
+		values: target.values.slice(range.start, range.end)
+	};
+}
+
+/**
  * Get focused row for a datum or target.
  * @param {Array} focusData Focused data rows
  * @param {object} d Rendered data row or target
@@ -1657,8 +1673,7 @@ export default class CanvasRenderer {
 			d &&
 			(
 				isCanvasBarType($$, d) ||
-				isCanvasCandlestickType($$, d) ||
-				(isCanvasPointType($$, d) && getPointOpacity($$, d) < 1)
+				isCanvasCandlestickType($$, d)
 			)
 		);
 	}
@@ -1684,7 +1699,9 @@ export default class CanvasRenderer {
 
 		painter.withTranslation(margin.left, margin.top, () => {
 			for (const target of targets) {
-				if (!target.values.some(hasCanvasDrawableValue.bind(null, $$))) {
+				const visibleTarget = getVisibleCanvasTarget($$, target);
+
+				if (!visibleTarget.values.some(hasCanvasDrawableValue.bind(null, $$))) {
 					continue;
 				}
 
@@ -1693,9 +1710,9 @@ export default class CanvasRenderer {
 					style.shape.lineFocusedWidth :
 					style.shape.lineWidth;
 				ctx.strokeStyle = $$.color(target.id);
-				$$.config.data_regions?.[target.id] ?
-					drawCanvasLineWithDataRegions($$, target, painter) :
-					drawCanvasLine($$, target, indices, painter);
+				$$.config.data_regions?.[visibleTarget.id] ?
+					drawCanvasLineWithDataRegions($$, visibleTarget, painter) :
+					drawCanvasLine($$, visibleTarget, indices, painter);
 			}
 			ctx.globalAlpha = 1;
 		});
@@ -1723,23 +1740,26 @@ export default class CanvasRenderer {
 
 		painter.withTranslation(margin.left, margin.top, () => {
 			for (const target of targets) {
-				if (!target.values.some(hasCanvasDrawableValue.bind(null, $$))) {
+				const visibleTarget = getVisibleCanvasTarget($$, target);
+
+				if (!visibleTarget.values.some(hasCanvasDrawableValue.bind(null, $$))) {
 					continue;
 				}
 
-				const color = getCanvasRenderColor($$, target, focusData);
+				const color = getCanvasRenderColor($$, visibleTarget, focusData);
 
 				ctx.globalAlpha = style.shape.areaOpacity * getCanvasTargetFocusOpacity($$, target);
 				ctx.fillStyle = getCanvasLinearGradientFill(
 					$$,
 					ctx,
-					target,
+					visibleTarget,
 					"area",
-					// bounds computation is a full O(n) pass: skip when no gradient is set
+					// Bounds computation walks visible rows, so skip it when no gradient is set.
+					// Use the original target so the range cache stays aligned with unsliced values.
 					$$.config.area_linearGradient ? getCanvasAreaBounds($$, target, indices) : null,
 					color
 				);
-				drawCanvasArea($$, target, indices, painter);
+				drawCanvasArea($$, visibleTarget, indices, painter);
 			}
 			ctx.globalAlpha = 1;
 		});
@@ -2073,14 +2093,13 @@ export default class CanvasRenderer {
 				) &&
 				isCanvasRenderableTarget($$, target)
 			);
-		// single filtering pass: keep target-local index `i`, it drives geometry lookup
-		const targetRows: Array<{d, i: number, text: string}[]> = [];
+		const targetRows: Array<{d, text: string}[]> = [];
 		let labelCount = 0;
 
 		targets.forEach(target => {
 			const range = getCanvasTargetVisibleRange($$, target);
 			const data = $$.labelishData(target);
-			const rows: {d, i: number, text: string}[] = [];
+			const rows: {d, text: string}[] = [];
 
 			for (let i = 0; i < data.length; i++) {
 				const d = data[i];
@@ -2092,7 +2111,7 @@ export default class CanvasRenderer {
 					d.index < range.end &&
 					hasCanvasDrawableValue($$, d)
 				) {
-					rows.push({d, i, text});
+					rows.push({d, text});
 				}
 			}
 
@@ -2110,12 +2129,12 @@ export default class CanvasRenderer {
 
 			targetRows
 				.forEach(rows => {
-					for (const {d, i, text} of rows) {
+					for (const {d, text} of rows) {
 						let x;
 						let y;
 
 						if (isCanvasBarType($$, d) && barPoints) {
-							const geometry = getCanvasBarGeometry($$, barPoints, d, i);
+							const geometry = getCanvasBarGeometry($$, barPoints, d, d.index);
 
 							if (!geometry) {
 								continue;
@@ -2148,7 +2167,7 @@ export default class CanvasRenderer {
 								$$,
 								candlestickPoints,
 								d,
-								i
+								d.index
 							);
 							const isUp = value?._isUp;
 
@@ -2171,7 +2190,7 @@ export default class CanvasRenderer {
 								"middle" :
 								(isUp ? "bottom" : "top");
 						} else if (cx && cy) {
-							({x, y} = getShapePoint(shape.pos, d, i));
+							({x, y} = getShapePoint(shape.pos, d, d.index));
 							({x, y} = getPointLabelAnchor($$, ctx, d, x, y));
 						}
 
@@ -2472,20 +2491,35 @@ export default class CanvasRenderer {
 						const r = $$.pointExpandedR?.(d) ?? (baseR * 1.75);
 						const overColor = getCanvasOverColor($$, d);
 						const color = overColor || $$.color(d.id);
+						const fill = overColor ||
+							style.focusPoint.fill ||
+							style.shape.pointFillColor ||
+							color;
+						const stroke = overColor || style.focusPoint.stroke || color;
+						const lineWidth = style.focusPoint.lineWidth;
+						const alpha = getPointOpacity($$, d);
+						const hasStroke = !!stroke && (lineWidth ?? 0) > 0;
+						const mergeSameColorStroke = pointType === "circle" &&
+							hasStroke &&
+							isNumber(alpha) &&
+							alpha < 1 &&
+							fill === stroke;
 
 						if (!isFiniteCanvasCoordinate(x, y)) {
 							return;
 						}
 
-						drawPointPattern(painter, pointType, x, y, r, {
-							fill: overColor ||
-								style.focusPoint.fill ||
-								style.shape.pointFillColor ||
-								color,
-							lineWidth: style.focusPoint.lineWidth,
-							stroke: overColor || style.focusPoint.stroke || color,
-							alpha: getPointOpacity($$, d)
-						}, baseR);
+						drawPointPattern(
+							painter,
+							pointType,
+							x,
+							y,
+							mergeSameColorStroke ? r + (lineWidth || 0) / 2 : r,
+							hasStroke && !mergeSameColorStroke ?
+								{fill, lineWidth, stroke, alpha} :
+								{fill, alpha},
+							baseR
+						);
 					});
 			}
 
