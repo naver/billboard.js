@@ -3459,6 +3459,69 @@ describe("ESM canvas", function() {
 		fillText.mockRestore();
 	});
 
+	it("should position canvas candlestick data labels from wick endpoints", () => {
+		const records: Array<{
+			text: string,
+			textAlign: CanvasTextAlign,
+			textBaseline: CanvasTextBaseline,
+			x: number,
+			y: number
+		}> = [];
+		const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText")
+			.mockImplementation(function(this: CanvasRenderingContext2D, text: string) {
+				const transform = this.getTransform();
+
+				records.push({
+					text: String(text),
+					textAlign: this.textAlign,
+					textBaseline: this.textBaseline,
+					x: transform.e,
+					y: transform.f
+				});
+			});
+
+		try {
+			generateWithOptions({
+				data: {
+					columns: [
+						["data1",
+							[1300, 1369, 1200, 1339],
+							[1348, 1371, 1271, 1320]
+						]
+					],
+					type: candlestick(),
+					labels: {
+						format: (value, id, index) => `${id}:${index}:${value}`
+					}
+				}
+			});
+
+			const shape = chart.internal.state.canvasShape || chart.internal.getDrawShape();
+			const getPoints = chart.internal.generateGetCandlestickPoints(
+				shape.indices[TYPE.CANDLESTICK],
+				false
+			);
+			const {margin} = chart.internal.state;
+			const up = chart.internal.data.targets[0].values[0];
+			const down = chart.internal.data.targets[0].values[1];
+			const upPoints = getPoints(up, up.index);
+			const downPoints = getPoints(down, down.index);
+			const upLabel = records.find(({text}) => text === "data1:0:1339");
+			const downLabel = records.find(({text}) => text === "data1:1:1320");
+
+			expect(upLabel?.textAlign).to.be.equal("center");
+			expect(upLabel?.textBaseline).to.be.equal("alphabetic");
+			expect(upLabel?.x).to.be.closeTo(margin.left + upPoints[2][0], 0.1);
+			expect(upLabel?.y).to.be.closeTo(margin.top + upPoints[2][2] - 3, 0.1);
+			expect(downLabel?.textAlign).to.be.equal("center");
+			expect(downLabel?.textBaseline).to.be.equal("alphabetic");
+			expect(downLabel?.x).to.be.closeTo(margin.left + downPoints[2][0], 0.1);
+			expect(downLabel?.y).to.be.closeTo(margin.top + downPoints[2][1] + 12, 0.1);
+		} finally {
+			fillText.mockRestore();
+		}
+	});
+
 	it("should render category bubble ticks and centered labels on canvas", () => {
 		const records: Array<{
 			text: string,
