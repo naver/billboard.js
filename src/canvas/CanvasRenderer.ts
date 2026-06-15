@@ -2175,20 +2175,21 @@ export default class CanvasRenderer {
 								continue;
 							}
 
-							const {body} = geometry;
+							const {wickEnd, wickStart} = geometry;
+							const isInverted = $$.config[`axis_${$$.axis?.getId(d.id)}_inverted`];
 
 							x = $$.config.axis_rotated ?
-								(isUp ? body.x + body.w + 4 : body.x - 4) :
-								body.x + body.w / 2;
+								(isUp ? wickEnd[0] + 4 : wickStart[0] - 4) :
+								wickStart[0];
 							y = $$.config.axis_rotated ?
-								body.y + body.h / 2 :
-								(isUp ? body.y - 4 : body.y + body.h + 13);
+								wickStart[1] + 3 :
+								(isUp ? wickEnd[1] - 3 : wickStart[1] + 12);
+							!$$.config.axis_rotated && isInverted &&
+								(y += 15 * (isUp ? 1 : -1));
 							ctx.textAlign = $$.config.axis_rotated ?
 								(isUp ? "left" : "right") :
 								"center";
-							ctx.textBaseline = $$.config.axis_rotated ?
-								"middle" :
-								(isUp ? "bottom" : "top");
+							ctx.textBaseline = "alphabetic";
 						} else if (cx && cy) {
 							({x, y} = getShapePoint(shape.pos, d, d.index));
 							({x, y} = getPointLabelAnchor($$, ctx, d, x, y));
