@@ -17,29 +17,35 @@ let messageId = 0;
  * @returns {{key: string, src: string}} Cache key and Object URL
  * @private
  */
-function getOrCreateWorkerResources(fn: Function, depsFn?: Function[]): {key: string, src: string} {
+function getOrCreateWorkerResources(fn: Function, depsFn?: Function[]):
+	| {key: string, src: string}
+	| null {
 	const fnString = fn.toString();
 	// Include depsFn in cache key to handle different dependencies
 	const depsString = depsFn?.map(String).join(";") ?? "";
 	const key = (fnString + depsString).replace(/(function|[\s\W\n])/g, "").substring(0, 30);
 
 	if (!(key in cache)) {
-		// Create Blob and Object URL for Web Worker
-		const blob = new window.Blob([
-			`${depsString}
+		try {
+			// Create Blob and Object URL for Web Worker
+			const blob = new window.Blob([
+				`${depsString}
 
-			self.onmessage=function({data}) {
-				const result = (${fnString}).apply(null, data.args);
-				self.postMessage({id: data.id, result});
-			};`
-		], {
-			type: "text/javascript"
-		});
+				self.onmessage=function({data}) {
+					const result = (${fnString}).apply(null, data.args);
+					self.postMessage({id: data.id, result});
+				};`
+			], {
+				type: "text/javascript"
+			});
 
-		cache[key] = {
-			src: window.URL.createObjectURL(blob),
-			worker: null
-		};
+			cache[key] = {
+				src: window.URL.createObjectURL(blob),
+				worker: null
+			};
+		} catch {
+			return null;
+		}
 	}
 
 	return {key, src: cache[key].src};
@@ -61,7 +67,11 @@ export function getWorker(key: string, src: string): Worker | null {
 	}
 
 	if (!cached.worker) {
-		cached.worker = new window.Worker(src);
+		try {
+			cached.worker = new window.Worker(src);
+		} catch {
+			return null;
+		}
 
 		// handle error
 		if (cached.worker) {
@@ -111,11 +121,11 @@ export function runWorker(
 	};
 
 	if (window.Worker && useWorker) {
-		const {key, src} = getOrCreateWorkerResources(fn, depsFn);
-		const worker = getWorker(key, src);
+		const workerResources = getOrCreateWorkerResources(fn, depsFn);
+		const worker = workerResources && getWorker(workerResources.key, workerResources.src);
 
-		runFn = function(...args: unknown[]) {
-			if (worker) {
+		if (worker) {
+			runFn = function(...args: unknown[]) {
 				// workers are cached and shared: match the response by id so concurrent
 				// callers don't steal each other's result
 				const id = ++messageId;
@@ -129,8 +139,8 @@ export function runWorker(
 
 				worker.addEventListener("message", handler);
 				worker.postMessage({id, args});
-			}
-		};
+			};
+		}
 	}
 
 	return runFn;

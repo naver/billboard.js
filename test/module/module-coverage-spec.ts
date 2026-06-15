@@ -194,6 +194,52 @@ describe("MODULE coverage helpers", () => {
 			})(4);
 		}));
 
+		it("falls back to sync execution when worker resources cannot be created", () => {
+			const OriginalWorker = window.Worker;
+			const originalCreateObjectURL = window.URL.createObjectURL;
+			const values: number[] = [];
+
+			try {
+				window.Worker = class {};
+				window.URL.createObjectURL = () => {
+					throw new Error("CSP blocked");
+				};
+
+				runWorker(true, value => value * 2, value => values.push(value))(5);
+
+				expect(values).to.be.deep.equal([10]);
+			} finally {
+				window.Worker = OriginalWorker;
+				window.URL.createObjectURL = originalCreateObjectURL;
+			}
+		});
+
+		it("falls back to sync execution when Worker construction fails", () => {
+			const OriginalWorker = window.Worker;
+			const originalCreateObjectURL = window.URL.createObjectURL;
+			const originalRevokeObjectURL = window.URL.revokeObjectURL;
+			const values: number[] = [];
+
+			try {
+				window.Worker = class {
+					constructor() {
+						throw new Error("Worker blocked");
+					}
+				};
+				window.URL.createObjectURL = () => "blob:blocked";
+				window.URL.revokeObjectURL = () => {};
+
+				runWorker(true, value => value + 1, value => values.push(value))(5);
+
+				expect(values).to.be.deep.equal([6]);
+			} finally {
+				cleanupWorkers();
+				window.Worker = OriginalWorker;
+				window.URL.createObjectURL = originalCreateObjectURL;
+				window.URL.revokeObjectURL = originalRevokeObjectURL;
+			}
+		});
+
 	});
 
 	describe("geometry and brush helpers", () => {
@@ -325,6 +371,14 @@ describe("MODULE coverage helpers", () => {
 			expect(mergeObj({a: {b: 1}}, {a: {c: 2}, arr: [1]}, {"__proto__": {polluted: true}}))
 				.to.be.deep.equal({a: {b: 1, c: 2}, arr: [1]});
 			expect(({} as any).polluted).to.be.undefined;
+
+			const date = new Date(1234);
+			const merged = mergeObj({}, {date, nested: {date}});
+
+			expect(merged.date).to.be.instanceOf(Date);
+			expect(+merged.date).to.be.equal(+date);
+			expect(merged.date).not.to.be.equal(date);
+			expect(merged.nested.date).to.be.instanceOf(Date);
 		});
 
 		it("gets ranges, min/max values and binary-search indexes", () => {
@@ -353,13 +407,17 @@ describe("MODULE coverage helpers", () => {
 			});
 			expect(parseShorthand("1 2 3")).to.be.deep.equal({top: 1, right: 2, bottom: 3, left: 2});
 			expect(parseShorthand(5)).to.be.deep.equal({top: 5, right: 5, bottom: 5, left: 5});
-			expect(Array.from(toSet([{id: "a"}, null, {id: "b"}], item => item.id)))
-				.to.be.deep.equal(["a", "b"]);
-			expect(Array.from(toMap([{id: "a", value: 1}, null, {id: "b", value: 2}],
-				item => item.id, item => item.value).entries()))
-				.to.be.deep.equal([["a", 1], ["b", 2]]);
+				expect(Array.from(toSet([{id: "a"}, null, {id: "b"}], item => item.id)))
+					.to.be.deep.equal(["a", "b"]);
+				expect(Array.from(toSet(["", 0, false, null, undefined])))
+					.to.be.deep.equal(["", 0, false]);
+				expect(Array.from(toMap([{id: "a", value: 1}, null, {id: "b", value: 2}],
+					item => item.id, item => item.value).entries()))
+					.to.be.deep.equal([["a", 1], ["b", 2]]);
+				expect(Array.from(toMap(["", 0, false, null], item => String(item)).entries()))
+					.to.be.deep.equal([["", ""], ["0", 0], ["false", false]]);
 
-			let ready = false;
+				let ready = false;
 
 			setTimeout(() => {
 				ready = true;

@@ -3631,12 +3631,13 @@ describe("ESM canvas", function() {
 				}
 			});
 
-			const canvasEl = container.querySelector(`canvas.${$CANVAS.canvas}`);
-			const rect = canvasEl.getBoundingClientRect();
-			const {margin} = chart.internal.state;
-			const d = chart.internal.data.targets[0].values[0];
+				const canvasEl = container.querySelector(`canvas.${$CANVAS.canvas}`);
+				const rect = canvasEl.getBoundingClientRect();
+				const {margin} = chart.internal.state;
+				const d = chart.internal.data.targets[0].values[0];
+				const expectedExpandedRadius = chart.internal.pointExpandedR(d);
 
-			fillTextRecords.length = 0;
+				fillTextRecords.length = 0;
 			fillRecords.length = 0;
 			arcRecords.length = 0;
 			canvasEl.dispatchEvent(new MouseEvent("mousemove", {
@@ -3648,32 +3649,31 @@ describe("ESM canvas", function() {
 			const focusLabel = fillTextRecords.find(({canvasClass, text}) =>
 				canvasClass.includes($CANVAS.canvas) && text === "20"
 			);
-			const expandedPointFill = fillRecords.find(({canvasClass, fillStyle, lineWidth}) =>
-				canvasClass.includes($CANVAS.canvas) &&
-				fillStyle === "#ffffff" &&
-				lineWidth === chart.internal.canvasTheme.style.focusPoint.lineWidth
-			);
-			const expandedPointArc = arcRecords.find(({canvasClass, r}) =>
-				canvasClass.includes($CANVAS.canvas) &&
-				Math.abs(r - chart.internal.pointExpandedR(d)) < 1e-6
-			);
-			const expandedPointArcs = arcRecords.filter(({canvasClass, lineWidth}) =>
-				canvasClass.includes($CANVAS.canvas) &&
-				lineWidth === chart.internal.canvasTheme.style.focusPoint.lineWidth
-			);
+				const expandedPointFill = fillRecords.find(({canvasClass, fillStyle}) =>
+					canvasClass.includes($CANVAS.canvas) &&
+					fillStyle === "#ffffff"
+				);
+				const expandedPointArc = arcRecords.find(({canvasClass, r}) =>
+					canvasClass.includes($CANVAS.canvas) &&
+					Math.abs(r - expectedExpandedRadius) < 1e-6
+				);
+				const expandedPointArcs = arcRecords.filter(({canvasClass, r}) =>
+					canvasClass.includes($CANVAS.canvas) &&
+					Math.abs(r - expectedExpandedRadius) < 1e-6
+				);
 
-			expect(chart.internal.state.canvasFocusKey).to.contain("data1:0");
-			expect(chart.internal.state.canvasFocusMainRedraw).to.be.true;
-			expect(focusLabel).not.to.be.undefined;
-			expect(focusLabel?.textAlign).to.be.equal("center");
+				expect(chart.internal.state.canvasFocusKey).to.contain("data1:0");
+				expect(chart.internal.state.canvasFocusMainRedraw).to.be.false;
+				expect(focusLabel).not.to.be.undefined;
+				expect(focusLabel?.textAlign).to.be.equal("center");
 			expect(focusLabel?.textBaseline).to.be.equal("middle");
 			expect(focusLabel?.fillStyle).to.be.equal(chart.internal.color("data1"));
 			expect(focusLabel?.globalAlpha).to.be.equal(1);
 			expect(focusLabel?.absoluteY - margin.top)
 				.to.be.closeTo(chart.internal.circleY(d, d.index), 1e-6);
-			expect(expandedPointFill?.globalAlpha).to.be.equal(0.5);
-			expect(expandedPointArc?.globalAlpha).to.be.equal(0.5);
-			expect(expandedPointArcs).to.have.length(1);
+				expect(expandedPointFill?.globalAlpha).to.be.equal(0.5);
+				expect(expandedPointArc?.globalAlpha).to.be.equal(0.5);
+				expect(expandedPointArcs).to.have.length(1);
 			expect(container.querySelector(`canvas.${$CANVAS.overlay}`)).to.be.null;
 			expect(container.querySelectorAll("canvas")).to.have.length(1);
 		} finally {
@@ -3761,24 +3761,25 @@ describe("ESM canvas", function() {
 			}));
 
 			const expectedExpandedRadius = chart.internal.pointExpandedR(d) + focusLineWidth / 2;
-			const expandedPointArcs = arcRecords.filter(({canvasClass, r}) =>
-				canvasClass.includes($CANVAS.canvas) &&
-				Math.abs(r - expectedExpandedRadius) < 1e-6
-			);
-			const expandedPointStroke = strokeRecords.find(({
-				canvasClass,
-				globalAlpha,
-				lineWidth,
+				const expandedPointArcs = arcRecords.filter(({canvasClass, r}) =>
+					canvasClass.includes($CANVAS.canvas) &&
+					Math.abs(r - expectedExpandedRadius) < 1e-6
+				);
+				const expandedPointStroke = strokeRecords.find(({
+					canvasClass,
+					globalAlpha,
+					lineWidth,
 				strokeStyle
 			}) =>
 				canvasClass.includes($CANVAS.canvas) &&
 				strokeStyle === color &&
 				globalAlpha === 0.5 &&
 				lineWidth === focusLineWidth
-			);
+				);
 
-			expect(chart.internal.state.canvasFocusKey).to.contain("data1:0");
-			expect(expandedPointArcs).to.have.length(1);
+				expect(chart.internal.state.canvasFocusKey).to.contain("data1:0");
+				expect(chart.internal.state.canvasFocusMainRedraw).to.be.false;
+				expect(expandedPointArcs).to.have.length(1);
 			expect(expandedPointArcs[0].r)
 				.to.be.closeTo(expectedExpandedRadius, 1e-6);
 			expect(expandedPointArcs[0].globalAlpha).to.be.equal(0.5);

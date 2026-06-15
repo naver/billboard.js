@@ -33,6 +33,7 @@ const plugins = [
 ];
 
 const external = id => /^d3-/.test(id);
+const hasSideEffects = id => /[/\\]src[/\\]Chart[/\\]api[/\\]stubs\.ts$/.test(id);
 
 const bbPlugins = readdirSync(resolvePath("../src/Plugin/"), {
         withFileTypes: true
@@ -64,7 +65,7 @@ export default [
             banner: getBannerStr()
         },
         treeshake: {
-            moduleSideEffects: false,
+            moduleSideEffects: hasSideEffects,
             propertyReadSideEffects: false
         },
         plugins,

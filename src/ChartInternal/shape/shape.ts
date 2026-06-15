@@ -499,14 +499,16 @@ export default {
 			$$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))
 		);
 
-		// Create cache key based on target IDs
+		// Same IDs can receive new values through load()/flow(), so ID-only
+		// caching can leave stacked offsets pointing at stale row maps.
+		const dataGeneration = $$.state.dataGeneration;
 		const targetIds = targets.map(t => t.id).join("_");
 		const cacheKey = `${KEY.shapeOffset}_${targetIds}`;
 
 		// Check if result is already cached
 		const cachedData = $$.cache.get(cacheKey);
 
-		if (cachedData) {
+		if (cachedData?.generation === dataGeneration) {
 			return cachedData;
 		}
 
@@ -542,7 +544,7 @@ export default {
 			return out;
 		}, {});
 
-		const result = {indexMapByTargetId, shapeOffsetTargets};
+		const result = {generation: dataGeneration, indexMapByTargetId, shapeOffsetTargets};
 
 		// Cache the result
 		$$.cache.add(cacheKey, result);
