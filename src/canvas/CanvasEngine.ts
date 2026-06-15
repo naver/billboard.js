@@ -16,6 +16,7 @@ export default class CanvasEngine {
 	private dpr = 1;
 	private frame: HTMLCanvasElement | null = null;
 	private frameCtx: CanvasRenderingContext2D | null = null;
+	private frameValid = false;
 
 	/**
 	 * Create and attach the canvas element.
@@ -56,6 +57,7 @@ export default class CanvasEngine {
 		this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 		this.frame = null;
 		this.frameCtx = null;
+		this.frameValid = false;
 	}
 
 	/**
@@ -63,7 +65,7 @@ export default class CanvasEngine {
 	 * @private
 	 */
 	clearOverlay(): void {
-		this.restoreFrame();
+		this.frameValid && this.restoreFrame();
 	}
 
 	/**
@@ -73,8 +75,15 @@ export default class CanvasEngine {
 	 */
 	withOverlay(draw: (ctx: CanvasRenderingContext2D) => void): void {
 		const {ctx} = this;
+		const hasFrame = this.frameValid;
 
-		this.clearOverlay();
+		if (hasFrame) {
+			this.clearOverlay();
+		} else {
+			// Copy the clean frame only when an overlay is actually requested.
+			// Large filled charts make eager full-canvas copies expensive.
+			this.captureFrame();
+		}
 		ctx.save();
 		ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 		try {
@@ -93,6 +102,7 @@ export default class CanvasEngine {
 	beginFrame(w: number, h: number): void {
 		const {ctx} = this;
 
+		this.frameValid = false;
 		ctx.save();
 		ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 		ctx.clearRect(0, 0, w, h);
@@ -104,7 +114,6 @@ export default class CanvasEngine {
 	 */
 	endFrame(): void {
 		this.ctx.restore();
-		this.captureFrame();
 	}
 
 	/**
@@ -113,6 +122,8 @@ export default class CanvasEngine {
 	 */
 	captureFrame(): void {
 		const {canvas} = this;
+
+		this.frameValid = false;
 
 		if (canvas.width && canvas.height) {
 			let {frame, frameCtx} = this;
@@ -142,6 +153,7 @@ export default class CanvasEngine {
 			}
 
 			frameCtx.drawImage(canvas, 0, 0);
+			this.frameValid = true;
 		}
 	}
 
@@ -150,7 +162,7 @@ export default class CanvasEngine {
 	 * @private
 	 */
 	restoreFrame(): void {
-		if (!this.frame || !this.frameCtx) {
+		if (!this.frameValid || !this.frame || !this.frameCtx) {
 			return;
 		}
 
@@ -172,5 +184,6 @@ export default class CanvasEngine {
 		this.canvas?.remove();
 		this.frame = null;
 		this.frameCtx = null;
+		this.frameValid = false;
 	}
 }

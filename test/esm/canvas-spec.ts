@@ -2803,38 +2803,48 @@ describe("ESM canvas", function() {
 	});
 
 	it("should keep one canvas and restore the cached frame after hover overlays", () => {
-		generateWithOptions({
-			data: {
-				columns,
-				type: line()
-			},
-			point: {
-				focus: {
-					only: true
+		const drawImage = vi.spyOn(CanvasRenderingContext2D.prototype, "drawImage");
+
+		try {
+			generateWithOptions({
+				data: {
+					columns,
+					type: line()
+				},
+				point: {
+					focus: {
+						only: true
+					}
 				}
-			}
-		});
+			});
 
-		const {margin} = chart.internal.state;
-		const d = chart.internal.data.targets[0].values[1];
-		const canvasEl = container.querySelector(`canvas.${$CANVAS.canvas}`);
-		const before = countCanvasAlphaPixels(canvasEl);
-		const x = margin.left + chart.internal.scale.x(d.x);
-		const y = margin.top + chart.internal.scale.y(d.value);
+			const {margin} = chart.internal.state;
+			const d = chart.internal.data.targets[0].values[1];
+			const canvasEl = container.querySelector(`canvas.${$CANVAS.canvas}`);
+			const before = countCanvasAlphaPixels(canvasEl);
+			const x = margin.left + chart.internal.scale.x(d.x);
+			const y = margin.top + chart.internal.scale.y(d.value);
 
-		canvasEl.dispatchEvent(new MouseEvent("mousemove", {
-			bubbles: true,
-			clientX: x,
-			clientY: y
-		}));
+			expect(drawImage).not.toHaveBeenCalled();
 
-		expect(container.querySelector(`canvas.${$CANVAS.overlay}`)).to.be.null;
-		expect(container.querySelectorAll("canvas")).to.have.length(1);
-		expect(countCanvasAlphaPixels(canvasEl)).to.be.greaterThan(before);
+			canvasEl.dispatchEvent(new MouseEvent("mousemove", {
+				bubbles: true,
+				clientX: x,
+				clientY: y
+			}));
 
-		canvasEl.dispatchEvent(new MouseEvent("mouseout", {bubbles: true}));
+			expect(container.querySelector(`canvas.${$CANVAS.overlay}`)).to.be.null;
+			expect(container.querySelectorAll("canvas")).to.have.length(1);
+			expect(countCanvasAlphaPixels(canvasEl)).to.be.greaterThan(before);
+			expect(drawImage).toHaveBeenCalledTimes(1);
 
-		expect(countCanvasAlphaPixels(canvasEl)).to.be.equal(before);
+			canvasEl.dispatchEvent(new MouseEvent("mouseout", {bubbles: true}));
+
+			expect(countCanvasAlphaPixels(canvasEl)).to.be.equal(before);
+			expect(drawImage).toHaveBeenCalledTimes(2);
+		} finally {
+			drawImage.mockRestore();
+		}
 	});
 
 	it("should cull dense canvas x ticks", () => {
