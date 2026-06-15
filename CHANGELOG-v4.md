@@ -310,39 +310,88 @@ Canvas drawing internals:
 - `src/canvas/util.ts` contains canvas target-type predicates, grouped-target support checks, shape
   index lookup, and coordinate guards shared by render and hit-test code.
 
-Canvas initial generate/render benchmark snapshot:
+### Canvas benchmark snapshot
 
-The following numbers are a local benchmark snapshot, not a release guarantee. They were measured in
-Chromium headless from `http://127.0.0.1:8080/demo/benchmark/` using the local
-`dist/billboard.pkgd.min.js` with one warmup run and three measured runs on 2026-06-08. The measured
-interval uses the demo page's `Generate` timer, from `bb.generate()` start through `onrendered`.
-This is an initial chart generation benchmark, not a script loading, page loading, `chart.load()`,
-`flow()`, or resize benchmark.
+The following numbers are a local benchmark snapshot, not a release guarantee. They were measured in Chromium headless against rebuilt local UMD bundles from the `3.18.0` tag and the current v4 branch with one warmup run and three measured runs on 2026-06-15. Values are median elapsed time in milliseconds.
 
-The benchmark used the demo page's `1 x 100,000` data matrix, `transition.duration=0`,
-`legend.show=false`, and `axis.x.tick.show=false`. The demo does not set `point.show=false`, so
-line-like charts include the default SVG point-node cost. This makes the numbers match the public
-benchmark demo behavior rather than the previous path-only micro-benchmark. The demo data-size input
-includes the column id entry, so `1 x 100,000` produces 99,999 numeric values for one series.
-The largest measured canvas speedup in this run is **89.4x** for `line`.
+The benchmark uses the public benchmark demo defaults where applicable: `1 x 10,000` data matrix, `transition.duration=0`, `legend.show=false`, `axis.x.tick.show=false`, and `boost.useWorker=false`.
+Line-like charts keep the default point rendering cost, matching the demo behavior rather than a
+path-only micro-benchmark. Canvas-unsupported types are intentionally left blank in the canvas
+column.
 
-| Type | Data matrix | SVG median | Canvas median | Canvas speed |
+Simple averages below use the nine canvas-supported demo types so the SVG and canvas summaries are compared over the same chart set:
+
+- Initial render: 4.0 SVG is **62.8% faster** than 3.18.0; 4.0 canvas is **94.8% faster**.
+- `chart.load()`: 4.0 SVG is **75.9% faster** than 3.18.0; 4.0 canvas is **63.9% faster**.
+- `chart.resize()`: 4.0 SVG is **54.9% slower** than 3.18.0; 4.0 canvas is **125.2% slower**,
+  mainly from the current area-family canvas path.
+
+#### Initial render
+
+Initial render is measured from `bb.generate()` start through the first `onrendered` callback.
+
+| type | data matrix | 3.18.0 | 4.0 (svg) | 4.0 (canvas) |
 | --- | ---: | ---: | ---: | ---: |
-| `line` | 1 x 100,000 | 17100.3 ms | 191.3 ms | **89.4x** |
-| `spline` | 1 x 100,000 | 16705.9 ms | 267.8 ms | 62.4x |
-| `step` | 1 x 100,000 | 16956.4 ms | 197.4 ms | 85.9x |
-| `area` | 1 x 100,000 | 16988.0 ms | 21415.7 ms | 0.8x |
-| `area-spline` | 1 x 100,000 | 17131.3 ms | 3456.8 ms | 5.0x |
-| `area-step` | 1 x 100,000 | 17781.3 ms | 22081.5 ms | 0.8x |
-| `bar` | 1 x 100,000 | 17761.7 ms | 511.5 ms | 34.7x |
-| `scatter` | 1 x 100,000 | 18895.2 ms | 249.2 ms | 75.8x |
-| `bubble` | 1 x 100,000 | 20000.9 ms | 596.8 ms | 33.5x |
+| `area` | 1 x 10,000 | 1109.6 ms | 402.0 ms | 108.5 ms |
+| `area-spline` | 1 x 10,000 | 1096.3 ms | 414.1 ms | 130.7 ms |
+| `area-step` | 1 x 10,000 | 1134.1 ms | 424.8 ms | 109.3 ms |
+| `bar` | 1 x 10,000 | 1146.4 ms | 460.9 ms | 53.3 ms |
+| `bubble` | 1 x 10,000 | 1322.9 ms | 449.7 ms | 57.1 ms |
+| `donut` | 1 x 10,000 | 10.3 ms | 11.0 ms |  |
+| `gauge` | 1 x 10,000 | 13.9 ms | 14.0 ms |  |
+| `line` | 1 x 10,000 | 1090.6 ms | 390.0 ms | 19.3 ms |
+| `pie` | 1 x 10,000 | 14.4 ms | 11.2 ms |  |
+| `radar` | 1 x 10,000 | 6810.3 ms | 5376.7 ms |  |
+| `scatter` | 1 x 10,000 | 1277.4 ms | 483.1 ms | 25.4 ms |
+| `spline` | 1 x 10,000 | 1081.7 ms | 412.0 ms | 20.2 ms |
+| `step` | 1 x 10,000 | 1095.7 ms | 411.9 ms | 19.0 ms |
 
-The result matches the expected demo tradeoff: canvas is clearly faster for node-heavy charts where
-SVG creates very large point or shape DOM sets. `area` and `area-step` are current optimization
-candidates in this 100k demo scenario; their canvas implementations need profiling before publishing
-positive performance claims for those types. `candlestick` and `treemap` are omitted from this
-snapshot because they are not exposed by the `demo/benchmark/` type selector.
+#### Data loading
+
+`chart.load()` is measured from `chart.load({columns})` start through the `done` callback.
+
+| type | data matrix | 3.18.0 | 4.0 (svg) | 4.0 (canvas) |
+| --- | ---: | ---: | ---: | ---: |
+| `area` | 1 x 10,000 | 812.4 ms | 203.8 ms | 878.6 ms |
+| `area-spline` | 1 x 10,000 | 810.8 ms | 204.1 ms | 774.5 ms |
+| `area-step` | 1 x 10,000 | 804.9 ms | 202.2 ms | 840.4 ms |
+| `bar` | 1 x 10,000 | 848.3 ms | 229.5 ms | 51.2 ms |
+| `bubble` | 1 x 10,000 | 912.5 ms | 195.8 ms | 54.9 ms |
+| `donut` | 1 x 10,000 | 1.7 ms | 1.8 ms |  |
+| `gauge` | 1 x 10,000 | 2.0 ms | 2.0 ms |  |
+| `line` | 1 x 10,000 | 830.5 ms | 201.1 ms | 22.3 ms |
+| `pie` | 1 x 10,000 | 1.8 ms | 1.8 ms |  |
+| `radar` | 1 x 10,000 | 141.7 ms | 157.5 ms |  |
+| `scatter` | 1 x 10,000 | 865.5 ms | 192.7 ms | 24.0 ms |
+| `spline` | 1 x 10,000 | 790.3 ms | 178.7 ms | 28.6 ms |
+| `step` | 1 x 10,000 | 780.9 ms | 191.1 ms | 19.9 ms |
+
+#### Resize
+
+Resize is measured as synchronous `chart.resize({width, height})` elapsed time with transitions
+disabled.
+
+| type | data matrix | 3.18.0 | 4.0 (svg) | 4.0 (canvas) |
+| --- | ---: | ---: | ---: | ---: |
+| `area` | 1 x 10,000 | 100.9 ms | 174.8 ms | 773.3 ms |
+| `area-spline` | 1 x 10,000 | 99.3 ms | 199.8 ms | 619.9 ms |
+| `area-step` | 1 x 10,000 | 98.5 ms | 166.8 ms | 774.4 ms |
+| `bar` | 1 x 10,000 | 129.6 ms | 203.9 ms | 43.0 ms |
+| `bubble` | 1 x 10,000 | 194.7 ms | 203.6 ms | 49.6 ms |
+| `donut` | 1 x 10,000 | 0.2 ms | 0.2 ms |  |
+| `gauge` | 1 x 10,000 | 0.2 ms | 0.2 ms |  |
+| `line` | 1 x 10,000 | 89.8 ms | 160.8 ms | 16.0 ms |
+| `pie` | 1 x 10,000 | 0.2 ms | 0.1 ms |  |
+| `radar` | 1 x 10,000 | 140.0 ms | 135.6 ms |  |
+| `scatter` | 1 x 10,000 | 146.4 ms | 179.8 ms | 18.8 ms |
+| `spline` | 1 x 10,000 | 83.8 ms | 156.5 ms | 21.9 ms |
+| `step` | 1 x 10,000 | 92.0 ms | 156.8 ms | 13.5 ms |
+
+The result shows two separate effects. The v4 SVG path is substantially faster than 3.18.0 for
+node-heavy axis charts in initial render and `chart.load()`. Canvas then gives another large gain
+for line, spline, step, bar, bubble, and scatter because those charts avoid per-point or per-shape
+SVG nodes. The current area-family canvas path is faster for initial render, but `chart.load()` and
+resize are still optimization candidates.
 
 Canvas parity scope:
 
