@@ -404,7 +404,9 @@ describe("ESM canvas renderer coverage", () => {
 		renderer.drawCircles(ctx, shape, [ctx.data.targets[2].values[0]]);
 		renderer.drawLabels(ctx, shape);
 		renderer.drawFocus(ctx, [ctx.data.targets[2].values[0]]);
-		expect(renderer.hasExpandedShapeFocus(ctx, [ctx.data.targets[2].values[0]])).to.be.true;
+		expect(renderer.hasExpandedShapeFocus(ctx, [ctx.data.targets[2].values[0]])).to.be.false;
+		expect(renderer.hasExpandedShapeFocus(ctx, [ctx.data.targets[0].values[0]])).to.be.true;
+		expect(renderer.hasExpandedShapeFocus(ctx, [ctx.data.targets[1].values[0]])).to.be.true;
 
 		ctx.config.axis_rotated = true;
 		ctx.config.point_show = false;

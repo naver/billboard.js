@@ -919,10 +919,18 @@ export default class ChartInternal {
 		$$.resizeFunction = resizeFunction;
 
 		// attach resize event
-		if (resize_auto === "parent") {
-			($$.resizeFunction.resizeObserver = new ResizeObserver($$.resizeFunction.bind($$)))
+		if (resize_auto === "parent" && window.ResizeObserver) {
+			($$.resizeFunction.resizeObserver = new window.ResizeObserver(
+				$$.resizeFunction.bind($$)
+			))
 				.observe($el.chart.node().parentNode);
 		} else {
+			if (resize_auto === "parent") {
+				// ResizeObserver unavailable: parent-specific resize won't be detected
+				window.console?.warn?.(
+					"[billboard.js] resize.auto='parent' requires ResizeObserver; falling back to window resize."
+				);
+			}
 			window.addEventListener("resize", $$.resizeFunction);
 		}
 	}

@@ -134,7 +134,7 @@ export default class TableView extends Plugin {
 					tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
 						value: i === 0 ?
 							config.categoryFormat.bind(this)(d) :
-							(isNumber(d) ? d.toLocaleString() : config.nullString)
+							(isNumber(d) ? config.numberFormat.bind(this)(d) : config.nullString)
 					})
 				).join("")
 			}</tr>`;

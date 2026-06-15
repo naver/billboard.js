@@ -2803,38 +2803,48 @@ describe("ESM canvas", function() {
 	});
 
 	it("should keep one canvas and restore the cached frame after hover overlays", () => {
-		generateWithOptions({
-			data: {
-				columns,
-				type: line()
-			},
-			point: {
-				focus: {
-					only: true
+		const drawImage = vi.spyOn(CanvasRenderingContext2D.prototype, "drawImage");
+
+		try {
+			generateWithOptions({
+				data: {
+					columns,
+					type: line()
+				},
+				point: {
+					focus: {
+						only: true
+					}
 				}
-			}
-		});
+			});
 
-		const {margin} = chart.internal.state;
-		const d = chart.internal.data.targets[0].values[1];
-		const canvasEl = container.querySelector(`canvas.${$CANVAS.canvas}`);
-		const before = countCanvasAlphaPixels(canvasEl);
-		const x = margin.left + chart.internal.scale.x(d.x);
-		const y = margin.top + chart.internal.scale.y(d.value);
+			const {margin} = chart.internal.state;
+			const d = chart.internal.data.targets[0].values[1];
+			const canvasEl = container.querySelector(`canvas.${$CANVAS.canvas}`);
+			const before = countCanvasAlphaPixels(canvasEl);
+			const x = margin.left + chart.internal.scale.x(d.x);
+			const y = margin.top + chart.internal.scale.y(d.value);
 
-		canvasEl.dispatchEvent(new MouseEvent("mousemove", {
-			bubbles: true,
-			clientX: x,
-			clientY: y
-		}));
+			expect(drawImage).not.toHaveBeenCalled();
 
-		expect(container.querySelector(`canvas.${$CANVAS.overlay}`)).to.be.null;
-		expect(container.querySelectorAll("canvas")).to.have.length(1);
-		expect(countCanvasAlphaPixels(canvasEl)).to.be.greaterThan(before);
+			canvasEl.dispatchEvent(new MouseEvent("mousemove", {
+				bubbles: true,
+				clientX: x,
+				clientY: y
+			}));
 
-		canvasEl.dispatchEvent(new MouseEvent("mouseout", {bubbles: true}));
+			expect(container.querySelector(`canvas.${$CANVAS.overlay}`)).to.be.null;
+			expect(container.querySelectorAll("canvas")).to.have.length(1);
+			expect(countCanvasAlphaPixels(canvasEl)).to.be.greaterThan(before);
+			expect(drawImage).toHaveBeenCalledTimes(1);
 
-		expect(countCanvasAlphaPixels(canvasEl)).to.be.equal(before);
+			canvasEl.dispatchEvent(new MouseEvent("mouseout", {bubbles: true}));
+
+			expect(countCanvasAlphaPixels(canvasEl)).to.be.equal(before);
+			expect(drawImage).toHaveBeenCalledTimes(2);
+		} finally {
+			drawImage.mockRestore();
+		}
 	});
 
 	it("should cull dense canvas x ticks", () => {
@@ -3449,6 +3459,69 @@ describe("ESM canvas", function() {
 		fillText.mockRestore();
 	});
 
+	it("should position canvas candlestick data labels from wick endpoints", () => {
+		const records: Array<{
+			text: string,
+			textAlign: CanvasTextAlign,
+			textBaseline: CanvasTextBaseline,
+			x: number,
+			y: number
+		}> = [];
+		const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText")
+			.mockImplementation(function(this: CanvasRenderingContext2D, text: string) {
+				const transform = this.getTransform();
+
+				records.push({
+					text: String(text),
+					textAlign: this.textAlign,
+					textBaseline: this.textBaseline,
+					x: transform.e,
+					y: transform.f
+				});
+			});
+
+		try {
+			generateWithOptions({
+				data: {
+					columns: [
+						["data1",
+							[1300, 1369, 1200, 1339],
+							[1348, 1371, 1271, 1320]
+						]
+					],
+					type: candlestick(),
+					labels: {
+						format: (value, id, index) => `${id}:${index}:${value}`
+					}
+				}
+			});
+
+			const shape = chart.internal.state.canvasShape || chart.internal.getDrawShape();
+			const getPoints = chart.internal.generateGetCandlestickPoints(
+				shape.indices[TYPE.CANDLESTICK],
+				false
+			);
+			const {margin} = chart.internal.state;
+			const up = chart.internal.data.targets[0].values[0];
+			const down = chart.internal.data.targets[0].values[1];
+			const upPoints = getPoints(up, up.index);
+			const downPoints = getPoints(down, down.index);
+			const upLabel = records.find(({text}) => text === "data1:0:1339");
+			const downLabel = records.find(({text}) => text === "data1:1:1320");
+
+			expect(upLabel?.textAlign).to.be.equal("center");
+			expect(upLabel?.textBaseline).to.be.equal("alphabetic");
+			expect(upLabel?.x).to.be.closeTo(margin.left + upPoints[2][0], 0.1);
+			expect(upLabel?.y).to.be.closeTo(margin.top + upPoints[2][2] - 3, 0.1);
+			expect(downLabel?.textAlign).to.be.equal("center");
+			expect(downLabel?.textBaseline).to.be.equal("alphabetic");
+			expect(downLabel?.x).to.be.closeTo(margin.left + downPoints[2][0], 0.1);
+			expect(downLabel?.y).to.be.closeTo(margin.top + downPoints[2][1] + 12, 0.1);
+		} finally {
+			fillText.mockRestore();
+		}
+	});
+
 	it("should render category bubble ticks and centered labels on canvas", () => {
 		const records: Array<{
 			text: string,
@@ -3631,12 +3704,13 @@ describe("ESM canvas", function() {
 				}
 			});
 
-			const canvasEl = container.querySelector(`canvas.${$CANVAS.canvas}`);
-			const rect = canvasEl.getBoundingClientRect();
-			const {margin} = chart.internal.state;
-			const d = chart.internal.data.targets[0].values[0];
+				const canvasEl = container.querySelector(`canvas.${$CANVAS.canvas}`);
+				const rect = canvasEl.getBoundingClientRect();
+				const {margin} = chart.internal.state;
+				const d = chart.internal.data.targets[0].values[0];
+				const expectedExpandedRadius = chart.internal.pointExpandedR(d);
 
-			fillTextRecords.length = 0;
+				fillTextRecords.length = 0;
 			fillRecords.length = 0;
 			arcRecords.length = 0;
 			canvasEl.dispatchEvent(new MouseEvent("mousemove", {
@@ -3648,32 +3722,31 @@ describe("ESM canvas", function() {
 			const focusLabel = fillTextRecords.find(({canvasClass, text}) =>
 				canvasClass.includes($CANVAS.canvas) && text === "20"
 			);
-			const expandedPointFill = fillRecords.find(({canvasClass, fillStyle, lineWidth}) =>
-				canvasClass.includes($CANVAS.canvas) &&
-				fillStyle === "#ffffff" &&
-				lineWidth === chart.internal.canvasTheme.style.focusPoint.lineWidth
-			);
-			const expandedPointArc = arcRecords.find(({canvasClass, r}) =>
-				canvasClass.includes($CANVAS.canvas) &&
-				Math.abs(r - chart.internal.pointExpandedR(d)) < 1e-6
-			);
-			const expandedPointArcs = arcRecords.filter(({canvasClass, lineWidth}) =>
-				canvasClass.includes($CANVAS.canvas) &&
-				lineWidth === chart.internal.canvasTheme.style.focusPoint.lineWidth
-			);
+				const expandedPointFill = fillRecords.find(({canvasClass, fillStyle}) =>
+					canvasClass.includes($CANVAS.canvas) &&
+					fillStyle === "#ffffff"
+				);
+				const expandedPointArc = arcRecords.find(({canvasClass, r}) =>
+					canvasClass.includes($CANVAS.canvas) &&
+					Math.abs(r - expectedExpandedRadius) < 1e-6
+				);
+				const expandedPointArcs = arcRecords.filter(({canvasClass, r}) =>
+					canvasClass.includes($CANVAS.canvas) &&
+					Math.abs(r - expectedExpandedRadius) < 1e-6
+				);
 
-			expect(chart.internal.state.canvasFocusKey).to.contain("data1:0");
-			expect(chart.internal.state.canvasFocusMainRedraw).to.be.true;
-			expect(focusLabel).not.to.be.undefined;
-			expect(focusLabel?.textAlign).to.be.equal("center");
+				expect(chart.internal.state.canvasFocusKey).to.contain("data1:0");
+				expect(chart.internal.state.canvasFocusMainRedraw).to.be.false;
+				expect(focusLabel).not.to.be.undefined;
+				expect(focusLabel?.textAlign).to.be.equal("center");
 			expect(focusLabel?.textBaseline).to.be.equal("middle");
 			expect(focusLabel?.fillStyle).to.be.equal(chart.internal.color("data1"));
 			expect(focusLabel?.globalAlpha).to.be.equal(1);
 			expect(focusLabel?.absoluteY - margin.top)
 				.to.be.closeTo(chart.internal.circleY(d, d.index), 1e-6);
-			expect(expandedPointFill?.globalAlpha).to.be.equal(0.5);
-			expect(expandedPointArc?.globalAlpha).to.be.equal(0.5);
-			expect(expandedPointArcs).to.have.length(1);
+				expect(expandedPointFill?.globalAlpha).to.be.equal(0.5);
+				expect(expandedPointArc?.globalAlpha).to.be.equal(0.5);
+				expect(expandedPointArcs).to.have.length(1);
 			expect(container.querySelector(`canvas.${$CANVAS.overlay}`)).to.be.null;
 			expect(container.querySelectorAll("canvas")).to.have.length(1);
 		} finally {
@@ -3761,24 +3834,25 @@ describe("ESM canvas", function() {
 			}));
 
 			const expectedExpandedRadius = chart.internal.pointExpandedR(d) + focusLineWidth / 2;
-			const expandedPointArcs = arcRecords.filter(({canvasClass, r}) =>
-				canvasClass.includes($CANVAS.canvas) &&
-				Math.abs(r - expectedExpandedRadius) < 1e-6
-			);
-			const expandedPointStroke = strokeRecords.find(({
-				canvasClass,
-				globalAlpha,
-				lineWidth,
+				const expandedPointArcs = arcRecords.filter(({canvasClass, r}) =>
+					canvasClass.includes($CANVAS.canvas) &&
+					Math.abs(r - expectedExpandedRadius) < 1e-6
+				);
+				const expandedPointStroke = strokeRecords.find(({
+					canvasClass,
+					globalAlpha,
+					lineWidth,
 				strokeStyle
 			}) =>
 				canvasClass.includes($CANVAS.canvas) &&
 				strokeStyle === color &&
 				globalAlpha === 0.5 &&
 				lineWidth === focusLineWidth
-			);
+				);
 
-			expect(chart.internal.state.canvasFocusKey).to.contain("data1:0");
-			expect(expandedPointArcs).to.have.length(1);
+				expect(chart.internal.state.canvasFocusKey).to.contain("data1:0");
+				expect(chart.internal.state.canvasFocusMainRedraw).to.be.false;
+				expect(expandedPointArcs).to.have.length(1);
 			expect(expandedPointArcs[0].r)
 				.to.be.closeTo(expectedExpandedRadius, 1e-6);
 			expect(expandedPointArcs[0].globalAlpha).to.be.equal(0.5);
