@@ -1,3 +1,15 @@
+# [4.0.0-next.4](https://github.com/naver/billboard.js/compare/4.0.0-next.3...4.0.0-next.4) (2026-06-15)
+
+
+### Bug Fixes
+
+* **canvas:** align candlestick labels with wick endpoints ([b328da4](https://github.com/naver/billboard.js/commit/b328da4d371874caf522e09a91f86874a52389c3))
+
+
+### Features
+
+* **plugin-tableview:** add numberFormat configuration option ([2abe355](https://github.com/naver/billboard.js/commit/2abe3552163c88743849dd65b64ea6c567c5adbc)), closes [#4140](https://github.com/naver/billboard.js/issues/4140) [#4141](https://github.com/naver/billboard.js/issues/4141)
+
 # [4.0.0-next.3](https://github.com/naver/billboard.js/compare/4.0.0-next.2...4.0.0-next.3) (2026-06-10)
 
 
