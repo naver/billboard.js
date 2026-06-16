@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260613012908
+ * @version 3.18.0-nightly-20260616013517
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -408,7 +408,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260613012908");
+__publicField(Plugin, "version", "3.18.0-nightly-20260616013517");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(6);
@@ -790,7 +790,7 @@ var object_spreadValues = (a, b) => {
 function _forEachValidItem(items, callback) {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
-    if (item) {
+    if (item !== null && isDefined(item)) {
       callback(item, i);
     }
   }
@@ -870,7 +870,9 @@ function mergeObj(target, ...objectN) {
     Object.keys(source).forEach((key) => {
       if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
         const value = source[key];
-        if (isObject(value)) {
+        if (value instanceof Date) {
+          target[key] = new Date(value.getTime());
+        } else if (isObject(value)) {
           !target[key] && (target[key] = {});
           target[key] = mergeObj(target[key], value);
         } else {

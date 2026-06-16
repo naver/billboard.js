@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260613012908
+ * @version 3.18.0-nightly-20260616013517
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -26766,7 +26766,7 @@ var __spreadValues = (a, b) => {
 function _forEachValidItem(items, callback) {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
-    if (item) {
+    if (item !== null && isDefined(item)) {
       callback(item, i);
     }
   }
@@ -26846,7 +26846,9 @@ function mergeObj(target, ...objectN) {
     Object.keys(source).forEach((key) => {
       if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
         const value = source[key];
-        if (isObject(value)) {
+        if (value instanceof Date) {
+          target[key] = new Date(value.getTime());
+        } else if (isObject(value)) {
           !target[key] && (target[key] = {});
           target[key] = mergeObj(target[key], value);
         } else {
@@ -29630,6 +29632,7 @@ class CanvasEngine {
     CanvasEngine_publicField(this, "dpr", 1);
     CanvasEngine_publicField(this, "frame", null);
     CanvasEngine_publicField(this, "frameCtx", null);
+    CanvasEngine_publicField(this, "frameValid", false);
   }
   /**
    * Create and attach the canvas element.
@@ -29664,13 +29667,14 @@ class CanvasEngine {
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     this.frame = null;
     this.frameCtx = null;
+    this.frameValid = false;
   }
   /**
    * Clear transient overlay drawings by restoring the captured frame.
    * @private
    */
   clearOverlay() {
-    this.restoreFrame();
+    this.frameValid && this.restoreFrame();
   }
   /**
    * Draw transient overlay content on the single visible canvas.
@@ -29679,7 +29683,12 @@ class CanvasEngine {
    */
   withOverlay(draw) {
     const { ctx } = this;
-    this.clearOverlay();
+    const hasFrame = this.frameValid;
+    if (hasFrame) {
+      this.clearOverlay();
+    } else {
+      this.captureFrame();
+    }
     ctx.save();
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     try {
@@ -29696,6 +29705,7 @@ class CanvasEngine {
    */
   beginFrame(w, h) {
     const { ctx } = this;
+    this.frameValid = false;
     ctx.save();
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
@@ -29706,7 +29716,6 @@ class CanvasEngine {
    */
   endFrame() {
     this.ctx.restore();
-    this.captureFrame();
   }
   /**
    * Capture the rendered frame for focus overlay restoration.
@@ -29714,6 +29723,7 @@ class CanvasEngine {
    */
   captureFrame() {
     const { canvas } = this;
+    this.frameValid = false;
     if (canvas.width && canvas.height) {
       let { frame, frameCtx } = this;
       if (!frame) {
@@ -29734,6 +29744,7 @@ class CanvasEngine {
         frameCtx.clearRect(0, 0, canvas.width, canvas.height);
       }
       frameCtx.drawImage(canvas, 0, 0);
+      this.frameValid = true;
     }
   }
   /**
@@ -29741,7 +29752,7 @@ class CanvasEngine {
    * @private
    */
   restoreFrame() {
-    if (!this.frame || !this.frameCtx) {
+    if (!this.frameValid || !this.frame || !this.frameCtx) {
       return;
     }
     const { canvas, ctx } = this;
@@ -29761,6 +29772,7 @@ class CanvasEngine {
     (_a = this.canvas) == null ? void 0 : _a.remove();
     this.frame = null;
     this.frameCtx = null;
+    this.frameValid = false;
   }
 }
 
@@ -31288,6 +31300,12 @@ function drawCanvasArea($$, target, indices, painter, isSub = false) {
     generateDrawAreaPath($$, indices, isSub, ctx)(target);
   });
 }
+function getVisibleCanvasTarget($$, target) {
+  const range = getCanvasTargetVisibleRange($$, target);
+  return range.start === 0 && range.end === target.values.length ? target : CanvasRenderer_spreadProps(CanvasRenderer_spreadValues({}, target), {
+    values: target.values.slice(range.start, range.end)
+  });
+}
 function getFocusedCanvasDatum(focusData, d) {
   if (!(focusData == null ? void 0 : focusData.length) || !(d == null ? void 0 : d.id)) {
     return null;
@@ -32291,7 +32309,7 @@ class CanvasRenderer {
    */
   hasExpandedShapeFocus($$, selectedData) {
     return !!(selectedData == null ? void 0 : selectedData.some(
-      (d) => d && (isCanvasBarType($$, d) || isCanvasCandlestickType($$, d) || isCanvasPointType($$, d) && getPointOpacity($$, d) < 1)
+      (d) => d && (isCanvasBarType($$, d) || isCanvasCandlestickType($$, d))
     ));
   }
   /**
@@ -32312,13 +32330,14 @@ class CanvasRenderer {
     painter.withTranslation(margin.left, margin.top, () => {
       var _a;
       for (const target of targets) {
-        if (!target.values.some(hasCanvasDrawableValue.bind(null, $$))) {
+        const visibleTarget = getVisibleCanvasTarget($$, target);
+        if (!visibleTarget.values.some(hasCanvasDrawableValue.bind(null, $$))) {
           continue;
         }
         ctx.globalAlpha = getCanvasTargetFocusOpacity($$, target);
         ctx.lineWidth = isCanvasTargetFocused($$, target) ? style.shape.lineFocusedWidth : style.shape.lineWidth;
         ctx.strokeStyle = $$.color(target.id);
-        ((_a = $$.config.data_regions) == null ? void 0 : _a[target.id]) ? drawCanvasLineWithDataRegions($$, target, painter) : drawCanvasLine($$, target, indices, painter);
+        ((_a = $$.config.data_regions) == null ? void 0 : _a[visibleTarget.id]) ? drawCanvasLineWithDataRegions($$, visibleTarget, painter) : drawCanvasLine($$, visibleTarget, indices, painter);
       }
       ctx.globalAlpha = 1;
     });
@@ -32341,21 +32360,23 @@ class CanvasRenderer {
     }
     painter.withTranslation(margin.left, margin.top, () => {
       for (const target of targets) {
-        if (!target.values.some(hasCanvasDrawableValue.bind(null, $$))) {
+        const visibleTarget = getVisibleCanvasTarget($$, target);
+        if (!visibleTarget.values.some(hasCanvasDrawableValue.bind(null, $$))) {
           continue;
         }
-        const color = getCanvasRenderColor($$, target, focusData);
+        const color = getCanvasRenderColor($$, visibleTarget, focusData);
         ctx.globalAlpha = style.shape.areaOpacity * getCanvasTargetFocusOpacity($$, target);
         ctx.fillStyle = getCanvasLinearGradientFill(
           $$,
           ctx,
-          target,
+          visibleTarget,
           "area",
-          // bounds computation is a full O(n) pass: skip when no gradient is set
+          // Bounds computation walks visible rows, so skip it when no gradient is set.
+          // Use the original target so the range cache stays aligned with unsliced values.
           $$.config.area_linearGradient ? getCanvasAreaBounds($$, target, indices) : null,
           color
         );
-        drawCanvasArea($$, target, indices, painter);
+        drawCanvasArea($$, visibleTarget, indices, painter);
       }
       ctx.globalAlpha = 1;
     });
@@ -32626,7 +32647,7 @@ class CanvasRenderer {
         const d = data[i];
         const text = getLabelText($$, d);
         if (text && d.index >= range.start && d.index < range.end && hasCanvasDrawableValue($$, d)) {
-          rows.push({ d, i, text });
+          rows.push({ d, text });
         }
       }
       labelCount += rows.length;
@@ -32639,12 +32660,12 @@ class CanvasRenderer {
       ctx.font = style.label.font;
       ctx.textAlign = "center";
       targetRows.forEach((rows) => {
-        var _a2;
-        for (const { d, i, text } of rows) {
+        var _a2, _b;
+        for (const { d, text } of rows) {
           let x;
           let y;
           if (isCanvasBarType($$, d) && barPoints) {
-            const geometry = getCanvasBarGeometry($$, barPoints, d, i);
+            const geometry = getCanvasBarGeometry($$, barPoints, d, d.index);
             if (!geometry) {
               continue;
             }
@@ -32663,19 +32684,21 @@ class CanvasRenderer {
               $$,
               candlestickPoints,
               d,
-              i
+              d.index
             );
             const isUp = value == null ? void 0 : value._isUp;
             if (!geometry) {
               continue;
             }
-            const { body } = geometry;
-            x = $$.config.axis_rotated ? isUp ? body.x + body.w + 4 : body.x - 4 : body.x + body.w / 2;
-            y = $$.config.axis_rotated ? body.y + body.h / 2 : isUp ? body.y - 4 : body.y + body.h + 13;
+            const { wickEnd, wickStart } = geometry;
+            const isInverted = $$.config[`axis_${(_b = $$.axis) == null ? void 0 : _b.getId(d.id)}_inverted`];
+            x = $$.config.axis_rotated ? isUp ? wickEnd[0] + 4 : wickStart[0] - 4 : wickStart[0];
+            y = $$.config.axis_rotated ? wickStart[1] + 3 : isUp ? wickEnd[1] - 3 : wickStart[1] + 12;
+            !$$.config.axis_rotated && isInverted && (y += 15 * (isUp ? 1 : -1));
             ctx.textAlign = $$.config.axis_rotated ? isUp ? "left" : "right" : "center";
-            ctx.textBaseline = $$.config.axis_rotated ? "middle" : isUp ? "bottom" : "top";
+            ctx.textBaseline = "alphabetic";
           } else if (cx && cy) {
-            ({ x, y } = getShapePoint(shape.pos, d, i));
+            ({ x, y } = getShapePoint(shape.pos, d, d.index));
             ({ x, y } = getPointLabelAnchor($$, ctx, d, x, y));
           }
           x += getLabelPosition($$, d, "x", texts);
@@ -32905,15 +32928,24 @@ class CanvasRenderer {
           const r = (_d = (_c = $$.pointExpandedR) == null ? void 0 : _c.call($$, d)) != null ? _d : baseR * 1.75;
           const overColor = getCanvasOverColor($$, d);
           const color = overColor || $$.color(d.id);
+          const fill = overColor || style.focusPoint.fill || style.shape.pointFillColor || color;
+          const stroke = overColor || style.focusPoint.stroke || color;
+          const lineWidth = style.focusPoint.lineWidth;
+          const alpha = getPointOpacity($$, d);
+          const hasStroke = !!stroke && (lineWidth != null ? lineWidth : 0) > 0;
+          const mergeSameColorStroke = pointType === "circle" && hasStroke && isNumber(alpha) && alpha < 1 && fill === stroke;
           if (!isFiniteCanvasCoordinate(x, y)) {
             return;
           }
-          drawPointPattern(painter, pointType, x, y, r, {
-            fill: overColor || style.focusPoint.fill || style.shape.pointFillColor || color,
-            lineWidth: style.focusPoint.lineWidth,
-            stroke: overColor || style.focusPoint.stroke || color,
-            alpha: getPointOpacity($$, d)
-          }, baseR);
+          drawPointPattern(
+            painter,
+            pointType,
+            x,
+            y,
+            mergeSameColorStroke ? r + (lineWidth || 0) / 2 : r,
+            hasStroke && !mergeSameColorStroke ? { fill, lineWidth, stroke, alpha } : { fill, alpha },
+            baseR
+          );
         });
       }
       this.drawFocusLabels($$, selectedData);
@@ -37265,20 +37297,24 @@ function getOrCreateWorkerResources(fn, depsFn) {
   const depsString = (_a = depsFn == null ? void 0 : depsFn.map(String).join(";")) != null ? _a : "";
   const key = (fnString + depsString).replace(/(function|[\s\W\n])/g, "").substring(0, 30);
   if (!(key in cache)) {
-    const blob = new win.Blob([
-      `${depsString}
+    try {
+      const blob = new win.Blob([
+        `${depsString}
 
-			self.onmessage=function({data}) {
-				const result = (${fnString}).apply(null, data.args);
-				self.postMessage({id: data.id, result});
-			};`
-    ], {
-      type: "text/javascript"
-    });
-    cache[key] = {
-      src: win.URL.createObjectURL(blob),
-      worker: null
-    };
+				self.onmessage=function({data}) {
+					const result = (${fnString}).apply(null, data.args);
+					self.postMessage({id: data.id, result});
+				};`
+      ], {
+        type: "text/javascript"
+      });
+      cache[key] = {
+        src: win.URL.createObjectURL(blob),
+        worker: null
+      };
+    } catch (e) {
+      return null;
+    }
   }
   return { key, src: cache[key].src };
 }
@@ -37288,7 +37324,11 @@ function getWorker(key, src) {
     return null;
   }
   if (!cached.worker) {
-    cached.worker = new win.Worker(src);
+    try {
+      cached.worker = new win.Worker(src);
+    } catch (e) {
+      return null;
+    }
     if (cached.worker) {
       cached.worker.onerror = function(e) {
         console.error ? console.error(e) : console.log(e);
@@ -37303,10 +37343,10 @@ function runWorker(useWorker = true, fn, callback, depsFn) {
     callback(res);
   };
   if (win.Worker && useWorker) {
-    const { key, src } = getOrCreateWorkerResources(fn, depsFn);
-    const worker = getWorker(key, src);
-    runFn = function(...args) {
-      if (worker) {
+    const workerResources = getOrCreateWorkerResources(fn, depsFn);
+    const worker = workerResources && getWorker(workerResources.key, workerResources.src);
+    if (worker) {
+      runFn = function(...args) {
         const id = ++messageId;
         const handler = function(e) {
           var _a;
@@ -37317,8 +37357,8 @@ function runWorker(useWorker = true, fn, callback, depsFn) {
         };
         worker.addEventListener("message", handler);
         worker.postMessage({ id, args });
-      }
-    };
+      };
+    }
   }
   return runFn;
 }
@@ -46139,10 +46179,11 @@ function updateTargetsForShape(targets, config) {
     const targets = $$.orderTargets(
       $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))
     );
+    const dataGeneration = $$.state.dataGeneration;
     const targetIds = targets.map((t) => t.id).join("_");
     const cacheKey = `${KEY.shapeOffset}_${targetIds}`;
     const cachedData = $$.cache.get(cacheKey);
-    if (cachedData) {
+    if ((cachedData == null ? void 0 : cachedData.generation) === dataGeneration) {
       return cachedData;
     }
     const isStackNormalized = $$.isStackNormalized();
@@ -46170,7 +46211,7 @@ function updateTargetsForShape(targets, config) {
       out[id] = index;
       return out;
     }, {});
-    const result = { indexMapByTargetId, shapeOffsetTargets };
+    const result = { generation: dataGeneration, indexMapByTargetId, shapeOffsetTargets };
     $$.cache.add(cacheKey, result);
     return result;
   },
@@ -47180,6 +47221,7 @@ class ChartInternal {
     return $$.getBaseValue(d) !== null && withoutFadeIn[d.id] ? null : "0";
   }
   bindResize() {
+    var _a, _b;
     const $$ = this;
     const { $el, config, state } = $$;
     const resizeFunction = generateResize(config.resize_timer);
@@ -47188,7 +47230,7 @@ class ChartInternal {
     list.push(() => callFn(config.onresize, $$.api));
     if (/^(true|parent)$/.test(resize_auto)) {
       list.push(() => {
-        var _a;
+        var _a2;
         const prevWidth = state.current.width;
         const prevHeight = state.current.height;
         $$.setContainerSize();
@@ -47198,7 +47240,7 @@ class ChartInternal {
         state.resizing = true;
         if (config.legend_show) {
           $$.updateSizes();
-          state.isCanvasMode ? (_a = $$.updateHtmlLegend) == null ? void 0 : _a.call($$) : $$.updateLegend();
+          state.isCanvasMode ? (_a2 = $$.updateHtmlLegend) == null ? void 0 : _a2.call($$) : $$.updateLegend();
         }
         $$.api.flush(false);
       });
@@ -47209,9 +47251,17 @@ class ChartInternal {
     });
     list.forEach((v) => resizeFunction.add(v));
     $$.resizeFunction = resizeFunction;
-    if (resize_auto === "parent") {
-      ($$.resizeFunction.resizeObserver = new ResizeObserver($$.resizeFunction.bind($$))).observe($el.chart.node().parentNode);
+    if (resize_auto === "parent" && win.ResizeObserver) {
+      ($$.resizeFunction.resizeObserver = new win.ResizeObserver(
+        $$.resizeFunction.bind($$)
+      )).observe($el.chart.node().parentNode);
     } else {
+      if (resize_auto === "parent") {
+        (_b = (_a = win.console) == null ? void 0 : _a.warn) == null ? void 0 : _b.call(
+          _a,
+          "[billboard.js] resize.auto='parent' requires ResizeObserver; falling back to window resize."
+        );
+      }
       win.addEventListener("resize", $$.resizeFunction);
     }
   }
@@ -55871,6 +55921,33 @@ class AxisRenderer {
     this.params = params;
     this.helper = new AxisRendererHelper(this);
   }
+  canReuseTickTextOnResize(isLeftRight) {
+    const { config, params } = this;
+    const { config: chartConfig, id, owner } = params;
+    const isX = /^(x|subX)$/.test(id);
+    const type = id === "subX" ? "x" : id;
+    const customTickFormat = id === "subX" ? chartConfig.subchart_axis_x_tick_format || chartConfig.axis_x_tick_format : chartConfig[`axis_${type}_tick_format`];
+    const categoryAutoWrap = params.tickMultiline && params.isCategory && !isLeftRight && !(params.tickWidth > 0);
+    return !!(owner.state.resizing && !owner.state.flowing && !isFunction(chartConfig.axis_evalTextSize) && !customTickFormat && !params.tickTitle && !(isX && chartConfig.axis_x_tick_autorotate) && !categoryAutoWrap && config.withoutTransition);
+  }
+  canReuseTickNodesOnResize(tickNodes, ticks, isLeftRight, tickShow) {
+    if (tickShow.tick || !tickShow.text || !this.canReuseTickTextOnResize(isLeftRight) || tickNodes.size() !== ticks.length) {
+      return false;
+    }
+    const nodes = tickNodes.nodes();
+    for (let i = 0; i < ticks.length; i++) {
+      const current = nodes[i].__data__;
+      const next = ticks[i];
+      if (current instanceof Date || next instanceof Date) {
+        if (+current !== +next) {
+          return false;
+        }
+      } else if (current !== next) {
+        return false;
+      }
+    }
+    return true;
+  }
   /**
    * Create axis element
    * @param {d3.selection} g Axis selection
@@ -55915,76 +55992,106 @@ class AxisRenderer {
       if (tickShow.tick || tickShow.text) {
         const ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight || params.config.axis_rotated);
         ctx.generatedTicks = ticks;
-        let tick = g2.selectAll(".tick").data(ticks, scale1);
-        const tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick");
-        const tickExit = tick.exit().remove();
-        tick = tickEnter.merge(tick);
-        tickShow.tick && tickEnter.append("line");
-        tickShow.text && tickEnter.append("text");
-        const tickText = tick.select("text");
-        const counts = [];
-        let sizeFor1Char = { w: 0, h: 0 };
-        if (isFunction(evalTextSize)) {
-          sizeFor1Char = evalTextSize.bind(ctx.params.owner.api)(tickText.node(), id);
-          if (this.classList.contains($COMMON.dummy)) {
-            this.sizeFor1Char = sizeFor1Char;
-          }
-        }
-        if (!sizeFor1Char || sizeFor1Char.w === 0 || sizeFor1Char.h === 0) {
-          sizeFor1Char = ctx.helper.getSizeFor1Char(orient, tickText, !!evalTextSize);
-        }
-        let tspan = tickText.selectAll("tspan").data((d, index) => {
-          let split;
-          if (params.tickMultiline) {
-            split = splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w);
-          } else {
-            const formatted = helper.textFormatted(d);
-            split = isArray(formatted) ? formatted.concat() : [formatted];
-          }
-          counts[index] = split.length;
-          return split.map((splitted) => ({ index, splitted }));
-        });
-        tspan.exit().remove();
-        tspan = tspan.enter().append("tspan").merge(tspan).text((d) => d.splitted);
-        tspan.attr("x", isTopBottom ? 0 : tickLength * sign).attr("dx", (() => {
-          let dx = 0;
-          if (/(top|bottom)/.test(orient) && rotate) {
-            dx = 8 * Math.sin(Math.PI * (rotate / 180)) * (orient === "top" ? -1 : 1);
-          }
-          return dx + (tickTextPos.x || 0);
-        })()).attr("dy", (d, i) => {
-          const defValue = ".71em";
-          let dy = 0;
-          if (orient !== "top") {
-            dy = sizeFor1Char.h;
-            if (i === 0) {
-              dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? defValue : 0;
-            }
-          }
-          return isNumber(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || defValue;
-        });
-        const lineUpdate = tick.select("line");
-        const textUpdate = tick.select("text");
-        tickEnter.select("line").attr(`${axisPx}2`, innerTickSize * sign);
-        tickEnter.select("text").attr(axisPx, tickLength * sign);
-        ctx.setTickLineTextPosition(lineUpdate, textUpdate, sizeFor1Char);
-        if (params.tickTitle) {
-          const title = textUpdate.select("title");
-          (title.empty() ? textUpdate.append("title") : title).text((index) => params.tickTitle[index]);
-        }
-        if (scale1.bandwidth) {
-          const x = scale1;
-          const dx = x.bandwidth() / 2;
-          scale0 = (d) => x(d) + dx;
-          scale1 = scale0;
-        } else if (scale0.bandwidth) {
-          scale0 = scale1;
+        let tick = g2.selectAll(".tick");
+        const canReuseTickNodes = ctx.canReuseTickNodesOnResize(
+          tick,
+          ticks,
+          isLeftRight || params.config.axis_rotated,
+          tickShow
+        );
+        if (canReuseTickNodes) {
+          tickTransform(tick, scale1);
         } else {
-          tickTransform(tickExit, scale1);
+          tick = tick.data(ticks, scale1);
+          const tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick");
+          const tickExit = tick.exit().remove();
+          tick = tickEnter.merge(tick);
+          tickShow.tick && tickEnter.append("line");
+          tickShow.text && tickEnter.append("text");
+          const hasTickChange = !tickEnter.empty() || !tickExit.empty();
+          const reuseTickText = tickShow.text && !hasTickChange && ctx.canReuseTickTextOnResize(isLeftRight || params.config.axis_rotated);
+          let sizeFor1Char = { w: 0, h: 0 };
+          let textUpdate = tick.selectAll("text.__bb-empty");
+          if (tickShow.text && !reuseTickText) {
+            const tickText = tick.select("text");
+            const counts = [];
+            textUpdate = tickText;
+            if (isFunction(evalTextSize)) {
+              sizeFor1Char = evalTextSize.bind(ctx.params.owner.api)(
+                tickText.node(),
+                id
+              );
+              if (this.classList.contains($COMMON.dummy)) {
+                this.sizeFor1Char = sizeFor1Char;
+              }
+            }
+            if (!sizeFor1Char || sizeFor1Char.w === 0 || sizeFor1Char.h === 0) {
+              sizeFor1Char = ctx.helper.getSizeFor1Char(
+                orient,
+                tickText,
+                !!evalTextSize
+              );
+            }
+            let tspan = tickText.selectAll("tspan").data((d, index) => {
+              let split;
+              if (params.tickMultiline) {
+                split = splitTickText(
+                  d,
+                  scale1,
+                  ticks,
+                  isLeftRight,
+                  sizeFor1Char.w
+                );
+              } else {
+                const formatted = helper.textFormatted(d);
+                split = isArray(formatted) ? formatted.concat() : [formatted];
+              }
+              counts[index] = split.length;
+              return split.map((splitted) => ({ index, splitted }));
+            });
+            tspan.exit().remove();
+            tspan = tspan.enter().append("tspan").merge(tspan).text((d) => d.splitted);
+            tspan.attr("x", isTopBottom ? 0 : tickLength * sign).attr("dx", (() => {
+              let dx = 0;
+              if (/(top|bottom)/.test(orient) && rotate) {
+                dx = 8 * Math.sin(Math.PI * (rotate / 180)) * (orient === "top" ? -1 : 1);
+              }
+              return dx + (tickTextPos.x || 0);
+            })()).attr("dy", (d, i) => {
+              const defValue = ".71em";
+              let dy = 0;
+              if (orient !== "top") {
+                dy = sizeFor1Char.h;
+                if (i === 0) {
+                  dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? defValue : 0;
+                }
+              }
+              return isNumber(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || defValue;
+            });
+          }
+          const lineUpdate = tick.select("line");
+          tickEnter.select("line").attr(`${axisPx}2`, innerTickSize * sign);
+          tickEnter.select("text").attr(axisPx, tickLength * sign);
+          ctx.setTickLineTextPosition(lineUpdate, textUpdate, sizeFor1Char);
+          if (params.tickTitle) {
+            const title = textUpdate.select("title");
+            const tickTitle = params.tickTitle;
+            (title.empty() ? textUpdate.append("title") : title).text((index) => tickTitle[Number(index)]);
+          }
+          if (scale1.bandwidth) {
+            const x = scale1;
+            const dx = x.bandwidth() / 2;
+            scale0 = (d) => x(d) + dx;
+            scale1 = scale0;
+          } else if (scale0.bandwidth) {
+            scale0 = scale1;
+          } else {
+            tickTransform(tickExit, scale1);
+          }
+          tick = params.owner.state.flowing ? helper.transitionise(tick) : params.owner.$T(tick);
+          tickTransform(tickEnter, scale0);
+          tickTransform(tick.style("opacity", null), scale1);
         }
-        tick = params.owner.state.flowing ? helper.transitionise(tick) : params.owner.$T(tick);
-        tickTransform(tickEnter, scale0);
-        tickTransform(tick.style("opacity", null), scale1);
       }
     });
     this.g = $g;
@@ -56067,7 +56174,7 @@ class AxisRenderer {
     switch (orient) {
       case "bottom":
         lineUpdate.attr("x1", tickPos.x).attr("x2", tickPos.x).attr("y2", (d) => this.getTickSize.bind(this)(d) * (tickLineInner ? -1 : 1));
-        textUpdate.attr("x", 0).attr("y", yForText(rotate)).style("text-anchor", textAnchorForText(rotate)).style("text-anchor", (d, i, { length }) => {
+        textUpdate.attr("x", 0).attr("y", yForText(rotate)).style("text-anchor", (d, i, { length }) => {
           if (!isRotated && i === 0 && (inner === true || inner.first)) {
             return "start";
           } else if (!isRotated && i === length - 1 && (inner === true || inner.last)) {
@@ -57563,7 +57670,7 @@ var eventrect_pow = Math.pow;
     const isRotated = config.axis_rotated;
     const isMultipleX = $$.isMultipleX();
     const xDomain = xScale == null ? void 0 : xScale.domain();
-    const fingerprint = xDomain ? `${xDomain[0]}_${xDomain[1]}_${state.width}_${state.height}_${$$.data.targets.length}_${[...state.hiddenTargetIds].join(",")}` : null;
+    const fingerprint = xDomain ? `${xDomain[0]}_${xDomain[1]}_${state.width}_${state.height}_${$$.data.targets.length}_${state.dataGeneration}_${[...state.hiddenTargetIds].join(",")}` : null;
     if (fingerprint && fingerprint === state._eventRectFingerprint) {
       return;
     }
@@ -64924,7 +65031,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.18.0-nightly-20260613012908",
+  version: "3.18.0-nightly-20260616013517",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

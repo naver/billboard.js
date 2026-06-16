@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.18.0-nightly-20260613012908
+ * @version 3.18.0-nightly-20260616013517
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -24815,7 +24815,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.18.0-nightly-20260613012908");
+__publicField(Plugin, "version", "3.18.0-nightly-20260616013517");
 
 ;// ./node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {
@@ -25298,7 +25298,7 @@ var object_spreadValues = (a, b) => {
 function _forEachValidItem(items, callback) {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
-    if (item) {
+    if (item !== null && isDefined(item)) {
       callback(item, i);
     }
   }
@@ -25378,7 +25378,9 @@ function mergeObj(target, ...objectN) {
     Object.keys(source).forEach((key) => {
       if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
         const value = source[key];
-        if (isObject(value)) {
+        if (value instanceof Date) {
+          target[key] = new Date(value.getTime());
+        } else if (isObject(value)) {
           !target[key] && (target[key] = {});
           target[key] = mergeObj(target[key], value);
         } else {
