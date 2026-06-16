@@ -9,7 +9,8 @@ window.bench = {
         type: document.getElementById("type"),
         dataSeries: document.getElementById("data-series"),
         dataSize: document.getElementById("data-size"),
-        transition: document.getElementById("transition")
+        transition: document.getElementById("transition"),
+        renderModes: document.querySelectorAll("[name=render-mode]")
     },
     init() {
         if (/^(127\.|localhost)/.test(location.host)) {
@@ -44,6 +45,9 @@ window.bench = {
         
         //console.log(JSON.stringify(data));
         return data;
+    },
+    getRenderMode() {
+        return [].slice.call(this.$el.renderModes).find(v => v.checked)?.value || "svg";
     },
     loadBillboard: function() {
         const version = document.getElementById("version").value;
@@ -87,10 +91,14 @@ window.bench = {
         }
 
         const chartType = this.$el.type.value;
+        const renderMode = this.getRenderMode();
 
         this.perf(false, "Generate");
 
         this.chart = bb.generate({
+            render: {
+                mode: renderMode
+            },
             boost: {
                 useCssRule: document.getElementById("useCssRule").checked,
                 useWorker: document.getElementById("useWorker").checked
@@ -133,25 +141,30 @@ window.bench = {
         this.chart.load({
             columns: this.getData(),
             done: function() {
+                ctx.perf(true, "Load");
                 ctx.timer = setTimeout(bench.load.bind(bench), 500);
             }
         });
-
-        this.perf(true, "Load");
     },
     resize: function() {
         this.stop();
-        
+        const duration = +this.$el.transition.value;
+
         this.timer = setInterval(() => {
             this.perf(false, "Resize");
-            
+
             bench.chart.resize({
                 width: this.getRandom(200, 600),
                 height: this.getRandom(200, 480)
             });
 
-            this.perf(true, "Resize");
-        }, 500);
+            if (duration > 0) {
+                // Wait for transition to complete before measuring
+                setTimeout(() => this.perf(true, "Resize"), duration + 50);
+            } else {
+                this.perf(true, "Resize");
+            }
+        }, Math.max(500, duration + 100));
     },
     stop: function() {
         this.play = false;

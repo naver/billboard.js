@@ -57,7 +57,7 @@ g > text.bb-title {
     margin-top: 0;
   }
 
-.code {
+  .code {
     margin:0;
   }
   
@@ -96,7 +96,7 @@ pre code {
   line-height: 1.3;
   border: 1px solid #ccc;
   padding: 10px;
-overscroll-behavior: contain;
+  overscroll-behavior: contain;
 }
 
 code.html {

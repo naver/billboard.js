@@ -34,7 +34,8 @@
 
     <script src="https://unpkg.com/@stackblitz/sdk/bundles/sdk.umd.js"></script>
     <script>
-        var path = ["../dist/", "../release/latest/dist/"];
+        var path = ["../dist/", "../../gh-pages/release/latest/dist/"];
+        // var path = ["https://naver.github.io/billboard.js/release/3.9.0/dist/"];
 
         !function() {
             var cssFileName = localStorage.cssThemeName;
@@ -90,24 +91,31 @@
 
     <!-- Sidebar -->
     <div id="sidebar-wrapper">
-        <h2 class="sidebar-brand">billboard.js</h2>
-        <p class="link">
-            <a href="https://naver.github.io/billboard.js/release/latest/doc/" target="_new">API Docs</a> |
-            <a href="https://github.com/naver/billboard.js" class="github" target="_new">GitHub</a>
-        </p>
-        <form id="theme">
-            Theme: <select class="classic">
-                <option value="">default</option>
-                <option value="datalab">datalab</option>
-                <option value="dark">dark</option>
-                <option value="insight">insight</option>
-                <option value="graph">graph</option>
-<option value="modern">modern</option>
-            </select>
-        </form>
-        <p id="launch" title="To open as new window, hold the 'Alt(Win)/option(Mac)' key while clicking.">
-            Launch code editor <button class="js">JS</button> <button class="ts">TS</button>
-        </p>
+        <div class="sidebar-header">
+            <h2 class="sidebar-brand">billboard.js</h2>
+            <p class="link">
+                <a href="https://naver.github.io/billboard.js/release/latest/doc/" target="_new">API Docs</a> |
+                <a href="https://github.com/naver/billboard.js" class="github" target="_new">GitHub</a>
+            </p>
+            <form id="theme">
+                Theme: <select class="classic">
+                    <option value="">default</option>
+                    <option value="datalab">datalab</option>
+                    <option value="dark">dark</option>
+                    <option value="insight">insight</option>
+                    <option value="graph">graph</option>
+                    <option value="modern">modern</option>
+                </select>
+            </form>
+            <form id="render-mode">
+                Render:
+                <label><input type="radio" name="render-mode" value="svg"> svg</label>
+                <label><input type="radio" name="render-mode" value="canvas"> canvas</label>
+            </form>
+            <p id="launch" title="To open as new window, hold the 'Alt(Win)/option(Mac)' key while clicking.">
+                Launch code editor <button class="js">JS</button> <button class="ts">TS</button>
+            </p>
+        </div>
 
         <ul class="sidebar-nav"></ul>
     </div>

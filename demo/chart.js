@@ -5,7 +5,8 @@ var billboardDemo = {
 	},
 	timer: {
 		code: null,
-		btn: null
+		btn: null,
+		sidebarScroll: null
 	},
 
 	/**
@@ -13,6 +14,7 @@ var billboardDemo = {
 	 */
 	init: function() {
 		this.$wrapper = document.getElementById("wrapper");
+		this.$sidebar = document.getElementById("sidebar-wrapper");
 		this.$chartArea = document.querySelector(".chart_area");
 		this.$list = document.querySelector(".sidebar-nav");
 		this.$title = document.getElementById("title");
@@ -21,6 +23,7 @@ var billboardDemo = {
 		this.$gridArea = document.querySelector(".example-grid");
 		this.$launch = document.getElementById("launch");
 		this.$themeSelect = document.querySelector("#theme select");
+		this.$renderModeInputs = document.querySelectorAll("#render-mode input[name=render-mode]");
 
 		this.$html = document.querySelector("code.html");
 		this.$code = document.querySelector("code.javascript");
@@ -29,11 +32,97 @@ var billboardDemo = {
 
 		this.WIDTH = 768;
 		this.selectedClass = "selected";
+		this.canvasSupportedTypes = [
+			"area",
+			"area-line-range",
+			"area-spline",
+			"area-spline-range",
+			"area-step",
+			"area-step-range",
+			"bar",
+			"bubble",
+			"candlestick",
+			"line",
+			"scatter",
+			"spline",
+			"step",
+			"treemap"
+		];
+		this.canvasUnsupportedTypes = [
+			"donut",
+			"funnel",
+			"gauge",
+			"pie",
+			"polar",
+			"radar"
+		];
+		this.canvasSupportedPlugins = [
+			"tableview"
+		];
 
+		this._initRenderMode();
 		this._bindEvents();
 		this._createList();
 
 		location.hash && this.showDemo(location.hash);
+		this._restoreSidebarScroll();
+	},
+
+	_getSidebarScrollKey: function() {
+		return "billboardDemo.sidebarScrollTop";
+	},
+
+	_saveSidebarScroll: function() {
+		this.$sidebar && localStorage.setItem(this._getSidebarScrollKey(), this.$sidebar.scrollTop);
+	},
+
+	_restoreSidebarScroll: function() {
+		var value = Number(localStorage.getItem(this._getSidebarScrollKey()));
+		var ctx = this;
+
+		if (!this.$sidebar || !Number.isFinite(value)) {
+			return;
+		}
+
+		this._restoringSidebarScroll = true;
+
+		(window.requestAnimationFrame || window.setTimeout)(function() {
+			ctx.$sidebar.scrollTop = value;
+
+			setTimeout(function() {
+				ctx.$sidebar.scrollTop = value;
+				ctx._restoringSidebarScroll = false;
+			}, 0);
+		});
+	},
+
+	_initRenderMode: function() {
+		var value = localStorage.getItem("renderModeName") || localStorage.renderModeName || "svg";
+		var ctx = this;
+
+		if (this.$renderModeInputs.length) {
+			if (!/^(svg|canvas)$/.test(value)) {
+				value = "svg";
+			}
+
+			this.$renderModeInputs.forEach(function(input) {
+				input.checked = input.value === value;
+				input.addEventListener("change", function(e) {
+					ctx.onRenderModeChange(e);
+				});
+			});
+		}
+	},
+
+	onRenderModeChange: function(e) {
+		localStorage.setItem("renderModeName", e.target.value);
+		localStorage.renderModeName = e.target.value;
+
+		if (location.hash) {
+			this.destroyChart();
+			this.$chartArea.innerHTML = "";
+			this.showDemo(location.hash);
+		}
 	},
 
 	_bindEvents: function() {
@@ -74,6 +163,21 @@ var billboardDemo = {
 			}
 		});
 
+		this.$sidebar && this.$sidebar.addEventListener("scroll", function() {
+			if (ctx._restoringSidebarScroll) {
+				return;
+			}
+
+			clearTimeout(ctx.timer.sidebarScroll);
+			ctx.timer.sidebarScroll = setTimeout(function() {
+				ctx._saveSidebarScroll();
+			}, 100);
+		}, {passive: true});
+
+		window.addEventListener("beforeunload", function() {
+			ctx._saveSidebarScroll();
+		});
+
 		this.$code.addEventListener("keydown", function(e) {
 			if (/^(9|13|3[27-9]|40)$/.test(e.keyCode)) {
 				if (e.keyCode === 9) {
@@ -106,7 +210,8 @@ var billboardDemo = {
 			if (el.tagName === "BUTTON") {
 				ctx.editor(null, el.innerHTML, e.altKey);
 			}
-		})
+		});
+
 	},
 
 	/**
@@ -195,6 +300,140 @@ var billboardDemo = {
 			left <= clientWidth;
 	},
 
+	getRenderMode: function() {
+		var checked = document.querySelector("#render-mode input[name=render-mode]:checked");
+
+		return checked ? checked.value : "svg";
+	},
+
+	isCanvasRenderMode: function() {
+		return this.getRenderMode() === "canvas";
+	},
+
+	cloneOptions: function(value, refs) {
+		var ctx = this;
+		var clone;
+
+		if (value === null || typeof value !== "object" || value.nodeType) {
+			return value;
+		}
+
+		if (value instanceof Date) {
+			return new Date(value.getTime());
+		}
+
+		refs = refs || new WeakMap();
+
+		if (refs.has(value)) {
+			return refs.get(value);
+		}
+
+		clone = Array.isArray(value) ? [] : {};
+		refs.set(value, clone);
+
+		Object.keys(value).forEach(function(key) {
+			clone[key] = ctx.cloneOptions(value[key], refs);
+		});
+
+		return clone;
+	},
+
+	getChartTypes: function(options) {
+		var types = [];
+		var data = options && options.data || {};
+
+		if (data.type) {
+			types.push(data.type);
+		}
+
+		Object.keys(data.types || {}).forEach(function(key) {
+			types.push(data.types[key]);
+		});
+
+		if (!types.length) {
+			types.push("line");
+		}
+
+		return types.filter(function(type, index) {
+			return types.indexOf(type) === index;
+		});
+	},
+
+	getUnsupportedCanvasTypes: function(options) {
+		var ctx = this;
+
+		return this.getChartTypes(options).filter(function(type) {
+			return ctx.canvasUnsupportedTypes.indexOf(type) > -1 ||
+				ctx.canvasSupportedTypes.indexOf(type) === -1;
+		});
+	},
+
+	getPluginNames: function(options) {
+		var names = [];
+
+		(options && options._plugins || []).forEach(function(plugin) {
+			Object.keys(plugin).forEach(function(name) {
+				if (names.indexOf(name) === -1) {
+					names.push(name);
+				}
+			});
+		});
+
+		return names;
+	},
+
+	getUnsupportedCanvasPlugins: function(options) {
+		var ctx = this;
+
+		return this.getPluginNames(options).filter(function(name) {
+			return ctx.canvasSupportedPlugins.indexOf(name) === -1;
+		});
+	},
+
+	getCanvasFallback: function(options) {
+		return {
+			types: this.getUnsupportedCanvasTypes(options),
+			plugins: this.getUnsupportedCanvasPlugins(options)
+		};
+	},
+
+	hasCanvasFallback: function(fallback) {
+		return !!(fallback && (fallback.types.length || fallback.plugins.length));
+	},
+
+	applyRenderMode: function(options) {
+		if (this.isCanvasRenderMode() && !this.hasCanvasFallback(this.getCanvasFallback(options))) {
+			options.render = options.render || {};
+			options.render.mode = "canvas";
+		}
+
+		return options;
+	},
+
+	addRenderModeNotice: function(fallback) {
+		var notice = document.createElement("div");
+		var messages = [];
+
+		notice.className = "render-mode-notice";
+
+		if (fallback.types.length) {
+			messages.push("Canvas render mode doesn't support " +
+				fallback.types.join(", ") + " chart type" + (fallback.types.length > 1 ? "s" : "") +
+				" yet.");
+		}
+
+		if (fallback.plugins.length) {
+			messages.push("Canvas render mode doesn't support " +
+				fallback.plugins.join(", ") + " plugin" + (fallback.plugins.length > 1 ? "s" : "") +
+				" yet. This demo is SVG-only.");
+		}
+
+		messages.push("Unsupported demos are rendered as SVG.");
+		notice.textContent = messages.join(" ");
+
+		this.$chartArea.appendChild(notice);
+	},
+
 	/**
 	 * Destroy chart
 	 * @param {Array} inst
@@ -204,16 +443,16 @@ var billboardDemo = {
 		bb.instance.splice(0, bb.instance.length);
 
 		inst.deref()?.forEach(function (c) {
-			var timer = c.timer;
-			var el = c.$.chart;
+			var timer = c && c.timer;
+			var el = c && c.$ && c.$.chart;
 
 			try {
 				timer && timer.forEach(function (v) {
 					clearTimeout(v);
 				});
 			} finally {
-				el.parentNode && el.parentNode.removeChild(el);
-				c.destroy();
+				el && el.parentNode && el.parentNode.removeChild(el);
+				c && c.destroy && c.destroy();
 			}
 		});
 	},
@@ -227,6 +466,11 @@ var billboardDemo = {
 	generate: function(type, key) {
 		var typeData = demos[type][key];
 		var isArray = typeData && typeData.constructor === Array;
+		var entries = isArray ? typeData : [typeData];
+		var fallback = {
+			types: [],
+			plugins: []
+		};
 		var hasPlugin = /plugin/i.test(type);
 		var pluginName = key.replace(/Diagram/, "").toLowerCase() || "";
 		var camelize = function(s) {
@@ -236,13 +480,31 @@ var billboardDemo = {
 		var code = {
 			markup: [],
 			data: [],
-			esm: []
+			esm: [],
+			fallback: fallback
 		};
+
+		if (this.isCanvasRenderMode()) {
+			entries.forEach(function(t) {
+				var entryFallback = self.getCanvasFallback(t.options);
+
+				fallback.types = fallback.types.concat(entryFallback.types);
+				fallback.plugins = fallback.plugins.concat(entryFallback.plugins);
+			});
+
+			fallback.types = fallback.types.filter(function(v, i) {
+				return fallback.types.indexOf(v) === i;
+			});
+
+			fallback.plugins = fallback.plugins.filter(function(v, i) {
+				return fallback.plugins.indexOf(v) === i;
+			});
+		}
 
 		key = type +"."+ key;
 
 		// generate chart
-		isArray ? typeData.forEach(function(t, i) {
+		isArray ? entries.forEach(function(t, i) {
 			self._addChartInstance(t, key, i + 1, code);
 		}) : this._addChartInstance(typeData, key, undefined, code);
 
@@ -250,7 +512,7 @@ var billboardDemo = {
 
 		// UMD
 		code.data = code.data.join("")
-			.replace(/"(area|area-line-range|area-spline|area-spline-range|area-step|area-step-range|bar|bubble|candlestick|donut|funnel|gauge|line|pie|polar|radar|scatter|spline|step|treemap|selection|subchart|zoom)(\(\))?",?/g, function(match, p1, p2, p3, offset, string) {
+			.replace(/"(area|area-line-range|area-spline|area-spline-range|area-step|area-step-range|bar|bubble|candlestick|canvas|donut|funnel|gauge|line|pie|polar|radar|scatter|spline|step|treemap|selection|subchart|zoom)(\(\))?",?/g, function(match, p1, p2, p3, offset, string) {
 				var module = camelize(p1);
 		
 				code.esm.indexOf(module) === -1 &&
@@ -262,10 +524,21 @@ var billboardDemo = {
 			});
 
 		this.$code.innerHTML = '// for ESM environment, need to import modules as:\r\n' +
-'// import bb, {'+ code.esm.join(", ") +'} from "billboard.js";\r\n';
+'// import bb, {'+ code.esm.join(", ") +'} from "'+
+			(code.esm.indexOf("canvas") > -1 ? "billboard.js/canvas" : "billboard.js") +'";\r\n';
 
 		if (hasPlugin) {
 			this.$code.innerHTML += '// import '+ pluginName +' from "billboard.js/dist/plugin/billboardjs-plugin-'+ pluginName +'";\r\n';
+		}
+
+		if (this.isCanvasRenderMode() && code.fallback.types.length) {
+			this.$code.innerHTML += '// canvas render mode skipped for unsupported chart type(s): ' +
+				code.fallback.types.join(", ") + '\r\n';
+		}
+
+		if (this.isCanvasRenderMode() && code.fallback.plugins.length) {
+			this.$code.innerHTML += '// canvas render mode skipped for SVG-only plugin(s): ' +
+				code.fallback.plugins.join(", ") + '\r\n';
 		}
 
 		this.$code.innerHTML += '\r\n'+ code.data;
@@ -286,7 +559,7 @@ var billboardDemo = {
 				.then(function() {
 					ctx.showCopyMsg();
 				}, function(e) {
-					console.error("An error occured:", errMsg);
+					console.error("An error occurred:", errMsg);
 				});
 		} else {
 			var textArea = document.createElement("textarea");
@@ -322,7 +595,7 @@ var billboardDemo = {
 				document.execCommand("copy");
 				ctx.showCopyMsg();
 			} catch (e) {
-				console.error("An error occured:", errMsg);
+				console.error("An error occurred:", errMsg);
 			}
 
 			document.body.removeChild(textArea);
@@ -421,6 +694,9 @@ var billboardDemo = {
 		typeKey = typeKey.split(".");
 
 		var key = this.getLowerFirstCase(typeKey[1]);
+		var func = type.func;
+		var style = type.style;
+		var options = this.applyRenderMode(this.cloneOptions(type.options));
 
 		if (index) {
 			key += "_"+ index;
@@ -436,6 +712,10 @@ var billboardDemo = {
 
 			if ((index && index === 1) || !index) {
 				this.$chartArea.innerHTML = "";
+			}
+
+			if (this.hasCanvasFallback(code.fallback) && ((index && index === 1) || !index)) {
+				this.addRenderModeNotice(code.fallback);
 			}
 
 			index > 1 && this.$chartArea.appendChild(document.createElement("hr"));
@@ -466,10 +746,6 @@ var billboardDemo = {
 				});
 			}
 		}
-
-		var func = type.func;
-		var style = type.style;
-		var options = type.options;
 
 		options.bindto = "#" + key;
 
