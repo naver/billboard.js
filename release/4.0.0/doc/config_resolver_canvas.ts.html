@@ -1,0 +1,3228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>config/resolver/canvas.ts - billboard.js API doc</title>
+    
+    <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
+    
+        <meta name="keywords" content="chart, SVG, D3, Data Visualization" />
+        <meta name="keyword" content="chart, SVG, D3, Data Visualization" />
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://naver.github.io/billboard.js/demo/" target="_blank" >Examples</a></h2><h2><a href="https://github.com/naver/billboard.js" target="_blank" >GitHub</a></h2><h3>Namespaces</h3><ul><li><a href="bb.html">bb</a><ul class='members'><li data-type='member'><a href="bb.html#.instance">instance</a></li><li data-type='member'><a href="bb.html#.plugin">plugin</a></li><li data-type='member'><a href="bb.html#.version">version</a></li></ul><ul class='methods'><li data-type='method'><a href="bb.html#.defaults">defaults</a></li><li data-type='method'><a href="bb.html#.generate">generate</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="Chart.html">Chart</a><ul class='members'><li data-type='member'><a href="Chart.html#.$">$</a></li><li data-type='member'><a href="Chart.html#.plugins">plugins</a></li></ul><ul class='methods'><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4labels">axis․labels</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4max">axis․max</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4min">axis․min</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4range">axis․range</a></li><li data-type='method'><a href="Chart.html#categories">categories</a></li><li data-type='method'><a href="Chart.html#category">category</a></li><li data-type='method'><a href="Chart.html#color">color</a></li><li data-type='method'><a href="Chart.html#config">config</a></li><li data-type='method'><a href="Chart.html#data">data</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4axes">data․axes</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4colors">data․colors</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4max">data․max</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4min">data․min</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4names">data․names</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4shown">data․shown</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4values">data․values</a></li><li data-type='method'><a href="Chart.html#defocus">defocus</a></li><li data-type='method'><a href="Chart.html#destroy">destroy</a></li><li data-type='method'><a href="Chart.html#export">export</a></li><li data-type='method'><a href="Chart.html#flow">flow</a></li><li data-type='method'><a href="Chart.html#flush">flush</a></li><li data-type='method'><a href="Chart.html#focus">focus</a></li><li data-type='method'><a href="Chart.html#groups">groups</a></li><li data-type='method'><a href="Chart.html#hide">hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4hide">legend․hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4show">legend․show</a></li><li data-type='method'><a href="Chart.html#load">load</a></li><li data-type='method'><a href="Chart.html#regions">regions</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4add">regions․add</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4remove">regions․remove</a></li><li data-type='method'><a href="Chart.html#resize">resize</a></li><li data-type='method'><a href="Chart.html#revert">revert</a></li><li data-type='method'><a href="Chart.html#select">select</a></li><li data-type='method'><a href="Chart.html#selected">selected</a></li><li data-type='method'><a href="Chart.html#show">show</a></li><li data-type='method'><a href="Chart.html#subchart">subchart</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4hide">subchart․hide</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4reset">subchart․reset</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4show">subchart․show</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4toggle">subchart․toggle</a></li><li data-type='method'><a href="Chart.html#toggle">toggle</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4hide">tooltip․hide</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4show">tooltip․show</a></li><li data-type='method'><a href="Chart.html#unload">unload</a></li><li data-type='method'><a href="Chart.html#unselect">unselect</a></li><li data-type='method'><a href="Chart.html#unzoom">unzoom</a></li><li data-type='method'><a href="Chart.html#x">x</a></li><li data-type='method'><a href="Chart.html#xgrids">xgrids</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4add">xgrids․add</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4remove">xgrids․remove</a></li><li data-type='method'><a href="Chart.html#xs">xs</a></li><li data-type='method'><a href="Chart.html#ygrids">ygrids</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4add">ygrids․add</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4remove">ygrids․remove</a></li><li data-type='method'><a href="Chart.html#zoom">zoom</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4enable">zoom․enable</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4max">zoom․max</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4min">zoom․min</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4range">zoom․range</a></li></ul></li><li><a href="Options.html">Options</a><ul class='members'><li data-type='member'><a href="Options.html#.arc">arc</a></li><li data-type='member'><a href="Options.html#.area">area</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4evalTextSize">axis․evalTextSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4rotated">axis․rotated</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4tooltip">axis․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4axes">axis․x․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4categories">axis․x․categories</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4clipPath">axis․x․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4extent">axis․x․extent</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4forceAsSingle">axis․x․forceAsSingle</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4height">axis․x․height</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4inverted">axis․x․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4label">axis․x․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4localtime">axis․x․localtime</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4max">axis․x․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4min">axis․x․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4padding">axis․x․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4show">axis․x․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4autorotate">axis․x․tick․autorotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4centered">axis․x․tick․centered</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4count">axis․x․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․x․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․x․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․x․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4reverse">axis․x․tick․culling․reverse</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4fit">axis․x․tick․fit</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4format">axis․x․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4inner">axis․x․tick․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4multiline">axis․x․tick․multiline</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․x․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․x․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4show">axis․x․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4inner">axis․x․tick․text․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․x․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․x․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4tooltip">axis․x․tick․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4values">axis․x․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4width">axis․x․tick․width</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4type">axis․x․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4axes">axis․y2․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4center">axis․y2․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4default">axis․y2․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inner">axis․y2․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inverted">axis․y2․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4label">axis․y2․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4max">axis․y2․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4min">axis․y2․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4padding">axis․y2․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4show">axis․y2․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y2․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y2․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․y2․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y2․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4reverse">axis․y2․tick․culling․reverse</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y2․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4inner">axis․y2․tick․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y2․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y2․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y2․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y2․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y2․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y2․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y2․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4type">axis․y2․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4axes">axis․y․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4center">axis․y․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4clipPath">axis․y․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4default">axis․y․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inner">axis․y․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inverted">axis․y․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4label">axis․y․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4max">axis․y․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4min">axis․y․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4padding">axis․y․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4show">axis․y․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․y․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4reverse">axis․y․tick․culling․reverse</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4inner">axis․y․tick․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4type">axis․y․type</a></li><li data-type='member'><a href="Options.html#.background">background</a></li><li data-type='member'><a href="Options.html#.bar">bar</a></li><li data-type='member'><a href="Options.html#.bindto">bindto</a></li><li data-type='member'><a href="Options.html#.boost">boost</a></li><li data-type='member'><a href="Options.html#.bubble">bubble</a></li><li data-type='member'><a href="Options.html#.candlestick">candlestick</a></li><li data-type='member'><a href="Options.html#.canvas">canvas</a></li><li data-type='member'><a href="Options.html#.clipPath">clipPath</a></li><li data-type='member'><a href="Options.html#.color">color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4axes">data․axes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4classes">data․classes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4color">data․color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4colors">data․colors</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4columns">data․columns</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4empty%25E2%2580%25A4label%25E2%2580%25A4text">data․empty․label․text</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4filter">data․filter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groups">data․groups</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groupsZeroAs">data․groupsZeroAs</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4headers">data․headers</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4hide">data․hide</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4idConverter">data․idConverter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4json">data․json</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4keys">data․keys</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4labels">data․labels</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4mimeType">data․mimeType</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4names">data․names</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onclick">data․onclick</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onhidden">data․onhidden</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmax">data․onmax</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmin">data․onmin</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onout">data․onout</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onover">data․onover</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onselected">data․onselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onshown">data․onshown</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onunselected">data․onunselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4order">data․order</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4regions">data․regions</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4rows">data․rows</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4draggable">data․selection․draggable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled">data․selection․enabled</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4grouped">data․selection․grouped</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4isselectable">data․selection․isselectable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4multiple">data․selection․multiple</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4stack%25E2%2580%25A4normalize">data․stack․normalize</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4type">data․type</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4types">data․types</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4url">data․url</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4x">data․x</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xFormat">data․xFormat</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xLocaltime">data․xLocaltime</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xSort">data․xSort</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xs">data․xs</a></li><li data-type='member'><a href="Options.html#.donut">donut</a></li><li data-type='member'><a href="Options.html#.funnel">funnel</a></li><li data-type='member'><a href="Options.html#.gauge">gauge</a></li><li data-type='member'><a href="Options.html#.grid">grid</a></li><li data-type='member'><a href="Options.html#.interaction">interaction</a></li><li data-type='member'><a href="Options.html#.legend">legend</a></li><li data-type='member'><a href="Options.html#.line">line</a></li><li data-type='member'><a href="Options.html#.onafterinit">onafterinit</a></li><li data-type='member'><a href="Options.html#.onbeforeinit">onbeforeinit</a></li><li data-type='member'><a href="Options.html#.onclick">onclick</a></li><li data-type='member'><a href="Options.html#.oninit">oninit</a></li><li data-type='member'><a href="Options.html#.onout">onout</a></li><li data-type='member'><a href="Options.html#.onover">onover</a></li><li data-type='member'><a href="Options.html#.onrendered">onrendered</a></li><li data-type='member'><a href="Options.html#.onresize">onresize</a></li><li data-type='member'><a href="Options.html#.onresized">onresized</a></li><li data-type='member'><a href="Options.html#.padding">padding</a></li><li data-type='member'><a href="Options.html#.pie">pie</a></li><li data-type='member'><a href="Options.html#.plugins">plugins</a></li><li data-type='member'><a href="Options.html#.point">point</a></li><li data-type='member'><a href="Options.html#.polar">polar</a></li><li data-type='member'><a href="Options.html#.radar">radar</a></li><li data-type='member'><a href="Options.html#.regions">regions</a></li><li data-type='member'><a href="Options.html#.render">render</a></li><li data-type='member'><a href="Options.html#.resize">resize</a></li><li data-type='member'><a href="Options.html#.scatter">scatter</a></li><li data-type='member'><a href="Options.html#.size">size</a></li><li data-type='member'><a href="Options.html#.spline">spline</a></li><li data-type='member'><a href="Options.html#.subchart">subchart</a></li><li data-type='member'><a href="Options.html#.svg">svg</a></li><li data-type='member'><a href="Options.html#.title">title</a></li><li data-type='member'><a href="Options.html#.tooltip">tooltip</a></li><li data-type='member'><a href="Options.html#.transition">transition</a></li><li data-type='member'><a href="Options.html#.treemap">treemap</a></li><li data-type='member'><a href="Options.html#.zoom">zoom</a></li></ul></li><li><a href="Plugin.html">Plugin</a><ul class='members'><li data-type='member'><a href="Plugin.html#.version">version</a></li></ul></li><li><a href="plugin-bubblecompare.html">plugin-bubblecompare</a><ul class='members'><li data-type='member'><a href="plugin-bubblecompare.html#.expandScale">expandScale</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.maxR">maxR</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.minR">minR</a></li></ul></li><li><a href="plugin-sparkline.html">plugin-sparkline</a><ul class='members'><li data-type='member'><a href="plugin-sparkline.html#.selector">selector</a></li></ul></li><li><a href="plugin-stanford.html">plugin-stanford</a><ul class='members'><li data-type='member'><a href="plugin-stanford.html#.colors">colors</a></li><li data-type='member'><a href="plugin-stanford.html#.epochs">epochs</a></li><li data-type='member'><a href="plugin-stanford.html#.lines">lines</a></li><li data-type='member'><a href="plugin-stanford.html#.padding">padding</a></li><li data-type='member'><a href="plugin-stanford.html#.regions">regions</a></li><li data-type='member'><a href="plugin-stanford.html#.scale">scale</a></li></ul></li><li><a href="plugin-tableview.html">plugin-tableview</a><ul class='members'><li data-type='member'><a href="plugin-tableview.html#.categoryFormat">categoryFormat</a></li><li data-type='member'><a href="plugin-tableview.html#.categoryTitle">categoryTitle</a></li><li data-type='member'><a href="plugin-tableview.html#.class">class</a></li><li data-type='member'><a href="plugin-tableview.html#.nullString">nullString</a></li><li data-type='member'><a href="plugin-tableview.html#.numberFormat">numberFormat</a></li><li data-type='member'><a href="plugin-tableview.html#.selector">selector</a></li><li data-type='member'><a href="plugin-tableview.html#.style">style</a></li><li data-type='member'><a href="plugin-tableview.html#.title">title</a></li><li data-type='member'><a href="plugin-tableview.html#.updateOnToggle">updateOnToggle</a></li></ul></li><li><a href="plugin-textoverlap.html">plugin-textoverlap</a><ul class='members'><li data-type='member'><a href="plugin-textoverlap.html#.area">area</a></li><li data-type='member'><a href="plugin-textoverlap.html#.extent">extent</a></li><li data-type='member'><a href="plugin-textoverlap.html#.selector">selector</a></li></ul></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">config/resolver/canvas.ts</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+import {select as d3Select} from "d3-selection";
+import CanvasAxisRenderer from "../../canvas/CanvasAxisRenderer";
+import CanvasEngine from "../../canvas/CanvasEngine";
+import CanvasRenderer from "../../canvas/CanvasRenderer";
+import CanvasTheme from "../../canvas/CanvasTheme";
+import {$CANVAS} from "../../canvas/classes";
+import HitDetector from "../../canvas/HitDetector";
+import {
+	hasCanvasDrawableValue,
+	isCanvasBarType,
+	isCanvasBubbleType,
+	isCanvasCandlestickType,
+	isCanvasPointType,
+	isCanvasScatterType,
+	isCanvasTargetSupported,
+	isCanvasTreemapType
+} from "../../canvas/util";
+import ChartInternal from "../../ChartInternal/ChartInternal";
+import {getRenderDataPoint} from "../../ChartInternal/shape/core/geometry";
+import {$FOCUS, $LEGEND} from "../../config/classes";
+import {window} from "../../module/browser";
+import {KEY} from "../../module/Cache";
+import {
+	callFn,
+	extend,
+	getBoundingRect,
+	isBoolean,
+	isFunction,
+	parseDate,
+	sanitize,
+	tplProcess
+} from "../../module/util";
+
+const CANVAS_SELECTABLE_TYPE_FILTERS = [
+	isCanvasPointType,
+	isCanvasBarType,
+	isCanvasCandlestickType,
+	isCanvasTreemapType
+];
+const CANVAS_LEGEND_TOUCH_TAP_THRESHOLD = 10;
+const CANVAS_LEGEND_TOUCH_CLICK_TIMEOUT = 750;
+const CANVAS_SUBCHART_HANDLE_SIZE = 6;
+const CANVAS_SUBCHART_CLICK_TOLERANCE = 2;
+const CANVAS_FLOW_ANIMATION_MAX_VALUES = 100000;
+const CANVAS_HTML_ATTR_ESCAPE: Record&lt;string, string> = {
+	"&amp;": "&amp;amp;",
+	"&lt;": "&amp;lt;",
+	">": "&amp;gt;",
+	"\"": "&amp;quot;",
+	"'": "&amp;#39;"
+};
+const canvasSelectionDragRows = new WeakMap&lt;object, Map&lt;string, any>>();
+
+/**
+ * Emit canvas v1 unsupported option warning.
+ * @param {string} message Warning message
+ * @private
+ */
+function warn(message: string): void {
+	window.console?.warn?.(`[billboard.js] ${message}`);
+}
+
+/**
+ * Get formatted legend text.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} id Data id
+ * @returns {string} Legend text
+ * @private
+ */
+function getLegendText($$, id: string): string {
+	const {config} = $$;
+	const text = config.data_names[id] ?? id;
+
+	return isFunction(config.legend_format) ?
+		config.legend_format(text, id !== text ? id : undefined) :
+		text;
+}
+
+/**
+ * Escape a value for safe HTML attribute interpolation.
+ * @param {string} value Attribute value
+ * @returns {string} Escaped value
+ * @private
+ */
+function escapeHtmlAttr(value: string): string {
+	return `${value}`.replace(/[&amp;&lt;>"']/g, char => CANVAS_HTML_ATTR_ESCAPE[char]);
+}
+
+/**
+ * Get the point pattern assigned to a legend item.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} id Data id
+ * @returns {string} Point pattern
+ * @private
+ */
+function getCanvasLegendPointPattern($$, id: string): string {
+	const {config} = $$;
+	const targetIds = $$.mapToIds?.($$.data.targets) || [];
+	const pattern = $$.getValidPointPattern?.() || (
+		Array.isArray(config.point_pattern) &amp;&amp; config.point_pattern.length ?
+			config.point_pattern :
+			[config.point_type]
+	);
+	const index = Math.max(0, targetIds.indexOf(id));
+
+	return pattern[index % pattern.length] || "circle";
+}
+
+/**
+ * Build inline SVG markup for a canvas HTML legend point tile.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} id Data id
+ * @returns {string} SVG markup
+ * @private
+ */
+function getCanvasLegendPointIcon($$, id: string): string {
+	const color = escapeHtmlAttr($$.color(id));
+	const pattern = getCanvasLegendPointPattern($$, id);
+	const svgAttrs = "viewBox=\"0 0 8 8\" aria-hidden=\"true\" focusable=\"false\" " +
+		"style=\"display:block;width:100%;height:100%;overflow:visible;pointer-events:none\"";
+	const paintAttrs = `fill="${color}" stroke="${color}"`;
+
+	if (/^rect(angle)?$/i.test(pattern)) {
+		return `&lt;svg ${svgAttrs}>&lt;rect x="1" y="1" width="6" height="6" ${paintAttrs}>&lt;/rect>&lt;/svg>`;
+	}
+
+	if (!pattern || /^circle$/i.test(pattern)) {
+		return `&lt;svg ${svgAttrs}>&lt;circle cx="4" cy="4" r="3" ${paintAttrs}>&lt;/circle>&lt;/svg>`;
+	}
+
+	return `&lt;svg ${svgAttrs}>&lt;g ${paintAttrs}>${sanitize(pattern)}&lt;/g>&lt;/svg>`;
+}
+
+/**
+ * Update legend item lookup cache for canvas HTML legends.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} item Legend item selection
+ * @private
+ */
+function updateCanvasLegendItemMap($$, item): void {
+	const itemMap = new Map&lt;string, HTMLElement>();
+
+	item.each(function(id: string) {
+		itemMap.set(id, this);
+	});
+
+	$$.cache.add(KEY.legendItemMap, itemMap);
+}
+
+/**
+ * Apply shared canvas HTML legend classes and state.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} item Legend item selection
+ * @private
+ */
+function setCanvasHtmlLegendItem($$, item): void {
+	const {config} = $$;
+
+	item
+		.attr("class", function(id: string) {
+			const current = d3Select(this).attr("class") || "";
+			const next = `${current} ${$$.generateClass($LEGEND.legendItem, id)}`;
+
+			return Array.from(new Set(next.trim().split(/\s+/).filter(Boolean))).join(" ");
+		})
+		.style("visibility", id => ($$.isLegendToShow(id) ? null : "hidden"))
+		.classed($LEGEND.legendItemHidden, id => !$$.isTargetToShow(id))
+		.classed($CANVAS.legendItemInteractive, !!config.interaction_enabled);
+
+	updateCanvasLegendItemMap($$, item);
+}
+
+/**
+ * Apply SVG-compatible legend focus styling to canvas HTML legend items.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} id Focused data id
+ * @private
+ */
+function setCanvasHtmlLegendFocus($$, id: string): void {
+	const {legend} = $$.$el;
+	const targetIds = $$.mapToTargetIds?.([id]) || [id];
+
+	legend?.selectAll(`.${$LEGEND.legendItem}`)
+		.classed($FOCUS.legendItemFocused, (d: string) => targetIds.indexOf(d) >= 0)
+		.style("opacity", function(d: string) {
+			return targetIds.indexOf(d) >= 0 ?
+				null :
+				$$.opacityForUnfocusedLegend.call($$, d3Select(this));
+		});
+}
+
+/**
+ * Revert canvas HTML legend focus styling.
+ * @param {object} $$ ChartInternal instance
+ * @private
+ */
+function revertCanvasHtmlLegendFocus($$): void {
+	const {legend} = $$.$el;
+
+	legend?.selectAll(`.${$LEGEND.legendItem}`)
+		.classed($FOCUS.legendItemFocused, false)
+		.style("opacity", null);
+}
+
+/**
+ * Apply SVG-compatible target focus state for canvas redraw.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} id Focused data id
+ * @private
+ */
+function setCanvasLegendTargetFocus($$, id: string): void {
+	const {state} = $$;
+	const targetIds = $$.mapToTargetIds?.([id]) || [id];
+	const focusedIds = targetIds.filter($$.isTargetToShow, $$);
+	const focusedSet = new Set(focusedIds);
+	const defocusedIds = ($$.mapToTargetIds?.() || [])
+		.filter(targetId => !focusedSet.has(targetId) &amp;&amp; $$.isTargetToShow(targetId));
+
+	state.focusedTargetIds = focusedSet;
+	state.defocusedTargetIds = new Set(defocusedIds);
+	$$.renderCanvasFrame?.(undefined, null, false);
+}
+
+/**
+ * Revert canvas target focus state.
+ * @param {object} $$ ChartInternal instance
+ * @private
+ */
+function revertCanvasLegendTargetFocus($$): void {
+	const {state} = $$;
+	const changed = !!state.focusedTargetIds?.size || !!state.defocusedTargetIds?.size;
+
+	state.focusedTargetIds = new Set();
+	state.defocusedTargetIds = new Set();
+	changed &amp;&amp; $$.renderCanvasFrame?.(undefined, null, false);
+}
+
+/**
+ * Get touch point from a canvas legend touch event.
+ * @param {TouchEvent} event Touch event
+ * @returns {Touch | undefined} Touch point
+ * @private
+ */
+function getCanvasLegendTouchPoint(event): Touch | undefined {
+	return event.changedTouches?.[0] || event.touches?.[0];
+}
+
+/**
+ * Store the touch start position for canvas legend tap detection.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} id Legend data id
+ * @param {TouchEvent} event Touch event
+ * @private
+ */
+function setCanvasLegendTouchStart($$, id: string, event): void {
+	const touch = getCanvasLegendTouchPoint(event);
+
+	$$.state.canvasLegendTouch = touch ?
+		{
+			id,
+			x: touch.clientX,
+			y: touch.clientY,
+			moved: false
+		} :
+		null;
+}
+
+/**
+ * Update whether the current canvas legend touch moved beyond tap tolerance.
+ * @param {object} $$ ChartInternal instance
+ * @param {TouchEvent} event Touch event
+ * @private
+ */
+function updateCanvasLegendTouchMove($$, event): void {
+	const start = $$.state.canvasLegendTouch;
+	const touch = start &amp;&amp; getCanvasLegendTouchPoint(event);
+
+	if (touch) {
+		start.moved = start.moved ||
+			Math.abs(touch.clientX - start.x) > CANVAS_LEGEND_TOUCH_TAP_THRESHOLD ||
+			Math.abs(touch.clientY - start.y) > CANVAS_LEGEND_TOUCH_TAP_THRESHOLD;
+	}
+}
+
+/**
+ * Determine whether a touch sequence is a canvas legend tap.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} id Legend data id
+ * @param {TouchEvent} event Touch event
+ * @returns {boolean} Whether the touch sequence is a tap
+ * @private
+ */
+function isCanvasLegendTouchTap($$, id: string, event): boolean {
+	updateCanvasLegendTouchMove($$, event);
+
+	const start = $$.state.canvasLegendTouch;
+
+	$$.state.canvasLegendTouch = null;
+
+	return !!start &amp;&amp; start.id === id &amp;&amp; !start.moved;
+}
+
+/**
+ * Mark a canvas legend touch tap so the following compatibility click can be skipped.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} id Legend data id
+ * @private
+ */
+function markCanvasLegendTouchClick($$, id: string): void {
+	$$.state.canvasLegendLastTouchClickId = id;
+	$$.state.canvasLegendLastTouchClickTime = Date.now();
+}
+
+/**
+ * Check if a canvas legend click duplicates a recent touch tap.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} id Legend data id
+ * @returns {boolean} Whether the click is duplicate
+ * @private
+ */
+function isDuplicateCanvasLegendTouchClick($$, id: string): boolean {
+	const {state} = $$;
+	const duplicate = state.canvasLegendLastTouchClickId === id &amp;&amp;
+		Date.now() - (state.canvasLegendLastTouchClickTime || 0) &lt;
+			CANVAS_LEGEND_TOUCH_CLICK_TIMEOUT;
+
+	if (duplicate) {
+		state.canvasLegendLastTouchClickId = null;
+		state.canvasLegendLastTouchClickTime = 0;
+	}
+
+	return duplicate;
+}
+
+/**
+ * Bind canvas HTML legend interactions without invoking SVG focus paths.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} item Legend item selection
+ * @private
+ */
+function bindCanvasHtmlLegendInteractions($$, item): void {
+	const {api, config, state} = $$;
+
+	item.on("click dblclick mouseover mouseout touchstart touchmove touchend", null);
+
+	if (!config.interaction_enabled) {
+		return;
+	}
+
+	const interaction = config.legend_item_interaction;
+	const eventType = typeof interaction === "object" &amp;&amp; interaction?.dblclick ?
+		"dblclick" :
+		"click";
+	const isTouch = state.inputType === "touch";
+	const hasClickInteraction = interaction || isFunction(config.legend_item_onclick);
+	const touchOption = isTouch ? getCanvasTouchListenerOption(config) : undefined;
+
+	const handleCanvasLegendToggle = function(event, id): void {
+		if (
+			!callFn(config.legend_item_onclick, api, id, !state.hiddenTargetIds.has(id))
+		) {
+			const selected = d3Select(this);
+
+			if (event.type === "dblclick" || event.altKey) {
+				if (
+					state.hiddenTargetIds.size &amp;&amp;
+					!selected.classed($LEGEND.legendItemHidden)
+				) {
+					api.show();
+				} else {
+					api.hide();
+					api.show(id);
+				}
+			} else {
+				api.toggle(id);
+				selected.classed($FOCUS.legendItemFocused, false);
+			}
+			revertCanvasLegendTargetFocus($$);
+		}
+
+		isTouch &amp;&amp; $$.hideTooltip?.();
+	};
+
+	item.on(eventType, hasClickInteraction ?
+		function(event, id) {
+			if (
+				isTouch &amp;&amp; event.type === "click" &amp;&amp;
+				isDuplicateCanvasLegendTouchClick($$, id)
+			) {
+				return;
+			}
+
+			handleCanvasLegendToggle.call(this, event, id);
+		} :
+		null);
+
+	isTouch &amp;&amp; eventType === "click" &amp;&amp; hasClickInteraction &amp;&amp; item
+		.on("touchstart", function(event, id) {
+			setCanvasLegendTouchStart($$, id, event);
+		}, touchOption)
+		.on("touchmove", event => {
+			updateCanvasLegendTouchMove($$, event);
+		}, touchOption)
+		.on("touchend", function(event, id) {
+			if (isCanvasLegendTouchTap($$, id, event)) {
+				markCanvasLegendTouchClick($$, id);
+				handleCanvasLegendToggle.call(this, event, id);
+			}
+		}, touchOption);
+
+	!isTouch &amp;&amp; item
+		.on("mouseover", interaction || isFunction(config.legend_item_onover) ?
+			function(event, id) {
+				if (
+					!callFn(config.legend_item_onover, api, id, !state.hiddenTargetIds.has(id))
+				) {
+					setCanvasHtmlLegendFocus($$, id);
+					!state.transiting &amp;&amp;
+						$$.isTargetToShow(id) &amp;&amp;
+						setCanvasLegendTargetFocus($$, id);
+				}
+			} :
+			null)
+		.on("mouseout", interaction || isFunction(config.legend_item_onout) ?
+			function(event, id) {
+				if (
+					!callFn(config.legend_item_onout, api, id, !state.hiddenTargetIds.has(id))
+				) {
+					revertCanvasHtmlLegendFocus($$);
+					revertCanvasLegendTargetFocus($$);
+				}
+			} :
+			null);
+}
+
+/**
+ * Measure a legend text with the same SVG structure used by the default renderer.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} text Legend text
+ * @returns {object|null} Text bounding rect
+ * @private
+ */
+function measureSvgLegendText($$, text: string): DOMRect | null {
+	const chart = $$.$el.chart?.node?.();
+	const doc = chart?.ownerDocument;
+
+	if (!chart || !doc) {
+		return null;
+	}
+
+	const svg = doc.createElementNS("http://www.w3.org/2000/svg", "svg");
+	const group = doc.createElementNS("http://www.w3.org/2000/svg", "g");
+	const textElement = doc.createElementNS("http://www.w3.org/2000/svg", "text");
+
+	svg.style.cssText = "position:absolute;visibility:hidden;left:-10000px;top:-10000px;";
+	group.setAttribute("class", $LEGEND.legendItem);
+	textElement.textContent = text;
+	group.appendChild(textElement);
+	svg.appendChild(group);
+	chart.appendChild(svg);
+
+	const rect = getBoundingRect(textElement);
+
+	svg.remove();
+
+	return rect;
+}
+
+/**
+ * Check if canvas can render the configured x axis type.
+ * @param {string} type X axis type
+ * @returns {boolean} Whether type is supported
+ * @private
+ */
+function isSupportedCanvasXType(type: string): boolean {
+	return /^(indexed|category|log|timeseries)$/.test(type);
+}
+
+/**
+ * Check if canvas can render the configured y/y2 axis type.
+ * @param {string} type Y axis type
+ * @returns {boolean} Whether type is supported
+ * @private
+ */
+function isSupportedCanvasYType(type: string): boolean {
+	return /^(indexed|log|timeseries)$/.test(type);
+}
+
+/**
+ * Get client position from mouse, pointer or touch event.
+ * @param {Event} event Input event
+ * @returns {object|null} Client position
+ * @private
+ */
+function getCanvasEventClientPoint(event: MouseEvent | PointerEvent | TouchEvent) {
+	const touchEvent = event as TouchEvent;
+	const touch = touchEvent.changedTouches?.[0] || touchEvent.touches?.[0];
+
+	return touch || ("clientX" in event ? event : null);
+}
+
+/**
+ * Get data row under a canvas pointer event.
+ * @param {object} $$ ChartInternal instance
+ * @param {Event} event Input event
+ * @param {boolean} shapeOnly Whether to skip grouped x-index fallback
+ * @returns {object|null} Hit data row
+ * @private
+ */
+function getCanvasEventDatum($$, event: MouseEvent | PointerEvent | TouchEvent, shapeOnly = false) {
+	const point = getCanvasEventPoint($$, event);
+
+	return point ?
+		(shapeOnly ?
+			$$.hitDetector.findNearestShape?.(point[0], point[1]) :
+			$$.hitDetector.findNearest(point[0], point[1])) :
+		null;
+}
+
+/**
+ * Check whether a canvas pointer coordinate can select the grouped x index.
+ * @param {object} $$ ChartInternal instance
+ * @param {Array} point Canvas-local coordinates
+ * @returns {boolean} Whether x-index hover is allowed
+ * @private
+ */
+function isCanvasXIndexHoverArea($$, point: number[]): boolean {
+	const {config, state} = $$;
+	const {height, margin, width, xAxisHeight} = state;
+	const [x, y] = point;
+	const left = margin.left;
+	const right = margin.left + width;
+	const top = margin.top;
+	const bottom = margin.top + height;
+	const axisBand = config.axis_x_show ? Math.max(xAxisHeight || 0, 24) : 0;
+
+	if ($$.isMultipleX?.() || state.hasTreemap) {
+		return false;
+	}
+
+	return config.axis_rotated ?
+		y >= top &amp;&amp; y &lt;= bottom &amp;&amp; x >= left - axisBand &amp;&amp; x &lt;= right :
+		x >= left &amp;&amp; x &lt;= right &amp;&amp; y >= top &amp;&amp; y &lt;= bottom + axisBand;
+}
+
+/**
+ * Check whether a canvas pointer coordinate is inside the main plot area.
+ * @param {object} $$ ChartInternal instance
+ * @param {Array} point Canvas-local coordinates
+ * @returns {boolean} Whether axis tooltip can be shown
+ * @private
+ */
+function isCanvasAxisTooltipArea($$, point: number[]): boolean {
+	const {state: {height, margin, width}} = $$;
+	const [x, y] = point;
+
+	return x >= margin.left &amp;&amp;
+		x &lt;= margin.left + width &amp;&amp;
+		y >= margin.top &amp;&amp;
+		y &lt;= margin.top + height;
+}
+
+/**
+ * Get data row for hover from a canvas-local coordinate.
+ * @param {object} $$ ChartInternal instance
+ * @param {Array} point Canvas-local coordinates
+ * @returns {object|null} Hover data row
+ * @private
+ */
+function getCanvasHoverDatumFromPoint($$, point: number[]) {
+	return $$.hitDetector.findNearest(point[0], point[1]) ||
+		(isCanvasXIndexHoverArea($$, point) ?
+			$$.hitDetector.findNearestIndexByCoord?.(point[0], point[1]) :
+			null);
+}
+
+/**
+ * Get visible canvas data rows for a tooltip target.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} d Base data row
+ * @returns {Array} Tooltip data rows
+ * @private
+ */
+function getCanvasTooltipData($$, d): any[] {
+	const {config, state} = $$;
+	const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+	const pointBased = isCanvasPointBasedInteraction($$, d);
+	const sameXData = config.tooltip_grouped &amp;&amp;
+			!state.hasTreemap &amp;&amp;
+			!pointBased ?
+		$$.filterByX?.(targetsToShow, d.x) :
+		null;
+
+	return (state.hasTreemap ?
+		[d] :
+		(pointBased ?
+			[d] :
+			(config.tooltip_grouped ?
+				(sameXData?.length ?
+					sameXData :
+					targetsToShow.map(target => target.values[d.index]).filter(Boolean)) :
+				[d])))
+		.map(v => $$.addName?.(v) || v);
+}
+
+/**
+ * Get data rows for canvas focus rendering.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} d Hover data row
+ * @param {Array} selectedData Tooltip data rows
+ * @returns {Array} Focus data rows
+ * @private
+ */
+function getCanvasFocusData($$, d, selectedData): any[] {
+	return $$.isMultipleX?.() &amp;&amp; !isCanvasPointBasedInteraction($$, d) ?
+		[$$.addName?.(d) || d] :
+		selectedData;
+}
+
+/**
+ * Get canvas-local coordinates from mouse, pointer or touch event.
+ * @param {object} $$ ChartInternal instance
+ * @param {Event} event Input event
+ * @returns {Array|null} Canvas-local coordinates
+ * @private
+ */
+function getCanvasEventPoint($$, event: MouseEvent | PointerEvent | TouchEvent): number[] | null {
+	const point = getCanvasEventClientPoint(event);
+
+	if (!point) {
+		return null;
+	}
+
+	const canvas = $$.$el.canvas.node();
+	const rect = getBoundingRect(canvas, true);
+
+	return [point.clientX - rect.left, point.clientY - rect.top];
+}
+
+/**
+ * Normalize a subchart domain range for the current x axis type.
+ * @param {object} $$ ChartInternal instance
+ * @param {Array} domain Domain range
+ * @returns {Array} Normalized domain range
+ * @private
+ */
+function normalizeCanvasSubchartDomain($$, domain): any[] | null {
+	if (!Array.isArray(domain) || domain.length &lt; 2) {
+		return null;
+	}
+
+	const values = domain.slice(0, 2);
+
+	return $$.axis?.isTimeSeries?.() ? values.map(value => parseDate.call($$, value)) : values;
+}
+
+/**
+ * Get the canvas-space rectangle occupied by the subchart plot.
+ * @param {object} $$ ChartInternal instance
+ * @returns {object|null} Subchart rectangle
+ * @private
+ */
+function getCanvasSubchartRect($$): {x: number, y: number, w: number, h: number} | null {
+	const {config, state} = $$;
+
+	if (!config.subchart_show || !state.hasAxis || state.width2 &lt;= 0 || state.height2 &lt;= 0) {
+		return null;
+	}
+
+	return {
+		x: state.margin2.left,
+		y: state.margin2.top,
+		w: state.width2,
+		h: state.height2
+	};
+}
+
+/**
+ * Check whether a canvas point is inside the subchart plot area.
+ * @param {object} $$ ChartInternal instance
+ * @param {Array} point Canvas-local point
+ * @returns {boolean} Whether point is in the subchart
+ * @private
+ */
+function isCanvasSubchartPoint($$, point: number[]): boolean {
+	const rect = getCanvasSubchartRect($$);
+
+	return !!rect &amp;&amp;
+		point[0] >= rect.x &amp;&amp;
+		point[0] &lt;= rect.x + rect.w &amp;&amp;
+		point[1] >= rect.y &amp;&amp;
+		point[1] &lt;= rect.y + rect.h;
+}
+
+/**
+ * Get the allowed local brush coordinate extent for canvas subchart interactions.
+ * @param {object} $$ ChartInternal instance
+ * @returns {Array} Brush extent in subchart-local pixels
+ * @private
+ */
+function getCanvasSubchartBrushExtent($$): [number, number] {
+	const rect = getCanvasSubchartRect($$);
+	const axisLength = rect ? ($$.config.axis_rotated ? rect.h : rect.w) : 0;
+	const extent = $$.axis?.getExtent?.();
+	const values = Array.isArray(extent) ? extent.slice(0, 2) : [];
+
+	if (values.length === 2 &amp;&amp; values.every(Number.isFinite)) {
+		const start = Math.max(0, Math.min(axisLength, values[0]));
+		const end = Math.max(0, Math.min(axisLength, values[1]));
+
+		return [Math.min(start, end), Math.max(start, end)];
+	}
+
+	return [0, axisLength];
+}
+
+/**
+ * Get the local brush coordinate from a canvas subchart pointer event.
+ * @param {object} $$ ChartInternal instance
+ * @param {Event} event Input event
+ * @param {boolean} clampToExtent Whether to clamp pointer outside brush extent
+ * @returns {number|null} Brush coordinate
+ * @private
+ */
+function getCanvasSubchartBrushCoord(
+	$$,
+	event: MouseEvent | PointerEvent | TouchEvent,
+	clampToExtent = false
+):
+	| number
+	| null {
+	const point = getCanvasEventPoint($$, event);
+	const rect = point &amp;&amp; getCanvasSubchartRect($$);
+
+	if (!point || !rect || !isCanvasSubchartPoint($$, point)) {
+		return null;
+	}
+
+	const raw = $$.config.axis_rotated ? point[1] - rect.y : point[0] - rect.x;
+	const [min, max] = getCanvasSubchartBrushExtent($$);
+
+	if (!clampToExtent &amp;&amp; (raw &lt; min || raw > max)) {
+		return null;
+	}
+
+	return Math.max(min, Math.min(max, raw));
+}
+
+/**
+ * Build a scale domain from two subchart brush coordinates.
+ * @param {object} $$ ChartInternal instance
+ * @param {number} start Brush start coordinate
+ * @param {number} end Brush end coordinate
+ * @returns {Array} Domain range
+ * @private
+ */
+function getCanvasSubchartDomainFromCoords($$, start: number, end: number): any[] {
+	const coordStart = Math.min(start, end);
+	const coordEnd = Math.max(start, end);
+
+	return [
+		$$.scale.subX.invert(coordStart),
+		$$.scale.subX.invert(coordEnd)
+	];
+}
+
+/**
+ * Get current canvas subchart brush selection in local subchart pixels.
+ * @param {object} $$ ChartInternal instance
+ * @returns {Array|null} Brush selection pixels
+ * @private
+ */
+function getCanvasSubchartBrushSelection($$): [number, number] | null {
+	const {scale, state} = $$;
+	const domain = state.domain;
+
+	if (!domain?.length || !scale.subX) {
+		return null;
+	}
+
+	const rect = getCanvasSubchartRect($$);
+	const p0 = scale.subX(domain[0]);
+	const p1 = scale.subX(domain[1]);
+
+	if (!rect || !Number.isFinite(p0) || !Number.isFinite(p1)) {
+		return null;
+	}
+
+	const [min, max] = getCanvasSubchartBrushExtent($$);
+
+	return [
+		Math.max(min, Math.min(max, Math.min(p0, p1))),
+		Math.max(min, Math.min(max, Math.max(p0, p1)))
+	];
+}
+
+/**
+ * Get the subchart brush mode at a local brush coordinate.
+ * @param {object} $$ ChartInternal instance
+ * @param {number} coord Brush coordinate
+ * @returns {string} Brush mode
+ * @private
+ */
+function getCanvasSubchartBrushMode($$, coord: number):
+	| "select"
+	| "move"
+	| "resize-start"
+	| "resize-end" {
+	const selection = getCanvasSubchartBrushSelection($$);
+
+	if (!selection) {
+		return "select";
+	}
+
+	const [start, end] = selection;
+
+	if (Math.abs(coord - start) &lt;= CANVAS_SUBCHART_HANDLE_SIZE) {
+		return "resize-start";
+	}
+
+	if (Math.abs(coord - end) &lt;= CANVAS_SUBCHART_HANDLE_SIZE) {
+		return "resize-end";
+	}
+
+	return coord > start &amp;&amp; coord &lt; end ? "move" : "select";
+}
+
+/**
+ * Clamp a subchart brush selection to the subchart extent.
+ * @param {object} $$ ChartInternal instance
+ * @param {number} start Selection start pixel
+ * @param {number} end Selection end pixel
+ * @returns {Array} Clamped selection pixels
+ * @private
+ */
+function clampCanvasSubchartSelection($$, start: number, end: number): [number, number] {
+	const [min, max] = getCanvasSubchartBrushExtent($$);
+
+	return [
+		Math.max(min, Math.min(max, start)),
+		Math.max(min, Math.min(max, end))
+	];
+}
+
+/**
+ * Get cursor for a canvas subchart brush mode.
+ * @param {object} $$ ChartInternal instance
+ * @param {string} mode Brush mode
+ * @returns {string} CSS cursor
+ * @private
+ */
+function getCanvasSubchartCursor($$, mode: string): string {
+	if (/^resize/.test(mode)) {
+		return $$.config.axis_rotated ? "ns-resize" : "ew-resize";
+	}
+
+	return mode === "move" ? "move" : "crosshair";
+}
+
+/**
+ * Get stable key for canvas data callbacks.
+ * @param {object} d Data row
+ * @returns {string|null} Data key
+ * @private
+ */
+function getCanvasDataKey(d): string | null {
+	return d ? `${d.id}:${d.index}` : null;
+}
+
+/**
+ * Get canvas drag selection delta rows from current and previous hit rows.
+ * @param {object} $$ ChartInternal instance
+ * @param {Array} dataRows Current drag hit rows
+ * @returns {object} Current included keys and rows to toggle
+ * @private
+ */
+function getCanvasSelectionDragDelta($$, dataRows): {included: Set&lt;string>, rows: any[]} {
+	const previousKeys = $$.state.canvasSelectionDragIncluded as Set&lt;string>;
+	const previousRows = canvasSelectionDragRows.get($$) || new Map&lt;string, any>();
+	const currentRows = new Map&lt;string, any>();
+	const included = new Set&lt;string>();
+	const rows: any[] = [];
+
+	dataRows
+		.filter(d => isCanvasSelectableData($$, d))
+		.forEach(d => {
+			const key = getCanvasDataKey(d);
+
+			if (key) {
+				included.add(key);
+				!currentRows.has(key) &amp;&amp; currentRows.set(key, d);
+			}
+		});
+
+	currentRows.forEach((d, key) => {
+		!previousKeys.has(key) &amp;&amp; rows.push(d);
+	});
+	previousRows.forEach((d, key) => {
+		!included.has(key) &amp;&amp; rows.push(d);
+	});
+	canvasSelectionDragRows.set($$, currentRows);
+
+	return {included, rows};
+}
+
+/**
+ * Normalize a data id or id list.
+ * @param {string|Array} ids Data ids
+ * @returns {Array|null} Normalized ids
+ * @private
+ */
+function getCanvasSelectionIds(ids?: string | string[]): string[] | null {
+	return ids ? (Array.isArray(ids) ? ids : [ids]) : null;
+}
+
+/**
+ * Check whether a canvas data row participates in selection.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} d Data row
+ * @returns {boolean} Whether the row can be selected
+ * @private
+ */
+function isCanvasSelectableData($$, d): boolean {
+	return d &amp;&amp;
+		hasCanvasDrawableValue($$, d) &amp;&amp;
+		isCanvasTargetSupported($$, d, CANVAS_SELECTABLE_TYPE_FILTERS) &amp;&amp;
+		CANVAS_SELECTABLE_TYPE_FILTERS.some(filter => filter($$, d)) &amp;&amp;
+		$$.config.data_selection_isselectable.bind($$.api)(d);
+}
+
+/**
+ * Iterate selectable canvas rows.
+ * @param {object} $$ ChartInternal instance
+ * @param {function} callback Row callback
+ * @private
+ */
+function eachCanvasSelectableData($$, callback: (d) => void): void {
+	$$.filterTargetsToShow($$.data.targets)
+		.filter(target => isCanvasTargetSupported($$, target, CANVAS_SELECTABLE_TYPE_FILTERS))
+		.forEach(target => {
+			target.values.forEach(d => {
+				isCanvasSelectableData($$, d) &amp;&amp; callback(d);
+			});
+		});
+}
+
+/**
+ * Check whether a canvas data row should interact as a single point.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} d Data row
+ * @returns {boolean} Whether the row should stay ungrouped
+ * @private
+ */
+function isCanvasPointBasedInteraction($$, d): boolean {
+	return !($$.config.axis_x_forceAsSingle &amp;&amp; $$.config.tooltip_grouped) &amp;&amp;
+		(isCanvasScatterType($$, d) || isCanvasBubbleType($$, d));
+}
+
+/**
+ * Check if touch input is enabled by option.
+ * @param {object} config Config object
+ * @returns {boolean} Whether touch is enabled
+ * @private
+ */
+function isCanvasTouchEnabled(config): boolean {
+	return config.interaction_inputType_touch !== false;
+}
+
+/**
+ * Get touch listener passive option following interaction.inputType.touch.preventDefault.
+ * @param {object} config Config object
+ * @returns {object} Event listener options
+ * @private
+ */
+function getCanvasTouchListenerOption(config): AddEventListenerOptions {
+	const preventDefault = config.interaction_inputType_touch?.preventDefault;
+	const isPrevented = (isBoolean(preventDefault) &amp;&amp; preventDefault) || false;
+	const preventThreshold = (!isNaN(preventDefault) &amp;&amp; preventDefault) || null;
+
+	return {
+		passive: !isPrevented &amp;&amp; preventThreshold === null
+	};
+}
+
+/**
+ * Create touch preventDefault handler following interaction.inputType.touch.preventDefault.
+ * @param {object} config Config object
+ * @returns {function} Touch preventer
+ * @private
+ */
+function getCanvasTouchPreventer(config): (event: TouchEvent) => void {
+	const preventDefault = config.interaction_inputType_touch?.preventDefault;
+	const isPrevented = (isBoolean(preventDefault) &amp;&amp; preventDefault) || false;
+	const preventThreshold = (!isNaN(preventDefault) &amp;&amp; preventDefault) || null;
+	let startPx;
+
+	return event => {
+		const touch = event.changedTouches?.[0] || event.touches?.[0];
+
+		if (!touch) {
+			return;
+		}
+
+		const currentXY = touch[`client${config.axis_rotated ? "Y" : "X"}`];
+
+		if (event.type === "touchstart") {
+			if (isPrevented) {
+				event.preventDefault();
+			} else if (preventThreshold !== null) {
+				startPx = currentXY;
+			}
+		} else if (
+			event.type === "touchmove" &amp;&amp;
+			(
+				isPrevented ||
+				startPx === true ||
+				(
+					preventThreshold !== null &amp;&amp;
+					Math.abs(startPx - currentXY) >= preventThreshold
+				)
+			)
+		) {
+			startPx = true;
+			event.preventDefault();
+		}
+	};
+}
+
+/**
+ * Check whether a pointer event should be handled by canvas pointer path.
+ * @param {object} $$ ChartInternal instance
+ * @param {PointerEvent} event Pointer event
+ * @returns {boolean} Whether event should be handled
+ * @private
+ */
+function shouldHandleCanvasPointerEvent($$, event: PointerEvent): boolean {
+	return event.pointerType !== "mouse" &amp;&amp; $$.state.inputType !== "touch";
+}
+
+/**
+ * Check if click event duplicates a recent touch/pointer data click.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} d Data row
+ * @returns {boolean} Whether the click should skip data callback
+ * @private
+ */
+function isDuplicateCanvasInputClick($$, d): boolean {
+	const {state} = $$;
+	const key = getCanvasDataKey(d);
+	const duplicate = key &amp;&amp;
+		state.canvasLastInputClickKey === key &amp;&amp;
+		Date.now() - (state.canvasLastInputClickTime || 0) &lt; 750;
+
+	if (duplicate) {
+		state.canvasLastInputClickKey = null;
+		state.canvasLastInputClickTime = 0;
+	}
+
+	return Boolean(duplicate);
+}
+
+/**
+ * Mark a touch/pointer data click so the following compatibility click can be ignored.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} d Data row
+ * @private
+ */
+function markCanvasInputClick($$, d): void {
+	$$.state.canvasLastInputClickKey = getCanvasDataKey(d);
+	$$.state.canvasLastInputClickTime = Date.now();
+}
+
+/**
+ * Get current animation timestamp.
+ * @returns {number} Timestamp
+ * @private
+ */
+function getCanvasAnimationTime(): number {
+	return window.performance?.now?.() ?? Date.now();
+}
+
+/**
+ * Check whether a domain can be interpolated for canvas flow.
+ * @param {Array} domain Domain values
+ * @param {boolean} isLog Whether the domain is in log scale
+ * @returns {boolean} Whether domain is numeric/date-like
+ * @private
+ */
+function isCanvasFlowDomain(domain, isLog = false): boolean {
+	return Array.isArray(domain) &amp;&amp;
+		domain.length >= 2 &amp;&amp;
+		domain.every(v => Number.isFinite(+v) &amp;&amp; (!isLog || +v > 0));
+}
+
+/**
+ * Interpolate numeric/date domain values.
+ * @param {Array} start Start domain
+ * @param {Array} end End domain
+ * @param {number} ratio Interpolation ratio
+ * @param {boolean} isLog Whether to interpolate in log space
+ * @returns {Array} Interpolated domain
+ * @private
+ */
+function interpolateCanvasFlowDomain(start, end, ratio: number, isLog = false): any[] {
+	return start.slice(0, 2).map((value, index) => {
+		const next = isLog ?
+			Math.exp(Math.log(+value) + ((Math.log(+end[index]) - Math.log(+value)) * ratio)) :
+			+value + ((+end[index] - +value) * ratio);
+
+		return value instanceof Date || end[index] instanceof Date ? new Date(next) : next;
+	});
+}
+
+/**
+ * Count current canvas flow values.
+ * @param {object} $$ ChartInternal instance
+ * @returns {number} Total values
+ * @private
+ */
+function getCanvasFlowValueCount($$): number {
+	return $$.data.targets.reduce((sum, target) => sum + target.values.length, 0);
+}
+
+/**
+ * Sync y/y2 domains for canvas flow frames after data has been appended.
+ * @param {object} $$ ChartInternal instance
+ * @private
+ */
+function syncCanvasFlowYDomains($$): void {
+	const {scale} = $$;
+	const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+
+	(["y", "y2"] as const).forEach(key => {
+		scale[key]?.domain($$.getYDomain(targetsToShow, key));
+	});
+
+	scale.subY?.domain($$.getYDomain(targetsToShow, "y"));
+	scale.subY2?.domain($$.getYDomain(targetsToShow, "y2"));
+}
+
+const canvasInternal = {
+	/**
+	 * Normalize unsupported options before initializing canvas mode.
+	 * @private
+	 */
+	prepareCanvasConfig(): void {
+		const {config, state} = this;
+
+		this.warnUnsupportedCanvasOptions();
+
+		if (
+			state.orgConfig?.transition &amp;&amp;
+			Object.prototype.hasOwnProperty.call(state.orgConfig.transition, "duration") &amp;&amp;
+			state.orgConfig.transition.duration
+		) {
+			warn("canvas mode: transition.duration is ignored; canvas redraws synchronously.");
+		}
+
+		config.transition_duration = 0;
+
+		if (!isSupportedCanvasXType(config.axis_x_type)) {
+			config.axis_x_type = "indexed";
+		}
+
+		if (!isSupportedCanvasYType(config.axis_y_type)) {
+			config.axis_y_type = "indexed";
+		}
+
+		if (!isSupportedCanvasYType(config.axis_y2_type)) {
+			config.axis_y2_type = "indexed";
+		}
+
+		if (this.hasType?.("bubble")) {
+			config.point_show = true;
+			config.point_type = "circle";
+		}
+	},
+
+	/**
+	 * Apply the current canvas subchart selection to the main x domain.
+	 * @private
+	 */
+	applyCanvasSubchartDomain(): void {
+		const $$ = this;
+		const {axis, config, scale, state} = $$;
+
+		if (!config.subchart_show || !state.hasAxis || !scale.subX) {
+			return;
+		}
+
+		if (!state.rendered &amp;&amp; !state.domain &amp;&amp; config.subchart_init_range) {
+			state.domain = normalizeCanvasSubchartDomain($$, config.subchart_init_range);
+		}
+
+		const domain = normalizeCanvasSubchartDomain($$, state.domain);
+
+		if (
+			!domain ||
+			!$$.withinRange(domain, $$.getZoomDomain("subX", true), $$.getZoomDomain("subX"))
+		) {
+			return;
+		}
+
+		state.domain = domain;
+		scale.x.domain(domain);
+		axis.x.scale(scale.x);
+	},
+
+	/**
+	 * Set the canvas subchart selection domain and redraw the main chart.
+	 * @param {Array} domain Domain range
+	 * @param {boolean} redraw Whether to redraw immediately
+	 * @param {boolean} callCallback Whether to call subchart.onbrush
+	 * @returns {Array|undefined} Applied domain range
+	 * @private
+	 */
+	setCanvasSubchartDomain(domain, redraw = true, callCallback = false): any[] | undefined {
+		const $$ = this;
+		const {config, scale, state} = $$;
+		const nextDomain = normalizeCanvasSubchartDomain($$, domain);
+
+		if (
+			!config.subchart_show ||
+			!nextDomain ||
+			!$$.withinRange(nextDomain, $$.getZoomDomain("subX", true), $$.getZoomDomain("subX"))
+		) {
+			return undefined;
+		}
+
+		state.domain = nextDomain;
+		scale.zoom = null;
+
+		if (redraw) {
+			$$.redraw({
+				withTransition: false,
+				withY: config.zoom_rescale,
+				withSubchart: false,
+				withEventRect: false,
+				withDimension: false
+			});
+		}
+
+		callCallback &amp;&amp; config.subchart_onbrush.bind($$.api)(state.domain);
+
+		return state.domain;
+	},
+
+	/**
+	 * Clear the canvas subchart brush selection and restore the full x domain.
+	 * @param {boolean} redraw Whether to redraw immediately
+	 * @param {boolean} callCallback Whether to call subchart.onbrush
+	 * @private
+	 */
+	clearCanvasSubchartDomain(redraw = true, callCallback = false): void {
+		const $$ = this;
+		const {axis, config, org, scale, state} = $$;
+
+		if (!config.subchart_show) {
+			return;
+		}
+
+		state.domain = undefined;
+		scale.zoom = null;
+
+		if (org.xDomain?.length) {
+			scale.x.domain(org.xDomain);
+			axis.x.scale(scale.x);
+		}
+
+		if (redraw) {
+			$$.redraw({
+				withTransition: false,
+				withUpdateXDomain: true,
+				withUpdateOrgXDomain: false,
+				withY: config.zoom_rescale,
+				withSubchart: false,
+				withEventRect: false,
+				withDimension: false
+			});
+		}
+
+		callCallback &amp;&amp; config.subchart_onbrush.bind($$.api)(scale.x.orgDomain());
+	},
+
+	/**
+	 * Finish a pending canvas flow animation before accepting another flow mutation.
+	 * @private
+	 */
+	flushCanvasFlow(): void {
+		const {state} = this;
+
+		if (!state.canvasFlowFinish) {
+			return;
+		}
+
+		state.canvasFlowFrame !== null &amp;&amp;
+			window.cancelAnimationFrame?.(state.canvasFlowFrame);
+		state.canvasFlowFrame = null;
+		state.canvasFlowFinish();
+	},
+
+	/**
+	 * Animate canvas flow by interpolating the x domain, then commit the final data window.
+	 * @param {object} flow Flow metadata
+	 * @returns {boolean} Whether animation was started
+	 * @private
+	 */
+	animateCanvasFlow(flow): boolean {
+		const $$ = this;
+		const {axis, data, org, scale, state} = $$;
+		const {done = () => {}, duration, length, orgDataCount} = flow;
+		const requestFrame = window.requestAnimationFrame?.bind(window);
+		const isLog = !!axis.isLog?.("x");
+
+		if (
+			!requestFrame ||
+			!duration ||
+			!length ||
+			!orgDataCount ||
+			getCanvasFlowValueCount($$) > CANVAS_FLOW_ANIMATION_MAX_VALUES
+		) {
+			return false;
+		}
+
+		const startDomain = scale.x.domain().slice(0, 2);
+		const startOrgDomain = org.xDomain?.slice?.();
+		const startSubXDomain = scale.subX?.domain?.().slice?.();
+
+		if (!isCanvasFlowDomain(startDomain, isLog)) {
+			return false;
+		}
+
+		const removed = data.targets.map(target => target.values.splice(0, length));
+
+		$$.updateXDomain($$.filterTargetsToShow(data.targets), true, true);
+
+		const endDomain = scale.x.domain().slice(0, 2);
+		const endOrgDomain = org.xDomain?.slice?.();
+
+		data.targets.forEach((target, index) => {
+			target.values.unshift(...removed[index]);
+		});
+
+		if (!isCanvasFlowDomain(endDomain, isLog)) {
+			startOrgDomain &amp;&amp; (org.xDomain = startOrgDomain);
+			scale.x.domain(startDomain);
+			startSubXDomain &amp;&amp; scale.subX.domain(startSubXDomain);
+			axis.x.scale(scale.x);
+
+			return false;
+		}
+
+		syncCanvasFlowYDomains($$);
+
+		let finished = false;
+		const started = getCanvasAnimationTime();
+		const finish = () => {
+			if (finished) {
+				return;
+			}
+
+			finished = true;
+			data.targets.forEach(target => {
+				target.values.splice(0, length);
+			});
+
+			endOrgDomain &amp;&amp; (org.xDomain = endOrgDomain);
+			scale.x.domain(endDomain);
+			scale.subX?.domain?.(endOrgDomain ?? endDomain);
+			axis.x.scale(scale.x);
+			state.dirty.data = true;
+			state._eventRectFingerprint = null;
+			state.canvasShape = null;
+			state._cachedDrawShape = null;
+
+			$$.redraw({
+				withLegend: true,
+				withTransition: false,
+				withTrimXDomain: false,
+				withUpdateOrgXDomain: true,
+				withUpdateXAxis: true,
+				withUpdateXDomain: true
+			});
+			$$.updateTypesElements();
+			state.canvasFlowFrame = null;
+			state.canvasFlowFinish = null;
+			state.flowing = false;
+			done.call($$.api);
+		};
+		const render = (timestamp: number) => {
+			const ratio = Math.min(1, Math.max(0, (timestamp - started) / duration));
+			const domain = interpolateCanvasFlowDomain(startDomain, endDomain, ratio, isLog);
+
+			scale.x.domain(domain);
+			axis.x.scale(scale.x);
+			state.canvasShape = null;
+			state._cachedDrawShape = null;
+			state._canvasVisibleRangeCache = null;
+			state._canvasXTickValuesCache = null;
+			$$.renderCanvasFrame(undefined, null, false);
+
+			if (ratio &lt; 1) {
+				state.canvasFlowFrame = requestFrame(render);
+			} else {
+				finish();
+			}
+		};
+
+		startOrgDomain &amp;&amp; (org.xDomain = startOrgDomain);
+		scale.x.domain(startDomain);
+		startSubXDomain &amp;&amp; scale.subX.domain(startSubXDomain);
+		axis.x.scale(scale.x);
+		state.flowing = true;
+		state.cancelClick = true;
+		$$.hideTooltip?.();
+		state.canvasFlowFinish = finish;
+		state.canvasFlowFrame = requestFrame(render);
+
+		return true;
+	},
+
+	/**
+	 * Initialize canvas renderers, theme, hit detector and event bindings.
+	 * @private
+	 */
+	initCanvas(): void {
+		const $$ = this;
+		const {config, state, $el} = $$;
+		const container = $el.chart.node();
+
+		state.isCanvasMode = true;
+		state.canvasInlineStyle.minHeight = container.style.minHeight;
+
+		if (window.getComputedStyle(container).position === "static") {
+			$el.chart.style("position", "relative");
+		}
+
+		$el.chart.style("min-height", `${state.current.height}px`);
+
+		$$.canvasEngine = new CanvasEngine();
+		$$.canvasEngine.init(container, state.current.width, $$.getCanvasSurfaceHeight());
+		$el.canvas = d3Select($$.canvasEngine.canvas);
+
+		$$.canvasTheme = new CanvasTheme();
+		$$.canvasTheme.load(container, config.canvas_theme);
+
+		$$.canvasAxisRenderer = new CanvasAxisRenderer($$.canvasEngine, $$.canvasTheme);
+		$$.canvasRenderer = new CanvasRenderer($$.canvasEngine, $$.canvasTheme);
+		$$.hitDetector = new HitDetector();
+
+		$$.bindCanvasEvents();
+		config.zoom_enabled &amp;&amp; $$.bindZoomEvent?.();
+	},
+
+	/**
+	 * Warn about options that canvas mode does not support yet.
+	 * @private
+	 */
+	warnUnsupportedCanvasOptions(): void {
+		const {config} = this;
+		const unsupported = [
+			[
+				!isSupportedCanvasXType(config.axis_x_type),
+				"axis.x.type other than indexed/category/log/timeseries"
+			],
+			[
+				!isSupportedCanvasYType(config.axis_y_type),
+				"axis.y.type other than indexed/log/timeseries"
+			],
+			[
+				!isSupportedCanvasYType(config.axis_y2_type),
+				"axis.y2.type other than indexed/log/timeseries"
+			],
+			[config.boost_useCssRule, "boost.useCssRule"],
+			[this.hasArcType?.(), "arc charts"],
+			[this.hasType?.("radar"), "radar chart"],
+			[this.hasType?.("polar"), "polar chart"],
+			[this.hasType?.("funnel"), "funnel chart"]
+		];
+
+		unsupported.forEach(([condition, name]) => {
+			condition &amp;&amp; warn(`canvas mode: ${name} is not yet supported.`);
+		});
+	},
+
+	/**
+	 * Bind pointer and click handlers to the canvas surface.
+	 * @private
+	 */
+	bindCanvasEvents(): void {
+		const $$ = this;
+		const {config, state, $el} = $$;
+		const canvas = $el.canvas.node();
+		const preventTouchEvent = getCanvasTouchPreventer(config);
+		const touchOption = getCanvasTouchListenerOption(config);
+
+		canvas.addEventListener("mousemove", $$.onCanvasMouseMove.bind($$));
+		canvas.addEventListener("mouseenter", event => {
+			state.event = event;
+			config.onover?.bind($$.api)(event);
+		});
+		canvas.addEventListener("mouseout", $$.onCanvasMouseOut.bind($$));
+		canvas.addEventListener("mouseleave", event => {
+			state.event = event;
+			config.onout?.bind($$.api)(event);
+		});
+		canvas.addEventListener("mousedown", event => {
+			if ($$.onCanvasSubchartBrushStart?.(event)) {
+				return;
+			}
+
+			$$.onCanvasSelectionDragStart(event);
+		});
+		canvas.addEventListener("click", $$.onCanvasClick.bind($$));
+
+		canvas.addEventListener("pointerdown", $$.onCanvasPointerDown.bind($$));
+		canvas.addEventListener("pointerenter", $$.onCanvasPointerEnter.bind($$));
+		canvas.addEventListener("pointermove", $$.onCanvasPointerMove.bind($$));
+		canvas.addEventListener("pointerup", $$.onCanvasPointerUp.bind($$));
+		canvas.addEventListener("pointerleave", $$.onCanvasPointerOut.bind($$));
+		canvas.addEventListener("pointercancel", $$.onCanvasPointerCancel.bind($$));
+
+		if (isCanvasTouchEnabled(config)) {
+			canvas.addEventListener("touchstart", event => {
+				preventTouchEvent(event);
+				$$.onCanvasTouchStart(event);
+			}, touchOption);
+			canvas.addEventListener("touchmove", event => {
+				preventTouchEvent(event);
+				$$.onCanvasTouchMove(event);
+			}, touchOption);
+			canvas.addEventListener("touchend", $$.onCanvasTouchEnd.bind($$), touchOption);
+			canvas.addEventListener("touchcancel", $$.onCanvasTouchCancel.bind($$), touchOption);
+		}
+	},
+
+	/**
+	 * Render and update the HTML legend used by canvas mode.
+	 * @private
+	 */
+	updateHtmlLegend(): void {
+		const $$ = this;
+		const {config, state, $el} = $$;
+		const chart = $el.chart.node();
+
+		if (!config.legend_show || state.hasTreemap) {
+			if (state.hasTreemap) {
+				$el.legend?.remove();
+				$el.legend = null;
+			} else {
+				$el.legend?.style("visibility", "hidden");
+			}
+
+			state.legendItemWidth = 0;
+			state.legendItemHeight = 0;
+			state.legendStep = 0;
+			return;
+		}
+
+		const targetIds = $$.mapToIds($$.data.targets)
+			.filter(id => config.data_names[id] !== null);
+
+		if (config.legend_contents_bindto &amp;&amp; config.legend_contents_template) {
+			if ($$.updateHtmlLegendTemplate(targetIds)) {
+				state.legendItemWidth = 0;
+				state.legendItemHeight = 0;
+				state.legendStep = 0;
+				state.legendHasRendered = true;
+			} else {
+				state.legendItemWidth = 0;
+				state.legendItemHeight = 0;
+				state.legendStep = 0;
+			}
+
+			return;
+		}
+
+		if (!$el.legend) {
+			$el.legend = d3Select(chart)
+				.append("div")
+				.classed($LEGEND.legend, true)
+				.classed($CANVAS.legend, true);
+		}
+
+		$el.legend.style("visibility", null);
+
+		const legendItems = $el.legend
+			.selectAll(`button.${$LEGEND.legendItem}`)
+			.data(targetIds, (id: string) => id);
+
+		legendItems.exit().remove();
+
+		const enter = legendItems.enter()
+			.append("button")
+			.attr("type", "button")
+			.attr("data-id", id => id);
+
+		enter.append("span")
+			.classed($LEGEND.legendItemTile, true);
+
+		enter.append("span")
+			.classed($CANVAS.legendItemTitle, true);
+
+		const item = enter.merge(legendItems as any)
+			.attr("class", id => $$.generateClass($LEGEND.legendItem, id).trim());
+
+		setCanvasHtmlLegendItem($$, item);
+
+		item.select(`.${$LEGEND.legendItemTile}`)
+			.classed($CANVAS.legendItemTileCircle,
+				!config.legend_usePoint &amp;&amp; config.legend_item_tile_type === "circle")
+			.style("background-color", id => (config.legend_usePoint ? null : $$.color(id)))
+			.html(id => (config.legend_usePoint ? getCanvasLegendPointIcon($$, id) : ""));
+
+		item.select(`.${$CANVAS.legendItemTitle}`)
+			.text(id => getLegendText($$, id));
+
+		if (config.legend_tooltip) {
+			item.attr("title", id => getLegendText($$, id));
+		}
+
+		bindCanvasHtmlLegendInteractions($$, item);
+
+		$$.updateHtmlLegendSize(targetIds);
+		$$.positionHtmlLegend();
+		state.legendHasRendered = true;
+	},
+
+	/**
+	 * Render canvas mode legend into custom HTML template container.
+	 * @param {Array} targetIds Legend target ids
+	 * @returns {boolean} Whether template legend was rendered
+	 * @private
+	 */
+	updateHtmlLegendTemplate(targetIds: string[]): boolean {
+		const $$ = this;
+		const {api, config, $el} = $$;
+		const wrapper = d3Select(config.legend_contents_bindto);
+		const template = config.legend_contents_template;
+		const ids: string[] = [];
+		let html = "";
+
+		if (wrapper.empty()) {
+			return false;
+		}
+
+		targetIds.forEach(id => {
+			const content = isFunction(template) ?
+				sanitize(template.call(api, id, $$.color(id), api.data(id)[0].values)) :
+				tplProcess(template, {
+					COLOR: $$.color(id),
+					TITLE: id
+				});
+
+			if (content) {
+				ids.push(id);
+				html += content;
+			}
+		});
+
+		const legendItem = wrapper
+			.html(html)
+			.classed($LEGEND.legend, true)
+			.classed($CANVAS.legend, false)
+			.style("visibility", null)
+			.selectAll(function() {
+				return this.children;
+			})
+			.data(ids);
+
+		setCanvasHtmlLegendItem($$, legendItem);
+		bindCanvasHtmlLegendInteractions($$, legendItem);
+
+		$el.legend = wrapper;
+
+		return true;
+	},
+
+	/**
+	 * Measure HTML legend items and update legend layout state.
+	 * @param {Array} targetIds Visible legend target ids
+	 * @private
+	 */
+	updateHtmlLegendSize(targetIds: string[]): void {
+		const $$ = this;
+		const {config, state, $el} = $$;
+		const itemSizes: number[] = [];
+		const itemLayouts: Record&lt;string, any> = {};
+		let maxWidth = 0;
+		let maxHeight = 0;
+		let legendStep = 0;
+		const useTemplateLegend = config.legend_contents_bindto &amp;&amp; config.legend_contents_template;
+
+		if (useTemplateLegend) {
+			$el.legend.selectAll(`.${$LEGEND.legendItem}`)
+				.each(function(id) {
+					const rect = getBoundingRect(this, true);
+					const text = `${getLegendText($$, id)}`;
+					const fallbackWidth = Math.max(32, text.length * 7 + 24);
+					const fallbackHeight = 20;
+					const width = Math.ceil(rect.width || fallbackWidth);
+					const height = Math.ceil(rect.height || fallbackHeight);
+
+					itemSizes.push(width);
+					maxWidth = Math.max(maxWidth, width);
+					maxHeight = Math.max(maxHeight, height);
+				});
+		} else if (targetIds.length) {
+			const isRightOrInset = state.isLegendRight || state.isLegendInset;
+			const isRectangle = config.legend_item_tile_type !== "circle";
+			const itemTileSize = {
+				width: isRectangle ? config.legend_item_tile_width : config.legend_item_tile_r * 2,
+				height: isRectangle ? config.legend_item_tile_height : config.legend_item_tile_r * 2
+			};
+			const dimension = {
+				padding: {
+					top: 4,
+					right: 10
+				},
+				max: {
+					width: 0,
+					height: 0
+				},
+				posMin: 10,
+				step: 0,
+				tileWidth: itemTileSize.width + 5,
+				totalLength: 0
+			};
+			const sizes = {
+				offsets: {},
+				widths: {},
+				heights: {},
+				margins: [0],
+				steps: {}
+			};
+			const measured = targetIds.map((id, index) => {
+				const text = `${getLegendText($$, id)}`;
+				const rect = measureSvgLegendText($$, text);
+				const fallbackWidth = Math.max(32, text.length * 7);
+				const fallbackHeight = 12;
+				const isLast = index === targetIds.length - 1;
+				const hidden = config.legend_show &amp;&amp; !$$.isLegendToShow(id);
+				const width = hidden ? 0 : (
+					(rect?.width || fallbackWidth) +
+					dimension.tileWidth +
+					(isLast &amp;&amp; !isRightOrInset ? 0 : dimension.padding.right) +
+					config.legend_padding
+				);
+				const height = hidden ? 0 : (rect?.height || fallbackHeight) +
+					dimension.padding.top;
+
+				dimension.max.width = Math.max(dimension.max.width, width);
+				dimension.max.height = Math.max(dimension.max.height, height);
+
+				return {
+					id,
+					hidden,
+					width,
+					height
+				};
+			});
+			const areaLength = isRightOrInset ? $$.getLegendHeight() : $$.getLegendWidth();
+			const updateValues = (id: string, itemLength: number, withoutStep = false) => {
+				let margin;
+
+				if (!withoutStep) {
+					margin = (areaLength - dimension.totalLength - itemLength) / 2;
+
+					if (margin &lt; dimension.posMin) {
+						margin = (areaLength - itemLength) / 2;
+						dimension.totalLength = 0;
+						dimension.step++;
+					}
+				}
+
+				sizes.steps[id] = dimension.step;
+				sizes.margins[dimension.step] = state.isLegendInset ? 10 : margin;
+				sizes.offsets[id] = dimension.totalLength;
+				dimension.totalLength += itemLength;
+			};
+
+			if (state.isLegendInset) {
+				dimension.step = config.legend_inset_step ?
+					config.legend_inset_step :
+					targetIds.length;
+				state.legendStep = dimension.step;
+			}
+
+			measured.forEach(({id, hidden, width, height}) => {
+				const itemWidth = config.legend_equally &amp;&amp; !hidden ? dimension.max.width : width;
+				const itemHeight = config.legend_equally &amp;&amp; !hidden ? dimension.max.height : height;
+				const itemLength = isRightOrInset ? itemHeight : itemWidth;
+
+				sizes.widths[id] = itemWidth;
+				sizes.heights[id] = itemHeight;
+				itemSizes.push(itemWidth);
+				maxWidth = Math.max(maxWidth, itemWidth);
+				maxHeight = Math.max(maxHeight, itemHeight);
+
+				if (hidden) {
+					sizes.steps[id] = 0;
+					sizes.offsets[id] = 0;
+					return;
+				}
+
+				updateValues(id, itemLength);
+			});
+
+			const xForLegend = state.isLegendRight ?
+				(id: string) => dimension.max.width * sizes.steps[id] :
+				state.isLegendInset ?
+				(id: string) => dimension.max.width * sizes.steps[id] + 10 :
+				(id: string) => sizes.margins[sizes.steps[id]] + sizes.offsets[id];
+			const yForLegend = state.isLegendRight || state.isLegendInset ?
+				(id: string) => sizes.margins[sizes.steps[id]] + sizes.offsets[id] :
+				(id: string) => dimension.max.height * sizes.steps[id];
+			const titleX = 4 + itemTileSize.width;
+			const tileCenterY = 9;
+
+			measured.forEach(({id, hidden}) => {
+				const x = hidden ? 0 : xForLegend(id);
+				const y = hidden ? 0 : yForLegend(id);
+
+				itemLayouts[id] = {
+					item: {
+						x,
+						y: y - 5,
+						width: sizes.widths[id],
+						height: sizes.heights[id]
+					},
+					title: {
+						x: titleX,
+						y: 0,
+						height: sizes.heights[id]
+					},
+					tile: {
+						x: -2,
+						y: tileCenterY - (itemTileSize.height / 2),
+						width: itemTileSize.width,
+						height: itemTileSize.height
+					}
+				};
+			});
+			legendStep = dimension.step;
+		}
+
+		if (!targetIds.length) {
+			state.legendItemWidth = 0;
+			state.legendItemHeight = 0;
+			state.legendStep = 0;
+			return;
+		}
+
+		if (useTemplateLegend) {
+			const availableWidth = Math.max(1, state.current.width);
+			const rowGap = 10;
+			let rows = 1;
+			let rowWidth = 0;
+
+			itemSizes.forEach(width => {
+				if (rowWidth &amp;&amp; rowWidth + rowGap + width > availableWidth) {
+					rows++;
+					rowWidth = width;
+				} else {
+					rowWidth += (rowWidth ? rowGap : 0) + width;
+				}
+			});
+
+			state.legendStep = Math.max(0, rows - 1);
+		} else {
+			state.legendStep = legendStep;
+		}
+
+		state.legendItemWidth = maxWidth;
+		state.legendItemHeight = Math.max(12, maxHeight);
+
+		if (!useTemplateLegend) {
+			$el.legend.selectAll(`button.${$LEGEND.legendItem}`)
+				.each(function(id) {
+					const layout = itemLayouts[id];
+					const item = d3Select(this);
+
+					if (!layout) {
+						return;
+					}
+
+					item
+						.style("left", `${layout.item.x}px`)
+						.style("top", `${layout.item.y}px`)
+						.style("width", `${layout.item.width}px`)
+						.style("height", `${layout.item.height}px`);
+
+					item.select(`.${$CANVAS.legendItemTitle}`)
+						.style("left", `${layout.title.x}px`)
+						.style("top", `${layout.title.y}px`)
+						.style("height", `${layout.title.height}px`)
+						.style("line-height", `${layout.title.height}px`);
+
+					item.select(`.${$LEGEND.legendItemTile}`)
+						.style("left", `${layout.tile.x}px`)
+						.style("top", `${layout.tile.y}px`)
+						.style("width", `${layout.tile.width}px`)
+						.style("height", `${layout.tile.height}px`);
+				});
+		}
+	},
+
+	/**
+	 * Get bottom legend block height separated from the canvas drawing surface.
+	 * @returns {number} Legend block height
+	 * @private
+	 */
+	getCanvasBottomLegendHeight(): number {
+		const $$ = this;
+		const {config, state, $el} = $$;
+
+		if (
+			!config.legend_show ||
+			state.isLegendRight ||
+			state.isLegendInset ||
+			state.hasTreemap ||
+			!$el.legend ||
+			!state.legendItemHeight
+		) {
+			return 0;
+		}
+
+		const rectHeight = getBoundingRect($el.legend.node(), true).height;
+		const rowHeight = state.legendItemHeight * (state.legendStep + 1);
+
+		return Math.ceil(Math.max($$.getLegendHeight?.() || 0, rectHeight || rowHeight));
+	},
+
+	/**
+	 * Get canvas drawing surface height excluding separately rendered bottom legend DOM.
+	 * @returns {number} Canvas drawing surface height
+	 * @private
+	 */
+	getCanvasSurfaceHeight(): number {
+		const $$ = this;
+
+		return Math.max(0, $$.state.current.height - $$.getCanvasBottomLegendHeight());
+	},
+
+	/**
+	 * Position the HTML legend around or inside the canvas chart.
+	 * @private
+	 */
+	positionHtmlLegend(): void {
+		const $$ = this;
+		const {config, state, $el} = $$;
+		const legend = $el.legend;
+
+		legend
+			.classed($CANVAS.legendBottom, !state.isLegendRight &amp;&amp; !state.isLegendInset)
+			.classed($CANVAS.legendRight, state.isLegendRight)
+			.classed($CANVAS.legendInset, state.isLegendInset)
+			.style("top", null)
+			.style("right", null)
+			.style("bottom", null)
+			.style("left", null)
+			.style("width", null)
+			.style("height", null)
+			.style("min-height", null);
+
+		if (state.isLegendRight) {
+			legend
+				.style("top", `${state.margin3.top}px`)
+				.style("right", "0")
+				.style("bottom", `${state.margin3.bottom}px`)
+				.style("width", `${Math.max(0, $$.getLegendWidth())}px`);
+		} else if (!state.isLegendInset) {
+			const legendHeight = $$.getLegendHeight?.() || 0;
+
+			legend
+				.style("top", `${Math.max(0, state.current.height - legendHeight)}px`)
+				.style("right", "0")
+				.style("bottom", "auto")
+				.style("left", "0");
+		} else if (state.isLegendInset) {
+			const isTop = state.isLegendTop;
+			const isLeft = state.isLegendLeft;
+
+			legend
+				.style(isTop ? "top" : "bottom", `${config.legend_inset_y}px`)
+				.style(isLeft ? "left" : "right", `${config.legend_inset_x}px`)
+				.style("width",
+					`${Math.max(0, state.legendItemWidth * (state.legendStep + 1) + 20)}px`);
+		}
+	},
+
+	/**
+	 * Get selected canvas data rows.
+	 * @param {string} targetId Target id
+	 * @returns {Array} Selected rows
+	 * @private
+	 */
+	getCanvasSelectedData(targetId?: string): any[] {
+		const $$ = this;
+		const selected = $$.state.canvasSelection;
+		const data: any[] = [];
+
+		if (!$$.config.data_selection_enabled || !selected?.size) {
+			return data;
+		}
+
+		eachCanvasSelectableData($$, d => {
+			(!targetId || d.id === targetId) &amp;&amp;
+				selected.has(getCanvasDataKey(d)) &amp;&amp;
+				data.push(d);
+		});
+
+		return data;
+	},
+
+	/**
+	 * Select or unselect canvas data rows.
+	 * @param {boolean} isSelection Whether to select
+	 * @param {string|Array} ids Target ids
+	 * @param {Array} indices Target indices
+	 * @param {boolean} resetOther Whether to reset unrelated selections
+	 * @private
+	 */
+	setCanvasSelection(
+		isSelection = false,
+		ids?: string | string[],
+		indices?: number[],
+		resetOther?: boolean
+	): void {
+		const $$ = this;
+		const {config, state} = $$;
+		const selected = state.canvasSelection;
+		const selectionGrouped = config.data_selection_grouped;
+		const targetIds = getCanvasSelectionIds(ids);
+		let changed = false;
+
+		if (!config.data_selection_enabled) {
+			return;
+		}
+
+		eachCanvasSelectableData($$, d => {
+			const key = getCanvasDataKey(d);
+			const isTargetId = selectionGrouped || !targetIds || targetIds.indexOf(d.id) >= 0;
+			const isTargetIndex = !indices || indices.indexOf(d.index) >= 0;
+			const isSelected = selected.has(key);
+
+			if (isSelection) {
+				if (isTargetId &amp;&amp; isTargetIndex &amp;&amp; !isSelected) {
+					selected.add(key);
+					callFn(config.data_onselected, $$.api, d, $$.canvasEngine.canvas);
+					changed = true;
+				} else if (resetOther &amp;&amp; isSelected) {
+					selected.delete(key);
+					callFn(config.data_onunselected, $$.api, d, $$.canvasEngine.canvas);
+					changed = true;
+				}
+			} else if (isTargetId &amp;&amp; isTargetIndex &amp;&amp; isSelected) {
+				selected.delete(key);
+				callFn(config.data_onunselected, $$.api, d, $$.canvasEngine.canvas);
+				changed = true;
+			}
+		});
+
+		changed &amp;&amp; $$.renderCanvasFrame?.(undefined, null, false);
+	},
+
+	/**
+	 * Toggle canvas data selection from a click.
+	 * @param {Array} dataRows Data rows to toggle
+	 * @private
+	 */
+	toggleCanvasSelection(dataRows): void {
+		const $$ = this;
+		const {config, state} = $$;
+		const selected = state.canvasSelection;
+		let changed = false;
+
+		if (!config.data_selection_enabled) {
+			return;
+		}
+
+		dataRows
+			.filter(d => isCanvasSelectableData($$, d))
+			.forEach(d => {
+				const key = getCanvasDataKey(d);
+				const isSelected = selected.has(key);
+
+				if (!config.data_selection_multiple) {
+					eachCanvasSelectableData($$, selectedData => {
+						const selectedKey = getCanvasDataKey(selectedData);
+						const shouldReset = config.data_selection_grouped ?
+							selectedData.id === d.id :
+							selectedKey !== key;
+
+						if (shouldReset &amp;&amp; selected.has(selectedKey)) {
+							selected.delete(selectedKey);
+							callFn(
+								config.data_onunselected,
+								$$.api,
+								selectedData,
+								$$.canvasEngine.canvas
+							);
+							changed = true;
+						}
+					});
+				}
+
+				if (isSelected &amp;&amp; selected.has(key)) {
+					selected.delete(key);
+					callFn(config.data_onunselected, $$.api, d, $$.canvasEngine.canvas);
+				} else {
+					selected.add(key);
+					callFn(config.data_onselected, $$.api, d, $$.canvasEngine.canvas);
+				}
+
+				changed = true;
+			});
+
+		changed &amp;&amp; $$.renderCanvasFrame?.(undefined, null, false);
+	},
+
+	/**
+	 * Check whether canvas draggable selection can start.
+	 * @param {MouseEvent|TouchEvent} event Input event
+	 * @returns {boolean} Whether drag selection can start
+	 * @private
+	 */
+	canStartCanvasSelectionDrag(event: MouseEvent | TouchEvent): boolean {
+		const $$ = this;
+		const {config} = $$;
+		const mouse = event as MouseEvent;
+
+		return Boolean(
+			config.interaction_enabled &amp;&amp;
+				config.data_selection_enabled &amp;&amp;
+				config.data_selection_draggable &amp;&amp;
+				config.data_selection_multiple &amp;&amp;
+				!config.zoom_enabled &amp;&amp;
+				(mouse.button === undefined || mouse.button === 0)
+		);
+	},
+
+	/**
+	 * Get the selected data rows inside the current canvas drag rectangle.
+	 * @param {object} rect Canvas rectangle
+	 * @returns {Array} Included rows
+	 * @private
+	 */
+	getCanvasSelectionDragData(rect): any[] {
+		const $$ = this;
+		const {config} = $$;
+		const data = $$.hitDetector.findInRect(rect, config.data_selection_grouped);
+
+		if (!config.data_selection_grouped) {
+			return data;
+		}
+
+		const indices = new Set(data.map(d => d.index));
+
+		return $$.filterTargetsToShow($$.data.targets)
+			.flatMap(target => target.values.filter(d => indices.has(d.index)));
+	},
+
+	/**
+	 * Start canvas draggable selection.
+	 * @param {MouseEvent|TouchEvent} event Input event
+	 * @returns {boolean} Whether drag started
+	 * @private
+	 */
+	startCanvasSelectionDrag(event: MouseEvent | TouchEvent): boolean {
+		const $$ = this;
+		const {state} = $$;
+		const point = getCanvasEventPoint($$, event);
+
+		if (!point || !$$.canStartCanvasSelectionDrag(event)) {
+			return false;
+		}
+
+		state.dragStart = point;
+		state.canvasSelectionDragStart = point;
+		state.canvasSelectionDragIncluded = new Set&lt;string>();
+		state.canvasSelectionDragging = true;
+		state.canvasSelectionDragMoved = false;
+		canvasSelectionDragRows.set($$, new Map&lt;string, any>());
+		$$.setDragStatus(true);
+		$$.hideTooltip?.();
+		event.preventDefault?.();
+
+		return true;
+	},
+
+	/**
+	 * Update canvas draggable selection.
+	 * @param {MouseEvent|TouchEvent} event Input event
+	 * @returns {boolean} Whether drag was handled
+	 * @private
+	 */
+	updateCanvasSelectionDrag(event: MouseEvent | TouchEvent): boolean {
+		const $$ = this;
+		const {config, state} = $$;
+		const start = state.canvasSelectionDragStart;
+		const point = getCanvasEventPoint($$, event);
+
+		if (!state.canvasSelectionDragging || !start || !point) {
+			return false;
+		}
+
+		const [sx, sy] = start;
+		const [mx, my] = point;
+		const minX = Math.min(sx, mx);
+		const maxX = Math.max(sx, mx);
+		const minY = config.data_selection_grouped ? state.margin.top : Math.min(sy, my);
+		const maxY = config.data_selection_grouped ?
+			state.margin.top + state.height :
+			Math.max(sy, my);
+		const rect = {
+			x: minX,
+			y: minY,
+			w: maxX - minX,
+			h: maxY - minY
+		};
+		const moved = Math.abs(mx - sx) > 4 || Math.abs(my - sy) > 4;
+
+		state.canvasSelectionDragMoved = state.canvasSelectionDragMoved || moved;
+
+		if (moved) {
+			const {included, rows} = getCanvasSelectionDragDelta(
+				$$,
+				$$.getCanvasSelectionDragData(rect)
+			);
+
+			rows.length &amp;&amp; $$.toggleCanvasSelection(rows);
+			state.canvasSelectionDragIncluded = included;
+			state.cancelClick = true;
+		}
+
+		$$.renderCanvasSelectionDrag(rect);
+		event.preventDefault?.();
+
+		return true;
+	},
+
+	/**
+	 * End canvas draggable selection.
+	 * @param {MouseEvent|TouchEvent} event Input event
+	 * @returns {boolean} Whether drag ended
+	 * @private
+	 */
+	endCanvasSelectionDrag(event: MouseEvent | TouchEvent): boolean {
+		const $$ = this;
+		const {state} = $$;
+
+		if (!state.canvasSelectionDragging) {
+			return false;
+		}
+
+		$$.updateCanvasSelectionDrag(event);
+		state.cancelClick = state.cancelClick || state.canvasSelectionDragMoved;
+		state.dragStart = null;
+		state.canvasSelectionDragStart = null;
+		state.canvasSelectionDragIncluded = new Set&lt;string>();
+		state.canvasSelectionDragging = false;
+		state.canvasSelectionDragMoved = false;
+		canvasSelectionDragRows.delete($$);
+		$$.setDragStatus(false);
+		$$.clearCanvasFocus();
+		event.preventDefault?.();
+
+		return true;
+	},
+
+	/**
+	 * Dispatch canvas data.onout callback for the current hovered row.
+	 * @param {HTMLCanvasElement} canvas Canvas element
+	 * @private
+	 */
+	dispatchCanvasDataOut(canvas): void {
+		const $$ = this;
+		const {config, state} = $$;
+		const d = state.canvasDataHover;
+
+		if (!d) {
+			return;
+		}
+
+		state.canvasDataHover = null;
+		state.canvasDataHoverKey = null;
+		config.interaction_enabled &amp;&amp; callFn(config.data_onout, $$.api, d, canvas);
+	},
+
+	/**
+	 * Dispatch canvas data.onover callback when the hovered row changes.
+	 * @param {object} d Data row
+	 * @param {HTMLCanvasElement} canvas Canvas element
+	 * @private
+	 */
+	dispatchCanvasDataOver(d, canvas): void {
+		const $$ = this;
+		const {config, state} = $$;
+		const key = getCanvasDataKey(d);
+
+		if (state.canvasDataHoverKey === key) {
+			return;
+		}
+
+		$$.dispatchCanvasDataOut(canvas);
+		state.canvasDataHover = d;
+		state.canvasDataHoverKey = key;
+		config.interaction_enabled &amp;&amp; d &amp;&amp; callFn(config.data_onover, $$.api, d, canvas);
+	},
+
+	/**
+	 * Dispatch canvas data.onclick callback for a pointer position.
+	 * @param {Event} event Input event
+	 * @param {boolean} markInputClick Whether to suppress following compatibility click
+	 * @returns {object|null} Clicked data row
+	 * @private
+	 */
+	dispatchCanvasDataClick(event: MouseEvent | PointerEvent | TouchEvent, markInputClick = false) {
+		const $$ = this;
+		const {config, $el} = $$;
+		const canvas = $el.canvas.node();
+		const d = getCanvasEventDatum($$, event, true);
+
+		if (!d || isDuplicateCanvasInputClick($$, d)) {
+			return d;
+		}
+
+		if (config.interaction_enabled) {
+			const dataRows = config.data_selection_grouped ?
+				$$.filterTargetsToShow($$.data.targets)
+					.map(target => target.values[d.index])
+					.filter(Boolean) :
+				[d];
+
+			$$.toggleCanvasSelection?.(dataRows);
+			dataRows.forEach(row => callFn(config.data_onclick, $$.api, row, canvas));
+			markInputClick &amp;&amp; markCanvasInputClick($$, d);
+		}
+
+		return d;
+	},
+
+	/**
+	 * Update canvas subchart brush domain from an input event.
+	 * @param {Event} event Input event
+	 * @returns {boolean} Whether the brush was updated
+	 * @private
+	 */
+	updateCanvasSubchartBrush(event: MouseEvent | PointerEvent | TouchEvent): boolean {
+		const $$ = this;
+		const {state} = $$;
+		const start = state.canvasSubchartBrushStart;
+		const origin = state.canvasSubchartBrushOrigin;
+		const mode = state.canvasSubchartBrushMode;
+		const coord = getCanvasSubchartBrushCoord($$, event, true);
+
+		if (!state.canvasSubchartBrushDragging || start === null || coord === null || !mode) {
+			return false;
+		}
+
+		const delta = coord - start;
+
+		if (Math.abs(delta) > CANVAS_SUBCHART_CLICK_TOLERANCE) {
+			state.canvasSubchartBrushMoved = true;
+		}
+
+		if (!state.canvasSubchartBrushMoved) {
+			event.preventDefault?.();
+			return true;
+		}
+
+		let selection: [number, number];
+
+		if (mode === "move" &amp;&amp; origin) {
+			const [extentStart, extentEnd] = getCanvasSubchartBrushExtent($$);
+			const size = origin[1] - origin[0];
+			let nextStart = origin[0] + delta;
+			let nextEnd = origin[1] + delta;
+
+			if (nextStart &lt; extentStart) {
+				nextEnd += extentStart - nextStart;
+				nextStart = extentStart;
+			}
+
+			if (nextEnd > extentEnd) {
+				nextStart -= nextEnd - extentEnd;
+				nextEnd = extentEnd;
+			}
+
+			selection = [
+				Math.max(extentStart, Math.min(extentEnd - size, nextStart)),
+				Math.min(extentEnd, Math.max(extentStart + size, nextEnd))
+			];
+		} else if (mode === "resize-start" &amp;&amp; origin) {
+			selection = clampCanvasSubchartSelection($$, coord, origin[1]);
+		} else if (mode === "resize-end" &amp;&amp; origin) {
+			selection = clampCanvasSubchartSelection($$, origin[0], coord);
+		} else {
+			selection = clampCanvasSubchartSelection($$, start, coord);
+		}
+
+		const domain = getCanvasSubchartDomainFromCoords($$, selection[0], selection[1]);
+
+		$$.setCanvasSubchartDomain(domain, true);
+		state.cancelClick = true;
+		event.preventDefault?.();
+
+		return true;
+	},
+
+	/**
+	 * Update cursor while hovering over the canvas subchart brush area.
+	 * @param {Event} event Input event
+	 * @returns {boolean} Whether the pointer is over the subchart
+	 * @private
+	 */
+	updateCanvasSubchartCursor(event: MouseEvent | PointerEvent | TouchEvent): boolean {
+		const $$ = this;
+		const canvas = $$.$el.canvas.node();
+		const coord = getCanvasSubchartBrushCoord($$, event);
+
+		if (coord === null) {
+			canvas.style.cursor = "";
+			return false;
+		}
+
+		const mode = getCanvasSubchartBrushMode($$, coord);
+
+		canvas.style.cursor = getCanvasSubchartCursor($$, mode);
+
+		return true;
+	},
+
+	/**
+	 * Start a canvas subchart brush gesture.
+	 * @param {Event} event Mouse, pointer or touch event
+	 * @returns {boolean} Whether brushing started
+	 * @private
+	 */
+	startCanvasSubchartBrush(event: MouseEvent | PointerEvent | TouchEvent): boolean {
+		const $$ = this;
+		const {state} = $$;
+		const coord = getCanvasSubchartBrushCoord($$, event);
+
+		if (coord === null) {
+			return false;
+		}
+
+		const mode = getCanvasSubchartBrushMode($$, coord);
+
+		state.event = event;
+		state.canvasSubchartBrushDragging = true;
+		state.canvasSubchartBrushMode = mode;
+		state.canvasSubchartBrushStart = coord;
+		state.canvasSubchartBrushOrigin = getCanvasSubchartBrushSelection($$);
+		state.canvasSubchartBrushMoved = false;
+		state.cancelClick = true;
+		$$.setDragStatus(true);
+		event.preventDefault?.();
+
+		return true;
+	},
+
+	/**
+	 * End a canvas subchart brush gesture.
+	 * @param {Event} event Mouse, pointer or touch event
+	 * @returns {boolean} Whether brushing ended
+	 * @private
+	 */
+	endCanvasSubchartBrush(event: MouseEvent | PointerEvent | TouchEvent): boolean {
+		const $$ = this;
+		const {state} = $$;
+
+		if (!state.canvasSubchartBrushDragging) {
+			return false;
+		}
+
+		$$.updateCanvasSubchartBrush(event);
+
+		const shouldClear = state.canvasSubchartBrushMode === "select" &amp;&amp;
+			!state.canvasSubchartBrushMoved;
+		const shouldCallback = state.canvasSubchartBrushMoved || shouldClear;
+
+		if (shouldClear) {
+			$$.clearCanvasSubchartDomain?.(true, true);
+		} else if (shouldCallback) {
+			$$.config.subchart_onbrush.bind($$.api)(state.domain ?? $$.scale.x.orgDomain());
+		}
+
+		state.canvasSubchartBrushDragging = false;
+		state.canvasSubchartBrushMode = null;
+		state.canvasSubchartBrushStart = null;
+		state.canvasSubchartBrushOrigin = null;
+		state.canvasSubchartBrushMoved = false;
+		$$.setDragStatus(false);
+		event.preventDefault?.();
+
+		return true;
+	},
+
+	/**
+	 * Cancel a canvas subchart brush gesture without applying callbacks.
+	 * @param {Event} event Mouse, pointer or touch event
+	 * @returns {boolean} Whether brushing was cancelled
+	 * @private
+	 */
+	cancelCanvasSubchartBrush(event: MouseEvent | PointerEvent | TouchEvent): boolean {
+		const $$ = this;
+		const {state} = $$;
+
+		if (!state.canvasSubchartBrushDragging) {
+			return false;
+		}
+
+		state.canvasSubchartBrushDragging = false;
+		state.canvasSubchartBrushMode = null;
+		state.canvasSubchartBrushStart = null;
+		state.canvasSubchartBrushOrigin = null;
+		state.canvasSubchartBrushMoved = false;
+		$$.setDragStatus(false);
+		event.preventDefault?.();
+
+		return true;
+	},
+
+	/**
+	 * Start mouse-driven canvas subchart brushing.
+	 * @param {MouseEvent} event Mouse event
+	 * @returns {boolean} Whether brushing started
+	 * @private
+	 */
+	onCanvasSubchartBrushStart(event: MouseEvent): boolean {
+		const $$ = this;
+
+		if (!$$.startCanvasSubchartBrush(event)) {
+			return false;
+		}
+
+		const move = (event: MouseEvent) => {
+			$$.updateCanvasSubchartBrush(event);
+		};
+		const end = (event: MouseEvent) => {
+			$$.endCanvasSubchartBrush(event);
+			window.removeEventListener("mousemove", move);
+			window.removeEventListener("mouseup", end);
+		};
+
+		window.addEventListener("mousemove", move);
+		window.addEventListener("mouseup", end);
+
+		return true;
+	},
+
+	/**
+	 * Handle canvas click and dispatch shape-level data onclick.
+	 * @param {MouseEvent} event Mouse click event
+	 * @private
+	 */
+	onCanvasClick(event: MouseEvent): void {
+		const $$ = this;
+		const {config, state} = $$;
+
+		state.event = event;
+
+		if (state.flowing || state.cancelClick) {
+			state.cancelClick = false;
+			return;
+		}
+
+		$$.dispatchCanvasDataClick(event);
+		config.onclick?.bind($$.api)(event);
+	},
+
+	/**
+	 * Start mouse-driven canvas draggable selection.
+	 * @param {MouseEvent} event Mouse event
+	 * @private
+	 */
+	onCanvasSelectionDragStart(event: MouseEvent): void {
+		const $$ = this;
+		const {state} = $$;
+
+		if (!$$.startCanvasSelectionDrag(event)) {
+			return;
+		}
+
+		const move = (event: MouseEvent) => {
+			$$.updateCanvasSelectionDrag(event);
+		};
+		const end = (event: MouseEvent) => {
+			$$.endCanvasSelectionDrag(event);
+			window.removeEventListener("mousemove", move);
+			window.removeEventListener("mouseup", end);
+			state.canvasSelectionDragMoveHandler = null;
+			state.canvasSelectionDragEndHandler = null;
+		};
+
+		state.canvasSelectionDragMoveHandler = move;
+		state.canvasSelectionDragEndHandler = end;
+		window.addEventListener("mousemove", move);
+		window.addEventListener("mouseup", end);
+	},
+
+	/**
+	 * Start non-mouse pointer-driven canvas subchart brushing.
+	 * @param {PointerEvent} event Pointer event
+	 * @private
+	 */
+	onCanvasPointerDown(event: PointerEvent): void {
+		if (!shouldHandleCanvasPointerEvent(this, event)) {
+			return;
+		}
+
+		const $$ = this;
+		const canvas = $$.$el.canvas.node();
+
+		if (!$$.startCanvasSubchartBrush(event)) {
+			return;
+		}
+
+		const pointerId = event.pointerId;
+		const matchesPointer = (event: PointerEvent) => event.pointerId === pointerId;
+		const move = (event: PointerEvent) => {
+			matchesPointer(event) &amp;&amp; $$.updateCanvasSubchartBrush(event);
+		};
+		const end = (event: PointerEvent) => {
+			if (matchesPointer(event)) {
+				$$.endCanvasSubchartBrush(event);
+				cleanup();
+			}
+		};
+		const cancel = (event: PointerEvent) => {
+			if (matchesPointer(event)) {
+				$$.cancelCanvasSubchartBrush(event);
+				cleanup();
+			}
+		};
+
+		/**
+		 * Remove temporary pointer brush listeners.
+		 * @private
+		 */
+		function cleanup() {
+			window.removeEventListener("pointermove", move);
+			window.removeEventListener("pointerup", end);
+			window.removeEventListener("pointercancel", cancel);
+			try {
+				canvas.releasePointerCapture?.(pointerId);
+			} catch {
+				// Synthetic pointer events used by tests may not be capturable.
+			}
+		}
+
+		try {
+			canvas.setPointerCapture?.(pointerId);
+		} catch {
+			// Synthetic pointer events used by tests may not be capturable.
+		}
+		window.addEventListener("pointermove", move);
+		window.addEventListener("pointerup", end);
+		window.addEventListener("pointercancel", cancel);
+	},
+
+	/**
+	 * Handle non-mouse pointer entering the canvas.
+	 * @param {PointerEvent} event Pointer event
+	 * @private
+	 */
+	onCanvasPointerEnter(event: PointerEvent): void {
+		if (!shouldHandleCanvasPointerEvent(this, event)) {
+			return;
+		}
+
+		this.state.event = event;
+		this.config.onover?.bind(this.api)(event);
+	},
+
+	/**
+	 * Handle non-mouse pointer movement over the canvas.
+	 * @param {PointerEvent} event Pointer event
+	 * @private
+	 */
+	onCanvasPointerMove(event: PointerEvent): void {
+		if (!shouldHandleCanvasPointerEvent(this, event)) {
+			return;
+		}
+
+		if (this.updateCanvasSubchartBrush(event)) {
+			return;
+		}
+
+		this.onCanvasMouseMove(event);
+	},
+
+	/**
+	 * Handle non-mouse pointer click.
+	 * @param {PointerEvent} event Pointer event
+	 * @private
+	 */
+	onCanvasPointerUp(event: PointerEvent): void {
+		if (!shouldHandleCanvasPointerEvent(this, event)) {
+			return;
+		}
+
+		this.state.event = event;
+
+		if (this.endCanvasSubchartBrush(event)) {
+			this.config.onout?.bind(this.api)(event);
+			return;
+		}
+
+		this.dispatchCanvasDataClick(event, true);
+		this.dispatchCanvasDataOut(this.$el.canvas.node());
+	},
+
+	/**
+	 * Handle non-mouse pointer leaving the canvas.
+	 * @param {PointerEvent} event Pointer event
+	 * @private
+	 */
+	onCanvasPointerOut(event: PointerEvent): void {
+		if (!shouldHandleCanvasPointerEvent(this, event)) {
+			return;
+		}
+
+		if (this.state.canvasSubchartBrushDragging) {
+			return;
+		}
+
+		this.state.event = event;
+		this.onCanvasMouseOut();
+		this.config.onout?.bind(this.api)(event);
+	},
+
+	/**
+	 * Handle non-mouse pointer cancellation.
+	 * @param {PointerEvent} event Pointer event
+	 * @private
+	 */
+	onCanvasPointerCancel(event: PointerEvent): void {
+		if (!shouldHandleCanvasPointerEvent(this, event)) {
+			return;
+		}
+
+		this.state.event = event;
+		if (this.cancelCanvasSubchartBrush(event)) {
+			this.config.onout?.bind(this.api)(event);
+			return;
+		}
+
+		this.onCanvasPointerOut(event);
+	},
+
+	/**
+	 * Handle touch start over the canvas.
+	 * @param {TouchEvent} event Touch event
+	 * @private
+	 */
+	onCanvasTouchStart(event: TouchEvent): void {
+		if (event.touches.length > 1) {
+			return;
+		}
+
+		this.state.event = event;
+		if (this.startCanvasSubchartBrush(event)) {
+			return;
+		}
+
+		if (this.startCanvasSelectionDrag(event)) {
+			return;
+		}
+
+		this.config.onover?.bind(this.api)(event);
+		this.onCanvasMouseMove(event);
+	},
+
+	/**
+	 * Handle touch move over the canvas.
+	 * @param {TouchEvent} event Touch event
+	 * @private
+	 */
+	onCanvasTouchMove(event: TouchEvent): void {
+		if (event.touches.length > 1) {
+			return;
+		}
+
+		if (this.updateCanvasSubchartBrush(event)) {
+			return;
+		}
+
+		if (this.updateCanvasSelectionDrag(event)) {
+			return;
+		}
+
+		this.onCanvasMouseMove(event);
+	},
+
+	/**
+	 * Handle touch end over the canvas.
+	 * @param {TouchEvent} event Touch event
+	 * @private
+	 */
+	onCanvasTouchEnd(event: TouchEvent): void {
+		this.state.event = event;
+
+		if (this.endCanvasSubchartBrush(event)) {
+			this.config.onout?.bind(this.api)(event);
+			return;
+		}
+
+		if (this.endCanvasSelectionDrag(event)) {
+			this.config.onout?.bind(this.api)(event);
+			return;
+		}
+
+		this.dispatchCanvasDataClick(event, true);
+		this.dispatchCanvasDataOut(this.$el.canvas.node());
+		this.config.onout?.bind(this.api)(event);
+	},
+
+	/**
+	 * Handle touch cancellation.
+	 * @param {TouchEvent} event Touch event
+	 * @private
+	 */
+	onCanvasTouchCancel(event: TouchEvent): void {
+		this.state.event = event;
+		this.cancelCanvasSubchartBrush(event);
+		this.endCanvasSelectionDrag(event);
+		this.onCanvasMouseOut();
+		this.config.onout?.bind(this.api)(event);
+	},
+
+	/**
+	 * Update canvas focus state and tooltip on pointer movement.
+	 * @param {Event} event Mouse, pointer or touch move event
+	 * @private
+	 */
+	onCanvasMouseMove(event: MouseEvent | PointerEvent | TouchEvent): void {
+		const $$ = this;
+		const {config, state, $el} = $$;
+		const canvas = $el.canvas.node();
+
+		state.event = event;
+
+		if (state.flowing) {
+			return;
+		}
+
+		if (state.canvasSelectionDragging) {
+			return;
+		}
+
+		if ($$.updateCanvasSubchartCursor?.(event)) {
+			$$.dispatchCanvasDataOut(canvas);
+			if (state.canvasFocusKey) {
+				state.canvasFocusKey = null;
+				$$.clearCanvasFocus();
+			}
+			$$.hideTooltip?.();
+			return;
+		}
+
+		const point = getCanvasEventPoint($$, event);
+		const d = point ? getCanvasHoverDatumFromPoint($$, point) : null;
+
+		if (!d) {
+			$$.dispatchCanvasDataOut(canvas);
+			if (state.canvasFocusKey) {
+				state.canvasFocusKey = null;
+				$$.clearCanvasFocus();
+			}
+			if (point &amp;&amp; config.axis_tooltip &amp;&amp; isCanvasAxisTooltipArea($$, point)) {
+				$$.renderCanvasAxisTooltip(point);
+				$$.hideTooltip?.();
+				return;
+			}
+			$$.hideTooltip?.();
+			return;
+		}
+
+		$$.dispatchCanvasDataOver(d, canvas);
+
+		const selectedData = getCanvasTooltipData($$, d);
+		const focusData = getCanvasFocusData($$, d, selectedData);
+		const focusKey = focusData.map(v => `${v.id}:${v.index}`).join("|");
+
+		if (state.canvasFocusKey !== focusKey || config.axis_tooltip) {
+			state.canvasFocusKey = focusKey;
+			$$.renderCanvasFocus(focusData, point);
+		}
+
+		$$.showTooltip?.(selectedData, canvas);
+	},
+
+	/**
+	 * Clear focus and tooltip state when the pointer leaves the canvas.
+	 * @private
+	 */
+	onCanvasMouseOut(): void {
+		const canvas = this.$el.canvas.node();
+
+		canvas.style.cursor = "";
+		this.dispatchCanvasDataOut(canvas);
+		if (this.state.canvasFocusKey) {
+			this.state.canvasFocusKey = null;
+			this.clearCanvasFocus();
+		} else if (this.config.axis_tooltip) {
+			this.clearCanvasFocus();
+		}
+		this.hideTooltip?.();
+	},
+
+	/**
+	 * Show canvas tooltip from linked tooltip propagation.
+	 * @param {number} index Data index
+	 * @returns {boolean} Whether linked tooltip was shown
+	 * @private
+	 */
+	showCanvasLinkedTooltip(index: number): boolean {
+		const $$ = this;
+		const {$el, state} = $$;
+		const canvas = $el.canvas?.node();
+		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+		const d = targetsToShow.map(target => target.values[index]).find(Boolean);
+
+		if (!canvas || !d) {
+			$$.hideTooltip?.();
+			return false;
+		}
+
+		const selectedData = getCanvasTooltipData($$, d);
+		const focus = selectedData.find(v => v &amp;&amp; hasCanvasDrawableValue($$, v)) ||
+			selectedData[0];
+
+		if (!selectedData.length || !focus) {
+			$$.hideTooltip?.();
+			return false;
+		}
+
+		const {left, top} = getBoundingRect(canvas, true);
+		const point = getRenderDataPoint($$, focus);
+		const eventPoint = [
+			state.margin.left + point.x,
+			state.margin.top + point.y
+		];
+
+		state.event = {
+			clientX: left + eventPoint[0],
+			clientY: top + eventPoint[1],
+			currentTarget: canvas,
+			target: canvas
+		};
+		state.canvasFocusKey = selectedData.map(v => `${v.id}:${v.index}`).join("|");
+
+		$$.renderCanvasFocus(selectedData, eventPoint);
+		$$.showTooltip?.(selectedData, canvas);
+
+		return true;
+	},
+
+	/**
+	 * Draw drag-zoom brush overlay on the cached canvas frame.
+	 * @param {number} start Start coordinate
+	 * @param {number} end End coordinate
+	 * @private
+	 */
+	renderCanvasZoomBrush(start: number, end: number): void {
+		const $$ = this;
+
+		$$.canvasEngine.withOverlay(ctx => {
+			$$.canvasRenderer.withContext(ctx, () => {
+				$$.canvasRenderer.drawZoomBrush($$, start, end);
+			});
+		});
+	},
+
+	/**
+	 * Clear drag-zoom brush overlay.
+	 * @private
+	 */
+	clearCanvasZoomBrush(): void {
+		this.canvasEngine.clearOverlay();
+	},
+
+	/**
+	 * Draw selection drag overlay on the cached canvas frame.
+	 * @param {object} rect Selection rectangle
+	 * @private
+	 */
+	renderCanvasSelectionDrag(rect): void {
+		const $$ = this;
+
+		$$.canvasEngine.withOverlay(ctx => {
+			$$.canvasRenderer.withContext(ctx, () => {
+				$$.canvasRenderer.drawSelectionDragArea($$, rect);
+			});
+		});
+	},
+
+	/**
+	 * Draw a complete canvas frame and optionally rebuild hit indexes.
+	 * @param {object} shape Cached draw shape object
+	 * @param {Array} focusData Focused data rows
+	 * @param {boolean} rebuildHit Whether to rebuild hit indexes
+	 * @private
+	 */
+	renderCanvasFrame(shape?, focusData?, rebuildHit = false): void {
+		const $$ = this;
+		const {state} = $$;
+		const drawShape = shape || state.canvasShape || $$.getDrawShape();
+
+		state.canvasShape = drawShape;
+		state._canvasVisibleRangeCache = null;
+		state._canvasXTickValuesCache = null;
+
+		$$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());
+
+		try {
+			// user callbacks (tick format, data label format, etc.) run within:
+			// guard so a throwing formatter can't leak the saved context state
+			$$.canvasRenderer.drawBackground($$);
+			$$.canvasAxisRenderer.drawTitle($$);
+			state.hasAxis &amp;&amp; $$.canvasAxisRenderer.draw($$);
+			$$.canvasRenderer.draw($$, drawShape);
+			state.hasAxis &amp;&amp; $$.config.grid_lines_front &amp;&amp;
+				$$.canvasAxisRenderer.drawGridLines($$);
+			$$.canvasRenderer.drawSubchart($$, drawShape);
+			state.hasAxis &amp;&amp; $$.canvasAxisRenderer.drawSubXAxis($$);
+			$$.canvasRenderer.drawEmptyLabel($$);
+			rebuildHit &amp;&amp; $$.hitDetector.rebuild($$, drawShape);
+		} finally {
+			$$.canvasEngine.endFrame();
+		}
+
+		$$.canvasEngine.clearOverlay();
+		state.canvasFocusMainRedraw = false;
+		focusData &amp;&amp; $$.renderCanvasFocus(focusData);
+	},
+
+	/**
+	 * Restore the cached frame and draw focus overlays.
+	 * @param {Array} focusData Focused data rows
+	 * @param {Array} point Canvas-local pointer coordinate
+	 * @private
+	 */
+	renderCanvasFocus(focusData, point?): void {
+		const $$ = this;
+		const {state} = $$;
+		const withMainRedraw = $$.canvasRenderer.hasExpandedShapeFocus?.($$, focusData);
+
+		if (withMainRedraw) {
+			const drawShape = state.canvasShape || $$.getDrawShape();
+
+			$$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());
+
+			try {
+				$$.canvasRenderer.drawBackground($$);
+				$$.canvasAxisRenderer.drawTitle($$);
+				state.hasAxis &amp;&amp; $$.canvasAxisRenderer.draw($$);
+				$$.canvasRenderer.draw($$, drawShape, focusData);
+				state.hasAxis &amp;&amp; $$.config.grid_lines_front &amp;&amp;
+					$$.canvasAxisRenderer.drawGridLines($$);
+				$$.canvasRenderer.drawSubchart($$, drawShape);
+				state.hasAxis &amp;&amp; $$.canvasAxisRenderer.drawSubXAxis($$);
+				$$.canvasRenderer.drawEmptyLabel($$);
+			} finally {
+				$$.canvasEngine.endFrame();
+			}
+		}
+
+		state.canvasFocusMainRedraw = !!withMainRedraw;
+		$$.canvasEngine.withOverlay(ctx => {
+			$$.canvasRenderer.withContext(ctx, () => {
+				$$.canvasRenderer.drawFocus($$, focusData);
+			});
+			$$.canvasAxisRenderer.withContext(ctx, () => {
+				$$.canvasAxisRenderer.drawFocusedXAxisTick($$, focusData);
+				point &amp;&amp; $$.canvasAxisRenderer.drawAxisTooltip($$, point);
+			});
+		});
+	},
+
+	/**
+	 * Draw only the canvas axis tooltip overlay.
+	 * @param {Array} point Canvas-local pointer coordinate
+	 * @private
+	 */
+	renderCanvasAxisTooltip(point): void {
+		const $$ = this;
+
+		$$.canvasEngine.withOverlay(ctx => {
+			$$.canvasAxisRenderer.withContext(ctx, () => {
+				$$.canvasAxisRenderer.drawAxisTooltip($$, point);
+			});
+		});
+	},
+
+	/**
+	 * Restore the cached canvas frame without focus overlays.
+	 * @private
+	 */
+	clearCanvasFocus(): void {
+		const $$ = this;
+
+		if ($$.state.canvasFocusMainRedraw) {
+			$$.state.canvasFocusMainRedraw = false;
+			$$.renderCanvasFrame(undefined, null, false);
+		} else {
+			$$.canvasEngine?.clearOverlay();
+		}
+	},
+
+	/**
+	 * Resize canvas surfaces and reload canvas theme values.
+	 * @private
+	 */
+	resizeCanvas(): void {
+		const $$ = this;
+		const {config, state, $el} = $$;
+		const container = $el.chart.node();
+
+		$el.chart.style("min-height", `${state.current.height}px`);
+		$$.canvasEngine?.resize(state.current.width, $$.getCanvasSurfaceHeight());
+		$$.canvasTheme?.reload(container, config.canvas_theme);
+	}
+};
+
+/**
+ * Register canvas rendering modules and return canvas render mode.
+ * @returns {string} Canvas render mode
+ */
+export let canvas = (): "canvas" => {
+	extend(ChartInternal.prototype, canvasInternal);
+
+	return (canvas = () => "canvas")();
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="static/doc.css">
+    
+    <script src="static/analytics.js"></script>
+    
+</body>
+</html>

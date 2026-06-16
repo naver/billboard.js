@@ -1,0 +1,160 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.0.0
+*/
+import { callFn, endall } from '../../module/util/object.js';
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Show/Hide data series
+ * @param {boolean} show Show or hide
+ * @param {Array} targetIdsValue Target id values
+ * @param {object} options Options
+ * @param {boolean} [options.withLegend=false] whether or not display legend
+ * @param {boolean} [skipRedraw=false] whether or not skip redraw after show/hide
+ * @private
+ */
+function showHide(show, targetIdsValue, options, skipRedraw = false) {
+    const $$ = this.internal;
+    const targetIds = $$.mapToTargetIds(targetIdsValue);
+    const targetIdSet = new Set(targetIds);
+    const hiddenIds = [...$$.state.hiddenTargetIds].filter(v => targetIdSet.has(v));
+    $$.state.toggling = true;
+    $$.state.dirty.visibility = true;
+    $$[`${show ? "remove" : "add"}HiddenTargetIds`](targetIds);
+    if ($$.state.isCanvasMode) {
+        if (show && hiddenIds.length) {
+            callFn($$.config.data_onshown, this, hiddenIds);
+        }
+        else if (!show && hiddenIds.length === 0) {
+            callFn($$.config?.data_onhidden, this, targetIds);
+        }
+        if (!skipRedraw) {
+            $$.redraw({
+                withUpdateOrgXDomain: true,
+                withUpdateXDomain: true,
+                withLegend: true
+            });
+        }
+        $$.state.toggling = false;
+        return;
+    }
+    const targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds));
+    const opacity = show ? null : "0";
+    if (show && hiddenIds.length) {
+        targets.style("display", null);
+        callFn($$.config.data_onshown, this, hiddenIds);
+    }
+    $$.$T(targets)
+        .style("opacity", opacity, "important")
+        .call(endall, () => {
+        // https://github.com/naver/billboard.js/issues/1758
+        if (!show && hiddenIds.length === 0) {
+            targets.style("display", "none");
+            callFn($$.config?.data_onhidden, this, targetIds);
+        }
+        targets.style("opacity", opacity);
+    });
+    options.withLegend && $$[`${show ? "show" : "hide"}Legend`](targetIds);
+    if (!skipRedraw) {
+        $$.redraw({
+            withUpdateOrgXDomain: true,
+            withUpdateXDomain: true,
+            withLegend: true
+        });
+    }
+    $$.state.toggling = false;
+}
+var apiShow = {
+    /**
+     * Show data series on chart
+     * @function show
+     * @instance
+     * @memberof Chart
+     * @param {string|Array} [targetIdsValue] The target id value.
+     * @param {object} [options] The object can consist with following members:<br>
+     *
+     *    | Key | Type | default | Description |
+     *    | --- | --- | --- | --- |
+     *    | withLegend | boolean | false | whether or not display legend |
+     *
+     * @example
+     * // show 'data1'
+     * chart.show("data1");
+     *
+     * // show 'data1' and 'data3'
+     * chart.show(["data1", "data3"]);
+     */
+    show(targetIdsValue, options = {}) {
+        showHide.call(this, true, targetIdsValue, options);
+    },
+    /**
+     * Hide data series from chart
+     * @function hide
+     * @instance
+     * @memberof Chart
+     * @param {string|Array} [targetIdsValue] The target id value.
+     * @param {object} [options] The object can consist with following members:<br>
+     *
+     *    | Key | Type | default | Description |
+     *    | --- | --- | --- | --- |
+     *    | withLegend | boolean | false | whether or not display legend |
+     *
+     * @example
+     * // hide 'data1'
+     * chart.hide("data1");
+     *
+     * // hide 'data1' and 'data3'
+     * chart.hide(["data1", "data3"]);
+     */
+    hide(targetIdsValue, options = {}) {
+        showHide.call(this, false, targetIdsValue, options);
+    },
+    /**
+     * Toggle data series on chart. When target data is hidden, it will show. If is shown, it will hide in vice versa.
+     * @function toggle
+     * @instance
+     * @memberof Chart
+     * @param {string|Array} [targetIds] The target id value.
+     * @param {object} [options] The object can consist with following members:<br>
+     *
+     *    | Key | Type | default | Description |
+     *    | --- | --- | --- | --- |
+     *    | withLegend | boolean | false | whether or not display legend |
+     *
+     * @example
+     * // toggle 'data1'
+     * chart.toggle("data1");
+     *
+     * // toggle 'data1' and 'data3'
+     * chart.toggle(["data1", "data3"]);
+     */
+    toggle(targetIds, options = {}) {
+        const $$ = this.internal;
+        const targets = { show: [], hide: [] };
+        // sort show & hide target ids
+        $$.mapToTargetIds(targetIds)
+            .forEach((id) => targets[$$.isTargetToShow(id) ? "hide" : "show"].push(id));
+        if (targets.show.length && targets.hide.length) {
+            // Batch both operations with a single redraw
+            showHide.call(this, true, targets.show, options, true);
+            showHide.call(this, false, targets.hide, options);
+        }
+        else {
+            // perform show & hide task separately
+            // https://github.com/naver/billboard.js/issues/454
+            targets.show.length && this.show(targets.show, options);
+            targets.hide.length && this.hide(targets.hide, options);
+        }
+    }
+};
+
+export { apiShow as default };

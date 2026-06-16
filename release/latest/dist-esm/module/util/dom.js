@@ -1,0 +1,419 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.0.0
+*/
+import { pointer } from 'd3-selection';
+import { window as win, document as doc } from '../browser.js';
+import { toArray, mergeObj } from './object.js';
+import { isString } from './type-checks.js';
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+// Hoisted to module level to avoid recompilation on every addCssRules() call
+const RE_CSS_BB = /\s?(bb-)/g;
+const RE_CSS_DOTS = /\.+/g;
+/**
+ * Convert a CSS selector string to dot-notation class selector
+ * @param {string} s Selector string
+ * @returns {string}
+ * @private
+ */
+function getCssSelector(s) {
+    return s.replace(RE_CSS_BB, ".$1").replace(RE_CSS_DOTS, ".");
+}
+// ====================================
+// Internal Helper (Not Exported)
+// ====================================
+/**
+ * Get boundingClientRect or BBox with caching.
+ * Internal helper for getBoundingRect() and getBBox()
+ * @param {boolean} relativeViewport Relative to viewport - true: will use .getBoundingClientRect(), false: will use .getBBox()
+ * @param {SVGElement} node Target element
+ * @param {boolean} forceEval Force evaluation
+ * @returns {object}
+ * @private
+ */
+function _getRect(relativeViewport, node, forceEval = false) {
+    const _ = n => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+    // cache per API: getBoundingClientRect(viewport coords) and getBBox(local coords)
+    // return different values for the same node and must not share one slot
+    const cacheKey = relativeViewport ? "rectClient" : "rectBBox";
+    if (forceEval) {
+        return _(node);
+    }
+    else {
+        // will cache the value if the element is not a SVGElement or the width is not set
+        const needEvaluate = !(cacheKey in node) || (node.hasAttribute("width") &&
+            node[cacheKey].width !== +(node.getAttribute("width") || 0));
+        return needEvaluate ? (node[cacheKey] = _(node)) : node[cacheKey];
+    }
+}
+// ====================================
+// Exported
+// ====================================
+/**
+ * Set text value. If there're multiline add nodes.
+ * @param {d3Selection} node Text node
+ * @param {string} text Text value string
+ * @param {Array} dy dy value for multilined text
+ * @param {boolean} toMiddle To be alingned vertically middle
+ * @private
+ */
+function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
+    if (!node || !isString(text)) {
+        return;
+    }
+    if (text.indexOf("\n") === -1) {
+        node.text(text);
+    }
+    else {
+        const diff = [node.text(), text].map(v => v.replace(/[\s\n]/g, ""));
+        if (diff[0] !== diff[1]) {
+            const multiline = text.split("\n");
+            const len = toMiddle ? multiline.length - 1 : 1;
+            // reset possible text
+            node.html("");
+            multiline.forEach((v, i) => {
+                node.append("tspan")
+                    .attr("x", 0)
+                    .attr("dy", `${i === 0 ? dy[0] * len : dy[1]}em`)
+                    .text(v);
+            });
+        }
+    }
+}
+/**
+ * Substitution of SVGPathSeg API polyfill
+ * @param {SVGGraphicsElement} path Target svg element
+ * @returns {Array}
+ * @private
+ */
+function getRectSegList(path) {
+    /*
+     * seg1 ---------- seg2
+     *   |               |
+     *   |               |
+     *   |               |
+     * seg0 ---------- seg3
+     */
+    const { x, y, width, height } = getBBox(path, true);
+    return [
+        { x, y: y + height }, // seg0
+        { x, y }, // seg1
+        { x: x + width, y }, // seg2
+        { x: x + width, y: y + height } // seg3
+    ];
+}
+/**
+ * Get svg bounding path box dimension
+ * @param {SVGGraphicsElement} path Target svg element
+ * @returns {object}
+ * @private
+ */
+function getPathBox(path) {
+    const { width, height } = getBoundingRect(path);
+    const items = getRectSegList(path);
+    const x = items[0].x;
+    const y = Math.min(items[0].y, items[1].y);
+    return {
+        x,
+        y,
+        width,
+        height
+    };
+}
+/**
+ * Get event's current position coordinates
+ * @param {object} event Event object
+ * @param {SVGElement|HTMLElement} element Target element
+ * @returns {Array} [x, y] Coordinates x, y array
+ * @private
+ */
+function getPointer(event, element) {
+    const touches = event &&
+        (event.touches || (event.sourceEvent && event.sourceEvent.touches))?.[0];
+    let pointer$1 = [0, 0];
+    try {
+        pointer$1 = pointer(touches || event, element);
+    }
+    catch { }
+    return pointer$1.map(v => (isNaN(v) ? 0 : v));
+}
+/**
+ * Get boundingClientRect.
+ * @param {SVGElement} node Target element
+ * @param {boolean} forceEval Force evaluation
+ * @returns {object}
+ * @private
+ */
+function getBoundingRect(node, forceEval = false) {
+    return _getRect(true, node, forceEval);
+}
+/**
+ * Get BBox.
+ * @param {SVGElement} node Target element
+ * @param {boolean} forceEval Force evaluation
+ * @returns {object}
+ * @private
+ */
+function getBBox(node, forceEval = false) {
+    return _getRect(false, node, forceEval);
+}
+/**
+ * Add CSS rules
+ * @param {object} style Style object
+ * @param {string} selector Selector string
+ * @param {Array} prop Prps arrary
+ * @returns {number} Newely added rule index
+ * @private
+ */
+function addCssRules(style, selector, prop) {
+    const { rootSelector = "", sheet } = style;
+    const rule = `${rootSelector} ${getCssSelector(selector)} {${prop.join(";")}}`;
+    return sheet[sheet.insertRule ? "insertRule" : "addRule"](rule, sheet.cssRules.length);
+}
+/**
+ * Get css rules for specified stylesheets
+ * @param {Array} styleSheets The stylesheets to get the rules from
+ * @returns {Array}
+ * @private
+ */
+function getCssRules(styleSheets) {
+    let rules = [];
+    styleSheets.forEach(sheet => {
+        try {
+            if (sheet.cssRules && sheet.cssRules.length) {
+                rules = rules.concat(toArray(sheet.cssRules));
+            }
+        }
+        catch (e) {
+            win.console?.warn(`Error while reading rules from ${sheet.href}: ${String(e)}`);
+        }
+    });
+    return rules;
+}
+/**
+ * Get current window and container scroll position
+ * @param {HTMLElement} node Target element
+ * @returns {object} window scroll position
+ * @private
+ */
+function getScrollPosition(node) {
+    return {
+        x: (win.pageXOffset ?? win.scrollX ?? 0) + (node.scrollLeft ?? 0),
+        y: (win.pageYOffset ?? win.scrollY ?? 0) + (node.scrollTop ?? 0)
+    };
+}
+/**
+ * Get translation string from screen <--> svg point
+ * @param {SVGGraphicsElement} node graphics element
+ * @param {number} x target x point
+ * @param {number} y target y point
+ * @param {boolean} inverse inverse flag
+ * @returns {object}
+ */
+function getTransformCTM(node, x = 0, y = 0, inverse = true) {
+    const point = new DOMPoint(x, y);
+    const screen = node.getScreenCTM();
+    const res = point.matrixTransform(inverse ? screen?.inverse() : screen);
+    if (inverse === false) {
+        const rect = getBoundingRect(node);
+        res.x -= rect.x;
+        res.y -= rect.y;
+    }
+    return res;
+}
+/**
+ * Gets the SVGMatrix of an SVGGElement
+ * @param {SVGElement} node Node element
+ * @returns {SVGMatrix} matrix
+ * @private
+ */
+function getTranslation(node) {
+    const transform = node ? node.transform : null;
+    const baseVal = transform && transform.baseVal;
+    return baseVal && baseVal.numberOfItems ?
+        baseVal.getItem(0).matrix :
+        { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
+}
+/**
+ * Get position value from element's attribute or transform
+ * @param {SVGElement} element SVG element
+ * @param {string} type Coordinate type ("x" or "y")
+ * @returns {number} Position value
+ * @private
+ */
+function getElementPos(element, type) {
+    const attr = element?.getAttribute?.(type);
+    if (attr) {
+        return parseFloat(attr);
+    }
+    const matrix = getTranslation(element);
+    return type === "x" ? matrix.e : matrix.f;
+}
+/**
+ * Check if svg element has viewBox attribute
+ * @param {d3Selection} svg Target svg selection
+ * @returns {boolean}
+ */
+function hasViewBox(svg) {
+    const attr = svg.attr("viewBox");
+    // a valid viewBox has 4 numeric tokens: "min-x min-y width height"
+    return attr ? attr.trim().split(/[\s,]+/).length === 4 : false;
+}
+/**
+ * Determine if given node has the specified style
+ * @param {d3Selection|SVGElement} node Target node
+ * @param {object} condition Conditional style props object
+ * @param {boolean} all If true, all condition should be matched
+ * @returns {boolean}
+ */
+function hasStyle(node, condition, all = false) {
+    const isD3Node = !!node.node;
+    let has = false;
+    for (const [key, value] of Object.entries(condition)) {
+        has = isD3Node ? node.style(key) === value : node.style[key] === value;
+        // any-mode: stop on first match / all-mode: stop on first mismatch
+        if (all ? !has : has) {
+            break;
+        }
+    }
+    return has;
+}
+/**
+ * Return if the current doc is visible or not
+ * @returns {boolean}
+ * @private
+ */
+function isTabVisible() {
+    return doc?.hidden === false || doc?.visibilityState === "visible";
+}
+/**
+ * Get the current input type
+ * @param {boolean} mouse Config value: interaction.inputType.mouse
+ * @param {boolean} touch Config value: interaction.inputType.touch
+ * @returns {string} "mouse" | "touch" | null
+ * @private
+ */
+function convertInputType(mouse, touch) {
+    const { DocumentTouch, matchMedia, navigator } = win;
+    // https://developer.mozilla.org/en-US/docs/Web/CSS/@media/pointer#coarse
+    const hasPointerCoarse = matchMedia?.("(pointer:coarse)").matches;
+    let hasTouch = false;
+    if (touch) {
+        // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
+        if (navigator && "maxTouchPoints" in navigator) {
+            hasTouch = navigator.maxTouchPoints > 0;
+            // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+            // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
+        }
+        else if ("ontouchmove" in win || (DocumentTouch && doc instanceof DocumentTouch)) {
+            hasTouch = true;
+        }
+        else {
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
+            if (hasPointerCoarse) {
+                hasTouch = true;
+            }
+            else {
+                // Only as a last resort, fall back to user agent sniffing
+                const UA = navigator.userAgent;
+                hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+                    /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
+            }
+        }
+    }
+    // For non-touch device, media feature condition is: '(pointer:coarse) = false' and '(pointer:fine) = true'
+    // https://github.com/naver/billboard.js/issues/3854#issuecomment-2404183158
+    const hasMouse = mouse && !hasPointerCoarse && matchMedia?.("(pointer:fine)").matches;
+    // fallback to 'mouse' if no input type is detected.
+    return (hasMouse && "mouse") || (hasTouch && "touch") || "mouse";
+}
+/**
+ * Schedule a RAF update to batch multiple redraw requests
+ * Manages a RAF state object to intelligently batch rapid updates while ensuring
+ * immediate execution for the first call (for test compatibility)
+ * @param {object} rafState RAF state object with pendingRaf property
+ * @param {number|null} rafState.pendingRaf ID of pending RAF or null
+ * @param {function} callback Function to execute in RAF
+ * @returns {void}
+ * @private
+ */
+function scheduleRAFUpdate(rafState, callback) {
+    // If there's already a pending RAF, we're in a rapid update scenario
+    // Cancel it and schedule a new one to batch the updates
+    if (rafState.pendingRaf !== null) {
+        win.cancelAnimationFrame(rafState.pendingRaf);
+        // Schedule new RAF
+        rafState.pendingRaf = win.requestAnimationFrame(() => {
+            rafState.pendingRaf = null;
+            callback();
+        });
+    }
+    else {
+        // First call - execute immediately for test compatibility
+        // But set pending RAF to detect rapid consecutive calls
+        rafState.pendingRaf = win.requestAnimationFrame(() => {
+            rafState.pendingRaf = null;
+        });
+        callback();
+    }
+}
+// emulate event
+const emulateEvent = {
+    mouse: (() => {
+        const getParams = () => ({
+            bubbles: false,
+            cancelable: false,
+            screenX: 0,
+            screenY: 0,
+            clientX: 0,
+            clientY: 0
+        });
+        try {
+            // eslint-disable-next-line no-new
+            new MouseEvent("t");
+            return (el, eventType, params = getParams()) => {
+                el.dispatchEvent(new MouseEvent(eventType, params));
+            };
+        }
+        catch {
+            // Polyfills DOM4 MouseEvent
+            return (el, eventType, params = getParams()) => {
+                const mouseEvent = doc.createEvent("MouseEvent");
+                // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
+                mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
+                params.screenX, params.screenY, params.clientX, params.clientY, false, false, false, false, 0, null);
+                el.dispatchEvent(mouseEvent);
+            };
+        }
+    })(),
+    touch: (el, eventType, params) => {
+        const touchObj = new Touch(mergeObj({
+            identifier: Date.now(),
+            target: el,
+            radiusX: 2.5,
+            radiusY: 2.5,
+            rotationAngle: 10,
+            force: 0.5
+        }, params));
+        el.dispatchEvent(new TouchEvent(eventType, {
+            cancelable: true,
+            bubbles: true,
+            shiftKey: true,
+            touches: [touchObj],
+            targetTouches: [],
+            changedTouches: [touchObj]
+        }));
+    }
+};
+
+export { addCssRules, convertInputType, emulateEvent, getBBox, getBoundingRect, getCssRules, getElementPos, getPathBox, getPointer, getRectSegList, getScrollPosition, getTransformCTM, getTranslation, hasStyle, hasViewBox, isTabVisible, scheduleRAFUpdate, setTextValue };

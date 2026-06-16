@@ -1,0 +1,306 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.0.0
+*/
+import { scaleOrdinal } from 'd3-scale';
+import { select } from 'd3-selection';
+import { $ARC, $SHAPE, $COLOR } from '../../config/classes.js';
+import { document as doc } from '../../module/browser.js';
+import { KEY } from '../../module/Cache.js';
+import { isObject, isString, isFunction, notEmpty } from '../../module/util/type-checks.js';
+import { sanitize } from '../../module/sanitize.js';
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Set pattern's background color
+ * (it adds a <rect> element to simulate bg-color)
+ * @param {SVGPatternElement} pattern SVG pattern element
+ * @param {string} color Color string
+ * @param {string} id ID to be set
+ * @returns {{id: string, node: SVGPatternElement}}
+ * @private
+ */
+const _colorizePattern = (pattern, color, id) => {
+    const node = select(pattern.cloneNode(true));
+    node
+        .attr("id", id)
+        .insert("rect", ":first-child")
+        .attr("width", node.attr("width"))
+        .attr("height", node.attr("height"))
+        .style("fill", color);
+    return {
+        id,
+        node: node.node()
+    };
+};
+/**
+ * Get color pattern from CSS file
+ * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
+ * @param {d3Selection} element Chart element
+ * @returns {Array}
+ * @private
+ */
+function _getColorFromCss(element) {
+    const cacheKey = KEY.colorPattern;
+    const { body } = doc;
+    let pattern = body[cacheKey];
+    if (!pattern) {
+        const delimiter = ";";
+        const content = element
+            .classed($COLOR.colorPattern, true)
+            .style("background-image");
+        element.classed($COLOR.colorPattern, false);
+        if (content.indexOf(delimiter) > -1) {
+            pattern = content
+                .replace(/url[^#]*|["'()]|(\s|%20)/g, "")
+                .split(delimiter)
+                .map(v => v.trim().replace(/[\"'\s]/g, ""))
+                .filter(Boolean);
+            body[cacheKey] = pattern;
+        }
+    }
+    return pattern;
+}
+// Replacement of d3.schemeCategory10.
+// Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
+const schemeCategory10 = [
+    "#1f77b4",
+    "#ff7f0e",
+    "#2ca02c",
+    "#d62728",
+    "#9467bd",
+    "#8c564b",
+    "#e377c2",
+    "#7f7f7f",
+    "#bcbd22",
+    "#17becf"
+];
+var color = {
+    generateColor() {
+        const $$ = this;
+        const { $el, config } = $$;
+        const ids = [];
+        const hasGradient = config.area_linearGradient || config.bar_linearGradient ||
+            config.point_radialGradient;
+        let pattern = notEmpty(config.color_pattern) ?
+            config.color_pattern :
+            scaleOrdinal(_getColorFromCss($el.chart) || schemeCategory10).range();
+        const originalColorPattern = pattern;
+        if (isFunction(config.color_tiles)) {
+            const tiles = config.color_tiles.bind($$.api)();
+            // Add background color to patterns
+            const colorizedPatterns = pattern.map((p, index) => {
+                const color = p.replace(/[#\(\)\s,]/g, "");
+                const id = `${$$.state.datetimeId}-pattern-${color}-${index}`;
+                return _colorizePattern(tiles[index % tiles.length], p, id);
+            });
+            pattern = colorizedPatterns.map(p => `url(#${p.id})`);
+            $$.patterns = colorizedPatterns;
+        }
+        return function (d) {
+            const colors = config.data_colors;
+            const callback = config.data_color;
+            const id = d.id ||
+                d.data?.id ||
+                d;
+            const isLine = $$.isTypeOf(id, ["line", "spline", "step"]) || !config.data_types[id];
+            let color;
+            // if callback function is provided
+            if (isFunction(colors[id])) {
+                color = colors[id].bind($$.api)(d);
+            }
+            else if (colors[id]) {
+                // if specified, choose that color
+                color = colors[id];
+            }
+            else {
+                // if not specified, choose from pattern
+                let idx = ids.indexOf(id);
+                if (idx < 0) {
+                    ids.push(id);
+                    idx = ids.length - 1;
+                }
+                color = isLine ?
+                    originalColorPattern[idx % originalColorPattern.length] :
+                    pattern[idx % pattern.length];
+                colors[id] = color;
+            }
+            color = isFunction(callback) ? callback.call($$.api, color, d) : color;
+            if (hasGradient && $el.defs) {
+                const stop = $$.$el.defs.selectAll(`[id$='-gradient${$$.getTargetSelectorSuffix(id)}'] stop`);
+                let hasSameColor;
+                stop.each(function (d, i) {
+                    hasSameColor = i === 0 ?
+                        this.style.stopColor :
+                        this.style.stopColor === hasSameColor;
+                });
+                hasSameColor === true && stop.attr("stop-color", color);
+            }
+            return color;
+        };
+    },
+    generateLevelColor() {
+        const $$ = this;
+        const { config } = $$;
+        const colors = config.color_pattern;
+        const threshold = config.color_threshold;
+        const asValue = threshold.unit === "value";
+        const max = threshold.max || 100;
+        const values = threshold.values &&
+            threshold.values.length ?
+            threshold.values :
+            [];
+        return notEmpty(threshold) ?
+            function (value) {
+                const v = asValue ? value : (value * 100 / max);
+                let color = colors[colors.length - 1];
+                for (let i = 0, l = values.length; i < l; i++) {
+                    if (v <= values[i]) {
+                        color = colors[i];
+                        break;
+                    }
+                }
+                return color;
+            } :
+            null;
+    },
+    /**
+     * Append data backgound color filter definition
+     * @param {string|object|function} color Color string, object, or function
+     * @param {object} attr filter attribute
+     * @private
+     */
+    generateTextBGColorFilter(color, attr = {
+        x: 0,
+        y: 0,
+        width: 1,
+        height: 1
+    }) {
+        const $$ = this;
+        const { $el: { defs }, state } = $$;
+        if (color) {
+            let ids = [];
+            if (isString(color)) {
+                ids.push("");
+            }
+            else if (isObject(color)) {
+                ids = Object.keys(color);
+            }
+            else if (isFunction(color)) {
+                ids = $$.mapToTargetIds();
+            }
+            ids.forEach(v => {
+                const id = `${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(v)}${isString(color) ? $$.getTargetSelectorSuffix(color) : ""}`;
+                const colorValue = sanitize(v === "" ? color : color?.[v] || "");
+                if (defs.select(`#${id}`).empty()) {
+                    defs.append("filter")
+                        .attr("x", attr.x)
+                        .attr("y", attr.y)
+                        .attr("width", attr.width)
+                        .attr("height", attr.height)
+                        .attr("id", id)
+                        .html(`<feFlood flood-color="${colorValue}" />
+							<feComposite in="SourceGraphic" />`);
+                }
+            });
+        }
+        // Note: For function type, filters will be created dynamically in updateTextBGColor
+    },
+    /**
+     * Get data gradient color url
+     * @param {string} id Data id
+     * @returns {string}
+     * @private
+     */
+    getGradienColortUrl(id) {
+        return `url(#${this.state.datetimeId}-gradient${this.getTargetSelectorSuffix(id)})`;
+    },
+    /**
+     * Update linear/radial gradient definition
+     * - linear: area & bar only
+     * - radial: type which has data points only
+     * @private
+     */
+    updateLinearGradient() {
+        const $$ = this;
+        const { config, data: { targets }, state: { datetimeId }, $el: { defs } } = $$;
+        targets.forEach(d => {
+            const id = `${datetimeId}-gradient${$$.getTargetSelectorSuffix(d.id)}`;
+            const radialGradient = $$.hasPointType() && config.point_radialGradient;
+            const supportedType = ($$.isAreaType(d) && "area") || ($$.isBarType(d) && "bar");
+            if ((radialGradient || supportedType) && defs.select(`#${id}`).empty()) {
+                const color = $$.color(d);
+                const gradient = {
+                    defs: null,
+                    stops: []
+                };
+                if (radialGradient) {
+                    const { cx = 0.3, cy = 0.3, r = 0.7, stops = [[0.1, color, 0], [0.9, color, 1]] } = radialGradient;
+                    gradient.stops = stops;
+                    gradient.defs = defs.append("radialGradient")
+                        .attr("id", `${id}`)
+                        .attr("cx", cx)
+                        .attr("cy", cy)
+                        .attr("r", r);
+                }
+                else {
+                    const isRotated = config.axis_rotated;
+                    const { x = isRotated ? [1, 0] : [0, 0], y = isRotated ? [0, 0] : [0, 1], stops = [[0, color, 1], [1, color, 0]] } = config[`${supportedType}_linearGradient`];
+                    gradient.stops = stops;
+                    gradient.defs = defs.append("linearGradient")
+                        .attr("id", `${id}`)
+                        .attr("x1", x[0])
+                        .attr("x2", x[1])
+                        .attr("y1", y[0])
+                        .attr("y2", y[1]);
+                }
+                gradient.stops.forEach((v) => {
+                    const [offset, stopColor, stopOpacity] = v;
+                    const colorValue = isFunction(stopColor) ?
+                        stopColor.bind($$.api)(d.id) :
+                        stopColor;
+                    gradient.defs && gradient.defs.append("stop")
+                        .attr("offset", offset)
+                        .attr("stop-color", colorValue || color)
+                        .attr("stop-opacity", stopOpacity);
+                });
+            }
+        });
+    },
+    /**
+     * Set the data over color.
+     * When is out, will restate in its previous color value
+     * @param {boolean} isOver true: set overed color, false: restore
+     * @param {number|object} d target index or data object for Arc type
+     * @private
+     */
+    setOverColor(isOver, d) {
+        const $$ = this;
+        const { config, $el: { main } } = $$;
+        const onover = config.color_onover;
+        let color = isOver ? onover : $$.color;
+        if (isObject(color)) {
+            color = ({ id }) => (id in onover ? onover[id] : $$.color(id));
+        }
+        else if (isString(color)) {
+            color = () => onover;
+        }
+        else if (isFunction(onover)) {
+            color = color.bind($$.api);
+        }
+        main.selectAll(isObject(d) ?
+            // when is Arc type
+            `.${$ARC.arc}${$$.getTargetSelectorSuffix(d.id)}` :
+            `.${$SHAPE.shape}-${d}`).style("fill", color);
+    }
+};
+
+export { color as default };

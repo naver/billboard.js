@@ -1,0 +1,96 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.0.0
+*/
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * zoom config options
+ */
+var optZoom = {
+    /**
+     * Set zoom options
+     * @name zoom
+     * @memberof Options
+     * @type {object}
+     * @property {object} zoom Zoom object
+     * @property {boolean} [zoom.enabled=false] Enable zooming.
+     *  - **NOTE:** for ESM imports, needs to import 'zoom' exports and instantiate it by calling `zoom()`.
+     *    - `enabled: zoom()`
+     * @property {string} [zoom.type='wheel'] Set zoom interaction type.
+     *  - **Available types:**
+     *    - wheel
+     *    - drag
+     * @property {boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
+     *  If true set, y domain will be updated according to the zoomed region.
+     * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
+     * @property {number|Date} [zoom.x.min] Set x Axis minimum zoom range
+     * @property {number|Date} [zoom.x.max] Set x Axis maximum zoom range
+     * @property {function} [zoom.onzoomstart=undefined] Set callback that is called when zooming starts.<br>
+     *  Specified function receives the zoom event.
+     * @property {function} [zoom.onzoom=undefined] Set callback that is called when the chart is zooming.<br>
+     *  Specified function receives the zoomed domain.
+     * @property {function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
+     *  Specified function receives the zoomed domain.
+     * @property {boolean|object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
+     * @property {function} [zoom.resetButton.onclick] Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
+     * @property {string} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
+     * @see [Demo:zoom](https://naver.github.io/billboard.js/demo/#Interaction.Zoom)
+     * @see [Demo:drag zoom](https://naver.github.io/billboard.js/demo/#Interaction.DragZoom)
+     * @example
+     *  zoom: {
+     *      enabled: true,
+     *      type: "drag",
+     *      rescale: true,
+     *      extent: [1, 100]  // enable more zooming
+     *      x: {
+     *          min: -1,  // set min range
+     *          max: 10  // set max range
+     *      },
+     *      onzoomstart: function(event) { ... },
+     *      onzoom: function(domain) { ... },
+     *      onzoomend: function(domain) { ... },
+     *
+     *      // show reset button when is zoomed-in
+     *      resetButton: true,
+     *
+     *      resetButton: {
+     *          // onclick callback when reset button is clicked
+     *          onclick: function(button) {
+     *            button; // Reset button element reference
+     *            ...
+     *          },
+     *
+     *          // customized text value for reset zoom button
+     *          text: "Unzoom"
+     *      }
+     *  }
+     * @example
+     * // importing ESM
+     * import bb, {zoom} from "billboard.js";
+     *
+     * zoom: {
+     *      enabled: zoom(),
+     *      ...
+     * }
+     */
+    zoom_enabled: false,
+    zoom_type: "wheel",
+    zoom_extent: undefined,
+    zoom_rescale: false,
+    zoom_onzoom: undefined,
+    zoom_onzoomstart: undefined,
+    zoom_onzoomend: undefined,
+    zoom_resetButton: true,
+    zoom_x_min: undefined,
+    zoom_x_max: undefined
+};
+
+export { optZoom as default };

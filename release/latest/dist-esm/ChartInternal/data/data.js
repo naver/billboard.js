@@ -1,0 +1,1159 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.0.0
+*/
+import { select } from 'd3-selection';
+import { $BAR, $COMMON, $CANDLESTICK } from '../../config/classes.js';
+import { KEY } from '../../module/Cache.js';
+import { isArray, isNumber, isObject, isUndefined, isValue, isString, isBoolean, isObjectType, notEmpty, isFunction, isDefined } from '../../module/util/type-checks.js';
+import { getScrollPosition, hasViewBox, getTransformCTM } from '../../module/util/dom.js';
+import { getUnique, mergeArray, sortValue, parseDate, hasValue, findIndex } from '../../module/util/object.js';
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+// ranged data key-to-index lookup, used by getRangedData()
+const rangedDataKeyIndex = {
+    areaRange: { high: 0, mid: 1, low: 2 },
+    candlestick: { open: 0, high: 1, low: 2, close: 3, volume: 4 }
+};
+var data = {
+    isX(key) {
+        const $$ = this;
+        const { config } = $$;
+        const dataKey = config.data_x && key === config.data_x;
+        const existValue = notEmpty(config.data_xs) && hasValue(config.data_xs, key);
+        return dataKey || existValue;
+    },
+    isStackNormalized() {
+        const { config } = this;
+        return !!((config.data_stack_normalize === true ||
+            isObjectType(config.data_stack_normalize)) &&
+            config.data_groups.length);
+    },
+    /**
+     * Check if stack normalization should be applied per group
+     * @returns {boolean}
+     * @private
+     */
+    isStackNormalizedPerGroup() {
+        const { config } = this;
+        return !!(isObjectType(config.data_stack_normalize) &&
+            config.data_stack_normalize?.perGroup &&
+            config.data_groups.length);
+    },
+    /**
+     * Check if given id is grouped data or has grouped data
+     * @param {string} id Data id value
+     * @returns {boolean} is grouped data or has grouped data
+     * @private
+     */
+    isGrouped(id) {
+        const groups = this.config.data_groups;
+        return id ? groups.some(v => v.indexOf(id) >= 0 && v.length > 1) : groups.length > 0;
+    },
+    /**
+     * Check if the given axis has any grouped data
+     * @param {string} axisId Axis ID (e.g., "y", "y2")
+     * @returns {boolean} true if axis has grouped data
+     * @private
+     */
+    hasAxisGroupedData(axisId) {
+        const $$ = this;
+        const { axis } = $$;
+        const targets = $$.data.targets;
+        // Get all data IDs that belong to this axis
+        const axisDataIds = targets
+            .filter(t => axis.getId(t.id) === axisId)
+            .map(t => t.id);
+        // Check if any of the axis data IDs are in groups
+        return axisDataIds.some(id => $$.isGrouped(id));
+    },
+    getXKey(id) {
+        const $$ = this;
+        const { config } = $$;
+        return config.data_x ?
+            config.data_x :
+            (notEmpty(config.data_xs) ? config.data_xs[id] : null);
+    },
+    getXValuesOfXKey(key, targets) {
+        const $$ = this;
+        const ids = targets && notEmpty(targets) ? $$.mapToIds(targets) : [];
+        let xValues;
+        ids.forEach(id => {
+            if ($$.getXKey(id) === key) {
+                xValues = $$.data.xs[id];
+            }
+        });
+        return xValues;
+    },
+    /**
+     * Get index number based on given x Axis value
+     * @param {Date|number|string} x x Axis to be compared
+     * @param {Array} basedX x Axis list to be based on
+     * @returns {number} index number
+     * @private
+     */
+    getIndexByX(x, basedX) {
+        const $$ = this;
+        return basedX ?
+            basedX.indexOf(isString(x) ? x : +x) :
+            ($$.filterByX($$.data.targets, x)[0] || { index: null }).index;
+    },
+    getXValue(id, i) {
+        const $$ = this;
+        return id in $$.data.xs &&
+            $$.data.xs[id] &&
+            isValue($$.data.xs[id][i]) ?
+            $$.data.xs[id][i] :
+            i;
+    },
+    getOtherTargetXs() {
+        const $$ = this;
+        const idsForX = Object.keys($$.data.xs);
+        return idsForX.length ? $$.data.xs[idsForX[0]] : null;
+    },
+    getOtherTargetX(index) {
+        const xs = this.getOtherTargetXs();
+        return xs && index < xs.length ? xs[index] : null;
+    },
+    addXs(xs) {
+        const $$ = this;
+        const { config } = $$;
+        Object.keys(xs).forEach(id => {
+            config.data_xs[id] = xs[id];
+        });
+    },
+    /**
+     * Determine if x axis is multiple
+     * @returns {boolean} true: multiple, false: single
+     * @private
+     */
+    isMultipleX() {
+        return !this.config.axis_x_forceAsSingle && (notEmpty(this.config.data_xs) ||
+            this.hasType("bubble") ||
+            this.hasType("scatter"));
+    },
+    addName(data) {
+        const $$ = this;
+        const { config } = $$;
+        let name;
+        if (data) {
+            name = config.data_names[data.id];
+            data.name = name !== undefined ? name : data.id;
+        }
+        return data;
+    },
+    /**
+     * Get all values on given index
+     * @param {number} index Index
+     * @param {boolean} filterNull Filter nullish value
+     * @returns {Array}
+     * @private
+     */
+    getAllValuesOnIndex(index, filterNull = false) {
+        const $$ = this;
+        let value = $$.filterTargetsToShow($$.data.targets)
+            .map(t => $$.addName($$.getValueOnIndex(t.values, index)));
+        if (filterNull) {
+            value = value.filter(v => v && "value" in v && isValue(v.value));
+        }
+        return value;
+    },
+    getValueOnIndex(values, index) {
+        // Fast path: values are sorted by index from convertDataToTargets
+        if (values[index]?.index === index) {
+            return values[index];
+        }
+        // Fallback for sparse/reordered data
+        const valueOnIndex = values.filter(v => v.index === index);
+        return valueOnIndex.length ? valueOnIndex[0] : null;
+    },
+    updateTargetX(targets, x) {
+        const $$ = this;
+        targets.forEach(t => {
+            t.values.forEach((v, i) => {
+                v.x = $$.generateTargetX(x[i], t.id, i);
+            });
+            $$.data.xs[t.id] = x;
+        });
+    },
+    updateTargetXs(targets, xs) {
+        const $$ = this;
+        targets.forEach(t => {
+            xs[t.id] && $$.updateTargetX([t], xs[t.id]);
+        });
+    },
+    generateTargetX(rawX, id, index) {
+        const $$ = this;
+        const { axis } = $$;
+        let x = axis?.isCategorized() ? index : (rawX || index);
+        if (axis?.isTimeSeries()) {
+            const fn = parseDate.bind($$);
+            x = rawX ? fn(rawX) : fn($$.getXValue(id, index));
+        }
+        else if (axis?.isCustomX() && !axis?.isCategorized()) {
+            x = isValue(rawX) ? +rawX : $$.getXValue(id, index);
+        }
+        return x;
+    },
+    updateXs(values) {
+        if (values.length) {
+            this.axis.xs = values.map(v => v.x);
+        }
+    },
+    getPrevX(i) {
+        const x = this.axis.xs[i - 1];
+        return isDefined(x) ? x : null;
+    },
+    getNextX(i) {
+        const x = this.axis.xs[i + 1];
+        return isDefined(x) ? x : null;
+    },
+    /**
+     * Get base value isAreaRangeType
+     * @param {object} data Data object
+     * @returns {number}
+     * @private
+     */
+    getBaseValue(data) {
+        const $$ = this;
+        const { hasAxis } = $$.state;
+        let { value } = data;
+        // In case of area-range, data is given as: [low, mid, high] or {low, mid, high}
+        // will take the 'mid' as the base value
+        if (value && hasAxis) {
+            if ($$.isAreaRangeType(data)) {
+                value = $$.getRangedData(data, "mid");
+            }
+            else if ($$.isBubbleZType(data)) {
+                value = $$.getBubbleZData(value, "y");
+            }
+        }
+        return value;
+    },
+    /**
+     * Get min/max value from the data
+     * @private
+     * @param {Array} data array data to be evaluated
+     * @returns {{min: {number}, max: {number}}}
+     */
+    getMinMaxValue(data) {
+        const getBaseValue = this.getBaseValue.bind(this);
+        let min = Infinity;
+        let max = -Infinity;
+        const targets = data || this.data.targets.map(t => t.values);
+        for (let i = 0; i < targets.length; i++) {
+            const v = targets[i];
+            for (let j = 0; j < v.length; j++) {
+                const val = getBaseValue(v[j]);
+                if (isNumber(val)) {
+                    if (val < min)
+                        min = val;
+                    if (val > max)
+                        max = val;
+                }
+            }
+        }
+        return { min, max };
+    },
+    /**
+     * Get the min/max data
+     * @private
+     * @returns {{min: Array, max: Array}}
+     */
+    getMinMaxData() {
+        const $$ = this;
+        const cacheKey = KEY.dataMinMax;
+        let minMaxData = $$.cache.get(cacheKey);
+        if (!minMaxData) {
+            const data = $$.data.targets.map(t => t.values);
+            const minMax = $$.getMinMaxValue(data);
+            const min = [];
+            const max = [];
+            // Cache the getFilteredDataByValue function calls
+            const { min: minVal, max: maxVal } = minMax;
+            data.forEach(v => {
+                const minData = $$.getFilteredDataByValue(v, minVal);
+                const maxData = $$.getFilteredDataByValue(v, maxVal);
+                if (minData.length) {
+                    for (let i = 0; i < minData.length; i++) {
+                        min.push(minData[i]);
+                    }
+                }
+                if (maxData.length) {
+                    for (let i = 0; i < maxData.length; i++) {
+                        max.push(maxData[i]);
+                    }
+                }
+            });
+            // update the cached data
+            $$.cache.add(cacheKey, minMaxData = { min, max });
+        }
+        return minMaxData;
+    },
+    /**
+     * Get sum of data per index
+     * @param {string} targetId Target ID to get total for (only for normalized stack per group)
+     * @private
+     * @returns {Array}
+     */
+    getTotalPerIndex(targetId) {
+        const $$ = this;
+        const { config } = $$;
+        const cacheKey = targetId ? `${KEY.dataTotalPerIndex}-${targetId}` : KEY.dataTotalPerIndex;
+        let sum = $$.cache.get(cacheKey);
+        if (($$.config.data_groups.length || $$.isStackNormalized()) && !sum) {
+            sum = [];
+            // When normalize per group is enabled and targetId is provided,
+            // only sum data within the same group
+            let { targets } = $$.data;
+            if ($$.isStackNormalizedPerGroup() && targetId) {
+                // Find which group the target belongs to
+                const group = config.data_groups.find(g => g.indexOf(targetId) >= 0);
+                if (group) {
+                    // Only sum targets in the same group
+                    targets = targets.filter(t => group.indexOf(t.id) >= 0);
+                }
+                else {
+                    // If target is not in any group, return null to indicate no normalization
+                    return null;
+                }
+            }
+            targets.forEach(row => {
+                row.values.forEach((v, i) => {
+                    if (!sum[i]) {
+                        sum[i] = 0;
+                    }
+                    sum[i] += isNumber(v.value) ? v.value : 0;
+                });
+            });
+            $$.cache.add(cacheKey, sum);
+        }
+        return sum;
+    },
+    /**
+     * Get total data sum
+     * @param {boolean} subtractHidden Subtract hidden data from total
+     * @returns {number}
+     * @private
+     */
+    getTotalDataSum(subtractHidden) {
+        const $$ = this;
+        const cacheKey = KEY.dataTotalSum;
+        let total = $$.cache.get(cacheKey);
+        if (!isNumber(total)) {
+            total = $$.data.targets.reduce((acc, t) => {
+                return acc + t.values.reduce((sum, v) => sum + (v.value ?? 0), 0);
+            }, 0);
+            $$.cache.add(cacheKey, total);
+        }
+        if (subtractHidden) {
+            total -= $$.getHiddenTotalDataSum();
+        }
+        return total;
+    },
+    /**
+     * Get total hidden data sum
+     * @returns {number}
+     * @private
+     */
+    getHiddenTotalDataSum() {
+        const $$ = this;
+        const { api, state: { hiddenTargetIds } } = $$;
+        let total = 0;
+        if (hiddenTargetIds.size) {
+            total = api.data.values.bind(api)([...hiddenTargetIds])
+                .reduce((p, c) => p + c, 0);
+        }
+        return total;
+    },
+    /**
+     * Get filtered data by value
+     * @param {object} data Data
+     * @param {number} value Value to be filtered
+     * @returns {Array} filtered array data
+     * @private
+     */
+    getFilteredDataByValue(data, value) {
+        return data.filter(t => this.getBaseValue(t) === value);
+    },
+    /**
+     * Return the max length of the data
+     * @returns {number} max data length
+     * @private
+     */
+    getMaxDataCount() {
+        const { targets } = this.data;
+        let max = 0;
+        for (let i = 0; i < targets.length; i++) {
+            if (targets[i].values.length > max) {
+                max = targets[i].values.length;
+            }
+        }
+        return max;
+    },
+    getMaxDataCountTarget() {
+        const $$ = this;
+        const { cache, state } = $$;
+        const cached = cache.get(KEY.maxDataCountTarget);
+        if (cached && cached.generation === state.dataGeneration) {
+            return cached.value;
+        }
+        let target = $$.filterTargetsToShow() || [];
+        const length = target.length;
+        const isInverted = $$.config.axis_x_inverted;
+        if (length > 1) {
+            const allX = [];
+            for (let i = 0; i < target.length; i++) {
+                const values = target[i].values;
+                for (let j = 0; j < values.length; j++) {
+                    allX.push(values[j].x);
+                }
+            }
+            target = allX;
+            target = sortValue(getUnique(target))
+                .map((x, index, array) => ({
+                x,
+                index: isInverted ? array.length - index - 1 : index
+            }));
+        }
+        else if (length) {
+            target = target[0].values.concat();
+        }
+        cache.add(KEY.maxDataCountTarget, { value: target, generation: state.dataGeneration });
+        return target;
+    },
+    mapToIds(targets) {
+        return targets.map(d => d.id);
+    },
+    mapToTargetIds(ids) {
+        const $$ = this;
+        return ids ? (isArray(ids) ? ids.concat() : [ids]) : $$.mapToIds($$.data.targets);
+    },
+    hasTarget(targets, id) {
+        const ids = this.mapToIds(targets);
+        for (let i = 0, val; (val = ids[i]); i++) {
+            if (val === id) {
+                return true;
+            }
+        }
+        return false;
+    },
+    isTargetToShow(targetId) {
+        return !this.state.hiddenTargetIds.has(targetId);
+    },
+    isLegendToShow(targetId) {
+        return !this.state.hiddenLegendIds.has(targetId);
+    },
+    getTargetsToShow() {
+        const { state } = this;
+        return state._targetsToShow ?? this.filterTargetsToShow();
+    },
+    filterTargetsToShow(targets) {
+        const $$ = this;
+        // When called without arguments, use caching
+        if (!targets) {
+            const { cache, data, state } = $$;
+            const cacheKey = KEY.filteredTargets;
+            const cached = cache.get(cacheKey);
+            // Return cached result if generation matches
+            if (cached && cached.generation === state.dataGeneration) {
+                return cached.value;
+            }
+            // Compute and cache result
+            const filtered = data.targets.filter(t => $$.isTargetToShow(t.id));
+            cache.add(cacheKey, { value: filtered, generation: state.dataGeneration });
+            return filtered;
+        }
+        // When called with custom targets, don't cache
+        return targets.filter(t => $$.isTargetToShow(t.id));
+    },
+    mapTargetsToUniqueXs(targets) {
+        const $$ = this;
+        const { axis } = $$;
+        let xs = [];
+        if (targets?.length) {
+            xs = getUnique(mergeArray(targets.map(t => t.values.map(v => +v.x))));
+            xs = axis?.isTimeSeries() ? xs.map(x => new Date(+x)) : xs.map(Number);
+        }
+        return sortValue(xs);
+    },
+    /**
+     * Add to thetarget Ids
+     * @param {string} type State's prop name
+     * @param {Array|string} targetIds Target ids array
+     * @private
+     */
+    addTargetIds(type, targetIds) {
+        const { state } = this;
+        const ids = (isArray(targetIds) ? targetIds : [targetIds]);
+        ids.forEach(v => state[type].add(v));
+    },
+    /**
+     * Remove from the state target Ids
+     * @param {string} type State's prop name
+     * @param {Array|string} targetIds Target ids array
+     * @private
+     */
+    removeTargetIds(type, targetIds) {
+        const { state } = this;
+        const ids = (isArray(targetIds) ? targetIds : [targetIds]);
+        ids.forEach(v => state[type].delete(v));
+    },
+    addHiddenTargetIds(targetIds) {
+        this.addTargetIds("hiddenTargetIds", targetIds);
+    },
+    removeHiddenTargetIds(targetIds) {
+        this.removeTargetIds("hiddenTargetIds", targetIds);
+    },
+    addHiddenLegendIds(targetIds) {
+        this.addTargetIds("hiddenLegendIds", targetIds);
+    },
+    removeHiddenLegendIds(targetIds) {
+        this.removeTargetIds("hiddenLegendIds", targetIds);
+    },
+    getValuesAsIdKeyed(targets) {
+        const $$ = this;
+        const { hasAxis } = $$.state;
+        const ys = {};
+        const isMultipleX = $$.isMultipleX();
+        let xIndexMap = null;
+        if (isMultipleX) {
+            const cached = $$.cache.get(KEY.valuesXIndexMap);
+            if (cached && cached.generation === $$.state.dataGeneration) {
+                xIndexMap = cached.value;
+            }
+            else {
+                const xs = $$.mapTargetsToUniqueXs($$.data.targets)
+                    .map(v => (isString(v) ? v : +v));
+                xIndexMap = new Map(xs.map((x, i) => [x, i]));
+                $$.cache.add(KEY.valuesXIndexMap, {
+                    value: xIndexMap,
+                    generation: $$.state.dataGeneration
+                });
+            }
+        }
+        targets.forEach(t => {
+            const data = [];
+            t.values
+                .filter(({ value }) => isValue(value) || value === null)
+                .forEach(v => {
+                let { value } = v;
+                // exclude 'volume' value to correct mis domain calculation
+                if (value !== null && $$.isCandlestickType(v)) {
+                    value = isArray(value) ?
+                        value.slice(0, 4) :
+                        [value.open, value.high, value.low, value.close];
+                }
+                if (isArray(value)) {
+                    data.push(...value);
+                }
+                else if (isObject(value) && "high" in value) {
+                    data.push(...Object.values(value));
+                }
+                else if ($$.isBubbleZType(v)) {
+                    data.push(hasAxis && $$.getBubbleZData(value, "y"));
+                }
+                else {
+                    if (isMultipleX && xIndexMap) {
+                        // Use Map for O(1) lookup instead of getIndexByX which uses indexOf
+                        const xKey = isString(v.x) ? v.x : +v.x;
+                        const index = xIndexMap.get(xKey);
+                        if (index !== undefined) {
+                            data[index] = value;
+                        }
+                    }
+                    else {
+                        data.push(value);
+                    }
+                }
+            });
+            ys[t.id] = data;
+        });
+        return ys;
+    },
+    hasMultiTargets() {
+        return this.filterTargetsToShow().length > 1;
+    },
+    /**
+     * Sort targets data
+     * Note: For stacked bar, will sort from the total sum of data series, not for each stacked bar
+     * @param {Array} targetsValue Target value
+     * @returns {Array}
+     * @private
+     */
+    orderTargets(targetsValue) {
+        const $$ = this;
+        const targets = targetsValue.slice();
+        const fn = $$.getSortCompareFn();
+        fn && targets.sort(fn);
+        return targets;
+    },
+    /**
+     * Get data.order compare function
+     * @param {boolean} isReversed for Arc & Treemap type sort order needs to be reversed
+     * @returns {function} compare function
+     * @private
+     */
+    getSortCompareFn(isReversed = false) {
+        const $$ = this;
+        const { config } = $$;
+        const order = config.data_order;
+        const orderAsc = /asc/i.test(order);
+        const orderDesc = /desc/i.test(order);
+        let fn;
+        if (orderAsc || orderDesc) {
+            const reducer = (p, c) => p + Math.abs(c.value);
+            const sum = v => (isNumber(v) ? v : ("values" in v ? v.values.reduce(reducer, 0) : v.value));
+            fn = (t1, t2) => {
+                const t1Sum = sum(t1);
+                const t2Sum = sum(t2);
+                return isReversed ?
+                    (orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum) :
+                    (orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum);
+            };
+        }
+        else if (isFunction(order)) {
+            fn = order.bind($$.api);
+        }
+        return fn || null;
+    },
+    filterByX(targets, x) {
+        return this.getValuesByX(targets).get(this.getXCacheKey(x)) || [];
+    },
+    filterNullish(data) {
+        const filter = v => isValue(v.value);
+        return data ?
+            data.filter(v => "value" in v ? filter(v) : v.values.some(filter)) :
+            data;
+    },
+    filterRemoveNull(data) {
+        return data.filter(d => isValue(this.getBaseValue(d)));
+    },
+    filterByXDomain(targets, xDomain) {
+        return targets.map(t => ({
+            id: t.id,
+            id_org: t.id_org,
+            values: t.values.filter(v => xDomain[0] <= v.x && v.x <= xDomain[1])
+        }));
+    },
+    hasDataLabel() {
+        const dataLabels = this.config.data_labels;
+        return (isBoolean(dataLabels) && dataLabels) ||
+            (isObjectType(dataLabels) && notEmpty(dataLabels));
+    },
+    /**
+     * Determine if has null value
+     * @param {Array} targets Data array to be evaluated
+     * @returns {boolean}
+     * @private
+     */
+    hasNullDataValue(targets) {
+        return targets.some(({ value }) => value === null);
+    },
+    /**
+     * Get data index from the event coodinates
+     * @param {Event} event Event object
+     * @returns {number}
+     * @private
+     */
+    getDataIndexFromEvent(event) {
+        const $$ = this;
+        const { $el, config, state: { hasRadar, inputType, eventReceiver: { coords, rect } } } = $$;
+        let index;
+        if (hasRadar) {
+            let target = event.target;
+            // in case of multilined axis text
+            if (/tspan/i.test(target.tagName)) {
+                target = target.parentNode;
+            }
+            const d = select(target).datum();
+            index = d && Object.keys(d).length === 1 ? d.index : undefined;
+        }
+        else {
+            const isRotated = config.axis_rotated;
+            const scrollPos = getScrollPosition($el.chart.node());
+            // get data based on the mouse coords
+            const e = inputType === "touch" && event.changedTouches ?
+                event.changedTouches[0] :
+                event;
+            let point = isRotated ? e.clientY + scrollPos.y : e.clientX + scrollPos.x;
+            if (hasViewBox($el.svg)) {
+                const pos = [point, 0];
+                isRotated && pos.reverse();
+                point = getTransformCTM($el.eventRect.node(), ...pos)[isRotated ? "y" : "x"];
+            }
+            else {
+                point -= isRotated ? rect.top : rect.left;
+            }
+            index = findIndex(coords, point, 0, coords.length - 1, isRotated);
+        }
+        return index;
+    },
+    getDataLabelLength(min, max, key) {
+        const $$ = this;
+        const paddingCoef = 1.3;
+        const values = [min, max].map(v => $$.dataLabelFormat()(v));
+        if ($$.config.render_mode === "canvas" && !$$.$el.svg) {
+            const chart = $$.$el.chart?.node?.();
+            const doc = chart?.ownerDocument;
+            const svg = doc?.createElementNS("http://www.w3.org/2000/svg", "svg");
+            if (chart && svg) {
+                const texts = values.map(value => {
+                    const text = doc.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.textContent = value;
+                    svg.appendChild(text);
+                    return text;
+                });
+                svg.style.cssText =
+                    "position:absolute;visibility:hidden;left:-10000px;top:-10000px;";
+                chart.appendChild(svg);
+                const lengths = texts.map(text => text.getBoundingClientRect()[key] * paddingCoef);
+                svg.remove();
+                return lengths;
+            }
+        }
+        return $$.getTextRect(values)?.map((rect) => rect[key] * paddingCoef) || [0, 0];
+    },
+    isNoneArc(d) {
+        return this.hasTarget(this.data.targets, d.id);
+    },
+    isArc(d) {
+        return "data" in d && this.hasTarget(this.data.targets, d.data.id);
+    },
+    findSameXOfValues(values, index) {
+        const targetX = values[index].x;
+        const sames = [];
+        let i;
+        for (i = index - 1; i >= 0; i--) {
+            if (targetX !== values[i].x) {
+                break;
+            }
+            sames.push(values[i]);
+        }
+        for (i = index; i < values.length; i++) {
+            if (targetX !== values[i].x) {
+                break;
+            }
+            sames.push(values[i]);
+        }
+        return sames;
+    },
+    /**
+     * Get normalized x value cache key.
+     * @param {Date|number|string} x X value
+     * @returns {number|string} Cache key value
+     * @private
+     */
+    getXCacheKey(x) {
+        return isString(x) ? x : +x;
+    },
+    /**
+     * Get data rows grouped by x value.
+     * @param {Array} targets Data targets
+     * @returns {Map} X-value keyed data rows
+     * @private
+     */
+    getValuesByX(targets) {
+        const $$ = this;
+        const { cache, state } = $$;
+        const targetKey = targets.map(t => {
+            const { values } = t;
+            const first = values[0];
+            const last = values[values.length - 1];
+            return `${t.id}:${values.length}:${first ? $$.getXCacheKey(first.x) : ""}:${last ? $$.getXCacheKey(last.x) : ""}`;
+        }).join("|");
+        const cached = cache.get(KEY.valuesByX);
+        if (cached &&
+            cached.generation === state.dataGeneration &&
+            cached.targetKey === targetKey) {
+            return cached.value;
+        }
+        const valueMap = new Map();
+        for (let i = 0; i < targets.length; i++) {
+            const values = targets[i].values;
+            for (let j = 0; j < values.length; j++) {
+                const v = values[j];
+                const x = $$.getXCacheKey(v.x);
+                const rows = valueMap.get(x);
+                rows ? rows.push(v) : valueMap.set(x, [v]);
+            }
+        }
+        cache.add(KEY.valuesByX, {
+            generation: state.dataGeneration,
+            targetKey,
+            value: valueMap
+        });
+        return valueMap;
+    },
+    /**
+     * Get candidate values near the current pointer position.
+     * @param {Array} values Data values
+     * @param {Array} pos Pointer position
+     * @param {boolean} useSortedIndex Whether values are sorted target values
+     * @returns {Array} Candidate values
+     * @private
+     */
+    getClosestCandidates(values, pos, useSortedIndex = true) {
+        const $$ = this;
+        const { config, scale } = $$;
+        const len = values.length;
+        const first = values[0];
+        if (!useSortedIndex || len < 200 || !first || !config.data_xSort) {
+            return values;
+        }
+        const isBar = $$.isBarType(first.id);
+        const isCandle = $$.isCandlestickType(first.id);
+        const sensitivity = config.point_sensitivity;
+        if (!(isBar || isCandle) && !isNumber(sensitivity)) {
+            return values;
+        }
+        const xScale = scale.zoom || scale.x;
+        const pointerX = pos[+config.axis_rotated];
+        const isAscending = xScale(values[0].x) <= xScale(values[len - 1].x);
+        let start = 0;
+        let end = len - 1;
+        while (start < end) {
+            const mid = (start + end) >> 1;
+            const x = xScale(values[mid].x);
+            if (isAscending ? x < pointerX : x > pointerX) {
+                start = mid + 1;
+            }
+            else {
+                end = mid;
+            }
+        }
+        const candidates = [];
+        const visited = new Set();
+        const add = (index) => {
+            if (index >= 0 && index < len && !visited.has(index)) {
+                visited.add(index);
+                candidates.push(values[index]);
+            }
+        };
+        const addSameX = (index) => {
+            if (index < 0 || index >= len) {
+                return;
+            }
+            const x = $$.getXCacheKey(values[index].x);
+            let i = index;
+            while (i >= 0 && $$.getXCacheKey(values[i].x) === x) {
+                add(i--);
+            }
+            i = index + 1;
+            while (i < len && $$.getXCacheKey(values[i].x) === x) {
+                add(i++);
+            }
+        };
+        if (isBar || isCandle) {
+            for (let i = start - 2; i <= start + 2; i++) {
+                addSameX(i);
+            }
+        }
+        else {
+            const maxDx = sensitivity;
+            const scan = (index, direction) => {
+                for (let i = index; i >= 0 && i < len; i += direction) {
+                    const v = values[i];
+                    if (Math.abs(xScale(v.x) - pointerX) > maxDx) {
+                        break;
+                    }
+                    add(i);
+                }
+            };
+            scan(start, 1);
+            scan(start - 1, -1);
+        }
+        return candidates;
+    },
+    findClosestFromTargets(targets, pos) {
+        const $$ = this;
+        const candidates = [];
+        for (let i = 0; i < targets.length; i++) {
+            const closest = $$.findClosest(targets[i].values, pos);
+            closest && candidates.push(closest);
+        }
+        // decide closest point and return
+        return $$.findClosest(candidates, pos, false);
+    },
+    findClosest(values, pos, useSortedIndex = true) {
+        const $$ = this;
+        const { $el: { main } } = $$;
+        const data = $$.getClosestCandidates(values, pos, useSortedIndex);
+        let minDist;
+        let closest;
+        // find mouseovering bar/candlestick and closest point in a single pass
+        // https://github.com/naver/billboard.js/issues/2434
+        for (let i = 0; i < data.length; i++) {
+            const v = data[i];
+            if (!v || !isValue(v.value)) {
+                continue;
+            }
+            const isBar = $$.isBarType(v.id);
+            const isCandle = $$.isCandlestickType(v.id);
+            if (isBar || isCandle) {
+                const selector = isBar ?
+                    `.${$BAR.chartBar}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$BAR.bar}-${v.index}` :
+                    `.${$CANDLESTICK.chartCandlestick}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$CANDLESTICK.candlestick}-${v.index} path`;
+                if (!closest && $$.isWithinBar(main.select(selector).node())) {
+                    closest = v;
+                }
+            }
+            else {
+                const d = $$.dist(v, pos);
+                const sensitivity = $$.getPointSensitivity(v);
+                if (d < sensitivity && (minDist === undefined || d < minDist)) {
+                    minDist = d;
+                    closest = v;
+                }
+            }
+        }
+        return closest;
+    },
+    dist(data, pos) {
+        const $$ = this;
+        const { config: { axis_rotated: isRotated }, scale } = $$;
+        const xIndex = +isRotated; // true: 1, false: 0
+        const yIndex = +!isRotated; // true: 0, false: 1
+        const y = $$.circleY(data, data.index);
+        const x = (scale.zoom || scale.x)(data.x);
+        return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
+    },
+    /**
+     * Convert data for step type
+     * @param {Array} values Object data values
+     * @returns {Array}
+     * @private
+     */
+    convertValuesToStep(values) {
+        const $$ = this;
+        const { axis, config } = $$;
+        const stepType = config.line_step_type;
+        const isCategorized = axis ? axis.isCategorized() : false;
+        const converted = isArray(values) ? values.concat() : [values];
+        if (!(isCategorized || /step\-(after|before)/.test(stepType))) {
+            return values;
+        }
+        // when all data are null, return empty array
+        // https://github.com/naver/billboard.js/issues/3124
+        if (converted.length) {
+            // insert & append cloning first/last value to be fully rendered covering on each gap sides
+            const head = converted[0];
+            const tail = converted[converted.length - 1];
+            const { id } = head;
+            let { x } = head;
+            // insert head
+            converted.unshift({ x: --x, value: head.value, id });
+            isCategorized && stepType === "step-after" &&
+                converted.unshift({ x: x - 1, value: head.value, id });
+            // append tail
+            x = tail.x;
+            converted.push({ x: ++x, value: tail.value, id });
+            isCategorized && stepType === "step-before" &&
+                converted.push({ x: x + 1, value: tail.value, id });
+        }
+        return converted;
+    },
+    convertValuesToRange(values) {
+        const converted = isArray(values) ? values.concat() : [values];
+        const ranges = [];
+        converted.forEach(range => {
+            const { x, id } = range;
+            ranges.push({
+                x,
+                id,
+                value: range.value[0]
+            });
+            ranges.push({
+                x,
+                id,
+                value: range.value[2]
+            });
+        });
+        return ranges;
+    },
+    updateDataAttributes(name, attrs) {
+        const $$ = this;
+        const { config } = $$;
+        const current = config[`data_${name}`];
+        if (isUndefined(attrs)) {
+            return current;
+        }
+        Object.keys(attrs).forEach(id => {
+            current[id] = attrs[id];
+        });
+        $$.redraw({ withLegend: true });
+        return current;
+    },
+    getRangedData(d, key = "", type = "areaRange") {
+        const value = d?.value;
+        if (isArray(value)) {
+            if (type === "bar") {
+                return value.reduce((a, c) => c - a);
+            }
+            else {
+                const index = rangedDataKeyIndex[type]?.[key] ?? -1;
+                return index >= 0 ? value[index] : undefined;
+            }
+        }
+        else if (value && key) {
+            return value[key];
+        }
+        return value;
+    },
+    /**
+     * Set ratio for grouped data
+     * @param {Array} data Data array
+     * @private
+     */
+    setRatioForGroupedData(data) {
+        const $$ = this;
+        const { config } = $$;
+        // calculate ratio if grouped data exists
+        if (config.data_groups.length && data.some(d => $$.isGrouped(d.id))) {
+            const setter = (d) => $$.getRatio("index", d, true);
+            data.forEach(v => {
+                "values" in v ? v.values.forEach(setter) : setter(v);
+            });
+        }
+    },
+    /**
+     * Get ratio value
+     * @param {string} type Ratio for given type
+     * @param {object} d Data value object
+     * @param {boolean} asPercent Convert the return as percent or not
+     * @returns {number} Ratio value
+     * @private
+     */
+    getRatio(type, d, asPercent = false) {
+        const $$ = this;
+        const { config, state } = $$;
+        const api = $$.api;
+        let ratio = 0;
+        if (d && api.data.shown().length) {
+            ratio = d.ratio || d.value;
+            if (type === "arc") {
+                // if has padAngle set, calculate rate based on value
+                if ($$.pie.padAngle()()) {
+                    ratio = d.value / $$.getTotalDataSum(true);
+                    // otherwise, based on the rendered angle value
+                }
+                else {
+                    const gaugeArcLength = config.gauge_fullCircle ?
+                        $$.getArcLength() :
+                        $$.getStartingAngle() * -2;
+                    const arcLength = $$.hasType("gauge") ? gaugeArcLength : Math.PI * 2;
+                    ratio = (d.endAngle - d.startAngle) / arcLength;
+                }
+            }
+            else if (type === "index") {
+                const dataValues = api.data.values.bind(api);
+                const { hiddenTargetIds } = state;
+                // For normalized stack per group, get total per group
+                let total = this.getTotalPerIndex($$.isStackNormalizedPerGroup() ? d.id : undefined);
+                // If total is null, the data is not in any group - don't normalize
+                if (total === null) {
+                    return ratio;
+                }
+                if (hiddenTargetIds.size) {
+                    // When normalized per group, only subtract hidden data from the same group
+                    let hiddenIds = [...hiddenTargetIds];
+                    if ($$.isStackNormalizedPerGroup() && d.id) {
+                        const group = config.data_groups.find(g => g.indexOf(d.id) >= 0);
+                        if (group) {
+                            // Only consider hidden IDs in the same group
+                            hiddenIds = hiddenIds.filter(id => group.indexOf(id) >= 0);
+                        }
+                    }
+                    if (hiddenIds.length) {
+                        let hiddenSum = dataValues(hiddenIds, false);
+                        if (hiddenSum.length) {
+                            hiddenSum = hiddenSum
+                                .reduce((acc, curr) => acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i]));
+                            total = total.map((v, i) => v - hiddenSum[i]);
+                        }
+                    }
+                }
+                const divisor = total[d.index];
+                d.ratio = isNumber(d.value) && total && divisor ? d.value / divisor : 0;
+                ratio = d.ratio;
+            }
+            else if (type === "radar") {
+                ratio = (parseFloat(String(Math.max(d.value, 0))) / state.current.dataMax) * config.radar_size_ratio;
+            }
+            else if (type === "bar") {
+                const yScale = $$.getYScaleById.bind($$)(d.id);
+                const max = yScale.domain().reduce((a, c) => c - a);
+                // when all data are 0, return 0
+                ratio = max === 0 ? 0 : Math.abs($$.getRangedData(d, null, type) / max);
+            }
+            else if (type === "treemap") {
+                ratio /= $$.getTotalDataSum(true);
+            }
+        }
+        return asPercent && ratio ? ratio * 100 : ratio;
+    },
+    /**
+     * Sort data index to be aligned with x axis.
+     * @param {Array} tickValues Tick array values
+     * @private
+     */
+    updateDataIndexByX(tickValues) {
+        const $$ = this;
+        const tickValueMap = tickValues.reduce((out, tick, index) => {
+            out[Number(tick.x)] = index;
+            return out;
+        }, {});
+        $$.data.targets.forEach(t => {
+            t.values.forEach((value, valueIndex) => {
+                let index = tickValueMap[Number(value.x)];
+                if (index === undefined) {
+                    index = valueIndex;
+                }
+                value.index = index;
+            });
+        });
+    },
+    /**
+     * Determine if bubble has dimension data
+     * @param {object|Array} d data value
+     * @returns {boolean}
+     * @private
+     */
+    isBubbleZType(d) {
+        const $$ = this;
+        return $$.isBubbleType(d) && ((isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
+            (isArray(d.value) && d.value.length >= 2));
+    },
+    /**
+     * Determine if bar has ranged data
+     * @param {Array} d data value
+     * @returns {boolean}
+     * @private
+     */
+    isBarRangeType(d) {
+        const $$ = this;
+        const { value } = d;
+        return $$.isBarType(d) && isArray(value) && value.length >= 2 &&
+            value.every(isNumber);
+    },
+    /**
+     * Get data object by id
+     * @param {string} id data id
+     * @returns {object}
+     * @private
+     */
+    getDataById(id) {
+        const d = this.cache.get(id) || this.api.data(id);
+        return d?.[0] ?? d;
+    }
+};
+
+export { data as default };

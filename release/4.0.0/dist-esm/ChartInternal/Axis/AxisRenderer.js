@@ -1,0 +1,551 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.0.0
+*/
+import { select } from 'd3-selection';
+import { $COMMON } from '../../config/classes.js';
+import { AXIS_TICK_LENGTH, AXIS_TICK_SIZE, AXIS_TICK_PADDING } from '../../config/const.js';
+import AxisRendererHelper from './AxisRendererHelper.js';
+import { isFunction, isArray, isNumber, isString } from '../../module/util/type-checks.js';
+import { toArray } from '../../module/util/object.js';
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+class AxisRenderer {
+    helper;
+    config;
+    params;
+    g;
+    generatedTicks = [];
+    canReuseTickTextOnResize(isLeftRight) {
+        const { config, params } = this;
+        const { config: chartConfig, id, owner } = params;
+        const isX = /^(x|subX)$/.test(id);
+        const type = id === "subX" ? "x" : id;
+        const customTickFormat = id === "subX" ?
+            chartConfig.subchart_axis_x_tick_format || chartConfig.axis_x_tick_format :
+            chartConfig[`axis_${type}_tick_format`];
+        const categoryAutoWrap = params.tickMultiline && params.isCategory && !isLeftRight &&
+            !(params.tickWidth > 0);
+        return !!(owner.state.resizing &&
+            !owner.state.flowing &&
+            !isFunction(chartConfig.axis_evalTextSize) &&
+            !customTickFormat &&
+            !params.tickTitle &&
+            !(isX && chartConfig.axis_x_tick_autorotate) &&
+            !categoryAutoWrap &&
+            config.withoutTransition);
+    }
+    canReuseTickNodesOnResize(tickNodes, ticks, isLeftRight, tickShow) {
+        if (tickShow.tick || !tickShow.text || !this.canReuseTickTextOnResize(isLeftRight) ||
+            tickNodes.size() !== ticks.length) {
+            return false;
+        }
+        const nodes = tickNodes.nodes();
+        for (let i = 0; i < ticks.length; i++) {
+            const current = nodes[i].__data__;
+            const next = ticks[i];
+            if (current instanceof Date || next instanceof Date) {
+                if (+current !== +next) {
+                    return false;
+                }
+            }
+            else if (current !== next) {
+                return false;
+            }
+        }
+        return true;
+    }
+    constructor(params = {}) {
+        const config = {
+            innerTickSize: AXIS_TICK_SIZE,
+            outerTickSize: params.outerTick ? AXIS_TICK_SIZE : 0,
+            orient: "bottom",
+            range: [],
+            tickArguments: null,
+            tickCentered: null,
+            tickCulling: true,
+            tickFormat: null,
+            tickLength: AXIS_TICK_LENGTH,
+            tickOffset: 0,
+            tickPadding: AXIS_TICK_PADDING,
+            tickValues: null,
+            transition: null,
+            noTransition: params.noTransition
+        };
+        config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding;
+        this.config = config;
+        this.params = params;
+        this.helper = new AxisRendererHelper(this);
+    }
+    /**
+     * Create axis element
+     * @param {d3.selection} g Axis selection
+     * @private
+     */
+    create(g) {
+        const ctx = this;
+        const { config, helper, params } = ctx;
+        const { scale } = helper;
+        const { orient } = config;
+        const splitTickText = this.splitTickText.bind(ctx);
+        const isLeftRight = /^(left|right)$/.test(orient);
+        const isTopBottom = /^(top|bottom)$/.test(orient);
+        // line/text enter and path update
+        const tickTransform = helper.getTickTransformSetter(isTopBottom ? "x" : "y");
+        const axisPx = tickTransform === helper.axisX ? "y" : "x";
+        const sign = /^(top|left)$/.test(orient) ? -1 : 1;
+        // tick text helpers
+        const rotate = params.tickTextRotate;
+        this.config.range = scale.rangeExtent ?
+            scale.rangeExtent() :
+            helper.scaleExtent((params.orgXScale || scale).range());
+        const { innerTickSize, tickLength, range } = config;
+        // // get the axis' tick position configuration
+        const id = params.id;
+        const tickTextPos = id && /^(x|y|y2)$/.test(id) ?
+            params.config[`axis_${id}_tick_text_position`] :
+            { x: 0, y: 0 };
+        // tick visiblity
+        const prefix = id === "subX" ? `subchart_axis_x` : `axis_${id}`;
+        const axisShow = params.config[`${prefix}_show`];
+        const tickShow = {
+            tick: axisShow ? params.config[`${prefix}_tick_show`] : false,
+            text: axisShow ? params.config[`${prefix}_tick_text_show`] : false
+        };
+        const evalTextSize = params.config.axis_evalTextSize;
+        let $g;
+        g.each(function () {
+            const g = select(this);
+            let scale0 = this.__chart__ || scale;
+            let scale1 = helper.copyScale();
+            $g = g;
+            this.__chart__ = scale1;
+            config.tickOffset = params.isCategory ? (scale1(1) - scale1(0)) / 2 : 0;
+            // update selection - data join
+            const path = g.selectAll(".domain").data([0]);
+            // enter + update selection
+            path.enter().append("path")
+                .attr("class", "domain")
+                // https://observablehq.com/@d3/d3-selection-2-0
+                .merge(path)
+                .attr("d", () => {
+                const outerTickSized = config.outerTickSize * sign;
+                return isTopBottom ?
+                    `M${range[0]},${outerTickSized}V0H${range[1]}V${outerTickSized}` :
+                    `M${outerTickSized},${range[0]}H0V${range[1]}H${outerTickSized}`;
+            });
+            if (tickShow.tick || tickShow.text) {
+                // count of tick data in array
+                const ticks = config.tickValues ||
+                    helper.generateTicks(scale1, isLeftRight || params.config.axis_rotated);
+                // set generated ticks
+                ctx.generatedTicks = ticks;
+                // update selection
+                let tick = g.selectAll(".tick");
+                const canReuseTickNodes = ctx.canReuseTickNodesOnResize(tick, ticks, isLeftRight || params.config.axis_rotated, tickShow);
+                if (canReuseTickNodes) {
+                    tickTransform(tick, scale1);
+                }
+                else {
+                    tick = tick.data(ticks, scale1);
+                    // enter selection
+                    const tickEnter = tick
+                        .enter()
+                        .insert("g", ".domain")
+                        .attr("class", "tick");
+                    // MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.
+                    const tickExit = tick.exit().remove();
+                    // enter + update selection
+                    tick = tickEnter.merge(tick);
+                    tickShow.tick && tickEnter.append("line");
+                    tickShow.text && tickEnter.append("text");
+                    const hasTickChange = !tickEnter.empty() || !tickExit.empty();
+                    const reuseTickText = tickShow.text && !hasTickChange &&
+                        ctx.canReuseTickTextOnResize(isLeftRight || params.config.axis_rotated);
+                    let sizeFor1Char = { w: 0, h: 0 };
+                    let textUpdate = tick.selectAll("text.__bb-empty");
+                    if (tickShow.text && !reuseTickText) {
+                        const tickText = tick.select("text");
+                        const counts = [];
+                        textUpdate = tickText;
+                        if (isFunction(evalTextSize)) {
+                            // set evalTextSize to dummy axis element to be used in .getMaxTickSize()
+                            sizeFor1Char = evalTextSize.bind(ctx.params.owner.api)(tickText.node(), id);
+                            if (this.classList.contains($COMMON.dummy)) {
+                                this.sizeFor1Char = sizeFor1Char;
+                            }
+                        }
+                        if (!sizeFor1Char || sizeFor1Char.w === 0 || sizeFor1Char.h === 0) {
+                            sizeFor1Char = ctx.helper.getSizeFor1Char(orient, tickText, !!evalTextSize);
+                        }
+                        let tspan = tickText
+                            .selectAll("tspan")
+                            .data((d, index) => {
+                            let split;
+                            if (params.tickMultiline) {
+                                split = splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w);
+                            }
+                            else {
+                                const formatted = helper.textFormatted(d);
+                                split = isArray(formatted) ? formatted.concat() : [formatted];
+                            }
+                            counts[index] = split.length;
+                            return split.map(splitted => ({ index, splitted }));
+                        });
+                        tspan.exit().remove();
+                        tspan = tspan
+                            .enter()
+                            .append("tspan")
+                            .merge(tspan)
+                            .text(d => d.splitted);
+                        // set <tspan>'s position
+                        tspan
+                            .attr("x", isTopBottom ? 0 : tickLength * sign)
+                            .attr("dx", (() => {
+                            let dx = 0;
+                            if (/(top|bottom)/.test(orient) && rotate) {
+                                dx = 8 * Math.sin(Math.PI * (rotate / 180)) *
+                                    (orient === "top" ? -1 : 1);
+                            }
+                            return dx + (tickTextPos.x || 0);
+                        })())
+                            .attr("dy", (d, i) => {
+                            const defValue = ".71em";
+                            let dy = 0;
+                            if (orient !== "top") {
+                                dy = sizeFor1Char.h;
+                                if (i === 0) {
+                                    dy = isLeftRight ?
+                                        -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) :
+                                        (tickTextPos.y === 0 ? defValue : 0);
+                                }
+                            }
+                            return isNumber(dy) && tickTextPos.y ?
+                                dy + tickTextPos.y :
+                                dy || defValue;
+                        });
+                    }
+                    const lineUpdate = tick.select("line");
+                    tickEnter.select("line").attr(`${axisPx}2`, innerTickSize * sign);
+                    tickEnter.select("text").attr(axisPx, tickLength * sign);
+                    ctx.setTickLineTextPosition(lineUpdate, textUpdate, sizeFor1Char);
+                    // Append <title> for tooltip display
+                    if (params.tickTitle) {
+                        const title = textUpdate.select("title");
+                        const tickTitle = params.tickTitle;
+                        (title.empty() ? textUpdate.append("title") : title)
+                            .text(index => tickTitle[Number(index)]);
+                    }
+                    if (scale1.bandwidth) {
+                        const x = scale1;
+                        const dx = x.bandwidth() / 2;
+                        scale0 = d => x(d) + dx;
+                        scale1 = scale0;
+                    }
+                    else if (scale0.bandwidth) {
+                        scale0 = scale1;
+                    }
+                    else {
+                        tickTransform(tickExit, scale1);
+                    }
+                    // when .flow(), it should follow flow's transition config
+                    // otherwise make to use ChartInternals.$T()
+                    tick = params.owner.state.flowing ?
+                        helper.transitionise(tick) :
+                        params.owner.$T(tick);
+                    tickTransform(tickEnter, scale0);
+                    tickTransform(tick.style("opacity", null), scale1);
+                }
+            }
+        });
+        this.g = $g;
+    }
+    /**
+     * Get generated ticks
+     * @param {number} count Count of ticks
+     * @returns {Array} Generated ticks
+     * @private
+     */
+    getGeneratedTicks(count) {
+        const len = this.generatedTicks?.length - 1;
+        let res = this.generatedTicks;
+        if (len > count) {
+            const interval = Math.round((len / count) + 0.1);
+            res = this.generatedTicks
+                .map((v, i) => (i % interval === 0 ? v : null))
+                .filter(v => v !== null)
+                .splice(0, count);
+        }
+        return res;
+    }
+    /**
+     * Get tick x/y coordinate
+     * @returns {{x: number, y: number}}
+     * @private
+     */
+    getTickXY() {
+        const { config } = this;
+        const pos = { x: 0, y: 0 };
+        if (this.params.isCategory) {
+            pos.x = config.tickCentered ? 0 : config.tickOffset;
+            pos.y = config.tickCentered ? config.tickOffset : 0;
+        }
+        return pos;
+    }
+    /**
+     * Get tick size
+     * @param {object} d data object
+     * @returns {number}
+     * @private
+     */
+    getTickSize(d) {
+        const { scale } = this.helper;
+        const { config } = this;
+        const { innerTickSize, range } = config;
+        const tickPosition = scale(d) +
+            (config.tickCentered ? 0 : config.tickOffset);
+        return range[0] < tickPosition && tickPosition < range[1] ? innerTickSize : 0;
+    }
+    /**
+     * Set tick's line & text position
+     * @param {d3.selection} lineUpdate Line selection
+     * @param {d3.selection} textUpdate Text selection
+     * @param {object} sizeFor1Char Size for 1 char
+     * @private
+     */
+    setTickLineTextPosition(lineUpdate, textUpdate, sizeFor1Char) {
+        const tickPos = this.getTickXY();
+        const { innerTickSize, orient, tickLength, tickOffset } = this.config;
+        const axisId = this.params.id;
+        const rotate = this.params.tickTextRotate;
+        const baseHeight = 6;
+        const charHeight = (sizeFor1Char.h / 2) - baseHeight;
+        const textAnchorForText = r => {
+            const value = ["start", "end"];
+            orient === "top" && value.reverse();
+            return !r ? "middle" : value[r > 0 ? 0 : 1];
+        };
+        const textTransform = r => (r ? `rotate(${r})` : null);
+        const yForText = r => {
+            const r2 = r / (orient === "bottom" ? 15 : 23);
+            const y = r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
+            return y;
+        };
+        const { config: { axis_rotated: isRotated, axis_x_tick_text_inner: inner } } = this.params.owner;
+        const tickLineInner = this.params.config[`axis_${axisId}_tick_inner`];
+        switch (orient) {
+            case "bottom":
+                lineUpdate
+                    .attr("x1", tickPos.x)
+                    .attr("x2", tickPos.x)
+                    .attr("y2", d => this.getTickSize.bind(this)(d) * (tickLineInner ? -1 : 1));
+                textUpdate
+                    .attr("x", 0)
+                    .attr("y", yForText(rotate))
+                    .style("text-anchor", (d, i, { length }) => {
+                    if (!isRotated && i === 0 && (inner === true || inner.first)) {
+                        return "start";
+                    }
+                    else if (!isRotated && i === length - 1 && (inner === true || inner.last)) {
+                        return "end";
+                    }
+                    return textAnchorForText(rotate);
+                })
+                    .attr("transform", textTransform(rotate));
+                break;
+            case "top":
+                lineUpdate
+                    .attr("x2", 0)
+                    .attr("y2", tickLineInner ? innerTickSize : -innerTickSize);
+                textUpdate
+                    .attr("x", 0)
+                    .attr("y", -(yForText(rotate) + charHeight + baseHeight))
+                    .style("text-anchor", textAnchorForText(rotate))
+                    .attr("transform", textTransform(rotate));
+                break;
+            case "left":
+                lineUpdate
+                    .attr("x2", tickLineInner ? innerTickSize : -innerTickSize)
+                    .attr("y1", tickPos.y)
+                    .attr("y2", tickPos.y);
+                textUpdate
+                    .attr("x", -tickLength)
+                    .attr("y", tickOffset + (isRotated ? charHeight / 4 : charHeight))
+                    .style("text-anchor", "end");
+                break;
+            case "right":
+                lineUpdate
+                    .attr("x2", tickLineInner ? -innerTickSize : innerTickSize)
+                    .attr("y2", 0);
+                textUpdate
+                    .attr("x", tickLength)
+                    .attr("y", charHeight)
+                    .style("text-anchor", "start");
+        }
+    }
+    // this should be called only when category axis
+    splitTickText(d, scale, ticks, isLeftRight, charWidth) {
+        const { params } = this;
+        const tickText = this.helper.textFormatted(d);
+        const splitted = isString(tickText) && tickText.indexOf("\n") > -1 ?
+            tickText.split("\n") :
+            [];
+        if (splitted.length) {
+            return splitted;
+        }
+        if (isArray(tickText)) {
+            return tickText;
+        }
+        let tickWidth = params.tickWidth;
+        if (!tickWidth || tickWidth <= 0) {
+            tickWidth = isLeftRight ? 95 : (params.isCategory ?
+                (params.isInverted ?
+                    scale(ticks[0]) - scale(ticks[1]) :
+                    scale(ticks[1]) - scale(ticks[0])) - 12 :
+                110);
+        }
+        // split given text by tick width size
+        // eslint-disable-next-line
+        function split(splitted, text) {
+            let subtext;
+            let spaceIndex;
+            let textWidth;
+            for (let i = 1; i < text.length; i++) {
+                if (text.charAt(i) === " ") {
+                    spaceIndex = i;
+                }
+                subtext = text.substr(0, i + 1);
+                textWidth = charWidth * subtext.length;
+                // if text width gets over tick width, split by space index or current index
+                if (tickWidth < textWidth) {
+                    return split(splitted.concat(text.substr(0, spaceIndex || i)), text.slice(spaceIndex ? spaceIndex + 1 : i));
+                }
+            }
+            return splitted.concat(text);
+        }
+        return split(splitted, String(tickText));
+    }
+    scale(x) {
+        if (!arguments.length) {
+            return this.helper.scale;
+        }
+        this.helper.scale = x;
+        return this;
+    }
+    orient(x) {
+        if (!arguments.length) {
+            return this.config.orient;
+        }
+        this.config.orient = x in {
+            top: 1,
+            right: 1,
+            bottom: 1,
+            left: 1
+        } ?
+            String(x) :
+            "bottom";
+        return this;
+    }
+    tickFormat(format) {
+        const { config } = this;
+        if (!arguments.length) {
+            return config.tickFormat;
+        }
+        config.tickFormat = format;
+        return this;
+    }
+    tickCentered(isCentered) {
+        const { config } = this;
+        if (!arguments.length) {
+            return config.tickCentered;
+        }
+        config.tickCentered = isCentered;
+        return this;
+    }
+    /**
+     * Return tick's offset value.
+     * The value will be set for 'category' axis type.
+     * @returns {number}
+     * @private
+     */
+    tickOffset() {
+        return this.config.tickOffset;
+    }
+    /**
+     * Get tick interval count
+     * @private
+     * @param {number} size Total data size
+     * @returns {number}
+     */
+    tickInterval(size) {
+        const { outerTickSize, tickOffset, tickValues } = this.config;
+        let interval;
+        if (this.params.isCategory) {
+            const scale = this.params.owner.scale.zoom ?? this.helper.scale;
+            interval = tickOffset * 2 || Math.abs(scale(1) - scale(0));
+        }
+        else {
+            const scale = this.params.owner.scale.zoom ?? this.helper.scale;
+            const length = this.g ?
+                this.g.select("path.domain")
+                    .node()
+                    .getTotalLength() - outerTickSize * 2 :
+                Math.abs(scale.range()[1] - scale.range()[0]);
+            interval = length / (size || this.g?.selectAll("line").size() || 1);
+            // get the interval by its values
+            if (tickValues) {
+                for (let i = 0; i < tickValues.length - 1; i++) {
+                    const intervalByValue = scale(tickValues[i + 1]) - scale(tickValues[i]);
+                    if (intervalByValue && intervalByValue < interval) {
+                        interval = intervalByValue;
+                    }
+                }
+            }
+        }
+        return interval === Infinity ? 0 : interval;
+    }
+    ticks(...args) {
+        const { config } = this;
+        if (!args.length) {
+            return config.tickArguments;
+        }
+        config.tickArguments = toArray(args);
+        return this;
+    }
+    tickCulling(culling) {
+        const { config } = this;
+        if (!arguments.length) {
+            return config.tickCulling;
+        }
+        config.tickCulling = culling;
+        return this;
+    }
+    tickValues(x) {
+        const { config } = this;
+        if (isFunction(x)) {
+            config.tickValues = () => x(this.helper.scale.domain());
+        }
+        else {
+            if (!arguments.length) {
+                return config.tickValues;
+            }
+            config.tickValues = x;
+        }
+        return this;
+    }
+    setTransition(t) {
+        this.config.transition = t;
+        return this;
+    }
+}
+
+export { AxisRenderer as default };

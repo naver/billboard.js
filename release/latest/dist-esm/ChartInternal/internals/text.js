@@ -1,0 +1,538 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.0.0
+*/
+import { selectAll, select } from 'd3-selection';
+import { $TEXT, $COMMON } from '../../config/classes.js';
+import { KEY } from '../../module/Cache.js';
+import { getTextPos, batchGetBBox, setRotatePos, updateTextImagePos, updateTextBorder, updateTextImage, meetsLabelThreshold, getRotateAnchor } from './text.util.js';
+import { getTranslation, getBoundingRect, getElementPos, getBBox, setTextValue } from '../../module/util/dom.js';
+import { isNumber, isString, isFunction, isObject } from '../../module/util/type-checks.js';
+import { capitalize, getRandom } from '../../module/util/object.js';
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+var text = {
+    opacityForText(d) {
+        const $$ = this;
+        return $$.isBarType(d) &&
+            !meetsLabelThreshold.call($$, Math.abs($$.getRatio("bar", d)), "bar") ?
+            "0" :
+            ($$.hasDataLabel() ? null : "0");
+    },
+    /**
+     * Initializes the text
+     * @private
+     */
+    initText() {
+        const { $el } = this;
+        $el.main.select(`.${$COMMON.chart}`).append("g")
+            .attr("class", $TEXT.chartTexts)
+            .style("pointer-events", $el.funnel || $el.treemap ? "none" : null);
+    },
+    /**
+     * Update chartText
+     * @param {object} targets $$.data.targets
+     * @private
+     */
+    updateTargetsForText(targets) {
+        const $$ = this;
+        const classChartText = $$.getChartClass("Text");
+        const classTexts = $$.getClass("texts", "id");
+        const classFocus = $$.classFocus.bind($$);
+        const mainTextUpdate = $$.$el.main.select(`.${$TEXT.chartTexts}`)
+            .selectAll(`.${$TEXT.chartText}`)
+            .data($$.filterNullish(targets))
+            .attr("class", d => `${classChartText(d)}${classFocus(d)}`.trim());
+        const mainTextEnter = mainTextUpdate.enter().append("g")
+            .style("opacity", "0")
+            .attr("class", classChartText)
+            .call($$.setCssRule(true, ` .${$TEXT.text}`, ["fill", "pointer-events:none"], $$.updateTextColor));
+        mainTextEnter.append("g")
+            .attr("class", classTexts);
+    },
+    /**
+     * Update text
+     * @private
+     */
+    updateText() {
+        const $$ = this;
+        const { $el, $T, config, axis } = $$;
+        const classText = $$.getClass("text", "index");
+        const labelsCentered = config.data_labels.centered;
+        const text = $el.main.selectAll(`.${$TEXT.texts}`)
+            .selectAll(`.${$TEXT.text}`)
+            .data($$.labelishData.bind($$));
+        $T(text.exit())
+            .style("fill-opacity", "0")
+            .remove();
+        $el.text = text.enter()
+            .append("text")
+            .merge(text)
+            .attr("class", classText)
+            .attr("text-anchor", d => {
+            const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
+            // when value is negative or
+            let isEndAnchor = isInverted ? d.value > 0 : d.value < 0;
+            if ($$.isCandlestickType(d)) {
+                const data = $$.getCandlestickData(d);
+                isEndAnchor = !data?._isUp;
+            }
+            else if ($$.isTreemapType(d)) {
+                return labelsCentered ? "middle" : "start";
+            }
+            return (config.axis_rotated ? (isEndAnchor ? "end" : "start") : "middle");
+        })
+            .style("fill", $$.getStylePropValue($$.updateTextColor))
+            .style("fill-opacity", "0")
+            .each(function (d, i, texts) {
+            const node = select(this);
+            let { value } = d;
+            if ($$.isBubbleZType(d)) {
+                value = $$.getBubbleZData(value, "z");
+            }
+            else if ($$.isCandlestickType(d)) {
+                const data = $$.getCandlestickData(d);
+                if (data) {
+                    value = data.close;
+                }
+            }
+            value = $$.isTreemapType(d) ?
+                $$.treemapDataLabelFormat(d)(node) :
+                $$.dataLabelFormat(d.id)(value, d.id, d.index, texts);
+            if (isNumber(value)) {
+                this.textContent = value;
+            }
+            else {
+                setTextValue(node, value, undefined, true);
+            }
+        });
+        // Add images if imgUrl is specified
+        updateTextImage.call($$);
+    },
+    updateTextColor(d) {
+        const $$ = this;
+        const { config } = $$;
+        const labelColors = config.data_labels_colors;
+        const defaultColor = ($$.isArcType(d) && !$$.isRadarType(d)) || $$.isFunnelType(d) || $$.isTreemapType(d) ?
+            null :
+            $$.color(d);
+        let color;
+        if (isString(labelColors)) {
+            color = labelColors;
+        }
+        else if (isObject(labelColors)) {
+            const { id } = d.data || d;
+            color = labelColors[id];
+        }
+        else if (isFunction(labelColors)) {
+            color = labelColors.bind($$.api)(defaultColor, d);
+        }
+        if ($$.isCandlestickType(d) && !isFunction(labelColors)) {
+            const value = $$.getCandlestickData(d);
+            if (!value?._isUp) {
+                const downColor = config.candlestick_color_down;
+                color = isObject(downColor) ? downColor[d.id] : downColor;
+            }
+        }
+        return color || defaultColor;
+    },
+    /**
+     * Update data label text background color
+     * @param {object} d Data object
+     * @param {object|string|function} option option object
+     * @returns {string|null}
+     * @private
+     */
+    updateTextBGColor(d, option) {
+        const $$ = this;
+        const { $el: { defs } } = $$;
+        let color = "";
+        if (option) {
+            const id = isString(option) ?
+                "" :
+                $$.getTargetSelectorSuffix("id" in d ? d.id : d.data.id);
+            const filter = defs.select(["filter[id*='labels-bg", "']"].join(id));
+            if (filter.size()) {
+                color = `url(#${filter.attr("id")})`;
+            }
+            if (isFunction(option)) {
+                $$.generateTextBGColorFilter(option);
+                // Get default color and call function
+                const defaultColor = $$.color(d);
+                const bgColor = option.bind($$.api)(defaultColor, d);
+                if (bgColor) {
+                    filter.select("feFlood").attr("flood-color", bgColor);
+                }
+                else {
+                    color = "";
+                }
+            }
+        }
+        return color || null;
+    },
+    /**
+     * Redraw chartText
+     * @param {function} getX Positioning function for x
+     * @param {function} getY Positioning function for y
+     * @param {boolean} forFlow Weather is flow
+     * @param {boolean} withTransition transition is enabled
+     * @returns {Array}
+     * @private
+     */
+    redrawText(getX, getY, forFlow, withTransition) {
+        const $$ = this;
+        const { $T, axis, config, state: { hasTreemap } } = $$;
+        const t = getRandom(true);
+        const isRotated = config.axis_rotated;
+        const angle = config.data_labels.rotate;
+        const anchorString = getRotateAnchor(angle);
+        const rotateString = angle ? `rotate(${angle})` : "";
+        const text = $$.$el.text
+            .style("fill", $$.getStylePropValue($$.updateTextColor))
+            .attr("filter", d => $$.updateTextBGColor.bind($$)(d, config.data_labels_backgroundColors))
+            .style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$));
+        // Phase 1: collect text dimensions before mutating label positions.
+        const dimensions = new Map();
+        const elementsToMeasure = [];
+        text.each(function (d) {
+            const element = this;
+            dimensions.set(element, { rect: getBoundingRect(element) });
+            if (config.data_labels.centered && ($$.isBarType(d) || $$.isTreemapType(d))) {
+                elementsToMeasure.push(element);
+            }
+        });
+        if (elementsToMeasure.length > 0) {
+            batchGetBBox(elementsToMeasure).forEach((bbox, element) => {
+                const dimension = dimensions.get(element);
+                dimension && (dimension.bbox = bbox);
+            });
+        }
+        // Phase 2: apply cached dimensions during position calculation.
+        text.each(function (d, i) {
+            const labelDimension = dimensions.get(this);
+            // do not apply transition for newly added text elements
+            const node = $T(hasTreemap && this.childElementCount ? this.parentNode : this, !!(withTransition &&
+                (this.getAttribute("x") || this.getAttribute("transform"))), t);
+            const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
+            let pos = {
+                x: getX.call(this, d, i, labelDimension),
+                y: getY.call(this, d, i, labelDimension)
+            };
+            if (angle) {
+                pos = setRotatePos.bind($$)(d, pos, anchorString, isRotated, isInverted);
+                node.attr("text-anchor", anchorString);
+            }
+            updateTextImagePos.call($$, this, pos, labelDimension?.rect);
+            // when is multiline
+            if (this.childElementCount || angle) {
+                node.attr("transform", `translate(${pos.x} ${pos.y}) ${rotateString}`);
+            }
+            else {
+                node.attr("x", pos.x).attr("y", pos.y);
+            }
+            config.data_labels.border &&
+                updateTextBorder.call($$, node.node(), pos, `${$TEXT.textBorderRect}-${i}`);
+        });
+        // need to return 'true' as of being pushed to the redraw list
+        // ref: getRedrawList()
+        return true;
+    },
+    /**
+     * Gets the getBoundingClientRect value of the element
+     * @param {HTMLElement|d3.selection|Array} source Target element
+     * @param {string} className Class name
+     * @returns {object} value of element.getBoundingClientRect()
+     * @private
+     */
+    getTextRect(source, className) {
+        const $$ = this;
+        let cacheKey;
+        let base;
+        let text;
+        if (Array.isArray(source)) {
+            cacheKey = `${KEY.textRect}-${source.join("_")}`;
+        }
+        else {
+            base = source.node?.() ?? source;
+            if (!/text/i.test(base.tagName)) {
+                base = base.querySelector("text");
+            }
+            text = base.textContent;
+            cacheKey = `${KEY.textRect}-${text.replace(/\W/g, "_")}`;
+        }
+        const rect = $$.cache.get(cacheKey) || [];
+        if (rect.length === 0) {
+            ($$.$el.svg || $$.$el.chart.select("svg"))
+                .selectAll(`.${$COMMON.dummy}`)
+                .data(text ? [text] : source)
+                .enter()
+                .append("text")
+                .style("visibility", "hidden")
+                .style("font", base ? select(base).style("font") : null)
+                .classed(className || $COMMON.dummy, true)
+                .text(d => d)
+                .each(function (v, i) {
+                rect[i] = getBoundingRect(this);
+            })
+                .remove();
+            $$.cache.add(cacheKey, rect);
+        }
+        return rect.length > 1 ? rect : rect[0];
+    },
+    /**
+     * Gets the x or y coordinate of the text
+     * @param {object} indices Indices values
+     * @param {boolean} forX whether or not to x
+     * @returns {function} coordinates
+     * @private
+     */
+    generateXYForText(indices, forX) {
+        const $$ = this;
+        const { state: { hasRadar, hasFunnel, hasTreemap } } = $$;
+        const types = Object.keys(indices);
+        const points = {};
+        const getter = forX ? $$.getXForText : $$.getYForText;
+        hasFunnel && types.push("funnel");
+        hasRadar && types.push("radar");
+        hasTreemap && types.push("treemap");
+        types.forEach(v => {
+            points[v] = $$[`generateGet${capitalize(v)}Points`](indices[v], false);
+        });
+        return function (d, i, labelDimension) {
+            const type = ($$.isAreaType(d) && "area") ||
+                ($$.isBarType(d) && "bar") ||
+                ($$.isCandlestickType(d) && "candlestick") ||
+                ($$.isFunnelType(d) && "funnel") ||
+                ($$.isRadarType(d) && "radar") ||
+                ($$.isTreemapType(d) && "treemap") || "line";
+            return getter.call($$, points[type](d, i), d, this, labelDimension);
+        };
+    },
+    /**
+     * Get centerized text position for bar type data.label.text
+     * @param {object} d Data object
+     * @param {Array} points Data points position
+     * @param {HTMLElement} textElement Data label text element
+     * @param {string} type 'x' or 'y'
+     * @param {object} labelDimension Optional cached label dimensions
+     * @returns {number} Position value
+     * @private
+     */
+    getCenteredTextPos(d, points, textElement, type, labelDimension) {
+        const $$ = this;
+        const { config } = $$;
+        const isRotated = config.axis_rotated;
+        const isBarType = $$.isBarType(d);
+        const isTreemapType = $$.isTreemapType(d);
+        if (config.data_labels.centered && (isBarType || isTreemapType)) {
+            const rect = labelDimension?.bbox || getBBox(textElement);
+            if (isBarType) {
+                const isPositive = $$.getRangedData(d, null, "bar") >= 0;
+                if (isRotated) {
+                    const w = (isPositive ?
+                        points[1][1] - points[0][1] :
+                        points[0][1] - points[1][1]) / 2 + (rect.width / 2);
+                    return isPositive ? -w - 3 : w + 2;
+                }
+                else {
+                    const h = (isPositive ?
+                        points[0][1] - points[1][1] :
+                        points[1][1] - points[0][1]) / 2 + (rect.height / 2);
+                    return isPositive ? h : -h - 2;
+                }
+            }
+            else if (isTreemapType) {
+                return type === "x" ?
+                    (points[1][0] - points[0][0]) / 2 : // X: Move to horizontal center of rect
+                    (points[1][1] - points[0][1]) / 2 - rect.y - rect.height / 2; // Y: Calculate true vertical center
+            }
+        }
+        return 0;
+    },
+    /**
+     * Gets the x coordinate of the text
+     * @param {object} points Data points position
+     * @param {object} d Data object
+     * @param {HTMLElement} textElement Data label text element
+     * @param {object} labelDimension Optional cached label dimensions
+     * @returns {number} x coordinate
+     * @private
+     */
+    getXForText(points, d, textElement, labelDimension) {
+        const $$ = this;
+        const { config } = $$;
+        const isRotated = config.axis_rotated;
+        const isFunnelType = $$.isFunnelType(d);
+        const isTreemapType = $$.isTreemapType(d);
+        let xPos = points ? points[0][0] : 0;
+        if ($$.isCandlestickType(d)) {
+            if (isRotated) {
+                xPos = $$.getCandlestickData(d)?._isUp ? points[2][2] + 4 : points[2][1] - 4;
+            }
+            else {
+                xPos += (points[1][0] - xPos) / 2;
+            }
+        }
+        else if (isFunnelType) {
+            // Use pre-calculated center x from points[2]
+            // Preserve current position when points unavailable (during hide transition)
+            if (points) {
+                xPos = points[2]?.[0] ?? xPos;
+            }
+            else {
+                return getElementPos(textElement, "x");
+            }
+        }
+        else if (isTreemapType) {
+            xPos += config.data_labels.centered ? 0 : 5;
+        }
+        else {
+            if (isRotated) {
+                const isInverted = config[`axis_${$$.axis.getId(d.id)}_inverted`];
+                const padding = $$.isBarType(d) ? 4 : 6;
+                const value = d.value;
+                xPos = points[2][1];
+                xPos += padding * ((isInverted ? value > 0 : value < 0) ? -1 : 1);
+            }
+            else {
+                xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
+            }
+        }
+        if (isRotated || isTreemapType || isFunnelType) {
+            xPos += $$.getCenteredTextPos(d, points, textElement, "x", labelDimension);
+        }
+        return xPos + getTextPos.call(this, d, "x");
+    },
+    /**
+     * Gets the y coordinate of the text
+     * @param {object} points Data points position
+     * @param {object} d Data object
+     * @param {HTMLElement} textElement Data label text element
+     * @param {object} labelDimension Optional cached label dimensions
+     * @returns {number} y coordinate
+     * @private
+     */
+    getYForText(points, d, textElement, labelDimension) {
+        const $$ = this;
+        const { axis, config, state } = $$;
+        const isRotated = config.axis_rotated;
+        const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
+        const isBarType = $$.isBarType(d);
+        const isFunnelType = $$.isFunnelType(d);
+        const isTreemapType = $$.isTreemapType(d);
+        const r = config.point_r;
+        const rect = labelDimension?.rect || getBoundingRect(textElement);
+        let { value } = d;
+        let baseY = 3;
+        let yPos;
+        if ($$.isCandlestickType(d)) {
+            value = $$.getCandlestickData(d);
+            if (isRotated) {
+                yPos = points[0][0];
+                yPos += ((points[1][0] - yPos) / 2) + baseY;
+            }
+            else {
+                yPos = value && value._isUp ? points[2][2] - baseY : points[2][1] + (baseY * 4);
+                if (isInverted) {
+                    yPos += 15 * (value._isUp ? 1 : -1);
+                }
+            }
+        }
+        else if (isFunnelType) {
+            // Use pre-calculated center y from points[2]
+            // Preserve current position when points unavailable (during hide transition)
+            if (points) {
+                yPos = (points[2]?.[1] ?? points[0][1]) + rect.height / 2 - 3;
+            }
+            else {
+                return getElementPos(textElement, "y");
+            }
+        }
+        else if (isTreemapType) {
+            yPos = points[0][1] + (config.data_labels.centered ? 0 : rect.height + 5);
+        }
+        else {
+            if (isRotated) {
+                yPos = (points[0][0] + points[2][0] + rect.height * 0.6) / 2;
+            }
+            else {
+                yPos = points[2][1];
+                if (isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d))) {
+                    baseY += config.point_r / 2.3;
+                }
+                if (value < 0 || (value === 0 && !state.hasPositiveValue && state.hasNegativeValue)) {
+                    yPos += isInverted ? (isBarType ? -3 : -5) : (rect.height + (isBarType ? -baseY : baseY));
+                }
+                else {
+                    let diff = -baseY * 2;
+                    if (isBarType) {
+                        diff = -baseY;
+                    }
+                    else if ($$.isBubbleType(d)) {
+                        diff = baseY;
+                    }
+                    if (isInverted) {
+                        diff = isBarType ? 10 : 15;
+                    }
+                    yPos += diff;
+                }
+            }
+        }
+        if (!isRotated || isTreemapType) {
+            yPos += $$.getCenteredTextPos(d, points, textElement, "y", labelDimension);
+        }
+        return yPos + getTextPos.call(this, d, "y");
+    },
+    /**
+     * Calculate if two or more text nodes are overlapping
+     * Mark overlapping text nodes with "text-overlapping" class
+     * @param {string} id Axis id
+     * @param {ChartInternal} $$ ChartInternal context
+     * @param {string} selector Selector string
+     * @private
+     */
+    markOverlapped(id, $$, selector) {
+        const textNodes = $$.$el.arcs.selectAll(selector);
+        const filteredTextNodes = textNodes.filter(node => node.data.id !== id);
+        const textNode = textNodes.filter(node => node.data.id === id);
+        const translate = getTranslation(textNode.node());
+        // Calculates the length of the hypotenuse
+        const calcHypo = (x, y) => Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        textNode.node() && filteredTextNodes.each(function () {
+            const coordinate = getTranslation(this);
+            const filteredTextNode = select(this);
+            const nodeForWidth = calcHypo(translate.e, translate.f) > calcHypo(coordinate.e, coordinate.f) ?
+                textNode :
+                filteredTextNode;
+            const overlapsX = Math.ceil(Math.abs(translate.e - coordinate.e)) <
+                Math.ceil(nodeForWidth.node().getComputedTextLength());
+            const overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) <
+                parseInt(textNode.style("font-size"), 10);
+            filteredTextNode.classed($TEXT.TextOverlapping, overlapsX && overlapsY);
+        });
+    },
+    /**
+     * Calculate if two or more text nodes are overlapping
+     * Remove "text-overlapping" class on selected text nodes
+     * @param {ChartInternal} $$ ChartInternal context
+     * @param {string} selector Selector string
+     * @private
+     */
+    undoMarkOverlapped($$, selector) {
+        $$.$el.arcs.selectAll(selector)
+            .each(function () {
+            selectAll([this, this.previousSibling])
+                .classed($TEXT.TextOverlapping, false);
+        });
+    }
+};
+
+export { text as default };

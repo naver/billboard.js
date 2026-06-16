@@ -1,0 +1,967 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.0.0
+*/
+/**
+ * data config options
+ */
+var data = {
+    /**
+     * Specify the key of x values in the data.<br><br>
+     * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on a category axis, the values of the data on the key will be used for category names.
+     * @name data․x
+     * @memberof Options
+     * @type {string}
+     * @default undefined
+     * @example
+     * data: {
+     *   x: "date"
+     * }
+     */
+    data_x: undefined,
+    /**
+     * Converts data id value
+     * @name data․idConverter
+     * @memberof Options
+     * @type {function}
+     * @default function(id) { return id; }
+     * @example
+     * data: {
+     *    idConverter: function(id) {
+     *       // when id is 'data1', converts to be 'data2'
+     *       // 'data2' should be given as the initial data value
+     *       if (id === "data1") {
+     *          return "data2";
+     *       } else {
+     *          return id;
+     *       }
+     *    }
+     * }
+     */
+    data_idConverter: id => id,
+    /**
+     * Set custom data name.
+     * If a name is set to `null`, the series is omitted from the legend.
+     * @name data․names
+     * @memberof Options
+     * @type {object}
+     * @default {}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataName)
+     * @example
+     * data: {
+     *   names: {
+     *     data1: "Data Name 1",
+     *     data2: "Data Name 2"
+     *   }
+     * }
+     */
+    data_names: {},
+    /**
+     * Set custom data class.<br><br>
+     * If this option is specified, the element g for the data has an additional class that has the prefix 'bb-target-' (eg. bb-target-additional-data1-class).
+     * @name data․classes
+     * @memberof Options
+     * @type {object}
+     * @default {}
+     * @example
+     * data: {
+     *   classes: {
+     *     data1: "additional-data1-class",
+     *     data2: "additional-data2-class"
+     *   }
+     * }
+     */
+    data_classes: {},
+    /**
+     * Set chart type at once.<br><br>
+     * If this option is specified, the type will be applied to every data. This setting can be overwritten by data.types.<br><br>
+     * **Available Values:**
+     * - area
+     * - area-line-range
+     * - area-spline
+     * - area-spline-range
+     * - area-step
+     * - area-step-range
+     * - bar
+     * - bubble
+     * - candlestick
+     * - donut
+     * - funnel
+     * - gauge
+     * - line
+     * - pie
+     * - polar
+     * - radar
+     * - scatter
+     * - spline
+     * - step
+     * - treemap
+     * @name data․type
+     * @memberof Options
+     * @type {string}
+     * @default "line"<br>NOTE: When importing shapes by ESM, `line()` should be specified for type.
+     * @example
+     * data: {
+     *    type: "bar"
+     * }
+     * @example
+     * // Generate chart by importing ESM
+     * // Import types to be used only, where this will make smaller bundle size.
+     * import bb, {
+     *   area,
+     *   areaLineRange,
+     *   areaSpline,
+     *   areaSplineRange,
+     *   areaStep,
+     *   areaStepRange,
+     *   bar,
+     *   bubble,
+     *   candlestick,
+     *   donut,
+     *   funnel,
+     *   gauge,
+     *   line,
+     *   pie,
+     *   polar,
+     *   radar,
+     *   scatter,
+     *   spline,
+     *   step,
+     *   treemap
+     * }
+     *
+     * bb.generate({
+     *   ...,
+     *   data: {
+     *     type: bar()
+     *   }
+     * });
+     */
+    data_type: undefined,
+    /**
+     * Set chart type for each data.<br>
+     * This setting overwrites data.type setting.
+     * - **NOTE:** `radar` and `treemap` type can't be combined with other types.
+     * @name data․types
+     * @memberof Options
+     * @type {object}
+     * @default {}
+     * @example
+     * data: {
+     *   types: {
+     *     data1: "bar",
+     *     data2: "spline"
+     *   }
+     * }
+     * @example
+     * // Generate chart by importing ESM
+     * // Import types to be used only, where this will make smaller bundle size.
+     * import bb, {
+     *   area,
+     *   areaLineRange,
+     *   areaSpline,
+     *   areaSplineRange,
+     *   areaStep,
+     *   areaStepRange,
+     *   bar,
+     *   bubble,
+     *   candlestick,
+     *   donut,
+     *   funnel,
+     *   gauge,
+     *   line,
+     *   pie,
+     *   polar,
+     *   radar,
+     *   scatter,
+     *   spline,
+     *   step,
+     *   treemap
+     * }
+     *
+     * bb.generate({
+     *   ...,
+     *   data: {
+     *     types: {
+     *       data1: bar(),
+     *       data1: spline()
+     *     }
+     *   }
+     * });
+     */
+    data_types: {},
+    /**
+     *  This option changes the order of stacking data and pieces of pie/donut.
+     *  - If `null` specified, it will be the order in which the data is loaded.
+     *  - If a function is specified, it will be used as [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)<br><br>
+     *
+     *  **Available Values:**
+     *  - `desc`: In descending order
+     *  - `asc`: In ascending order
+     *  - `null`: It keeps the data load order
+     *  - `function(data1, data2) { ... }`: Array.sort compareFunction
+     *
+     *  **NOTE**: order function only works for Axis based types & Arc types, except `Radar` type.
+     * @name data․order
+     * @memberof Options
+     * @type {string|function|null}
+     * @default desc
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataOrder)
+     * @example
+     * data: {
+     *   // in descending order (default)
+     *   order: "desc"
+     *
+     *   // in ascending order
+     *   order: "asc"
+     *
+     *   // keeps data input order
+     *   order: null
+     *
+     *   // specifying sort function
+     *   order: function(a, b) {
+     *       // param data passed format
+     *       // {
+     *       //   id: "data1", id_org: "data1", values: [
+     *       //      {x: 5, value: 250, id: "data1", index: 5, name: "data1"},
+     *       //       ...
+     *       //   ]
+     *       // }
+     *
+     *       const reducer = (p, c) => p + Math.abs(c.value);
+     *       const aSum = a.values.reduce(reducer, 0);
+     *       const bSum = b.values.reduce(reducer, 0);
+     *
+     *       // ascending order
+     *       return aSum - bSum;
+     *
+     *       // descending order
+     *       // return bSum - aSum;
+     *   }
+     * }
+     */
+    data_order: "desc",
+    /**
+     * Set groups for the data for stacking.
+     * @name data․groups
+     * @memberof Options
+     * @type {Array}
+     * @default []
+     * @example
+     * data: {
+     *   groups: [
+     *     ["data1", "data2"],
+     *     ["data3"]
+     *   ]
+     * }
+     */
+    data_groups: [],
+    /**
+     * Set how zero value will be treated on groups.<br>
+     * Possible values:
+     * - `zero`: 0 will be positioned at the absolute axis zero point.
+     * - `positive`: 0 will be positioned at the top of a stack.
+     * - `negative`: 0 will be positioned at the bottom of a stack.
+     * @name data․groupsZeroAs
+     * @memberof Options
+     * @type {string}
+     * @default "positive"
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.Groups)
+     * @example
+     * data: {
+     *   groupsZeroAs: "zero" // "positive" or "negative"
+     * }
+     */
+    data_groupsZeroAs: "positive",
+    /**
+     * Set color converter function.<br><br>
+     * This option should be a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
+     * @name data․color
+     * @memberof Options
+     * @type {function}
+     * @default undefined
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataColor)
+     * @example
+     * data: {
+     *   color: function(color, d) { ... }
+     * }
+     */
+    data_color: undefined,
+    /**
+     * Set color for each data.
+     * @name data․colors
+     * @memberof Options
+     * @type {object}
+     * @default {}
+     * @example
+     * data: {
+     *   colors: {
+     *     data1: "#ff0000",
+     *     data2: function(d) {
+     *        return "#000";
+     *     }
+     *     ...
+     *   }
+     * }
+     */
+    data_colors: {},
+    /**
+     * Set labels options
+     * @name data․labels
+     * @memberof Options
+     * @type {object}
+     * @property {object} data Data object
+     * @property {boolean} [data.labels=false] Show or hide labels on each data point
+     * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
+     * @property {function} [data.labels.format] Set formatter function for data labels.<br>
+     * The formatter function receives 4 arguments such as `v, id, i, texts` and it **must return a string** (`\n` character will be used as line break) that will be shown as the label.<br><br>
+     * The arguments are:<br>
+     *  - `v` is the value of the data point where the label is shown.
+     *  - `id` is the id of the data where the label is shown.
+     *  - `i` is the index of the data series point where the label is shown.
+     *  - `texts` is an array of whole corresponding data series' text labels.<br><br>
+     * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
+     * @property {string|object|function} [data.labels.backgroundColors] Set label text background colors.<br><br>
+     * - **NOTE**: When a function is set, background colors can be specified one color per dataset.
+     *   - Within the function, the last returned color for dataset will be used.
+     *   - Only can control set or unset background color for each values.
+     * @property {string|object|function} [data.labels.colors] Set label text colors.
+     * @property {object|function} [data.labels.position] Set each dataset position, relative to the original.<br><br>
+     * When a function is specified, it will receive 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
+     * The arguments are:<br>
+     *  - `type` coordinate type string, which will be 'x' or 'y'.
+     *  - `v` is the value of the data point where the label is shown.
+     *  - `id` is the id of the data where the label is shown.
+     *  - `i` is the index of the data series point where the label is shown.
+     *  - `texts` is an array of whole corresponding data series' text labels.<br><br>
+     * @property {number} [data.labels.position.x=0] x coordinate position, relative to the original.
+     * @property {number} [data.labels.position.y=0] y coordinate position, relative to the original.
+     * @property {object} [data.labels.rotate] Rotate label text. Specify degree value in a range of `0 ~ 360`.
+     * - **NOTE:** Depending on the rotate value, the text position needs to be adjusted manually(using `data.labels.position` option) to be shown nicely.
+     * @property {boolean|object} [data.labels.border=false] Add border to data label text. NOTE: When set as `true`, styling isn't applied. Hence, you need to set it using `.bb-text-border` class.
+     * @property {number|string|object} [data.labels.border.padding="3 5"] Border padding. Can be a single number, string or object with top, bottom, left, right properties.
+     * @property {number} [data.labels.border.radius=10] Border radius value.
+     * @property {number} [data.labels.border.strokeWidth=1] Border stroke width.
+     * @property {string} [data.labels.border.stroke="#000"] Border stroke color.
+     * @property {string} [data.labels.border.fill="none"] Border fill color.
+     * @property {object|function} [data.labels.image] Set image to be displayed next to the label text.<br><br>
+     * When a function is specified, it will receive 3 arguments such as `v, id, i` and it must return an image object with `url`, `width`, `height`, and optional `pos` properties.<br><br>
+     * The arguments are:<br>
+     *  - `v` is the value of the data point where the label is shown.
+     *  - `id` is the id of the data where the label is shown.
+     *  - `i` is the index of the data series point where the label is shown.
+     * @property {string} data.labels.image.url Image URL path. Can use placeholder `{=ID}` which will be replaced with the data ID.
+     * @property {number} data.labels.image.width Image width in pixels.
+     * @property {number} data.labels.image.height Image height in pixels.
+     * @property {object} [data.labels.image.pos] Image position relative to the label text.
+     * @property {number} [data.labels.image.pos.x=0] x coordinate position, relative to the original.
+     * @property {number} [data.labels.image.pos.y=0] y coordinate position, relative to the original.
+     * @memberof Options
+     * @type {object}
+     * @default {}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
+     * @see [Demo: label border](https://naver.github.io/billboard.js/demo/#Data.DataLabelBorder)
+     * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
+     * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+     * @see [Demo: label image](https://naver.github.io/billboard.js/demo/#Data.DataLabelImage)
+     * @see [Demo: label multiline](https://naver.github.io/billboard.js/demo/#Data.DataLabelMultiline)
+     * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
+     * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
+     * @see [Demo: label rotate](https://naver.github.io/billboard.js/demo/#Data.DataLabelRotate)
+     * @example
+     * data: {
+     *   labels: true,
+     *
+     *   // or set specific options
+     *   labels: {
+     *     format: function(v, id, i, texts) {
+     *         ...
+     *         // to multiline, return with '\n' character
+     *         return "Line1\nLine2";
+     *     },
+     *
+     *     // it's possible to set for each data
+     *     format: {
+     *         data1: function(v, id, i, texts) { ... },
+     *         ...
+     *     },
+     *
+     *     // align text to center of the 'bar' shape (works only for 'bar' type)
+     *     centered: true,
+     *
+     *     // apply background color for label texts
+     *     backgroundColors: "red",
+     *
+     *     // set different background colors per dataset
+     *     backgroundColors: {
+     *          data1: "green",
+     *          data2: "yellow"
+     *     },
+     *
+     *     // call back for label text background color
+     *     backgroundColors: function(color, d) {
+     *         // color: the default data label color string
+     *         // data: ex) {x: 0, value: 200, id: "data3", index: 0}
+     *         ....
+     *         return d.value > 200 ? "cyan" : "red";
+     *     },
+     *
+     *     // apply for all label texts
+     *     colors: "red",
+     *
+     *     // set different colors per dataset
+     *     // for not specified dataset, will have the default color value
+     *     colors: {
+     *        data1: "yellow",
+     *        data3: "green"
+     *     },
+     *
+     *     // call back for label text color
+     *     colors: function(color, d) {
+     *         // color: the default data label color string
+     *         // data: ex) {x: 0, value: 200, id: "data3", index: 0}
+     *         ....
+     *         return d.value > 200 ? "cyan" : color;
+     *     },
+     *
+     *     // return x, y coordinate position
+     *     // apt to handle each text position manually
+     *     position: function(type, v, id, i, texts) {
+     *         ...
+     *         return type == "x" ? 10 : 20;
+     *     },
+     *
+     *     // set x, y coordinate position
+     *     position: {
+     *        x: -10,
+     *        y: 10
+     *     },
+     *
+     *     // or set x, y coordinate position by each dataset
+     *     position: {
+     *        data1: {x: 5, y: 5},
+     *        data2: {x: 10, y: -20}
+     *     },
+     *
+     * 	   // rotate degree for label text
+     *     rotate: 90,
+     *
+     *     // add border to data label text
+     *     // NOTE: When set as `true`, styling aren't applied. Hence, need to set using '.bb-text-border' class.
+     *     // ex. ".bb-text-border { fill: red; stroke: #000; stroke-width: 2px; rx: 10px; ry: 10px; }"
+     *     border: true,
+     *
+     *     // or set detailed border options
+     *     border: {
+     *        padding: 10,  // set all padding to 10
+     *        padding: "5 10",  // set top and bottom padding to 5, left and right padding to 10
+     *        padding: {  // specify each padding
+     *           top: 3,
+     *           bottom: 5,
+     *           left: 10,
+     *           right: 13
+     *        },
+     *        radius: 10,
+     *        strokeWidth: 2,
+     *        stroke: "#000",
+     *        fill: "red"
+     *     },
+     *
+     *     // set image to be displayed next to the label text
+     *     image: {
+     *        url: "./sample.svg",
+     *
+     *        // use placeholder to dynamically set image URL based on data ID
+     *        url: "./images/{=ID}.svg",  // will be replaced to "./images/data1.svg", "./images/data2.svg", etc.
+     *        width: 35,
+     *        height: 35,
+     *        pos: {
+     *           x: 0,
+     *           y: 0
+     *        }
+     *     },
+     *
+     *     // or use function to return image configuration dynamically
+     *     image: function(v, id, i) {
+     *        // v is the value of the data point where the label is shown.
+     *        // id is the id of the data where the label is shown.
+     *        // i is the index of the data series point where the label is shown.
+     *
+     *        // Return different images based on value
+     *        if (v > 500) {
+     *           return {
+     *              url: "./high-value.svg",
+     *              width: 40,
+     *              height: 40,
+     *              pos: { x: 0, y: 0 }
+     *           };
+     *        } else if (v > 100) {
+     *           return {
+     *              url: "./medium-value.svg",
+     *              width: 30,
+     *              height: 30,
+     *              pos: { x: 0, y: 0 }
+     *           };
+     *        } else if(v < 5) {
+     *        	// Return falsy value in case you don't want to show image
+     *           return null;
+     *        } else {
+     *           return {
+     *              url: "./low-value.svg",
+     *              width: 20,
+     *              height: 20,
+     *              pos: { x: 0, y: 0 }
+     *           };
+     *        }
+     *     }
+     *   }
+     * }
+     */
+    data_labels: {},
+    data_labels_backgroundColors: undefined,
+    data_labels_colors: undefined,
+    data_labels_position: {},
+    data_labels_imgUrl: undefined,
+    /**
+     * Hide each data when the chart appears.<br><br>
+     * If true is specified, all of data will be hidden. If multiple ids are specified as an array, those will be hidden.
+     * @name data․hide
+     * @memberof Options
+     * @type {boolean|Array}
+     * @default false
+     * @example
+     * data: {
+     *   // all of data will be hidden
+     *   hide: true
+     *
+     *   // specified data will be hidden
+     *   hide: ["data1", ...]
+     * }
+     */
+    data_hide: false,
+    /**
+     * Filter values to be shown
+     * The data value is the same as the returned by `.data()`.
+     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+     * @name data․filter
+     * @memberof Options
+     * @type {function}
+     * @default undefined
+     * @example
+     * data: {
+     *   // filter for id value
+     *   filter: function(v) {
+     *      // v: [{id: "data1", id_org: "data1", values: [
+     *      //      {x: 0, value: 130, id: "data2", index: 0}, ...]
+     *      //    }, ...]
+     *      return v.id !== "data1";
+     *   }
+     */
+    data_filter: undefined,
+    /**
+     * Set a callback for click event on each data point.<br><br>
+     * This callback will be called when each data point is clicked and will receive `d` and element as the arguments.
+     * - `d` is the data clicked and element is the element clicked.
+     * - `element` is the current interacting svg element.
+     * - In this callback, `this` will be the Chart object.
+     * @name data․onclick
+     * @memberof Options
+     * @type {function}
+     * @default function() {}
+     * @example
+     * data: {
+     *     onclick: function(d, element) {
+     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+     *        // element - <circle>
+     *        ...
+     *     }
+     * }
+     */
+    data_onclick: () => { },
+    /**
+     * Set a callback for mouse/touch over event on each data point.<br><br>
+     * This callback will be called when the mouse cursor or touch moves onto each data point and will receive `d` and `element` as the argument.
+     * - `d` is the data where mouse cursor moves onto.
+     * - `element` is the current interacting svg element.
+     * - In this callback, `this` will be the Chart object.
+     * @name data․onover
+     * @memberof Options
+     * @type {function}
+     * @default function() {}
+     * @example
+     * data: {
+     *     onover: function(d, element) {
+     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4}
+     *        // element - <circle>
+     *        ...
+     *     }
+     * }
+     */
+    data_onover: () => { },
+    /**
+     * Set a callback for mouse/touch out event on each data point.<br><br>
+     * This callback will be called when the mouse cursor or touch moves out each data point and will receive `d` as the argument.
+     * - `d` is the data where mouse cursor moves out.
+     * - `element` is the current interacting svg element.
+     * - In this callback, `this` will be the Chart object.
+     * @name data․onout
+     * @memberof Options
+     * @type {function}
+     * @default function() {}
+     * @example
+     * data: {
+     *     onout: function(d, element) {
+     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4}
+     *        // element - <circle>
+     *        ...
+     *     }
+     * }
+     */
+    data_onout: () => { },
+    /**
+     * Set a callback for when data is shown.<br>
+     * The callback will receive shown data ids in array.
+     * @name data․onshown
+     * @memberof Options
+     * @type {function}
+     * @default undefined
+     * @example
+     *  data: {
+     *    onshown: function(ids) {
+     *      // ids - ["data1", "data2", ...]
+     *      ...
+     *    }
+     *  }
+     */
+    data_onshown: undefined,
+    /**
+     * Set a callback for when data is hidden.<br>
+     * The callback will receive hidden data ids in array.
+     * @name data․onhidden
+     * @memberof Options
+     * @type {function}
+     * @default undefined
+     * @example
+     *  data: {
+     *    onhidden: function(ids) {
+     *      // ids - ["data1", "data2", ...]
+     *      ...
+     *    }
+     *  }
+     */
+    data_onhidden: undefined,
+    /**
+     * Set a callback for minimum data
+     * - **NOTE:** For 'area-line-range', 'area-step-range' and 'area-spline-range', `mid` data will be taken for the comparison
+     * @name data․onmin
+     * @memberof Options
+     * @type {function}
+     * @default undefined
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
+     * @example
+     *  onmin: function(data) {
+     *    // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
+     *    ...
+     *  }
+     */
+    data_onmin: undefined,
+    /**
+     * Set a callback for maximum data
+     * - **NOTE:** For 'area-line-range', 'area-step-range' and 'area-spline-range', `mid` data will be taken for the comparison
+     * @name data․onmax
+     * @memberof Options
+     * @type {function}
+     * @default undefined
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
+     * @example
+     *  onmax: function(data) {
+     *    // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
+     *    ...
+     *  }
+     */
+    data_onmax: undefined,
+    /**
+     * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as most browsers will block XMLHTTPRequests.
+     * @name data․url
+     * @memberof Options
+     * @type {string}
+     * @default undefined
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.LoadData)
+     * @example
+     * data: {
+     *     url: "/data/test.csv"
+     * }
+     */
+    data_url: undefined,
+    /**
+     * XHR header value
+     * - **NOTE:** Should be used with `data.url` option
+     * @name data․headers
+     * @memberof Options
+     * @type {string}
+     * @default undefined
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader
+     * @example
+     * data: {
+     *     url: "/data/test.csv",
+     *     headers: {
+     *        "Content-Type": "text/xml",
+     *        ...
+     *     }
+     * }
+     */
+    data_headers: undefined,
+    /**
+     * Parse a JSON object for data. See also data.keys.
+     * @name data․json
+     * @memberof Options
+     * @type {Array}
+     * @default undefined
+     * @see [data․keys](#.data%25E2%2580%25A4keys)
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.JSONData)
+     * @example
+     * data: {
+     *     json: [
+     *       {name: "www.site1.com", upload: 200, download: 200, total: 400},
+     *       {name: "www.site2.com", upload: 100, download: 300, total: 400},
+     *       {name: "www.site3.com", upload: 300, download: 200, total: 500},
+     *       {name: "www.site4.com", upload: 400, download: 100, total: 500}
+     *     ],
+     *     keys: {
+     *       // case 1: specify 'x' key for category axis
+     *       x: "name", // 'name' key will be used as category x axis values
+     *       value: ["upload", "download"]
+     *
+     *       // case 2: without 'x' key for non-category axis
+     *       value: ["upload", "download"]
+     *     }
+     * }
+     */
+    data_json: undefined,
+    /**
+     * Load data from a multidimensional array, with the first element containing the data names, the following containing related data in that order.
+     * @name data․rows
+     * @memberof Options
+     * @type {Array}
+     * @default undefined
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.RowOrientedData)
+     * @example
+     * data: {
+     *   rows: [
+     *     ["A", "B", "C"],
+     *     [90, 120, 300],
+     *     [40, 160, 240],
+     *     [50, 200, 290],
+     *     [120, 160, 230],
+     *     [80, 130, 300],
+     *     [90, 220, 320]
+     *   ]
+     * }
+     *
+     * // for 'bar' type, data can contain:
+     * // - an array of [start, end] data following the order
+     * data: {
+     *   rows: [
+     *      ["data1", "data2"],
+     *      [[100, 150], 120],
+     *      [[200, 300], 55],
+     *      [[-400, 500], 60]
+     *   ],
+     *   type: "bar"
+     * }
+     *
+     * // for 'range' types('area-line-range' or 'area-step-range' or 'area-spline-range'), data should contain:
+     * // - an array of [high, mid, low] data following the order
+     * // - or an object with 'high', 'mid' and 'low' key value
+     * data: {
+     *   rows: [
+     *      ["data1", "data2"],
+     *      [
+     *        // or {high:150, mid: 140, low: 110}, 120
+     *        [150, 140, 110], 120
+     *      ],
+     *      [[155, 130, 115], 55],
+     *      [[160, 135, 120], 60]
+     *   ],
+     *   types: {
+     *       data1: "area-line-range",
+     *       data2: "line"
+     *   }
+     * }
+     *
+     * // for 'bubble' type, data can contain dimension value:
+     * // - an array of [y, z] data following the order
+     * // - or an object with 'y' and 'z' key value
+     * // 'y' is for y axis coordination and 'z' is the bubble radius value
+     * data: {
+     *   rows: [
+     *      ["data1", "data2"],
+     *      [
+     *        // or {y:10, z: 140}, 120
+     *        [10, 140], 120
+     *      ],
+     *      [[100, 30], 55],
+     *      [[50, 100], 60]
+     *   ],
+     *   types: {
+     *       data1: "bubble",
+     *       data2: "line"
+     *   }
+     * }
+     *
+     * // for 'candlestick' type, data should contain:
+     * // - an array of [open, high, low, close, volume(optional)] data following the order
+     * // - or an object with 'open', 'high', 'low', 'close' and 'value'(optional) key value
+     * data: {
+     *   rows: [
+     *      ["data1", "data2"],
+     * 		[
+     * 			// open, high, low, close, volume (optional)
+     * 			{open: 1300, high: 1369, low: 1200, close: 1339, volume: 100},
+     * 			[1000, 1100, 850, 870]
+     * 		],
+     * 		[
+     * 			{open: 1348, high: 1371, low: 1271, close: 1320},
+     * 			[870, 1250, 830, 1200, 50]
+     * 		]
+     *   ],
+     *   type: "candlestick"
+     * }
+     */
+    data_rows: undefined,
+    /**
+     * Load data from a multidimensional array, with each element containing an array consisting of a datum name and associated data values.
+     * @name data․columns
+     * @memberof Options
+     * @type {Array}
+     * @default undefined
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.ColumnOrientedData)
+     * @example
+     * data: {
+     *   columns: [
+     *      ["data1", 30, 20, 50, 40, 60, 50],
+     *      ["data2", 200, 130, 90, 240, 130, 220],
+     *      ["data3", 300, 200, 160, 400, 250, 250]
+     *   ]
+     * }
+     *
+     * // for 'bar' type, data can contain:
+     * // - an array of [start, end] data following the order
+     * data: {
+     *   columns: [
+     *     ["data1", -100, 50, [100, 200], [200, 300]],
+     *     ["data2", -200, 300, [-100, 100], [-50, -30]],
+     *   ],
+     *   type: "bar"
+     * }
+     *
+     * // for 'range' types('area-line-range' or 'area-step-range' or 'area-spline-range'), data should contain:
+     * // - an array of [high, mid, low] data following the order
+     * // - or an object with 'high', 'mid' and 'low' key value
+     * data: {
+     *   columns: [
+     *      ["data1",
+     *          [150, 140, 110],  // or {high:150, mid: 140, low: 110}
+     *          [150, 140, 110],
+     *          [150, 140, 110]
+     *      ]
+     *   ],
+     *   type: "area-line-range"
+     * }
+     *
+     * // for 'bubble' type, data can contain dimension value:
+     * // - an array of [y, z] data following the order
+     * // - or an object with 'y' and 'z' key value
+     * // 'y' is for y axis coordination and 'z' is the bubble radius value
+     * data: {
+     *   columns: [
+     *      ["data1",
+     *          [10, 140],  // or {y:10, z: 140}
+     *          [100, 30],
+     *          [50, 100]
+     *      ]
+     *   ],
+     *   type: "bubble"
+     * }
+     *
+     * // for 'candlestick' type, data should contain:
+     * // - an array of [open, high, low, close, volume(optional)] data following the order
+     * // - or an object with 'open', 'high', 'low', 'close' and 'value'(optional) key value
+     * data: {
+     *   columns: [
+     *      ["data1",
+     *          [1000, 1100, 850, 870, 100],  // or {open:1000, high: 1100, low: 870, volume: 100}
+     *          [870, 1250, 830, 1200]  // 'volume' can be omitted
+     *      ]
+     *   ],
+     *   type: "candlestick"
+     * }
+     */
+    data_columns: undefined,
+    /**
+     * Used if loading JSON via data.url.
+     * - **Available Values:**
+     *   - json
+     *   - csv
+     *   - tsv
+     * @name data․mimeType
+     * @memberof Options
+     * @type {string}
+     * @default csv
+     * @example
+     * data: {
+     *     mimeType: "json"
+     * }
+     */
+    data_mimeType: "csv",
+    /**
+     * Choose which JSON object keys correspond to desired data.
+     * - **NOTE:** Only for JSON object given as array.
+     * @name data․keys
+     * @memberof Options
+     * @type {string}
+     * @default undefined
+     * @example
+     * data: {
+     *     json: [
+     *       {name: "www.site1.com", upload: 200, download: 200, total: 400},
+     *       {name: "www.site2.com", upload: 100, download: 300, total: 400},
+     *       {name: "www.site3.com", upload: 300, download: 200, total: 500},
+     *       {name: "www.site4.com", upload: 400, download: 100, total: 500}
+     *     ],
+     *     keys: {
+     *       // case 1: specify 'x' key for category axis
+     *       x: "name", // 'name' key will be used as category x axis values
+     *       value: ["upload", "download"]
+     *
+     *       // case 2: without 'x' key for non-category axis
+     *       value: ["upload", "download"]
+     *     }
+     * }
+     */
+    data_keys: undefined,
+    /**
+     * Set text label to be displayed when there's no data to show.
+     * - ex. Toggling all visible data to not be shown, unloading all current data, etc.
+     * @name data․empty․label․text
+     * @memberof Options
+     * @type {string}
+     * @default ""
+     * @example
+     * data: {
+     *   empty: {
+     *     label: {
+     *       text: "No Data"
+     *     }
+     *   }
+     * }
+     */
+    data_empty_label_text: ""
+};
+
+export { data as default };

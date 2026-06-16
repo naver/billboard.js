@@ -1,0 +1,112 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.0.0
+*/
+import x from './x.js';
+import y from './y.js';
+import y2 from './y2.js';
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * y Axis  config options
+ */
+var optAxis = {
+    /**
+     * Setup the way to evaluate tick text size.
+     * - **NOTE:**
+     *   - When setting `false` or a custom evaluator, it is highly recommended to memoize evaluated text dimension value to not degrade performance.
+     * @name axis․evalTextSize
+     * @memberof Options
+     * @type {boolean|function}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.AxisEvalTextSize)
+     * @example
+     * axis: {
+     *   // will evaluate getting text size every time.
+     *   evalTextSize: false,
+     *
+     *   // set a custom evaluator
+     *   evalTextSize: function(textElement, axisId) {
+     *     // set some character to be evaluated
+     *     // NOTE: The dummy textElement is a descendant of given axisId('x', 'y' or 'y2').
+     *     textElement.textContent = "0";
+     *
+     *     // get the size
+     *     const box = textElement.getBBox();
+     *
+     *     // clear text
+     *     textElement.textContent = "";
+     *
+     *     return { w: 7, h: 12};
+     *   },
+     *
+     *   // set a custom evaluator by returning fixed value
+     *   evalTextSize: function(textElement, axisId) {
+     *     return {
+     *        x: {w: 7, h: 12},
+     *        y: {w: 15.75, h: 30},
+     *        y2: {w: 9.5, h: 18}
+     *     }[axisId];
+     *   }
+     * }
+     */
+    axis_evalTextSize: true,
+    /**
+     * Switch x and y axis position.
+     * @name axis․rotated
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   rotated: true
+     * }
+     */
+    axis_rotated: false,
+    /**
+     * Set axis tooltip.
+     * - **NOTE:**
+     *   - When enabled, will disable default focus grid line.
+     *   - For `timeseries` x Axis, tooltip will be formatted using x Axis' tick format.
+     *   - For `category` x Axis, tooltip will be displaying scales' value text.
+     * @name axis․tooltip
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @property {object} axis Axis object
+     * @property {boolean} [axis.tooltip=false] Show tooltip or not.
+     * @property {string|object} [axis.tooltip.backgroundColor] Set axis tooltip text background colors.
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.AxisTooltip)
+     * @example
+     * axis: {
+     *     tooltip: true, // default background color is
+     *
+     *     // set background color for axis tooltip texts
+     *     tooltip: {
+     *          backgroundColor: "red",
+     *
+     *          // set different background colors per axes
+     *          // NOTE: In this case, only specified axes tooltip will appear.
+     *          backgroundColor: {
+     *               x: "green",
+     *               y: "yellow",
+     *               y2: "red"
+     *          }
+     *     }
+     * }
+     */
+    axis_tooltip: false,
+    ...x,
+    ...y,
+    ...y2
+};
+
+export { optAxis as default };

@@ -1,0 +1,182 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.0.0
+*/
+/**
+ * Axis based chart data config options
+ */
+var optDataAxis = {
+    /**
+     * Specify the keys of the x values for each data.<br><br>
+     * This option can be used if we want to show the data that has different x values.
+     * @name data․xs
+     * @memberof Options
+     * @type {object}
+     * @default {}
+     * @example
+     * data: {
+     *   xs: {
+     *      data1: "x1",
+     *      data2: "x2"
+     *   }
+     * }
+     */
+    data_xs: {},
+    /**
+     * Set a format specifier to parse string specified as x.
+     * @name data․xFormat
+     * @memberof Options
+     * @type {string}
+     * @default %Y-%m-%d
+     * @example
+     * data: {
+     *    x: "x",
+     *    columns: [
+     *        ["x", "01012019", "02012019", "03012019"],
+     *        ["data1", 30, 200, 100]
+     *    ],
+     *    // Format specifier to parse as datetime for given 'x' string value
+     *    xFormat: "%m%d%Y"
+     * },
+     * axis: {
+     *    x: {
+     *        type: "timeseries"
+     *    }
+     * }
+     * @see [D3's time specifier](https://d3js.org/d3-time-format#locale_format)
+     */
+    data_xFormat: "%Y-%m-%d",
+    /**
+     * Set localtime format to parse x axis.
+     * @name data․xLocaltime
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @example
+     * data: {
+     *   xLocaltime: false
+     * }
+     */
+    data_xLocaltime: true,
+    /**
+     * Sort on x axis.
+     * - **NOTE:** This option works for lineish(area/line/spline/step) types only.
+     * @name data․xSort
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataXSort)
+     * @example
+     * data: {
+     *   xSort: false,
+     *   x: "x",
+     *   columns: [
+     *     // The line graph will start to be drawn following the x axis sequence
+     *     // Below data, will start drawing x=1: 200, x=2: 300, x=3: 100
+     *     ["x", 3, 1, 2],
+     *     ["data1", 100, 200, 300]
+     *   ]
+     * }
+     */
+    data_xSort: true,
+    /**
+     * Set y axis the data related to. y and y2 can be used.
+     * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
+     * @name data․axes
+     * @memberof Options
+     * @type {object}
+     * @default {}
+     * @example
+     * data: {
+     *   axes: {
+     *     data1: "y",
+     *     data2: "y2"
+     *   }
+     * }
+     */
+    data_axes: {},
+    /**
+     * Define regions for each data.<br>
+     * The values must be an array for each data and it should include an object that has `start`, `end` and `style`.
+     * - The object type should be as:
+     *   - start {number}: Start data point number. If not set, the start will be the first data point.
+     *   - [end] {number}: End data point number. If not set, the end will be the last data point.
+     *   - [style.dasharray="2 2"] {string}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
+     * - **NOTE:**
+     *   - Supports only line type.
+     *   - `start` and `end` values should be in the exact x value range.
+     *   - Dashes will be applied using `stroke-dasharray` css property when data doesn't contain nullish value(or nullish value with `line.connectNull=true` set).
+     *   - Dashes will be applied via path command when data contains nullish value.
+     * @name data․regions
+     * @memberof Options
+     * @type {object}
+     * @default {}
+     * @example
+     * data: {
+     *   regions: {
+     *     data1: [{
+     *         start: 1,
+     *         end: 2,
+     *         style: {
+     *             dasharray: "5 2"
+     *         }
+     *     }, {
+     *         start: 3
+     *     }],
+     *     ...
+     *   }
+     * }
+     */
+    data_regions: {},
+    /**
+     * Set the stacking to be normalized
+     * - **NOTE:**
+     *   - For stacking, '[data.groups](#.data%25E2%2580%25A4groups)' option should be set
+     *   - y Axis will be set in percentage value (0 ~ 100%)
+     *   - Must have positive values
+     *   - Data not in any group will not be normalized when using perGroup option
+     * @name data․stack․normalize
+     * @memberof Options
+     * @type {boolean|object}
+     * @default false
+     * @see [Demo: Data Stack Normalized](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
+     * @see [Demo: Data Stack Normalized per Group](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalizedGroup)
+     * @example
+     * data: {
+     *   stack: {
+     *      // Normalize all grouped data together (all groups combined to 0-100%)
+     *      normalize: true
+     *
+     *      // Normalize per group (each group independently becomes 0-100%)
+     *      // Data not in any group will display with their original values.
+     *      // If non-grouped data shares the same axis (e.g., y), it will be
+     *      // displayed on the 0-100 absolute scale. To display original values,
+     *      // assign them to a separate axis (e.g., y2).
+     *      normalize: {
+     *        perGroup: true
+     *      }
+     *   },
+     *   groups: [
+     *     ["data1", "data2"]  // This group will be normalized to 0-100%
+     *   ],
+     *   // data3 is not in any group, so it displays original values
+     *   // Assign it to y2 axis to use a separate scale
+     *   axes: {
+     *     data3: "y2"
+     *   }
+     * },
+     * axis: {
+     *   y2: {
+     *     show: true
+     *   }
+     * }
+     */
+    data_stack_normalize: false
+};
+
+export { optDataAxis as default };

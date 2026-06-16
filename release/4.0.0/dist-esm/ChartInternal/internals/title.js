@@ -1,0 +1,137 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.0.0
+*/
+import { $TEXT } from '../../config/classes.js';
+import { getElementPos, getBBox, setTextValue, getBoundingRect } from '../../module/util/dom.js';
+import { isNumber } from '../../module/util/type-checks.js';
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Get the text position
+ * @param {string} pos right, left or center
+ * @param {number} width chart width
+ * @returns {string|number} text-anchor value or position in pixel
+ * @private
+ */
+function _getTextXPos(pos = "left", width) {
+    const isNum = isNumber(width);
+    if (pos.includes("center")) {
+        return isNum ? width / 2 : "middle";
+    }
+    if (pos.includes("right")) {
+        return isNum ? width : "end";
+    }
+    return isNum ? 0 : "start";
+}
+/**
+ * Get estimated canvas title height.
+ * @param {object} $$ ChartInternal instance
+ * @returns {number} Title height
+ * @private
+ */
+function _getCanvasTitleHeight($$) {
+    const { config, $el } = $$;
+    const font = $$.canvasTheme?.style?.title?.font ||
+        $$.canvasTheme?.style?.label?.font ||
+        "14px sans-serif";
+    const chart = $el.chart?.node?.();
+    const doc = chart?.ownerDocument;
+    if (chart && doc && config.title_text) {
+        const svg = doc.createElementNS("http://www.w3.org/2000/svg", "svg");
+        const text = doc.createElementNS("http://www.w3.org/2000/svg", "text");
+        svg.style.cssText = "position:absolute;visibility:hidden;left:-10000px;top:-10000px;";
+        text.setAttribute("class", $TEXT.title);
+        text.style.font = font;
+        text.textContent = String(config.title_text);
+        svg.appendChild(text);
+        chart.appendChild(svg);
+        const height = getBoundingRect(text).height;
+        svg.remove();
+        if (height) {
+            return height;
+        }
+    }
+    return config.title_text ? (parseFloat(font) || 14) : 0;
+}
+var title = {
+    /**
+     * Initializes the title
+     * @private
+     */
+    initTitle() {
+        const $$ = this;
+        const { config, $el } = $$;
+        if (config.title_text) {
+            $el.title = $el.svg.append("g");
+            const text = $el.title
+                .append("text")
+                .style("text-anchor", _getTextXPos(config.title_position))
+                .attr("class", $TEXT.title);
+            setTextValue(text, config.title_text, [0.3, 1.5]);
+        }
+    },
+    /**
+     * Redraw title
+     * @private
+     */
+    redrawTitle() {
+        const $$ = this;
+        const { config, state: { current }, $el: { title } } = $$;
+        if (title) {
+            const x = _getTextXPos(config.title_position, current.width);
+            const y = (config.title_padding.top || 0) +
+                $$.getTextRect($$.$el.title, $TEXT.title).height;
+            title.attr("transform", `translate(${x}, ${y})`);
+        }
+    },
+    /**
+     * Get canvas title height using the same SVG text measurement as title padding.
+     * @returns {number} Title height
+     * @private
+     */
+    getCanvasTitleHeight() {
+        return _getCanvasTitleHeight(this);
+    },
+    /**
+     * Get title padding
+     * @returns {number} padding value
+     * @private
+     */
+    getTitlePadding() {
+        const $$ = this;
+        const { $el: { title }, config, state } = $$;
+        const paddingTop = config.title_padding.top || 0;
+        const paddingBottom = config.title_padding.bottom || 0;
+        if (state.isCanvasMode && config.title_text) {
+            return paddingTop + $$.getCanvasTitleHeight() + paddingBottom;
+        }
+        if (!title?.node()) {
+            return paddingTop + paddingBottom;
+        }
+        const titleNode = title.node();
+        const translateY = getElementPos(titleNode, "y");
+        // If title has been positioned, use actual bounding box for accurate calculation
+        if (translateY) {
+            const bbox = getBBox(titleNode);
+            // Calculate actual bottom of title text
+            // translateY is the baseline position, bbox.y is negative (above baseline),
+            // bbox.y + bbox.height gives the extent below baseline
+            return translateY + bbox.y + bbox.height + paddingBottom;
+        }
+        // Fallback: title not yet positioned, use text rect estimation
+        return paddingTop +
+            $$.getTextRect(title, $TEXT.title).height +
+            paddingBottom;
+    }
+};
+
+export { title as default };

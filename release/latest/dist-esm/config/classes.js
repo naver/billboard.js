@@ -1,0 +1,216 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.0.0
+*/
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * CSS class names definition
+ * @private
+ */
+const $COMMON = {
+    button: "bb-button",
+    chart: "bb-chart",
+    empty: "bb-empty",
+    main: "bb-main",
+    target: "bb-target",
+    EXPANDED: "_expanded_",
+    dummy: "_dummy_"
+};
+const $ARC = {
+    arc: "bb-arc",
+    arcLabelLine: "bb-arc-label-line",
+    arcLabelLineText: "bb-arc-label-line-text",
+    arcRange: "bb-arc-range",
+    arcs: "bb-arcs",
+    chartArc: "bb-chart-arc",
+    chartArcs: "bb-chart-arcs",
+    chartArcsBackground: "bb-chart-arcs-background",
+    chartArcsTitle: "bb-chart-arcs-title",
+    needle: "bb-needle"
+};
+const $AREA = {
+    area: "bb-area",
+    areas: "bb-areas"
+};
+const $AXIS = {
+    axis: "bb-axis",
+    axisX: "bb-axis-x",
+    axisXLabel: "bb-axis-x-label",
+    axisY: "bb-axis-y",
+    axisY2: "bb-axis-y2",
+    axisY2Label: "bb-axis-y2-label",
+    axisYLabel: "bb-axis-y-label",
+    axisXTooltip: "bb-axis-x-tooltip",
+    axisYTooltip: "bb-axis-y-tooltip",
+    axisY2Tooltip: "bb-axis-y2-tooltip",
+    axisTooltipX: "bb-axis-tooltip-x",
+    axisTooltipY: "bb-axis-tooltip-y"
+};
+const $BAR = {
+    bar: "bb-bar",
+    bars: "bb-bars",
+    chartBar: "bb-chart-bar",
+    chartBars: "bb-chart-bars",
+    barConnectLine: "bb-bar-connectLine"
+};
+const $CANDLESTICK = {
+    candlestick: "bb-candlestick",
+    candlesticks: "bb-candlesticks",
+    chartCandlestick: "bb-chart-candlestick",
+    chartCandlesticks: "bb-chart-candlesticks",
+    valueDown: "bb-value-down",
+    valueUp: "bb-value-up"
+};
+const $CIRCLE = {
+    chartCircles: "bb-chart-circles",
+    circle: "bb-circle",
+    circles: "bb-circles"
+};
+const $COLOR = {
+    colorPattern: "bb-color-pattern",
+    colorScale: "bb-colorscale"
+};
+const $DRAG = {
+    dragarea: "bb-dragarea",
+    INCLUDED: "_included_"
+};
+const $FUNNEL = {
+    funnel: "bb-funnel",
+    chartFunnel: "bb-chart-funnel",
+    chartFunnels: "bb-chart-funnels",
+    funnelBackground: "bb-funnel-background"
+};
+const $GAUGE = {
+    chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
+    chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
+    chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
+    chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
+    gaugeValue: "bb-gauge-value"
+};
+const $LEGEND = {
+    legend: "bb-legend",
+    legendBackground: "bb-legend-background",
+    legendItem: "bb-legend-item",
+    legendItemEvent: "bb-legend-item-event",
+    legendItemHidden: "bb-legend-item-hidden",
+    legendItemPoint: "bb-legend-item-point",
+    legendItemTile: "bb-legend-item-tile"
+};
+const $LINE = {
+    chartLine: "bb-chart-line",
+    chartLines: "bb-chart-lines",
+    line: "bb-line",
+    lines: "bb-lines"
+};
+const $EVENT = {
+    eventRect: "bb-event-rect",
+    eventRects: "bb-event-rects",
+    eventRectsMultiple: "bb-event-rects-multiple",
+    eventRectsSingle: "bb-event-rects-single"
+};
+const $FOCUS = {
+    focused: "bb-focused",
+    defocused: "bb-defocused",
+    legendItemFocused: "bb-legend-item-focused",
+    xgridFocus: "bb-xgrid-focus",
+    ygridFocus: "bb-ygrid-focus"
+};
+const $GRID = {
+    grid: "bb-grid",
+    gridLines: "bb-grid-lines",
+    xgrid: "bb-xgrid",
+    xgridLine: "bb-xgrid-line",
+    xgridLines: "bb-xgrid-lines",
+    xgrids: "bb-xgrids",
+    ygrid: "bb-ygrid",
+    ygridLine: "bb-ygrid-line",
+    ygridLines: "bb-ygrid-lines",
+    ygrids: "bb-ygrids"
+};
+const $LEVEL = {
+    level: "bb-level",
+    levels: "bb-levels"
+};
+const $RADAR = {
+    chartRadar: "bb-chart-radar",
+    chartRadars: "bb-chart-radars"
+};
+const $REGION = {
+    region: "bb-region",
+    regions: "bb-regions"
+};
+const $SELECT = {
+    selectedCircle: "bb-selected-circle",
+    selectedCircles: "bb-selected-circles",
+    SELECTED: "_selected_"
+};
+const $SHAPE = {
+    shape: "bb-shape",
+    shapes: "bb-shapes"
+};
+const $SUBCHART = {
+    brush: "bb-brush",
+    subchart: "bb-subchart"
+};
+const $TEXT = {
+    chartText: "bb-chart-text",
+    chartTexts: "bb-chart-texts",
+    text: "bb-text",
+    texts: "bb-texts",
+    title: "bb-title",
+    textBorderRect: "bb-text-border",
+    textLabelImage: "bb-text-label-image",
+    TextOverlapping: "text-overlapping"
+};
+const $TOOLTIP = {
+    tooltip: "bb-tooltip",
+    tooltipContainer: "bb-tooltip-container",
+    tooltipName: "bb-tooltip-name"
+};
+const $TREEMAP = {
+    treemap: "bb-treemap",
+    chartTreemap: "bb-chart-treemap",
+    chartTreemaps: "bb-chart-treemaps"
+};
+const $ZOOM = {
+    buttonZoomReset: "bb-zoom-reset",
+    zoomBrush: "bb-zoom-brush"
+};
+var CLASS = {
+    ...$COMMON,
+    ...$ARC,
+    ...$AREA,
+    ...$AXIS,
+    ...$BAR,
+    ...$CANDLESTICK,
+    ...$CIRCLE,
+    ...$COLOR,
+    ...$DRAG,
+    ...$GAUGE,
+    ...$LEGEND,
+    ...$LINE,
+    ...$EVENT,
+    ...$FOCUS,
+    ...$FUNNEL,
+    ...$GRID,
+    ...$LEVEL,
+    ...$RADAR,
+    ...$REGION,
+    ...$SELECT,
+    ...$SHAPE,
+    ...$SUBCHART,
+    ...$TEXT,
+    ...$TOOLTIP,
+    ...$TREEMAP,
+    ...$ZOOM
+};
+
+export { $ARC, $AREA, $AXIS, $BAR, $CANDLESTICK, $CIRCLE, $COLOR, $COMMON, $DRAG, $EVENT, $FOCUS, $FUNNEL, $GAUGE, $GRID, $LEGEND, $LEVEL, $LINE, $RADAR, $REGION, $SELECT, $SHAPE, $SUBCHART, $TEXT, $TOOLTIP, $TREEMAP, $ZOOM, CLASS as default };

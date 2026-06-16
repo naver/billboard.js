@@ -1,0 +1,64 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.0.0
+*/
+import { isEmpty } from '../../module/util/type-checks.js';
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+var apiCategory = {
+    /**
+     * Set specified category name on category axis.
+     * @function category
+     * @instance
+     * @memberof Chart
+     * @param {number} i index of category to be changed
+     * @param {string} category category value to be changed
+     * @returns {string}
+     * @example
+     * chart.category(2, "Category 3");
+     */
+    category(i, category) {
+        const $$ = this.internal;
+        const { config } = $$;
+        if (arguments.length > 1) {
+            config.axis_x_categories[i] = category;
+            $$.state.dirty.data = true;
+            $$.redraw();
+        }
+        return config.axis_x_categories[i];
+    },
+    /**
+     * Set or get category names on category axis.
+     * @function categories
+     * @instance
+     * @memberof Chart
+     * @param {Array} categories This must be an array that includes category names in string. If category names are included in the date by data.x option, this is not required.
+     * @returns {Array}
+     * @example
+     * chart.categories([
+     *      "Category 1", "Category 2", ...
+     * ]);
+     */
+    categories(categories) {
+        const $$ = this.internal;
+        const { config } = $$;
+        if (!categories || !Array.isArray(categories)) {
+            const cat = config.axis_x_categories;
+            return isEmpty(cat) ? Object.values($$.data.xs)[0] : cat;
+        }
+        config.axis_x_categories = categories;
+        $$.state.dirty.data = true;
+        $$.redraw();
+        return config.axis_x_categories;
+    }
+};
+
+export { apiCategory as default };
