@@ -25,7 +25,7 @@ function _forEachValidItem<T>(items: T[], callback: (item: T, index: number) => 
 	for (let i = 0; i < items.length; i++) {
 		const item = items[i];
 
-		if (item) {
+		if (item !== null && isDefined(item)) {
 			callback(item, i);
 		}
 	}
@@ -224,7 +224,9 @@ function mergeObj(target: object, ...objectN): any {
 			if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
 				const value = source[key];
 
-				if (isObject(value)) {
+				if (value instanceof Date) {
+					target[key] = new Date(value.getTime());
+				} else if (isObject(value)) {
 					!target[key] && (target[key] = {});
 					target[key] = mergeObj(target[key], value);
 				} else {

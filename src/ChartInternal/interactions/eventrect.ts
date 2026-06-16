@@ -274,7 +274,9 @@ export default {
 		// width/height must be part of the key: resize keeps the domain but moves coords.
 		const xDomain = xScale?.domain();
 		const fingerprint = xDomain ?
-			`${xDomain[0]}_${xDomain[1]}_${state.width}_${state.height}_${$$.data.targets.length}_${
+			`${xDomain[0]}_${
+				xDomain[1]
+			}_${state.width}_${state.height}_${$$.data.targets.length}_${state.dataGeneration}_${
 				[...state.hiddenTargetIds].join(",")
 			}` :
 			null;

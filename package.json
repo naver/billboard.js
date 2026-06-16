@@ -54,6 +54,8 @@
 	},
 	"sideEffects": [
 		"dist/**/*.css",
+		"dist-esm/Chart/api/stubs.js",
+		"src/Chart/api/stubs.ts",
 		"src/index.ts"
 	],
 	"repository": {

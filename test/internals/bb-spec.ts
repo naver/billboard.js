@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {beforeEach, beforeAll, afterEach, afterAll, describe, expect, it} from "vitest";
+import {beforeEach, beforeAll, afterEach, afterAll, describe, expect, it, vi} from "vitest";
 import sinon from "sinon";
 
 import bb from "../../src";
@@ -322,7 +322,7 @@ describe("Interface & initialization", () => {
 			expect(svg.attr("viewBox")).to.be.equal("0 0 640 480");
 		});
 
-		it("check 'parent' resize", () => {
+		it("check 'parent' resize", () => new Promise(done => {
 			let width = 300;
 
 			container.style.width = `${width}px`;
@@ -353,7 +353,38 @@ describe("Interface & initialization", () => {
 			// should resize on parent element
 			setTimeout(() => {
 				expect(+chart.$.svg.attr("width")).to.be.equal(width);
+				done(1);
 			}, 350);
+		}));
+
+		it("does not throw for parent resize when ResizeObserver is unavailable", () => {
+			const ResizeObserver = (window as any).ResizeObserver;
+			const warn = vi.spyOn(window.console, "warn").mockImplementation(() => {});
+
+			container.innerHTML = '<div id="chartResize"></div>';
+			(window as any).ResizeObserver = undefined;
+
+			try {
+				expect(() => {
+					chart = util.generate({
+						data: {
+							columns: [
+								["data1", 30]
+							]
+						},
+						resize: {
+							auto: "parent"
+						},
+						bindto: "#chartResize"
+					});
+				}).not.to.throw();
+				expect(warn).toHaveBeenCalledWith(
+					"[billboard.js] resize.auto='parent' requires ResizeObserver; falling back to window resize."
+				);
+			} finally {
+				warn.mockRestore();
+				(window as any).ResizeObserver = ResizeObserver;
+			}
 		});
 
 	});

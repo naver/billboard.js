@@ -31,9 +31,6 @@ export {
 	step,
 	treemap,
 
-	// render modules
-	canvas,
-
 	// interaction modules
 	selection,
 	subchart,
