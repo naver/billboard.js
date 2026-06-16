@@ -1,3 +1,10 @@
+## [4.0.1](https://github.com/naver/billboard.js/compare/4.0.0...4.0.1) (2026-06-16)
+
+
+### Bug Fixes
+
+* **types:** add canvas subpath mapping ([a6b180a](https://github.com/naver/billboard.js/commit/a6b180a259e6115c1065ad24c4d3c473845be89f))
+
 # [4.0.0](https://github.com/naver/billboard.js/compare/3.18.0...4.0.0) (2026-06-16)
 
 
