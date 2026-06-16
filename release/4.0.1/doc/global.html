@@ -1,0 +1,3570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Global - billboard.js API doc</title>
+    
+    <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
+    
+        <meta name="keywords" content="chart, SVG, D3, Data Visualization" />
+        <meta name="keyword" content="chart, SVG, D3, Data Visualization" />
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://naver.github.io/billboard.js/demo/" target="_blank" >Examples</a></h2><h2><a href="https://github.com/naver/billboard.js" target="_blank" >GitHub</a></h2><h3>Namespaces</h3><ul><li><a href="bb.html">bb</a><ul class='members'><li data-type='member'><a href="bb.html#.instance">instance</a></li><li data-type='member'><a href="bb.html#.plugin">plugin</a></li><li data-type='member'><a href="bb.html#.version">version</a></li></ul><ul class='methods'><li data-type='method'><a href="bb.html#.defaults">defaults</a></li><li data-type='method'><a href="bb.html#.generate">generate</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="Chart.html">Chart</a><ul class='members'><li data-type='member'><a href="Chart.html#.$">$</a></li><li data-type='member'><a href="Chart.html#.plugins">plugins</a></li></ul><ul class='methods'><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4labels">axis․labels</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4max">axis․max</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4min">axis․min</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4range">axis․range</a></li><li data-type='method'><a href="Chart.html#categories">categories</a></li><li data-type='method'><a href="Chart.html#category">category</a></li><li data-type='method'><a href="Chart.html#color">color</a></li><li data-type='method'><a href="Chart.html#config">config</a></li><li data-type='method'><a href="Chart.html#data">data</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4axes">data․axes</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4colors">data․colors</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4max">data․max</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4min">data․min</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4names">data․names</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4shown">data․shown</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4values">data․values</a></li><li data-type='method'><a href="Chart.html#defocus">defocus</a></li><li data-type='method'><a href="Chart.html#destroy">destroy</a></li><li data-type='method'><a href="Chart.html#export">export</a></li><li data-type='method'><a href="Chart.html#flow">flow</a></li><li data-type='method'><a href="Chart.html#flush">flush</a></li><li data-type='method'><a href="Chart.html#focus">focus</a></li><li data-type='method'><a href="Chart.html#groups">groups</a></li><li data-type='method'><a href="Chart.html#hide">hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4hide">legend․hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4show">legend․show</a></li><li data-type='method'><a href="Chart.html#load">load</a></li><li data-type='method'><a href="Chart.html#regions">regions</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4add">regions․add</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4remove">regions․remove</a></li><li data-type='method'><a href="Chart.html#resize">resize</a></li><li data-type='method'><a href="Chart.html#revert">revert</a></li><li data-type='method'><a href="Chart.html#select">select</a></li><li data-type='method'><a href="Chart.html#selected">selected</a></li><li data-type='method'><a href="Chart.html#show">show</a></li><li data-type='method'><a href="Chart.html#subchart">subchart</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4hide">subchart․hide</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4reset">subchart․reset</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4show">subchart․show</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4toggle">subchart․toggle</a></li><li data-type='method'><a href="Chart.html#toggle">toggle</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4hide">tooltip․hide</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4show">tooltip․show</a></li><li data-type='method'><a href="Chart.html#unload">unload</a></li><li data-type='method'><a href="Chart.html#unselect">unselect</a></li><li data-type='method'><a href="Chart.html#unzoom">unzoom</a></li><li data-type='method'><a href="Chart.html#x">x</a></li><li data-type='method'><a href="Chart.html#xgrids">xgrids</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4add">xgrids․add</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4remove">xgrids․remove</a></li><li data-type='method'><a href="Chart.html#xs">xs</a></li><li data-type='method'><a href="Chart.html#ygrids">ygrids</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4add">ygrids․add</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4remove">ygrids․remove</a></li><li data-type='method'><a href="Chart.html#zoom">zoom</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4enable">zoom․enable</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4max">zoom․max</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4min">zoom․min</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4range">zoom․range</a></li></ul></li><li><a href="Options.html">Options</a><ul class='members'><li data-type='member'><a href="Options.html#.arc">arc</a></li><li data-type='member'><a href="Options.html#.area">area</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4evalTextSize">axis․evalTextSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4rotated">axis․rotated</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4tooltip">axis․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4axes">axis․x․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4categories">axis․x․categories</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4clipPath">axis․x․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4extent">axis․x․extent</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4forceAsSingle">axis․x․forceAsSingle</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4height">axis․x․height</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4inverted">axis․x․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4label">axis․x․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4localtime">axis․x․localtime</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4max">axis․x․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4min">axis․x․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4padding">axis․x․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4show">axis․x․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4autorotate">axis․x․tick․autorotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4centered">axis․x․tick․centered</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4count">axis․x․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․x․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․x․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․x․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4reverse">axis․x․tick․culling․reverse</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4fit">axis․x․tick․fit</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4format">axis․x․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4inner">axis․x․tick․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4multiline">axis․x․tick․multiline</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․x․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․x․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4show">axis․x․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4inner">axis․x․tick․text․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․x․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․x․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4tooltip">axis․x․tick․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4values">axis․x․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4width">axis․x․tick․width</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4type">axis․x․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4axes">axis․y2․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4center">axis․y2․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4default">axis․y2․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inner">axis․y2․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inverted">axis․y2․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4label">axis․y2․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4max">axis․y2․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4min">axis․y2․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4padding">axis․y2․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4show">axis․y2․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y2․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y2․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․y2․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y2․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4reverse">axis․y2․tick․culling․reverse</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y2․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4inner">axis․y2․tick․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y2․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y2․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y2․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y2․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y2․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y2․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y2․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4type">axis․y2․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4axes">axis․y․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4center">axis․y․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4clipPath">axis․y․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4default">axis․y․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inner">axis․y․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inverted">axis․y․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4label">axis․y․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4max">axis․y․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4min">axis․y․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4padding">axis․y․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4show">axis․y․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․y․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4reverse">axis․y․tick․culling․reverse</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4inner">axis․y․tick․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4type">axis․y․type</a></li><li data-type='member'><a href="Options.html#.background">background</a></li><li data-type='member'><a href="Options.html#.bar">bar</a></li><li data-type='member'><a href="Options.html#.bindto">bindto</a></li><li data-type='member'><a href="Options.html#.boost">boost</a></li><li data-type='member'><a href="Options.html#.bubble">bubble</a></li><li data-type='member'><a href="Options.html#.candlestick">candlestick</a></li><li data-type='member'><a href="Options.html#.canvas">canvas</a></li><li data-type='member'><a href="Options.html#.clipPath">clipPath</a></li><li data-type='member'><a href="Options.html#.color">color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4axes">data․axes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4classes">data․classes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4color">data․color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4colors">data․colors</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4columns">data․columns</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4empty%25E2%2580%25A4label%25E2%2580%25A4text">data․empty․label․text</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4filter">data․filter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groups">data․groups</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groupsZeroAs">data․groupsZeroAs</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4headers">data․headers</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4hide">data․hide</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4idConverter">data․idConverter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4json">data․json</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4keys">data․keys</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4labels">data․labels</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4mimeType">data․mimeType</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4names">data․names</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onclick">data․onclick</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onhidden">data․onhidden</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmax">data․onmax</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmin">data․onmin</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onout">data․onout</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onover">data․onover</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onselected">data․onselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onshown">data․onshown</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onunselected">data․onunselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4order">data․order</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4regions">data․regions</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4rows">data․rows</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4draggable">data․selection․draggable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled">data․selection․enabled</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4grouped">data․selection․grouped</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4isselectable">data․selection․isselectable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4multiple">data․selection․multiple</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4stack%25E2%2580%25A4normalize">data․stack․normalize</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4type">data․type</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4types">data․types</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4url">data․url</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4x">data․x</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xFormat">data․xFormat</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xLocaltime">data․xLocaltime</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xSort">data․xSort</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xs">data․xs</a></li><li data-type='member'><a href="Options.html#.donut">donut</a></li><li data-type='member'><a href="Options.html#.funnel">funnel</a></li><li data-type='member'><a href="Options.html#.gauge">gauge</a></li><li data-type='member'><a href="Options.html#.grid">grid</a></li><li data-type='member'><a href="Options.html#.interaction">interaction</a></li><li data-type='member'><a href="Options.html#.legend">legend</a></li><li data-type='member'><a href="Options.html#.line">line</a></li><li data-type='member'><a href="Options.html#.onafterinit">onafterinit</a></li><li data-type='member'><a href="Options.html#.onbeforeinit">onbeforeinit</a></li><li data-type='member'><a href="Options.html#.onclick">onclick</a></li><li data-type='member'><a href="Options.html#.oninit">oninit</a></li><li data-type='member'><a href="Options.html#.onout">onout</a></li><li data-type='member'><a href="Options.html#.onover">onover</a></li><li data-type='member'><a href="Options.html#.onrendered">onrendered</a></li><li data-type='member'><a href="Options.html#.onresize">onresize</a></li><li data-type='member'><a href="Options.html#.onresized">onresized</a></li><li data-type='member'><a href="Options.html#.padding">padding</a></li><li data-type='member'><a href="Options.html#.pie">pie</a></li><li data-type='member'><a href="Options.html#.plugins">plugins</a></li><li data-type='member'><a href="Options.html#.point">point</a></li><li data-type='member'><a href="Options.html#.polar">polar</a></li><li data-type='member'><a href="Options.html#.radar">radar</a></li><li data-type='member'><a href="Options.html#.regions">regions</a></li><li data-type='member'><a href="Options.html#.render">render</a></li><li data-type='member'><a href="Options.html#.resize">resize</a></li><li data-type='member'><a href="Options.html#.scatter">scatter</a></li><li data-type='member'><a href="Options.html#.size">size</a></li><li data-type='member'><a href="Options.html#.spline">spline</a></li><li data-type='member'><a href="Options.html#.subchart">subchart</a></li><li data-type='member'><a href="Options.html#.svg">svg</a></li><li data-type='member'><a href="Options.html#.title">title</a></li><li data-type='member'><a href="Options.html#.tooltip">tooltip</a></li><li data-type='member'><a href="Options.html#.transition">transition</a></li><li data-type='member'><a href="Options.html#.treemap">treemap</a></li><li data-type='member'><a href="Options.html#.zoom">zoom</a></li></ul></li><li><a href="Plugin.html">Plugin</a><ul class='members'><li data-type='member'><a href="Plugin.html#.version">version</a></li></ul></li><li><a href="plugin-bubblecompare.html">plugin-bubblecompare</a><ul class='members'><li data-type='member'><a href="plugin-bubblecompare.html#.expandScale">expandScale</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.maxR">maxR</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.minR">minR</a></li></ul></li><li><a href="plugin-sparkline.html">plugin-sparkline</a><ul class='members'><li data-type='member'><a href="plugin-sparkline.html#.selector">selector</a></li></ul></li><li><a href="plugin-stanford.html">plugin-stanford</a><ul class='members'><li data-type='member'><a href="plugin-stanford.html#.colors">colors</a></li><li data-type='member'><a href="plugin-stanford.html#.epochs">epochs</a></li><li data-type='member'><a href="plugin-stanford.html#.lines">lines</a></li><li data-type='member'><a href="plugin-stanford.html#.padding">padding</a></li><li data-type='member'><a href="plugin-stanford.html#.regions">regions</a></li><li data-type='member'><a href="plugin-stanford.html#.scale">scale</a></li></ul></li><li><a href="plugin-tableview.html">plugin-tableview</a><ul class='members'><li data-type='member'><a href="plugin-tableview.html#.categoryFormat">categoryFormat</a></li><li data-type='member'><a href="plugin-tableview.html#.categoryTitle">categoryTitle</a></li><li data-type='member'><a href="plugin-tableview.html#.class">class</a></li><li data-type='member'><a href="plugin-tableview.html#.nullString">nullString</a></li><li data-type='member'><a href="plugin-tableview.html#.numberFormat">numberFormat</a></li><li data-type='member'><a href="plugin-tableview.html#.selector">selector</a></li><li data-type='member'><a href="plugin-tableview.html#.style">style</a></li><li data-type='member'><a href="plugin-tableview.html#.title">title</a></li><li data-type='member'><a href="plugin-tableview.html#.updateOnToggle">updateOnToggle</a></li></ul></li><li><a href="plugin-textoverlap.html">plugin-textoverlap</a><ul class='members'><li data-type='member'><a href="plugin-textoverlap.html#.area">area</a></li><li data-type='member'><a href="plugin-textoverlap.html#.extent">extent</a></li><li data-type='member'><a href="plugin-textoverlap.html#.selector">selector</a></li></ul></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Global</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+            
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+            
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="ALLOWED_TAGS"><span class="type-signature type-signature-constant">(constant) </span>ALLOWED_TAGS<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>HTML/SVG Sanitization module
+Pure whitelist approach - only explicitly allowed tags, attributes, and protocols pass through</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="module_sanitize.ts.html">module/sanitize.ts</a>, <a href="module_sanitize.ts.html#line12">line 12</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>HTML/SVG Sanitization module
+Pure whitelist approach - only explicitly allowed tags, attributes, and protocols pass through</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="QUOTE"><span class="type-signature type-signature-constant">(constant) </span>QUOTE<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Copyright (c) 2017 ~ present NAVER Corp.
+billboard.js project is licensed under the MIT license</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="module_dsv.ts.html">module/dsv.ts</a>, <a href="module_dsv.ts.html#line7">line 7</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://datatracker.ietf.org/doc/html/rfc4180">https://datatracker.ietf.org/doc/html/rfc4180</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Copyright (c) 2017 ~ present NAVER Corp.
+billboard.js project is licensed under the MIT license</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="area"><span class="type-signature"></span>area<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas area charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line127">line 127</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas area charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="areaLineRange"><span class="type-signature"></span>areaLineRange<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas area-line-range charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line132">line 132</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas area-line-range charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="areaSpline"><span class="type-signature"></span>areaSpline<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas area-spline charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line137">line 137</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas area-spline charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="areaSplineRange"><span class="type-signature"></span>areaSplineRange<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas area-spline-range charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line142">line 142</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas area-spline-range charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="areaStep"><span class="type-signature"></span>areaStep<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas area-step charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line147">line 147</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas area-step charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="areaStepRange"><span class="type-signature"></span>areaStepRange<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas area-step-range charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line152">line 152</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas area-step-range charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="bar"><span class="type-signature"></span>bar<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas bar charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line157">line 157</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas bar charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="bubble"><span class="type-signature"></span>bubble<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas bubble charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line167">line 167</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas bubble charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="candlestick"><span class="type-signature"></span>candlestick<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas candlestick charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line172">line 172</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas candlestick charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="canvas"><span class="type-signature"></span>canvas<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register canvas rendering modules and return canvas render mode.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvas.ts.html">config/resolver/canvas.ts</a>, <a href="config_resolver_canvas.ts.html#line2645">line 2645</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register canvas rendering modules and return canvas render mode.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="category"><span class="type-signature"></span>category<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Enable chart category API (chart.category() / chart.categories()).
+Tree-shakable: only bundled when imported.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_category.ts.html">config/resolver/category.ts</a>, <a href="config_resolver_category.ts.html#line24">line 24</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Enable chart category API (chart.category() / chart.categories()).
+Tree-shakable: only bundled when imported.</p>
+</div>
+
+
+
+
+
+
+
+    <h5 class="h5-examples">Example</h5>
+    
+    <pre class="prettyprint"><code>// ESM — import to enable category APIs
+import bb, {bar, category} from "billboard.js";
+
+const chart = bb.generate({
+  ...bar(),
+  ...category(),
+  data: { columns: [...] }
+});
+
+chart.categories(["A", "B", "C"]);</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="exportApi"><span class="type-signature"></span>exportApi<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Enable chart export API (chart.export()).
+Tree-shakable: only bundled when imported.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_export.ts.html">config/resolver/export.ts</a>, <a href="config_resolver_export.ts.html#line23">line 23</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Enable chart export API (chart.export()).
+Tree-shakable: only bundled when imported.</p>
+</div>
+
+
+
+
+
+
+
+    <h5 class="h5-examples">Example</h5>
+    
+    <pre class="prettyprint"><code>// ESM — import to enable chart.export()
+import bb, {exportApi} from "billboard.js";
+
+const chart = bb.generate({
+  ...exportApi(),
+  data: { columns: [...] }
+});
+
+chart.export(); // now available</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="flow"><span class="type-signature"></span>flow<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Enable chart flow API (chart.flow()).
+Tree-shakable: only bundled when imported.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_flow.ts.html">config/resolver/flow.ts</a>, <a href="config_resolver_flow.ts.html#line27">line 27</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Enable chart flow API (chart.flow()).
+Tree-shakable: only bundled when imported.</p>
+</div>
+
+
+
+
+
+
+
+    <h5 class="h5-examples">Example</h5>
+    
+    <pre class="prettyprint"><code>// ESM — import to enable chart.flow()
+import bb, {bar, flow} from "billboard.js";
+
+const chart = bb.generate({
+  ...bar(),
+  ...flow(),
+  data: { columns: [...] }
+});
+
+chart.flow({ columns: [...] }); // now available</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="grid"><span class="type-signature"></span>grid<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Enable chart grid API (chart.xgrids() / chart.ygrids()).
+Tree-shakable: only bundled when imported.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_grid.ts.html">config/resolver/grid.ts</a>, <a href="config_resolver_grid.ts.html#line30">line 30</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Enable chart grid API (chart.xgrids() / chart.ygrids()).
+Tree-shakable: only bundled when imported.</p>
+</div>
+
+
+
+
+
+
+
+    <h5 class="h5-examples">Example</h5>
+    
+    <pre class="prettyprint"><code>// ESM — import to enable grid APIs and grid rendering
+import bb, {bar, grid} from "billboard.js";
+
+const chart = bb.generate({
+  ...bar(),
+  ...grid(),
+  data: { columns: [...] },
+  grid: { x: { lines: [...] } }
+});
+
+chart.xgrids([{value: 1, text: "Label"}]);</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="line"><span class="type-signature"></span>line<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas line charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line112">line 112</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas line charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="regions"><span class="type-signature"></span>regions<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Enable chart regions API (chart.regions()).
+Tree-shakable: only bundled when imported.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_regions.ts.html">config/resolver/regions.ts</a>, <a href="config_resolver_regions.ts.html#line28">line 28</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Enable chart regions API (chart.regions()).
+Tree-shakable: only bundled when imported.</p>
+</div>
+
+
+
+
+
+
+
+    <h5 class="h5-examples">Example</h5>
+    
+    <pre class="prettyprint"><code>// ESM — import to enable regions API and region rendering
+import bb, {bar, regions} from "billboard.js";
+
+const chart = bb.generate({
+  ...bar(),
+  ...regions(),
+  data: { columns: [...] },
+  regions: [{ start: 1, end: 2, class: "hl" }]
+});
+
+chart.regions([{start: 1, end: 3}]);</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="scatter"><span class="type-signature"></span>scatter<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas scatter charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line162">line 162</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas scatter charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="spline"><span class="type-signature"></span>spline<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas spline charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line117">line 117</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas spline charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="step"><span class="type-signature"></span>step<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas step charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line122">line 122</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas step charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="treemap"><span class="type-signature"></span>treemap<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Register modules and options required for canvas treemap charts.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="config_resolver_canvasShape.ts.html">config/resolver/canvasShape.ts</a>, <a href="config_resolver_canvasShape.ts.html#line177">line 177</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Register modules and options required for canvas treemap charts.</p>
+</div>
+
+
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="format"><span class="type-signature"></span>format<span class="signature">(specifier)</span><span class="type-signature"> &rarr; {function}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Simple number formatter.
+Supports &quot;d&quot; specifier (decimal notation, rounded to integer).</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Plugin_stanford_ColorScale.ts.html">Plugin/stanford/ColorScale.ts</a>, <a href="Plugin_stanford_ColorScale.ts.html#line16">line 16</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5 class="h5-parameters">Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>specifier</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Format specifier</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5 class="h5-returns">Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Formatter function</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getTransformCTM"><span class="type-signature"></span>getTransformCTM<span class="signature">(node, x, y, inverse)</span><span class="type-signature"> &rarr; {object}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Get translation string from screen &lt;--&gt; svg point</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="module_util_dom.ts.html">module/util/dom.ts</a>, <a href="module_util_dom.ts.html#line214">line 214</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5 class="h5-parameters">Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>node</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">SVGGraphicsElement</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>graphics element</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>0</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>target x point</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>0</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>target y point</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>inverse</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>true</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>inverse flag</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5 class="h5-returns">Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="hasStyle"><span class="type-signature"></span>hasStyle<span class="signature">(node, condition, all)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Determine if given node has the specified style</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="module_util_dom.ts.html">module/util/dom.ts</a>, <a href="module_util_dom.ts.html#line270">line 270</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5 class="h5-parameters">Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>node</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">d3Selection</span>
+|
+
+<span class="param-type">SVGElement</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Target node</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>condition</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Conditional style props object</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>all</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>false</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>If true, all condition should be matched</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5 class="h5-returns">Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="hasViewBox"><span class="type-signature"></span>hasViewBox<span class="signature">(svg)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Check if svg element has viewBox attribute</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="module_util_dom.ts.html">module/util/dom.ts</a>, <a href="module_util_dom.ts.html#line258">line 258</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5 class="h5-parameters">Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>svg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">d3Selection</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Target svg selection</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5 class="h5-returns">Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="hsl"><span class="type-signature"></span>hsl<span class="signature">(h, s, l, opacity)</span><span class="type-signature"> &rarr; {<a href="HSLColor.html">HSLColor</a>}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Creates an HSL color object.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Plugin_stanford_index.ts.html">Plugin/stanford/index.ts</a>, <a href="Plugin_stanford_index.ts.html#line23">line 23</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5 class="h5-parameters">Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>h</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Hue (0-360)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>s</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Saturation (0-1)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>l</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Lightness (0-1)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>opacity</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>1</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Opacity (0-1), defaults to 1</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5 class="h5-returns">Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>HSL color object</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="HSLColor.html">HSLColor</a></span>
+
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="polygonArea"><span class="type-signature"></span>polygonArea<span class="signature">(polygon)</span><span class="type-signature"> &rarr; {number}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Compute the signed area of a polygon using the Shoelace formula.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="module_polygon.ts.html">module/polygon.ts</a>, <a href="module_polygon.ts.html#line8">line 8</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://en.wikipedia.org/wiki/Shoelace_formula">https://en.wikipedia.org/wiki/Shoelace_formula</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5 class="h5-parameters">Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>polygon</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Array of [x, y] coordinates</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5 class="h5-returns">Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Signed area of the polygon</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="polygonCentroid"><span class="type-signature"></span>polygonCentroid<span class="signature">(polygon)</span><span class="type-signature"> &rarr; {Array}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Compute the centroid of a polygon.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="module_polygon.ts.html">module/polygon.ts</a>, <a href="module_polygon.ts.html#line24">line 24</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5 class="h5-parameters">Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>polygon</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Array of [x, y] coordinates</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5 class="h5-returns">Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Centroid [x, y] of the polygon</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array</span>
+
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+<h4 class="name" id="LabelLineConfig">LabelLineConfig</h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Label line configuration type</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ChartInternal_internals_text.arc.ts.html">ChartInternal/internals/text.arc.ts</a>, <a href="ChartInternal_internals_text.arc.ts.html#line252">line 252</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>chartType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>line</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>show</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>distance</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<div class="description usertext">
+    <p>Label line configuration type</p>
+</div>
+
+
+
+    <h5 class="h5-types">Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">object</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="LinearGradientOption">LinearGradientOption</h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Copyright (c) 2017 ~ present NAVER Corp.
+billboard.js project is licensed under the MIT license</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ChartInternal_shape_IShape.ts.html">ChartInternal/shape/IShape.ts</a>, <a href="ChartInternal_shape_IShape.ts.html#line4">line 4</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>stops</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<div class="description usertext">
+    <p>Copyright (c) 2017 ~ present NAVER Corp.
+billboard.js project is licensed under the MIT license</p>
+</div>
+
+
+
+    <h5 class="h5-types">Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">boolean</span>
+|
+
+<span class="param-type">object</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+            
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="static/doc.css">
+    
+    <script src="static/analytics.js"></script>
+    
+</body>
+</html>
