@@ -1,3 +1,69 @@
+# [4.0.0](https://github.com/naver/billboard.js/compare/3.18.0...4.0.0) (2026-06-16)
+
+
+### Bug Fixes
+
+* **background:** Correct background image position in canvas ([34009de](https://github.com/naver/billboard.js/commit/34009de310a2f1370388b291cc08a18d1cc9981c))
+* **boost:** Correct rootSelector typo in CSS scope initialization ([a0673ee](https://github.com/naver/billboard.js/commit/a0673ee6b52518720fa2c55706a4ee584c27b85d)), closes [#4123](https://github.com/naver/billboard.js/issues/4123)
+* **boost:** Reuse Worker and Object URL to prevent memory leak ([fc812fb](https://github.com/naver/billboard.js/commit/fc812fb763bacdf3a50511fc7d0147ba70674f9b)), closes [#3720](https://github.com/naver/billboard.js/issues/3720)
+* **canvas:** address canvas render review issues ([70df3f6](https://github.com/naver/billboard.js/commit/70df3f6d52afb63a320d02bc9af14d887de5aa90))
+* **canvas:** align candlestick labels with wick endpoints ([b328da4](https://github.com/naver/billboard.js/commit/b328da4d371874caf522e09a91f86874a52389c3))
+* **canvas:** align rendering and touch interaction parity ([5944cab](https://github.com/naver/billboard.js/commit/5944cab8ddf4808faf9744d8a6b573996eb1903e))
+* **data:** Add type check before 'in' operator in JSON dot-notation path resolver ([67c00b9](https://github.com/naver/billboard.js/commit/67c00b90020b8acb8bbbbdb3c70e04d6f14cfa85)), closes [#4116](https://github.com/naver/billboard.js/issues/4116)
+* **data:** Handle non-array value for data.json ([dc5d04c](https://github.com/naver/billboard.js/commit/dc5d04c39f4fa9828ce2e1f1e75f717657f0fb32)), closes [#4103](https://github.com/naver/billboard.js/issues/4103)
+* **types:** Add file extensions to types ([02c7bf6](https://github.com/naver/billboard.js/commit/02c7bf69a3632052b5cf6aa90e4e904da187efad)), closes [#4097](https://github.com/naver/billboard.js/issues/4097)
+* **types:** Export shape option types from main entry point ([#4109](https://github.com/naver/billboard.js/issues/4109)) ([f4a236a](https://github.com/naver/billboard.js/commit/f4a236aaf9e90592e63b933a4a022287daa48035)), closes [#4104](https://github.com/naver/billboard.js/issues/4104)
+* **util:** camelCase SVG tag/attribute matching in sanitizer ([631ddc5](https://github.com/naver/billboard.js/commit/631ddc516e88b3aecb81eca2373aabb3851420c6)), closes [#4078](https://github.com/naver/billboard.js/issues/4078) [#4106](https://github.com/naver/billboard.js/issues/4106)
+* **util:** update sanitization function ([#4105](https://github.com/naver/billboard.js/issues/4105)) ([d492644](https://github.com/naver/billboard.js/commit/d4926443fbf4f9d5af250a92d41669a8f483f77c))
+* **zoom:** fix drag zoom boundary release and circle transition desync  ([00f6859](https://github.com/naver/billboard.js/commit/00f685937d7a15bc80636708627e3ba1b353893a)), closes [#4131](https://github.com/naver/billboard.js/issues/4131) [#4131](https://github.com/naver/billboard.js/issues/4131)
+
+
+### Features
+
+* **canvas:** add canvas rendering mode ([200c99e](https://github.com/naver/billboard.js/commit/200c99efc5858ac77680fb5d365aa7686abcdf9e))
+* **esm:** tree-shakable grid, regions, category modules ([678e761](https://github.com/naver/billboard.js/commit/678e7614203e3b720bf6835587e7323e0b83418f))
+* **funnel:** Rotate and spline option ([7a7bf25](https://github.com/naver/billboard.js/commit/7a7bf257da10d514ba5d02648eed41b737652a61)), closes [#4024](https://github.com/naver/billboard.js/issues/4024)
+* **plugin-tableview:** add numberFormat configuration option ([2abe355](https://github.com/naver/billboard.js/commit/2abe3552163c88743849dd65b64ea6c567c5adbc)), closes [#4140](https://github.com/naver/billboard.js/issues/4140) [#4141](https://github.com/naver/billboard.js/issues/4141)
+
+
+### BREAKING CHANGES
+
+* **esm:** chart.export() and chart.flow() are no longer
+included automatically in the ESM build. Explicit import required:
+
+  import bb, { bar, exportApi, flow } from "billboard.js";
+  bb.generate({ ...bar(), ...exportApi(), ...flow(), data: { ... } });
+
+UMD bundle users are not affected.
+
+* refactor(esm): remove prototype stubs for export and flow modules
+
+Remove the stub implementations and delete calls that were added as
+fallbacks — they are unnecessary now that the resolver pattern handles
+lazy loading directly without stub cleanup.
+
+* feat(esm): make grid, regions, category APIs tree-shakable
+
+- Introduce grid(), regions(), category() resolver modules for opt-in ESM import
+- Remove apiGrid, apiRegion, apiCategory from axis resolver
+- Remove internal grid/region renderers from axis resolver
+- Extend Chart/api/stubs with xgrids/ygrids/regions/category/categories stubs
+- Add optional chaining in redraw/eventrect/flow/ChartInternal for grid/region methods
+- Update UMD entry to auto-invoke new resolvers
+- Update ESM entry to export new resolvers
+- Point runtime error docs to new MODULE_IMPORTS.md guide
+- Add tests for new optional modules
+
+Add CHANGELOG-v4.md for release notes and MODULE_IMPORTS.md as the
+canonical module import guide referenced from runtime error messages.
+* **esm:** In ESM builds, chart.xgrids()/ygrids(), chart.regions(),
+chart.category()/categories() now require explicit import:
+
+  import bb, {bar, grid, regions, category} from "billboard.js";
+  grid(); regions(); category();  // run once per app
+
+UMD bundle users are not affected — the UMD entry auto-invokes all resolvers.
+
 # [3.18.0](https://github.com/naver/billboard.js/compare/3.17.4...3.18.0) (2026-01-23)
 
 
