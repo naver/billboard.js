@@ -159,6 +159,12 @@ importers:
       d3-delaunay:
         specifier: ^6.0.4
         version: 6.0.4
+      d3-format:
+        specifier: ^3.1.0
+        version: 3.1.0
+      d3-time:
+        specifier: ^3.1.0
+        version: 3.1.0
       docdash:
         specifier: ^2.0.2
         version: 2.0.2
