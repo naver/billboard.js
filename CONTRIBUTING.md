@@ -106,8 +106,8 @@ Steps to submit your pull request:
 2. Create a new branch from your billboard.js `master` branch (and be sure it is always up-to-date)
 3. Do your work
 4. Create test code for your work (when possible)
-5. Run `npm run lint` for linting and code style check. (update until there are no errors or warnings)
-6. Run test code by `npm test` or `npm test:chrome` for chrome browser.
+5. Run `pnpm run lint` for linting and code style check. (update until there are no errors or warnings)
+6. Run test code by `pnpm test`.
    Make sure all tests pass at least on the latest version of Chrome (mobile/desktop).
 7. Write a commit log following convention and push to your repository branch.
 8. Create a new PR from your branch to `billboard.js/master` branch.

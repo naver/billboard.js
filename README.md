@@ -52,7 +52,7 @@ If you have any questions, check out the previous posts or create a new one at:
 
 ## Download and Installation
 
-Download dist files from the repo directly or install it via npm.
+Download dist files from the repo directly or install it with pnpm.
 
 <details>
   <summary>Dist file list from the repo. (click to expand)</summary>
@@ -147,7 +147,7 @@ There are two ways to install from the `nightly` branch directly.
 
 ```sh
 # Run install command from shell
-$ npm install git+https://github.com/naver/billboard.js.git#nightly --save
+$ pnpm add git+https://github.com/naver/billboard.js.git#nightly
 ```
 
 ### Next (Release Candidate) version
@@ -156,13 +156,13 @@ Next version is the 'release candidate' build, prior to the latest official rele
 
 ```sh
 # Run install command from shell
-$ npm install billboard.js@next --save
+$ pnpm add billboard.js@next
 ```
 
-### Installation with npm
+### Installation with pnpm
 
 ```bash
-$ npm install billboard.js
+$ pnpm add billboard.js
 ```
 
 ### Packages

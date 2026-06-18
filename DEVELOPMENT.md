@@ -18,29 +18,26 @@ $ git clone https://github.com/naver/billboard.js.git
 ```
 
 #### 2. Install dependencies
-`npm` and `Yarn` are supported.
+`pnpm` is used for dependency management.
 
 ```
 # Install the dependency modules.
-$ npm install
-
-# or
-$ yarn
+$ pnpm install
 ```
 
 #### 3. Build
 
-Use npm scripts to build billboard.js
+Use package scripts to build billboard.js
 
 ```bash
 # Run webpack-dev-server for development
-$ npm start
+$ pnpm start
 
 # Build
-$ npm run build
+$ pnpm run build
 
 # Generate jsdoc
-$ npm run jsdoc
+$ pnpm run jsdoc
 ```
 
 Two folders will be created after the build is completed.
@@ -54,17 +51,17 @@ To maintain the same code style and quality, we adopted [ESLint](https://eslint.
 Setup your editor for checking or run the command below for linting.
 
 ```bash
-$ npm run lint
+$ pnpm run lint
 ```
 
 ### Test
 
-Once you have created a branch and finished the development, you must perform tests with `npm test` command before pushing to a remote repository.
+Once you have created a branch and finished the development, you must perform tests with `pnpm test` command before pushing to a remote repository.
 
 ```bash
-$ npm test
+$ pnpm test
 ```
-Running the `npm test` command will start [Mocha](https://mochajs.org/) tests via [Karma-runner](https://karma-runner.github.io/).
+Running the `pnpm test` command will start Vitest tests in browser mode.
 
 ## Bug Report
 
