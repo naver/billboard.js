@@ -21,21 +21,17 @@ jobs:
         fetch-depth: 0
         token: ${{ secrets.GITHUB_TOKEN }}
         
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+
     - name: Setup Node.js
       uses: actions/setup-node@v6
       with:
         node-version: '20'
-        
-    - name: Enable Corepack and setup Yarn
-      run: |
-        corepack enable
-        corepack prepare yarn@4.3.1 --activate
-        # Set yarn version to 4.3.1 and ensure it's available
-        YARN_IGNORE_PATH=1 yarn set version 4.3.1
-        # Verify yarn is working
-        yarn --version
-      env:
-        YARN_IGNORE_PATH: 1
+        cache: 'pnpm'
+        cache-dependency-path: |
+          pnpm-lock.yaml
+          packages/react/pnpm-lock.yaml
         
     - name: Configure git
       run: |
@@ -48,29 +44,26 @@ jobs:
         
     - name: Install dependencies
       run: |
-        yarn install --immutable
-      env:
-        YARN_IGNORE_PATH: 1
+        pnpm install --frozen-lockfile
+        pnpm --dir packages/react install --frozen-lockfile
         
     - name: Update all dependencies
       run: |
-        yarn up "**"
-      env:
-        YARN_IGNORE_PATH: 1
+        pnpm update --latest
+        pnpm --dir packages/react update --latest
         
     - name: Install updated dependencies
       run: |
-        yarn install
-        sudo npx playwright install-deps
-        npx playwright install
-      env:
-        YARN_IGNORE_PATH: 1
+        pnpm install
+        pnpm --dir packages/react install
+        sudo pnpm exec playwright install-deps
+        pnpm exec playwright install
+        pnpm --dir packages/react exec playwright install
         
     - name: Run tests
       run: |
-        yarn coverage:ci
-      env:
-        YARN_IGNORE_PATH: 1
+        pnpm run coverage:ci
+        pnpm --dir packages/react test
         
     - name: Check if there are changes
       id: check_changes

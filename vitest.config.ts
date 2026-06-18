@@ -59,6 +59,9 @@ export default defineConfig({
         browser: {
             enabled: true,
             provider:  playwright(),
+            api: {
+                host: "127.0.0.1"
+            },
             headless: true,
             viewport: {
                 width: 800,
@@ -76,6 +79,6 @@ export default defineConfig({
                 /.+/
             ]
         },
-        open: true
+        open: !process.env.CI
     }
 });

@@ -44,7 +44,7 @@ build() {
 	rm -rf release && mkdir -p release/$VERSION
 
 	# build & copy to release path
-	npm run build && npm run jsdoc
+	pnpm run build && pnpm run jsdoc
 	cp -r doc dist* release/$VERSION/
 
 	# copy built files to dist_tag folder
@@ -62,7 +62,7 @@ push() {
 	fi
 
 	# push to github pages
-	npx gh-pages --dist $DIST_FOLDER --dest $DEST_FOLDER --add --remote $DEST_REMOTE --message $COMMIT_MESSAGE
+	pnpm dlx gh-pages --dist $DIST_FOLDER --dest $DEST_FOLDER --add --remote $DEST_REMOTE --message $COMMIT_MESSAGE
 }
 
 setup

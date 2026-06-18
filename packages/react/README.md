@@ -6,7 +6,7 @@ React component for billboard.js
 
 ```bash
 # Install billboard.js together if you don't have it already
-$ npm install billboard.js @billboard.js/react
+$ pnpm add billboard.js @billboard.js/react
 ```
 
 ## How to use
