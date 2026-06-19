@@ -160,7 +160,7 @@ function makeContext() {
 }
 
 describe("ESM canvas renderer coverage", () => {
-	it("draws subchart bars, candlesticks, points, brush handles and selections", () => {
+	it("draws subchart bars, candlesticks, scatter points, brush handles and selections", () => {
 		const {renderer} = makeRenderer();
 		const ctx = makeContext();
 		const shape = {

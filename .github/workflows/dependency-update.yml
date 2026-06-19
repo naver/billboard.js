@@ -27,7 +27,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v6
       with:
-        node-version: '20'
+        node-version: 24.x
         cache: 'pnpm'
         cache-dependency-path: |
           pnpm-lock.yaml
@@ -40,7 +40,7 @@ jobs:
         
     - name: Create and switch to dependency branch
       run: |
-        git checkout -b dependency-update-$(date +%Y%m%d)
+        git checkout -b "dependency-update-$(date +%Y%m%d)"
         
     - name: Install dependencies
       run: |
@@ -69,9 +69,9 @@ jobs:
       id: check_changes
       run: |
         if git diff --quiet; then
-          echo "changes=false" >> $GITHUB_OUTPUT
+          echo "changes=false" >> "$GITHUB_OUTPUT"
         else
-          echo "changes=true" >> $GITHUB_OUTPUT
+          echo "changes=true" >> "$GITHUB_OUTPUT"
         fi
         
     - name: Commit changes
@@ -100,7 +100,7 @@ jobs:
         
         Please review and merge if everything looks good." \
           --base master \
-          --head dependency-update-$(date +%Y%m%d) \
+          --head "dependency-update-$(date +%Y%m%d)" \
           --label "chore,dependencies,dev-env"
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -110,4 +110,4 @@ jobs:
       run: |
         echo "No dependency updates available"
         git checkout master
-        git branch -D dependency-update-$(date +%Y%m%d) 
+        git branch -D "dependency-update-$(date +%Y%m%d)"
