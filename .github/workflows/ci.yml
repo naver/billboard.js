@@ -37,11 +37,14 @@ jobs:
       run: pnpm run coverage:ci
 
     - name: Coveralls Parallel
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@v2
       with:
-        github-token: ${{ secrets.github_token }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        file: ./coverage/lcov.info
+        format: lcov
         flag-name: run-${{ matrix.node-version }}
         parallel: true
+        fail-on-error: false
         
   send_coverage:
     permissions:
@@ -51,10 +54,11 @@ jobs:
     steps:
     - name: Coveralls
       # https://github.com/marketplace/actions/coveralls-github-action
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel-finished: true
+        fail-on-error: false
 
   release:
     needs: send_coverage
