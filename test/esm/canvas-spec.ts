@@ -4000,18 +4000,13 @@ describe("ESM canvas", function() {
 		}
 	});
 
-	it("should keep target-color stroke on subchart points when CSS overrides canvas point fill", () => {
-		const style = document.createElement("style");
-		const pointStrokeRecords: Array<{
-			lineWidth: number,
+	it("should skip line data points on canvas subchart to match SVG", () => {
+		const pointArcRecords: Array<{
 			r: number,
-			strokeStyle: string,
 			tx: number,
 			ty: number
 		}> = [];
 		const originalArc = CanvasRenderingContext2D.prototype.arc;
-		const originalStroke = CanvasRenderingContext2D.prototype.stroke;
-		let lastArc: {r: number, tx: number, ty: number} | null = null;
 		const arc = vi.spyOn(CanvasRenderingContext2D.prototype, "arc")
 			.mockImplementation(function(
 				this: CanvasRenderingContext2D,
@@ -4024,30 +4019,10 @@ describe("ESM canvas", function() {
 			) {
 				const transform = this.getTransform();
 
-				lastArc = {r, tx: transform.e, ty: transform.f};
+				pointArcRecords.push({r, tx: transform.e, ty: transform.f});
 
 				return originalArc.call(this, x, y, r, startAngle, endAngle, counterclockwise);
 			});
-		const stroke = vi.spyOn(CanvasRenderingContext2D.prototype, "stroke")
-			.mockImplementation(function(this: CanvasRenderingContext2D, ...args) {
-				if (lastArc) {
-					pointStrokeRecords.push({
-						...lastArc,
-						lineWidth: this.lineWidth,
-						strokeStyle: String(this.strokeStyle)
-					});
-					lastArc = null;
-				}
-
-				return originalStroke.apply(this, args as []);
-			});
-
-		style.textContent = `
-			.bb-circle {
-				fill: rgb(255, 255, 255) !important;
-			}
-		`;
-		document.head.appendChild(style);
 
 		try {
 			generateWithOptions({
@@ -4060,22 +4035,19 @@ describe("ESM canvas", function() {
 				}
 			});
 
-			const {margin2} = chart.internal.state;
-			const color = chart.internal.color("data1");
+			const {margin, margin2} = chart.internal.state;
 
-			expect(chart.internal.canvasTheme.style.shape.pointFillColor)
-				.to.be.equal("rgb(255, 255, 255)");
-			expect(chart.internal.canvasTheme.style.shape.pointStrokeColor).to.be.undefined;
-			expect(pointStrokeRecords.some(({lineWidth, r, strokeStyle, tx, ty}) =>
-				strokeStyle === color &&
-				lineWidth === 1 &&
+			expect(pointArcRecords.some(({r, tx, ty}) =>
+				r <= 3 &&
+				Math.abs(tx - margin.left) < 0.1 &&
+				Math.abs(ty - margin.top) < 0.1
+			)).to.be.true;
+			expect(pointArcRecords.some(({r, tx, ty}) =>
 				r <= 3 &&
 				Math.abs(tx - margin2.left) < 0.1 &&
 				Math.abs(ty - margin2.top) < 0.1
-			)).to.be.true;
+			)).to.be.false;
 		} finally {
-			style.remove();
-			stroke.mockRestore();
 			arc.mockRestore();
 		}
 	});

@@ -14,12 +14,12 @@ setup_git() {
 }
 
 build_nightly() {
-    ./node_modules/.bin/cross-env VERSION=$VERSION npm run build:production
-    ./node_modules/.bin/cross-env VERSION=$VERSION npm run build:packaged
-    ./node_modules/.bin/cross-env VERSION=$VERSION npm run build:theme
-    ./node_modules/.bin/cross-env VERSION=$VERSION npm run build:plugin
-    ./node_modules/.bin/cross-env VERSION=$VERSION npm run build:esm
-    npm run build:plugin:types
+    pnpm exec cross-env VERSION=$VERSION pnpm run build:production
+    pnpm exec cross-env VERSION=$VERSION pnpm run build:packaged
+    pnpm exec cross-env VERSION=$VERSION pnpm run build:theme
+    pnpm exec cross-env VERSION=$VERSION pnpm run build:plugin
+    pnpm exec cross-env VERSION=$VERSION pnpm run build:esm
+    pnpm run build:plugin:types
 }
 
 build_and_commit() {

@@ -16,13 +16,13 @@
 		"dev": "vite",
 		"build": "tsc && vite build && tsc --emitDeclarationOnly",
 		"build:test": "vite --config vite.config.test.ts build",
-		"preview": "npm run build:test && vite preview",
-		"test": "npm run build:test && vitest",
-		"test:ui": "npm test -- --ui",
-		"coverage": "npm run build:test && vitest run",
+		"preview": "pnpm run build:test && vite preview",
+		"test": "pnpm run build:test && vitest",
+		"test:ui": "pnpm run test -- --ui",
+		"coverage": "pnpm run build:test && vitest run",
 		"storybook": "start-storybook -p 6006",
 		"build-storybook": "build-storybook",
-		"deploy": "npm run coverage && npm run build"
+		"deploy": "pnpm run coverage && pnpm run build"
 	},
 	"repository": {
 		"type": "git",
@@ -62,6 +62,7 @@
 		"@types/react-dom": "^18.3.0",
 		"@vitejs/plugin-react": "^4.3.1",
 		"@vitest/coverage-c8": "^0.33.0",
+		"@vitest/coverage-istanbul": "2.0.5",
 		"@vitest/coverage-v8": "^2.0.5",
 		"@vitest/ui": "^2.0.5",
 		"babel-loader": "^9.1.3",
@@ -73,5 +74,6 @@
 		"typescript": "^5.5.4",
 		"vite": "^5.4.2",
 		"vitest": "^2.0.5"
-	}
+	},
+	"packageManager": "pnpm@10.16.0"
 }

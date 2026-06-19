@@ -15,31 +15,36 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v6
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        cache: 'pnpm'
 
     - name: Install dependencies
       run: |
-        npm config set package-lock false
-        npm install --save --legacy-peer-deps
-        sudo npx playwright install-deps
-        npx playwright install
+        pnpm install --frozen-lockfile
+        sudo pnpm exec playwright install-deps
+        pnpm exec playwright install
 
     - name: Lint
-      run: npm run lint
+      run: pnpm run lint
 
     - name: Run Test
-      run: npm run coverage:ci
+      run: pnpm run coverage:ci
 
     - name: Coveralls Parallel
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@v2
       with:
-        github-token: ${{ secrets.github_token }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        file: ./coverage/lcov.info
+        format: lcov
         flag-name: run-${{ matrix.node-version }}
         parallel: true
+        fail-on-error: false
         
   send_coverage:
     permissions:
@@ -49,10 +54,11 @@ jobs:
     steps:
     - name: Coveralls
       # https://github.com/marketplace/actions/coveralls-github-action
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel-finished: true
+        fail-on-error: false
 
   release:
     needs: send_coverage
@@ -65,24 +71,24 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.ref }}
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24.x
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: |
-          npm config set package-lock false
-          npm config set legacy-peer-deps=true
-          npm install
+        run: pnpm install --frozen-lockfile
 
       - name: Publish
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         id: publish
-        run: npm run release
+        run: pnpm run release
 
       - name: Deploy
         shell: bash

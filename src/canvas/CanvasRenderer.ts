@@ -1345,8 +1345,8 @@ export default class CanvasRenderer {
 						if (cx && cy) {
 							for (const target of targets) {
 								if (
-									!isCanvasPointType($$, target) ||
-									(isCanvasLineType($$, target) && !shouldDrawPoints($$, target))
+									!isCanvasScatterType($$, target) &&
+									!isCanvasBubbleType($$, target)
 								) {
 									continue;
 								}
