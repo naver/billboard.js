@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.1-nightly-20260617013432
+ * @version 4.0.1-nightly-20260619013636
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23235,14 +23235,14 @@ const $ZOOM = {
 };
 /* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $LEVEL), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
-;// ./node_modules/d3-selection/src/sourceEvent.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/sourceEvent.js
 /* harmony default export */ function sourceEvent(event) {
   let sourceEvent;
   while (sourceEvent = event.sourceEvent) event = sourceEvent;
   return event;
 }
 
-;// ./node_modules/d3-selection/src/pointer.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/pointer.js
 
 /* harmony default export */ function src_pointer(event, node) {
   event = sourceEvent(event);
@@ -24206,7 +24206,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "4.0.1-nightly-20260617013432");
+__publicField(Plugin, "version", "4.0.1-nightly-20260619013636");
 
 ;// ./src/Plugin/sparkline/Options.ts
 class Options {

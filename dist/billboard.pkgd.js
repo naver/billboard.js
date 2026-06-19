@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.1-nightly-20260617013432
+ * @version 4.0.1-nightly-20260619013636
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -23097,7 +23097,7 @@ __webpack_require__.d(resolver_shape_namespaceObject, {
   treemap: function() { return treemap_treemap; }
 });
 
-;// ./node_modules/d3-selection/src/selector.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selector.js
 function none() {
 }
 /* harmony default export */ function selector(selector) {
@@ -23106,7 +23106,7 @@ function none() {
   };
 }
 
-;// ./node_modules/d3-selection/src/selection/select.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/select.js
 
 
 /* harmony default export */ function selection_select(select) {
@@ -23122,12 +23122,12 @@ function none() {
   return new Selection(subgroups, this._parents);
 }
 
-;// ./node_modules/d3-selection/src/array.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/array.js
 function array(x) {
   return x == null ? [] : Array.isArray(x) ? x : Array.from(x);
 }
 
-;// ./node_modules/d3-selection/src/selectorAll.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selectorAll.js
 function empty() {
   return [];
 }
@@ -23137,7 +23137,7 @@ function empty() {
   };
 }
 
-;// ./node_modules/d3-selection/src/selection/selectAll.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/selectAll.js
 
 
 
@@ -23160,7 +23160,7 @@ function arrayAll(select) {
   return new Selection(subgroups, parents);
 }
 
-;// ./node_modules/d3-selection/src/matcher.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/matcher.js
 /* harmony default export */ function matcher(selector) {
   return function() {
     return this.matches(selector);
@@ -23172,7 +23172,7 @@ function childMatcher(selector) {
   };
 }
 
-;// ./node_modules/d3-selection/src/selection/selectChild.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/selectChild.js
 
 var find = Array.prototype.find;
 function childFind(match) {
@@ -23187,7 +23187,7 @@ function childFirst() {
   return this.select(match == null ? childFirst : childFind(typeof match === "function" ? match : childMatcher(match)));
 }
 
-;// ./node_modules/d3-selection/src/selection/selectChildren.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/selectChildren.js
 
 var filter = Array.prototype.filter;
 function children() {
@@ -23202,7 +23202,7 @@ function childrenFilter(match) {
   return this.selectAll(match == null ? children : childrenFilter(typeof match === "function" ? match : childMatcher(match)));
 }
 
-;// ./node_modules/d3-selection/src/selection/filter.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/filter.js
 
 
 /* harmony default export */ function selection_filter(match) {
@@ -23217,12 +23217,12 @@ function childrenFilter(match) {
   return new Selection(subgroups, this._parents);
 }
 
-;// ./node_modules/d3-selection/src/selection/sparse.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/sparse.js
 /* harmony default export */ function sparse(update) {
   return new Array(update.length);
 }
 
-;// ./node_modules/d3-selection/src/selection/enter.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/enter.js
 
 
 /* harmony default export */ function enter() {
@@ -23251,14 +23251,14 @@ EnterNode.prototype = {
   }
 };
 
-;// ./node_modules/d3-selection/src/constant.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/constant.js
 /* harmony default export */ function constant(x) {
   return function() {
     return x;
   };
 }
 
-;// ./node_modules/d3-selection/src/selection/data.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/data.js
 
 
 
@@ -23333,14 +23333,14 @@ function arraylike(data) {
   return typeof data === "object" && "length" in data ? data : Array.from(data);
 }
 
-;// ./node_modules/d3-selection/src/selection/exit.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/exit.js
 
 
 /* harmony default export */ function exit() {
   return new Selection(this._exit || this._groups.map(sparse), this._parents);
 }
 
-;// ./node_modules/d3-selection/src/selection/join.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/join.js
 /* harmony default export */ function join(onenter, onupdate, onexit) {
   var enter = this.enter(), update = this, exit = this.exit();
   if (typeof onenter === "function") {
@@ -23358,7 +23358,7 @@ function arraylike(data) {
   return enter && update ? enter.merge(update).order() : update;
 }
 
-;// ./node_modules/d3-selection/src/selection/merge.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/merge.js
 
 /* harmony default export */ function merge(context) {
   var selection = context.selection ? context.selection() : context;
@@ -23375,7 +23375,7 @@ function arraylike(data) {
   return new Selection(merges, this._parents);
 }
 
-;// ./node_modules/d3-selection/src/selection/order.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/order.js
 /* harmony default export */ function order() {
   for (var groups = this._groups, j = -1, m = groups.length; ++j < m; ) {
     for (var group = groups[j], i = group.length - 1, next = group[i], node; --i >= 0; ) {
@@ -23388,7 +23388,7 @@ function arraylike(data) {
   return this;
 }
 
-;// ./node_modules/d3-selection/src/selection/sort.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/sort.js
 
 /* harmony default export */ function sort(compare) {
   if (!compare) compare = ascending;
@@ -23409,7 +23409,7 @@ function ascending(a, b) {
   return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 
-;// ./node_modules/d3-selection/src/selection/call.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/call.js
 /* harmony default export */ function call() {
   var callback = arguments[0];
   arguments[0] = this;
@@ -23417,12 +23417,12 @@ function ascending(a, b) {
   return this;
 }
 
-;// ./node_modules/d3-selection/src/selection/nodes.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/nodes.js
 /* harmony default export */ function nodes() {
   return Array.from(this);
 }
 
-;// ./node_modules/d3-selection/src/selection/node.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/node.js
 /* harmony default export */ function node() {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length; i < n; ++i) {
@@ -23433,19 +23433,19 @@ function ascending(a, b) {
   return null;
 }
 
-;// ./node_modules/d3-selection/src/selection/size.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/size.js
 /* harmony default export */ function size() {
   let size = 0;
   for (const node of this) ++size;
   return size;
 }
 
-;// ./node_modules/d3-selection/src/selection/empty.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/empty.js
 /* harmony default export */ function selection_empty() {
   return !this.node();
 }
 
-;// ./node_modules/d3-selection/src/selection/each.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/each.js
 /* harmony default export */ function each(callback) {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
@@ -23455,7 +23455,7 @@ function ascending(a, b) {
   return this;
 }
 
-;// ./node_modules/d3-selection/src/namespaces.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/namespaces.js
 var xhtml = "http://www.w3.org/1999/xhtml";
 /* harmony default export */ var namespaces = ({
   svg: "http://www.w3.org/2000/svg",
@@ -23465,7 +23465,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
   xmlns: "http://www.w3.org/2000/xmlns/"
 });
 
-;// ./node_modules/d3-selection/src/namespace.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/namespace.js
 
 /* harmony default export */ function namespace(name) {
   var prefix = name += "", i = prefix.indexOf(":");
@@ -23473,7 +23473,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
   return namespaces.hasOwnProperty(prefix) ? { space: namespaces[prefix], local: name } : name;
 }
 
-;// ./node_modules/d3-selection/src/selection/attr.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/attr.js
 
 function attrRemove(name) {
   return function() {
@@ -23518,12 +23518,12 @@ function attrFunctionNS(fullname, value) {
   return this.each((value == null ? fullname.local ? attrRemoveNS : attrRemove : typeof value === "function" ? fullname.local ? attrFunctionNS : attrFunction : fullname.local ? attrConstantNS : attrConstant)(fullname, value));
 }
 
-;// ./node_modules/d3-selection/src/window.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/window.js
 /* harmony default export */ function src_window(node) {
   return node.ownerDocument && node.ownerDocument.defaultView || node.document && node || node.defaultView;
 }
 
-;// ./node_modules/d3-selection/src/selection/style.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/style.js
 
 function styleRemove(name) {
   return function() {
@@ -23549,7 +23549,7 @@ function styleValue(node, name) {
   return node.style.getPropertyValue(name) || src_window(node).getComputedStyle(node, null).getPropertyValue(name);
 }
 
-;// ./node_modules/d3-selection/src/selection/property.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/property.js
 function propertyRemove(name) {
   return function() {
     delete this[name];
@@ -23571,7 +23571,7 @@ function propertyFunction(name, value) {
   return arguments.length > 1 ? this.each((value == null ? propertyRemove : typeof value === "function" ? propertyFunction : propertyConstant)(name, value)) : this.node()[name];
 }
 
-;// ./node_modules/d3-selection/src/selection/classed.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/classed.js
 function classArray(string) {
   return string.trim().split(/^|\s+/);
 }
@@ -23634,7 +23634,7 @@ function classedFunction(names, value) {
   return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
 }
 
-;// ./node_modules/d3-selection/src/selection/text.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/text.js
 function textRemove() {
   this.textContent = "";
 }
@@ -23653,7 +23653,7 @@ function textFunction(value) {
   return arguments.length ? this.each(value == null ? textRemove : (typeof value === "function" ? textFunction : textConstant)(value)) : this.node().textContent;
 }
 
-;// ./node_modules/d3-selection/src/selection/html.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/html.js
 function htmlRemove() {
   this.innerHTML = "";
 }
@@ -23672,7 +23672,7 @@ function htmlFunction(value) {
   return arguments.length ? this.each(value == null ? htmlRemove : (typeof value === "function" ? htmlFunction : htmlConstant)(value)) : this.node().innerHTML;
 }
 
-;// ./node_modules/d3-selection/src/selection/raise.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/raise.js
 function raise() {
   if (this.nextSibling) this.parentNode.appendChild(this);
 }
@@ -23680,7 +23680,7 @@ function raise() {
   return this.each(raise);
 }
 
-;// ./node_modules/d3-selection/src/selection/lower.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/lower.js
 function lower() {
   if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
 }
@@ -23688,7 +23688,7 @@ function lower() {
   return this.each(lower);
 }
 
-;// ./node_modules/d3-selection/src/creator.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/creator.js
 
 
 function creatorInherit(name) {
@@ -23707,7 +23707,7 @@ function creatorFixed(fullname) {
   return (fullname.local ? creatorFixed : creatorInherit)(fullname);
 }
 
-;// ./node_modules/d3-selection/src/selection/append.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/append.js
 
 /* harmony default export */ function append(name) {
   var create = typeof name === "function" ? name : creator(name);
@@ -23716,7 +23716,7 @@ function creatorFixed(fullname) {
   });
 }
 
-;// ./node_modules/d3-selection/src/selection/insert.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/insert.js
 
 
 function constantNull() {
@@ -23729,7 +23729,7 @@ function constantNull() {
   });
 }
 
-;// ./node_modules/d3-selection/src/selection/remove.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/remove.js
 function remove() {
   var parent = this.parentNode;
   if (parent) parent.removeChild(this);
@@ -23738,7 +23738,7 @@ function remove() {
   return this.each(remove);
 }
 
-;// ./node_modules/d3-selection/src/selection/clone.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/clone.js
 function selection_cloneShallow() {
   var clone = this.cloneNode(false), parent = this.parentNode;
   return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
@@ -23751,12 +23751,12 @@ function selection_cloneDeep() {
   return this.select(deep ? selection_cloneDeep : selection_cloneShallow);
 }
 
-;// ./node_modules/d3-selection/src/selection/datum.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/datum.js
 /* harmony default export */ function selection_datum(value) {
   return arguments.length ? this.property("__data__", value) : this.node().__data__;
 }
 
-;// ./node_modules/d3-selection/src/selection/on.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/on.js
 function contextListener(listener) {
   return function(event) {
     listener.call(this, event, this.__data__);
@@ -23819,7 +23819,7 @@ function onAdd(typename, value, options) {
   return this;
 }
 
-;// ./node_modules/d3-selection/src/selection/dispatch.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/dispatch.js
 
 function dispatchEvent(node, type, params) {
   var window = src_window(node), event = window.CustomEvent;
@@ -23846,7 +23846,7 @@ function dispatchFunction(type, params) {
   return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
 }
 
-;// ./node_modules/d3-selection/src/selection/iterator.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/iterator.js
 /* harmony default export */ function* iterator() {
   for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
     for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
@@ -23855,7 +23855,7 @@ function dispatchFunction(type, params) {
   }
 }
 
-;// ./node_modules/d3-selection/src/selection/index.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/index.js
 
 
 
@@ -23941,7 +23941,7 @@ Selection.prototype = selection.prototype = {
 };
 /* harmony default export */ var src_selection = (selection);
 
-;// ./node_modules/d3-selection/src/select.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/select.js
 
 /* harmony default export */ function src_select(selector) {
   return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
@@ -24060,7 +24060,7 @@ const TYPE_BY_CATEGORY = {
   ]
 };
 
-;// ./node_modules/d3-array/src/ticks.js
+;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/ticks.js
 const e10 = Math.sqrt(50), e5 = Math.sqrt(10), e2 = Math.sqrt(2);
 function tickSpec(start, stop, count) {
   const step = (stop - start) / Math.max(0, count), power = Math.floor(Math.log10(step)), error = step / Math.pow(10, power), factor = error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1;
@@ -24108,17 +24108,17 @@ function tickStep(start, stop, count) {
   return (reverse ? -1 : 1) * (inc < 0 ? 1 / -inc : inc);
 }
 
-;// ./node_modules/d3-array/src/ascending.js
+;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/ascending.js
 function ascending_ascending(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 
-;// ./node_modules/d3-array/src/descending.js
+;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/descending.js
 function descending(a, b) {
   return a == null || b == null ? NaN : b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
 }
 
-;// ./node_modules/d3-array/src/bisector.js
+;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/bisector.js
 
 
 function bisector(f) {
@@ -24164,7 +24164,7 @@ function zero() {
   return 0;
 }
 
-;// ./node_modules/d3-array/src/number.js
+;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/number.js
 function number(x) {
   return x === null ? NaN : +x;
 }
@@ -24185,7 +24185,7 @@ function* numbers(values, valueof) {
   }
 }
 
-;// ./node_modules/d3-array/src/bisect.js
+;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/bisect.js
 
 
 
@@ -24195,7 +24195,7 @@ const bisectLeft = ascendingBisect.left;
 const bisectCenter = bisector(number).center;
 /* harmony default export */ var bisect = (bisectRight);
 
-;// ./node_modules/d3-color/src/define.js
+;// ./node_modules/.pnpm/d3-color@3.1.0/node_modules/d3-color/src/define.js
 /* harmony default export */ function src_define(constructor, factory, prototype) {
   constructor.prototype = factory.prototype = prototype;
   prototype.constructor = constructor;
@@ -24206,7 +24206,7 @@ function extend(parent, definition) {
   return prototype;
 }
 
-;// ./node_modules/d3-color/src/color.js
+;// ./node_modules/.pnpm/d3-color@3.1.0/node_modules/d3-color/src/color.js
 
 function Color() {
 }
@@ -24535,7 +24535,7 @@ function hsl2rgb(h, m1, m2) {
   return (h < 60 ? m1 + (m2 - m1) * h / 60 : h < 180 ? m2 : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60 : m1) * 255;
 }
 
-;// ./node_modules/d3-interpolate/src/basis.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/basis.js
 function basis(t1, v0, v1, v2, v3) {
   var t2 = t1 * t1, t3 = t2 * t1;
   return ((1 - 3 * t1 + 3 * t2 - t3) * v0 + (4 - 6 * t2 + 3 * t3) * v1 + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2 + t3 * v3) / 6;
@@ -24548,7 +24548,7 @@ function basis(t1, v0, v1, v2, v3) {
   };
 }
 
-;// ./node_modules/d3-interpolate/src/basisClosed.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/basisClosed.js
 
 /* harmony default export */ function basisClosed(values) {
   var n = values.length;
@@ -24558,10 +24558,10 @@ function basis(t1, v0, v1, v2, v3) {
   };
 }
 
-;// ./node_modules/d3-interpolate/src/constant.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/constant.js
 /* harmony default export */ var src_constant = ((x) => () => x);
 
-;// ./node_modules/d3-interpolate/src/color.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/color.js
 
 function linear(a, d) {
   return function(t) {
@@ -24587,7 +24587,7 @@ function nogamma(a, b) {
   return d ? linear(a, d) : src_constant(isNaN(a) ? b : a);
 }
 
-;// ./node_modules/d3-interpolate/src/rgb.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/rgb.js
 
 
 
@@ -24631,7 +24631,7 @@ function rgbSpline(spline) {
 var rgbBasis = rgbSpline(src_basis);
 var rgbBasisClosed = rgbSpline(basisClosed);
 
-;// ./node_modules/d3-interpolate/src/numberArray.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/numberArray.js
 /* harmony default export */ function numberArray(a, b) {
   if (!b) b = [];
   var n = a ? Math.min(b.length, a.length) : 0, c = b.slice(), i;
@@ -24644,7 +24644,7 @@ function isNumberArray(x) {
   return ArrayBuffer.isView(x) && !(x instanceof DataView);
 }
 
-;// ./node_modules/d3-interpolate/src/array.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/array.js
 
 
 /* harmony default export */ function src_array(a, b) {
@@ -24660,7 +24660,7 @@ function genericArray(a, b) {
   };
 }
 
-;// ./node_modules/d3-interpolate/src/date.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/date.js
 /* harmony default export */ function date(a, b) {
   var d = /* @__PURE__ */ new Date();
   return a = +a, b = +b, function(t) {
@@ -24668,14 +24668,14 @@ function genericArray(a, b) {
   };
 }
 
-;// ./node_modules/d3-interpolate/src/number.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/number.js
 /* harmony default export */ function src_number(a, b) {
   return a = +a, b = +b, function(t) {
     return a * (1 - t) + b * t;
   };
 }
 
-;// ./node_modules/d3-interpolate/src/object.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/object.js
 
 /* harmony default export */ function object(a, b) {
   var i = {}, c = {}, k;
@@ -24694,7 +24694,7 @@ function genericArray(a, b) {
   };
 }
 
-;// ./node_modules/d3-interpolate/src/string.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/string.js
 
 var reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g, reB = new RegExp(reA.source, "g");
 function string_zero(b) {
@@ -24736,7 +24736,7 @@ function one(b) {
   });
 }
 
-;// ./node_modules/d3-interpolate/src/value.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/value.js
 
 
 
@@ -24751,26 +24751,26 @@ function one(b) {
   return b == null || t === "boolean" ? src_constant(b) : (t === "number" ? src_number : t === "string" ? (c = color(b)) ? (b = c, rgb) : string : b instanceof color ? rgb : b instanceof Date ? date : isNumberArray(b) ? numberArray : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object : src_number)(a, b);
 }
 
-;// ./node_modules/d3-interpolate/src/round.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/round.js
 /* harmony default export */ function round(a, b) {
   return a = +a, b = +b, function(t) {
     return Math.round(a * (1 - t) + b * t);
   };
 }
 
-;// ./node_modules/d3-scale/src/constant.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/constant.js
 function constants(x) {
   return function() {
     return x;
   };
 }
 
-;// ./node_modules/d3-scale/src/number.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/number.js
 function number_number(x) {
   return +x;
 }
 
-;// ./node_modules/d3-scale/src/continuous.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/continuous.js
 
 
 
@@ -24859,7 +24859,7 @@ function continuous() {
   return transformer()(identity, identity);
 }
 
-;// ./node_modules/d3-scale/src/init.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/init.js
 function initRange(domain, range) {
   switch (arguments.length) {
     case 0:
@@ -24892,7 +24892,7 @@ function initInterpolator(domain, interpolator) {
   return this;
 }
 
-;// ./node_modules/d3-format/src/formatSpecifier.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatSpecifier.js
 var re = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
 function formatSpecifier(specifier) {
   if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
@@ -24927,32 +24927,32 @@ FormatSpecifier.prototype.toString = function() {
   return this.fill + this.align + this.sign + this.symbol + (this.zero ? "0" : "") + (this.width === void 0 ? "" : Math.max(1, this.width | 0)) + (this.comma ? "," : "") + (this.precision === void 0 ? "" : "." + Math.max(0, this.precision | 0)) + (this.trim ? "~" : "") + this.type;
 };
 
-;// ./node_modules/d3-format/src/formatDecimal.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatDecimal.js
 /* harmony default export */ function formatDecimal(x) {
   return Math.abs(x = Math.round(x)) >= 1e21 ? x.toLocaleString("en").replace(/,/g, "") : x.toString(10);
 }
 function formatDecimalParts(x, p) {
-  if (!isFinite(x) || x === 0) return null;
-  var i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e"), coefficient = x.slice(0, i);
+  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null;
+  var i, coefficient = x.slice(0, i);
   return [
     coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient,
     +x.slice(i + 1)
   ];
 }
 
-;// ./node_modules/d3-format/src/exponent.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/exponent.js
 
 /* harmony default export */ function exponent(x) {
   return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
 }
 
-;// ./node_modules/d3-format/src/precisionPrefix.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/precisionPrefix.js
 
 /* harmony default export */ function precisionPrefix(step, value) {
   return Math.max(0, Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3 - exponent(Math.abs(step)));
 }
 
-;// ./node_modules/d3-format/src/formatGroup.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatGroup.js
 /* harmony default export */ function formatGroup(grouping, thousands) {
   return function(value, width) {
     var i = value.length, t = [], j = 0, g = grouping[0], length = 0;
@@ -24966,7 +24966,7 @@ function formatDecimalParts(x, p) {
   };
 }
 
-;// ./node_modules/d3-format/src/formatNumerals.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatNumerals.js
 /* harmony default export */ function formatNumerals(numerals) {
   return function(value) {
     return value.replace(/[0-9]/g, function(i) {
@@ -24975,7 +24975,7 @@ function formatDecimalParts(x, p) {
   };
 }
 
-;// ./node_modules/d3-format/src/formatTrim.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatTrim.js
 /* harmony default export */ function formatTrim(s) {
   out: for (var n = s.length, i = 1, i0 = -1, i1; i < n; ++i) {
     switch (s[i]) {
@@ -24995,17 +24995,17 @@ function formatDecimalParts(x, p) {
   return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
 }
 
-;// ./node_modules/d3-format/src/formatPrefixAuto.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatPrefixAuto.js
 
 var prefixExponent;
 /* harmony default export */ function formatPrefixAuto(x, p) {
   var d = formatDecimalParts(x, p);
-  if (!d) return prefixExponent = void 0, x.toPrecision(p);
+  if (!d) return x + "";
   var coefficient = d[0], exponent = d[1], i = exponent - (prefixExponent = Math.max(-8, Math.min(8, Math.floor(exponent / 3))) * 3) + 1, n = coefficient.length;
   return i === n ? coefficient : i > n ? coefficient + new Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + new Array(1 - i).join("0") + formatDecimalParts(x, Math.max(0, p + i - 1))[0];
 }
 
-;// ./node_modules/d3-format/src/formatRounded.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatRounded.js
 
 /* harmony default export */ function formatRounded(x, p) {
   var d = formatDecimalParts(x, p);
@@ -25014,7 +25014,7 @@ var prefixExponent;
   return exponent < 0 ? "0." + new Array(-exponent).join("0") + coefficient : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1) : coefficient + new Array(exponent - coefficient.length + 2).join("0");
 }
 
-;// ./node_modules/d3-format/src/formatTypes.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatTypes.js
 
 
 
@@ -25034,12 +25034,12 @@ var prefixExponent;
   "x": (x) => Math.round(x).toString(16)
 });
 
-;// ./node_modules/d3-format/src/identity.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/identity.js
 /* harmony default export */ function src_identity(x) {
   return x;
 }
 
-;// ./node_modules/d3-format/src/locale.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/locale.js
 
 
 
@@ -25051,13 +25051,13 @@ var prefixExponent;
 var map = Array.prototype.map, prefixes = ["y", "z", "a", "f", "p", "n", "\xB5", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y"];
 /* harmony default export */ function locale(locale) {
   var group = locale.grouping === void 0 || locale.thousands === void 0 ? src_identity : formatGroup(map.call(locale.grouping, Number), locale.thousands + ""), currencyPrefix = locale.currency === void 0 ? "" : locale.currency[0] + "", currencySuffix = locale.currency === void 0 ? "" : locale.currency[1] + "", decimal = locale.decimal === void 0 ? "." : locale.decimal + "", numerals = locale.numerals === void 0 ? src_identity : formatNumerals(map.call(locale.numerals, String)), percent = locale.percent === void 0 ? "%" : locale.percent + "", minus = locale.minus === void 0 ? "\u2212" : locale.minus + "", nan = locale.nan === void 0 ? "NaN" : locale.nan + "";
-  function newFormat(specifier, options) {
+  function newFormat(specifier) {
     specifier = formatSpecifier(specifier);
     var fill = specifier.fill, align = specifier.align, sign = specifier.sign, symbol = specifier.symbol, zero = specifier.zero, width = specifier.width, comma = specifier.comma, precision = specifier.precision, trim = specifier.trim, type = specifier.type;
     if (type === "n") comma = true, type = "g";
     else if (!formatTypes[type]) precision === void 0 && (precision = 12), trim = true, type = "g";
     if (zero || fill === "0" && align === "=") zero = true, fill = "0", align = "=";
-    var prefix = (options && options.prefix !== void 0 ? options.prefix : "") + (symbol === "$" ? currencyPrefix : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : ""), suffix = (symbol === "$" ? currencySuffix : /[%p]/.test(type) ? percent : "") + (options && options.suffix !== void 0 ? options.suffix : "");
+    var prefix = symbol === "$" ? currencyPrefix : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : "", suffix = symbol === "$" ? currencySuffix : /[%p]/.test(type) ? percent : "";
     var formatType = formatTypes[type], maybeSuffix = /[defgprs%]/.test(type);
     precision = precision === void 0 ? 6 : /[gprs]/.test(type) ? Math.max(1, Math.min(21, precision)) : Math.max(0, Math.min(20, precision));
     function format(value) {
@@ -25072,7 +25072,7 @@ var map = Array.prototype.map, prefixes = ["y", "z", "a", "f", "p", "n", "\xB5",
         if (trim) value = formatTrim(value);
         if (valueNegative && +value === 0 && sign !== "+") valueNegative = false;
         valuePrefix = (valueNegative ? sign === "(" ? sign : minus : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
-        valueSuffix = (type === "s" && !isNaN(value) && prefixExponent !== void 0 ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
+        valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
         if (maybeSuffix) {
           i = -1, n = value.length;
           while (++i < n) {
@@ -25109,9 +25109,9 @@ var map = Array.prototype.map, prefixes = ["y", "z", "a", "f", "p", "n", "\xB5",
     return format;
   }
   function formatPrefix(specifier, value) {
-    var e = Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3, k = Math.pow(10, -e), f = newFormat((specifier = formatSpecifier(specifier), specifier.type = "f", specifier), { suffix: prefixes[8 + e / 3] });
+    var f = newFormat((specifier = formatSpecifier(specifier), specifier.type = "f", specifier)), e = Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3, k = Math.pow(10, -e), prefix = prefixes[8 + e / 3];
     return function(value2) {
-      return f(k * value2);
+      return f(k * value2) + prefix;
     };
   }
   return {
@@ -25120,7 +25120,7 @@ var map = Array.prototype.map, prefixes = ["y", "z", "a", "f", "p", "n", "\xB5",
   };
 }
 
-;// ./node_modules/d3-format/src/defaultLocale.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/defaultLocale.js
 
 var defaultLocale_locale;
 var format;
@@ -25137,20 +25137,20 @@ function defaultLocale(definition) {
   return defaultLocale_locale;
 }
 
-;// ./node_modules/d3-format/src/precisionRound.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/precisionRound.js
 
 /* harmony default export */ function precisionRound(step, max) {
   step = Math.abs(step), max = Math.abs(max) - step;
   return Math.max(0, exponent(max) - exponent(step)) + 1;
 }
 
-;// ./node_modules/d3-format/src/precisionFixed.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/precisionFixed.js
 
 /* harmony default export */ function precisionFixed(step) {
   return Math.max(0, -exponent(Math.abs(step)));
 }
 
-;// ./node_modules/d3-scale/src/tickFormat.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/tickFormat.js
 
 
 function tickFormat(start, stop, count, specifier) {
@@ -25179,7 +25179,7 @@ function tickFormat(start, stop, count, specifier) {
   return format(specifier);
 }
 
-;// ./node_modules/d3-scale/src/linear.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/linear.js
 
 
 
@@ -25238,7 +25238,7 @@ function linear_linear() {
   return linearish(scale);
 }
 
-;// ./node_modules/d3-scale/src/symlog.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/symlog.js
 
 
 
@@ -25267,7 +25267,7 @@ function symlog() {
   return initRange.apply(scale, arguments);
 }
 
-;// ./node_modules/d3-scale/src/nice.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/nice.js
 function nice(domain, interval) {
   domain = domain.slice();
   var i0 = 0, i1 = domain.length - 1, x0 = domain[i0], x1 = domain[i1], t;
@@ -25280,7 +25280,7 @@ function nice(domain, interval) {
   return domain;
 }
 
-;// ./node_modules/d3-scale/src/log.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/log.js
 
 
 
@@ -25398,7 +25398,7 @@ function log() {
   return scale;
 }
 
-;// ./node_modules/d3-time/src/duration.js
+;// ./node_modules/.pnpm/d3-time@3.1.0/node_modules/d3-time/src/duration.js
 const durationSecond = 1e3;
 const durationMinute = durationSecond * 60;
 const durationHour = durationMinute * 60;
@@ -25407,7 +25407,7 @@ const durationWeek = durationDay * 7;
 const durationMonth = durationDay * 30;
 const durationYear = durationDay * 365;
 
-;// ./node_modules/d3-time/src/interval.js
+;// ./node_modules/.pnpm/d3-time@3.1.0/node_modules/d3-time/src/interval.js
 const t0 = /* @__PURE__ */ new Date(), t1 = /* @__PURE__ */ new Date();
 function timeInterval(floori, offseti, count, field) {
   function interval(date) {
@@ -25467,7 +25467,7 @@ function timeInterval(floori, offseti, count, field) {
   return interval;
 }
 
-;// ./node_modules/d3-time/src/millisecond.js
+;// ./node_modules/.pnpm/d3-time@3.1.0/node_modules/d3-time/src/millisecond.js
 
 const millisecond = timeInterval(() => {
 }, (date, step) => {
@@ -25489,7 +25489,7 @@ millisecond.every = (k) => {
 };
 const milliseconds = millisecond.range;
 
-;// ./node_modules/d3-time/src/second.js
+;// ./node_modules/.pnpm/d3-time@3.1.0/node_modules/d3-time/src/second.js
 
 
 const second = timeInterval((date) => {
@@ -25503,7 +25503,7 @@ const second = timeInterval((date) => {
 });
 const seconds = second.range;
 
-;// ./node_modules/d3-time/src/minute.js
+;// ./node_modules/.pnpm/d3-time@3.1.0/node_modules/d3-time/src/minute.js
 
 
 const timeMinute = timeInterval((date) => {
@@ -25527,7 +25527,7 @@ const utcMinute = timeInterval((date) => {
 });
 const utcMinutes = utcMinute.range;
 
-;// ./node_modules/d3-time/src/hour.js
+;// ./node_modules/.pnpm/d3-time@3.1.0/node_modules/d3-time/src/hour.js
 
 
 const timeHour = timeInterval((date) => {
@@ -25551,7 +25551,7 @@ const utcHour = timeInterval((date) => {
 });
 const utcHours = utcHour.range;
 
-;// ./node_modules/d3-time/src/day.js
+;// ./node_modules/.pnpm/d3-time@3.1.0/node_modules/d3-time/src/day.js
 
 
 const timeDay = timeInterval(
@@ -25582,7 +25582,7 @@ const unixDay = timeInterval((date) => {
 });
 const unixDays = unixDay.range;
 
-;// ./node_modules/d3-time/src/week.js
+;// ./node_modules/.pnpm/d3-time@3.1.0/node_modules/d3-time/src/week.js
 
 
 function timeWeekday(i) {
@@ -25634,7 +25634,7 @@ const utcThursdays = utcThursday.range;
 const utcFridays = utcFriday.range;
 const utcSaturdays = utcSaturday.range;
 
-;// ./node_modules/d3-time/src/month.js
+;// ./node_modules/.pnpm/d3-time@3.1.0/node_modules/d3-time/src/month.js
 
 const timeMonth = timeInterval((date) => {
   date.setDate(1);
@@ -25659,7 +25659,7 @@ const utcMonth = timeInterval((date) => {
 });
 const utcMonths = utcMonth.range;
 
-;// ./node_modules/d3-time/src/year.js
+;// ./node_modules/.pnpm/d3-time@3.1.0/node_modules/d3-time/src/year.js
 
 const timeYear = timeInterval((date) => {
   date.setMonth(0, 1);
@@ -25702,7 +25702,7 @@ utcYear.every = (k) => {
 };
 const utcYears = utcYear.range;
 
-;// ./node_modules/d3-time/src/ticks.js
+;// ./node_modules/.pnpm/d3-time@3.1.0/node_modules/d3-time/src/ticks.js
 
 
 
@@ -25755,7 +25755,7 @@ const [utcTicks, utcTickInterval] = ticker(utcYear, utcMonth, utcSunday, unixDay
 const [timeTicks, timeTickInterval] = ticker(timeYear, timeMonth, timeSunday, timeDay, timeHour, timeMinute);
 
 
-;// ./node_modules/d3-time-format/src/locale.js
+;// ./node_modules/.pnpm/d3-time-format@4.1.0/node_modules/d3-time-format/src/locale.js
 
 function localDate(d) {
   if (0 <= d.y && d.y < 100) {
@@ -26294,7 +26294,7 @@ function formatUnixTimestampSeconds(d) {
   return Math.floor(+d / 1e3);
 }
 
-;// ./node_modules/d3-time-format/src/defaultLocale.js
+;// ./node_modules/.pnpm/d3-time-format@4.1.0/node_modules/d3-time-format/src/defaultLocale.js
 
 var src_defaultLocale_locale;
 var timeFormat;
@@ -26320,7 +26320,7 @@ function defaultLocale_defaultLocale(definition) {
   return src_defaultLocale_locale;
 }
 
-;// ./node_modules/d3-scale/src/time.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/time.js
 
 
 
@@ -26365,7 +26365,7 @@ function time() {
   return initRange.apply(calendar(timeTicks, timeTickInterval, timeYear, timeMonth, timeSunday, timeDay, timeHour, timeMinute, second, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
 }
 
-;// ./node_modules/d3-scale/src/utcTime.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/utcTime.js
 
 
 
@@ -27940,9 +27940,6 @@ function getYGridTickValues($$) {
 }
 
 ;// ./src/canvas/CanvasPainter.ts
-var CanvasPainter_defProp = Object.defineProperty;
-var CanvasPainter_defNormalProp = (obj, key, value) => key in obj ? CanvasPainter_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => CanvasPainter_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 class CanvasPainter {
   /**
@@ -27951,7 +27948,7 @@ class CanvasPainter {
    * @private
    */
   constructor(ctx) {
-    __publicField(this, "ctx", ctx);
+    this.ctx = ctx;
   }
   /**
    * Get current drawing context.
@@ -28356,7 +28353,7 @@ var CanvasAxisRenderer_spreadValues = (a, b) => {
   return a;
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-var CanvasAxisRenderer_publicField = (obj, key, value) => CanvasAxisRenderer_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+var __publicField = (obj, key, value) => CanvasAxisRenderer_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 
@@ -28642,9 +28639,9 @@ class CanvasAxisRenderer {
    * @private
    */
   constructor(engine, theme) {
-    CanvasAxisRenderer_publicField(this, "engine", engine);
-    CanvasAxisRenderer_publicField(this, "theme", theme);
-    CanvasAxisRenderer_publicField(this, "painter");
+    this.engine = engine;
+    this.theme = theme;
+    __publicField(this, "painter");
     this.painter = new CanvasPainter(engine.ctx);
   }
   /**
@@ -29992,20 +29989,20 @@ ${(ratio * 100).toFixed(2)}%`;
   return text === null || text === void 0 ? null : String(text);
 }
 
-;// ./node_modules/d3-shape/src/array.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/array.js
 var slice = Array.prototype.slice;
 /* harmony default export */ function d3_shape_src_array(x) {
   return typeof x === "object" && "length" in x ? x : Array.from(x);
 }
 
-;// ./node_modules/d3-shape/src/constant.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/constant.js
 /* harmony default export */ function d3_shape_src_constant(x) {
   return function constant() {
     return x;
   };
 }
 
-;// ./node_modules/d3-shape/src/curve/linear.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/linear.js
 function Linear(context) {
   this._context = context;
 }
@@ -30043,7 +30040,7 @@ Linear.prototype = {
   return new Linear(context);
 }
 
-;// ./node_modules/d3-path/src/path.js
+;// ./node_modules/.pnpm/d3-path@3.1.0/node_modules/d3-path/src/path.js
 var __pow = Math.pow;
 const pi = Math.PI, tau = 2 * pi, epsilon = 1e-6, tauEpsilon = tau - epsilon;
 function path_append(strings) {
@@ -30138,7 +30135,7 @@ function pathRound(digits = 3) {
   return new Path(+digits);
 }
 
-;// ./node_modules/d3-shape/src/path.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/path.js
 
 function withPath(shape) {
   let digits = 3;
@@ -30156,7 +30153,7 @@ function withPath(shape) {
   return () => new Path(digits);
 }
 
-;// ./node_modules/d3-shape/src/point.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/point.js
 function point_x(p) {
   return p[0];
 }
@@ -30164,7 +30161,7 @@ function point_y(p) {
   return p[1];
 }
 
-;// ./node_modules/d3-shape/src/line.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/line.js
 
 
 
@@ -30204,7 +30201,7 @@ function point_y(p) {
   return line;
 }
 
-;// ./node_modules/d3-shape/src/area.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/area.js
 
 
 
@@ -31611,8 +31608,8 @@ class CanvasRenderer {
    * @private
    */
   constructor(engine, theme) {
-    CanvasRenderer_publicField(this, "engine", engine);
-    CanvasRenderer_publicField(this, "theme", theme);
+    this.engine = engine;
+    this.theme = theme;
     CanvasRenderer_publicField(this, "painter");
     CanvasRenderer_publicField(this, "labelImageCache", /* @__PURE__ */ new Map());
     CanvasRenderer_publicField(this, "backgroundImageCache", /* @__PURE__ */ new Map());
@@ -32053,7 +32050,7 @@ class CanvasRenderer {
             const cx = (_e = $$.subxx) == null ? void 0 : _e.bind($$);
             if (cx && cy) {
               for (const target of targets) {
-                if (!isCanvasPointType($$, target) || isCanvasLineType($$, target) && !shouldDrawPoints($$, target)) {
+                if (!isCanvasScatterType($$, target) && !isCanvasBubbleType($$, target)) {
                   continue;
                 }
                 const color = $$.color(target.id);
@@ -36942,14 +36939,14 @@ function logError(head, tail, info) {
   throw Error(`${prefix} ${head.replace(/\%c([a-z-]+)/i, "'$1' ")} ${tail != null ? tail : ""}`);
 }
 
-;// ./node_modules/d3-selection/src/sourceEvent.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/sourceEvent.js
 /* harmony default export */ function sourceEvent(event) {
   let sourceEvent;
   while (sourceEvent = event.sourceEvent) event = sourceEvent;
   return event;
 }
 
-;// ./node_modules/d3-selection/src/pointer.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/pointer.js
 
 /* harmony default export */ function src_pointer(event, node) {
   event = sourceEvent(event);
@@ -39024,7 +39021,7 @@ function callDone(fn, resizeAfter = false) {
   }
 });
 
-;// ./node_modules/d3-dispatch/src/dispatch.js
+;// ./node_modules/.pnpm/d3-dispatch@3.0.1/node_modules/d3-dispatch/src/dispatch.js
 var noop = { value: () => {
 } };
 function dispatch_dispatch() {
@@ -39094,7 +39091,7 @@ function set(type, name, callback) {
 }
 /* harmony default export */ var src_dispatch = (dispatch_dispatch);
 
-;// ./node_modules/d3-drag/src/noevent.js
+;// ./node_modules/.pnpm/d3-drag@3.0.0/node_modules/d3-drag/src/noevent.js
 const nonpassive = { passive: false };
 const nonpassivecapture = { capture: true, passive: false };
 function nopropagation(event) {
@@ -39105,7 +39102,7 @@ function nopropagation(event) {
   event.stopImmediatePropagation();
 }
 
-;// ./node_modules/d3-drag/src/nodrag.js
+;// ./node_modules/.pnpm/d3-drag@3.0.0/node_modules/d3-drag/src/nodrag.js
 
 
 /* harmony default export */ function nodrag(view) {
@@ -39133,10 +39130,10 @@ function yesdrag(view, noclick) {
   }
 }
 
-;// ./node_modules/d3-drag/src/constant.js
+;// ./node_modules/.pnpm/d3-drag@3.0.0/node_modules/d3-drag/src/constant.js
 /* harmony default export */ var d3_drag_src_constant = ((x) => () => x);
 
-;// ./node_modules/d3-drag/src/event.js
+;// ./node_modules/.pnpm/d3-drag@3.0.0/node_modules/d3-drag/src/event.js
 function DragEvent(type, {
   sourceEvent,
   subject,
@@ -39168,7 +39165,7 @@ DragEvent.prototype.on = function() {
   return value === this._ ? this : value;
 };
 
-;// ./node_modules/d3-drag/src/drag.js
+;// ./node_modules/.pnpm/d3-drag@3.0.0/node_modules/d3-drag/src/drag.js
 
 
 
@@ -39661,7 +39658,7 @@ const RE_SELECTOR_SUFFIX = /[\x00-\x20\x7F-\xA0\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`
   }
 });
 
-;// ./node_modules/internmap/src/index.js
+;// ./node_modules/.pnpm/internmap@2.0.3/node_modules/internmap/src/index.js
 class InternMap extends Map {
   constructor(entries, key = keyof) {
     super();
@@ -39719,7 +39716,7 @@ function keyof(value) {
   return value !== null && typeof value === "object" ? value.valueOf() : value;
 }
 
-;// ./node_modules/d3-scale/src/ordinal.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/ordinal.js
 
 
 const implicit = /* @__PURE__ */ Symbol("implicit");
@@ -39985,7 +39982,7 @@ const schemeCategory10 = [
   }
 });
 
-;// ./node_modules/d3-timer/src/timer.js
+;// ./node_modules/.pnpm/d3-timer@3.0.1/node_modules/d3-timer/src/timer.js
 var timer_frame = 0, timeout = 0, interval = 0, pokeDelay = 1e3, taskHead, taskTail, clockLast = 0, clockNow = 0, clockSkew = 0, clock = typeof performance === "object" && performance.now ? performance : Date, setFrame = typeof window === "object" && window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : function(f) {
   setTimeout(f, 17);
 };
@@ -40077,7 +40074,7 @@ function sleep(time) {
   }
 }
 
-;// ./node_modules/d3-timer/src/timeout.js
+;// ./node_modules/.pnpm/d3-timer@3.0.1/node_modules/d3-timer/src/timeout.js
 
 /* harmony default export */ function src_timeout(callback, delay, time) {
   var t = new Timer();
@@ -40089,7 +40086,7 @@ function sleep(time) {
   return t;
 }
 
-;// ./node_modules/d3-transition/src/transition/schedule.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/schedule.js
 
 
 var emptyOn = src_dispatch("start", "end", "cancel", "interrupt");
@@ -40202,7 +40199,7 @@ function create(node, id, self) {
   }
 }
 
-;// ./node_modules/d3-transition/src/interrupt.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/interrupt.js
 
 /* harmony default export */ function interrupt(node, name) {
   var schedules = node.__transition, schedule, active, empty = true, i;
@@ -40222,7 +40219,7 @@ function create(node, id, self) {
   if (empty) delete node.__transition;
 }
 
-;// ./node_modules/d3-transition/src/selection/interrupt.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/selection/interrupt.js
 
 /* harmony default export */ function selection_interrupt(name) {
   return this.each(function() {
@@ -40230,7 +40227,7 @@ function create(node, id, self) {
   });
 }
 
-;// ./node_modules/d3-interpolate/src/transform/decompose.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/transform/decompose.js
 var degrees = 180 / Math.PI;
 var decompose_identity = {
   translateX: 0,
@@ -40256,7 +40253,7 @@ var decompose_identity = {
   };
 }
 
-;// ./node_modules/d3-interpolate/src/transform/parse.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/transform/parse.js
 
 var svgNode;
 function parseCss(value) {
@@ -40272,7 +40269,7 @@ function parseSvg(value) {
   return decompose(value.a, value.b, value.c, value.d, value.e, value.f);
 }
 
-;// ./node_modules/d3-interpolate/src/transform/index.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/transform/index.js
 
 
 function interpolateTransform(parse, pxComma, pxParen, degParen) {
@@ -40329,7 +40326,7 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
 var interpolateTransformCss = interpolateTransform(parseCss, "px, ", "px)", "deg)");
 var interpolateTransformSvg = interpolateTransform(parseSvg, ", ", ")", ")");
 
-;// ./node_modules/d3-transition/src/transition/tween.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/tween.js
 
 function tweenRemove(id, name) {
   var tween0, tween1;
@@ -40391,7 +40388,7 @@ function tweenValue(transition, name, value) {
   };
 }
 
-;// ./node_modules/d3-transition/src/transition/interpolate.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/interpolate.js
 
 
 /* harmony default export */ function interpolate(a, b) {
@@ -40399,7 +40396,7 @@ function tweenValue(transition, name, value) {
   return (typeof b === "number" ? src_number : b instanceof color ? rgb : (c = color(b)) ? (b = c, rgb) : string)(a, b);
 }
 
-;// ./node_modules/d3-transition/src/transition/attr.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/attr.js
 
 
 
@@ -40453,7 +40450,7 @@ function attr_attrFunctionNS(fullname, interpolate2, value) {
   return this.attrTween(name, typeof value === "function" ? (fullname.local ? attr_attrFunctionNS : attr_attrFunction)(fullname, i, tweenValue(this, "attr." + name, value)) : value == null ? (fullname.local ? attr_attrRemoveNS : attr_attrRemove)(fullname) : (fullname.local ? attr_attrConstantNS : attr_attrConstant)(fullname, i, value));
 }
 
-;// ./node_modules/d3-transition/src/transition/attrTween.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/attrTween.js
 
 function attrInterpolate(name, i) {
   return function(t) {
@@ -40494,7 +40491,7 @@ function attrTween(name, value) {
   return this.tween(key, (fullname.local ? attrTweenNS : attrTween)(fullname, value));
 }
 
-;// ./node_modules/d3-transition/src/transition/delay.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/delay.js
 
 function delayFunction(id, value) {
   return function() {
@@ -40511,7 +40508,7 @@ function delayConstant(id, value) {
   return arguments.length ? this.each((typeof value === "function" ? delayFunction : delayConstant)(id, value)) : schedule_get(this.node(), id).delay;
 }
 
-;// ./node_modules/d3-transition/src/transition/duration.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/duration.js
 
 function durationFunction(id, value) {
   return function() {
@@ -40528,7 +40525,7 @@ function durationConstant(id, value) {
   return arguments.length ? this.each((typeof value === "function" ? durationFunction : durationConstant)(id, value)) : schedule_get(this.node(), id).duration;
 }
 
-;// ./node_modules/d3-transition/src/transition/ease.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/ease.js
 
 function easeConstant(id, value) {
   if (typeof value !== "function") throw new Error();
@@ -40541,7 +40538,7 @@ function easeConstant(id, value) {
   return arguments.length ? this.each(easeConstant(id, value)) : schedule_get(this.node(), id).ease;
 }
 
-;// ./node_modules/d3-transition/src/transition/easeVarying.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/easeVarying.js
 
 function easeVarying(id, value) {
   return function() {
@@ -40555,7 +40552,7 @@ function easeVarying(id, value) {
   return this.each(easeVarying(this._id, value));
 }
 
-;// ./node_modules/d3-transition/src/transition/filter.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/filter.js
 
 
 /* harmony default export */ function transition_filter(match) {
@@ -40570,7 +40567,7 @@ function easeVarying(id, value) {
   return new Transition(subgroups, this._parents, this._name, this._id);
 }
 
-;// ./node_modules/d3-transition/src/transition/merge.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/merge.js
 
 /* harmony default export */ function transition_merge(transition) {
   if (transition._id !== this._id) throw new Error();
@@ -40587,7 +40584,7 @@ function easeVarying(id, value) {
   return new Transition(merges, this._parents, this._name, this._id);
 }
 
-;// ./node_modules/d3-transition/src/transition/on.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/on.js
 
 function start(name) {
   return (name + "").trim().split(/^|\s+/).every(function(t) {
@@ -40609,7 +40606,7 @@ function onFunction(id, name, listener) {
   return arguments.length < 2 ? schedule_get(this.node(), id).on.on(name) : this.each(onFunction(id, name, listener));
 }
 
-;// ./node_modules/d3-transition/src/transition/remove.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/remove.js
 function removeFunction(id) {
   return function() {
     var parent = this.parentNode;
@@ -40621,7 +40618,7 @@ function removeFunction(id) {
   return this.on("end.remove", removeFunction(this._id));
 }
 
-;// ./node_modules/d3-transition/src/transition/select.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/select.js
 
 
 
@@ -40640,7 +40637,7 @@ function removeFunction(id) {
   return new Transition(subgroups, this._parents, name, id);
 }
 
-;// ./node_modules/d3-transition/src/transition/selectAll.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/selectAll.js
 
 
 
@@ -40663,14 +40660,14 @@ function removeFunction(id) {
   return new Transition(subgroups, parents, name, id);
 }
 
-;// ./node_modules/d3-transition/src/transition/selection.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/selection.js
 
 var selection_Selection = src_selection.prototype.constructor;
 /* harmony default export */ function transition_selection() {
   return new selection_Selection(this._groups, this._parents);
 }
 
-;// ./node_modules/d3-transition/src/transition/style.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/style.js
 
 
 
@@ -40716,7 +40713,7 @@ function styleMaybeRemove(id, name) {
   return value == null ? this.styleTween(name, styleNull(name, i)).on("end.style." + name, style_styleRemove(name)) : typeof value === "function" ? this.styleTween(name, style_styleFunction(name, i, tweenValue(this, "style." + name, value))).each(styleMaybeRemove(this._id, name)) : this.styleTween(name, style_styleConstant(name, i, value), priority).on("end.style." + name, null);
 }
 
-;// ./node_modules/d3-transition/src/transition/styleTween.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/styleTween.js
 function styleInterpolate(name, i, priority) {
   return function(t) {
     this.style.setProperty(name, i.call(this, t), priority);
@@ -40740,7 +40737,7 @@ function styleTween(name, value, priority) {
   return this.tween(key, styleTween(name, value, priority == null ? "" : priority));
 }
 
-;// ./node_modules/d3-transition/src/transition/text.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/text.js
 
 function text_textConstant(value) {
   return function() {
@@ -40757,7 +40754,7 @@ function text_textFunction(value) {
   return this.tween("text", typeof value === "function" ? text_textFunction(tweenValue(this, "text", value)) : text_textConstant(value == null ? "" : value + ""));
 }
 
-;// ./node_modules/d3-transition/src/transition/textTween.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/textTween.js
 function textInterpolate(i) {
   return function(t) {
     this.textContent = i.call(this, t);
@@ -40781,7 +40778,7 @@ function textTween(value) {
   return this.tween(key, textTween(value));
 }
 
-;// ./node_modules/d3-transition/src/transition/transition.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/transition.js
 
 
 /* harmony default export */ function transition() {
@@ -40802,7 +40799,7 @@ function textTween(value) {
   return new Transition(groups, this._parents, name, id1);
 }
 
-;// ./node_modules/d3-transition/src/transition/end.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/end.js
 
 /* harmony default export */ function end() {
   var on0, on1, that = this, id = that._id, size = that.size();
@@ -40824,7 +40821,7 @@ function textTween(value) {
   });
 }
 
-;// ./node_modules/d3-transition/src/transition/index.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/transition/index.js
 
 
 
@@ -40893,7 +40890,7 @@ Transition.prototype = transition_transition.prototype = {
   [Symbol.iterator]: selection_prototype[Symbol.iterator]
 };
 
-;// ./node_modules/d3-ease/src/cubic.js
+;// ./node_modules/.pnpm/d3-ease@3.0.1/node_modules/d3-ease/src/cubic.js
 function cubicIn(t) {
   return t * t * t;
 }
@@ -40904,7 +40901,7 @@ function cubicInOut(t) {
   return ((t *= 2) <= 1 ? t * t * t : (t -= 2) * t * t + 2) / 2;
 }
 
-;// ./node_modules/d3-transition/src/selection/transition.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/selection/transition.js
 
 
 
@@ -40942,23 +40939,23 @@ function inherit(node, id) {
   return new Transition(groups, this._parents, name, id);
 }
 
-;// ./node_modules/d3-transition/src/selection/index.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/selection/index.js
 
 
 
 src_selection.prototype.interrupt = selection_interrupt;
 src_selection.prototype.transition = selection_transition;
 
-;// ./node_modules/d3-transition/src/index.js
+;// ./node_modules/.pnpm/d3-transition@3.0.1_d3-selection@3.0.0/node_modules/d3-transition/src/index.js
 
 
 
 
 
-;// ./node_modules/d3-brush/src/constant.js
+;// ./node_modules/.pnpm/d3-brush@3.0.0/node_modules/d3-brush/src/constant.js
 /* harmony default export */ var d3_brush_src_constant = ((x) => () => x);
 
-;// ./node_modules/d3-brush/src/event.js
+;// ./node_modules/.pnpm/d3-brush@3.0.0/node_modules/d3-brush/src/event.js
 function BrushEvent(type, {
   sourceEvent,
   target,
@@ -40976,7 +40973,7 @@ function BrushEvent(type, {
   });
 }
 
-;// ./node_modules/d3-brush/src/noevent.js
+;// ./node_modules/.pnpm/d3-brush@3.0.0/node_modules/d3-brush/src/noevent.js
 function noevent_nopropagation(event) {
   event.stopImmediatePropagation();
 }
@@ -40985,7 +40982,7 @@ function noevent_nopropagation(event) {
   event.stopImmediatePropagation();
 }
 
-;// ./node_modules/d3-brush/src/brush.js
+;// ./node_modules/.pnpm/d3-brush@3.0.0/node_modules/d3-brush/src/brush.js
 
 
 
@@ -41473,7 +41470,7 @@ function brush_brush(dim) {
   return brush2;
 }
 
-;// ./node_modules/d3-brush/src/index.js
+;// ./node_modules/.pnpm/d3-brush@3.0.0/node_modules/d3-brush/src/index.js
 
 
 ;// ./src/module/util/brush.ts
@@ -43427,7 +43424,7 @@ function _getLegendTouchOption($$) {
   }
 });
 
-;// ./node_modules/d3-selection/src/selectAll.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selectAll.js
 
 
 /* harmony default export */ function src_selectAll(selector) {
@@ -44994,7 +44991,7 @@ const RE_TOOLTIP_TPL = /{{(.*)}}/;
   }
 });
 
-;// ./node_modules/d3-shape/src/curve/basis.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/basis.js
 function point(that, x, y) {
   that._context.bezierCurveTo(
     (2 * that._x0 + that._x1) / 3,
@@ -45057,11 +45054,11 @@ Basis.prototype = {
   return new Basis(context);
 }
 
-;// ./node_modules/d3-shape/src/noop.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/noop.js
 /* harmony default export */ function src_noop() {
 }
 
-;// ./node_modules/d3-shape/src/curve/basisClosed.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/basisClosed.js
 
 
 function BasisClosed(context) {
@@ -45123,7 +45120,7 @@ BasisClosed.prototype = {
   return new BasisClosed(context);
 }
 
-;// ./node_modules/d3-shape/src/curve/basisOpen.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/basisOpen.js
 
 function BasisOpen(context) {
   this._context = context;
@@ -45172,7 +45169,7 @@ BasisOpen.prototype = {
   return new BasisOpen(context);
 }
 
-;// ./node_modules/d3-shape/src/curve/bundle.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/bundle.js
 
 function Bundle(context, beta) {
   this._basis = new Basis(context);
@@ -45214,7 +45211,7 @@ Bundle.prototype = {
   return bundle;
 })(0.85));
 
-;// ./node_modules/d3-shape/src/curve/cardinal.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/cardinal.js
 function cardinal_point(that, x, y) {
   that._context.bezierCurveTo(
     that._x1 + that._k * (that._x2 - that._x0),
@@ -45284,7 +45281,7 @@ Cardinal.prototype = {
   return cardinal;
 })(0));
 
-;// ./node_modules/d3-shape/src/curve/cardinalClosed.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/cardinalClosed.js
 
 
 function CardinalClosed(context, tension) {
@@ -45351,7 +45348,7 @@ CardinalClosed.prototype = {
   return cardinal;
 })(0));
 
-;// ./node_modules/d3-shape/src/curve/cardinalOpen.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/cardinalOpen.js
 
 function CardinalOpen(context, tension) {
   this._context = context;
@@ -45406,7 +45403,7 @@ CardinalOpen.prototype = {
   return cardinal;
 })(0));
 
-;// ./node_modules/d3-shape/src/math.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/math.js
 const math_abs = Math.abs;
 const atan2 = Math.atan2;
 const cos = Math.cos;
@@ -45425,7 +45422,7 @@ function asin(x) {
   return x >= 1 ? halfPi : x <= -1 ? -halfPi : Math.asin(x);
 }
 
-;// ./node_modules/d3-shape/src/curve/catmullRom.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/catmullRom.js
 
 
 function catmullRom_point(that, x, y) {
@@ -45506,7 +45503,7 @@ CatmullRom.prototype = {
   return catmullRom;
 })(0.5));
 
-;// ./node_modules/d3-shape/src/curve/catmullRomClosed.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/catmullRomClosed.js
 
 
 
@@ -45580,7 +45577,7 @@ CatmullRomClosed.prototype = {
   return catmullRom;
 })(0.5));
 
-;// ./node_modules/d3-shape/src/curve/catmullRomOpen.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/catmullRomOpen.js
 
 
 function CatmullRomOpen(context, alpha) {
@@ -45642,7 +45639,7 @@ CatmullRomOpen.prototype = {
   return catmullRom;
 })(0.5));
 
-;// ./node_modules/d3-shape/src/curve/monotone.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/monotone.js
 function sign(x) {
   return x < 0 ? -1 : 1;
 }
@@ -45739,7 +45736,7 @@ function monotoneY(context) {
   return new MonotoneY(context);
 }
 
-;// ./node_modules/d3-shape/src/curve/natural.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/natural.js
 function Natural(context) {
   this._context = context;
 }
@@ -45792,7 +45789,7 @@ function controlPoints(x) {
   return new Natural(context);
 }
 
-;// ./node_modules/d3-shape/src/curve/linearClosed.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/linearClosed.js
 
 function LinearClosed(context) {
   this._context = context;
@@ -45816,7 +45813,7 @@ LinearClosed.prototype = {
   return new LinearClosed(context);
 }
 
-;// ./node_modules/d3-shape/src/curve/step.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/step.js
 function Step(context, t) {
   this._context = context;
   this._t = t;
@@ -52902,7 +52899,7 @@ let subchartModule = () => {
   return (subchartModule = () => true)();
 };
 
-;// ./node_modules/d3-interpolate/src/zoom.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/zoom.js
 var epsilon2 = 1e-12;
 function cosh(x) {
   return ((x = Math.exp(x)) + 1 / x) / 2;
@@ -52947,10 +52944,10 @@ function tanh(x) {
   return zoom;
 })(Math.SQRT2, 2, 4));
 
-;// ./node_modules/d3-zoom/src/constant.js
+;// ./node_modules/.pnpm/d3-zoom@3.0.0/node_modules/d3-zoom/src/constant.js
 /* harmony default export */ var d3_zoom_src_constant = ((x) => () => x);
 
-;// ./node_modules/d3-zoom/src/event.js
+;// ./node_modules/.pnpm/d3-zoom@3.0.0/node_modules/d3-zoom/src/event.js
 function ZoomEvent(type, {
   sourceEvent,
   target,
@@ -52966,7 +52963,7 @@ function ZoomEvent(type, {
   });
 }
 
-;// ./node_modules/d3-zoom/src/transform.js
+;// ./node_modules/.pnpm/d3-zoom@3.0.0/node_modules/d3-zoom/src/transform.js
 function Transform(k, x, y) {
   this.k = k;
   this.x = x;
@@ -53015,7 +53012,7 @@ function transform_transform(node) {
   return node.__zoom;
 }
 
-;// ./node_modules/d3-zoom/src/noevent.js
+;// ./node_modules/.pnpm/d3-zoom@3.0.0/node_modules/d3-zoom/src/noevent.js
 function src_noevent_nopropagation(event) {
   event.stopImmediatePropagation();
 }
@@ -53024,7 +53021,7 @@ function src_noevent_nopropagation(event) {
   event.stopImmediatePropagation();
 }
 
-;// ./node_modules/d3-zoom/src/zoom.js
+;// ./node_modules/.pnpm/d3-zoom@3.0.0/node_modules/d3-zoom/src/zoom.js
 
 
 
@@ -53348,7 +53345,7 @@ function defaultConstrain(transform, extent, translateExtent) {
   return zoom;
 }
 
-;// ./node_modules/d3-zoom/src/index.js
+;// ./node_modules/.pnpm/d3-zoom@3.0.0/node_modules/d3-zoom/src/index.js
 
 
 
@@ -55653,12 +55650,12 @@ const axis = {
   }
 });
 
-;// ./node_modules/d3-axis/src/identity.js
+;// ./node_modules/.pnpm/d3-axis@3.0.0/node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {
   return x;
 }
 
-;// ./node_modules/d3-axis/src/axis.js
+;// ./node_modules/.pnpm/d3-axis@3.0.0/node_modules/d3-axis/src/axis.js
 
 var axis_top = 1, right = 2, bottom = 3, left = 4, axis_epsilon = 1e-6;
 function translateX(x) {
@@ -61425,17 +61422,17 @@ let candlestick_candlestick = () => (extendAxis(
   donut_startingAngle: 0
 });
 
-;// ./node_modules/d3-shape/src/descending.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/descending.js
 /* harmony default export */ function src_descending(a, b) {
   return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
 }
 
-;// ./node_modules/d3-shape/src/identity.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/identity.js
 /* harmony default export */ function d3_shape_src_identity(d) {
   return d;
 }
 
-;// ./node_modules/d3-shape/src/pie.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/pie.js
 
 
 
@@ -61489,7 +61486,7 @@ let candlestick_candlestick = () => (extendAxis(
   return pie;
 }
 
-;// ./node_modules/d3-shape/src/arc.js
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/arc.js
 
 
 
@@ -64206,7 +64203,7 @@ let scatter_scatter = () => (extendAxis(
   [common_point, scatter]
 ), (scatter_scatter = () => TYPE.SCATTER)());
 
-;// ./node_modules/d3-hierarchy/src/treemap/round.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/treemap/round.js
 /* harmony default export */ function treemap_round(node) {
   node.x0 = Math.round(node.x0);
   node.y0 = Math.round(node.y0);
@@ -64214,7 +64211,7 @@ let scatter_scatter = () => (extendAxis(
   node.y1 = Math.round(node.y1);
 }
 
-;// ./node_modules/d3-hierarchy/src/treemap/dice.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/treemap/dice.js
 /* harmony default export */ function dice(parent, x0, y0, x1, y1) {
   var nodes = parent.children, node, i = -1, n = nodes.length, k = parent.value && (x1 - x0) / parent.value;
   while (++i < n) {
@@ -64223,7 +64220,7 @@ let scatter_scatter = () => (extendAxis(
   }
 }
 
-;// ./node_modules/d3-hierarchy/src/treemap/slice.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/treemap/slice.js
 /* harmony default export */ function treemap_slice(parent, x0, y0, x1, y1) {
   var nodes = parent.children, node, i = -1, n = nodes.length, k = parent.value && (y1 - y0) / parent.value;
   while (++i < n) {
@@ -64232,7 +64229,7 @@ let scatter_scatter = () => (extendAxis(
   }
 }
 
-;// ./node_modules/d3-hierarchy/src/treemap/squarify.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/treemap/squarify.js
 
 
 var phi = (1 + Math.sqrt(5)) / 2;
@@ -64276,7 +64273,7 @@ function squarifyRatio(ratio, parent, x0, y0, x1, y1) {
   return squarify;
 })(phi));
 
-;// ./node_modules/d3-hierarchy/src/accessors.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/accessors.js
 function optional(f) {
   return f == null ? null : required(f);
 }
@@ -64285,7 +64282,7 @@ function required(f) {
   return f;
 }
 
-;// ./node_modules/d3-hierarchy/src/constant.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/constant.js
 function constantZero() {
   return 0;
 }
@@ -64295,7 +64292,7 @@ function constantZero() {
   };
 }
 
-;// ./node_modules/d3-hierarchy/src/treemap/index.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/treemap/index.js
 
 
 
@@ -64363,7 +64360,7 @@ function constantZero() {
   return treemap;
 }
 
-;// ./node_modules/d3-hierarchy/src/treemap/binary.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/treemap/binary.js
 /* harmony default export */ function binary(parent, x0, y0, x1, y1) {
   var nodes = parent.children, i, n = nodes.length, sum, sums = new Array(n + 1);
   for (sums[0] = sum = i = 0; i < n; ++i) {
@@ -64397,14 +64394,14 @@ function constantZero() {
   }
 }
 
-;// ./node_modules/d3-hierarchy/src/treemap/sliceDice.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/treemap/sliceDice.js
 
 
 /* harmony default export */ function sliceDice(parent, x0, y0, x1, y1) {
   (parent.depth & 1 ? treemap_slice : dice)(parent, x0, y0, x1, y1);
 }
 
-;// ./node_modules/d3-hierarchy/src/treemap/resquarify.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/treemap/resquarify.js
 
 
 
@@ -64430,7 +64427,7 @@ function constantZero() {
   return resquarify;
 })(phi));
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/count.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/count.js
 function count(node) {
   var sum = 0, children = node.children, i = children && children.length;
   if (!i) sum = 1;
@@ -64441,7 +64438,7 @@ function count(node) {
   return this.eachAfter(count);
 }
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/each.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/each.js
 /* harmony default export */ function hierarchy_each(callback, that) {
   let index = -1;
   for (const node of this) {
@@ -64450,7 +64447,7 @@ function count(node) {
   return this;
 }
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/eachBefore.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/eachBefore.js
 /* harmony default export */ function eachBefore(callback, that) {
   var node = this, nodes = [node], children, i, index = -1;
   while (node = nodes.pop()) {
@@ -64464,7 +64461,7 @@ function count(node) {
   return this;
 }
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/eachAfter.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/eachAfter.js
 /* harmony default export */ function eachAfter(callback, that) {
   var node = this, nodes = [node], next = [], children, i, n, index = -1;
   while (node = nodes.pop()) {
@@ -64481,7 +64478,7 @@ function count(node) {
   return this;
 }
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/find.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/find.js
 /* harmony default export */ function hierarchy_find(callback, that) {
   let index = -1;
   for (const node of this) {
@@ -64491,7 +64488,7 @@ function count(node) {
   }
 }
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/sum.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/sum.js
 /* harmony default export */ function sum(value) {
   return this.eachAfter(function(node) {
     var sum = +value(node.data) || 0, children = node.children, i = children && children.length;
@@ -64500,7 +64497,7 @@ function count(node) {
   });
 }
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/sort.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/sort.js
 /* harmony default export */ function hierarchy_sort(compare) {
   return this.eachBefore(function(node) {
     if (node.children) {
@@ -64509,7 +64506,7 @@ function count(node) {
   });
 }
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/path.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/path.js
 /* harmony default export */ function hierarchy_path(end) {
   var start = this, ancestor = leastCommonAncestor(start, end), nodes = [start];
   while (start !== ancestor) {
@@ -64536,7 +64533,7 @@ function leastCommonAncestor(a, b) {
   return c;
 }
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/ancestors.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/ancestors.js
 /* harmony default export */ function ancestors() {
   var node = this, nodes = [node];
   while (node = node.parent) {
@@ -64545,12 +64542,12 @@ function leastCommonAncestor(a, b) {
   return nodes;
 }
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/descendants.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/descendants.js
 /* harmony default export */ function descendants() {
   return Array.from(this);
 }
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/leaves.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/leaves.js
 /* harmony default export */ function leaves() {
   var leaves = [];
   this.eachBefore(function(node) {
@@ -64561,7 +64558,7 @@ function leastCommonAncestor(a, b) {
   return leaves;
 }
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/links.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/links.js
 /* harmony default export */ function links() {
   var root = this, links = [];
   root.each(function(node) {
@@ -64572,7 +64569,7 @@ function leastCommonAncestor(a, b) {
   return links;
 }
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/iterator.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/iterator.js
 /* harmony default export */ function* hierarchy_iterator() {
   var node = this, current, next = [node], children, i, n;
   do {
@@ -64588,7 +64585,7 @@ function leastCommonAncestor(a, b) {
   } while (next.length);
 }
 
-;// ./node_modules/d3-hierarchy/src/hierarchy/index.js
+;// ./node_modules/.pnpm/d3-hierarchy@3.1.2/node_modules/d3-hierarchy/src/hierarchy/index.js
 
 
 
@@ -65031,7 +65028,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.1-nightly-20260617013432",
+  version: "4.0.1-nightly-20260619013636",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

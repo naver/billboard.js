@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.1-nightly-20260617013432
+ * @version 4.0.1-nightly-20260619013636
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1879,9 +1879,6 @@ function getYGridTickValues($$) {
 }
 
 ;// ./src/canvas/CanvasPainter.ts
-var CanvasPainter_defProp = Object.defineProperty;
-var CanvasPainter_defNormalProp = (obj, key, value) => key in obj ? CanvasPainter_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => CanvasPainter_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 class CanvasPainter {
   /**
@@ -1890,7 +1887,7 @@ class CanvasPainter {
    * @private
    */
   constructor(ctx) {
-    __publicField(this, "ctx", ctx);
+    this.ctx = ctx;
   }
   /**
    * Get current drawing context.
@@ -2295,7 +2292,7 @@ var CanvasAxisRenderer_spreadValues = (a, b) => {
   return a;
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-var CanvasAxisRenderer_publicField = (obj, key, value) => CanvasAxisRenderer_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+var __publicField = (obj, key, value) => CanvasAxisRenderer_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
 
@@ -2581,9 +2578,9 @@ class CanvasAxisRenderer {
    * @private
    */
   constructor(engine, theme) {
-    CanvasAxisRenderer_publicField(this, "engine", engine);
-    CanvasAxisRenderer_publicField(this, "theme", theme);
-    CanvasAxisRenderer_publicField(this, "painter");
+    this.engine = engine;
+    this.theme = theme;
+    __publicField(this, "painter");
     this.painter = new CanvasPainter(engine.ctx);
   }
   /**
@@ -5260,8 +5257,8 @@ class CanvasRenderer {
    * @private
    */
   constructor(engine, theme) {
-    CanvasRenderer_publicField(this, "engine", engine);
-    CanvasRenderer_publicField(this, "theme", theme);
+    this.engine = engine;
+    this.theme = theme;
     CanvasRenderer_publicField(this, "painter");
     CanvasRenderer_publicField(this, "labelImageCache", /* @__PURE__ */ new Map());
     CanvasRenderer_publicField(this, "backgroundImageCache", /* @__PURE__ */ new Map());
@@ -5702,7 +5699,7 @@ class CanvasRenderer {
             const cx = (_e = $$.subxx) == null ? void 0 : _e.bind($$);
             if (cx && cy) {
               for (const target of targets) {
-                if (!isCanvasPointType($$, target) || isCanvasLineType($$, target) && !shouldDrawPoints($$, target)) {
+                if (!isCanvasScatterType($$, target) && !isCanvasBubbleType($$, target)) {
                   continue;
                 }
                 const color = $$.color(target.id);
@@ -34696,7 +34693,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.1-nightly-20260617013432",
+  version: "4.0.1-nightly-20260619013636",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

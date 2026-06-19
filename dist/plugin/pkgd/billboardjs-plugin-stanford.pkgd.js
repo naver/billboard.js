@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.1-nightly-20260617013432
+ * @version 4.0.1-nightly-20260619013636
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23048,7 +23048,7 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ Stanford; }
 });
 
-;// ./node_modules/d3-color/src/define.js
+;// ./node_modules/.pnpm/d3-color@3.1.0/node_modules/d3-color/src/define.js
 /* harmony default export */ function src_define(constructor, factory, prototype) {
   constructor.prototype = factory.prototype = prototype;
   prototype.constructor = constructor;
@@ -23059,7 +23059,7 @@ function extend(parent, definition) {
   return prototype;
 }
 
-;// ./node_modules/d3-color/src/color.js
+;// ./node_modules/.pnpm/d3-color@3.1.0/node_modules/d3-color/src/color.js
 
 function Color() {
 }
@@ -23388,10 +23388,10 @@ function hsl2rgb(h, m1, m2) {
   return (h < 60 ? m1 + (m2 - m1) * h / 60 : h < 180 ? m2 : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60 : m1) * 255;
 }
 
-;// ./node_modules/d3-interpolate/src/constant.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/constant.js
 /* harmony default export */ var constant = ((x) => () => x);
 
-;// ./node_modules/d3-interpolate/src/color.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/color.js
 
 function linear(a, d) {
   return function(t) {
@@ -23417,7 +23417,7 @@ function nogamma(a, b) {
   return d ? linear(a, d) : constant(isNaN(a) ? b : a);
 }
 
-;// ./node_modules/d3-interpolate/src/hsl.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/hsl.js
 
 
 function hsl_hsl(hue2) {
@@ -23435,7 +23435,7 @@ function hsl_hsl(hue2) {
 /* harmony default export */ var src_hsl = (hsl_hsl(hue));
 var hslLong = hsl_hsl(nogamma);
 
-;// ./node_modules/d3-interpolate/src/basis.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/basis.js
 function basis(t1, v0, v1, v2, v3) {
   var t2 = t1 * t1, t3 = t2 * t1;
   return ((1 - 3 * t1 + 3 * t2 - t3) * v0 + (4 - 6 * t2 + 3 * t3) * v1 + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2 + t3 * v3) / 6;
@@ -23448,7 +23448,7 @@ function basis(t1, v0, v1, v2, v3) {
   };
 }
 
-;// ./node_modules/d3-interpolate/src/basisClosed.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/basisClosed.js
 
 /* harmony default export */ function basisClosed(values) {
   var n = values.length;
@@ -23458,7 +23458,7 @@ function basis(t1, v0, v1, v2, v3) {
   };
 }
 
-;// ./node_modules/d3-interpolate/src/rgb.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/rgb.js
 
 
 
@@ -23502,7 +23502,7 @@ function rgbSpline(spline) {
 var rgbBasis = rgbSpline(src_basis);
 var rgbBasisClosed = rgbSpline(basisClosed);
 
-;// ./node_modules/d3-interpolate/src/numberArray.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/numberArray.js
 /* harmony default export */ function numberArray(a, b) {
   if (!b) b = [];
   var n = a ? Math.min(b.length, a.length) : 0, c = b.slice(), i;
@@ -23515,7 +23515,7 @@ function isNumberArray(x) {
   return ArrayBuffer.isView(x) && !(x instanceof DataView);
 }
 
-;// ./node_modules/d3-interpolate/src/array.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/array.js
 
 
 /* harmony default export */ function array(a, b) {
@@ -23531,7 +23531,7 @@ function genericArray(a, b) {
   };
 }
 
-;// ./node_modules/d3-interpolate/src/date.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/date.js
 /* harmony default export */ function date(a, b) {
   var d = /* @__PURE__ */ new Date();
   return a = +a, b = +b, function(t) {
@@ -23539,14 +23539,14 @@ function genericArray(a, b) {
   };
 }
 
-;// ./node_modules/d3-interpolate/src/number.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/number.js
 /* harmony default export */ function number(a, b) {
   return a = +a, b = +b, function(t) {
     return a * (1 - t) + b * t;
   };
 }
 
-;// ./node_modules/d3-interpolate/src/object.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/object.js
 
 /* harmony default export */ function object(a, b) {
   var i = {}, c = {}, k;
@@ -23565,7 +23565,7 @@ function genericArray(a, b) {
   };
 }
 
-;// ./node_modules/d3-interpolate/src/string.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/string.js
 
 var reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g, reB = new RegExp(reA.source, "g");
 function zero(b) {
@@ -23607,7 +23607,7 @@ function one(b) {
   });
 }
 
-;// ./node_modules/d3-interpolate/src/value.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/value.js
 
 
 
@@ -23622,24 +23622,24 @@ function one(b) {
   return b == null || t === "boolean" ? constant(b) : (t === "number" ? number : t === "string" ? (c = color(b)) ? (b = c, rgb) : string : b instanceof color ? rgb : b instanceof Date ? date : isNumberArray(b) ? numberArray : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object : number)(a, b);
 }
 
-;// ./node_modules/d3-interpolate/src/round.js
+;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/round.js
 /* harmony default export */ function round(a, b) {
   return a = +a, b = +b, function(t) {
     return Math.round(a * (1 - t) + b * t);
   };
 }
 
-;// ./node_modules/d3-array/src/ascending.js
+;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/ascending.js
 function ascending(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 
-;// ./node_modules/d3-array/src/descending.js
+;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/descending.js
 function descending(a, b) {
   return a == null || b == null ? NaN : b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
 }
 
-;// ./node_modules/d3-array/src/bisector.js
+;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/bisector.js
 
 
 function bisector(f) {
@@ -23685,7 +23685,7 @@ function bisector_zero() {
   return 0;
 }
 
-;// ./node_modules/d3-array/src/number.js
+;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/number.js
 function number_number(x) {
   return x === null ? NaN : +x;
 }
@@ -23706,7 +23706,7 @@ function* numbers(values, valueof) {
   }
 }
 
-;// ./node_modules/d3-array/src/bisect.js
+;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/bisect.js
 
 
 
@@ -23716,19 +23716,19 @@ const bisectLeft = ascendingBisect.left;
 const bisectCenter = bisector(number_number).center;
 /* harmony default export */ var bisect = (bisectRight);
 
-;// ./node_modules/d3-scale/src/constant.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/constant.js
 function constants(x) {
   return function() {
     return x;
   };
 }
 
-;// ./node_modules/d3-scale/src/number.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/number.js
 function src_number_number(x) {
   return +x;
 }
 
-;// ./node_modules/d3-scale/src/continuous.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/continuous.js
 
 
 
@@ -23817,7 +23817,7 @@ function continuous() {
   return transformer()(identity, identity);
 }
 
-;// ./node_modules/d3-scale/src/init.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/init.js
 function initRange(domain, range) {
   switch (arguments.length) {
     case 0:
@@ -23850,7 +23850,7 @@ function initInterpolator(domain, interpolator) {
   return this;
 }
 
-;// ./node_modules/d3-array/src/ticks.js
+;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/ticks.js
 const e10 = Math.sqrt(50), e5 = Math.sqrt(10), e2 = Math.sqrt(2);
 function tickSpec(start, stop, count) {
   const step = (stop - start) / Math.max(0, count), power = Math.floor(Math.log10(step)), error = step / Math.pow(10, power), factor = error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1;
@@ -23898,7 +23898,7 @@ function tickStep(start, stop, count) {
   return (reverse ? -1 : 1) * (inc < 0 ? 1 / -inc : inc);
 }
 
-;// ./node_modules/d3-format/src/formatSpecifier.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatSpecifier.js
 var re = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
 function formatSpecifier(specifier) {
   if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
@@ -23933,32 +23933,32 @@ FormatSpecifier.prototype.toString = function() {
   return this.fill + this.align + this.sign + this.symbol + (this.zero ? "0" : "") + (this.width === void 0 ? "" : Math.max(1, this.width | 0)) + (this.comma ? "," : "") + (this.precision === void 0 ? "" : "." + Math.max(0, this.precision | 0)) + (this.trim ? "~" : "") + this.type;
 };
 
-;// ./node_modules/d3-format/src/formatDecimal.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatDecimal.js
 /* harmony default export */ function formatDecimal(x) {
   return Math.abs(x = Math.round(x)) >= 1e21 ? x.toLocaleString("en").replace(/,/g, "") : x.toString(10);
 }
 function formatDecimalParts(x, p) {
-  if (!isFinite(x) || x === 0) return null;
-  var i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e"), coefficient = x.slice(0, i);
+  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null;
+  var i, coefficient = x.slice(0, i);
   return [
     coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient,
     +x.slice(i + 1)
   ];
 }
 
-;// ./node_modules/d3-format/src/exponent.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/exponent.js
 
 /* harmony default export */ function exponent(x) {
   return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
 }
 
-;// ./node_modules/d3-format/src/precisionPrefix.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/precisionPrefix.js
 
 /* harmony default export */ function precisionPrefix(step, value) {
   return Math.max(0, Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3 - exponent(Math.abs(step)));
 }
 
-;// ./node_modules/d3-format/src/formatGroup.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatGroup.js
 /* harmony default export */ function formatGroup(grouping, thousands) {
   return function(value, width) {
     var i = value.length, t = [], j = 0, g = grouping[0], length = 0;
@@ -23972,7 +23972,7 @@ function formatDecimalParts(x, p) {
   };
 }
 
-;// ./node_modules/d3-format/src/formatNumerals.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatNumerals.js
 /* harmony default export */ function formatNumerals(numerals) {
   return function(value) {
     return value.replace(/[0-9]/g, function(i) {
@@ -23981,7 +23981,7 @@ function formatDecimalParts(x, p) {
   };
 }
 
-;// ./node_modules/d3-format/src/formatTrim.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatTrim.js
 /* harmony default export */ function formatTrim(s) {
   out: for (var n = s.length, i = 1, i0 = -1, i1; i < n; ++i) {
     switch (s[i]) {
@@ -24001,17 +24001,17 @@ function formatDecimalParts(x, p) {
   return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
 }
 
-;// ./node_modules/d3-format/src/formatPrefixAuto.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatPrefixAuto.js
 
 var prefixExponent;
 /* harmony default export */ function formatPrefixAuto(x, p) {
   var d = formatDecimalParts(x, p);
-  if (!d) return prefixExponent = void 0, x.toPrecision(p);
+  if (!d) return x + "";
   var coefficient = d[0], exponent = d[1], i = exponent - (prefixExponent = Math.max(-8, Math.min(8, Math.floor(exponent / 3))) * 3) + 1, n = coefficient.length;
   return i === n ? coefficient : i > n ? coefficient + new Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + new Array(1 - i).join("0") + formatDecimalParts(x, Math.max(0, p + i - 1))[0];
 }
 
-;// ./node_modules/d3-format/src/formatRounded.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatRounded.js
 
 /* harmony default export */ function formatRounded(x, p) {
   var d = formatDecimalParts(x, p);
@@ -24020,7 +24020,7 @@ var prefixExponent;
   return exponent < 0 ? "0." + new Array(-exponent).join("0") + coefficient : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1) : coefficient + new Array(exponent - coefficient.length + 2).join("0");
 }
 
-;// ./node_modules/d3-format/src/formatTypes.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/formatTypes.js
 
 
 
@@ -24040,12 +24040,12 @@ var prefixExponent;
   "x": (x) => Math.round(x).toString(16)
 });
 
-;// ./node_modules/d3-format/src/identity.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/identity.js
 /* harmony default export */ function src_identity(x) {
   return x;
 }
 
-;// ./node_modules/d3-format/src/locale.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/locale.js
 
 
 
@@ -24057,13 +24057,13 @@ var prefixExponent;
 var map = Array.prototype.map, prefixes = ["y", "z", "a", "f", "p", "n", "\xB5", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y"];
 /* harmony default export */ function locale(locale) {
   var group = locale.grouping === void 0 || locale.thousands === void 0 ? src_identity : formatGroup(map.call(locale.grouping, Number), locale.thousands + ""), currencyPrefix = locale.currency === void 0 ? "" : locale.currency[0] + "", currencySuffix = locale.currency === void 0 ? "" : locale.currency[1] + "", decimal = locale.decimal === void 0 ? "." : locale.decimal + "", numerals = locale.numerals === void 0 ? src_identity : formatNumerals(map.call(locale.numerals, String)), percent = locale.percent === void 0 ? "%" : locale.percent + "", minus = locale.minus === void 0 ? "\u2212" : locale.minus + "", nan = locale.nan === void 0 ? "NaN" : locale.nan + "";
-  function newFormat(specifier, options) {
+  function newFormat(specifier) {
     specifier = formatSpecifier(specifier);
     var fill = specifier.fill, align = specifier.align, sign = specifier.sign, symbol = specifier.symbol, zero = specifier.zero, width = specifier.width, comma = specifier.comma, precision = specifier.precision, trim = specifier.trim, type = specifier.type;
     if (type === "n") comma = true, type = "g";
     else if (!formatTypes[type]) precision === void 0 && (precision = 12), trim = true, type = "g";
     if (zero || fill === "0" && align === "=") zero = true, fill = "0", align = "=";
-    var prefix = (options && options.prefix !== void 0 ? options.prefix : "") + (symbol === "$" ? currencyPrefix : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : ""), suffix = (symbol === "$" ? currencySuffix : /[%p]/.test(type) ? percent : "") + (options && options.suffix !== void 0 ? options.suffix : "");
+    var prefix = symbol === "$" ? currencyPrefix : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : "", suffix = symbol === "$" ? currencySuffix : /[%p]/.test(type) ? percent : "";
     var formatType = formatTypes[type], maybeSuffix = /[defgprs%]/.test(type);
     precision = precision === void 0 ? 6 : /[gprs]/.test(type) ? Math.max(1, Math.min(21, precision)) : Math.max(0, Math.min(20, precision));
     function format(value) {
@@ -24078,7 +24078,7 @@ var map = Array.prototype.map, prefixes = ["y", "z", "a", "f", "p", "n", "\xB5",
         if (trim) value = formatTrim(value);
         if (valueNegative && +value === 0 && sign !== "+") valueNegative = false;
         valuePrefix = (valueNegative ? sign === "(" ? sign : minus : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
-        valueSuffix = (type === "s" && !isNaN(value) && prefixExponent !== void 0 ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
+        valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
         if (maybeSuffix) {
           i = -1, n = value.length;
           while (++i < n) {
@@ -24115,9 +24115,9 @@ var map = Array.prototype.map, prefixes = ["y", "z", "a", "f", "p", "n", "\xB5",
     return format;
   }
   function formatPrefix(specifier, value) {
-    var e = Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3, k = Math.pow(10, -e), f = newFormat((specifier = formatSpecifier(specifier), specifier.type = "f", specifier), { suffix: prefixes[8 + e / 3] });
+    var f = newFormat((specifier = formatSpecifier(specifier), specifier.type = "f", specifier)), e = Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3, k = Math.pow(10, -e), prefix = prefixes[8 + e / 3];
     return function(value2) {
-      return f(k * value2);
+      return f(k * value2) + prefix;
     };
   }
   return {
@@ -24126,7 +24126,7 @@ var map = Array.prototype.map, prefixes = ["y", "z", "a", "f", "p", "n", "\xB5",
   };
 }
 
-;// ./node_modules/d3-format/src/defaultLocale.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/defaultLocale.js
 
 var defaultLocale_locale;
 var format;
@@ -24143,20 +24143,20 @@ function defaultLocale(definition) {
   return defaultLocale_locale;
 }
 
-;// ./node_modules/d3-format/src/precisionRound.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/precisionRound.js
 
 /* harmony default export */ function precisionRound(step, max) {
   step = Math.abs(step), max = Math.abs(max) - step;
   return Math.max(0, exponent(max) - exponent(step)) + 1;
 }
 
-;// ./node_modules/d3-format/src/precisionFixed.js
+;// ./node_modules/.pnpm/d3-format@3.1.0/node_modules/d3-format/src/precisionFixed.js
 
 /* harmony default export */ function precisionFixed(step) {
   return Math.max(0, -exponent(Math.abs(step)));
 }
 
-;// ./node_modules/d3-scale/src/tickFormat.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/tickFormat.js
 
 
 function tickFormat(start, stop, count, specifier) {
@@ -24185,7 +24185,7 @@ function tickFormat(start, stop, count, specifier) {
   return format(specifier);
 }
 
-;// ./node_modules/d3-scale/src/linear.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/linear.js
 
 
 
@@ -24244,7 +24244,7 @@ function linear_linear() {
   return linearish(scale);
 }
 
-;// ./node_modules/d3-scale/src/nice.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/nice.js
 function nice(domain, interval) {
   domain = domain.slice();
   var i0 = 0, i1 = domain.length - 1, x0 = domain[i0], x1 = domain[i1], t;
@@ -24257,7 +24257,7 @@ function nice(domain, interval) {
   return domain;
 }
 
-;// ./node_modules/d3-scale/src/log.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/log.js
 
 
 
@@ -24375,7 +24375,7 @@ function log() {
   return scale;
 }
 
-;// ./node_modules/d3-scale/src/symlog.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/symlog.js
 
 
 
@@ -24404,7 +24404,7 @@ function symlog() {
   return initRange.apply(scale, arguments);
 }
 
-;// ./node_modules/d3-scale/src/pow.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/pow.js
 
 
 
@@ -24441,7 +24441,7 @@ function sqrt() {
   return pow.apply(null, arguments).exponent(0.5);
 }
 
-;// ./node_modules/d3-scale/src/sequential.js
+;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/sequential.js
 
 
 
@@ -24815,14 +24815,14 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "4.0.1-nightly-20260617013432");
+__publicField(Plugin, "version", "4.0.1-nightly-20260619013636");
 
-;// ./node_modules/d3-axis/src/identity.js
+;// ./node_modules/.pnpm/d3-axis@3.0.0/node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {
   return x;
 }
 
-;// ./node_modules/d3-axis/src/axis.js
+;// ./node_modules/.pnpm/d3-axis@3.0.0/node_modules/d3-axis/src/axis.js
 
 var axis_top = 1, right = 2, bottom = 3, left = 4, epsilon = 1e-6;
 function translateX(x) {
@@ -25510,14 +25510,14 @@ function toMap(items, keyFn, valueFn = ((item) => item)) {
 }
 
 
-;// ./node_modules/d3-selection/src/sourceEvent.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/sourceEvent.js
 /* harmony default export */ function sourceEvent(event) {
   let sourceEvent;
   while (sourceEvent = event.sourceEvent) event = sourceEvent;
   return event;
 }
 
-;// ./node_modules/d3-selection/src/pointer.js
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/pointer.js
 
 /* harmony default export */ function src_pointer(event, node) {
   event = sourceEvent(event);
