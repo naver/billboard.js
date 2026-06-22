@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.1-nightly-20260619013636
+ * @version 4.0.1-nightly-20260622013528
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23050,12 +23050,12 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ TextOverlap; }
 });
 
-;// ./node_modules/.pnpm/robust-predicates@3.0.2/node_modules/robust-predicates/esm/util.js
+;// ./node_modules/.pnpm/robust-predicates@3.0.3/node_modules/robust-predicates/esm/util.js
 const epsilon = 1.1102230246251565e-16;
 const splitter = 134217729;
 const resulterrbound = (3 + 8 * epsilon) * epsilon;
 
-// fast_expansion_sum_zeroelim routine from oritinal code
+// fast_expansion_sum_zeroelim routine from original code
 function sum(elen, e, flen, f, h) {
     let Q, Qnew, hh, bvirt;
     let enow = e[0];
@@ -23190,7 +23190,7 @@ function vec(n) {
     return new Float64Array(n);
 }
 
-;// ./node_modules/.pnpm/robust-predicates@3.0.2/node_modules/robust-predicates/esm/orient2d.js
+;// ./node_modules/.pnpm/robust-predicates@3.0.3/node_modules/robust-predicates/esm/orient2d.js
 
 
 const ccwerrboundA = (3 + 16 * epsilon) * epsilon;
@@ -23376,7 +23376,7 @@ function orient2dfast(ax, ay, bx, by, cx, cy) {
     return (ay - cy) * (bx - cx) - (ax - cx) * (by - cy);
 }
 
-;// ./node_modules/.pnpm/robust-predicates@3.0.2/node_modules/robust-predicates/esm/orient3d.js
+;// ./node_modules/.pnpm/robust-predicates@3.0.3/node_modules/robust-predicates/esm/orient3d.js
 
 
 const o3derrboundA = (7 + 56 * epsilon) * epsilon;
@@ -23399,7 +23399,7 @@ const orient3d_u = vec(4);
 
 const _8 = vec(8);
 const _8b = vec(8);
-const _16 = vec(8);
+const _16 = vec(16);
 const _12 = vec(12);
 
 let fin = vec(192);
@@ -23418,112 +23418,109 @@ function tailinit(xtail, ytail, ax, ay, bx, by, a, b) {
             a[0] = 0;
             b[0] = 0;
             return 1;
-        } else {
-            negate = -ytail;
-            s1 = negate * ax;
-            c = splitter * negate;
-            ahi = c - (c - negate);
-            alo = negate - ahi;
-            c = splitter * ax;
-            bhi = c - (c - ax);
-            blo = ax - bhi;
-            a[0] = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
-            a[1] = s1;
-            s1 = ytail * bx;
-            c = splitter * ytail;
-            ahi = c - (c - ytail);
-            alo = ytail - ahi;
-            c = splitter * bx;
-            bhi = c - (c - bx);
-            blo = bx - bhi;
-            b[0] = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
-            b[1] = s1;
-            return 2;
         }
-    } else {
-        if (ytail === 0) {
-            s1 = xtail * ay;
-            c = splitter * xtail;
-            ahi = c - (c - xtail);
-            alo = xtail - ahi;
-            c = splitter * ay;
-            bhi = c - (c - ay);
-            blo = ay - bhi;
-            a[0] = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
-            a[1] = s1;
-            negate = -xtail;
-            s1 = negate * by;
-            c = splitter * negate;
-            ahi = c - (c - negate);
-            alo = negate - ahi;
-            c = splitter * by;
-            bhi = c - (c - by);
-            blo = by - bhi;
-            b[0] = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
-            b[1] = s1;
-            return 2;
-        } else {
-            s1 = xtail * ay;
-            c = splitter * xtail;
-            ahi = c - (c - xtail);
-            alo = xtail - ahi;
-            c = splitter * ay;
-            bhi = c - (c - ay);
-            blo = ay - bhi;
-            s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
-            t1 = ytail * ax;
-            c = splitter * ytail;
-            ahi = c - (c - ytail);
-            alo = ytail - ahi;
-            c = splitter * ax;
-            bhi = c - (c - ax);
-            blo = ax - bhi;
-            t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
-            _i = s0 - t0;
-            bvirt = s0 - _i;
-            a[0] = s0 - (_i + bvirt) + (bvirt - t0);
-            _j = s1 + _i;
-            bvirt = _j - s1;
-            _0 = s1 - (_j - bvirt) + (_i - bvirt);
-            _i = _0 - t1;
-            bvirt = _0 - _i;
-            a[1] = _0 - (_i + bvirt) + (bvirt - t1);
-            u3 = _j + _i;
-            bvirt = u3 - _j;
-            a[2] = _j - (u3 - bvirt) + (_i - bvirt);
-            a[3] = u3;
-            s1 = ytail * bx;
-            c = splitter * ytail;
-            ahi = c - (c - ytail);
-            alo = ytail - ahi;
-            c = splitter * bx;
-            bhi = c - (c - bx);
-            blo = bx - bhi;
-            s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
-            t1 = xtail * by;
-            c = splitter * xtail;
-            ahi = c - (c - xtail);
-            alo = xtail - ahi;
-            c = splitter * by;
-            bhi = c - (c - by);
-            blo = by - bhi;
-            t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
-            _i = s0 - t0;
-            bvirt = s0 - _i;
-            b[0] = s0 - (_i + bvirt) + (bvirt - t0);
-            _j = s1 + _i;
-            bvirt = _j - s1;
-            _0 = s1 - (_j - bvirt) + (_i - bvirt);
-            _i = _0 - t1;
-            bvirt = _0 - _i;
-            b[1] = _0 - (_i + bvirt) + (bvirt - t1);
-            u3 = _j + _i;
-            bvirt = u3 - _j;
-            b[2] = _j - (u3 - bvirt) + (_i - bvirt);
-            b[3] = u3;
-            return 4;
-        }
+        negate = -ytail;
+        s1 = negate * ax;
+        c = splitter * negate;
+        ahi = c - (c - negate);
+        alo = negate - ahi;
+        c = splitter * ax;
+        bhi = c - (c - ax);
+        blo = ax - bhi;
+        a[0] = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+        a[1] = s1;
+        s1 = ytail * bx;
+        c = splitter * ytail;
+        ahi = c - (c - ytail);
+        alo = ytail - ahi;
+        c = splitter * bx;
+        bhi = c - (c - bx);
+        blo = bx - bhi;
+        b[0] = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+        b[1] = s1;
+        return 2;
     }
+    if (ytail === 0) {
+        s1 = xtail * ay;
+        c = splitter * xtail;
+        ahi = c - (c - xtail);
+        alo = xtail - ahi;
+        c = splitter * ay;
+        bhi = c - (c - ay);
+        blo = ay - bhi;
+        a[0] = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+        a[1] = s1;
+        negate = -xtail;
+        s1 = negate * by;
+        c = splitter * negate;
+        ahi = c - (c - negate);
+        alo = negate - ahi;
+        c = splitter * by;
+        bhi = c - (c - by);
+        blo = by - bhi;
+        b[0] = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+        b[1] = s1;
+        return 2;
+    }
+    s1 = xtail * ay;
+    c = splitter * xtail;
+    ahi = c - (c - xtail);
+    alo = xtail - ahi;
+    c = splitter * ay;
+    bhi = c - (c - ay);
+    blo = ay - bhi;
+    s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+    t1 = ytail * ax;
+    c = splitter * ytail;
+    ahi = c - (c - ytail);
+    alo = ytail - ahi;
+    c = splitter * ax;
+    bhi = c - (c - ax);
+    blo = ax - bhi;
+    t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+    _i = s0 - t0;
+    bvirt = s0 - _i;
+    a[0] = s0 - (_i + bvirt) + (bvirt - t0);
+    _j = s1 + _i;
+    bvirt = _j - s1;
+    _0 = s1 - (_j - bvirt) + (_i - bvirt);
+    _i = _0 - t1;
+    bvirt = _0 - _i;
+    a[1] = _0 - (_i + bvirt) + (bvirt - t1);
+    u3 = _j + _i;
+    bvirt = u3 - _j;
+    a[2] = _j - (u3 - bvirt) + (_i - bvirt);
+    a[3] = u3;
+    s1 = ytail * bx;
+    c = splitter * ytail;
+    ahi = c - (c - ytail);
+    alo = ytail - ahi;
+    c = splitter * bx;
+    bhi = c - (c - bx);
+    blo = bx - bhi;
+    s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+    t1 = xtail * by;
+    c = splitter * xtail;
+    ahi = c - (c - xtail);
+    alo = xtail - ahi;
+    c = splitter * by;
+    bhi = c - (c - by);
+    blo = by - bhi;
+    t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+    _i = s0 - t0;
+    bvirt = s0 - _i;
+    b[0] = s0 - (_i + bvirt) + (bvirt - t0);
+    _j = s1 + _i;
+    bvirt = _j - s1;
+    _0 = s1 - (_j - bvirt) + (_i - bvirt);
+    _i = _0 - t1;
+    bvirt = _0 - _i;
+    b[1] = _0 - (_i + bvirt) + (bvirt - t1);
+    u3 = _j + _i;
+    bvirt = u3 - _j;
+    b[2] = _j - (u3 - bvirt) + (_i - bvirt);
+    b[3] = u3;
+    return 4;
 }
 
 function tailadd(finlen, a, b, k, z) {
@@ -23840,7 +23837,7 @@ function orient3dfast(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz) {
         cdx * (ady * bdz - adz * bdy);
 }
 
-;// ./node_modules/.pnpm/robust-predicates@3.0.2/node_modules/robust-predicates/esm/incircle.js
+;// ./node_modules/.pnpm/robust-predicates@3.0.3/node_modules/robust-predicates/esm/incircle.js
 
 
 const iccerrboundA = (10 + 96 * epsilon) * epsilon;
@@ -24607,7 +24604,7 @@ function incirclefast(ax, ay, bx, by, cx, cy, dx, dy) {
     return alift * bcdet + blift * cadet + clift * abdet;
 }
 
-;// ./node_modules/.pnpm/robust-predicates@3.0.2/node_modules/robust-predicates/esm/insphere.js
+;// ./node_modules/.pnpm/robust-predicates@3.0.3/node_modules/robust-predicates/esm/insphere.js
 
 
 const isperrboundA = (16 + 224 * epsilon) * epsilon;
@@ -25341,19 +25338,19 @@ function insphere(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, ex, ey, ez) {
     return -insphereadapt(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, ex, ey, ez, permanent);
 }
 
-function inspherefast(pax, pay, paz, pbx, pby, pbz, pcx, pcy, pcz, pdx, pdy, pdz, pex, pey, pez) {
-    const aex = pax - pex;
-    const bex = pbx - pex;
-    const cex = pcx - pex;
-    const dex = pdx - pex;
-    const aey = pay - pey;
-    const bey = pby - pey;
-    const cey = pcy - pey;
-    const dey = pdy - pey;
-    const aez = paz - pez;
-    const bez = pbz - pez;
-    const cez = pcz - pez;
-    const dez = pdz - pez;
+function inspherefast(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, ex, ey, ez) {
+    const aex = ax - ex;
+    const bex = bx - ex;
+    const cex = cx - ex;
+    const dex = dx - ex;
+    const aey = ay - ey;
+    const bey = by - ey;
+    const cey = cy - ey;
+    const dey = dy - ey;
+    const aez = az - ez;
+    const bez = bz - ez;
+    const cez = cz - ez;
+    const dez = dz - ez;
 
     const ab = aex * bey - bex * aey;
     const bc = bex * cey - cex * bey;
@@ -25375,22 +25372,33 @@ function inspherefast(pax, pay, paz, pbx, pby, pbz, pcx, pcy, pcz, pdx, pdy, pdz
     return (clift * dab - dlift * abc) + (alift * bcd - blift * cda);
 }
 
-;// ./node_modules/.pnpm/robust-predicates@3.0.2/node_modules/robust-predicates/index.js
+;// ./node_modules/.pnpm/robust-predicates@3.0.3/node_modules/robust-predicates/index.js
 
 
 
 
 
 
-;// ./node_modules/.pnpm/delaunator@5.0.1/node_modules/delaunator/index.js
+;// ./node_modules/.pnpm/delaunator@5.1.0/node_modules/delaunator/index.js
 
 const EPSILON = Math.pow(2, -52);
 const EDGE_STACK = new Uint32Array(512);
 
 
 
+/** @template {ArrayLike<number>} T */
 class Delaunator {
 
+    /**
+     * Constructs a delaunay triangulation object given an array of points (`[x, y]` by default).
+     * `getX` and `getY` are optional functions of the form `(point) => value` for custom point formats.
+     *
+     * @template P
+     * @param {P[]} points
+     * @param {(p: P) => number} [getX]
+     * @param {(p: P) => number} [getY]
+     */
+    // @ts-expect-error TS2322
     static from(points, getX = defaultGetX, getY = defaultGetY) {
         const n = points.length;
         const coords = new Float64Array(n * 2);
@@ -25404,6 +25412,12 @@ class Delaunator {
         return new Delaunator(coords);
     }
 
+    /**
+     * Constructs a delaunay triangulation object given an array of point coordinates of the form:
+     * `[x0, y0, x1, y1, ...]` (use a typed array for best performance). Duplicate points are skipped.
+     *
+     * @param {T} coords
+     */
     constructor(coords) {
         const n = coords.length >> 1;
         if (n > 0 && typeof coords[0] !== 'number') throw new Error('Expected coords to contain numbers.');
@@ -25412,23 +25426,44 @@ class Delaunator {
 
         // arrays that will store the triangulation graph
         const maxTriangles = Math.max(2 * n - 5, 0);
-        this._triangles = new Uint32Array(maxTriangles * 3);
-        this._halfedges = new Int32Array(maxTriangles * 3);
+        /** @private */ this._triangles = new Uint32Array(maxTriangles * 3);
+        /** @private */ this._halfedges = new Int32Array(maxTriangles * 3);
 
         // temporary arrays for tracking the edges of the advancing convex hull
-        this._hashSize = Math.ceil(Math.sqrt(n));
-        this._hullPrev = new Uint32Array(n); // edge to prev edge
-        this._hullNext = new Uint32Array(n); // edge to next edge
-        this._hullTri = new Uint32Array(n); // edge to adjacent triangle
-        this._hullHash = new Int32Array(this._hashSize); // angular edge hash
+        /** @private */ this._hashSize = Math.ceil(Math.sqrt(n));
+        /** @private */ this._hullPrev = new Uint32Array(n); // edge to prev edge
+        /** @private */ this._hullNext = new Uint32Array(n); // edge to next edge
+        /** @private */ this._hullTri = new Uint32Array(n); // edge to adjacent triangle
+        /** @private */ this._hullHash = new Int32Array(this._hashSize); // angular edge hash
 
         // temporary arrays for sorting points
-        this._ids = new Uint32Array(n);
-        this._dists = new Float64Array(n);
+        /** @private */ this._ids = new Uint32Array(n);
+        /** @private */ this._dists = new Float64Array(n);
+
+        /** @private */ this.trianglesLen = 0;
+        /** @private */ this._cx = 0;
+        /** @private */ this._cy = 0;
+        /** @private */ this._hullStart = 0;
+
+
+        /** A `Uint32Array` array of indices that reference points on the convex hull of the input data, counter-clockwise. */
+        this.hull = this._triangles;
+        /** A `Uint32Array` array of triangle vertex indices (each group of three numbers forms a triangle). All triangles are directed counterclockwise. */
+        this.triangles = this._triangles;
+        /**
+         * A `Int32Array` array of triangle half-edge indices that allows you to traverse the triangulation.
+         * `i`-th half-edge in the array corresponds to vertex `triangles[i]` the half-edge is coming from.
+         * `halfedges[i]` is the index of a twin half-edge in an adjacent triangle (or `-1` for outer half-edges on the convex hull).
+         */
+        this.halfedges = this._halfedges;
 
         this.update();
     }
 
+    /**
+     * Updates the triangulation if you modified `delaunay.coords` values in place, avoiding expensive memory allocations.
+     * Useful for iterative relaxation algorithms such as Lloyd's.
+     */
     update() {
         const {coords, _hullPrev: hullPrev, _hullNext: hullNext, _hullTri: hullTri, _hullHash: hullHash} =  this;
         const n = coords.length >> 1;
@@ -25451,7 +25486,7 @@ class Delaunator {
         const cx = (minX + maxX) / 2;
         const cy = (minY + maxY) / 2;
 
-        let i0, i1, i2;
+        let i0 = 0, i1 = 0, i2 = 0;
 
         // pick a seed point close to the center
         for (let i = 0, minDist = Infinity; i < n; i++) {
@@ -25509,7 +25544,7 @@ class Delaunator {
             }
             this.hull = hull.subarray(0, j);
             this.triangles = new Uint32Array(0);
-            this.halfedges = new Uint32Array(0);
+            this.halfedges = new Int32Array(0);
             return;
         }
 
@@ -25557,7 +25592,7 @@ class Delaunator {
         this.trianglesLen = 0;
         this._addTriangle(i0, i1, i2, -1, -1, -1);
 
-        for (let k = 0, xp, yp; k < this._ids.length; k++) {
+        for (let k = 0, xp = 0, yp = 0; k < this._ids.length; k++) {
             const i = this._ids[k];
             const x = coords[2 * i];
             const y = coords[2 * i + 1];
@@ -25639,10 +25674,23 @@ class Delaunator {
         this.halfedges = this._halfedges.subarray(0, this.trianglesLen);
     }
 
+    /**
+     * Calculate an angle-based key for the edge hash used for advancing convex hull.
+     *
+     * @param {number} x
+     * @param {number} y
+     * @private
+     */
     _hashKey(x, y) {
         return Math.floor(pseudoAngle(x - this._cx, y - this._cy) * this._hashSize) % this._hashSize;
     }
 
+    /**
+     * Flip an edge in a pair of triangles if it doesn't satisfy the Delaunay condition.
+     *
+     * @param {number} a
+     * @private
+     */
     _legalize(a) {
         const {_triangles: triangles, _halfedges: halfedges, coords} = this;
 
@@ -25698,7 +25746,7 @@ class Delaunator {
 
                 const hbl = halfedges[bl];
 
-                // edge swapped on the other side of the hull (rare); fix the halfedge reference
+                // edge swapped on the other side of the hull (rare); fix the half-edge reference
                 if (hbl === -1) {
                     let e = this._hullStart;
                     do {
@@ -25728,12 +25776,28 @@ class Delaunator {
         return ar;
     }
 
+    /**
+     * Link two half-edges to each other.
+     * @param {number} a
+     * @param {number} b
+     * @private
+     */
     _link(a, b) {
         this._halfedges[a] = b;
         if (b !== -1) this._halfedges[b] = a;
     }
 
-    // add a new triangle given vertex indices and adjacent half-edge ids
+    /**
+     * Add a new triangle given vertex indices and adjacent half-edge ids.
+     *
+     * @param {number} i0
+     * @param {number} i1
+     * @param {number} i2
+     * @param {number} a
+     * @param {number} b
+     * @param {number} c
+     * @private
+     */
     _addTriangle(i0, i1, i2, a, b, c) {
         const t = this.trianglesLen;
 
@@ -25751,18 +25815,43 @@ class Delaunator {
     }
 }
 
-// monotonically increases with real angle, but doesn't need expensive trigonometry
+/**
+ * Monotonically increases with real angle, but doesn't need expensive trigonometry.
+ *
+ * @param {number} dx
+ * @param {number} dy
+ */
 function pseudoAngle(dx, dy) {
     const p = dx / (Math.abs(dx) + Math.abs(dy));
     return (dy > 0 ? 3 - p : 1 + p) / 4; // [0..1]
 }
 
+/**
+ * Squared distance between two points.
+ *
+ * @param {number} ax
+ * @param {number} ay
+ * @param {number} bx
+ * @param {number} by
+ */
 function dist(ax, ay, bx, by) {
     const dx = ax - bx;
     const dy = ay - by;
     return dx * dx + dy * dy;
 }
 
+/**
+ * Check whether point P is inside a circle formed by points A, B, C.
+ *
+ * @param {number} ax
+ * @param {number} ay
+ * @param {number} bx
+ * @param {number} by
+ * @param {number} cx
+ * @param {number} cy
+ * @param {number} px
+ * @param {number} py
+ */
 function inCircle(ax, ay, bx, by, cx, cy, px, py) {
     const dx = ax - px;
     const dy = ay - py;
@@ -25780,6 +25869,16 @@ function inCircle(ax, ay, bx, by, cx, cy, px, py) {
            ap * (ex * fy - ey * fx) < 0;
 }
 
+/**
+ * Squared radius of the circle formed by points A, B, C.
+ *
+ * @param {number} ax
+ * @param {number} ay
+ * @param {number} bx
+ * @param {number} by
+ * @param {number} cx
+ * @param {number} cy
+ */
 function circumradius(ax, ay, bx, by, cx, cy) {
     const dx = bx - ax;
     const dy = by - ay;
@@ -25796,6 +25895,16 @@ function circumradius(ax, ay, bx, by, cx, cy) {
     return x * x + y * y;
 }
 
+/**
+ * Get coordinates of a circumcenter for points A, B, C.
+ *
+ * @param {number} ax
+ * @param {number} ay
+ * @param {number} bx
+ * @param {number} by
+ * @param {number} cx
+ * @param {number} cy
+ */
 function circumcenter(ax, ay, bx, by, cx, cy) {
     const dx = bx - ax;
     const dy = by - ay;
@@ -25812,6 +25921,14 @@ function circumcenter(ax, ay, bx, by, cx, cy) {
     return {x, y};
 }
 
+/**
+ * Sort points by distance via an array of point indices and an array of calculated distances.
+ *
+ * @param {Uint32Array} ids
+ * @param {Float64Array} dists
+ * @param {number} left
+ * @param {number} right
+ */
 function quicksort(ids, dists, left, right) {
     if (right - left <= 20) {
         for (let i = left + 1; i <= right; i++) {
@@ -25851,15 +25968,22 @@ function quicksort(ids, dists, left, right) {
     }
 }
 
+/**
+ * @param {Uint32Array} arr
+ * @param {number} i
+ * @param {number} j
+ */
 function swap(arr, i, j) {
     const tmp = arr[i];
     arr[i] = arr[j];
     arr[j] = tmp;
 }
 
+/** @param {[number, number]} p */
 function defaultGetX(p) {
     return p[0];
 }
+/** @param {[number, number]} p */
 function defaultGetY(p) {
     return p[1];
 }
@@ -26615,7 +26739,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "4.0.1-nightly-20260619013636");
+__publicField(Plugin, "version", "4.0.1-nightly-20260622013528");
 
 ;// ./src/Plugin/textoverlap/Options.ts
 class Options {
