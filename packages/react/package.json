@@ -48,7 +48,7 @@
 		"react": ">=16.8.0"
 	},
 	"devDependencies": {
-		"@babel/core": "^8.0.1",
+		"@babel/core": "^7.29.6",
 		"@playwright/test": "^1.61.0",
 		"@storybook/addon-actions": "^9.0.8",
 		"@storybook/addon-console": "^3.0.0",
