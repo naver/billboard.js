@@ -1518,7 +1518,7 @@ describe("SHAPE BAR", () => {
 				data: {x: 1, value: 3}
 			});
 
-			expect(chart.$.tooltip.selectAll(".name").size()).to.be.equal(2);
+			expect(chart.$.tooltip.selectAll(".name").size()).to.be.equal(1);
 		});
 
 		it("set options point.sensitivity=3", () => {

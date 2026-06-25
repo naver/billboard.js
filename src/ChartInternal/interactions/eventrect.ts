@@ -450,15 +450,15 @@ export default {
 					.classed($COMMON.EXPANDED, true)
 					.style("cursor", isSelectable ? "pointer" : null);
 
-				$$.showTooltip(closestData, context);
-				$$.showGridFocus?.(closestData);
+				$$.showTooltip([closest], context);
+				$$.showGridFocus?.([closest]);
 				$$.unexpandCircles?.();
 
 				$$.setExpand(index, closest.id, true);
 
 				if (
 					isSelectionEnabled &&
-					(isSelectionGrouped || isSelectable?.bind($$.api)(closestData))
+					(isSelectionGrouped || isSelectable?.bind($$.api)(closest))
 				) {
 					context.style.cursor = "pointer";
 				}
