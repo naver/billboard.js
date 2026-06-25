@@ -11,7 +11,7 @@ import {
 	namespaces as d3Namespaces
 } from "d3-selection";
 import util from "../assets/util";
-import {$TOOLTIP} from "../../src/config/classes";
+import {$COMMON, $EVENT, $TOOLTIP} from "../../src/config/classes";
 import {isNumber, isUndefined, isString} from "../../src/module/util";
 
 describe("TOOLTIP", function() {
@@ -1671,6 +1671,40 @@ describe("TOOLTIP", function() {
 				expect(tooltipHtml).to.not.include("<iframe");
 				expect(tooltipHtml).to.include("&lt;iframe");
 				expect(tooltipHtml).to.include("Title");
+			});
+		});
+
+		describe("tooltip.grouped = false with single X-axis focus", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100],
+							["data2", 130, 100, 140]
+						]
+					},
+					tooltip: {
+						grouped: false
+					}
+				};
+			});
+
+			it("should show tooltip and focus point when tooltip.show is called", () => {
+				chart.tooltip.show({
+					data: {
+						index: 1,
+						id: "data2",
+						value: 100
+					}
+				});
+
+				expect(chart.$.tooltip.selectAll(".name").size()).to.be.equal(1);
+				expect(chart.$.tooltip.select(".name").text()).to.be.equal("data2");
+				expect(+chart.$.tooltip.select(".value").text()).to.be.equal(100);
+
+				const expandedPoints = chart.$.svg.selectAll(`.${$COMMON.EXPANDED}`);
+				expect(expandedPoints.size()).to.be.equal(1);
+				expect(expandedPoints.datum().id).to.be.equal("data2");
 			});
 		});
 	});

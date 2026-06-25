@@ -380,7 +380,7 @@ export default {
 	 */
 	selectRectForSingle(context: SVGRectElement, index: number): void {
 		const $$ = this;
-		const {config, $el: {main, circle}} = $$;
+		const {config, state, $el: {main, circle}} = $$;
 		const isSelectionEnabled = config.data_selection_enabled;
 		const isSelectionGrouped = config.data_selection_grouped;
 		const isSelectable = config.data_selection_isselectable;
@@ -403,39 +403,71 @@ export default {
 				false
 			);
 
-		const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`)
-			.classed($COMMON.EXPANDED, true)
-			.style("cursor", isSelectable ? "pointer" : null)
-			.filter(function(d) {
-				return $$.isWithinShape(this, d);
+		if (isTooltipGrouped) {
+			const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`)
+				.classed($COMMON.EXPANDED, true)
+				.style("cursor", isSelectable ? "pointer" : null)
+				.filter(function(d) {
+					return $$.isWithinShape(this, d);
+				});
+
+			shapeAtIndex
+				.call(selected => {
+					const d = selected.data();
+
+					if (
+						isSelectionEnabled &&
+						(isSelectionGrouped || isSelectable?.bind($$.api)(d))
+					) {
+						context.style.cursor = "pointer";
+					}
+				});
+		} else {
+			const mouse = getPointer(state.event, context);
+			const closestData = selectedData.filter(d => {
+				if ($$.isTargetToShow(d.id)) {
+					const dist = $$.dist(d, mouse);
+					return dist < $$.getPointSensitivity(d);
+				}
+				return false;
 			});
 
-		if (shapeAtIndex.empty() && !isTooltipGrouped && config.interaction_onout) {
-			$$.hideGridFocus?.();
-			$$.hideTooltip();
+			if (closestData.length > 0) {
+				let closest = closestData[0];
+				let minDist = $$.dist(closest, mouse);
 
-			!isSelectionGrouped && $$.setExpand(index);
-		}
+				for (let i = 1; i < closestData.length; i++) {
+					const d = closestData[i];
+					const dist = $$.dist(d, mouse);
 
-		shapeAtIndex
-			.call(selected => {
-				const d = selected.data();
+					if (dist < minDist) {
+						minDist = dist;
+						closest = d;
+					}
+				}
+
+				main.selectAll(`.${$SHAPE.shape}-${index}`)
+					.classed($COMMON.EXPANDED, true)
+					.style("cursor", isSelectable ? "pointer" : null);
+
+				$$.showTooltip(closestData, context);
+				$$.showGridFocus?.(closestData);
+				$$.unexpandCircles?.();
+
+				$$.setExpand(index, closest.id, true);
 
 				if (
 					isSelectionEnabled &&
-					(isSelectionGrouped || isSelectable?.bind($$.api)(d))
+					(isSelectionGrouped || isSelectable?.bind($$.api)(closestData))
 				) {
 					context.style.cursor = "pointer";
 				}
-
-				if (!isTooltipGrouped) {
-					$$.showTooltip(d, context);
-					$$.showGridFocus?.(d);
-					$$.unexpandCircles?.();
-
-					selected.each(d => $$.setExpand(index, d.id));
-				}
-			});
+			} else if (config.interaction_onout) {
+				$$.hideGridFocus?.();
+				$$.hideTooltip();
+				!isSelectionGrouped && $$.setExpand(index);
+			}
+		}
 	},
 
 	/**
