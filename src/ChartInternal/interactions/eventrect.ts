@@ -403,26 +403,36 @@ export default {
 				false
 			);
 
-		if (isTooltipGrouped) {
-			const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`)
-				.classed($COMMON.EXPANDED, true)
-				.style("cursor", isSelectable ? "pointer" : null)
-				.filter(function(d) {
-					return $$.isWithinShape(this, d);
-				});
+		const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`)
+			.classed($COMMON.EXPANDED, true)
+			.style("cursor", isSelectable ? "pointer" : null)
+			.filter(function(d) {
+				return $$.isWithinShape(this, d);
+			});
 
-			shapeAtIndex
-				.call(selected => {
-					const d = selected.data();
+		shapeAtIndex
+			.call(selected => {
+				const d = selected.data();
 
-					if (
-						isSelectionEnabled &&
-						(isSelectionGrouped || isSelectable?.bind($$.api)(d))
-					) {
-						context.style.cursor = "pointer";
-					}
-				});
-		} else {
+				if (
+					isSelectionEnabled &&
+					(isSelectionGrouped || isSelectable?.bind($$.api)(d))
+				) {
+					context.style.cursor = "pointer";
+				}
+
+				if (!isTooltipGrouped) {
+					$$.showTooltip(d, context);
+					$$.showGridFocus?.(d);
+					$$.unexpandCircles?.();
+
+					selected.each(d => $$.setExpand(index, d.id));
+				}
+			});
+
+		if (!isTooltipGrouped && shapeAtIndex.empty()) {
+			// `point.focus.only` can render focus points away from the hovered data point.
+			// Fall back to data distance so ungrouped tooltips can still focus the intended point.
 			const mouse = getPointer(state.event, context);
 			const closestData = selectedData.filter(d => {
 				if ($$.isTargetToShow(d.id)) {
@@ -450,8 +460,8 @@ export default {
 					.classed($COMMON.EXPANDED, true)
 					.style("cursor", isSelectable ? "pointer" : null);
 
-				$$.showTooltip([closest], context);
-				$$.showGridFocus?.([closest]);
+				$$.showTooltip(closestData, context);
+				$$.showGridFocus?.(closestData);
 				$$.unexpandCircles?.();
 
 				$$.setExpand(index, closest.id, true);
@@ -465,6 +475,7 @@ export default {
 			} else if (config.interaction_onout) {
 				$$.hideGridFocus?.();
 				$$.hideTooltip();
+
 				!isSelectionGrouped && $$.setExpand(index);
 			}
 		}

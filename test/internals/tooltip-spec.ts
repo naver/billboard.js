@@ -11,7 +11,7 @@ import {
 	namespaces as d3Namespaces
 } from "d3-selection";
 import util from "../assets/util";
-import {$COMMON, $EVENT, $TOOLTIP} from "../../src/config/classes";
+import {$COMMON, $TOOLTIP} from "../../src/config/classes";
 import {isNumber, isUndefined, isString} from "../../src/module/util";
 
 describe("TOOLTIP", function() {
@@ -1685,6 +1685,11 @@ describe("TOOLTIP", function() {
 					},
 					tooltip: {
 						grouped: false
+					},
+					point: {
+						focus: {
+							only: true
+						}
 					}
 				};
 			});
