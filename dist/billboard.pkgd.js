@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.1-nightly-20260626012543
+ * @version 4.0.1-nightly-20260627012048
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -57748,9 +57748,9 @@ var eventrect_pow = Math.pow;
    * @private
    */
   selectRectForSingle(context, index) {
-    var _a, _b;
+    var _a, _b, _c, _d;
     const $$ = this;
-    const { config, $el: { main, circle } } = $$;
+    const { config, state, $el: { main, circle } } = $$;
     const isSelectionEnabled = config.data_selection_enabled;
     const isSelectionGrouped = config.data_selection_grouped;
     const isSelectable = config.data_selection_isselectable;
@@ -57770,11 +57770,6 @@ var eventrect_pow = Math.pow;
     const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`).classed($COMMON.EXPANDED, true).style("cursor", isSelectable ? "pointer" : null).filter(function(d) {
       return $$.isWithinShape(this, d);
     });
-    if (shapeAtIndex.empty() && !isTooltipGrouped && config.interaction_onout) {
-      (_b = $$.hideGridFocus) == null ? void 0 : _b.call($$);
-      $$.hideTooltip();
-      !isSelectionGrouped && $$.setExpand(index);
-    }
     shapeAtIndex.call((selected) => {
       var _a2, _b2;
       const d = selected.data();
@@ -57788,6 +57783,39 @@ var eventrect_pow = Math.pow;
         selected.each((d2) => $$.setExpand(index, d2.id));
       }
     });
+    if (!isTooltipGrouped && shapeAtIndex.empty()) {
+      const mouse = getPointer(state.event, context);
+      const closestData = selectedData.filter((d) => {
+        if ($$.isTargetToShow(d.id)) {
+          const dist = $$.dist(d, mouse);
+          return dist < $$.getPointSensitivity(d);
+        }
+        return false;
+      });
+      if (closestData.length > 0) {
+        let closest = closestData[0];
+        let minDist = $$.dist(closest, mouse);
+        for (let i = 1; i < closestData.length; i++) {
+          const d = closestData[i];
+          const dist = $$.dist(d, mouse);
+          if (dist < minDist) {
+            minDist = dist;
+            closest = d;
+          }
+        }
+        $$.showTooltip([closest], context);
+        (_b = $$.showGridFocus) == null ? void 0 : _b.call($$, [closest]);
+        (_c = $$.unexpandCircles) == null ? void 0 : _c.call($$);
+        $$.setExpand(index, closest.id, true);
+        if (isSelectionEnabled && (isSelectionGrouped || (isSelectable == null ? void 0 : isSelectable.bind($$.api)(closest)))) {
+          context.style.cursor = "pointer";
+        }
+      } else if (config.interaction_onout) {
+        (_d = $$.hideGridFocus) == null ? void 0 : _d.call($$);
+        $$.hideTooltip();
+        !isSelectionGrouped && $$.setExpand(index);
+      }
+    }
   },
   /**
    * Select rect for multiple x values
@@ -65031,7 +65059,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.1-nightly-20260626012543",
+  version: "4.0.1-nightly-20260627012048",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
