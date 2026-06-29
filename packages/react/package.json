@@ -49,7 +49,7 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^8.0.1",
-		"@playwright/test": "^1.61.0",
+		"@playwright/test": "^1.61.1",
 		"@storybook/addon-actions": "^9.0.8",
 		"@storybook/addon-console": "^3.0.0",
 		"@storybook/addon-essentials": "^8.6.14",
@@ -60,7 +60,7 @@
 		"@storybook/testing-library": "^0.2.2",
 		"@types/react": "^19.2.17",
 		"@types/react-dom": "^19.2.3",
-		"@vitejs/plugin-react": "^6.0.2",
+		"@vitejs/plugin-react": "^6.0.3",
 		"@vitest/coverage-c8": "^0.33.0",
 		"@vitest/coverage-istanbul": "4.1.9",
 		"@vitest/coverage-v8": "^4.1.9",
@@ -68,11 +68,11 @@
 		"babel-loader": "^10.1.1",
 		"billboard.js": "^4.0.1",
 		"jsdom": "^29.1.1",
-		"playwright": "^1.61.0",
+		"playwright": "^1.61.1",
 		"react": "^19.2.7",
 		"react-dom": "^19.2.7",
 		"typescript": "^6.0.3",
-		"vite": "^8.0.16",
+		"vite": "^8.1.0",
 		"vitest": "^4.1.9"
 	},
 	"packageManager": "pnpm@10.16.0"
