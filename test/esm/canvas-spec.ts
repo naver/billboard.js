@@ -596,6 +596,48 @@ describe("ESM canvas", function() {
 		}
 	});
 
+	it("should not react on hover when the legend item is hidden", () => {
+		chart = generateWithOptions({
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400],
+					["data2", 50, 20, 10, 40],
+					["data3", 10, 60, 40, 80]
+				],
+				type: line()
+			}
+		});
+
+		// hide data1 by clicking its legend
+		let item1 = container.querySelector(".bb-legend-item-data1") as HTMLElement;
+
+		item1.dispatchEvent(new MouseEvent("click", {bubbles: true}));
+
+		// re-query after the legend re-renders
+		item1 = container.querySelector(".bb-legend-item-data1") as HTMLElement;
+		const item2 = container.querySelector(".bb-legend-item-data2") as HTMLElement;
+		const item3 = container.querySelector(".bb-legend-item-data3") as HTMLElement;
+
+		expect(item1.classList.contains($LEGEND.legendItemHidden)).to.be.true;
+
+		// hovering the hidden legend must not focus itself nor dim visible legends
+		item1.dispatchEvent(new MouseEvent("mouseover", {bubbles: true}));
+
+		expect(item1.classList.contains($FOCUS.legendItemFocused)).to.be.false;
+		expect(item2.style.opacity).to.be.equal("");
+		expect(item3.style.opacity).to.be.equal("");
+
+		item1.dispatchEvent(new MouseEvent("mouseout", {bubbles: true}));
+
+		// a visible legend hover still dims the others (unchanged behavior)
+		item2.dispatchEvent(new MouseEvent("mouseover", {bubbles: true}));
+
+		expect(item2.classList.contains($FOCUS.legendItemFocused)).to.be.true;
+		expect(item3.style.opacity).to.be.equal("0.3");
+
+		item2.dispatchEvent(new MouseEvent("mouseout", {bubbles: true}));
+	});
+
 	it("should measure and wrap canvas template legend size when requested", () => {
 		const legendElement = document.createElement("div");
 

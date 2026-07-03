@@ -418,10 +418,11 @@ function bindCanvasHtmlLegendInteractions($$, item): void {
 				if (
 					!callFn(config.legend_item_onover, api, id, !state.hiddenTargetIds.has(id))
 				) {
-					setCanvasHtmlLegendFocus($$, id);
-					!state.transiting &&
-						$$.isTargetToShow(id) &&
+					// hidden data's legend shouldn't react on hover (mirrors SVG focus guard)
+					if (!state.transiting && $$.isTargetToShow(id)) {
+						setCanvasHtmlLegendFocus($$, id);
 						setCanvasLegendTargetFocus($$, id);
+					}
 				}
 			} :
 			null)
