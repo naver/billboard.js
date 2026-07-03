@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.1-nightly-20260627012048
+ * @version 4.0.1-nightly-20260703010436
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -23062,19 +23062,19 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* reexport */ bb; }
 });
 
-// NAMESPACE OBJECT: ./src/config/resolver/interaction/index.ts
-var resolver_interaction_namespaceObject = {};
-__webpack_require__.r(resolver_interaction_namespaceObject);
-__webpack_require__.d(resolver_interaction_namespaceObject, {
+// NAMESPACE OBJECT (decoupled): ./src/config/resolver/interaction/index.ts
+var interaction_namespaceObject = {};
+__webpack_require__.r(interaction_namespaceObject);
+__webpack_require__.d(interaction_namespaceObject, {
   selection: function() { return selectionModule; },
   subchart: function() { return subchartModule; },
   zoom: function() { return zoomModule; }
 });
 
-// NAMESPACE OBJECT: ./src/config/resolver/shape/index.ts
-var resolver_shape_namespaceObject = {};
-__webpack_require__.r(resolver_shape_namespaceObject);
-__webpack_require__.d(resolver_shape_namespaceObject, {
+// NAMESPACE OBJECT (decoupled): ./src/config/resolver/shape/index.ts
+var shape_namespaceObject = {};
+__webpack_require__.r(shape_namespaceObject);
+__webpack_require__.d(shape_namespaceObject, {
   area: function() { return area_area; },
   areaLineRange: function() { return areaLineRange; },
   areaSpline: function() { return areaSpline; },
@@ -65059,7 +65059,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.1-nightly-20260627012048",
+  version: "4.0.1-nightly-20260703010436",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
@@ -65263,8 +65263,8 @@ const bb = {
 
 
 
-Object.keys(resolver_shape_namespaceObject).forEach((v) => resolver_shape_namespaceObject[v]());
-Object.keys(resolver_interaction_namespaceObject).forEach((v) => resolver_interaction_namespaceObject[v]());
+Object.keys(shape_namespaceObject).forEach((v) => shape_namespaceObject[v]());
+Object.keys(interaction_namespaceObject).forEach((v) => interaction_namespaceObject[v]());
 exportApi();
 flow_flow();
 grid_grid();
@@ -65304,11 +65304,26 @@ canvas();
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	!function() {
-/******/ 		// define getter functions for harmony exports
+/******/ 		// define getter/value functions for harmony exports
 /******/ 		__webpack_require__.d = function(exports, definition) {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			if(Array.isArray(definition)) {
+/******/ 				var i = 0;
+/******/ 				while(i < definition.length) {
+/******/ 					var key = definition[i++];
+/******/ 					var binding = definition[i++];
+/******/ 					if(!__webpack_require__.o(exports, key)) {
+/******/ 						if(binding === 0) {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, value: definition[i++] });
+/******/ 						} else {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, get: binding });
+/******/ 						}
+/******/ 					} else if(binding === 0) { i++; }
+/******/ 				}
+/******/ 			} else {
+/******/ 				for(var key in definition) {
+/******/ 					if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 						Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 					}
 /******/ 				}
 /******/ 			}
 /******/ 		};
