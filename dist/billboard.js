@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.1-nightly-20260703010436
+ * @version 4.0.1-nightly-20260704010301
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -18386,8 +18386,10 @@ function bindCanvasHtmlLegendInteractions($$, item) {
   }, touchOption);
   !isTouch && item.on("mouseover", interaction || isFunction(config.legend_item_onover) ? function(event, id) {
     if (!callFn(config.legend_item_onover, api, id, !state.hiddenTargetIds.has(id))) {
-      setCanvasHtmlLegendFocus($$, id);
-      !state.transiting && $$.isTargetToShow(id) && setCanvasLegendTargetFocus($$, id);
+      if (!state.transiting && $$.isTargetToShow(id)) {
+        setCanvasHtmlLegendFocus($$, id);
+        setCanvasLegendTargetFocus($$, id);
+      }
     }
   } : null).on("mouseout", interaction || isFunction(config.legend_item_onout) ? function(event, id) {
     if (!callFn(config.legend_item_onout, api, id, !state.hiddenTargetIds.has(id))) {
@@ -34739,7 +34741,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.1-nightly-20260703010436",
+  version: "4.0.1-nightly-20260704010301",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
