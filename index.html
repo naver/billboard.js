@@ -93,8 +93,8 @@
                 <div>
                     <span class="lbl">Renderer</span>
                     <div class="seg" id="modeSeg">
-                        <button data-m="svg" class="on">SVG</button>
-                        <button data-m="canvas">Canvas</button>
+                        <button data-m="svg">SVG</button>
+                        <button data-m="canvas" class="on">Canvas</button>
                     </div>
                 </div>
                 <div>
@@ -109,14 +109,14 @@
                 <div class="metric">
                     <div><b id="mPts">5,000</b><span>points</span></div>
                     <div><b id="mTime">–</b><span>render time</span></div>
-                    <div><b id="mMode">SVG</b><span>backend</span></div>
+                    <div><b id="mMode">Canvas</b><span>backend</span></div>
                 </div>
             </div>
         </div>
         <div class="rpanel">
             <div class="topbar">
                 <i></i><i></i><i></i>
-                <span class="mode" id="modeTag">render.mode: "svg"</span>
+                <span class="mode" id="modeTag">render.mode: "canvas"</span>
             </div>
             <div id="chart2"></div>
             <div class="rlegend">
@@ -301,7 +301,7 @@ $ npm install billboard.js@next   # release candidate</code></pre>
     /* SVG builds one DOM node per point; beyond a few thousand it freezes the
        browser, so SVG mode is capped and larger sets are Canvas-only. */
     var SVG_MAX = 5000;
-    var curMode = "svg", curN = 5000, chart2 = null;
+    var curMode = "canvas", curN = 5000, chart2 = null;
     var canvasTheme = {theme: {selectors: {
         ".bb-axis .tick text": {fill: "#8b93a7", font: "11px sans-serif"},
         ".bb-axis path.domain": {stroke: "#333a47"},
