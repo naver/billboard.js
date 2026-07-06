@@ -12,7 +12,7 @@
     <meta property="og:type" content="website" />
 
     <!-- d3 & billboard.js -->
-    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="./release/latest/dist/billboard.min.js"></script>
     <link rel="stylesheet" href="./release/latest/dist/billboard.min.css" />
 
@@ -43,7 +43,7 @@
 
 <div class="wrap" id="top">
 <header>
-    <div class="badge" id="badgeVersion">Latest version: v4.0.2</div>
+    <div class="badge" id="badgeVersion">Latest version: v4.0.3</div>
     <h1>Beautiful charts,<br><span class="grad">effortlessly.</span></h1>
     <p class="lead">Re-usable, easy-interface JavaScript chart library built on D3 v4+.
         Render to <b>SVG</b> or <b>Canvas</b> from the same API — generate a chart in three lines.</p>
@@ -126,97 +126,130 @@
 
 <section id="start">
     <h2 class="stitle">Get Started</h2>
-    <p class="ssub">Three steps to your first chart.</p>
+    <p class="ssub">Two steps to your first chart.</p>
     <div class="startgrid">
         <div class="code">
-            <div class="codehead">1 · Load D3 &amp; billboard.js</div>
+            <div class="codehead">1. Setup: load &amp; set holder</div>
 <pre><code class="language-html">&lt;!-- D3 (peer dependency) --&gt;
-&lt;script src="https://d3js.org/d3.v6.min.js"&gt;&lt;/script&gt;
+&lt;script src="https://d3js.org/d3.v7.min.js"&gt;&lt;/script&gt;
 
 &lt;!-- billboard.js with base style --&gt;
 &lt;script src="$YOUR_PATH/billboard.js"&gt;&lt;/script&gt;
-&lt;link rel="stylesheet" href="$YOUR_PATH/billboard.css"&gt;</code></pre>
+&lt;link rel="stylesheet" href="$YOUR_PATH/billboard.css"&gt;
+
+&lt;!-- chart holder --&gt;
+&lt;div id="chart"&gt;&lt;/div&gt;</code></pre>
         </div>
         <div class="code">
-            <div class="codehead">2 · Add a holder &amp; generate</div>
-<pre><code class="language-javascript">// &lt;div id="chart"&gt;&lt;/div&gt;
+            <div class="codehead codehead-tabs">
+                <span>2. Generate a chart</span>
+                <div class="seg" id="startTabs">
+                    <button data-tab="vanilla" class="on">vanilla</button>
+                    <button data-tab="esm-svg">ESM: svg</button>
+                    <button data-tab="esm-canvas">ESM: canvas</button>
+                </div>
+            </div>
+            <div id="startPanels">
+<pre data-panel="vanilla"><code class="language-html">&lt;script&gt;
+  // bb is available as a global
+  const chart = bb.generate({
+    bindto: "#chart",
+    data: {
+      type: "bar",
+      columns: [
+        ["data1", 30, 200, 100, 170, 150, 250],
+        ["data2", 130, 100, 140, 35, 110, 50]
+      ]
+    }
+  });
+&lt;/script&gt;</code></pre>
+<pre data-panel="esm-svg" class="hide"><code class="language-javascript">import bb, {bar} from "billboard.js";
+import "billboard.js/dist/billboard.css";
 
 const chart = bb.generate({
   bindto: "#chart",
-  render: { mode: "svg" },   // or "canvas"
   data: {
-    type: "bar",
+    type: bar(),
     columns: [
       ["data1", 30, 200, 100, 170, 150, 250],
       ["data2", 130, 100, 140, 35, 110, 50]
     ]
   }
 });</code></pre>
-        </div>
-        <div class="code">
-            <div class="codehead">3 · Or render to canvas <span class="tag">high-density</span></div>
-<pre><code class="language-javascript">import bb, {scatter, canvas} from "billboard.js/canvas";
+<pre data-panel="esm-canvas" class="hide"><code class="language-javascript">import bb, {scatter, canvas} from "billboard.js/canvas";
+import "billboard.js/dist/billboard.css";
 
 bb.generate({
   bindto: "#chart",
-  render: { mode: canvas() },   // ← SVG or Canvas
+  render: { mode: canvas() },   // high-density backend
   data: {
     type: scatter(),
     /* thousands of points, still smooth */
   }
 });</code></pre>
+            </div>
         </div>
-    </div>
-    <p class="npm-line"><span>or install from npm</span></p>
-    <div class="npmbox">
-<pre><code class="language-bash">$ npm install billboard.js        # latest
-$ npm install billboard.js@next   # release candidate</code></pre>
     </div>
 </section>
 
 <aside id="download">
     <h2 class="stitle">Download</h2>
-    <p class="ssub">Current latest version is <span id="version">4.0.2</span>. <code>pkgd</code> files are packaged with D3.js.</p>
+    <p class="ssub">Current latest version is <span id="version">4.0.3</span>. <code>pkgd</code> files are packaged with D3.js.</p>
+
+    <p class="npm-line"><span>install from npm</span></p>
+    <div class="npmbox">
+<pre><code class="language-bash">$ npm install billboard.js        # latest
+$ npm install billboard.js@next   # release candidate</code></pre>
+    </div>
+    <p class="npm-line"><span>or download files</span></p>
 
     <div class="dlgrid">
         <div class="dlgroup">
             <h4>Development</h4>
-            <a href="./release/latest/dist/billboard.js" download>billboard.js</a>
-            <a href="./release/latest/dist/billboard.pkgd.js" download>billboard.pkgd.js</a>
-            <a href="./release/latest/dist/billboard.css" download>billboard.css</a>
+            <div class="dllinks">
+                <a href="./release/latest/dist/billboard.js" download>billboard.js</a>
+                <a href="./release/latest/dist/billboard.pkgd.js" download>billboard.pkgd.js</a>
+                <a href="./release/latest/dist/billboard.css" download>billboard.css</a>
+            </div>
         </div>
         <div class="dlgroup">
             <h4>Production</h4>
-            <a href="./release/latest/dist/billboard.min.js" download>billboard.min.js</a>
-            <a href="./release/latest/dist/billboard.pkgd.min.js" download>billboard.pkgd.min.js</a>
-            <a href="./release/latest/dist/billboard.min.css" download>billboard.min.css</a>
+            <div class="dllinks">
+                <a href="./release/latest/dist/billboard.min.js" download>billboard.min.js</a>
+                <a href="./release/latest/dist/billboard.pkgd.min.js" download>billboard.pkgd.min.js</a>
+                <a href="./release/latest/dist/billboard.min.css" download>billboard.min.css</a>
+            </div>
         </div>
         <div class="dlgroup">
             <h4>CSS Themes</h4>
-            <a href="./release/latest/dist/billboard.min.css" download>default</a>
-            <a href="./release/latest/dist/theme/dark.min.css" download>dark</a>
-            <a href="./release/latest/dist/theme/modern.min.css" download>modern</a>
-            <a href="./release/latest/dist/theme/datalab.min.css" download>datalab</a>
-            <a href="./release/latest/dist/theme/insight.min.css" download>insight</a>
-            <a href="./release/latest/dist/theme/graph.min.css" download>graph</a>
+            <div class="dllinks">
+                <a href="./release/latest/dist/billboard.min.css" download>default</a>
+                <a href="./release/latest/dist/theme/dark.min.css" download>dark</a>
+                <a href="./release/latest/dist/theme/modern.min.css" download>modern</a>
+                <a href="./release/latest/dist/theme/datalab.min.css" download>datalab</a>
+                <a href="./release/latest/dist/theme/insight.min.css" download>insight</a>
+                <a href="./release/latest/dist/theme/graph.min.css" download>graph</a>
+            </div>
         </div>
         <div class="dlgroup">
             <h4>Plugins</h4>
-            <a href="./release/latest/dist/plugin/billboardjs-plugin-bubblecompare.min.js" download>Bubble Compare</a>
-            <a href="./release/latest/dist/plugin/billboardjs-plugin-sparkline.min.js" download>Sparkline</a>
-            <a href="./release/latest/dist/plugin/billboardjs-plugin-stanford.min.js" download>Stanford</a>
-            <a href="./release/latest/dist/plugin/billboardjs-plugin-tableview.min.js" download>TableView</a>
-            <a href="./release/latest/dist/plugin/billboardjs-plugin-textoverlap.min.js" download>TextOverlap</a>
+            <div class="dllinks">
+                <a href="./release/latest/dist/plugin/billboardjs-plugin-bubblecompare.min.js" download>Bubble Compare</a>
+                <a href="./release/latest/dist/plugin/billboardjs-plugin-sparkline.min.js" download>Sparkline</a>
+                <a href="./release/latest/dist/plugin/billboardjs-plugin-stanford.min.js" download>Stanford</a>
+                <a href="./release/latest/dist/plugin/billboardjs-plugin-tableview.min.js" download>TableView</a>
+                <a href="./release/latest/dist/plugin/billboardjs-plugin-textoverlap.min.js" download>TextOverlap</a>
+            </div>
         </div>
     </div>
 </aside>
 
 <section class="stats-wrap">
     <div class="stats">
-        <div class="stat"><b>18+</b><span>chart types</span></div>
+        <div class="stat"><b>20</b><span>chart types</span></div>
         <div class="stat"><b>SVG + Canvas</b><span>rendering</span></div>
         <div class="stat"><b>MIT</b><span>licensed</span></div>
-        <div class="stat"><b id="statVer">v4.0.2</b><span>latest</span></div>
+        <div class="stat"><b id="statVer">v4.0.3</b><span>latest</span></div>
     </div>
 </section>
 </div>
@@ -230,166 +263,7 @@ $ npm install billboard.js@next   # release candidate</code></pre>
     </div>
 </footer>
 
-<script>
-(function () {
-    /* ---------- version labels ---------- */
-    var ver = (typeof bb !== "undefined" && bb.version) ? bb.version : "4.0.2";
-    var badge = document.getElementById("badgeVersion");
-    if (badge) badge.textContent = "Latest version: v" + ver;
-    var v = document.getElementById("version"); if (v) v.textContent = ver;
-    var sv = document.getElementById("statVer"); if (sv) sv.textContent = "v" + ver;
-
-    /* ---------- live GitHub star count ---------- */
-    var ghStar = document.getElementById("ghStar");
-    if (ghStar) {
-        fetch("https://api.github.com/repos/naver/billboard.js")
-            .then(function (r) { return r.json(); })
-            .then(function (d) {
-                var n = d && d.stargazers_count;
-                if (!n) return;
-                var label = n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, "") + "k" : String(n);
-                ghStar.textContent = "★ GitHub " + label;
-            })
-            .catch(function () {});
-    }
-
-    /* ---------- mobile nav ---------- */
-    var navToggle = document.getElementById("navToggle");
-    var navlinks = document.getElementById("navlinks");
-    navToggle && navToggle.addEventListener("click", function () {
-        navlinks.classList.toggle("open");
-    });
-
-    /* ---------- hero chart ---------- */
-    var columns = [
-        ["data1", 30, 200, 100, 400, 150, 250, 320],
-        ["data2", 130, 100, 140, 200, 150, 50, 180],
-        ["data3", 90, 70, 180, 120, 260, 140, 90]
-    ];
-    var heroColors = {data1: "#2acefd", data2: "#f87070", data3: "#a06bff"};
-    var comboTypes = {data1: "bar", data2: "area-spline", data3: "line"};
-    var hero = null;
-    function genHero(t) {
-        var cfg = {
-            bindto: "#chart",
-            data: {columns: columns, colors: heroColors},
-            bar: {width: {ratio: .55}},
-            legend: {show: true},
-            axis: {x: {tick: {show: false}}},
-            size: {height: 340},
-            padding: {top: 10}
-        };
-        // "combination" assigns a type per series; everything else is a single type.
-        if (t === "combination") { cfg.data.types = comboTypes; }
-        else { cfg.data.type = t; }
-        if (hero) { hero.destroy(); }
-        hero = bb.generate(cfg);
-    }
-    genHero("bar");
-    document.querySelectorAll("#heroSeg button").forEach(function (b) {
-        b.addEventListener("click", function () {
-            document.querySelectorAll("#heroSeg button").forEach(function (x) { x.classList.remove("on"); });
-            b.classList.add("on");
-            genHero(b.dataset.t);
-        });
-    });
-
-    /* ---------- SVG vs Canvas showcase ---------- */
-    /* SVG builds one DOM node per point; beyond a few thousand it freezes the
-       browser, so SVG mode is capped and larger sets are Canvas-only. */
-    var SVG_MAX = 2500;
-    var curMode = "canvas", curN = 5000, chart2 = null;
-    var canvasTheme = {theme: {selectors: {
-        ".bb-axis .tick text": {fill: "#8b93a7", font: "11px sans-serif"},
-        ".bb-axis path.domain": {stroke: "#333a47"},
-        ".bb-axis .tick line": {stroke: "#333a47"},
-        ".bb-grid line": {stroke: "rgba(255,255,255,.10)"}
-    }}};
-    // standard-normal noise (Box–Muller)
-    function gauss() {
-        var u = 1 - Math.random(), v = Math.random();
-        return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-    }
-    function gen(n) {
-        var xa = ["x_a"], xb = ["x_b"], ya = ["setosa"], yb = ["versicolor"];
-        for (var i = 0; i < n; i++) {
-            var a = Math.random() * 8, b = Math.random() * 8;
-            // spread widens with x → the y distribution differs by value (fan shape)
-            xa.push(+a.toFixed(3));
-            ya.push(+(a * 0.7 + gauss() * (0.3 + a * 0.35)).toFixed(3));
-            // wavy band whose spread tightens then widens across x
-            xb.push(+b.toFixed(3));
-            yb.push(+(4 + Math.sin(b * 0.7) * 2 + gauss() * (0.25 + Math.abs(b - 4) * 0.3)).toFixed(3));
-        }
-        return [xa, xb, ya, yb];
-    }
-    function render() {
-        var opt = {
-            bindto: "#chart2",
-            render: {mode: curMode},
-            data: {
-                xs: {setosa: "x_a", versicolor: "x_b"},
-                type: "scatter",
-                columns: gen(curN),
-                colors: {setosa: "#2acefd", versicolor: "#f87070"}
-            },
-            point: {r: curMode === "canvas" ? 1.6 : 2},
-            legend: {show: true},
-            axis: {x: {tick: {count: 6, format: function (x) { return x.toFixed(1); }}}, y: {tick: {count: 6, format: function (y) { return y.toFixed(2); }}}},
-            size: {height: 360},
-            padding: {top: 8, right: 16}
-        };
-        if (curMode === "canvas") opt.canvas = canvasTheme;
-        if (chart2) chart2.destroy();
-        var t0 = performance.now();
-        chart2 = bb.generate(opt);
-        var t1 = performance.now();
-        document.getElementById("mPts").textContent = curN.toLocaleString();
-        document.getElementById("mTime").textContent = Math.round(t1 - t0) + " ms";
-        document.getElementById("mMode").textContent = curMode.toUpperCase();
-        document.getElementById("modeTag").textContent = 'render.mode: "' + curMode + '"';
-    }
-    function syncPts() {
-        document.querySelectorAll("#ptSeg button").forEach(function (b) {
-            var blocked = curMode === "svg" && +b.dataset.n > SVG_MAX;
-            b.disabled = blocked;
-            b.classList.toggle("disabled", blocked);
-            b.title = blocked ? "Too many nodes for SVG — switch to Canvas" : "";
-        });
-        var hint = document.getElementById("rhint");
-        if (hint) hint.textContent = curMode === "svg"
-            ? "SVG builds one DOM node per point — best under ~2,500."
-            : "Canvas draws to a single bitmap — scales to tens of thousands.";
-    }
-    function setActivePt() {
-        document.querySelectorAll("#ptSeg button").forEach(function (x) {
-            x.classList.toggle("on", +x.dataset.n === curN);
-        });
-    }
-    document.querySelectorAll("#modeSeg button").forEach(function (b) {
-        b.addEventListener("click", function () {
-            document.querySelectorAll("#modeSeg button").forEach(function (x) { x.classList.remove("on"); });
-            b.classList.add("on");
-            curMode = b.dataset.m;
-            if (curMode === "svg" && curN > SVG_MAX) { curN = SVG_MAX; setActivePt(); }
-            syncPts();
-            render();
-        });
-    });
-    document.querySelectorAll("#ptSeg button").forEach(function (b) {
-        b.addEventListener("click", function () {
-            if (b.disabled) return;
-            document.querySelectorAll("#ptSeg button").forEach(function (x) { x.classList.remove("on"); });
-            b.classList.add("on"); curN = +b.dataset.n; render();
-        });
-    });
-    syncPts();
-    render();
-
-    /* ---------- code highlight ---------- */
-    if (window.hljs) hljs.highlightAll();
-})();
-</script>
+<script src="./js/index.js"></script>
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-DL3B3PRHQM"></script>
