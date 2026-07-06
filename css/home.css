@@ -127,6 +127,7 @@ footer .muted{font-size:12px;margin-top:6px}
 /* ---- billboard.js dark-mode text fixes (SVG render) ---- */
 .bb svg{font-size:12px}
 .bb-legend-item text{fill:#c7cfdd}
+.bb-legend-item-title{color:#c7cfdd}
 .bb-axis .tick text,.bb-axis text{fill:#8b93a7}
 .bb-axis path.domain,.bb-axis .tick line{stroke:#333a47}
 .bb-grid line,.bb-xgrid,.bb-ygrid{stroke:rgba(255,255,255,.06)}
@@ -137,11 +138,6 @@ footer .muted{font-size:12px;margin-top:6px}
 .bb-tooltip td{background:#0d1017;color:var(--txt);border-color:rgba(255,255,255,.06);padding:6px 12px}
 .bb-tooltip td.name{color:var(--mut)}
 .bb-tooltip td.value{color:var(--txt);font-weight:700;text-align:right}
-
-/* custom legend for the render showcase (canvas can't theme its legend text) */
-.rlegend{display:flex;gap:20px;justify-content:center;padding:6px 0 12px;font-size:12px;color:var(--mut)}
-.rlegend span{display:inline-flex;align-items:center;gap:7px}
-.rlegend i{width:11px;height:11px;border-radius:3px;display:inline-block}
 
 /* responsive */
 @media(max-width:860px){.render{grid-template-columns:1fr}}
