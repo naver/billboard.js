@@ -4,6 +4,8 @@
  */
 /* eslint-disable */
 import {beforeEach, beforeAll, describe, expect, it} from "vitest";
+// @ts-ignore
+import fontUrl from "../assets/font/alfa-slab-one.woff2?url";
 import util from "../assets/util";
 
 describe("API export", () => {
@@ -252,15 +254,16 @@ describe("API export", () => {
 		}));
 
 		it("check when 'preserveFontStyle=true'", () => new Promise(done => {
-			const font = new FontFace("Alfa Slab One", "url(https://fonts.gstatic.com/s/alfaslabone/v17/6NUQ8FmMKwSEKjnm5-4v-4Jh2dJhe_escmA.woff2)", {
+			// use a bundled font asset: fetching from fonts.gstatic.com made this test
+			// fail on CI whenever the network was slow (fallback font → pattern mismatch)
+			const font = new FontFace("Alfa Slab One", `url(${fontUrl})`, {
 				style: "normal",
 				weight: "400"
 			});
-			
-			document.fonts.add(font);
-			font.load();
 
-			document.fonts.ready.then(() => {
+			document.fonts.add(font);
+
+			font.load().then(() => {
 				chart.$.chart
 					.style("margin-left", "100px")
 					.style("padding-top", "50px");
