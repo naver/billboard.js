@@ -94,11 +94,22 @@ var shapeBar = {
             .remove();
         $root.bar = bar.enter().append("path")
             .attr("class", classBar)
-            .style("fill", $$.updateBarColor.bind($$))
+            .style("fill", $$.generateUpdateBarColor())
             .merge(bar)
             .style("opacity", initialOpacity);
         // calculate ratio if grouped data exists
         $$.setRatioForGroupedData($root.bar.data());
+    },
+    /**
+     * Generate bar color accessor, hoisting the bound color function
+     * to be created once per call (not per datum)
+     * @returns {function} Color accessor
+     * @private
+     */
+    generateUpdateBarColor() {
+        const $$ = this;
+        const fn = $$.getStylePropValue($$.color) || (() => null);
+        return (d) => getShapeColorWithGradient.call($$, d, "bar_linearGradient", fn);
     },
     /**
      * Update bar color
@@ -107,9 +118,7 @@ var shapeBar = {
      * @private
      */
     updateBarColor(d) {
-        const $$ = this;
-        const fn = $$.getStylePropValue($$.color);
-        return getShapeColorWithGradient.call($$, d, "bar_linearGradient", fn || (() => null));
+        return this.generateUpdateBarColor()(d);
     },
     /**
      * Redraw function
@@ -150,7 +159,7 @@ var shapeBar = {
                 }
                 return path[0];
             })
-                .style("fill", $$.updateBarColor.bind($$))
+                .style("fill", $$.generateUpdateBarColor())
                 .style("clip-path", d => d.clipPath)
                 .style("opacity", null)
         ];
@@ -181,6 +190,7 @@ var shapeBar = {
         const getPoints = $$.generateGetBarPoints(barIndices, isSub);
         const getRadius = getBarRadiusResolver($$);
         const stackingRadiusSet = getRadius ? getStackingBarRadiusSet($$) : new Set();
+        const connectLineCache = new Map();
         return (d, i) => {
             // 4 points that make a bar
             const points = getPoints(d, i);
@@ -200,7 +210,13 @@ var shapeBar = {
                 `H${pos} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${points[3][indexX]}` :
                 `V${pos} ${pathRadius[0]}H${points[2][indexX] - radius} ${pathRadius[1]}V${points[3][indexY]}`;
             const coords = [`M${points[0][indexX]},${points[0][indexY]}${path}z`];
-            if (_getConnectLineType.call($$, d.id)) {
+            // Memoize per series id: config lookup + regex runs once per id, not per bar
+            let connectLineType = connectLineCache.get(d.id);
+            if (connectLineType === undefined) {
+                connectLineType = _getConnectLineType.call($$, d.id);
+                connectLineCache.set(d.id, connectLineType);
+            }
+            if (connectLineType) {
                 coords.push(config.axis_rotated ?
                     {
                         x: points[0][indexX],

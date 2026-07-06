@@ -23,6 +23,15 @@ const rangedDataKeyIndex = {
     areaRange: { high: 0, mid: 1, low: 2 },
     candlestick: { open: 0, high: 1, low: 2, close: 3, volume: 4 }
 };
+/**
+ * Normalize target ids to an array
+ * @param {Array|string} targetIds Target ids
+ * @returns {Array} Target ids array
+ * @private
+ */
+function normalizeTargetIds(targetIds) {
+    return (isArray(targetIds) ? targetIds : [targetIds]);
+}
 var data = {
     isX(key) {
         const $$ = this;
@@ -493,8 +502,7 @@ var data = {
      */
     addTargetIds(type, targetIds) {
         const { state } = this;
-        const ids = (isArray(targetIds) ? targetIds : [targetIds]);
-        ids.forEach(v => state[type].add(v));
+        normalizeTargetIds(targetIds).forEach(v => state[type].add(v));
     },
     /**
      * Remove from the state target Ids
@@ -504,8 +512,7 @@ var data = {
      */
     removeTargetIds(type, targetIds) {
         const { state } = this;
-        const ids = (isArray(targetIds) ? targetIds : [targetIds]);
-        ids.forEach(v => state[type].delete(v));
+        normalizeTargetIds(targetIds).forEach(v => state[type].delete(v));
     },
     addHiddenTargetIds(targetIds) {
         this.addTargetIds("hiddenTargetIds", targetIds);
@@ -924,7 +931,9 @@ var data = {
         const yIndex = +!isRotated; // true: 0, false: 1
         const y = $$.circleY(data, data.index);
         const x = (scale.zoom || scale.x)(data.x);
-        return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
+        const dx = x - pos[xIndex];
+        const dy = y - pos[yIndex];
+        return Math.sqrt(dx * dx + dy * dy);
     },
     /**
      * Convert data for step type

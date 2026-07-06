@@ -505,7 +505,7 @@ var text = {
         const textNode = textNodes.filter(node => node.data.id === id);
         const translate = getTranslation(textNode.node());
         // Calculates the length of the hypotenuse
-        const calcHypo = (x, y) => Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        const calcHypo = (x, y) => Math.sqrt(x * x + y * y);
         textNode.node() && filteredTextNodes.each(function () {
             const coordinate = getTranslation(this);
             const filteredTextNode = select(this);

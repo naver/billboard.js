@@ -140,7 +140,7 @@ var shapePoint = {
             });
             circles.exit().remove();
             const pointR = $$.pointR.bind($$);
-            const updateCircleColor = $$.updateCircleColor.bind($$);
+            const updateCircleColor = $$.generateUpdateCircleColor();
             const initialOpacityForCircle = $$.initialOpacityForCircle.bind($$);
             circles.enter()
                 .filter(Boolean)
@@ -151,15 +151,24 @@ var shapePoint = {
         }
     },
     /**
+     * Generate circle color accessor, hoisting the bound color function
+     * to be created once per call (not per datum)
+     * @returns {function} Color accessor
+     * @private
+     */
+    generateUpdateCircleColor() {
+        const $$ = this;
+        const fn = $$.getStylePropValue($$.color);
+        return (d) => ($$.config.point_radialGradient ? $$.getGradienColortUrl(d.id) : (fn ? fn(d) : null));
+    },
+    /**
      * Update circle color
      * @param {object} d Data object
      * @returns {string} Color string
      * @private
      */
     updateCircleColor(d) {
-        const $$ = this;
-        const fn = $$.getStylePropValue($$.color);
-        return $$.config.point_radialGradient ? $$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
+        return this.generateUpdateCircleColor()(d);
     },
     redrawCircle(cx, cy, withTransition, flow, isSub = false) {
         const $$ = this;
@@ -172,6 +181,7 @@ var shapePoint = {
         const posAttr = $$.isCirclePoint() ? "c" : "";
         const t = getRandom();
         const opacityStyleFn = $$.opacityForCircle.bind($$);
+        const updateCircleColor = $$.generateUpdateCircleColor();
         // For standard circle type, batch the update across all circles in one pass
         if ($$.isCirclePoint()) {
             const sel = $root.circle;
@@ -188,14 +198,14 @@ var shapePoint = {
                 $T(sel.filter(function () {
                     return !!this.getAttribute("cx");
                 }), true, `${t}-pos`)
-                    .attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+                    .attr("cx", cx).attr("cy", cy).style("fill", updateCircleColor);
                 sel.filter(function () {
                     return !this.getAttribute("cx");
                 })
-                    .attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+                    .attr("cx", cx).attr("cy", cy).style("fill", updateCircleColor);
             }
             else {
-                sel.attr("cx", cx).attr("cy", cy).style("fill", $$.updateCircleColor.bind($$));
+                sel.attr("cx", cx).attr("cy", cy).style("fill", updateCircleColor);
             }
             const result = $T(sel, withTransition || !rendered, t)
                 .style("opacity", opacityStyleFn);
@@ -204,7 +214,7 @@ var shapePoint = {
                 $T(selectedCircles, withTransition).attr("cx", cx).attr("cy", cy)
             ];
         }
-        const fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition, flow, selectedCircles);
+        const fn = $$.point("update", $$, cx, cy, updateCircleColor, withTransition, flow, selectedCircles);
         const mainCircles = [];
         $root.circle.each(function (d) {
             let result = fn.bind(this)(d);
@@ -321,7 +331,9 @@ var shapePoint = {
             cx = x;
             cy = y;
         }
-        return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < (r || pointSensitivity);
+        const dx = cx - mouse[0];
+        const dy = cy - mouse[1];
+        return Math.sqrt(dx * dx + dy * dy) < (r || pointSensitivity);
     },
     updatePointClass(d) {
         const $$ = this;

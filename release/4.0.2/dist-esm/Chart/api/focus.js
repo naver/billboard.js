@@ -123,8 +123,7 @@ var apiFocus = {
         const $$ = this.internal;
         const { config, state, $el } = $$;
         const targetIds = $$.mapToTargetIds(targetIdsValue);
-        if (state.isCanvasMode) {
-            const changed = !!state.focusedTargetIds?.size || !!state.defocusedTargetIds?.size;
+        const resetLegend = () => {
             if (config.legend_show) {
                 $$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
                 $el.legend.selectAll($$.selectorLegends(targetIds))
@@ -133,6 +132,10 @@ var apiFocus = {
                 })
                     .classed($FOCUS.legendItemFocused, false);
             }
+        };
+        if (state.isCanvasMode) {
+            const changed = !!state.focusedTargetIds?.size || !!state.defocusedTargetIds?.size;
+            resetLegend();
             state.focusedTargetIds = new Set();
             state.defocusedTargetIds = new Set();
             changed && $$.renderCanvasFrame?.(undefined, null, false);
@@ -141,14 +144,7 @@ var apiFocus = {
         const candidates = $el.svg.selectAll($$.selectorTargets(targetIds)); // should be for all targets
         candidates.classed($FOCUS.focused, false).classed($FOCUS.defocused, false);
         $$.hasArcType(null, ["polar"]) && $$.unexpandArc(targetIds);
-        if (config.legend_show) {
-            $$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
-            $el.legend.selectAll($$.selectorLegends(targetIds))
-                .filter(function () {
-                return select(this).classed($FOCUS.legendItemFocused);
-            })
-                .classed($FOCUS.legendItemFocused, false);
-        }
+        resetLegend();
         state.focusedTargetIds = new Set();
         state.defocusedTargetIds = new Set();
     }

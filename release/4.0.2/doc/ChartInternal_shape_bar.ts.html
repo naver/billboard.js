@@ -165,12 +165,25 @@ export default {
 
 		$root.bar = bar.enter().append("path")
 			.attr("class", classBar)
-			.style("fill", $$.updateBarColor.bind($$))
+			.style("fill", $$.generateUpdateBarColor())
 			.merge(bar)
 			.style("opacity", initialOpacity);
 
 		// calculate ratio if grouped data exists
 		$$.setRatioForGroupedData($root.bar.data());
+	},
+
+	/**
+	 * Generate bar color accessor, hoisting the bound color function
+	 * to be created once per call (not per datum)
+	 * @returns {function} Color accessor
+	 * @private
+	 */
+	generateUpdateBarColor(): (d: IBarData) => string | null {
+		const $$ = this;
+		const fn = $$.getStylePropValue($$.color) || (() => null);
+
+		return (d: IBarData) => getShapeColorWithGradient.call($$, d, "bar_linearGradient", fn);
 	},
 
 	/**
@@ -180,10 +193,7 @@ export default {
 	 * @private
 	 */
 	updateBarColor(d: IBarData): string | null {
-		const $$ = this;
-		const fn = $$.getStylePropValue($$.color);
-
-		return getShapeColorWithGradient.call($$, d, "bar_linearGradient", fn || (() => null));
+		return this.generateUpdateBarColor()(d);
 	},
 
 	/**
@@ -238,7 +248,7 @@ export default {
 
 					return path[0];
 				})
-				.style("fill", $$.updateBarColor.bind($$))
+				.style("fill", $$.generateUpdateBarColor())
 				.style("clip-path", d => d.clipPath)
 				.style("opacity", null)
 		];
@@ -270,6 +280,7 @@ export default {
 		const getPoints = $$.generateGetBarPoints(barIndices, isSub);
 		const getRadius = getBarRadiusResolver($$);
 		const stackingRadiusSet = getRadius ? getStackingBarRadiusSet($$) : new Set&lt;string>();
+		const connectLineCache = new Map&lt;string, string | null>();
 
 		return (d: IBarData, i: number): BarPath => {
 			// 4 points that make a bar
@@ -319,7 +330,15 @@ export default {
 
 			const coords: BarPath = [`M${points[0][indexX]},${points[0][indexY]}${path}z`];
 
-			if (_getConnectLineType.call($$, d.id)) {
+			// Memoize per series id: config lookup + regex runs once per id, not per bar
+			let connectLineType = connectLineCache.get(d.id);
+
+			if (connectLineType === undefined) {
+				connectLineType = _getConnectLineType.call($$, d.id);
+				connectLineCache.set(d.id, connectLineType);
+			}
+
+			if (connectLineType) {
 				coords.push(config.axis_rotated ?
 					{
 						x: points[0][indexX],

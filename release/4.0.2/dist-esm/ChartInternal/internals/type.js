@@ -14,6 +14,25 @@ import { isNumber, isArray, isString } from '../../module/util/type-checks.js';
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+// Module-level constant: avoids re-creating the list on every isInterpolationType() call
+// https://github.com/d3/d3-shape#curves
+const INTERPOLATION_TYPES = new Set([
+    "basis",
+    "basis-closed",
+    "basis-open",
+    "bundle",
+    "cardinal",
+    "cardinal-closed",
+    "cardinal-open",
+    "catmull-rom",
+    "catmull-rom-closed",
+    "catmull-rom-open",
+    "linear",
+    "linear-closed",
+    "monotone-x",
+    "monotone-y",
+    "natural"
+]);
 var typeInternals = {
     /**
      * Check if the given chart type is valid
@@ -69,29 +88,19 @@ var typeInternals = {
         const { config, state: { current } } = $$;
         const types = config.data_types;
         const targets = targetsValue || $$.data.targets;
-        let has = false;
         if (!checkFromData && current.types?.indexOf(type) > -1) {
-            has = true;
+            return true;
         }
         else if (targets?.length) {
-            targets.forEach(target => {
+            return targets.some(target => {
                 const t = types[target.id];
-                if (t === type || (!t && type === "line")) {
-                    has = true;
-                }
+                return t === type || (!t && type === "line");
             });
         }
         else if (Object.keys(types).length) {
-            Object.keys(types).forEach(id => {
-                if (types[id] === type) {
-                    has = true;
-                }
-            });
+            return Object.values(types).some(t => t === type);
         }
-        else {
-            has = config.data_type === type;
-        }
-        return has;
+        return config.data_type === type;
     },
     /**
      * Check if contains given chart types
@@ -230,25 +239,8 @@ var typeInternals = {
     barLineBubbleData(d) {
         return this.isBarType(d) || this.isLineType(d) || this.isBubbleType(d) ? d.values : [];
     },
-    // https://github.com/d3/d3-shape#curves
     isInterpolationType(type) {
-        return [
-            "basis",
-            "basis-closed",
-            "basis-open",
-            "bundle",
-            "cardinal",
-            "cardinal-closed",
-            "cardinal-open",
-            "catmull-rom",
-            "catmull-rom-closed",
-            "catmull-rom-open",
-            "linear",
-            "linear-closed",
-            "monotone-x",
-            "monotone-y",
-            "natural"
-        ].indexOf(type) >= 0;
+        return INTERPOLATION_TYPES.has(type);
     }
 };
 
