@@ -1,3 +1,10 @@
+## [4.0.3](https://github.com/naver/billboard.js/compare/4.0.2...4.0.3) (2026-07-06)
+
+
+### Bug Fixes
+
+* **security:** escape attribute context in text background filter ([ff22a37](https://github.com/naver/billboard.js/commit/ff22a37aa7092fc8a9c5d489e72d74b0a3b35128))
+
 ## [4.0.2](https://github.com/naver/billboard.js/compare/4.0.1...4.0.2) (2026-07-06)
 
 
