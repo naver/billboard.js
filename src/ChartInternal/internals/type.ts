@@ -6,6 +6,26 @@ import {TYPE, TYPE_BY_CATEGORY} from "../../config/const";
 import {isArray, isNumber, isString} from "../../module/util";
 import type {IData} from "../data/IData";
 
+// Module-level constant: avoids re-creating the list on every isInterpolationType() call
+// https://github.com/d3/d3-shape#curves
+const INTERPOLATION_TYPES = new Set([
+	"basis",
+	"basis-closed",
+	"basis-open",
+	"bundle",
+	"cardinal",
+	"cardinal-closed",
+	"cardinal-open",
+	"catmull-rom",
+	"catmull-rom-closed",
+	"catmull-rom-open",
+	"linear",
+	"linear-closed",
+	"monotone-x",
+	"monotone-y",
+	"natural"
+]);
+
 export default {
 	/**
 	 * Check if the given chart type is valid
@@ -68,29 +88,20 @@ export default {
 		const {config, state: {current}} = $$;
 		const types = config.data_types;
 		const targets = targetsValue || $$.data.targets;
-		let has = false;
 
 		if (!checkFromData && current.types?.indexOf(type) > -1) {
-			has = true;
+			return true;
 		} else if (targets?.length) {
-			targets.forEach(target => {
+			return targets.some(target => {
 				const t = types[target.id];
 
-				if (t === type || (!t && type === "line")) {
-					has = true;
-				}
+				return t === type || (!t && type === "line");
 			});
 		} else if (Object.keys(types).length) {
-			Object.keys(types).forEach(id => {
-				if (types[id] === type) {
-					has = true;
-				}
-			});
-		} else {
-			has = config.data_type === type;
+			return Object.values(types).some(t => t === type);
 		}
 
-		return has;
+		return config.data_type === type;
 	},
 
 	/**
@@ -266,24 +277,7 @@ export default {
 		return this.isBarType(d) || this.isLineType(d) || this.isBubbleType(d) ? d.values : [];
 	},
 
-	// https://github.com/d3/d3-shape#curves
 	isInterpolationType(type: string): boolean {
-		return [
-			"basis",
-			"basis-closed",
-			"basis-open",
-			"bundle",
-			"cardinal",
-			"cardinal-closed",
-			"cardinal-open",
-			"catmull-rom",
-			"catmull-rom-closed",
-			"catmull-rom-open",
-			"linear",
-			"linear-closed",
-			"monotone-x",
-			"monotone-y",
-			"natural"
-		].indexOf(type) >= 0;
+		return INTERPOLATION_TYPES.has(type);
 	}
 };

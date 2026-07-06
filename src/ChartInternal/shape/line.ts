@@ -266,7 +266,7 @@ export default {
 				if (hasNullDataValue) {
 					const dx = x(data.x) - x(prevData.x);
 					const dy = y(data.value) - y(prevData.value);
-					const dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+					const dd = Math.sqrt(dx * dx + dy * dy);
 
 					diff = style[0] / dd; // dash
 					diffx2 = diff * style[1]; // gap
