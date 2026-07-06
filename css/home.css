@@ -1,0 +1,155 @@
+/* billboard.js landing — modern dark (2026 refresh) */
+:root{
+  --cyan:#2acefd; --coral:#f87070; --blue:#4f8cff; --violet:#a06bff;
+  --bg:#080a10; --panel:rgba(255,255,255,.04); --line:rgba(255,255,255,.09);
+  --txt:#eef2f8; --mut:#8b93a7;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--cyan);text-decoration:none}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+.bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(600px 400px at 12% 6%, rgba(42,206,253,.18), transparent 60%),
+    radial-gradient(700px 500px at 88% 3%, rgba(160,107,255,.16), transparent 60%),
+    radial-gradient(600px 500px at 70% 75%, rgba(248,112,112,.10), transparent 60%);
+  filter:saturate(1.1)}
+.wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* nav */
+nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(14px);background:rgba(8,10,16,.6);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand img{height:26px;display:block}
+.nav-toggle{display:none;background:none;border:0;color:var(--txt);font-size:22px;cursor:pointer}
+.navlinks{display:flex;gap:26px;align-items:center}
+.navlinks a{color:var(--mut);font-size:14px;font-weight:500;transition:color .2s}
+.navlinks a:hover{color:var(--txt)}
+.navlinks a.pill{padding:8px 16px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#04121a;font-weight:700}
+.navlinks a.pill:hover{color:#04121a;filter:brightness(1.05)}
+
+/* hero */
+header{padding:96px 0 40px;text-align:center}
+.badge{display:inline-flex;gap:8px;align-items:center;font-size:12px;color:var(--cyan);background:rgba(42,206,253,.1);border:1px solid rgba(42,206,253,.25);padding:6px 14px;border-radius:999px;margin-bottom:28px;font-weight:600}
+h1{font-size:clamp(40px,7vw,76px);line-height:1.04;letter-spacing:-.035em;font-weight:800}
+h1 .grad,.grad{background:linear-gradient(120deg,var(--cyan),var(--violet) 55%,var(--coral));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{max-width:640px;margin:22px auto 0;font-size:19px;color:var(--mut)}
+.lead b{color:var(--txt)}
+.cta{display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+.btn{padding:14px 26px;border-radius:12px;font-weight:700;font-size:15px;transition:transform .15s,box-shadow .2s;cursor:pointer;border:0;font-family:inherit;display:inline-block}
+.btn.primary{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#04121a;box-shadow:0 8px 30px rgba(42,206,253,.35)}
+.btn.primary:hover{transform:translateY(-2px)}
+.btn.ghost{background:var(--panel);border:1px solid var(--line);color:var(--txt)}
+.btn.ghost:hover{border-color:var(--cyan);color:var(--txt)}
+
+/* chart cards */
+.chartcard{margin:56px auto 0;max-width:940px;background:var(--panel);border:1px solid var(--line);border-radius:20px;backdrop-filter:blur(12px);box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden}
+.topbar{display:flex;gap:7px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
+.topbar > i{width:11px;height:11px;border-radius:50%;background:#2a2f3a}
+.topbar > i:nth-child(1){background:var(--coral)}.topbar > i:nth-child(2){background:#f5c451}.topbar > i:nth-child(3){background:#4fd07a}
+.topbar .mode{margin-left:auto;font-size:11px;font-family:ui-monospace,monospace;color:var(--cyan)}
+/* billboard.js sizes its <svg> to the holder's clientWidth (padding included),
+   so the holder must have no horizontal padding or the chart overflows. */
+#chart{padding:8px 0 4px}
+
+/* segmented buttons */
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.chartcard .topbar .seg{margin-left:auto}
+.seg button{font-size:11px;color:var(--mut);background:transparent;border:1px solid var(--line);padding:5px 11px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .15s}
+.seg button:hover{color:var(--txt)}
+.seg button.on{color:#04121a;background:var(--cyan);border-color:var(--cyan);font-weight:700}
+.seg button.disabled,.seg button:disabled{opacity:.35;cursor:not-allowed}
+.seg button.disabled:hover{color:var(--mut)}
+.rhint{font-size:12px;color:var(--mut);margin-top:2px}
+
+/* sections */
+section{padding:80px 0}
+.stitle{text-align:center;font-size:clamp(28px,4vw,42px);letter-spacing:-.03em;font-weight:800;margin-bottom:8px}
+.ssub{text-align:center;color:var(--mut);margin:0 auto 48px;max-width:640px}
+.ssub code{color:var(--txt);background:var(--panel);padding:2px 7px;border-radius:6px;font-size:.9em}
+
+/* features */
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.feat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;transition:transform .2s,border-color .2s}
+.feat:hover{transform:translateY(-4px);border-color:rgba(42,206,253,.4)}
+.feat.hl{border-color:rgba(42,206,253,.45);background:linear-gradient(180deg,rgba(42,206,253,.08),var(--panel))}
+.feat .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px;margin-bottom:16px;background:rgba(42,206,253,.12)}
+.feat h3{font-size:18px;margin-bottom:8px}
+.feat p{color:var(--mut);font-size:14px}
+
+/* rendering showcase */
+.render{display:grid;grid-template-columns:.85fr 1.15fr;gap:32px;align-items:center}
+.rtitle{font-size:clamp(28px,4vw,40px);letter-spacing:-.03em;font-weight:800;margin:14px 0}
+.rlead{color:var(--mut);margin-bottom:22px}
+.rlead code{color:var(--txt)}
+.ctl{display:flex;flex-direction:column;gap:16px}
+.lbl{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;display:block}
+.metric{margin-top:8px;display:flex;gap:24px}
+.metric b{display:block;font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;background:linear-gradient(120deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.metric span{font-size:12px;color:var(--mut)}
+.rpanel{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+#chart2{padding:6px 0}
+
+/* get started */
+.startgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;align-items:start}
+.code{background:#0d1017;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.codehead{padding:12px 16px;font-size:13px;font-weight:600;color:var(--txt);border-bottom:1px solid var(--line);background:var(--panel)}
+.codehead .tag{font-size:10px;font-weight:700;color:var(--cyan);background:rgba(42,206,253,.12);padding:2px 8px;border-radius:999px;margin-left:6px}
+.code pre{margin:0;overflow-x:auto}
+.code pre code{display:block;padding:16px 18px;font-size:12.5px;line-height:1.65;background:transparent}
+.npm-line{text-align:center;color:var(--mut);margin:36px 0 14px;font-size:14px;position:relative}
+.npmbox{max-width:520px;margin:0 auto;background:#0d1017;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.npmbox pre{margin:0}
+.npmbox pre code{display:block;padding:16px 20px;font-size:13px;background:transparent}
+
+/* download */
+.dlgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.dlgroup{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
+.dlgroup h4{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:14px}
+.dlgroup a{display:block;padding:10px 14px;border:1px solid var(--line);border-radius:10px;color:var(--txt);font-size:13px;margin-bottom:8px;transition:all .15s;background:rgba(255,255,255,.02)}
+.dlgroup a:hover{border-color:var(--cyan);color:var(--cyan);transform:translateX(3px)}
+
+/* stats */
+.stats-wrap{padding-top:48px}
+.stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 30px;text-align:center;min-width:150px}
+.stat b{display:block;font-size:28px;font-weight:800;background:linear-gradient(120deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat span{font-size:13px;color:var(--mut)}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:48px 0;margin-top:40px}
+.footer-inner{text-align:center}
+.flogo{height:26px;margin-bottom:16px;opacity:.9}
+footer p{color:var(--mut);font-size:14px}
+footer .muted{font-size:12px;margin-top:6px}
+
+/* ---- billboard.js dark-mode text fixes (SVG render) ---- */
+.bb svg{font-size:12px}
+.bb-legend-item text{fill:#c7cfdd}
+.bb-axis .tick text,.bb-axis text{fill:#8b93a7}
+.bb-axis path.domain,.bb-axis .tick line{stroke:#333a47}
+.bb-grid line,.bb-xgrid,.bb-ygrid{stroke:rgba(255,255,255,.06)}
+
+/* dark tooltip (HTML overlay — applies in both SVG & Canvas modes) */
+.bb-tooltip{background:#0d1017;border:1px solid var(--line);border-radius:9px;overflow:hidden;opacity:1;box-shadow:0 12px 34px rgba(0,0,0,.55);color:var(--txt);font-size:12px}
+.bb-tooltip th{background:#171b24;color:var(--txt);border:0;padding:7px 12px;font-weight:600;text-align:left}
+.bb-tooltip td{background:#0d1017;color:var(--txt);border-color:rgba(255,255,255,.06);padding:6px 12px}
+.bb-tooltip td.name{color:var(--mut)}
+.bb-tooltip td.value{color:var(--txt);font-weight:700;text-align:right}
+
+/* custom legend for the render showcase (canvas can't theme its legend text) */
+.rlegend{display:flex;gap:20px;justify-content:center;padding:6px 0 12px;font-size:12px;color:var(--mut)}
+.rlegend span{display:inline-flex;align-items:center;gap:7px}
+.rlegend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+/* responsive */
+@media(max-width:860px){.render{grid-template-columns:1fr}}
+@media(max-width:720px){
+  .nav-toggle{display:block}
+  .navlinks{position:absolute;top:64px;left:0;right:0;flex-direction:column;gap:0;background:rgba(8,10,16,.97);border-bottom:1px solid var(--line);padding:8px 0;display:none}
+  .navlinks.open{display:flex}
+  .navlinks a{padding:12px 24px;width:100%}
+  .navlinks a.pill{margin:8px 24px;text-align:center;width:auto}
+  header{padding:64px 0 24px}
+}
