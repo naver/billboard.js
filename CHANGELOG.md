@@ -1,3 +1,19 @@
+## [4.0.3](https://github.com/naver/billboard.js/compare/4.0.2...4.0.3) (2026-07-06)
+
+
+### Bug Fixes
+
+* **security:** escape attribute context in text background filter ([ff22a37](https://github.com/naver/billboard.js/commit/ff22a37aa7092fc8a9c5d489e72d74b0a3b35128))
+
+## [4.0.2](https://github.com/naver/billboard.js/compare/4.0.1...4.0.2) (2026-07-06)
+
+
+### Bug Fixes
+
+* **canvas:** skip line points in subchart ([3831ec6](https://github.com/naver/billboard.js/commit/3831ec6f8eed1ff69631b21c1b151ebe122aa588))
+* **legend:** prevent hidden legend hover from dimming visible legends on canvas ([3ae8438](https://github.com/naver/billboard.js/commit/3ae84382a0ecf30da3c0d33adf36b843988ccba6)), closes [#4158](https://github.com/naver/billboard.js/issues/4158) [#4159](https://github.com/naver/billboard.js/issues/4159)
+* **tooltip:** fix focus point and tooltip for single x-axis ([d7cba7f](https://github.com/naver/billboard.js/commit/d7cba7f391c83a47168e8c9d45a15a7c1b42caf1)), closes [#3968](https://github.com/naver/billboard.js/issues/3968) [#4156](https://github.com/naver/billboard.js/issues/4156)
+
 ## [4.0.1](https://github.com/naver/billboard.js/compare/4.0.0...4.0.1) (2026-06-16)
 
 

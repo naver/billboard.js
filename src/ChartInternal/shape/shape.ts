@@ -700,8 +700,17 @@ export default {
 		const areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, isSub);
 		const yScale = $$.getYScaleById.bind($$);
 
+		// per-series cache: y0 depends only on the id and is stable within one draw pass
+		const y0Cache = new Map<string, number>();
+
 		return function(d, i) {
-			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
+			let y0 = y0Cache.get(d.id);
+
+			if (y0 === undefined) {
+				y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)) as number;
+				y0Cache.set(d.id, y0);
+			}
+
 			const offset = areaOffset(d, i) || y0;
 			const posX = x(d);
 			const value = d.value as number;
@@ -745,12 +754,25 @@ export default {
 		const barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);
 		const yScale = $$.getYScaleById.bind($$);
 
+		// per-series cache: y0/isInverted depend only on the id and are stable within one draw pass
+		const idCache = new Map<string, {y0: number, isInverted: boolean}>();
+
 		return (d, i) => {
 			const {id} = d;
-			const y0 = yScale.call($$, id, isSub)($$.getShapeYMin(id));
+			let idInfo = idCache.get(id);
+
+			if (!idInfo) {
+				idInfo = {
+					y0: yScale.call($$, id, isSub)($$.getShapeYMin(id)),
+					isInverted: config[`axis_${$$.axis.getId(id)}_inverted`]
+				};
+
+				idCache.set(id, idInfo);
+			}
+
+			const {y0, isInverted} = idInfo;
 			const offset = barOffset(d, i) || y0;
 			const width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
-			const isInverted = config[`axis_${$$.axis.getId(id)}_inverted`];
 			const value = d.value as number;
 			const posX = barX(d);
 			let posY = barY(d);

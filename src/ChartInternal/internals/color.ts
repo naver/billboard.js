@@ -229,14 +229,15 @@ export default {
 				const colorValue = sanitize(v === "" ? color : color?.[v] || "");
 
 				if (defs.select(`#${id}`).empty()) {
-					defs.append("filter")
+					const filter = defs.append("filter")
 						.attr("x", attr.x)
 						.attr("y", attr.y)
 						.attr("width", attr.width)
 						.attr("height", attr.height)
-						.attr("id", id)
-						.html(`<feFlood flood-color="${colorValue}" />
-							<feComposite in="SourceGraphic" />`);
+						.attr("id", id);
+
+					filter.append("feFlood").attr("flood-color", colorValue);
+					filter.append("feComposite").attr("in", "SourceGraphic");
 				}
 			});
 		}

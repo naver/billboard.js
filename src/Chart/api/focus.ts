@@ -141,10 +141,7 @@ export default {
 		const $$ = this.internal;
 		const {config, state, $el} = $$;
 		const targetIds = $$.mapToTargetIds(targetIdsValue);
-
-		if (state.isCanvasMode) {
-			const changed = !!state.focusedTargetIds?.size || !!state.defocusedTargetIds?.size;
-
+		const resetLegend = () => {
 			if (config.legend_show) {
 				$$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
 				$el.legend.selectAll($$.selectorLegends(targetIds))
@@ -153,6 +150,12 @@ export default {
 					})
 					.classed($FOCUS.legendItemFocused, false);
 			}
+		};
+
+		if (state.isCanvasMode) {
+			const changed = !!state.focusedTargetIds?.size || !!state.defocusedTargetIds?.size;
+
+			resetLegend();
 
 			state.focusedTargetIds = new Set();
 			state.defocusedTargetIds = new Set();
@@ -166,14 +169,7 @@ export default {
 
 		$$.hasArcType(null, ["polar"]) && $$.unexpandArc(targetIds);
 
-		if (config.legend_show) {
-			$$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
-			$el.legend.selectAll($$.selectorLegends(targetIds))
-				.filter(function() {
-					return d3Select(this).classed($FOCUS.legendItemFocused);
-				})
-				.classed($FOCUS.legendItemFocused, false);
-		}
+		resetLegend();
 
 		state.focusedTargetIds = new Set();
 		state.defocusedTargetIds = new Set();
