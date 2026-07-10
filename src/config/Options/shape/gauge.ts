@@ -233,6 +233,8 @@ export default {
 		} | null)
 		| undefined
 	>undefined,
+	// NOTE: enforceMinMax currently applies only to unstacked/multi gauges. Does not support stacked categories.
+
 	gauge_enforceMinMax: false,
 	gauge_min: 0,
 	gauge_max: 100,
