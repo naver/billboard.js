@@ -5,7 +5,7 @@
 /* eslint-disable */
 import {beforeEach, beforeAll, afterAll, describe, expect, it} from "vitest";
 import sinon from "sinon";
-import TableView from "../../../src/Plugin/tableview";
+import TableView, {isValidTableViewOptions} from "../../../src/Plugin/tableview";
 import {defaultStyle} from "../../../src/Plugin/tableview/const";
 import util from "../../assets/util";
 import {toArray} from "../../../src/module/util";
@@ -328,6 +328,77 @@ describe("PLUGIN: TABLE-VIEW", () => {
 					expect(v.querySelectorAll("td")[x === "2026" ? 1 : 0].textContent).to.be.equal("N/A");
 				}
 			});
+		});
+	});
+
+	describe("isValidTableViewOptions", () => {
+		it("should treat an empty object as valid (all options fall back to defaults)", () => {
+			expect(isValidTableViewOptions({})).to.be.true;
+		});
+
+		it("should accept an object with every supported option of the correct type", () => {
+			expect(isValidTableViewOptions({
+				selector: "#holder",
+				categoryTitle: "Category",
+				categoryFormat: v => `${v}`,
+				class: "my-class",
+				style: false,
+				title: "My Table",
+				updateOnToggle: true,
+				nullString: "N/A",
+				numberFormat: v => `${v}`
+			})).to.be.true;
+		});
+
+		it("should accept a partial object with a subset of supported options", () => {
+			expect(isValidTableViewOptions({title: "My Table"})).to.be.true;
+			expect(isValidTableViewOptions({style: true, nullString: "-"})).to.be.true;
+		});
+
+		it("should allow an explicit 'undefined' value for a supported option", () => {
+			expect(isValidTableViewOptions({numberFormat: undefined})).to.be.true;
+			expect(isValidTableViewOptions({selector: undefined, class: undefined})).to.be.true;
+		});
+
+		it("should ignore unknown keys", () => {
+			expect(isValidTableViewOptions({unknownOption: true})).to.be.true;
+			expect(isValidTableViewOptions({title: "ok", typoOption: 1})).to.be.true;
+		});
+
+		it("should reject a supported option holding a value of the wrong type", () => {
+			expect(isValidTableViewOptions({style: "true"})).to.be.false;
+			expect(isValidTableViewOptions({title: 123})).to.be.false;
+			expect(isValidTableViewOptions({numberFormat: "not a function"})).to.be.false;
+			expect(isValidTableViewOptions({updateOnToggle: 1})).to.be.false;
+		});
+
+		it("should reject non-object values", () => {
+			expect(isValidTableViewOptions(null)).to.be.false;
+			expect(isValidTableViewOptions(undefined)).to.be.false;
+			expect(isValidTableViewOptions("string")).to.be.false;
+			expect(isValidTableViewOptions(42)).to.be.false;
+			expect(isValidTableViewOptions(true)).to.be.false;
+		});
+
+		it("should reject arrays", () => {
+			expect(isValidTableViewOptions([])).to.be.false;
+			expect(isValidTableViewOptions(["selector"])).to.be.false;
+		});
+
+		it("constructor should throw when given invalid options", () => {
+			// supported option with a value of the wrong type
+			expect(() => new TableView({style: "true"} as any)).to.throw();
+			// non-object value
+			expect(() => new TableView("nope" as any)).to.throw();
+		});
+
+		it("constructor should not throw when given an unknown option", () => {
+			expect(() => new TableView({unknownOption: true} as any)).not.to.throw();
+		});
+
+		it("constructor should not throw for valid options", () => {
+			expect(() => new TableView()).to.not.throw();
+			expect(() => new TableView({title: "My Table"})).to.not.throw();
 		});
 	});
 
