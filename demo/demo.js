@@ -4535,9 +4535,13 @@ d3.select(".chart_area")
 				},
 				_plugins: [{
 					tableview: {
-						title: "My Yearly Data List",
+						title: "My Yearly Taxes List",
 						categoryTitle: "Year",
-						style: true
+						style: true,
+						numberFormat: function(v) {
+							// optional, for example this formats number to German locale with 2 decimal places and adds Euro sign
+							return isNaN(v) ? v : v.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " €";
+						}
 					}
 				}]
 			}
