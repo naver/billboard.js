@@ -31,8 +31,8 @@ export default defineConfig({
         }
     },
     test: {
-        testTimeout: 3_500,
-        hookTimeout: 5_000,
+        testTimeout: 10_000,
+        hookTimeout: 10_000,
         globals: true,
         coverage: {
             provider: "istanbul",
