@@ -285,6 +285,6 @@ describe("API export", () => {
 					done(1);
 				});
 			});
-		}));
+		}), 10_000); // font load + canvas glyph render can exceed the 3.5s default on CI
 	});
 });
