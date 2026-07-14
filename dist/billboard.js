@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.3-nightly-20260707010700
+ * @version 4.0.3-nightly-20260714005635
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -33374,7 +33374,7 @@ let funnel_funnel = () => (extendArc([funnel], [shape_funnel]), (funnel_funnel =
    * @property {number} [gauge.expand.rate=0.98] Set expand rate.
    * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
    * @property {boolean} [gauge.enforceMinMax=false] Enforce to given min/max value.
-   * - **Note:** Only works for single data series.
+   * - **Note:** Applies only to unstacked/multi-arc gauges; stacked gauge data is not supported.
    * 	- When `gauge.min=50` and given value is `30`, gauge will render as empty value.
    * 	- When `gauge.max=100` and given value is `120`, gauge will render till 100, not surpassing max value.
    * @property {number} [gauge.min=0] Set min value of the gauge.
@@ -34772,7 +34772,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.3-nightly-20260707010700",
+  version: "4.0.3-nightly-20260714005635",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

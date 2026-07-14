@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.3-nightly-20260707010700
+ * @version 4.0.3-nightly-20260714005635
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23049,6 +23049,32 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ TableView; }
 });
 
+// UNUSED EXPORTS: isValidTableViewOptions
+
+;// ./src/module/util/type-checks.ts
+const isValue = (v) => v || v === 0;
+const isFunction = (v) => typeof v === "function";
+const isString = (v) => typeof v === "string";
+const isNumber = (v) => typeof v === "number";
+const isUndefined = (v) => typeof v === "undefined";
+const isDefined = (v) => typeof v !== "undefined";
+const isBoolean = (v) => typeof v === "boolean";
+const ceil10 = (v) => Math.ceil(v / 10) * 10;
+const asHalfPixel = (n) => Math.ceil(n) + 0.5;
+const diffDomain = (d) => d[1] - d[0];
+const isObjectType = (v) => typeof v === "object";
+const isEmptyObject = (obj) => {
+  for (const x in obj) {
+    return false;
+  }
+  return true;
+};
+const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
+const notEmpty = (o) => !isEmpty(o);
+const isArray = (arr) => Array.isArray(arr);
+const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
+
+
 ;// ./src/module/browser.ts
 function getGlobal() {
   return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
@@ -23394,30 +23420,6 @@ function sanitize(str) {
   );
 }
 
-;// ./src/module/util/type-checks.ts
-const isValue = (v) => v || v === 0;
-const isFunction = (v) => typeof v === "function";
-const isString = (v) => typeof v === "string";
-const isNumber = (v) => typeof v === "number";
-const isUndefined = (v) => typeof v === "undefined";
-const isDefined = (v) => typeof v !== "undefined";
-const isBoolean = (v) => typeof v === "boolean";
-const ceil10 = (v) => Math.ceil(v / 10) * 10;
-const asHalfPixel = (n) => Math.ceil(n) + 0.5;
-const diffDomain = (d) => d[1] - d[0];
-const isObjectType = (v) => typeof v === "object";
-const isEmptyObject = (obj) => {
-  for (const x in obj) {
-    return false;
-  }
-  return true;
-};
-const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
-const notEmpty = (o) => !isEmpty(o);
-const isArray = (arr) => Array.isArray(arr);
-const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
-
-
 ;// ./src/module/util/object.ts
 var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
@@ -23742,7 +23744,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "4.0.3-nightly-20260707010700");
+__publicField(Plugin, "version", "4.0.3-nightly-20260714005635");
 
 ;// ./src/Plugin/tableview/const.ts
 
@@ -23923,10 +23925,38 @@ var tableview_publicField = (obj, key, value) => tableview_defNormalProp(obj, ty
 
 
 
+const optionValidators = {
+  selector: isString,
+  categoryTitle: isString,
+  categoryFormat: isFunction,
+  class: isString,
+  style: isBoolean,
+  title: isString,
+  updateOnToggle: isBoolean,
+  nullString: isString,
+  numberFormat: isFunction
+};
+function isValidTableViewOptions(options) {
+  if (!isObjectType(options) || isArray(options) || options === null) {
+    return false;
+  }
+  return Object.entries(options).every(([key, value]) => {
+    const validate = optionValidators[key];
+    return !isFunction(validate) || value === void 0 || validate(value);
+  });
+}
 class TableView extends Plugin {
-  constructor(options) {
+  constructor(options = {}) {
+    var _a;
     super(options);
     tableview_publicField(this, "element");
+    if (!isValidTableViewOptions(options)) {
+      (_a = console == null ? void 0 : console.error) == null ? void 0 : _a.call(
+        console,
+        "[billboard.js] TableView plugin received invalid options; unsupported values will be ignored.",
+        options
+      );
+    }
     this.config = new Options();
     return this;
   }

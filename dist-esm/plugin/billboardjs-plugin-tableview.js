@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.0.3-nightly-20260707010700
+ * @version 4.0.3-nightly-20260714005635
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -14,9 +14,19 @@
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
+const isFunction = (v) => typeof v === "function";
+const isString = (v) => typeof v === "string";
 const isNumber = (v) => typeof v === "number";
 const isDefined = (v) => typeof v !== "undefined";
+const isBoolean = (v) => typeof v === "boolean";
 const isObjectType = (v) => typeof v === "object";
+/**
+ * Check if is array
+ * @param {Array} arr Data to be checked
+ * @returns {boolean}
+ * @private
+ */
+const isArray = (arr) => Array.isArray(arr);
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -530,7 +540,7 @@ class Plugin {
     $$;
     options;
     config;
-    static version = "4.0.3-nightly-20260707010700";
+    static version = "4.0.3-nightly-20260714005635";
     /**
      * Constructor
      * @param {Any} options config option object
@@ -756,6 +766,43 @@ class Options {
  * billboard.js project is licensed under the MIT license
  */
 /**
+ * Expected value type for each supported option, used to validate user input.
+ * Acts as the single source of truth for the set of allowed option keys.
+ * @private
+ */
+const optionValidators = {
+    selector: isString,
+    categoryTitle: isString,
+    categoryFormat: isFunction,
+    class: isString,
+    style: isBoolean,
+    title: isString,
+    updateOnToggle: isBoolean,
+    nullString: isString,
+    numberFormat: isFunction
+};
+/**
+ * Check whether the given value is a valid TableView options object.
+ * An empty object is valid (every option falls back to its default) and
+ * unknown keys are ignored, so only a known option holding a value of the
+ * wrong type makes the object invalid. An explicit `undefined` value is
+ * allowed so a consumer can opt out of an option and let it fall back to
+ * the default.
+ * @param {unknown} options Value given to the TableView constructor
+ * @returns {boolean} `true` when `options` is a valid TableView options object
+ * @private
+ */
+function isValidTableViewOptions(options) {
+    if (!isObjectType(options) || isArray(options) || options === null) {
+        return false;
+    }
+    return Object.entries(options).every(([key, value]) => {
+        const validate = optionValidators[key];
+        // unknown keys are ignored; known keys must match their expected type
+        return !isFunction(validate) || value === undefined || validate(value);
+    });
+}
+/**
  * Table view plugin.<br>
  * Generates table view for bound dataset.
  * - **NOTE:**
@@ -784,7 +831,18 @@ class Options {
  *          style: true,
  *          title: "My Data List",
  *          updateOnToggle: false,
- *          nullString: "N/A"
+ *          nullString: "N/A",
+ *          numberFormat: function(v) {
+ *              // do some transformation like number formatting
+ *              // return typeof v === "number" ? v.toFixed(2) : v;
+ *              // or use d3.format
+ *              // return typeof v === "number" ? d3.format(".2f")(v) : v;
+ *              // or use Intl.NumberFormat
+ *              // return typeof v === "number" ? new Intl.NumberFormat("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(v) : v;
+ *              // or any other number formatting library
+ *              ...
+ *              return v;
+ *          }
  *        }),
  *     ]
  *  });
@@ -801,8 +859,13 @@ class Options {
  */
 class TableView extends Plugin {
     element;
-    constructor(options) {
+    constructor(options = {}) {
         super(options);
+        // warn (but don't throw) on invalid options so that unsupported values
+        // simply fall back to their defaults, keeping behavior non-breaking.
+        if (!isValidTableViewOptions(options)) {
+            console?.error?.("[billboard.js] TableView plugin received invalid options; unsupported values will be ignored.", options);
+        }
         this.config = new Options();
         return this;
     }
@@ -884,4 +947,4 @@ class TableView extends Plugin {
     }
 }
 
-export { TableView as default };
+export { TableView as default, isValidTableViewOptions };
