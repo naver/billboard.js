@@ -8,6 +8,7 @@ import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$AXIS, $BAR, $COMMON, $EVENT, $LINE, $SHAPE} from "../../src/config/classes";
+import {getBarPathInterpolator} from "../../src/ChartInternal/shape/core/barRadius";
 
 describe("SHAPE BAR", () => {
 	let chart;
@@ -1051,6 +1052,58 @@ describe("SHAPE BAR", () => {
 			chart.$.bar.bars.each(function() {
 				expect(this.getAttribute("d")).to.be.equal(expected.shift());
 			});
+		});
+	});
+
+	describe("bar radius path interpolation (#4166)", () => {
+		// SVG arc flags (x-rotation, large-arc, sweep) must remain integers.
+		// d3's default string interpolator turned them into fractions during
+		// chart.load() transitions, producing invalid path syntax.
+		const collectArcFlags = (path: string): number[] => {
+			const flags: number[] = [];
+			const re = /a\s*[-\d.eE+]+ [-\d.eE+]+ ([-\d.eE+]+) ([-\d.eE+]+) ([-\d.eE+]+) /g;
+			let m;
+
+			while ((m = re.exec(path))) {
+				flags.push(+m[1], +m[2], +m[3]);
+			}
+
+			return flags;
+		};
+
+		it("arc flags should stay 0 or 1 for every interpolation progress", () => {
+			// negative-direction bar (flags "1 0 0") transitioning to
+			// positive-direction bar (flags "0 0 1") — the exact case that broke
+			const from =
+				"M295,213H112.76666666666665 a63.6 63.6 1 0 0 -63.6,63.6V276.6 a63.6 63.6 1 0 0 63.6,63.6H295z";
+			const to =
+				"M295,85.8H477.23333333333323 a63.6 63.6 0 0 1 63.6,63.6V149.4 a63.6 63.6 0 0 1 -63.6,63.6H295z";
+
+			const interpolate = getBarPathInterpolator(from, to);
+
+			for (let t = 0; t <= 1; t += 0.05) {
+				const path = interpolate(t);
+				const flags = collectArcFlags(path);
+
+				expect(flags.length).to.be.above(0);
+
+				flags.forEach(flag => {
+					expect(flag === 0 || flag === 1).to.be.true;
+				});
+			}
+		});
+
+		it("should reach the exact target path at t=1", () => {
+			const from = "M0,0V10 a5 5 0 0 1 5,5H10z";
+			const to = "M0,0V20 a5 5 0 0 1 5,5H10z";
+
+			expect(getBarPathInterpolator(from, to)(1)).to.be.equal(to);
+		});
+
+		it("should not throw and produce valid output when start path is empty", () => {
+			const to = "M0,0V20 a5 5 0 0 1 5,5H10z";
+
+			expect(getBarPathInterpolator("", to)(0.5)).to.be.equal(to);
 		});
 	});
 
