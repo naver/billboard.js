@@ -92,7 +92,7 @@ function makeAxisRenderer() {
 	};
 
 	return {
-		renderer: new CanvasAxisRenderer(engine, {style})
+		renderer: new CanvasAxisRenderer(engine, {style, getGridLineStyle: () => undefined})
 	};
 }
 
