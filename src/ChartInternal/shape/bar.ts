@@ -3,11 +3,16 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
-import type {d3Selection, DataRow} from "../../../types/types";
+import type {d3Selection, d3Transition, DataRow} from "../../../types/types";
 import {$BAR, $COMMON} from "../../config/classes";
 import {getRandom, isNumber} from "../../module/util";
 import type {IBarData} from "../data/IData";
-import {getBarRadiusInfo, getBarRadiusResolver, getStackingBarRadiusSet} from "./core/barRadius";
+import {
+	getBarPathInterpolator,
+	getBarRadiusInfo,
+	getBarRadiusResolver,
+	getStackingBarRadiusSet
+} from "./core/barRadius";
 import {getShapeColorWithGradient, updateTargetsForShape} from "./shape";
 
 type BarTypeDataRow = DataRow<number | number[]>;
@@ -159,40 +164,62 @@ export default {
 		const {bar} = isSub ? $$.$el.subchart : $$.$el;
 		const barPath: BarConnectLine[] = [];
 		const connectLineCache = new Map<string, string | null>();
+		const getRadius = getBarRadiusResolver($$);
+
+		// Computes the target path string and performs bar.connectLine side-effects.
+		const getBarPath = function(this: SVGPathElement, d, i, arr): string {
+			const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
+
+			// Memoize per series id: config lookup + regex runs once per id, not per bar
+			let connectLineType = connectLineCache.get(d.id);
+
+			if (connectLineType === undefined) {
+				connectLineType = _getConnectLineType.call($$, d.id);
+				connectLineCache.set(d.id, connectLineType);
+			}
+
+			// for bar.connectLine option
+			if (path.length > 1) {
+				barPath.push(path[1] as BarConnectLine);
+			}
+
+			// flush per series even when the last datum is null,
+			// otherwise the accumulated path leaks into the next series
+			if (i === arr.length - 1 && barPath.length) {
+				const barConnectLineNode = $$.$T(
+					d3Select(
+						(this.parentNode as ParentNode).querySelector(`.${$BAR.barConnectLine}`)
+					),
+					withTransition,
+					getRandom()
+				);
+
+				$$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
+				barPath.splice(0);
+			}
+
+			return path[0] as string;
+		};
+
+		const barTransition = $$.$T(bar, withTransition, getRandom());
+
+		// Radius bars are rendered as <path> with arc commands whose flags must
+		// stay integers. d3's default interpolator turns them into fractions
+		// during transitions (ex. chart.load()), producing invalid path syntax
+		// and console parse errors. Use a flag-aware interpolator instead. #4166
+		if (getRadius && typeof (barTransition as d3Transition).attrTween === "function") {
+			(barTransition as d3Transition).attrTween("d",
+				function(this: SVGPathElement, d, i, arr) {
+					const target = getBarPath.call(this, d, i, arr);
+
+					return getBarPathInterpolator(this.getAttribute("d") ?? "", target);
+				});
+		} else {
+			barTransition.attr("d", getBarPath);
+		}
 
 		return [
-			$$.$T(bar, withTransition, getRandom())
-				.attr("d", function(d, i, arr) {
-					const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
-
-					// Memoize per series id: config lookup + regex runs once per id, not per bar
-					let connectLineType = connectLineCache.get(d.id);
-
-					if (connectLineType === undefined) {
-						connectLineType = _getConnectLineType.call($$, d.id);
-						connectLineCache.set(d.id, connectLineType);
-					}
-
-					// for bar.connectLine option
-					if (path.length > 1) {
-						barPath.push(path[1]);
-					}
-
-					// flush per series even when the last datum is null,
-					// otherwise the accumulated path leaks into the next series
-					if (i === arr.length - 1 && barPath.length) {
-						const barConnectLineNode = $$.$T(
-							d3Select(this.parentNode.querySelector(`.${$BAR.barConnectLine}`)),
-							withTransition,
-							getRandom()
-						);
-
-						$$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
-						barPath.splice(0);
-					}
-
-					return path[0];
-				})
+			barTransition
 				.style("fill", $$.generateUpdateBarColor())
 				.style("clip-path", d => d.clipPath)
 				.style("opacity", null)
