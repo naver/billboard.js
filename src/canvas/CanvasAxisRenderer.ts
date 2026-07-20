@@ -23,11 +23,12 @@ import {
 	type YAxisId
 } from "./axisTicks";
 import CanvasEngine from "./CanvasEngine";
-import CanvasPainter, {CanvasRect} from "./CanvasPainter";
-import CanvasTheme from "./CanvasTheme";
+import CanvasPainter, {CanvasRect, type CanvasStyle} from "./CanvasPainter";
+import CanvasTheme, {type CanvasGridLineThemeStyle} from "./CanvasTheme";
 import {getFontSize} from "./util";
 
 type GridLine = Partial<GridLineOptions>;
+type GridAxis = "x" | "y";
 type AdditionalAxisOptions = {
 	scale: any,
 	ticks: AxisTickValue[],
@@ -58,6 +59,37 @@ function getXTickTextDirection(isRotated: boolean): number {
  */
 function getYTickTextDirection(isRotated: boolean, isY2: boolean): number {
 	return isRotated ? (isY2 ? -1 : 1) : (isY2 ? 1 : -1);
+}
+
+/**
+ * Convert resolved grid line style to painter line style.
+ * @param {object} style Grid line style
+ * @returns {object|undefined} Canvas line style
+ * @private
+ */
+function getGridLineCanvasStyle(style?: CanvasGridLineThemeStyle): CanvasStyle | undefined {
+	return style ?
+		{
+			stroke: style.lineColor,
+			lineWidth: style.lineWidth,
+			lineDash: style.dashArray
+		} :
+		undefined;
+}
+
+/**
+ * Convert resolved grid text style to painter text style.
+ * @param {object} style Grid text style
+ * @returns {object|undefined} Canvas text style
+ * @private
+ */
+function getGridTextCanvasStyle(style?: CanvasGridLineThemeStyle): CanvasStyle | undefined {
+	return style ?
+		{
+			fill: style.labelColor,
+			font: style.labelFont
+		} :
+		undefined;
 }
 
 /**
@@ -1150,16 +1182,32 @@ export default class CanvasAxisRenderer {
 				text: string | undefined,
 				x: number,
 				y: number,
-				rotated = false
+				rotated = false,
+				style?: CanvasStyle
 			): void => {
 				if (!text) {
 					return;
 				}
 
 				painter.text(text, x, y, {
+					...style,
 					angle: rotated ? -90 : 0
 				});
 			};
+
+			const drawLine = (
+				line: GridLine,
+				axisId: GridAxis,
+				draw: () => void
+			): void => {
+				const style = getGridLineCanvasStyle(
+					this.theme.getGridLineStyle(axisId, line, "line")
+				);
+
+				painter.strokePath(draw, style);
+			};
+			const getTextStyle = (axisId: GridAxis, line: GridLine): CanvasStyle | undefined =>
+				getGridTextCanvasStyle(this.theme.getGridLineStyle(axisId, line, "text"));
 
 			const drawXLine = (line: GridLine): void => {
 				if (line.value === undefined || !scale.x) {
@@ -1175,7 +1223,7 @@ export default class CanvasAxisRenderer {
 				if (isRotated) {
 					const y = margin.top + pos;
 
-					painter.strokePath(() => {
+					drawLine(line, "x", () => {
 						painter.traceLine(x1, y, x2, y);
 					});
 					ctx.textAlign = line.position === "start" ?
@@ -1184,12 +1232,14 @@ export default class CanvasAxisRenderer {
 					drawLabel(
 						line.text,
 						getLineTextPosition(line.position, x1, x2),
-						y - 5
+						y - 5,
+						false,
+						getTextStyle("x", line)
 					);
 				} else {
 					const x = margin.left + pos;
 
-					painter.strokePath(() => {
+					drawLine(line, "x", () => {
 						painter.traceLine(x, y1, x, y2);
 					});
 					ctx.textAlign = line.position === "start" ?
@@ -1199,7 +1249,8 @@ export default class CanvasAxisRenderer {
 						line.text,
 						x - 5,
 						getRotatedLineTextPosition(line.position, y1, y2),
-						true
+						true,
+						getTextStyle("x", line)
 					);
 				}
 			};
@@ -1222,7 +1273,7 @@ export default class CanvasAxisRenderer {
 				if (isRotated) {
 					const x = margin.left + pos;
 
-					painter.strokePath(() => {
+					drawLine(line, "y", () => {
 						painter.traceLine(x, y1, x, y2);
 					});
 					ctx.textAlign = line.position === "start" ?
@@ -1232,12 +1283,13 @@ export default class CanvasAxisRenderer {
 						line.text,
 						x - 5,
 						getRotatedLineTextPosition(line.position, y1, y2),
-						true
+						true,
+						getTextStyle("y", line)
 					);
 				} else {
 					const y = margin.top + pos;
 
-					painter.strokePath(() => {
+					drawLine(line, "y", () => {
 						painter.traceLine(x1, y, x2, y);
 					});
 					ctx.textAlign = line.position === "start" ?
@@ -1246,7 +1298,9 @@ export default class CanvasAxisRenderer {
 					drawLabel(
 						line.text,
 						getLineTextPosition(line.position, x1, x2),
-						y - 5
+						y - 5,
+						false,
+						getTextStyle("y", line)
 					);
 				}
 			};
