@@ -2036,11 +2036,32 @@ const canvasInternal = {
 		const {config, state} = $$;
 		const selected = state.canvasSelection;
 		const selectionGrouped = config.data_selection_grouped;
-		const targetIds = getCanvasSelectionIds(ids);
+		let targetIds = getCanvasSelectionIds(ids);
 		let changed = false;
+		const singleSelection = isSelection && !config.data_selection_multiple;
+		let resetDone = !singleSelection;
 
 		if (!config.data_selection_enabled) {
 			return;
+		}
+
+		// When multiple selection is disabled, only one data point (or one x-index
+		// group when 'grouped' is enabled) can hold the selected state at a time.
+		// Clear any current selection only when the narrowed request can select a point.
+		if (singleSelection) {
+			indices = indices?.length ? [indices[0]] : [0];
+
+			// non-grouped single selection targets exactly one point, so narrow to a
+			// single id (the first requested, or the first shown when none given).
+			if (!selectionGrouped) {
+				if (targetIds) {
+					targetIds = targetIds.slice(0, 1);
+				} else {
+					const [firstTarget] = $$.filterTargetsToShow($$.data.targets);
+
+					targetIds = firstTarget ? [firstTarget.id] : [];
+				}
+			}
 		}
 
 		eachCanvasSelectableData($$, d => {
@@ -2050,11 +2071,20 @@ const canvasInternal = {
 			const isSelected = selected.has(key);
 
 			if (isSelection) {
-				if (isTargetId && isTargetIndex && !isSelected) {
+				if (isTargetId && isTargetIndex && (!isSelected || singleSelection)) {
+					if (!resetDone) {
+						$$.setCanvasSelection(false);
+						resetDone = true;
+					}
+
+					if (selected.has(key)) {
+						return;
+					}
+
 					selected.add(key);
 					callFn(config.data_onselected, $$.api, d, $$.canvasEngine.canvas);
 					changed = true;
-				} else if (resetOther && isSelected) {
+				} else if ((!singleSelection || resetDone) && resetOther && isSelected) {
 					selected.delete(key);
 					callFn(config.data_onunselected, $$.api, d, $$.canvasEngine.canvas);
 					changed = true;

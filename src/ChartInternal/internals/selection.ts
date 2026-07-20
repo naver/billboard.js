@@ -25,7 +25,7 @@ export default {
 		const cy = (isRotated ? $$.circleX : $$.circleY).bind($$);
 		const r = $$.pointSelectR.bind($$);
 
-		callFn(config.data_onselected, $$.api, d, target.node());
+		callFn(config.data_onselected, $$.api, d, target?.node());
 
 		// add selected-circle on low layer g
 		$T(main.select(`.${$SELECT.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
