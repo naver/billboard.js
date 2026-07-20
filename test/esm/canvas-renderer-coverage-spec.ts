@@ -177,6 +177,28 @@ describe("ESM canvas renderer coverage", () => {
 		expect(renderer.ctx).to.not.be.null;
 	});
 
+	it("draws only the selection ring for point shapes when point.focus.only=true", () => {
+		const {renderer} = makeRenderer();
+		const ctx = makeContext();
+		const shape = {indices: {}, pos: {}};
+		const pointSpy = vi.spyOn(renderer.painter, "point");
+
+		// default (focus.only off): selected point draws both ring and data point
+		ctx.isPointFocusOnly = () => false;
+		renderer.drawSelections(ctx, shape);
+		const normalCalls = pointSpy.mock.calls.length;
+
+		pointSpy.mockClear();
+
+		// focus.only on: the data point is hidden, so only the ring is drawn
+		ctx.isPointFocusOnly = () => true;
+		renderer.drawSelections(ctx, shape);
+		const focusOnlyCalls = pointSpy.mock.calls.length;
+
+		expect(focusOnlyCalls).to.be.greaterThan(0);
+		expect(focusOnlyCalls).to.be.lessThan(normalCalls);
+	});
+
 	it("covers rotated subchart brush and early return branches", () => {
 		const {renderer} = makeRenderer();
 		const ctx = makeContext();
