@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.3-nightly-20260714005635
+ * @version 4.0.3-nightly-20260721005847
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -28369,6 +28369,19 @@ function getXTickTextDirection(isRotated) {
 function getYTickTextDirection(isRotated, isY2) {
   return isRotated ? isY2 ? -1 : 1 : isY2 ? 1 : -1;
 }
+function getGridLineCanvasStyle(style) {
+  return style ? {
+    stroke: style.lineColor,
+    lineWidth: style.lineWidth,
+    lineDash: style.dashArray
+  } : void 0;
+}
+function getGridTextCanvasStyle(style) {
+  return style ? {
+    fill: style.labelColor,
+    font: style.labelFont
+  } : void 0;
+}
 function getHorizontalXAxisClipRect(margin, width, height) {
   return {
     x: margin.left - X_AXIS_TICK_TEXT_HORIZONTAL_CLIP_PADDING,
@@ -29040,14 +29053,21 @@ class CanvasAxisRenderer {
       ctx.fillStyle = grid.labelColor;
       ctx.textBaseline = "middle";
       ctx.setLineDash([]);
-      const drawLabel = (text, x, y, rotated = false) => {
+      const drawLabel = (text, x, y, rotated = false, style) => {
         if (!text) {
           return;
         }
-        painter.text(text, x, y, {
+        painter.text(text, x, y, __spreadProps(CanvasAxisRenderer_spreadValues({}, style), {
           angle: rotated ? -90 : 0
-        });
+        }));
       };
+      const drawLine = (line, axisId, draw) => {
+        const style = getGridLineCanvasStyle(
+          this.theme.getGridLineStyle(axisId, line, "line")
+        );
+        painter.strokePath(draw, style);
+      };
+      const getTextStyle = (axisId, line) => getGridTextCanvasStyle(this.theme.getGridLineStyle(axisId, line, "text"));
       const drawXLine = (line) => {
         if (line.value === void 0 || !scale.x) {
           return;
@@ -29058,18 +29078,20 @@ class CanvasAxisRenderer {
         }
         if (isRotated) {
           const y = margin.top + pos;
-          painter.strokePath(() => {
+          drawLine(line, "x", () => {
             painter.traceLine(x1, y, x2, y);
           });
           ctx.textAlign = line.position === "start" ? "left" : line.position === "middle" ? "center" : "right";
           drawLabel(
             line.text,
             getLineTextPosition(line.position, x1, x2),
-            y - 5
+            y - 5,
+            false,
+            getTextStyle("x", line)
           );
         } else {
           const x = margin.left + pos;
-          painter.strokePath(() => {
+          drawLine(line, "x", () => {
             painter.traceLine(x, y1, x, y2);
           });
           ctx.textAlign = line.position === "start" ? "left" : line.position === "middle" ? "center" : "right";
@@ -29077,7 +29099,8 @@ class CanvasAxisRenderer {
             line.text,
             x - 5,
             getRotatedLineTextPosition(line.position, y1, y2),
-            true
+            true,
+            getTextStyle("x", line)
           );
         }
       };
@@ -29094,7 +29117,7 @@ class CanvasAxisRenderer {
         }
         if (isRotated) {
           const x = margin.left + pos;
-          painter.strokePath(() => {
+          drawLine(line, "y", () => {
             painter.traceLine(x, y1, x, y2);
           });
           ctx.textAlign = line.position === "start" ? "left" : line.position === "middle" ? "center" : "right";
@@ -29102,18 +29125,21 @@ class CanvasAxisRenderer {
             line.text,
             x - 5,
             getRotatedLineTextPosition(line.position, y1, y2),
-            true
+            true,
+            getTextStyle("y", line)
           );
         } else {
           const y = margin.top + pos;
-          painter.strokePath(() => {
+          drawLine(line, "y", () => {
             painter.traceLine(x1, y, x2, y);
           });
           ctx.textAlign = line.position === "start" ? "left" : line.position === "middle" ? "center" : "right";
           drawLabel(
             line.text,
             getLineTextPosition(line.position, x1, x2),
-            y - 5
+            y - 5,
+            false,
+            getTextStyle("y", line)
           );
         }
       };
@@ -29778,6 +29804,87 @@ class CanvasEngine {
 
 ;// ./src/ChartInternal/shape/core/barRadius.ts
 
+const RE_PATH_NUMBER = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g;
+const RE_PATH_TOKEN = /([aAcChHlLmMqQsStTvVzZ])|([-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?)/g;
+function getArcFlagTokenIndexes(path) {
+  const flags = /* @__PURE__ */ new Set();
+  let numIndex = -1;
+  let argIndex = 0;
+  let inArc = false;
+  let token;
+  RE_PATH_TOKEN.lastIndex = 0;
+  while (token = RE_PATH_TOKEN.exec(path)) {
+    if (token[1]) {
+      inArc = token[1] === "a" || token[1] === "A";
+      argIndex = 0;
+    } else {
+      numIndex++;
+      if (inArc) {
+        const pos = argIndex % 7;
+        if (pos === 2 || pos === 3 || pos === 4) {
+          flags.add(numIndex);
+        }
+        argIndex++;
+      }
+    }
+  }
+  return flags;
+}
+function getBarPathInterpolator(a, b) {
+  const flagSet = getArcFlagTokenIndexes(b);
+  const segments = [];
+  const interpolators = [];
+  let bIndex = 0;
+  let segIndex = -1;
+  let numIndex = -1;
+  let am;
+  let bm;
+  const append = (text) => {
+    if (segments[segIndex]) {
+      segments[segIndex] += text;
+    } else {
+      segments[++segIndex] = text;
+    }
+  };
+  RE_PATH_NUMBER.lastIndex = 0;
+  const reA = RE_PATH_NUMBER;
+  const reB = new RegExp(RE_PATH_NUMBER.source, "g");
+  a += "";
+  b += "";
+  while ((am = reA.exec(a)) && (bm = reB.exec(b))) {
+    numIndex++;
+    if (bm.index > bIndex) {
+      append(b.slice(bIndex, bm.index));
+    }
+    if (am[0] === bm[0]) {
+      append(bm[0]);
+    } else {
+      const from = +am[0];
+      const to = +bm[0];
+      const isFlag = flagSet.has(numIndex);
+      segments[++segIndex] = null;
+      interpolators.push({
+        index: segIndex,
+        fn: isFlag ? (t) => Math.round(from + (to - from) * t) : (t) => from + (to - from) * t
+      });
+    }
+    bIndex = reB.lastIndex;
+  }
+  if (bIndex < b.length) {
+    append(b.slice(bIndex));
+  }
+  if (!interpolators.length) {
+    const result = segments.join("");
+    return () => result;
+  }
+  return (t) => {
+    for (let i = 0, len = interpolators.length; i < len; i++) {
+      const { index, fn } = interpolators[i];
+      segments[index] = String(fn(t));
+    }
+    return segments.join("");
+  };
+}
 function getBarRadiusResolver($$) {
   const { bar_radius: radius, bar_radius_ratio: ratio } = $$.config;
   return isNumber(radius) && radius > 0 ? () => radius : isNumber(ratio) ? (width) => width * ratio : null;
@@ -32556,7 +32663,7 @@ class CanvasRenderer {
     const stackingRadiusSet = getRadius ? getStackingBarRadiusSet($$) : /* @__PURE__ */ new Set();
     painter.withTranslation(margin.left, margin.top, () => {
       selectedData.forEach((d) => {
-        var _a2, _b2, _c, _d, _e, _f;
+        var _a2, _b2, _c, _d, _e, _f, _g;
         const color = $$.color(d.id);
         if (isBar(d) && barPoints) {
           const geometry = getCanvasBarGeometry($$, barPoints, d, d.index);
@@ -32600,11 +32707,13 @@ class CanvasRenderer {
             lineWidth: style.selectedPoint.lineWidth,
             stroke: style.selectedPoint.stroke || color
           });
-          drawPointPattern(painter, pointType, x, y, r, {
-            fill: style.shape.pointFillColor || color,
-            stroke: style.shape.pointStrokeColor || color,
-            lineWidth: (_f = style.shape.pointLineWidth) != null ? _f : 1
-          });
+          if (!((_f = $$.isPointFocusOnly) == null ? void 0 : _f.call($$))) {
+            drawPointPattern(painter, pointType, x, y, r, {
+              fill: style.shape.pointFillColor || color,
+              stroke: style.shape.pointStrokeColor || color,
+              lineWidth: (_g = style.shape.pointLineWidth) != null ? _g : 1
+            });
+          }
         }
       });
       ctx.globalAlpha = 1;
@@ -33096,6 +33205,71 @@ function normalizeThemeSelectors(selector) {
     (value) => value.trim().replace(/\s*>\s*/g, " ").replace(/\s+/g, " ").replace(/^(?:svg)?\.bb\s+/, "").replace(/(^|\s)(?:g|path|rect|line|text|circle)\./g, "$1.")
   ).filter(Boolean);
 }
+function getDefinedKeys(values) {
+  return Object.keys(values).filter((key) => values[key] !== void 0);
+}
+function isSimpleGridLineSelector(selector) {
+  const tokens = selector.split(" ");
+  return tokens.every(
+    (token, index) => token === "line" || token === "text" ? index === tokens.length - 1 : /^(\.[A-Za-z_-][\w-]*)+$/.test(token)
+  );
+}
+function getGridLineSelectorTarget(selector) {
+  const target = selector.split(" ").at(-1);
+  return target === "line" || target === "text" ? target : null;
+}
+function getClassNames(className) {
+  return (className || "").split(/\s+/).filter(Boolean);
+}
+function getGridLineSelectorStyle(style, target) {
+  const values = target === "text" ? {
+    labelColor: readColorValue(style, "fill"),
+    labelFont: readFontValue(style)
+  } : {
+    lineColor: readColorValue(style, "stroke"),
+    lineWidth: readNumberValue(style, "stroke-width"),
+    dashArray: readDashArrayValue(style)
+  };
+  return getDefinedKeys(values).reduce((acc, key) => {
+    acc[key] = values[key];
+    return acc;
+  }, {});
+}
+function getGridLineSelectorOverrides(selectors) {
+  const overrides = [];
+  Object.keys(selectors != null ? selectors : {}).forEach((selector) => {
+    normalizeThemeSelectors(selector).forEach((normalizedSelector) => {
+      const target = getGridLineSelectorTarget(normalizedSelector) || "line";
+      const style = getGridLineSelectorStyle(selectors[selector], target);
+      if (isSimpleGridLineSelector(normalizedSelector) && getDefinedKeys(style).length) {
+        overrides.push({ selector: normalizedSelector, target, style });
+      }
+    });
+  });
+  return overrides;
+}
+function matchesGridLineSelector(selector, axis, className, target) {
+  if (!isSimpleGridLineSelector(selector)) {
+    return false;
+  }
+  const selectorTarget = getGridLineSelectorTarget(selector);
+  if (selectorTarget && selectorTarget !== target) {
+    return false;
+  } else if (!selectorTarget && target === "text") {
+    return false;
+  }
+  const customClasses = getClassNames(className);
+  const axisLineClass = `bb-${axis}grid-line`;
+  const availableClasses = /* @__PURE__ */ new Set([
+    "bb-grid",
+    "bb-grid-lines",
+    `bb-${axis}grid-lines`,
+    axisLineClass,
+    ...customClasses
+  ]);
+  const selectorClasses = Array.from(selector.matchAll(/\.([A-Za-z_-][\w-]*)/g)).map((match) => match[1]);
+  return !!selectorClasses.length && selectorClasses.every((cls) => availableClasses.has(cls)) && (selectorClasses.includes(axisLineClass) || customClasses.some((cls) => selectorClasses.includes(cls)));
+}
 function applySelectorStyle(target, selector, style) {
   switch (selector) {
     case ".bb-axis path.domain":
@@ -33372,6 +33546,8 @@ class CanvasTheme {
     CanvasTheme_publicField(this, "style");
     CanvasTheme_publicField(this, "cacheContainer", null);
     CanvasTheme_publicField(this, "cacheKey", null);
+    CanvasTheme_publicField(this, "gridLineSelectorOverrides", []);
+    CanvasTheme_publicField(this, "directGridOverrideKeys", /* @__PURE__ */ new Set());
   }
   /**
    * Read theme values from temporary SVG probes.
@@ -33380,8 +33556,12 @@ class CanvasTheme {
    * @private
    */
   load(container, userOverride) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     const svg = browser_doc.createElementNS(SVG_NS, "svg");
+    this.gridLineSelectorOverrides = getGridLineSelectorOverrides(userOverride == null ? void 0 : userOverride.selectors);
+    this.directGridOverrideKeys = new Set(
+      Object.keys((_a = userOverride == null ? void 0 : userOverride.grid) != null ? _a : {})
+    );
     svg.setAttribute("class", "bb");
     svg.style.cssText = "position:absolute;visibility:hidden;pointer-events:none;width:0;height:0;overflow:hidden";
     container.appendChild(svg);
@@ -33546,7 +33726,7 @@ class CanvasTheme {
       subchartBrushSelection.fill,
       toColor(subchartBrushExtent.fill, zoomBrushFill)
     );
-    const subchartBrushOpacity = (_d = (_c = (_b = (_a = toOptionalNumber(subchartBrushSelection["fill-opacity"], 1)) != null ? _a : toOptionalNumber(subchartBrushSelection.opacity, 1)) != null ? _b : toOptionalNumber(subchartBrushExtent["fill-opacity"], 1)) != null ? _c : toOptionalNumber(subchartBrushExtent.opacity, 1)) != null ? _d : zoomBrushOpacity;
+    const subchartBrushOpacity = (_e = (_d = (_c = (_b = toOptionalNumber(subchartBrushSelection["fill-opacity"], 1)) != null ? _b : toOptionalNumber(subchartBrushSelection.opacity, 1)) != null ? _c : toOptionalNumber(subchartBrushExtent["fill-opacity"], 1)) != null ? _d : toOptionalNumber(subchartBrushExtent.opacity, 1)) != null ? _e : zoomBrushOpacity;
     const subchartBrushHandleStroke = toColor(subchartBrushHandle.stroke, "transparent");
     const defaultStyle = {
       axis: {
@@ -33771,6 +33951,29 @@ class CanvasTheme {
       return;
     }
     this.load(container, userOverride);
+  }
+  /**
+   * Resolve selector based style for one configured optional grid line.
+   * @param {string} axis Grid axis
+   * @param {object} line Grid line options
+   * @param {string} line.class Grid line custom class
+   * @param {string} target Draw target
+   * @returns {object|undefined} Grid line style override
+   * @private
+   */
+  getGridLineStyle(axis, line = {}, target = "line") {
+    const style = {};
+    for (const override of this.gridLineSelectorOverrides) {
+      if (!matchesGridLineSelector(override.selector, axis, line.class, target)) {
+        continue;
+      }
+      for (const key of getDefinedKeys(override.style)) {
+        if (!this.directGridOverrideKeys.has(key)) {
+          style[key] = override.style[key];
+        }
+      }
+    }
+    return getDefinedKeys(style).length ? style : void 0;
   }
 }
 
@@ -48512,10 +48715,23 @@ const canvasInternal = {
     const { config, state } = $$;
     const selected = state.canvasSelection;
     const selectionGrouped = config.data_selection_grouped;
-    const targetIds = getCanvasSelectionIds(ids);
+    let targetIds = getCanvasSelectionIds(ids);
     let changed = false;
+    const singleSelection = isSelection && !config.data_selection_multiple;
+    let resetDone = !singleSelection;
     if (!config.data_selection_enabled) {
       return;
+    }
+    if (singleSelection) {
+      indices = (indices == null ? void 0 : indices.length) ? [indices[0]] : [0];
+      if (!selectionGrouped) {
+        if (targetIds) {
+          targetIds = targetIds.slice(0, 1);
+        } else {
+          const [firstTarget] = $$.filterTargetsToShow($$.data.targets);
+          targetIds = firstTarget ? [firstTarget.id] : [];
+        }
+      }
     }
     eachCanvasSelectableData($$, (d) => {
       const key = getCanvasDataKey(d);
@@ -48523,11 +48739,18 @@ const canvasInternal = {
       const isTargetIndex = !indices || indices.indexOf(d.index) >= 0;
       const isSelected = selected.has(key);
       if (isSelection) {
-        if (isTargetId && isTargetIndex && !isSelected) {
+        if (isTargetId && isTargetIndex && (!isSelected || singleSelection)) {
+          if (!resetDone) {
+            $$.setCanvasSelection(false);
+            resetDone = true;
+          }
+          if (selected.has(key)) {
+            return;
+          }
           selected.add(key);
           callFn(config.data_onselected, $$.api, d, $$.canvasEngine.canvas);
           changed = true;
-        } else if (resetOther && isSelected) {
+        } else if ((!singleSelection || resetDone) && resetOther && isSelected) {
           selected.delete(key);
           callFn(config.data_onunselected, $$.api, d, $$.canvasEngine.canvas);
           changed = true;
@@ -51909,28 +52132,85 @@ let grid_grid = () => {
 
 
 
-function setSelection(isSelection = false, ids, indices, resetOther) {
+function setSelectionForFocusOnly(isSelection, ids, indices, resetOther) {
   const $$ = this;
   const { config, $el: { main } } = $$;
   const selectionGrouped = config.data_selection_grouped;
   const isSelectable = config.data_selection_isselectable.bind($$.api);
+  const targetIds = isDefined(ids) ? [].concat(ids) : null;
+  const singleSelection = isSelection && !config.data_selection_multiple;
+  let resetDone = !singleSelection;
+  const unselect = (circle, d, index) => {
+    $$.unselectPoint(circle, d, index);
+    circle.interrupt().remove();
+  };
+  $$.getTargetsToShow().forEach((target) => {
+    const { id } = target;
+    const isTargetId = selectionGrouped || !targetIds || targetIds.indexOf(id) >= 0;
+    const selectedCircles = main.select(
+      `.${$SELECT.selectedCircles}${$$.getTargetSelectorSuffix(id)}`
+    );
+    target.values.forEach((d) => {
+      const { index } = d;
+      const isTargetIndex = !indices || indices.indexOf(index) >= 0;
+      const circle = selectedCircles.selectAll(`.${$SELECT.selectedCircle}-${index}`);
+      const isSelected = !circle.empty();
+      if (isSelection) {
+        if (isTargetId && isTargetIndex && isSelectable(d) && (!isSelected || singleSelection)) {
+          if (!resetDone) {
+            setSelectionForFocusOnly.call($$, false);
+            resetDone = true;
+          }
+          $$.selectPoint(null, d, index);
+        } else if ((!singleSelection || resetDone) && isDefined(resetOther) && resetOther && isSelected) {
+          unselect(circle, d, index);
+        }
+      } else if (isTargetId && isTargetIndex && isSelected) {
+        unselect(circle, d, index);
+      }
+    });
+  });
+}
+function setSelection(isSelection = false, ids, indices, resetOther) {
+  var _a;
+  const $$ = this;
+  const { config, $el: { main } } = $$;
+  const selectionGrouped = config.data_selection_grouped;
+  const isSelectable = config.data_selection_isselectable.bind($$.api);
+  const singleSelection = isSelection && !config.data_selection_multiple;
+  let resetDone = !singleSelection;
   if (!config.data_selection_enabled) {
+    return;
+  }
+  if (singleSelection) {
+    indices = (indices == null ? void 0 : indices.length) ? [indices[0]] : [0];
+    if (!selectionGrouped) {
+      const targetIds = isDefined(ids) ? [].concat(ids) : $$.getTargetsToShow().map((t) => t.id);
+      ids = targetIds.slice(0, 1);
+    }
+  }
+  if ((_a = $$.isPointFocusOnly) == null ? void 0 : _a.call($$)) {
+    setSelectionForFocusOnly.call($$, isSelection, ids, indices, resetOther);
     return;
   }
   main.selectAll(`.${$SHAPE.shapes}`).selectAll(`.${$SHAPE.shape}`).each(function(d) {
     const shape = src_select(this);
     const { id, index } = d.data ? d.data : d;
-    const toggle = $$.getToggle(this, d).bind($$);
     const isTargetId = selectionGrouped || !ids || ids.indexOf(id) >= 0;
     const isTargetIndex = !indices || indices.indexOf(index) >= 0;
-    const isSelected = shape.classed($SELECT.SELECTED);
     if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
       return;
     }
+    const toggle = $$.getToggle(this, d).bind($$);
+    const isSelected = shape.classed($SELECT.SELECTED);
     if (isSelection) {
-      if (isTargetId && isTargetIndex && isSelectable(d) && !isSelected) {
-        toggle(true, shape.classed($SELECT.SELECTED, true), d, index);
-      } else if (isDefined(resetOther) && resetOther && isSelected) {
+      if (isTargetId && isTargetIndex && isSelectable(d) && (!isSelected || singleSelection)) {
+        if (!resetDone) {
+          setSelection.call($$, false);
+          resetDone = true;
+        }
+        !shape.classed($SELECT.SELECTED) && toggle(true, shape.classed($SELECT.SELECTED, true), d, index);
+      } else if ((!singleSelection || resetDone) && isDefined(resetOther) && resetOther && isSelected) {
         toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
       }
     } else {
@@ -51958,11 +52238,15 @@ function setSelection(isSelection = false, ids, indices, resetOther) {
    *  chart.selected("data1");
    */
   selected(targetId) {
-    var _a;
+    var _a, _b;
     const $$ = this.internal;
     const dataPoint = [];
     if ($$.state.isCanvasMode) {
       return ((_a = $$.getCanvasSelectedData) == null ? void 0 : _a.call($$, targetId)) || dataPoint;
+    }
+    if ((_b = $$.isPointFocusOnly) == null ? void 0 : _b.call($$)) {
+      $$.$el.main.selectAll(`.${$SELECT.selectedCircles + $$.getTargetSelectorSuffix(targetId)}`).selectAll(`.${$SELECT.selectedCircle}`).each((d) => dataPoint.push(d));
+      return dataPoint;
     }
     $$.$el.main.selectAll(`.${$SHAPE.shapes + $$.getTargetSelectorSuffix(targetId)}`).selectAll(`.${$SHAPE.shape}`).filter(function() {
       return src_select(this).classed($SELECT.SELECTED);
@@ -52161,7 +52445,7 @@ var selection_spreadProps = (a, b) => selection_defProps(a, selection_getOwnProp
     const cx = (isRotated ? $$.circleY : $$.circleX).bind($$);
     const cy = (isRotated ? $$.circleX : $$.circleY).bind($$);
     const r = $$.pointSelectR.bind($$);
-    callFn(config.data_onselected, $$.api, d, target.node());
+    callFn(config.data_onselected, $$.api, d, target == null ? void 0 : target.node());
     $T(main.select(`.${$SELECT.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`).selectAll(`.${$SELECT.selectedCircle}-${i}`).data([d]).enter().append("circle").attr("class", () => $$.generateClass($SELECT.selectedCircle, i)).attr("cx", cx).attr("cy", cy).attr("stroke", $$.color).attr("r", (d2) => $$.pointSelectR(d2) * 1.4)).attr("r", r);
   },
   /**
@@ -60451,28 +60735,45 @@ function _getConnectLineType(id) {
     const { bar } = isSub ? $$.$el.subchart : $$.$el;
     const barPath = [];
     const connectLineCache = /* @__PURE__ */ new Map();
+    const getRadius = getBarRadiusResolver($$);
+    const getBarPath = function(d, i, arr) {
+      const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
+      let connectLineType = connectLineCache.get(d.id);
+      if (connectLineType === void 0) {
+        connectLineType = _getConnectLineType.call($$, d.id);
+        connectLineCache.set(d.id, connectLineType);
+      }
+      if (path.length > 1) {
+        barPath.push(path[1]);
+      }
+      if (i === arr.length - 1 && barPath.length) {
+        const barConnectLineNode = $$.$T(
+          src_select(
+            this.parentNode.querySelector(`.${$BAR.barConnectLine}`)
+          ),
+          withTransition,
+          getRandom()
+        );
+        $$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
+        barPath.splice(0);
+      }
+      return path[0];
+    };
+    const barTransition = $$.$T(bar, withTransition, getRandom());
+    if (getRadius && typeof barTransition.attrTween === "function") {
+      barTransition.attrTween(
+        "d",
+        function(d, i, arr) {
+          var _a;
+          const target = getBarPath.call(this, d, i, arr);
+          return getBarPathInterpolator((_a = this.getAttribute("d")) != null ? _a : "", target);
+        }
+      );
+    } else {
+      barTransition.attr("d", getBarPath);
+    }
     return [
-      $$.$T(bar, withTransition, getRandom()).attr("d", function(d, i, arr) {
-        const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
-        let connectLineType = connectLineCache.get(d.id);
-        if (connectLineType === void 0) {
-          connectLineType = _getConnectLineType.call($$, d.id);
-          connectLineCache.set(d.id, connectLineType);
-        }
-        if (path.length > 1) {
-          barPath.push(path[1]);
-        }
-        if (i === arr.length - 1 && barPath.length) {
-          const barConnectLineNode = $$.$T(
-            src_select(this.parentNode.querySelector(`.${$BAR.barConnectLine}`)),
-            withTransition,
-            getRandom()
-          );
-          $$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
-          barPath.splice(0);
-        }
-        return path[0];
-      }).style("fill", $$.generateUpdateBarColor()).style("clip-path", (d) => d.clipPath).style("opacity", null)
+      barTransition.style("fill", $$.generateUpdateBarColor()).style("clip-path", (d) => d.clipPath).style("opacity", null)
     ];
   },
   /**
@@ -65092,7 +65393,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.3-nightly-20260714005635",
+  version: "4.0.3-nightly-20260721005847",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
