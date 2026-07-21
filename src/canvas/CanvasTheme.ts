@@ -83,6 +83,14 @@ export type CanvasThemeSelectorMap = Record<string, CanvasThemeSelectorStyle>;
 export type CanvasThemeOverride = CanvasThemeDeepPartial<CanvasThemeStyle> & {
 	selectors?: CanvasThemeSelectorMap
 };
+export type CanvasGridLineThemeStyle = Partial<CanvasThemeStyle["grid"]>;
+
+type CanvasGridLineSelectorTarget = "line" | "text";
+type CanvasGridLineSelectorOverride = {
+	selector: string,
+	target: CanvasGridLineSelectorTarget,
+	style: CanvasGridLineThemeStyle
+};
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -370,6 +378,156 @@ function normalizeThemeSelectors(selector: string): string[] {
 				.replace(/(^|\s)(?:g|path|rect|line|text|circle)\./g, "$1.")
 		)
 		.filter(Boolean);
+}
+
+/**
+ * Get own keys from a style object whose values are set.
+ * @param {object} values Style values
+ * @returns {Array} Defined keys
+ * @private
+ */
+function getDefinedKeys<T extends Record<string, any>>(values: T): Array<keyof T> {
+	return Object.keys(values).filter(key => values[key] !== undefined) as Array<keyof T>;
+}
+
+/**
+ * Check whether a selector is simple enough for virtual optional grid line matching.
+ * @param {string} selector Normalized SVG selector
+ * @returns {boolean} Whether selector can be matched
+ * @private
+ */
+function isSimpleGridLineSelector(selector: string): boolean {
+	const tokens = selector.split(" ");
+
+	return tokens.every((token, index) =>
+		(token === "line" || token === "text") ?
+			index === tokens.length - 1 :
+			/^(\.[A-Za-z_-][\w-]*)+$/.test(token)
+	);
+}
+
+/**
+ * Get optional grid line selector target.
+ * @param {string} selector Normalized SVG selector
+ * @returns {string|null} Selector target
+ * @private
+ */
+function getGridLineSelectorTarget(
+	selector: string
+): CanvasGridLineSelectorTarget | null {
+	const target = selector.split(" ").at(-1);
+
+	return target === "line" || target === "text" ? target : null;
+}
+
+/**
+ * Split custom class value.
+ * @param {string} className Custom class value
+ * @returns {Array} Class names
+ * @private
+ */
+function getClassNames(className?: string): string[] {
+	return (className || "").split(/\s+/).filter(Boolean);
+}
+
+/**
+ * Read optional grid line or label style from selector style declaration.
+ * @param {object} style Style declaration object
+ * @param {string} target Selector target
+ * @returns {object} Grid line style
+ * @private
+ */
+function getGridLineSelectorStyle(
+	style: CanvasThemeSelectorStyle,
+	target: CanvasGridLineSelectorTarget
+): CanvasGridLineThemeStyle {
+	const values: CanvasGridLineThemeStyle = target === "text" ?
+		{
+			labelColor: readColorValue(style, "fill"),
+			labelFont: readFontValue(style)
+		} :
+		{
+			lineColor: readColorValue(style, "stroke"),
+			lineWidth: readNumberValue(style, "stroke-width"),
+			dashArray: readDashArrayValue(style)
+		};
+
+	return getDefinedKeys(values).reduce((acc, key) => {
+		acc[key] = values[key];
+		return acc;
+	}, {} as CanvasGridLineThemeStyle);
+}
+
+/**
+ * Convert selector based optional grid line overrides to ordered matcher entries.
+ * @param {object} selectors Selector style declarations
+ * @returns {Array} Optional grid line selector overrides
+ * @private
+ */
+function getGridLineSelectorOverrides(
+	selectors?: CanvasThemeSelectorMap
+): CanvasGridLineSelectorOverride[] {
+	const overrides: CanvasGridLineSelectorOverride[] = [];
+
+	Object.keys(selectors ?? {}).forEach(selector => {
+		normalizeThemeSelectors(selector).forEach(normalizedSelector => {
+			const target = getGridLineSelectorTarget(normalizedSelector) || "line";
+			const style = getGridLineSelectorStyle(selectors![selector], target);
+
+			if (isSimpleGridLineSelector(normalizedSelector) && getDefinedKeys(style).length) {
+				overrides.push({selector: normalizedSelector, target, style});
+			}
+		});
+	});
+
+	return overrides;
+}
+
+/**
+ * Check whether a virtual optional grid line selector matches a grid line config.
+ * @param {string} selector Normalized SVG selector
+ * @param {string} axis Grid axis
+ * @param {string} className Grid line custom class
+ * @param {string} target Draw target
+ * @returns {boolean} Whether selector matches
+ * @private
+ */
+function matchesGridLineSelector(
+	selector: string,
+	axis: "x" | "y",
+	className: string | undefined,
+	target: CanvasGridLineSelectorTarget
+): boolean {
+	if (!isSimpleGridLineSelector(selector)) {
+		return false;
+	}
+
+	const selectorTarget = getGridLineSelectorTarget(selector);
+
+	if (selectorTarget && selectorTarget !== target) {
+		return false;
+	} else if (!selectorTarget && target === "text") {
+		return false;
+	}
+
+	const customClasses = getClassNames(className);
+	const axisLineClass = `bb-${axis}grid-line`;
+	const availableClasses = new Set([
+		"bb-grid",
+		"bb-grid-lines",
+		`bb-${axis}grid-lines`,
+		axisLineClass,
+		...customClasses
+	]);
+	const selectorClasses = Array.from(selector.matchAll(/\.([A-Za-z_-][\w-]*)/g))
+		.map(match => match[1]);
+
+	return !!selectorClasses.length &&
+		selectorClasses.every(cls => availableClasses.has(cls)) &&
+		(
+			selectorClasses.includes(axisLineClass) ||
+			customClasses.some(cls => selectorClasses.includes(cls))
+		);
 }
 
 /**
@@ -697,6 +855,8 @@ export default class CanvasTheme {
 	public style!: CanvasThemeStyle;
 	private cacheContainer: HTMLElement | null = null;
 	private cacheKey: string | null = null;
+	private gridLineSelectorOverrides: CanvasGridLineSelectorOverride[] = [];
+	private directGridOverrideKeys = new Set<keyof CanvasThemeStyle["grid"]>();
 
 	/**
 	 * Read theme values from temporary SVG probes.
@@ -706,6 +866,11 @@ export default class CanvasTheme {
 	 */
 	load(container: HTMLElement, userOverride?: CanvasThemeOverride): void {
 		const svg = document.createElementNS(SVG_NS, "svg");
+
+		this.gridLineSelectorOverrides = getGridLineSelectorOverrides(userOverride?.selectors);
+		this.directGridOverrideKeys = new Set(
+			Object.keys(userOverride?.grid ?? {})
+		) as Set<keyof CanvasThemeStyle["grid"]>;
 
 		svg.setAttribute("class", "bb");
 		svg.style.cssText =
@@ -1162,5 +1327,36 @@ export default class CanvasTheme {
 		}
 
 		this.load(container, userOverride);
+	}
+
+	/**
+	 * Resolve selector based style for one configured optional grid line.
+	 * @param {string} axis Grid axis
+	 * @param {object} line Grid line options
+	 * @param {string} line.class Grid line custom class
+	 * @param {string} target Draw target
+	 * @returns {object|undefined} Grid line style override
+	 * @private
+	 */
+	getGridLineStyle(
+		axis: "x" | "y",
+		line: {class?: string} = {},
+		target: CanvasGridLineSelectorTarget = "line"
+	): CanvasGridLineThemeStyle | undefined {
+		const style: CanvasGridLineThemeStyle = {};
+
+		for (const override of this.gridLineSelectorOverrides) {
+			if (!matchesGridLineSelector(override.selector, axis, line.class, target)) {
+				continue;
+			}
+
+			for (const key of getDefinedKeys(override.style)) {
+				if (!this.directGridOverrideKeys.has(key)) {
+					style[key] = override.style[key];
+				}
+			}
+		}
+
+		return getDefinedKeys(style).length ? style : undefined;
 	}
 }

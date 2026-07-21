@@ -400,6 +400,91 @@ describe("API canvas", () => {
 		expect(chart.internal.state.canvasSelection.size).to.be.equal(0);
 	});
 
+	it("canvas select() API respects data.selection.multiple=false", () => {
+		generateWithOptions({
+			data: {
+				columns,
+				type: line(),
+				selection: {
+					enabled: true,
+					multiple: false
+				}
+			}
+		});
+
+		// only the latest selection survives
+		chart.select("data1", [2]);
+		chart.select("data2", [3]);
+		expect(chart.selected().map(d => `${d.id}:${d.index}`)).to.deep.equal(["data2:3"]);
+
+		// batch/no-arg selection also collapses to a single point
+		chart.select("data1", [0, 1, 3]);
+		expect(chart.selected().length).to.be.equal(1);
+
+		chart.select("missing", [0]);
+		expect(chart.selected().map(d => `${d.id}:${d.index}`)).to.deep.equal(["data1:0"]);
+
+		chart.select("data1", [99]);
+		expect(chart.selected().map(d => `${d.id}:${d.index}`)).to.deep.equal(["data1:0"]);
+
+		chart.unselect();
+		chart.select();
+		expect(chart.selected().length).to.be.equal(1);
+	});
+
+	it("canvas grouped select() API keeps only one x-index group when multiple=false", () => {
+		generateWithOptions({
+			data: {
+				columns,
+				type: line(),
+				selection: {
+					enabled: true,
+					grouped: true,
+					multiple: false
+				}
+			}
+		});
+
+		chart.select("data1", [1]);
+		chart.select("data2", [3]);
+
+		const selected = chart.selected();
+
+		expect(selected.length).to.be.equal(2);
+		expect(selected.every(d => d.index === 3)).to.be.true;
+	});
+
+	it("canvas select()/unselect() APIs work with point.focus.only=true", () => {
+		generateWithOptions({
+			data: {
+				columns,
+				type: line(),
+				selection: {
+					enabled: true
+				}
+			},
+			point: {
+				focus: {
+					only: true
+				}
+			}
+		});
+
+		// focus.only renders a single shared point per series, but canvas selection
+		// is data-key based, so the selection APIs remain unaffected
+		chart.select("data1", [1, 3], true);
+		expect(chart.selected().map(d => `${d.id}:${d.index}`)).to.deep.equal([
+			"data1:1",
+			"data1:3"
+		]);
+
+		chart.unselect("data1", [1]);
+		expect(chart.selected().map(d => `${d.id}:${d.index}`)).to.deep.equal(["data1:3"]);
+
+		chart.unselect();
+		expect(chart.selected()).to.deep.equal([]);
+	});
+
 	it("shows and hides canvas tooltip through tooltip APIs", () => {
 		generateWithOptions({
 			data: {

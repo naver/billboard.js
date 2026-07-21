@@ -16,6 +16,135 @@ export type BarRadiusInfo = {
 	pos: number
 };
 
+// d3's default string interpolator (used by transition.attr("d", …)) treats
+// every number in the path as interpolatable. SVG arc commands however carry
+// integer-only flags (x-axis-rotation, large-arc-flag, sweep-flag) which, when
+// interpolated to fractions like "0.00001", produce invalid path syntax and
+// flood the console with parse errors on chart.load(). See #4166.
+const RE_PATH_NUMBER = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g;
+const RE_PATH_TOKEN = /([aAcChHlLmMqQsStTvVzZ])|([-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?)/g;
+
+/**
+ * Collect the ordinal indexes of numeric tokens that are SVG arc-command flags.
+ * Arc parameters repeat in groups of 7: rx ry x-rotation large-arc sweep x y.
+ * Positions 2(x-rotation), 3(large-arc) and 4(sweep) must stay integers.
+ * @param {string} path Path string to scan
+ * @returns {Set} Ordinal indexes (in number order) of arc flag tokens
+ * @private
+ */
+function getArcFlagTokenIndexes(path: string): Set<number> {
+	const flags = new Set<number>();
+	let numIndex = -1;
+	let argIndex = 0;
+	let inArc = false;
+	let token;
+
+	RE_PATH_TOKEN.lastIndex = 0;
+
+	while ((token = RE_PATH_TOKEN.exec(path))) {
+		if (token[1]) {
+			inArc = token[1] === "a" || token[1] === "A";
+			argIndex = 0;
+		} else {
+			numIndex++;
+
+			if (inArc) {
+				const pos = argIndex % 7;
+
+				if (pos === 2 || pos === 3 || pos === 4) {
+					flags.add(numIndex);
+				}
+
+				argIndex++;
+			}
+		}
+	}
+
+	return flags;
+}
+
+/**
+ * Build a path interpolator that behaves like d3's string interpolator but
+ * snaps SVG arc flags to valid integers, preventing malformed paths during
+ * bar transitions (ex. chart.load() with bar.radius). See #4166.
+ * @param {string} a Start path
+ * @param {string} b Target path
+ * @returns {function} Interpolator returning a valid path for progress t
+ * @private
+ */
+export function getBarPathInterpolator(a: string, b: string): (t: number) => string {
+	const flagSet = getArcFlagTokenIndexes(b);
+	const segments: (string | null)[] = [];
+	const interpolators: {index: number, fn: (t: number) => number}[] = [];
+	let bIndex = 0;
+	let segIndex = -1;
+	let numIndex = -1;
+	let am;
+	let bm;
+
+	// append a literal chunk, merging with the previous literal segment
+	const append = (text: string): void => {
+		if (segments[segIndex]) {
+			segments[segIndex] += text;
+		} else {
+			segments[++segIndex] = text;
+		}
+	};
+
+	RE_PATH_NUMBER.lastIndex = 0;
+	const reA = RE_PATH_NUMBER;
+	const reB = new RegExp(RE_PATH_NUMBER.source, "g");
+
+	a += "";
+	b += "";
+
+	while ((am = reA.exec(a)) && (bm = reB.exec(b))) {
+		numIndex++;
+
+		// literal (non-numeric) part of target preceding this number
+		if (bm.index > bIndex) {
+			append(b.slice(bIndex, bm.index));
+		}
+
+		if (am[0] === bm[0]) {
+			append(bm[0]);
+		} else {
+			const from = +am[0];
+			const to = +bm[0];
+			const isFlag = flagSet.has(numIndex);
+
+			segments[++segIndex] = null;
+			interpolators.push({
+				index: segIndex,
+				fn: isFlag ? t => Math.round(from + (to - from) * t) : t => from + (to - from) * t
+			});
+		}
+
+		bIndex = reB.lastIndex;
+	}
+
+	// remaining target literal/numbers stay as-is (already valid)
+	if (bIndex < b.length) {
+		append(b.slice(bIndex));
+	}
+
+	if (!interpolators.length) {
+		const result = segments.join("");
+
+		return () => result;
+	}
+
+	return (t: number) => {
+		for (let i = 0, len = interpolators.length; i < len; i++) {
+			const {index, fn} = interpolators[i];
+
+			segments[index] = String(fn(t));
+		}
+
+		return segments.join("");
+	};
+}
+
 /**
  * Get the configured bar corner radius resolver.
  * @param {object} $$ ChartInternal instance

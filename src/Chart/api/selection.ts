@@ -8,6 +8,79 @@ import {$AREA, $LINE, $SELECT, $SHAPE} from "../../config/classes";
 import {isDefined} from "../../module/util";
 
 /**
+ * Toggler function to select or unselect when point.focus.only=true.<br><br>
+ * In this mode only a single shared circle element is rendered per series, so
+ * selection can't rely on per-index shape elements existing in the DOM. Iterate
+ * over the data instead and draw/remove the selected-circle elements directly.
+ * @param {boolean} isSelection Weather select or unselect
+ * @param {Array} ids Target ids
+ * @param {Array} indices Indices number
+ * @param {boolean} resetOther Weather reset other selected points (only for selection)
+ * @private
+ */
+function setSelectionForFocusOnly(
+	isSelection: boolean,
+	ids?: string | string[],
+	indices?: number[],
+	resetOther?: boolean
+): void {
+	const $$ = this;
+	const {config, $el: {main}} = $$;
+	const selectionGrouped = config.data_selection_grouped;
+	const isSelectable = config.data_selection_isselectable.bind($$.api);
+	const targetIds = isDefined(ids) ? ([] as string[]).concat(ids as string | string[]) : null;
+	const singleSelection = isSelection && !config.data_selection_multiple;
+	let resetDone = !singleSelection;
+
+	// Remove the selected-circle synchronously. The shape's selection state is
+	// represented solely by these elements in focus.only mode, so relying on
+	// unselectPoint's transitioned removal would let rapid API calls interrupt
+	// each other's transition and leave orphaned circles behind.
+	const unselect = (circle, d, index) => {
+		$$.unselectPoint(circle, d, index);
+		circle.interrupt().remove();
+	};
+
+	$$.getTargetsToShow().forEach(target => {
+		const {id} = target;
+		const isTargetId = selectionGrouped || !targetIds || targetIds.indexOf(id) >= 0;
+		const selectedCircles = main.select(
+			`.${$SELECT.selectedCircles}${$$.getTargetSelectorSuffix(id)}`
+		);
+
+		target.values.forEach(d => {
+			const {index} = d;
+			const isTargetIndex = !indices || indices.indexOf(index) >= 0;
+			const circle = selectedCircles.selectAll(`.${$SELECT.selectedCircle}-${index}`);
+			const isSelected = !circle.empty();
+
+			if (isSelection) {
+				if (
+					isTargetId && isTargetIndex && isSelectable(d) &&
+					(!isSelected || singleSelection)
+				) {
+					if (!resetDone) {
+						setSelectionForFocusOnly.call($$, false);
+						resetDone = true;
+					}
+
+					$$.selectPoint(null, d, index);
+				} else if (
+					(!singleSelection || resetDone) &&
+					isDefined(resetOther) &&
+					resetOther &&
+					isSelected
+				) {
+					unselect(circle, d, index);
+				}
+			} else if (isTargetId && isTargetIndex && isSelected) {
+				unselect(circle, d, index);
+			}
+		});
+	});
+}
+
+/**
  * Toggler function to select or unselect
  * @param {boolean} isSelection Weather select or unselect
  * @param {Array} ids Target ids
@@ -25,8 +98,32 @@ function setSelection(
 	const {config, $el: {main}} = $$;
 	const selectionGrouped = config.data_selection_grouped;
 	const isSelectable = config.data_selection_isselectable.bind($$.api);
+	const singleSelection = isSelection && !config.data_selection_multiple;
+	let resetDone = !singleSelection;
 
 	if (!config.data_selection_enabled) {
+		return;
+	}
+
+	// When multiple selection is disabled, only one data point (or one x-index
+	// group when 'grouped' is enabled) can hold the selected state at a time.
+	// Clear any current selection only when the narrowed request can select a point.
+	if (singleSelection) {
+		indices = indices?.length ? [indices[0]] : [0];
+
+		// non-grouped single selection targets exactly one point, so narrow to a
+		// single id (the first requested, or the first shown when none given).
+		if (!selectionGrouped) {
+			const targetIds = isDefined(ids) ?
+				([] as string[]).concat(ids as string | string[]) :
+				$$.getTargetsToShow().map(t => t.id);
+
+			ids = targetIds.slice(0, 1);
+		}
+	}
+
+	if ($$.isPointFocusOnly?.()) {
+		setSelectionForFocusOnly.call($$, isSelection, ids, indices, resetOther);
 		return;
 	}
 
@@ -35,20 +132,37 @@ function setSelection(
 		.each(function(d) {
 			const shape = d3Select(this);
 			const {id, index} = d.data ? d.data : d;
-			const toggle = $$.getToggle(this, d).bind($$);
 			const isTargetId = selectionGrouped || !ids || ids.indexOf(id) >= 0;
 			const isTargetIndex = !indices || indices.indexOf(index) >= 0;
-			const isSelected = shape.classed($SELECT.SELECTED);
 
 			// line/area selection not supported yet
 			if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
 				return;
 			}
 
+			const toggle = $$.getToggle(this, d).bind($$);
+			const isSelected = shape.classed($SELECT.SELECTED);
+
 			if (isSelection) {
-				if (isTargetId && isTargetIndex && isSelectable(d) && !isSelected) {
-					toggle(true, shape.classed($SELECT.SELECTED, true), d, index);
-				} else if (isDefined(resetOther) && resetOther && isSelected) {
+				if (
+					isTargetId &&
+					isTargetIndex &&
+					isSelectable(d) &&
+					(!isSelected || singleSelection)
+				) {
+					if (!resetDone) {
+						setSelection.call($$, false);
+						resetDone = true;
+					}
+
+					!shape.classed($SELECT.SELECTED) &&
+						toggle(true, shape.classed($SELECT.SELECTED, true), d, index);
+				} else if (
+					(!singleSelection || resetDone) &&
+					isDefined(resetOther) &&
+					resetOther &&
+					isSelected
+				) {
 					toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
 				}
 			} else {
@@ -82,6 +196,17 @@ export default {
 
 		if ($$.state.isCanvasMode) {
 			return $$.getCanvasSelectedData?.(targetId) || dataPoint;
+		}
+
+		// point.focus.only=true renders no per-index shape, so the selected-circle
+		// elements are the source of truth for the selection state.
+		if ($$.isPointFocusOnly?.()) {
+			$$.$el.main
+				.selectAll(`.${$SELECT.selectedCircles + $$.getTargetSelectorSuffix(targetId)}`)
+				.selectAll(`.${$SELECT.selectedCircle}`)
+				.each(d => dataPoint.push(d));
+
+			return dataPoint;
 		}
 
 		$$.$el.main.selectAll(`.${$SHAPE.shapes + $$.getTargetSelectorSuffix(targetId)}`)

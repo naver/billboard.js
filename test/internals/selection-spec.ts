@@ -191,4 +191,151 @@ describe("SELECTION", () => {
 			}, 350);
 		}));
 	});
+
+	describe("API selection with data.selection.multiple=false", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 230, 280, 320, 218, 250, 150]
+					],
+					type: "line",
+					selection: {
+						enabled: true,
+						grouped: false,
+						multiple: false
+					}
+				}
+			};
+		});
+
+		it("select() API should keep only one selection at a time", () => {
+			chart.select(["data1"], [2]);
+			chart.select(["data2"], [4]);
+
+			const selected = chart.selected();
+
+			expect(selected.length).to.be.equal(1);
+			expect(selected[0].id).to.be.equal("data2");
+			expect(selected[0].index).to.be.equal(4);
+		});
+
+		it("select() API with multiple indices should keep only one selection", () => {
+			chart.select(["data1"], [0, 2, 4]);
+
+			expect(chart.selected().length).to.be.equal(1);
+		});
+
+		it("select() API with no arguments should keep only one selection", () => {
+			chart.select();
+
+			expect(chart.selected().length).to.be.equal(1);
+		});
+
+		it("select() API with no selectable match should preserve current selection", () => {
+			chart.select(["data1"], [2]);
+			chart.select(["unknown"], [0]);
+
+			const selected = chart.selected();
+
+			expect(selected.length).to.be.equal(1);
+			expect(selected[0].id).to.be.equal("data1");
+			expect(selected[0].index).to.be.equal(2);
+		});
+
+		it("set options selection.grouped = true", () => {
+			args.data.selection.grouped = true;
+		});
+
+		it("grouped select() API should keep only one x-index group", () => {
+			chart.select(["data1"], [2]);
+			chart.select(["data2"], [4]);
+
+			const selected = chart.selected();
+
+			// grouped: both series at the single selected index remain
+			expect(selected.length).to.be.equal(2);
+			expect(selected.every(d => d.index === 4)).to.be.true;
+		});
+	});
+
+	describe("API selection with point.focus.only=true", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "line",
+					selection: {
+						enabled: true,
+						grouped: true,
+						multiple: false
+					}
+				},
+				point: {
+					focus: {
+						only: true
+					}
+				}
+			};
+		});
+
+		it("select()/selected() should work with focus.only", () => {
+			chart.select(["data1"], [3], true);
+
+			const selected = chart.selected();
+
+			expect(selected.length).to.be.equal(1);
+			expect(selected[0].index).to.be.equal(3);
+			expect(chart.$.main.selectAll(`.${$SELECT.selectedCircle}`).size()).to.be.equal(1);
+		});
+
+		it("select() w/resetOther should move the single selection", () => new Promise(done => {
+			chart.select(["data1"], [1], true);
+			chart.select(["data1"], [5], true);
+
+			setTimeout(() => {
+				const selected = chart.selected();
+
+				expect(selected.length).to.be.equal(1);
+				expect(selected[0].index).to.be.equal(5);
+
+				done(1);
+			}, 500);
+		}));
+
+		it("rapid successive select() must not leave orphaned selected circles", () => {
+			[0, 4, 2, 5].forEach(index => chart.select(["data1"], [index], true));
+
+			// selected-circle removal is synchronous, so no accumulation even when
+			// consecutive calls happen within a transition duration
+			expect(chart.selected().length).to.be.equal(1);
+			expect(chart.selected()[0].index).to.be.equal(5);
+			expect(chart.$.main.selectAll(`.${$SELECT.selectedCircle}`).size()).to.be.equal(1);
+		});
+
+		it("select() with no selectable match should preserve focus.only selection", () => {
+			chart.select(["data1"], [2], true);
+			chart.select(["data1"], [99], true);
+
+			const selected = chart.selected();
+
+			expect(selected.length).to.be.equal(1);
+			expect(selected[0].index).to.be.equal(2);
+			expect(chart.$.main.selectAll(`.${$SELECT.selectedCircle}`).size()).to.be.equal(1);
+		});
+
+		it("unselect() should work with focus.only", () => new Promise(done => {
+			chart.select(["data1"], [2], true);
+			chart.unselect(["data1"], [2]);
+
+			setTimeout(() => {
+				expect(chart.selected().length).to.be.equal(0);
+
+				done(1);
+			}, 500);
+		}));
+	});
 });

@@ -2043,11 +2043,17 @@ export default class CanvasRenderer {
 						lineWidth: style.selectedPoint.lineWidth,
 						stroke: style.selectedPoint.stroke || color
 					});
-					drawPointPattern(painter, pointType, x, y, r, {
-						fill: style.shape.pointFillColor || color,
-						stroke: style.shape.pointStrokeColor || color,
-						lineWidth: style.shape.pointLineWidth ?? 1
-					});
+
+					// with point.focus.only, the data point is rendered only while it's
+					// focused, so a selected-but-unfocused point shows just the selection
+					// ring (matching SVG). Skip drawing the data point itself here.
+					if (!$$.isPointFocusOnly?.()) {
+						drawPointPattern(painter, pointType, x, y, r, {
+							fill: style.shape.pointFillColor || color,
+							stroke: style.shape.pointStrokeColor || color,
+							lineWidth: style.shape.pointLineWidth ?? 1
+						});
+					}
 				}
 			});
 
