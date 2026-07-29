@@ -6,7 +6,17 @@
 /* global describe, beforeEach, it, expect */
 import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
-import {$AREA, $AXIS, $BAR, $FOCUS, $LINE, $SUBCHART} from "../../src/config/classes";
+import {
+	$AREA,
+	$AXIS,
+	$BAR,
+	$COMMON,
+	$EVENT,
+	$FOCUS,
+	$LEGEND,
+	$LINE,
+	$SUBCHART
+} from "../../src/config/classes";
 
 describe("SUBCHART", () => {
 	let chart;
@@ -59,11 +69,15 @@ describe("SUBCHART", () => {
 			}).node().parentNode;
 			const children = subchart.children;
 
-			expect(children.length).to.be.equal(3);
+			expect(children.length).to.be.equal(7);
 
 			expect(children[0].querySelectorAll(`.${$BAR.chartBars}, .${$LINE.chartLines}`).length).to.be.equal(2);
 			expect(children[1].classList.contains($SUBCHART.brush)).to.be.true;
-			expect(children[2].classList.contains($AXIS.axisX)).to.be.true;
+			expect(children[2].classList.contains($EVENT.eventRects)).to.be.true;
+			expect(children[3].classList.contains($FOCUS.xgridFocus)).to.be.true;
+			expect(children[4].classList.contains($AXIS.axisX)).to.be.true;
+			expect(children[5].classList.contains($AXIS.axisY)).to.be.true;
+			expect(children[6].classList.contains($AXIS.axisY2)).to.be.true;
 		});
 
 		it("set options subchart.size={height:80}", () => {
@@ -199,6 +213,512 @@ describe("SUBCHART", () => {
 		it("should format subX ticks with subX function", () => {
 			expected.subX = ["1", "2", "3", "4", "5", "6"];
 			checkTickValues();
+		});
+	});
+
+	describe("subchart x axis tick options", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "line"
+				},
+				subchart: {
+					show: true,
+					axis: {
+						x: {
+							tick: {
+								count: 2,
+								outer: false
+							}
+						}
+					}
+				}
+			};
+		});
+
+		it("should render subchart x ticks with configured count and outer option", () => {
+			const {axis} = chart.internal.$el;
+
+			expect(axis.subX.selectAll(".tick").size()).to.be.equal(2);
+			expect(axis.subX.select(".domain").attr("d")).to.not.include("V6");
+		});
+
+		it("set options subchart.axis.x.tick.values and culling", () => {
+			args.subchart.axis.x.tick = {
+				values: [0, 1, 2, 3, 4, 5],
+				culling: {
+					max: 2,
+					lines: false
+				}
+			};
+		});
+
+		it("should render configured subchart x tick values with culling", () => {
+			const {axis} = chart.internal.$el;
+			const ticks = axis.subX.selectAll(".tick");
+			const visibleTicks = ticks.filter(function() {
+				return this.style.display !== "none";
+			});
+
+			expect(ticks.size()).to.be.equal(6);
+			expect(visibleTicks.size()).to.be.at.most(2);
+		});
+	});
+
+	describe("subchart y/y2 axes", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400],
+						["data2", 130, 100, 140, 160]
+					],
+					axes: {
+						data2: "y2"
+					},
+					type: "line"
+				},
+				subchart: {
+					show: true,
+					axis: {
+						y: {
+							show: true,
+							tick: {
+								count: 3,
+								format: v => `Y:${v}`
+							}
+						},
+						y2: {
+							show: true,
+							tick: {
+								count: 4,
+								format: v => `Y2:${v}`
+							}
+						}
+					}
+				}
+			};
+		});
+
+		it("should render subchart y/y2 axes with configured tick format", () => {
+			const {axis} = chart.internal.$el;
+			const yTicks = axis.subY.selectAll(".tick");
+			const y2Ticks = axis.subY2.selectAll(".tick");
+
+			expect(axis.subY.style("visibility")).to.not.be.equal("hidden");
+			expect(axis.subY2.style("visibility")).to.not.be.equal("hidden");
+			expect(axis.subY.attr("transform")).to.be.equal(chart.internal.getTranslate("subY"));
+			expect(axis.subY2.attr("transform")).to.be.equal(chart.internal.getTranslate("subY2"));
+			expect(yTicks.size()).to.be.equal(3);
+			expect(y2Ticks.size()).to.be.equal(4);
+
+			axis.subY.selectAll(".tick text").each(function() {
+				expect(this.textContent).to.match(/^Y:/);
+			});
+			axis.subY2.selectAll(".tick text").each(function() {
+				expect(this.textContent).to.match(/^Y2:/);
+			});
+		});
+
+		it("set options subchart.axis.y/y2.tick.values and outer=false", () => {
+			args.subchart.axis.y.tick = {
+				values: [0, 200, 400],
+				format: v => `Y:${v}`,
+				outer: false
+			};
+			args.subchart.axis.y2.tick = {
+				values: [100, 140, 160],
+				format: v => `Y2:${v}`,
+				outer: false
+			};
+		});
+
+		it("should render configured subchart y/y2 tick values and outer option", () => {
+			const {axis} = chart.internal.$el;
+			const yValues = [];
+			const y2Values = [];
+
+			axis.subY.selectAll(".tick").each(d => yValues.push(d));
+			axis.subY2.selectAll(".tick").each(d => y2Values.push(d));
+
+			expect(yValues).to.be.deep.equal([0, 200, 400]);
+			expect(y2Values).to.be.deep.equal([100, 140, 160]);
+			expect(axis.subY.select(".domain").attr("d")).to.not.include("H-6");
+			expect(axis.subY2.select(".domain").attr("d")).to.not.include("H6");
+		});
+
+		it("set options subchart.axis.y.tick.culling", () => {
+			args.subchart.axis.y.tick = {
+				values: [0, 100, 200, 300, 400],
+				culling: {
+					max: 2,
+					lines: false
+				}
+			};
+		});
+
+		it("should cull subchart y tick lines with tick text", () => {
+			const {axis} = chart.internal.$el;
+			const ticks = axis.subY.selectAll(".tick");
+			const visibleTicks = ticks.filter(function() {
+				return this.style.display !== "none";
+			});
+
+			expect(ticks.size()).to.be.equal(5);
+			expect(visibleTicks.size()).to.be.at.most(2);
+		});
+
+		it("set options subchart.axis.y.tick.show=false", () => {
+			args.subchart.axis.y.tick.show = false;
+		});
+
+		it("shouldn't be generating subchart y tick lines", () => {
+			const {axis} = chart.internal.$el;
+
+			expect(axis.subY.selectAll(".tick line").size()).to.be.equal(0);
+			expect(axis.subY.selectAll(".tick text").size()).to.be.greaterThan(0);
+		});
+
+		it("set options subchart.axis.y.tick.text.show=false", () => {
+			args.subchart.axis.y.tick.show = true;
+			args.subchart.axis.y.tick.text = {
+				show: false
+			};
+		});
+
+		it("shouldn't be generating subchart y tick text", () => {
+			const {axis} = chart.internal.$el;
+
+			expect(axis.subY.selectAll(".tick line").size()).to.be.greaterThan(0);
+			expect(axis.subY.selectAll(".tick text").size()).to.be.equal(0);
+		});
+	});
+
+	describe("subchart type option", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100],
+						["data2", 130, 100, 140]
+					],
+					type: "line"
+				},
+				subchart: {
+					show: true,
+					type: "bar"
+				}
+			};
+		});
+
+		it("should render subchart with specified type", () => {
+			const {$el: {main, subchart}} = chart.internal;
+
+			expect(chart.config("data.type")).to.be.equal("line");
+			expect(chart.config("subchart.type")).to.be.equal("bar");
+			expect(main.selectAll(`.${$LINE.line}`).size()).to.be.equal(2);
+			expect(main.selectAll(`.${$BAR.bar}`).size()).to.be.equal(0);
+			expect(subchart.main.selectAll(`.${$BAR.bar}`).size()).to.be.equal(6);
+			expect(subchart.main.selectAll(`.${$LINE.line}`).size()).to.be.equal(0);
+		});
+
+		it("set options subchart.types={data1: 'area'}", () => {
+			args.subchart.types = {
+				data1: "area"
+			};
+		});
+
+		it("should override subchart type for each data", () => {
+			const {main} = chart.internal.$el.subchart;
+
+			expect(main.selectAll(`.${$AREA.area}`).size()).to.be.equal(1);
+			expect(main.selectAll(`.${$LINE.line}`).size()).to.be.equal(1);
+			expect(main.selectAll(`.${$BAR.bar}`).size()).to.be.equal(3);
+		});
+
+		it("should render subchart area from the subchart bottom", () => {
+			const {internal: {state, $el: {subchart: {main}}}} = chart;
+			const path = main.select(`.${$COMMON.target}-data1 .${$AREA.area}`).attr("d");
+			const values = path.match(/-?\d+(?:\.\d+)?(?:e[-+]?\d+)?/gi).map(Number);
+			const yValues = values.filter((_, i) => i % 2);
+
+			expect(Math.max(...yValues)).to.be.closeTo(state.height2, 0.5);
+		});
+	});
+
+	describe("subchart candlestick source values", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1",
+							{open: 10, high: 20, low: 5, close: 12, volume: 1000},
+							{open: 18, high: 19, low: 8, close: 12, volume: 2000},
+							{open: 16, high: 22, low: 14, close: 20, volume: 3000}
+						]
+					],
+					type: "candlestick"
+				},
+				candlestick: {
+					color: {
+						down: "red"
+					}
+				},
+				subchart: {
+					show: true,
+					type: "bar"
+				}
+			};
+		});
+
+		it("should render candlestick source as zero-based body value bars in subchart", () => {
+			const $$ = chart.internal;
+			const {main} = $$.$el.subchart;
+			const [up, down] = $$.data.targets[0].values;
+			const [upValue, downValue, upPoints, downPoints] = $$.withSubchartTypeContext(() => {
+				const indices = $$.getShapeIndices($$.isBarType);
+				const getPoints = $$.generateGetBarPoints(indices, true);
+
+				return [
+					$$.getSubchartCandlestickShapeValue(up, true),
+					$$.getSubchartCandlestickShapeValue(down, true),
+					getPoints(up, 0),
+					getPoints(down, 1)
+				];
+			});
+			const y = $$.getYScaleById("data1", true);
+
+			expect(main.selectAll(`.${$BAR.bar}`).size()).to.be.equal(3);
+			expect($$.scale.subY.domain()[0]).to.be.equal(0);
+			expect(upValue).to.be.equal(12);
+			expect(downValue).to.be.equal(18);
+			expect(upPoints[0][1]).to.be.closeTo(y(0), 0.5);
+			expect(upPoints[1][1]).to.be.closeTo(y(12), 0.5);
+			expect(downPoints[0][1]).to.be.closeTo(y(0), 0.5);
+			expect(downPoints[1][1]).to.be.closeTo(y(18), 0.5);
+		});
+
+		it("should apply candlestick down color to down-value subchart bars", () => {
+			const bars = chart.internal.$el.subchart.main
+				.selectAll(`.${$BAR.bar}`)
+				.nodes();
+
+			expect(window.getComputedStyle(bars[0]).fill).to.be.equal("rgb(31, 119, 180)");
+			expect(window.getComputedStyle(bars[1]).fill).to.be.equal("rgb(255, 0, 0)");
+		});
+
+		it("set options subchart.type='line'", () => {
+			args.subchart.type = "line";
+		});
+
+		it("should render candlestick source as close values for single-value subchart types", () => {
+			const $$ = chart.internal;
+			const {main} = $$.$el.subchart;
+			const d = $$.data.targets[0].values[0];
+			const path = main.select(`.${$LINE.line}`).attr("d");
+			const point = $$.withSubchartTypeContext(() => {
+				const indices = $$.getShapeIndices($$.isLineType);
+
+				return $$.generateGetLinePoints(indices, true)(d, 0)[0];
+			});
+			const [min, max] = $$.withSubchartTypeContext(() =>
+				$$.getYDomainMinMaxBoth($$.data.targets)
+			);
+
+			expect(main.selectAll(`.${$LINE.line}`).size()).to.be.equal(1);
+			expect(path).to.not.include("NaN");
+			expect(path).to.not.be.equal("M 0 0");
+			expect(point[1]).to.be.closeTo($$.getYScaleById("data1", true)(12), 0.5);
+			expect(min).to.be.equal(12);
+			expect(max).to.be.equal(20);
+		});
+
+		it("set options subchart.type='area'", () => {
+			args.subchart.type = "area";
+		});
+
+		it("should render candlestick source as close values for area subchart types", () => {
+			const $$ = chart.internal;
+			const {main} = $$.$el.subchart;
+			const path = main.select(`.${$AREA.area}`).attr("d");
+
+			expect(main.selectAll(`.${$AREA.area}`).size()).to.be.equal(1);
+			expect(path).to.not.include("NaN");
+			expect(path).to.not.be.equal("M 0 0");
+			expect(path).to.include("L");
+		});
+	});
+
+	describe("subchart brush interaction", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100],
+						["data2", 130, 100, 140]
+					],
+					type: "line"
+				},
+				subchart: {
+					show: true,
+					brush: {
+						enabled: false
+					}
+				}
+			};
+		});
+
+		it("should disable subchart brush pointer interaction", () => {
+			const brush = chart.internal.$el.subchart.main.select(`.${$SUBCHART.brush}`);
+
+			expect(brush.style("pointer-events")).to.be.equal("none");
+		});
+
+		it("should sync x focus grid to subchart when hovering main chart", () => {
+			const {internal: {state, $el: {subchart}}} = chart;
+			const mainLine = chart.$.grid.main.select(`line.${$FOCUS.xgridFocus}`)
+				.style("stroke", "rgb(1, 2, 3)")
+				.style("stroke-dasharray", "4 2")
+				.style("stroke-width", "2px");
+			const line = subchart.main.select(`g.${$FOCUS.xgridFocus} line.${$FOCUS.xgridFocus}`);
+
+			expect(line.style("visibility")).to.be.equal("hidden");
+
+			util.hoverChart(chart, "mousemove", {
+				clientX: 250,
+				clientY: 100
+			});
+
+			expect(line.style("visibility")).to.be.equal("visible");
+			expect(line.attr("x1")).to.be.equal(line.attr("x2"));
+			expect(+line.attr("y1")).to.be.equal(0);
+			expect(+line.attr("y2")).to.be.equal(state.height2);
+
+			const mainStyle = window.getComputedStyle(mainLine.node());
+
+			["stroke", "stroke-dasharray", "stroke-width"].forEach(prop => {
+				expect(line.style(prop)).to.be.equal(mainStyle.getPropertyValue(prop));
+			});
+
+			util.hoverChart(chart, "mouseout", {
+				clientX: -100,
+				clientY: -100
+			});
+
+			expect(line.style("visibility")).to.be.equal("hidden");
+		});
+
+		it("should behave like main chart hover from subchart area", () => {
+			const {internal: {$el: {subchart, tooltip}}} = chart;
+			const eventRect = subchart.eventRect.node();
+			const rect = eventRect.getBoundingClientRect();
+			const line = subchart.main.select(`g.${$FOCUS.xgridFocus} line.${$FOCUS.xgridFocus}`);
+
+			eventRect.dispatchEvent(new MouseEvent("mouseover", {
+				clientX: rect.left + (rect.width / 2),
+				clientY: rect.top + (rect.height / 2)
+			}));
+			eventRect.dispatchEvent(new MouseEvent("mousemove", {
+				clientX: rect.left + (rect.width / 2),
+				clientY: rect.top + (rect.height / 2)
+			}));
+
+			expect(tooltip.style("display")).to.be.equal("block");
+			expect(chart.$.grid.main.select(`line.${$FOCUS.xgridFocus}`).style("visibility"))
+				.to.not.be.equal("hidden");
+			expect(line.style("visibility")).to.be.equal("visible");
+
+			eventRect.dispatchEvent(new MouseEvent("mouseout", {
+				clientX: rect.left + (rect.width / 2),
+				clientY: rect.top + (rect.height / 2)
+			}));
+
+			expect(tooltip.style("display")).to.be.equal("none");
+			expect(line.style("visibility")).to.be.equal("hidden");
+		});
+
+		it("should apply legend hover opacity to subchart targets same as main chart", () => {
+			const legend = chart.$.legend.select(`.${$LEGEND.legendItem}-data1`);
+
+			util.fireEvent(legend.node(), "mouseover", {
+				clientX: 100,
+				clientY: 100
+			}, chart);
+
+			const mainTarget = chart.$.main.select(`.${$COMMON.target}-data2`);
+			const subchartTarget = chart.internal.$el.subchart.main
+				.select(`.${$COMMON.target}-data2`);
+
+			expect(mainTarget.classed($FOCUS.defocused)).to.be.true;
+			expect(subchartTarget.classed($FOCUS.defocused)).to.be.true;
+			expect(window.getComputedStyle(subchartTarget.node()).opacity)
+				.to.be.equal(window.getComputedStyle(mainTarget.node()).opacity);
+
+			util.fireEvent(legend.node(), "mouseout", {
+				clientX: 100,
+				clientY: 100
+			}, chart);
+
+			expect(subchartTarget.classed($FOCUS.defocused)).to.be.false;
+		});
+	});
+
+	describe("subchart continuous focus grid", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100],
+						["data2", 130, 100, 140]
+					],
+					type: "line"
+				},
+				subchart: {
+					show: true,
+					brush: {
+						enabled: false
+					},
+					grid: {
+						focus: {
+							continuous: true
+						}
+					}
+				}
+			};
+		});
+
+		it("should render one continuous x focus grid line across main and subchart", () => {
+			const {internal: {state, $el: {grid, main, subchart}}} = chart;
+			const mainLine = grid.main.select(`line.${$FOCUS.xgridFocus}`);
+			const subchartLine = subchart.main
+				.select(`g.${$FOCUS.xgridFocus} line.${$FOCUS.xgridFocus}`);
+			const continuousLine = main.select(`line.${$FOCUS.xgridFocusContinuous}`);
+			const expectedY2 = state.margin2.top - state.margin.top + state.height2;
+
+			expect(continuousLine.empty()).to.be.false;
+			expect(continuousLine.style("visibility")).to.be.equal("hidden");
+
+			util.hoverChart(chart, "mousemove", {
+				clientX: 250,
+				clientY: 100
+			});
+
+			expect(mainLine.style("visibility")).to.be.equal("hidden");
+			expect(subchartLine.style("visibility")).to.be.equal("hidden");
+			expect(continuousLine.style("visibility")).to.not.be.equal("hidden");
+			expect(continuousLine.attr("x1")).to.be.equal(continuousLine.attr("x2"));
+			expect(+continuousLine.attr("y1")).to.be.equal(0);
+			expect(+continuousLine.attr("y2")).to.be.closeTo(expectedY2, 0.5);
+
+			util.hoverChart(chart, "mouseout", {
+				clientX: -100,
+				clientY: -100
+			});
+
+			expect(continuousLine.style("visibility")).to.be.equal("hidden");
 		});
 	});
 

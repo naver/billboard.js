@@ -10,7 +10,8 @@ import {getPointer, isArray, isValue} from "../../module/util";
 import type {IDataRow} from "../data/IData";
 
 // Grid position and text anchor helpers
-const GRID_FOCUS_SELECTOR = `line.${$FOCUS.xgridFocus}, line.${$FOCUS.ygridFocus}`;
+const GRID_FOCUS_SELECTOR = `line.${$FOCUS.xgridFocus}:not(.${$FOCUS.xgridFocusContinuous}), ` +
+	`line.${$FOCUS.ygridFocus}`;
 const _getGridTextAnchor = d => isValue(d.position) || "end";
 const _getGridTextDx = d => (d.position === "start" ? 4 : (d.position === "middle" ? 0 : -4));
 
@@ -29,6 +30,16 @@ function _getGridFocusEl($$): d3Selection {
 	return cachedNodes.length && cachedNodes.every(node => mainNode?.contains(node)) ?
 		cached :
 		(state._gridFocusEl = main.selectAll(GRID_FOCUS_SELECTOR));
+}
+
+/**
+ * Hide continuous subchart focus grid line.
+ * @param {object} $$ ChartInternal context
+ * @private
+ */
+function _hideContinuousGridFocus($$): void {
+	$$.$el.main.select(`line.${$FOCUS.xgridFocusContinuous}`)
+		.style("visibility", "hidden");
 }
 
 /**
@@ -342,6 +353,12 @@ export default {
 					.append("line")
 					.attr("class", $FOCUS.ygridFocus);
 			}
+
+			config.subchart_grid_focus_continuous && $el.main.insert("g", className)
+				.attr("class", $FOCUS.xgridFocusContinuous)
+				.append("line")
+				.attr("class", `${$FOCUS.xgridFocus} ${$FOCUS.xgridFocusContinuous}`)
+				.style("visibility", "hidden");
 		}
 	},
 
@@ -492,6 +509,7 @@ export default {
 			const focusEl = _getGridFocusEl($$);
 
 			focusEl.style("visibility", "hidden");
+			_hideContinuousGridFocus($$);
 			$$.hideCircleFocus?.();
 		}
 	},
@@ -515,6 +533,7 @@ export default {
 				.attr("x2", isRotated ? width : -10)
 				.attr("y1", isRotated ? -10 : 0)
 				.attr("y2", isRotated ? -10 : height);
+			_hideContinuousGridFocus($$);
 		}
 
 		// need to return 'true' as of being pushed to the redraw list

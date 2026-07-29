@@ -25,6 +25,7 @@ import {
 } from "d3-shape";
 import type {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
+import {TYPE} from "../../config/const";
 import {KEY} from "../../module/Cache";
 import {
 	capitalize,
@@ -97,15 +98,93 @@ function getLinePointGroupTypeFilter($$): Function {
  * Get numeric value used for stacked offset calculation.
  * @param {object} $$ ChartInternal instance
  * @param {object} d Data row
+ * @param {boolean} isSub Whether coordinates are for the subchart
  * @returns {number|Array|object|null} Offset value
  * @private
  */
-function getShapeOffsetValue($$, d) {
+function getShapeOffsetValue($$, d, isSub?: boolean) {
+	const subchartCandlestickValue = getSubchartCandlestickShapeValue($$, d, isSub);
+
+	if (isNumber(subchartCandlestickValue)) {
+		return subchartCandlestickValue;
+	}
+
 	if ($$.isCandlestickType?.(d)) {
 		return $$.getCandlestickData?.(d)?.close;
 	}
 
 	return $$.getBaseValue(d);
+}
+
+/**
+ * Get candlestick data projected for alternate subchart shapes.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} d Data row
+ * @param {boolean} isSub Whether coordinates are for the subchart
+ * @returns {number|undefined} Projected value
+ * @private
+ */
+function getSubchartCandlestickShapeValue($$, d, isSub?: boolean) {
+	if (
+		!isSub ||
+		$$.isCandlestickType?.(d) ||
+		!$$.isSubchartSourceTypeOf?.(d, TYPE.CANDLESTICK)
+	) {
+		return undefined;
+	}
+
+	const value = $$.getCandlestickData?.(d);
+
+	if (!value) {
+		return undefined;
+	}
+
+	if ($$.isBarType(d)) {
+		return isNumber(value.open) && isNumber(value.close) ?
+			value._isUp ? value.close : value.open :
+			undefined;
+	}
+
+	return isNumber(value.close) ? value.close : undefined;
+}
+
+/**
+ * Check whether candlestick data can be projected as a subchart bar value.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} d Data row
+ * @param {boolean} isSub Whether coordinates are for the subchart
+ * @returns {boolean}
+ * @private
+ */
+function isSubchartCandlestickBarValue($$, d, isSub?: boolean): boolean {
+	const value = getSubchartCandlestickShapeValue($$, d, isSub);
+
+	return isNumber(value) && $$.isBarType(d);
+}
+
+/**
+ * Get subchart bar color projected from candlestick up/down state.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} d Data row
+ * @param {boolean} isSub Whether coordinates are for the subchart
+ * @returns {string|null} Bar color
+ * @private
+ */
+function getSubchartCandlestickBarColor($$, d, isSub?: boolean): string | null {
+	if (!isSubchartCandlestickBarValue($$, d, isSub)) {
+		return null;
+	}
+
+	const value = $$.getCandlestickData?.(d);
+
+	if (value?._isUp) {
+		return $$.color(d);
+	}
+
+	const downColor = $$.config.candlestick_color_down;
+	const color = downColor && typeof downColor === "object" ? downColor[d.id] : downColor;
+
+	return color || $$.color(d);
 }
 
 /**
@@ -453,9 +532,12 @@ export default {
 
 		return d => {
 			let {value} = d;
+			const subchartCandlestickValue = getSubchartCandlestickShapeValue($$, d, isSub);
 
 			if (isNumber(d)) {
 				value = d;
+			} else if (isNumber(subchartCandlestickValue)) {
+				value = subchartCandlestickValue;
 			} else if ($$.isAreaRangeType(d)) {
 				value = $$.getBaseValue(d, "mid");
 			} else if (isStackNormalized) {
@@ -474,13 +556,14 @@ export default {
 	/**
 	 * Get shape based y Axis min value
 	 * @param {string} id Data id
+	 * @param {boolean} isSub Whether to use subchart scale
 	 * @returns {number}
 	 * @private
 	 */
-	getShapeYMin(id: string): number {
+	getShapeYMin(id: string, isSub = false): number {
 		const $$ = this;
 		const axisId = $$.axis.getId(id);
-		const scale = $$.scale[axisId];
+		const scale = $$.getYScaleById(id, isSub);
 		const [yMin] = scale.domain();
 		const inverted = $$.config[`axis_${axisId}_inverted`];
 
@@ -490,10 +573,11 @@ export default {
 	/**
 	 * Get Shape's offset data
 	 * @param {function} typeFilter Type filter function
+	 * @param {boolean} isSub Whether coordinates are for the subchart
 	 * @returns {object}
 	 * @private
 	 */
-	getShapeOffsetData(typeFilter) {
+	getShapeOffsetData(typeFilter, isSub?: boolean) {
 		const $$ = this;
 		const targets = $$.orderTargets(
 			$$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))
@@ -503,7 +587,7 @@ export default {
 		// caching can leave stacked offsets pointing at stale row maps.
 		const dataGeneration = $$.state.dataGeneration;
 		const targetIds = targets.map(t => t.id).join("_");
-		const cacheKey = `${KEY.shapeOffset}_${targetIds}`;
+		const cacheKey = `${KEY.shapeOffset}_${isSub ? "sub" : "main"}_${targetIds}`;
 
 		// Check if result is already cached
 		const cachedData = $$.cache.get(cacheKey);
@@ -524,7 +608,7 @@ export default {
 
 			const rowValueMapByXValue = rowValues.reduce((out, d) => {
 				const key = Number(d.x);
-				const value = getShapeOffsetValue($$, d);
+				const value = getShapeOffsetValue($$, d, isSub);
 
 				out[key] = d;
 				values[key] = isStackNormalized ? $$.getRatio("index", d, true) : value;
@@ -555,7 +639,8 @@ export default {
 	getShapeOffset(typeFilter, indices, isSub?: boolean): Function {
 		const $$ = this;
 		const {shapeOffsetTargets, indexMapByTargetId} = $$.getShapeOffsetData(
-			typeFilter
+			typeFilter,
+			isSub
 		);
 		const groupsZeroAs = $$.config.data_groupsZeroAs;
 
@@ -580,7 +665,7 @@ export default {
 
 		return (d, idx) => {
 			const {id, value, x} = d;
-			const baseValue = getShapeOffsetValue($$, d);
+			const baseValue = getShapeOffsetValue($$, d, isSub);
 			const ind = $$.getIndices(indices, d);
 			const scale = $$.getYScaleById(id, isSub);
 
@@ -590,7 +675,7 @@ export default {
 			}
 
 			const dataXAsNumber = Number(x);
-			const y0 = scale(groupsZeroAs === "zero" ? 0 : $$.getShapeYMin(id));
+			const y0 = scale(groupsZeroAs === "zero" ? 0 : $$.getShapeYMin(id, isSub));
 			let offset = y0;
 
 			const sameGroupTargets = sameGroupByTargetId?.get(id) ??
@@ -614,7 +699,7 @@ export default {
 						row = rowValueMapByXValue[dataXAsNumber];
 					}
 
-					const rowValue = row && getShapeOffsetValue($$, row);
+					const rowValue = row && getShapeOffsetValue($$, row, isSub);
 
 					if (
 						isNumber(rowValue) &&
@@ -658,7 +743,7 @@ export default {
 		const yScale = $$.getYScaleById.bind($$);
 
 		return (d, i) => {
-			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
+			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id, isSub));
 			const offset = lineOffset(d, i) || y0;
 			const posX = x(d);
 			let posY = y(d);
@@ -707,7 +792,7 @@ export default {
 			let y0 = y0Cache.get(d.id);
 
 			if (y0 === undefined) {
-				y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)) as number;
+				y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id, isSub)) as number;
 				y0Cache.set(d.id, y0);
 			}
 
@@ -763,7 +848,7 @@ export default {
 
 			if (!idInfo) {
 				idInfo = {
-					y0: yScale.call($$, id, isSub)($$.getShapeYMin(id)),
+					y0: yScale.call($$, id, isSub)($$.getShapeYMin(id, isSub)),
 					isInverted: config[`axis_${$$.axis.getId(id)}_inverted`]
 				};
 
@@ -840,14 +925,46 @@ export default {
 		const typeFilter = getLinePointGroupTypeFilter($$);
 		const getPoints = $$.generateGetLinePoints($$.getShapeIndices(typeFilter), isSub,
 			typeFilter);
+		const y = $$.getShapeY(isSub);
 
 		return (d, i) => {
 			const id = d.id;
 
-			return $$.isGrouped(id) && isLinePointGroupType($$, d) ?
-				getPoints(d, i)[0][1] :
-				$$.getYScaleById(id, isSub)($$.getBaseValue(d));
+			return $$.isGrouped(id) && isLinePointGroupType($$, d) ? getPoints(d, i)[0][1] : y(d);
 		};
+	},
+
+	/**
+	 * Get candlestick data projected for alternate subchart shapes.
+	 * @param {object} d Data row
+	 * @param {boolean} isSub Whether coordinates are for the subchart
+	 * @returns {number|undefined} Projected value
+	 * @private
+	 */
+	getSubchartCandlestickShapeValue(d, isSub?: boolean) {
+		return getSubchartCandlestickShapeValue(this, d, isSub);
+	},
+
+	/**
+	 * Check whether the row should be drawn as a candlestick-derived subchart bar.
+	 * @param {object} d Data row
+	 * @param {boolean} isSub Whether coordinates are for the subchart
+	 * @returns {boolean}
+	 * @private
+	 */
+	isSubchartCandlestickBarValue(d, isSub?: boolean): boolean {
+		return isSubchartCandlestickBarValue(this, d, isSub);
+	},
+
+	/**
+	 * Get subchart bar color projected from candlestick up/down state.
+	 * @param {object} d Data row
+	 * @param {boolean} isSub Whether coordinates are for the subchart
+	 * @returns {string|null} Bar color
+	 * @private
+	 */
+	getSubchartCandlestickBarColor(d, isSub?: boolean): string | null {
+		return getSubchartCandlestickBarColor(this, d, isSub);
 	},
 
 	/**

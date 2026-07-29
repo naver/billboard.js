@@ -125,6 +125,17 @@ function makeContext() {
 			targets[2].values[0]
 		],
 		getCandlestickData: d => ({_isUp: d.index === 1}),
+		getDrawShape() {
+			return this.state.canvasShape || {
+				indices: {
+					[TYPE.AREA]: {},
+					[TYPE.BAR]: {},
+					[TYPE.CANDLESTICK]: {},
+					[TYPE.LINE]: {}
+				},
+				pos: {}
+			};
+		},
 		getShapeIndices: () => ({}),
 		getYScaleById: () => value => value,
 		isBarType: target => target.id === "bar",
@@ -155,6 +166,7 @@ function makeContext() {
 		},
 		subxx: d => d.index * 30,
 		updateCircleY: () => (d, i) => i * 12 + 5,
+		withSubchartTypeContext: fn => fn(),
 		xx: d => d.index * 30
 	};
 }
@@ -171,6 +183,7 @@ describe("ESM canvas renderer coverage", () => {
 			pos: {}
 		};
 
+		ctx.canvasTheme = renderer.theme;
 		renderer.drawSubchart(ctx, shape);
 		renderer.drawSelections(ctx, shape);
 
@@ -717,6 +730,29 @@ describe("ESM canvas renderer coverage", () => {
 		renderer.drawTreemaps(ctx);
 
 		expect(renderer.ctx).to.not.be.null;
+	});
+
+	it("draws one continuous focus grid line across main and subchart", () => {
+		const {renderer} = makeRenderer();
+		const ctx = makeContext();
+		const focus = ctx.data.targets[2].values[1];
+		const traceLine = vi.spyOn(renderer.painter, "traceLine");
+		const drawSubchartFocus = vi.spyOn(renderer, "drawSubchartFocus");
+
+		ctx.config.axis_tooltip = false;
+		ctx.config.subchart_grid_focus_continuous = true;
+		ctx.config.grid_focus_show = true;
+		ctx.config.subchart_brush_enabled = false;
+		ctx.config.tooltip_show = true;
+
+		renderer.drawFocus(ctx, [focus]);
+
+		expect(drawSubchartFocus).not.toHaveBeenCalled();
+		expect(traceLine.mock.calls.some(([x1, y1, x2, y2]) =>
+			x1 === x2 &&
+			y1 >= 0 &&
+			y2 > ctx.state.height
+		)).to.be.true;
 	});
 
 	it("positions treemap labels using SVG-compatible centered option", () => {

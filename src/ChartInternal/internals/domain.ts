@@ -37,8 +37,10 @@ function getTargetDomainCacheKey($$, targets: IData[]): string {
 		const last = values[values.length - 1];
 		const firstX = first ? $$.getXCacheKey?.(first.x) ?? first.x : "";
 		const lastX = last ? $$.getXCacheKey?.(last.x) ?? last.x : "";
+		const targetType = $$.getTargetType?.(target) ?? "";
+		const sourceType = $$.state?.subchartSourceTypes?.[target.id] ?? "";
 
-		return `${target.id}:${values.length}:${firstX}:${lastX}`;
+		return `${target.id}:${targetType}:${sourceType}:${values.length}:${firstX}:${lastX}`;
 	}).join("|");
 }
 
@@ -113,7 +115,8 @@ function getTargetValueMinMax($$, targets: IData[]): DomainMinMax {
 
 	for (let i = 0; i < targets.length; i++) {
 		const target = targets[i];
-		const isCandlestick = $$.isCandlestickType?.(target);
+		const isCandlestick = $$.isCandlestickType?.(target) ||
+			$$.isSubchartSourceTypeOf?.(target, TYPE.CANDLESTICK);
 		const {values} = target;
 
 		for (let j = 0; j < values.length; j++) {
@@ -124,7 +127,11 @@ function getTargetValueMinMax($$, targets: IData[]): DomainMinMax {
 				continue;
 			}
 
-			if (value !== null && isCandlestick) {
+			const subchartCandlestickValue = $$.getSubchartCandlestickShapeValue?.(row, true);
+
+			if (isNumber(subchartCandlestickValue)) {
+				value = subchartCandlestickValue;
+			} else if (value !== null && isCandlestick) {
 				value = Array.isArray(value) ?
 					value.slice(0, 4) :
 					[value.open, value.high, value.low, value.close];

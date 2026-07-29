@@ -126,6 +126,7 @@ export const $FOCUS = {
 	defocused: "bb-defocused",
 	legendItemFocused: "bb-legend-item-focused",
 	xgridFocus: "bb-xgrid-focus",
+	xgridFocusContinuous: "bb-xgrid-focus-continuous",
 	ygridFocus: "bb-ygrid-focus"
 };
 

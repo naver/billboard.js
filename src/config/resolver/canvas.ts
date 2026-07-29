@@ -20,6 +20,7 @@ import {
 	isCanvasTreemapType
 } from "../../canvas/util";
 import ChartInternal from "../../ChartInternal/ChartInternal";
+import {getMainCoordFromSubchartCoord} from "../../ChartInternal/internals/subchart.util";
 import {getRenderDataPoint} from "../../ChartInternal/shape/core/geometry";
 import {$FOCUS, $LEGEND} from "../../config/classes";
 import {window} from "../../module/browser";
@@ -698,6 +699,35 @@ function isCanvasSubchartPoint($$, point: number[]): boolean {
 }
 
 /**
+ * Convert a canvas subchart point to the equivalent main plot point.
+ * @param {object} $$ ChartInternal instance
+ * @param {Array} point Canvas-local point
+ * @returns {Array|null} Main plot point or null when not applicable
+ * @private
+ */
+function getCanvasMainPointFromSubchart($$, point: number[]): number[] | null {
+	const {config, state} = $$;
+	const rect = getCanvasSubchartRect($$);
+
+	if (config.subchart_brush_enabled !== false || !rect || !isCanvasSubchartPoint($$, point)) {
+		return null;
+	}
+
+	const mainCoord = getMainCoordFromSubchartCoord(
+		$$,
+		config.axis_rotated ? point[1] - rect.y : point[0] - rect.x
+	);
+
+	if (mainCoord === null) {
+		return null;
+	}
+
+	return config.axis_rotated ?
+		[state.margin.left + (state.width / 2), state.margin.top + mainCoord] :
+		[state.margin.left + mainCoord, state.margin.top + (state.height / 2)];
+}
+
+/**
  * Get the allowed local brush coordinate extent for canvas subchart interactions.
  * @param {object} $$ ChartInternal instance
  * @returns {Array} Brush extent in subchart-local pixels
@@ -1139,8 +1169,10 @@ function syncCanvasFlowYDomains($$): void {
 		scale[key]?.domain($$.getYDomain(targetsToShow, key));
 	});
 
-	scale.subY?.domain($$.getYDomain(targetsToShow, "y"));
-	scale.subY2?.domain($$.getYDomain(targetsToShow, "y2"));
+	$$.withSubchartTypeContext(() => {
+		scale.subY?.domain($$.getYDomain(targetsToShow, "y"));
+		scale.subY2?.domain($$.getYDomain(targetsToShow, "y2"));
+	});
 }
 
 const canvasInternal = {
@@ -2384,13 +2416,19 @@ const canvasInternal = {
 	 */
 	updateCanvasSubchartBrush(event: MouseEvent | PointerEvent | TouchEvent): boolean {
 		const $$ = this;
-		const {state} = $$;
+		const {config, state} = $$;
 		const start = state.canvasSubchartBrushStart;
 		const origin = state.canvasSubchartBrushOrigin;
 		const mode = state.canvasSubchartBrushMode;
 		const coord = getCanvasSubchartBrushCoord($$, event, true);
 
-		if (!state.canvasSubchartBrushDragging || start === null || coord === null || !mode) {
+		if (
+			config.subchart_brush_enabled === false ||
+			!state.canvasSubchartBrushDragging ||
+			start === null ||
+			coord === null ||
+			!mode
+		) {
 			return false;
 		}
 
@@ -2453,6 +2491,12 @@ const canvasInternal = {
 	updateCanvasSubchartCursor(event: MouseEvent | PointerEvent | TouchEvent): boolean {
 		const $$ = this;
 		const canvas = $$.$el.canvas.node();
+
+		if ($$.config.subchart_brush_enabled === false) {
+			canvas.style.cursor = "";
+			return false;
+		}
+
 		const coord = getCanvasSubchartBrushCoord($$, event);
 
 		if (coord === null) {
@@ -2476,6 +2520,11 @@ const canvasInternal = {
 	startCanvasSubchartBrush(event: MouseEvent | PointerEvent | TouchEvent): boolean {
 		const $$ = this;
 		const {state} = $$;
+
+		if ($$.config.subchart_brush_enabled === false) {
+			return false;
+		}
+
 		const coord = getCanvasSubchartBrushCoord($$, event);
 
 		if (coord === null) {
@@ -2897,7 +2946,8 @@ const canvasInternal = {
 			return;
 		}
 
-		const point = getCanvasEventPoint($$, event);
+		const rawPoint = getCanvasEventPoint($$, event);
+		const point = rawPoint && (getCanvasMainPointFromSubchart($$, rawPoint) || rawPoint);
 		const d = point ? getCanvasHoverDatumFromPoint($$, point) : null;
 
 		if (!d) {
@@ -2906,8 +2956,8 @@ const canvasInternal = {
 				state.canvasFocusKey = null;
 				$$.clearCanvasFocus();
 			}
-			if (point && config.axis_tooltip && isCanvasAxisTooltipArea($$, point)) {
-				$$.renderCanvasAxisTooltip(point);
+			if (rawPoint && config.axis_tooltip && isCanvasAxisTooltipArea($$, rawPoint)) {
+				$$.renderCanvasAxisTooltip(rawPoint);
 				$$.hideTooltip?.();
 				return;
 			}
@@ -3063,6 +3113,7 @@ const canvasInternal = {
 				$$.canvasAxisRenderer.drawGridLines($$);
 			$$.canvasRenderer.drawSubchart($$, drawShape);
 			state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
+			state.hasAxis && $$.canvasAxisRenderer.drawSubYAxes($$);
 			$$.canvasRenderer.drawEmptyLabel($$);
 			rebuildHit && $$.hitDetector.rebuild($$, drawShape);
 		} finally {
@@ -3099,6 +3150,7 @@ const canvasInternal = {
 					$$.canvasAxisRenderer.drawGridLines($$);
 				$$.canvasRenderer.drawSubchart($$, drawShape);
 				state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
+				state.hasAxis && $$.canvasAxisRenderer.drawSubYAxes($$);
 				$$.canvasRenderer.drawEmptyLabel($$);
 			} finally {
 				$$.canvasEngine.endFrame();

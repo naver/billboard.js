@@ -5,8 +5,8 @@
 import {$ARC, $AXIS} from "../../config/classes";
 import {asHalfPixel} from "../../module/util";
 
-type TranslateParam = "main" | "context" | "legend" | "x" | "y" | "y2" | "subX" | "arc" | "radar"
-	| "polar";
+type TranslateParam = "main" | "context" | "legend" | "x" | "y" | "y2" | "subX" | "subY" | "subY2"
+	| "arc" | "radar" | "polar";
 
 export default {
 	getTranslate(target: TranslateParam, index = 0): string {
@@ -42,6 +42,12 @@ export default {
 		} else if (target === "subX") {
 			x = 0;
 			y = isRotated ? 0 : state.height2;
+		} else if (target === "subY") {
+			x = 0;
+			y = isRotated ? state.height2 : 0;
+		} else if (target === "subY2") {
+			x = isRotated ? 0 : state.width2;
+			y = isRotated ? -1 : 0;
 		} else if (target === "arc") {
 			x = state.arcWidth / 2;
 			y = state.arcHeight / 2;
