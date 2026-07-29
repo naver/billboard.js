@@ -32,6 +32,45 @@ import {getScale} from "../internals/scale";
 import AxisRenderer from "./AxisRenderer";
 
 /**
+ * Get the corresponding main axis id for subchart axis ids.
+ * @param {string} id Axis id
+ * @returns {string} Base axis id
+ * @private
+ */
+function getBaseAxisId(id: string): string {
+	return id === "subX" ? "x" : (
+		id === "subY" ? "y" : (
+			id === "subY2" ? "y2" : id
+		)
+	);
+}
+
+/**
+ * Check whether the axis id belongs to subchart.
+ * @param {string} id Axis id
+ * @returns {boolean} Whether id is a subchart axis
+ * @private
+ */
+function isSubAxis(id: string): boolean {
+	return /^sub/.test(id);
+}
+
+/**
+ * Get tick option value for main/subchart axis.
+ * @param {object} config Chart config
+ * @param {string} id Axis id
+ * @param {string} key Tick option key
+ * @returns {boolean|number|string|Array|object|function|null|undefined} Tick option value
+ * @private
+ */
+function getAxisTickOption(config, id: string, key: string) {
+	const type = getBaseAxisId(id);
+	const subValue = config[`subchart_axis_${type}_tick_${key}`];
+
+	return isSubAxis(id) && subValue !== undefined ? subValue : config[`axis_${type}_tick_${key}`];
+}
+
+/**
  * Sample representative tick nodes to avoid N forced reflows in getMaxTickSize
  * @param {SVGTextElement[]} nodes All tick text nodes
  * @returns {SVGTextElement[]} Sampled subset: first, last, longest, and middle nodes
@@ -416,6 +455,8 @@ class Axis {
 
 	public x;
 	public subX;
+	public subY;
+	public subY2;
 	public y;
 	public y2;
 
@@ -430,7 +471,9 @@ class Axis {
 		x: "bottom",
 		y: "left",
 		y2: "right",
-		subX: "bottom"
+		subX: "bottom",
+		subY: "left",
+		subY2: "right"
 	};
 
 	constructor(owner) {
@@ -553,7 +596,9 @@ class Axis {
 			x: isRotated ? "left" : "bottom",
 			y: isRotated ? (yInner ? "top" : "bottom") : (yInner ? "right" : "left"),
 			y2: isRotated ? (y2Inner ? "bottom" : "top") : (y2Inner ? "left" : "right"),
-			subX: isRotated ? "left" : "bottom"
+			subX: isRotated ? "left" : "bottom",
+			subY: isRotated ? (yInner ? "top" : "bottom") : (yInner ? "right" : "left"),
+			subY2: isRotated ? (y2Inner ? "bottom" : "top") : (y2Inner ? "left" : "right")
 		};
 	}
 
@@ -653,9 +698,10 @@ class Axis {
 	 */
 	setAxis(id, scale, outerTick, noTransition): void {
 		const $$ = this.owner;
+		const type = getBaseAxisId(id);
 
-		if (id !== "subX") {
-			this.tick[id] = this.getTickValues(id);
+		if (!isSubAxis(id)) {
+			this.tick[type] = this.getTickValues(type);
 		}
 
 		// @ts-ignore
@@ -676,7 +722,7 @@ class Axis {
 		const $$ = this.owner;
 		const {config} = $$;
 		const isX = /^(x|subX)$/.test(id);
-		const type = isX ? "x" : id;
+		const type = getBaseAxisId(id);
 		const isCategory = isX && this.isCategorized();
 		const orient = this.orient[id];
 		const tickTextRotate = noTickTextRotate ? 0 : $$.getAxisTickRotate(type);
@@ -685,14 +731,16 @@ class Axis {
 		if (isX) {
 			tickFormat = (id === "subX") ? $$.format.subXAxisTick : $$.format.xAxisTick;
 		} else {
-			const fn = config[`axis_${id}_tick_format`];
+			const fn = isSubAxis(id) ?
+				config[`subchart_axis_${type}_tick_format`] || config[`axis_${type}_tick_format`] :
+				config[`axis_${type}_tick_format`];
 
 			if (isFunction(fn)) {
 				tickFormat = fn.bind($$.api);
 			}
 		}
 
-		let tickValues = this.tick[type];
+		let tickValues = isSubAxis(id) ? this.getTickValues(type, true) : this.tick[type];
 
 		const axisParams = mergeObj({
 			outerTick,
@@ -733,7 +781,8 @@ class Axis {
 		// Set tick
 		axis.tickFormat(
 			tickFormat || (
-				!isX && ($$.isStackNormalized() && $$.hasAxisGroupedData(id) && (x => `${x}%`))
+				!isX && ($$.isStackNormalized() && $$.hasAxisGroupedData(type) &&
+					(x => `${x}%`))
 			)
 		);
 
@@ -745,7 +794,7 @@ class Axis {
 			}
 		}
 
-		const tickCount = config[`axis_${type}_tick_count`];
+		const tickCount = getAxisTickOption(config, id, "count");
 
 		tickCount && axis.ticks(tickCount);
 
@@ -756,29 +805,40 @@ class Axis {
 		const $$ = this.owner;
 		const {config} = $$;
 		const fit = config.axis_x_tick_fit;
-		let count = config.axis_x_tick_count;
-		let values;
+		const generateValues = (countOption = config.axis_x_tick_count) => {
+			let count = countOption;
+			let values;
 
-		if (fit) {
-			values = $$.mapTargetsToUniqueXs(targets);
+			if (fit) {
+				values = $$.mapTargetsToUniqueXs(targets);
 
-			// if given count is greater than the value length, then limit the count.
-			if (this.isCategorized() && count > values.length) {
-				count = values.length;
+				// if given count is greater than the value length, then limit the count.
+				if (this.isCategorized() && count > values.length) {
+					count = values.length;
+				}
+
+				values = this.generateTickValues(
+					values,
+					count,
+					this.isTimeSeries()
+				);
 			}
 
-			values = this.generateTickValues(
-				values,
-				count,
-				this.isTimeSeries()
-			);
-		}
+			return values;
+		};
+		const values = generateValues();
 
 		if (axis) {
 			axis.tickValues(values);
 		} else if (this.x) {
+			const subTickValues = this.getTickValues("x", true);
+			const subTickCount = getAxisTickOption(config, "subX", "count");
+			const subValues = subTickValues ?? (
+				subTickCount !== config.axis_x_tick_count ? generateValues(subTickCount) : values
+			);
+
 			this.x.tickValues(values);
-			this.subX?.tickValues(values);
+			this.subX?.tickValues(subValues);
 		}
 
 		return values;
@@ -824,13 +884,15 @@ class Axis {
 			currFormat;
 	}
 
-	getTickValues(id: string) {
+	getTickValues(id: string, isSub = false) {
 		const $$ = this.owner;
-		const tickValues = $$.config[`axis_${id}_tick_values`];
+		const tickValues = isSub ?
+			getAxisTickOption($$.config, `sub${capitalize(id)}`, "values") :
+			$$.config[`axis_${id}_tick_values`];
+		const values = isFunction(tickValues) ? tickValues.call($$.api) : tickValues;
 		const axis = $$[`${id}Axis`];
 
-		return (isFunction(tickValues) ? tickValues.call($$.api) : tickValues) ||
-			(axis ? axis.tickValues() : undefined);
+		return isSub ? values ?? undefined : values || (axis ? axis.tickValues() : undefined);
 	}
 
 	getLabelOptionByAxisId(id: string) {
@@ -1442,10 +1504,17 @@ class Axis {
 		const $$ = this.owner;
 		const {$el: {axis}, $T} = $$;
 
-		const [axisX, axisY, axisY2, axisSubX] = ["x", "y", "y2", "subX"]
+		const [axisX, axisY, axisY2, axisSubX, axisSubY, axisSubY2] = [
+			"x",
+			"y",
+			"y2",
+			"subX",
+			"subY",
+			"subY2"
+		]
 			.map(v => $T(axis[v], withTransition));
 
-		return {axisX, axisY, axisY2, axisSubX};
+		return {axisX, axisY, axisY2, axisSubX, axisSubY, axisSubY2};
 	}
 
 	redraw(transitions, isHidden, isInit) {
@@ -1453,7 +1522,7 @@ class Axis {
 		const {config, state, $el} = $$;
 		const opacity = isHidden ? "0" : null;
 
-		["x", "y", "y2", "subX"].forEach(id => {
+		["x", "y", "y2", "subX", "subY", "subY2"].forEach(id => {
 			const axis = this[id];
 			const $axis = $el.axis[id];
 
@@ -1532,8 +1601,34 @@ class Axis {
 
 		// Update sub domain
 		if (wth.Y) {
-			scale.subY?.domain($$.getYDomain(targetsToShow, "y"));
-			scale.subY2?.domain($$.getYDomain(targetsToShow, "y2"));
+			const updateSubDomain = () => {
+				scale.subY?.domain($$.getYDomain(targetsToShow, "y"));
+				scale.subY2?.domain($$.getYDomain(targetsToShow, "y2"));
+
+				(["y", "y2"] as const).forEach(key => {
+					const subAxisId = key === "y2" ? "subY2" : "subY";
+					const axisScale = scale[subAxisId];
+					const axis = $$.axis[subAxisId];
+					const tickValues = this.getTickValues(key, true);
+					const tickCount = getAxisTickOption(config, subAxisId, "count");
+
+					if (!axisScale || !axis || tickValues || !tickCount) {
+						return;
+					}
+
+					const domain = axisScale.domain();
+
+					axis.tickValues(
+						this.generateTickValues(
+							domain,
+							domain.every(v => v === 0) ? 1 : tickCount,
+							this.isTimeSeriesY()
+						)
+					);
+				});
+			};
+
+			config.subchart_show ? $$.withSubchartTypeContext(updateSubDomain) : updateSubDomain();
 		}
 	}
 
@@ -1571,22 +1666,18 @@ class Axis {
 		const $$ = this.owner;
 		const {config, state: {clip, current}, $el} = $$;
 
-		["subX", "x", "y", "y2"].forEach(type => {
+		["subX", "x", "y", "y2", "subY", "subY2"].forEach(type => {
 			const axis = $el.axis[type];
 
-			// subchart x axis should be aligned with x axis culling
-			const id = type === "subX" ? "x" : type;
-
-			const cullingOptionPrefix = `axis_${id}_tick_culling`;
-			const toCull = config[cullingOptionPrefix];
+			const toCull = getAxisTickOption(config, type, "culling");
 
 			if (axis && toCull) {
 				const tickNodes = axis.selectAll(".tick");
 				const tickValues = sortValue(tickNodes.data(),
-					!config[`${cullingOptionPrefix}_reverse`]);
+					!getAxisTickOption(config, type, "culling_reverse"));
 				const tickSize = tickValues.length;
-				const cullingMax = config[`${cullingOptionPrefix}_max`];
-				const lines = config[`${cullingOptionPrefix}_lines`];
+				const cullingMax = getAxisTickOption(config, type, "culling_max");
+				const lines = getAxisTickOption(config, type, "culling_lines");
 				const cullTickLine = !lines || _hasOverlappedTickLineIntervals(
 					this[type],
 					tickValues,

@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {Axis} from "./axis.js";
+import {Axis, AxisTickValues} from "./axis.js";
 import {ChartTypes, d3Selection, DataItem, PrimitiveArray} from "./types.js";
 import {Chart} from "./chart.js";
 import {IArcData, IData, IDataPoint, IDataRow} from "../src/ChartInternal/data/IData.js";
@@ -777,6 +777,35 @@ export interface SubchartOptions {
 	 */
 	showHandle?: boolean;
 
+	/**
+	 * Set chart type for the subchart.
+	 * If this option is specified, the type will be applied to every data in the subchart.
+	 * This setting can be overwritten by subchart.types.
+	 */
+	type?: ChartTypes;
+
+	/**
+	 * Set chart type for each data in the subchart.
+	 * This setting overwrites subchart.type setting.
+	 */
+	types?: { [key: string]: ChartTypes };
+
+	brush?: {
+		/**
+		 * Enable subchart brush interaction.
+		 */
+		enabled?: boolean;
+	};
+
+	grid?: {
+		focus?: {
+			/**
+			 * Render x focus grid line as one continuous line across main chart and subchart when subchart brush is disabled.
+			 */
+			continuous?: boolean;
+		};
+	};
+
 	size?: {
 		/**
 		 * Change the height of the subchart.
@@ -791,6 +820,41 @@ export interface SubchartOptions {
 			 */
 			show?: boolean;
 			tick?: {
+				/**
+				 * The number of x axis ticks to show.
+				 */
+				count?: number;
+
+				/**
+				 * Set the x values of ticks manually.
+				 */
+				values?: AxisTickValues;
+
+				/**
+				 * Setting for culling ticks.
+				 */
+				culling?: boolean | {
+					/**
+					 * The number of tick texts will be adjusted to less than this value.
+					 */
+					max?: number;
+
+					/**
+					 * Control visibility of tick lines within culling option, along with tick text.
+					 */
+					lines?: boolean;
+
+					/**
+					 * Control culling start point to be reversed.
+					 */
+					reverse?: boolean;
+				};
+
+				/**
+				 * Show x axis outer tick.
+				 */
+				outer?: boolean;
+
 				/**
 				 * Use custom format for x axis ticks - see 'axis.x.tick.format' option for details.
 				 */
@@ -814,6 +878,120 @@ export interface SubchartOptions {
 						first?: boolean;
 						last?: boolean;
 					}
+				};
+			};
+		};
+		y?: {
+			/**
+			 * Show or hide y axis.
+			 */
+			show?: boolean;
+			tick?: {
+				/**
+				 * Set the number of y axis ticks.
+				 */
+				count?: number;
+
+				/**
+				 * Set y axis tick values manually.
+				 */
+				values?: AxisTickValues;
+
+				/**
+				 * Setting for culling ticks.
+				 */
+				culling?: boolean | {
+					/**
+					 * The number of tick texts will be adjusted to less than this value.
+					 */
+					max?: number;
+
+					/**
+					 * Control visibility of tick lines within culling option, along with tick text.
+					 */
+					lines?: boolean;
+
+					/**
+					 * Control culling start point to be reversed.
+					 */
+					reverse?: boolean;
+				};
+
+				/**
+				 * Show y axis outer tick.
+				 */
+				outer?: boolean;
+
+				/**
+				 * Use custom format for y axis ticks - see 'axis.y.tick.format' option for details.
+				 */
+				format?: (this: Chart, x: number | Date) => string | number;
+				/**
+				 * Show or hide y axis tick line.
+				 */
+				show?: boolean;
+				text?: {
+					/**
+					 * Show or hide y axis tick text.
+					 */
+					show?: boolean;
+				};
+			};
+		};
+		y2?: {
+			/**
+			 * Show or hide y2 axis.
+			 */
+			show?: boolean;
+			tick?: {
+				/**
+				 * Set the number of y2 axis ticks.
+				 */
+				count?: number;
+
+				/**
+				 * Set y2 axis tick values manually.
+				 */
+				values?: AxisTickValues;
+
+				/**
+				 * Setting for culling ticks.
+				 */
+				culling?: boolean | {
+					/**
+					 * The number of tick texts will be adjusted to less than this value.
+					 */
+					max?: number;
+
+					/**
+					 * Control visibility of tick lines within culling option, along with tick text.
+					 */
+					lines?: boolean;
+
+					/**
+					 * Control culling start point to be reversed.
+					 */
+					reverse?: boolean;
+				};
+
+				/**
+				 * Show y2 axis outer tick.
+				 */
+				outer?: boolean;
+
+				/**
+				 * Use custom format for y2 axis ticks - see 'axis.y2.tick.format' option for details.
+				 */
+				format?: (this: Chart, x: number | Date) => string | number;
+				/**
+				 * Show or hide y2 axis tick line.
+				 */
+				show?: boolean;
+				text?: {
+					/**
+					 * Show or hide y2 axis tick text.
+					 */
+					show?: boolean;
 				};
 			};
 		};

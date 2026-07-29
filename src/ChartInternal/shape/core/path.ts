@@ -8,6 +8,36 @@ type PathContext = CanvasRenderingContext2D | null | undefined;
 type PathResult = string | void;
 
 /**
+ * Get path y value with subchart candlestick projection.
+ * @param {object} $$ ChartInternal instance
+ * @param {object} d Data row
+ * @param {boolean} isSub Whether to use subchart scales
+ * @returns {number|Array|null|undefined} Path y value
+ * @private
+ */
+function getPathValue($$, d, isSub?: boolean) {
+	const value = $$.getSubchartCandlestickShapeValue?.(d, isSub);
+
+	return value === undefined ? $$.getBaseValue(d) : value;
+}
+
+/**
+ * Get drawable values with subchart candlestick projection.
+ * @param {object} $$ ChartInternal instance
+ * @param {Array} values Drawable values
+ * @param {boolean} isSub Whether to use subchart scales
+ * @returns {Array} Projected values
+ * @private
+ */
+function getProjectedValues($$, values, isSub?: boolean): any[] {
+	return values.map(d => {
+		const value = $$.getSubchartCandlestickShapeValue?.(d, isSub);
+
+		return value === undefined ? d : {...d, value};
+	});
+}
+
+/**
  * Get values with step handling for line-like paths.
  * @param {object} $$ ChartInternal instance
  * @param {object} d Data target (needs `.id` for per-series step type detection)
@@ -43,7 +73,9 @@ export function generateDrawLinePath(
 
 	const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 	const yValue = (d, i) => (
-		$$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)($$.getBaseValue(d))
+		$$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)(
+			getPathValue($$, d, isSub)
+		)
 	);
 
 	let line = d3Line<any>();
@@ -52,7 +84,7 @@ export function generateDrawLinePath(
 	context && (line = line.context(context));
 
 	if (!lineConnectNull) {
-		line = line.defined(d => $$.getBaseValue(d) !== null);
+		line = line.defined(d => getPathValue($$, d, isSub) !== null);
 	}
 
 	const x = isSub ? scale.subX : scale.x;
@@ -69,6 +101,8 @@ export function generateDrawLinePath(
 			const regions = config.data_regions[d.id];
 
 			if (regions && !context && $$.lineWithRegions) {
+				values = getProjectedValues($$, values, isSub);
+
 				if ($$.isAreaRangeType(d)) {
 					values = values.map(dv => ({...dv, value: $$.getRangedData(dv, "mid")}));
 				}
@@ -84,7 +118,7 @@ export function generateDrawLinePath(
 		} else {
 			if (values[0]) {
 				x0 = x(values[0].x);
-				y0 = y(values[0].value);
+				y0 = y(getPathValue($$, values[0], isSub));
 			}
 
 			path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
@@ -118,10 +152,10 @@ export function generateDrawAreaPath(
 
 	const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 	const value0 = (d, i) => ($$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)(
-		$$.isAreaRangeType(d) ? $$.getRangedData(d, "high") : $$.getShapeYMin(d.id)
+		$$.isAreaRangeType(d) ? $$.getRangedData(d, "high") : $$.getShapeYMin(d.id, isSub)
 	));
 	const value1 = (d, i) => ($$.isGrouped(d.id) ? getPoints(d, i)[1][1] : yScale(d.id, isSub)(
-		$$.isAreaRangeType(d) ? $$.getRangedData(d, "low") : d.value
+		$$.isAreaRangeType(d) ? $$.getRangedData(d, "low") : getPathValue($$, d, isSub)
 	));
 
 	return d => {
@@ -139,14 +173,16 @@ export function generateDrawAreaPath(
 					.x1(value1) :
 				area.x(xValue)
 					.y0(config.area_above ? 0 : (
-						config.area_below ? $$.state.height : value0
+						config.area_below ? (isSub ? $$.state.height2 : $$.state.height) : value0
 					))
 					.y1(value1);
 			context && (area = area.context(context));
 
 			if (!lineConnectNull) {
-				area = area.defined(d => $$.getBaseValue(d) !== null);
+				area = area.defined(d => getPathValue($$, d, isSub) !== null);
 			}
+
+			values = getProjectedValues($$, values, isSub);
 
 			if ($$.isStepType(d)) {
 				values = $$.convertValuesToStep(values);
@@ -155,8 +191,8 @@ export function generateDrawAreaPath(
 			path = area.curve($$.getCurve(d))(values);
 		} else {
 			if (values[0]) {
-				x0 = $$.scale.x(values[0].x);
-				y0 = $$.getYScaleById(d.id)(values[0].value);
+				x0 = (isSub ? $$.scale.subX : $$.scale.x)(values[0].x);
+				y0 = $$.getYScaleById(d.id, isSub)(getPathValue($$, values[0], isSub));
 			}
 
 			path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;

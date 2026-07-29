@@ -6,6 +6,7 @@
 /* global describe, afterEach, beforeAll, it, expect */
 import {afterEach, beforeAll, describe, expect, it, vi} from "vitest";
 import bb, {
+	area,
 	bar,
 	canvas,
 	category,
@@ -31,6 +32,7 @@ describe("API canvas", () => {
 	];
 
 	beforeAll(() => {
+		area();
 		canvas();
 		category();
 		exportApi();
@@ -551,5 +553,224 @@ describe("API canvas", () => {
 
 		const dataUrl = chart.export();
 		expect(/^data:image\/png;base64,/.test(dataUrl)).to.be.true;
+	});
+
+	it("supports subchart type option in canvas mode", () => {
+		generateWithOptions({
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400],
+					["data2", 50, 20, 10, 40]
+				],
+				type: line()
+			},
+			subchart: {
+				show: true,
+				type: bar(),
+				types: {
+					data2: line()
+				}
+			}
+		});
+
+		const $$ = chart.internal;
+
+		expect($$.getSubchartTargetType("data1")).to.be.equal("bar");
+		expect($$.getSubchartTargetType("data2")).to.be.equal("line");
+		expect(chart.config("data.type")).to.be.equal("line");
+		expect(() => $$.canvasRenderer.drawSubchart($$, $$.getDrawShape())).to.not.throw();
+		expect(chart.config("data.type")).to.be.equal("line");
+	});
+
+	it("renders subchart area from the subchart bottom in canvas mode", () => {
+		generateWithOptions({
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400],
+					["data2", 50, 20, 10, 40]
+				],
+				type: line()
+			},
+			subchart: {
+				show: true,
+				type: area()
+			}
+		});
+
+		const lineTos: Array<[number, number]> = [];
+		const lineTo = vi.spyOn(CanvasRenderingContext2D.prototype, "lineTo")
+			.mockImplementation(function(x, y) {
+				lineTos.push([x, y]);
+			});
+
+		chart.internal.canvasRenderer.drawSubchart(chart.internal, chart.internal.getDrawShape());
+
+		const yValues = lineTos.map(([, y]) => y).filter(Number.isFinite);
+
+		expect(Math.max(...yValues)).to.be.closeTo(chart.internal.state.height2, 0.5);
+
+		lineTo.mockRestore();
+	});
+
+	it("supports subchart y/y2 axes in canvas mode", () => {
+		generateWithOptions({
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400],
+					["data2", 130, 100, 140, 160]
+				],
+				axes: {
+					data2: "y2"
+				},
+				type: line()
+			},
+			subchart: {
+				show: true,
+				axis: {
+					y: {
+						show: true,
+						tick: {
+							count: 3
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							count: 4
+						}
+					}
+				}
+			}
+		});
+
+		const $$ = chart.internal;
+		const drawSubYAxes = vi.spyOn($$.canvasAxisRenderer, "drawSubYAxes");
+		const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText");
+
+		expect($$.scale.subY).to.not.be.undefined;
+		expect($$.scale.subY2).to.not.be.undefined;
+		expect(() => $$.renderCanvasFrame()).to.not.throw();
+		expect(drawSubYAxes).toHaveBeenCalled();
+
+		fillText.mockClear();
+		$$.canvasAxisRenderer.drawSubYAxes($$);
+
+		expect(fillText).toHaveBeenCalledTimes(7);
+	});
+
+	it("renders subchart x axis line once with the main axis style in canvas mode", () => {
+		const strokes: Array<{
+			alpha: number,
+			dash: number[],
+			lineWidth: number,
+			segments: Array<{x1: number, y1: number, x2: number, y2: number}>
+		}> = [];
+		let currentPoint: [number, number] | null = null;
+		let currentSegments: Array<{x1: number, y1: number, x2: number, y2: number}> = [];
+		const crisp = (value: number, lineWidth: number) => (
+			lineWidth % 2 ? Math.round(value) + 0.5 : Math.round(value)
+		);
+		const beginPath = vi.spyOn(CanvasRenderingContext2D.prototype, "beginPath")
+			.mockImplementation(function() {
+				currentPoint = null;
+				currentSegments = [];
+			});
+		const moveTo = vi.spyOn(CanvasRenderingContext2D.prototype, "moveTo")
+			.mockImplementation(function(x, y) {
+				currentPoint = [x, y];
+			});
+		const lineTo = vi.spyOn(CanvasRenderingContext2D.prototype, "lineTo")
+			.mockImplementation(function(x, y) {
+				if (currentPoint) {
+					currentSegments.push({
+						x1: currentPoint[0],
+						y1: currentPoint[1],
+						x2: x,
+						y2: y
+					});
+				}
+
+				currentPoint = [x, y];
+			});
+		const stroke = vi.spyOn(CanvasRenderingContext2D.prototype, "stroke")
+			.mockImplementation(function(this: CanvasRenderingContext2D) {
+				strokes.push({
+					alpha: this.globalAlpha,
+					dash: this.getLineDash(),
+					lineWidth: this.lineWidth,
+					segments: currentSegments.slice()
+				});
+			});
+
+		generateWithOptions({
+			data: {
+				columns,
+				type: bar()
+			},
+			subchart: {
+				show: true
+			}
+		});
+
+		const {margin2, width2, height2} = chart.internal.state;
+		const axisStyle = chart.internal.canvasTheme.style.axis;
+		const y = crisp(margin2.top + height2, axisStyle.lineWidth);
+		const subXAxisStrokes = strokes.filter(({segments}) =>
+			segments.some(({x1, y1, x2, y2}) =>
+				Math.abs(x1 - margin2.left) < 0.5 &&
+				Math.abs(x2 - (margin2.left + width2)) < 0.5 &&
+				Math.abs(y1 - y) < 0.5 &&
+				Math.abs(y2 - y) < 0.5
+			)
+		);
+
+		expect(subXAxisStrokes).to.have.length(1);
+		expect(subXAxisStrokes[0].lineWidth).to.be.equal(axisStyle.lineWidth);
+		expect(subXAxisStrokes[0].dash).to.have.length(0);
+		expect(subXAxisStrokes[0].alpha).to.be.equal(1);
+
+		stroke.mockRestore();
+		lineTo.mockRestore();
+		moveTo.mockRestore();
+		beginPath.mockRestore();
+	});
+
+	it("supports disabling subchart brush interaction in canvas mode", () => {
+		generateWithOptions({
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400],
+					["data2", 50, 20, 10, 40]
+				],
+				type: line()
+			},
+			subchart: {
+				show: true,
+				brush: {
+					enabled: false
+				}
+			}
+		});
+
+		const $$ = chart.internal;
+		const focusData = [$$.data.targets[0].values[1]];
+		const drawSubchartFocus = vi.spyOn($$.canvasRenderer, "drawSubchartFocus");
+		const canvas = chart.$.canvas.node();
+		const rect = canvas.getBoundingClientRect();
+
+		expect($$.startCanvasSubchartBrush(new MouseEvent("mousedown"))).to.be.false;
+		expect($$.updateCanvasSubchartCursor(new MouseEvent("mousemove"))).to.be.false;
+		expect(() => $$.canvasRenderer.drawSubchartBrush($$)).to.not.throw();
+
+		$$.renderCanvasFocus(focusData);
+
+		expect(drawSubchartFocus).toHaveBeenCalledWith($$, focusData);
+
+		canvas.dispatchEvent(new MouseEvent("mousemove", {
+			clientX: rect.left + $$.state.margin2.left + $$.scale.subX(1),
+			clientY: rect.top + $$.state.margin2.top + ($$.state.height2 / 2)
+		}));
+
+		expect($$.state.canvasFocusKey).to.contain("data1:1");
 	});
 });

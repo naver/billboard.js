@@ -10,6 +10,32 @@ import {AXIS_TICK_LENGTH, AXIS_TICK_PADDING, AXIS_TICK_SIZE} from "../../config/
 import {isArray, isFunction, isNumber, isString, toArray} from "../../module/util";
 import Helper from "./AxisRendererHelper";
 
+/**
+ * Get the corresponding main axis id for subchart axis ids.
+ * @param {string} id Axis id
+ * @returns {string} Base axis id
+ * @private
+ */
+function getBaseAxisId(id: string): string {
+	return id === "subX" ? "x" : (
+		id === "subY" ? "y" : (
+			id === "subY2" ? "y2" : id
+		)
+	);
+}
+
+/**
+ * Get config option prefix for an axis id.
+ * @param {string} id Axis id
+ * @returns {string} Option prefix
+ * @private
+ */
+function getAxisOptionPrefix(id: string): string {
+	const type = getBaseAxisId(id);
+
+	return /^sub/.test(id) ? `subchart_axis_${type}` : `axis_${type}`;
+}
+
 export default class AxisRenderer {
 	private helper;
 	private config;
@@ -21,9 +47,10 @@ export default class AxisRenderer {
 		const {config, params} = this;
 		const {config: chartConfig, id, owner} = params;
 		const isX = /^(x|subX)$/.test(id);
-		const type = id === "subX" ? "x" : id;
-		const customTickFormat = id === "subX" ?
-			chartConfig.subchart_axis_x_tick_format || chartConfig.axis_x_tick_format :
+		const type = getBaseAxisId(id);
+		const customTickFormat = /^sub/.test(id) ?
+			chartConfig[`subchart_axis_${type}_tick_format`] ||
+			chartConfig[`axis_${type}_tick_format`] :
 			chartConfig[`axis_${type}_tick_format`];
 		const categoryAutoWrap = params.tickMultiline && params.isCategory && !isLeftRight &&
 			!(params.tickWidth > 0);
@@ -122,12 +149,13 @@ export default class AxisRenderer {
 
 		// // get the axis' tick position configuration
 		const id = params.id;
-		const tickTextPos = id && /^(x|y|y2)$/.test(id) ?
-			params.config[`axis_${id}_tick_text_position`] :
+		const type = getBaseAxisId(id);
+		const tickTextPos = type && /^(x|y|y2)$/.test(type) ?
+			params.config[`axis_${type}_tick_text_position`] :
 			{x: 0, y: 0};
 
 		// tick visiblity
-		const prefix = id === "subX" ? `subchart_axis_x` : `axis_${id}`;
+		const prefix = getAxisOptionPrefix(id);
 		const axisShow = params.config[`${prefix}_show`];
 		const tickShow = {
 			tick: axisShow ? params.config[`${prefix}_tick_show`] : false,
@@ -423,7 +451,7 @@ export default class AxisRenderer {
 			}
 		} = this.params.owner;
 
-		const tickLineInner = this.params.config[`axis_${axisId}_tick_inner`];
+		const tickLineInner = this.params.config[`axis_${getBaseAxisId(axisId)}_tick_inner`];
 
 		switch (orient) {
 			case "bottom":

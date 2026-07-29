@@ -3914,6 +3914,215 @@ var demos = {
 		}
 	},
 
+	SubChart: {
+		BasicSubChart: {
+			description: "Drag over the subchart area to zoom the main chart.<br>When zoomed, try dragging the zoom selection element or expand it by dragging each edge (left/right)",
+			options: {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250]
+					],
+					type: "line"
+				},
+				subchart: {
+					show: "subchart()",
+					showHandle: true
+				}
+			}
+		},
+		SubchartType: {
+			description: "Use a different chart type in the subchart overview.",
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "line"
+				},
+				subchart: {
+					show: "subchart()",
+					type: "bar",
+					showHandle: true
+				}
+			}
+		},
+		SubchartTypes: {
+			description: "Specify chart types per data series in the subchart.",
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "line"
+				},
+				subchart: {
+					show: "subchart()",
+					type: "bar",
+					types: {
+						data2: "area"
+					},
+					showHandle: true
+				}
+			}
+		},
+		SubchartAxis: {
+			description: "Render y/y2 axes and tick options in the subchart.",
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					axes: {
+						data2: "y2"
+					},
+					type: "line"
+				},
+				subchart: {
+					show: "subchart()",
+					axis: {
+						y: {
+							show: true,
+							tick: {
+								count: 3
+							}
+						},
+						y2: {
+							show: true,
+							tick: {
+								count: 3
+							}
+						}
+					}
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				}
+			}
+		},
+		ContinuousFocusGrid: {
+			description: "Disable brush interaction and render one continuous x focus grid line across main chart and subchart.",
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "line"
+				},
+				subchart: {
+					show: "subchart()",
+					brush: {
+						enabled: false
+					},
+					grid: {
+						focus: {
+							continuous: true
+						}
+					}
+				}
+			}
+		},
+		CandlestickSubchartBar: {
+			description: "Render the main chart as candlestick and the subchart overview as zero-based body value bars.",
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05", "2024-01-06", "2024-01-07", "2024-01-08", "2024-01-09", "2024-01-10", "2024-01-11", "2024-01-12", "2024-01-13", "2024-01-14", "2024-01-15", "2024-01-16", "2024-01-17", "2024-01-18", "2024-01-19", "2024-01-20", "2024-01-21", "2024-01-22", "2024-01-23", "2024-01-24", "2024-01-25", "2024-01-26", "2024-01-27", "2024-01-28", "2024-01-29", "2024-01-30", "2024-01-31", "2024-02-01", "2024-02-02", "2024-02-03", "2024-02-04", "2024-02-05", "2024-02-06", "2024-02-07", "2024-02-08", "2024-02-09"],
+						["data1",
+							// open, high, low, close
+							[1327, 1369, 1289, 1348],
+							[1348, 1371, 1314, 1320],
+							[1320, 1412, 1314, 1394],
+							[1394, 1458, 1393, 1453],
+							[1453, 1501, 1448, 1500],
+							[1500, 1510, 1492, 1496],
+							[1496, 1496, 1448, 1448],
+							[1448, 1490, 1433, 1490],
+							[1490, 1544, 1490, 1537],
+							[1537, 1563, 1534, 1544],
+							[1544, 1550, 1511, 1525],
+							[1525, 1609, 1517, 1604],
+							[1604, 1614, 1585, 1592],
+							[1592, 1632, 1586, 1620],
+							[1620, 1633, 1609, 1622],
+							[1622, 1697, 1620, 1687],
+							[1687, 1691, 1624, 1648],
+							[1648, 1689, 1640, 1671],
+							[1671, 1702, 1671, 1695],
+							[1695, 1727, 1689, 1724],
+							[1724, 1733, 1691, 1696],
+							[1696, 1733, 1696, 1731],
+							[1731, 1756, 1716, 1748],
+							[1748, 1769, 1734, 1762],
+							[1762, 1792, 1752, 1778],
+							[1778, 1783, 1763, 1769],
+							[1769, 1791, 1740, 1755],
+							[1755, 1755, 1711, 1725],
+							[1725, 1739, 1683, 1701],
+							[1701, 1731, 1694, 1730],
+							[1730, 1739, 1703, 1715],
+							[1715, 1745, 1710, 1731],
+							[1731, 1732, 1643, 1643],
+							[1643, 1662, 1608, 1615],
+							[1615, 1667, 1615, 1665],
+							[1665, 1689, 1663, 1671],
+							[1671, 1671, 1587, 1588],
+							[1588, 1599, 1521, 1533],
+							[1533, 1554, 1476, 1490],
+							[1490, 1494, 1432, 1443]
+						]
+					],
+					type: "candlestick",
+					colors: {
+						data1: "green"
+					}
+				},
+				candlestick: {
+					color: {
+						down: "red"
+					},
+					width: {
+						ratio: 0.6
+					}
+				},
+				subchart: {
+					show: "subchart()",
+					type: "bar",
+					brush: {
+						enabled: false
+					},
+					grid: {
+						focus: {
+							continuous: true
+						}
+					},
+					axis: {
+						y: {
+							show: true,
+							tick: {
+								count: 3
+							}
+						}
+					}
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d"
+						}
+					}
+				}
+			}
+		}
+	},
+
 	Interaction: {
 		PreventScrollOnTouch: {
 			options: {
@@ -3932,21 +4141,6 @@ var demos = {
 							preventDefault: true
 						}
 					}
-				}
-			}
-		},
-		SubChart: {
-			description: "Drag over the subchart area to zoom the main chart.<br>When zoomed, try dragging the zoom selection element or expand it by dragging each edge (left/right)",
-			options: {
-				data: {
-					columns: [
-						["sample", 30, 200, 100, 400, 150, 250]
-					],
-					type: "line"
-				},
-				subchart: {
-					show: "subchart()",
-					showHandle: true
 				}
 			}
 		},

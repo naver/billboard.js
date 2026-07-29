@@ -36,7 +36,7 @@ export default {
 		const yScale = $$.getYScaleById.bind($$);
 
 		return (d, i) => {
-			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
+			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id, isSub));
 			const offset = shapeOffset(d, i) || y0; // offset is for stacked bar chart
 			const width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
 			const value = $$.getCandlestickData(d);
