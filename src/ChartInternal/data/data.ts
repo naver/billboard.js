@@ -4,6 +4,7 @@
  */
 import {select as d3Select} from "d3-selection";
 import {$BAR, $CANDLESTICK, $COMMON} from "../../config/classes";
+import {TYPE} from "../../config/const";
 import {KEY} from "../../module/Cache";
 import {
 	findIndex,
@@ -1458,7 +1459,9 @@ export default {
 		const $$ = this;
 		const {value} = d;
 
-		return $$.isBarType(d) && isArray(value) && value.length >= 2 &&
+		return $$.isBarType(d) &&
+			!$$.isSubchartSourceTypeOf?.(d, TYPE.CANDLESTICK) &&
+			isArray(value) && value.length >= 2 &&
 			value.every(isNumber);
 	},
 

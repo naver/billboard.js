@@ -390,6 +390,7 @@ export default {
 		if (isTooltipGrouped) {
 			$$.showTooltip(selectedData, context);
 			$$.showGridFocus?.(selectedData);
+			$$.showSubchartGridFocus?.(selectedData);
 
 			if (!isSelectionEnabled || isSelectionGrouped) {
 				return;
@@ -424,6 +425,7 @@ export default {
 				if (!isTooltipGrouped) {
 					$$.showTooltip(d, context);
 					$$.showGridFocus?.(d);
+					$$.showSubchartGridFocus?.(d);
 					$$.unexpandCircles?.();
 
 					selected.each(d => $$.setExpand(index, d.id));
@@ -458,6 +460,7 @@ export default {
 
 				$$.showTooltip([closest], context);
 				$$.showGridFocus?.([closest]);
+				$$.showSubchartGridFocus?.([closest]);
 				$$.unexpandCircles?.();
 
 				$$.setExpand(index, closest.id, true);
@@ -470,6 +473,7 @@ export default {
 				}
 			} else if (config.interaction_onout) {
 				$$.hideGridFocus?.();
+				$$.hideSubchartGridFocus?.();
 				$$.hideTooltip();
 
 				!isSelectionGrouped && $$.setExpand(index);
@@ -522,6 +526,7 @@ export default {
 
 		// Show xgrid focus line (optional module — grid resolver)
 		$$.showGridFocus?.(selectedData);
+		$$.showSubchartGridFocus?.(selectedData);
 
 		const dist = $$.dist(closest, mouse);
 
@@ -560,6 +565,7 @@ export default {
 
 		$$.$el.eventRect?.style("cursor", null);
 		$$.hideGridFocus?.();
+		$$.hideSubchartGridFocus?.();
 
 		if (tooltip) {
 			$$.hideTooltip();

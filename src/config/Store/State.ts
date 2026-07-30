@@ -62,6 +62,7 @@ export default class State {
 
 			// Zoom/subchart domain (different from current.domain which is for rendering)
 			domain: <number[] | undefined>undefined,
+			subchartSourceTypes: <Record<string, string> | undefined>undefined,
 
 			current: {
 				// current domain value. Assigned when is zoom is called

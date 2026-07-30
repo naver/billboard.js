@@ -391,6 +391,28 @@ function getDefinedKeys<T extends Record<string, any>>(values: T): Array<keyof T
 }
 
 /**
+ * Copy the defined entries of an object into a target of the same shape.
+ * @param {object} target Object to copy into
+ * @param {object} source Object to copy from
+ * @param {Set} skip Keys to leave untouched
+ * @returns {object} The target object
+ * @private
+ */
+function assignDefined<T extends Record<string, any>>(
+	target: T,
+	source: T,
+	skip?: Set<keyof T>
+): T {
+	getDefinedKeys(source).forEach(<K extends keyof T>(key: K) => {
+		if (!skip?.has(key)) {
+			target[key] = source[key];
+		}
+	});
+
+	return target;
+}
+
+/**
  * Check whether a selector is simple enough for virtual optional grid line matching.
  * @param {string} selector Normalized SVG selector
  * @returns {boolean} Whether selector can be matched
@@ -415,7 +437,8 @@ function isSimpleGridLineSelector(selector: string): boolean {
 function getGridLineSelectorTarget(
 	selector: string
 ): CanvasGridLineSelectorTarget | null {
-	const target = selector.split(" ").at(-1);
+	const tokens = selector.split(" ");
+	const target = tokens[tokens.length - 1];
 
 	return target === "line" || target === "text" ? target : null;
 }
@@ -452,10 +475,7 @@ function getGridLineSelectorStyle(
 			dashArray: readDashArrayValue(style)
 		};
 
-	return getDefinedKeys(values).reduce((acc, key) => {
-		acc[key] = values[key];
-		return acc;
-	}, {} as CanvasGridLineThemeStyle);
+	return assignDefined({} as CanvasGridLineThemeStyle, values);
 }
 
 /**
@@ -519,8 +539,8 @@ function matchesGridLineSelector(
 		axisLineClass,
 		...customClasses
 	]);
-	const selectorClasses = Array.from(selector.matchAll(/\.([A-Za-z_-][\w-]*)/g))
-		.map(match => match[1]);
+	const selectorClasses = (selector.match(/\.[A-Za-z_-][\w-]*/g) || [])
+		.map(match => match.slice(1));
 
 	return !!selectorClasses.length &&
 		selectorClasses.every(cls => availableClasses.has(cls)) &&
@@ -1350,11 +1370,7 @@ export default class CanvasTheme {
 				continue;
 			}
 
-			for (const key of getDefinedKeys(override.style)) {
-				if (!this.directGridOverrideKeys.has(key)) {
-					style[key] = override.style[key];
-				}
-			}
+			assignDefined(style, override.style, this.directGridOverrideKeys);
 		}
 
 		return getDefinedKeys(style).length ? style : undefined;

@@ -37,6 +37,110 @@ export default {
 		return !!(type && Object.values(TYPE).indexOf(type) > -1);
 	},
 
+	/**
+	 * Get the chart type to use for the subchart target.
+	 * subchart.types > subchart.type > data.types > data.type > line
+	 * @param {object|string} d Target data or id
+	 * @returns {string}
+	 * @private
+	 */
+	getSubchartTargetType(d): string {
+		const $$ = this;
+		const {config} = $$;
+		const id = isString(d) ? d : d?.id;
+		const subchartTypes = config.subchart_types || {};
+		const subchartType = config.subchart_type;
+		const dataTypes = config.data_types || {};
+		const targetSubchartType = id && subchartTypes[id];
+
+		if (targetSubchartType && $$.isValidChartType(targetSubchartType)) {
+			return targetSubchartType;
+		} else if (subchartType && $$.isValidChartType(subchartType)) {
+			return subchartType;
+		}
+
+		return (id && dataTypes[id]) || config.data_type || TYPE.LINE;
+	},
+
+	/**
+	 * Get the regular chart type configured for the target.
+	 * @param {object|string} d Target data or id
+	 * @returns {string}
+	 * @private
+	 */
+	getTargetType(d): string {
+		const {config} = this;
+		const id = isString(d) ? d : d?.id;
+
+		return (id && config.data_types?.[id]) || config.data_type || TYPE.LINE;
+	},
+
+	/**
+	 * Get the target's original chart type while subchart.type context is active.
+	 * @param {object|string} d Target data or id
+	 * @returns {string}
+	 * @private
+	 */
+	getSubchartSourceTargetType(d): string {
+		const {state} = this;
+		const id = isString(d) ? d : d?.id;
+		const sourceTypes = state.subchartSourceTypes;
+
+		return (id && sourceTypes?.[id]) || this.getTargetType(d);
+	},
+
+	/**
+	 * Check whether a target had the given source type before subchart.type remapping.
+	 * @param {object|string} d Target data or id
+	 * @param {string|Array} type chart type
+	 * @returns {boolean}
+	 * @private
+	 */
+	isSubchartSourceTypeOf(d, type): boolean {
+		const sourceType = this.getSubchartSourceTargetType(d);
+
+		return isArray(type) ? type.indexOf(sourceType) >= 0 : sourceType === type;
+	},
+
+	/**
+	 * Run a callback while regular type helpers resolve using subchart.type/types.
+	 * @param {function(): unknown} callback Callback to run
+	 * @returns {unknown} Callback return value
+	 * @private
+	 */
+	withSubchartTypeContext(callback: () => unknown) {
+		const $$ = this;
+		const {config, data, state} = $$;
+		const dataType = config.data_type;
+		const dataTypes = config.data_types;
+		const currentTypes = state.current.types;
+		const sourceTypes = state.subchartSourceTypes;
+		const subchartTypes = {};
+		const subchartSourceTypes = {};
+		const subchartType = config.subchart_type;
+
+		$$.mapToIds(data.targets).forEach(id => {
+			subchartSourceTypes[id] = $$.getTargetType(id);
+			subchartTypes[id] = $$.getSubchartTargetType(id);
+		});
+
+		config.data_type = subchartType && $$.isValidChartType(subchartType) ?
+			subchartType :
+			dataType;
+		config.data_types = subchartTypes;
+		state.current.types = [];
+		state.subchartSourceTypes = subchartSourceTypes;
+
+		try {
+			return callback();
+		} finally {
+			config.data_type = dataType;
+			config.data_types = dataTypes;
+			state.current.types = currentTypes;
+			state.subchartSourceTypes = sourceTypes;
+		}
+	},
+
 	setTargetType(targetIds: string[], type: string): void {
 		const $$ = this;
 		const {config, state: {withoutFadeIn}} = $$;
@@ -131,7 +235,7 @@ export default {
 	 */
 	isTypeOf(d, type): boolean {
 		const id = isString(d) ? d : d.id;
-		const dataType = this.config && (this.config.data_types?.[id] || this.config.data_type);
+		const dataType = this.config && this.getTargetType(id);
 
 		return isArray(type) ? type.indexOf(dataType) >= 0 : dataType === type;
 	},

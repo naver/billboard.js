@@ -10,6 +10,7 @@ import {
 	getAdditionalAxisScale,
 	getAdditionalAxisTickFormat,
 	getAdditionalAxisTickValues,
+	getSubXTickLineValues,
 	getSubXTickValues,
 	getXScale,
 	getXTickLinePosition,
@@ -34,7 +35,14 @@ type AdditionalAxisOptions = {
 	ticks: AxisTickValue[],
 	format: AxisTickFormat,
 	index: number,
-	outerTick: boolean
+	outerTick: boolean,
+	margin?: {left: number, top: number},
+	width?: number,
+	height?: number,
+	prefix?: string,
+	tickShow?: boolean,
+	tickTextShow?: boolean,
+	tickTextPosition?: {x: number, y: number}
 };
 
 const X_AXIS_TICK_TEXT_HORIZONTAL_CLIP_PADDING = 20;
@@ -59,6 +67,26 @@ function getXTickTextDirection(isRotated: boolean): number {
  */
 function getYTickTextDirection(isRotated: boolean, isY2: boolean): number {
 	return isRotated ? (isY2 ? -1 : 1) : (isY2 ? 1 : -1);
+}
+
+/**
+ * Get tick formatter for the canvas subchart y/y2 axis.
+ * @param {object} $$ ChartInternal context
+ * @param {string} id Axis id
+ * @returns {function} Tick formatter
+ * @private
+ */
+function getSubYTickFormat($$, id: YAxisId): AxisTickFormat {
+	const subAxisId = id === "y2" ? "subY2" : "subY";
+	const axisFormat = $$.axis?.[subAxisId]?.tickFormat?.();
+	const configFormat = $$.config[`subchart_axis_${id}_tick_format`] ||
+		$$.config[`axis_${id}_tick_format`];
+
+	if (axisFormat) {
+		return axisFormat;
+	}
+
+	return typeof configFormat === "function" ? configFormat.bind($$.api) : (v => v);
 }
 
 /**
@@ -788,6 +816,8 @@ export default class CanvasAxisRenderer {
 		const rangeStart = isRotated ? y1 : x1;
 		const rangeEnd = isRotated ? y2 : x2;
 		const ticks = getSubXTickValues($$);
+		const lineTicks = getSubXTickLineValues($$, ticks, axis.tickWidth);
+		const outerTick = config.subchart_axis_x_tick_outer ?? config.axis_x_tick_outer;
 		const tickDirection = isRotated ?
 			(config.axis_x_tick_inner ? 1 : -1) :
 			(config.axis_x_tick_inner ? -1 : 1);
@@ -807,8 +837,10 @@ export default class CanvasAxisRenderer {
 				y: margin2.top
 			},
 			() => {
+				ctx.globalAlpha = 1;
 				ctx.strokeStyle = axis.lineColor;
 				ctx.lineWidth = axis.lineWidth;
+				ctx.setLineDash([]);
 
 				painter.strokePath(() => {
 					if (isRotated) {
@@ -817,7 +849,7 @@ export default class CanvasAxisRenderer {
 						painter.traceLine(x1, y, x2, y);
 					}
 
-					if (config.axis_x_tick_outer) {
+					if (outerTick) {
 						if (isRotated) {
 							painter.traceLine(x, y1, x + (AXIS_TICK_SIZE * outerTickDirection), y1);
 							painter.traceLine(x, y2, x + (AXIS_TICK_SIZE * outerTickDirection), y2);
@@ -843,6 +875,27 @@ export default class CanvasAxisRenderer {
 				const lineHeight = getXTickTextLineHeight(painter, getFontSize(tickFont));
 				const tickTextWidth = getXTickTextWidth($$, ticks, isRotated, scale.subX);
 
+				if (config.subchart_axis_x_tick_show) {
+					for (const tick of lineTicks) {
+						const tickPos = scale.subX(normalizeXValue($$, tick));
+						const tx = margin2.left + tickPos;
+						const ty = margin2.top + tickPos;
+						const pos = isRotated ? ty : tx;
+
+						if (!isInAxisRange(pos, rangeStart, rangeEnd)) {
+							continue;
+						}
+
+						painter.strokePath(() => {
+							if (isRotated) {
+								painter.traceLine(x, ty, x + (AXIS_TICK_SIZE * tickDirection), ty);
+							} else {
+								painter.traceLine(tx, y, tx, y + (AXIS_TICK_SIZE * tickDirection));
+							}
+						});
+					}
+				}
+
 				for (const tick of ticks) {
 					const tickPos = scale.subX(normalizeXValue($$, tick));
 					const tx = margin2.left + tickPos;
@@ -851,16 +904,6 @@ export default class CanvasAxisRenderer {
 
 					if (!isInAxisRange(pos, rangeStart, rangeEnd)) {
 						continue;
-					}
-
-					if (config.subchart_axis_x_tick_show) {
-						painter.strokePath(() => {
-							if (isRotated) {
-								painter.traceLine(x, ty, x + (AXIS_TICK_SIZE * tickDirection), ty);
-							} else {
-								painter.traceLine(tx, y, tx, y + (AXIS_TICK_SIZE * tickDirection));
-							}
-						});
 					}
 
 					if (!config.subchart_axis_x_tick_text_show) {
@@ -905,6 +948,47 @@ export default class CanvasAxisRenderer {
 				}
 			}
 		);
+	}
+
+	/**
+	 * Draw the canvas subchart y/y2 axes.
+	 * @param {object} $$ ChartInternal instance
+	 * @private
+	 */
+	drawSubYAxes($$): void {
+		const {
+			config,
+			scale,
+			state: {margin2, width2, height2}
+		} = $$;
+
+		if (!config.subchart_show || width2 <= 0 || height2 <= 0) {
+			return;
+		}
+
+		(["y", "y2"] as YAxisId[]).forEach(id => {
+			const subScale = id === "y2" ? scale.subY2 : scale.subY;
+
+			if (!config[`subchart_axis_${id}_show`] || !subScale) {
+				return;
+			}
+
+			this.drawYAxis($$, id, {
+				scale: subScale,
+				ticks: getYTickValues($$, id, undefined, true, subScale, `subchart_axis_${id}`),
+				format: getSubYTickFormat($$, id),
+				index: 0,
+				outerTick: config[`subchart_axis_${id}_tick_outer`] ??
+					config[`axis_${id}_tick_outer`],
+				margin: margin2,
+				width: width2,
+				height: height2,
+				prefix: `subchart_axis_${id}`,
+				tickShow: config[`subchart_axis_${id}_tick_show`],
+				tickTextShow: config[`subchart_axis_${id}_tick_text_show`],
+				tickTextPosition: config[`axis_${id}_tick_text_position`]
+			});
+		});
 	}
 
 	/**
@@ -1779,23 +1863,27 @@ export default class CanvasAxisRenderer {
 	 */
 	private drawYAxis($$, id: YAxisId = "y", axisOptions?: AdditionalAxisOptions): void {
 		const {ctx, painter, theme: {style: {axis}}} = this;
-		const {config, scale, state: {margin, width, height}} = $$;
-		const prefix = `axis_${id}`;
+		const {config, scale, state} = $$;
+		const {margin, width, height} = state;
+		const plotMargin = axisOptions?.margin || margin;
+		const plotWidth = axisOptions?.width ?? width;
+		const plotHeight = axisOptions?.height ?? height;
+		const prefix = axisOptions?.prefix || `axis_${id}`;
 		const targetScale = axisOptions?.scale || scale[id];
 		const isY2 = id === "y2";
 		const isRotated = config.axis_rotated;
 		const axisOffset = axisOptions?.index ? $$.getAxisSize(id) * axisOptions.index : 0;
 		const x = painter.crisp(
-			margin.left + (isY2 ? width + (isRotated ? 0 : axisOffset) : -axisOffset),
+			plotMargin.left + (isY2 ? plotWidth + (isRotated ? 0 : axisOffset) : -axisOffset),
 			axis.lineWidth
 		);
-		const y = painter.crisp(margin.top + (
-			isRotated ? (isY2 ? -axisOffset - 1 : height + axisOffset) : 0
+		const y = painter.crisp(plotMargin.top + (
+			isRotated ? (isY2 ? -axisOffset - 1 : plotHeight + axisOffset) : 0
 		), axis.lineWidth);
-		const x1 = margin.left;
-		const x2 = margin.left + width;
-		const y1 = margin.top;
-		const y2 = margin.top + height;
+		const x1 = plotMargin.left;
+		const x2 = plotMargin.left + plotWidth;
+		const y1 = plotMargin.top;
+		const y2 = plotMargin.top + plotHeight;
 		const ticks = axisOptions?.ticks || getYTickValues($$, id);
 		const lineTicks = axisOptions?.ticks || (
 			config[`${prefix}_tick_culling`] && config[`${prefix}_tick_culling_lines`] !== false ?
@@ -1811,7 +1899,13 @@ export default class CanvasAxisRenderer {
 			(isY2 ? (config.axis_y2_tick_inner ? -1 : 1) : (config.axis_y_tick_inner ? 1 : -1));
 		const outerTickDirection = getYOuterTickDirection(config, isRotated, isY2);
 		const tickTextDirection = getYTickTextDirection(isRotated, isY2);
-		const tickTextPosition = config[`${prefix}_tick_text_position`];
+		const tickTextPosition = axisOptions?.tickTextPosition ||
+			config[`${prefix}_tick_text_position`] ||
+			config[`axis_${id}_tick_text_position`];
+		const tickShow = axisOptions?.tickShow ??
+			(axisOptions ? true : config[`${prefix}_tick_show`]);
+		const tickTextShow = axisOptions?.tickTextShow ??
+			(axisOptions ? true : config[`${prefix}_tick_text_show`]);
 
 		painter.withState(() => {
 			ctx.strokeStyle = axis.lineColor;
@@ -1849,8 +1943,8 @@ export default class CanvasAxisRenderer {
 
 			const addDrawableTick = (tick, target) => {
 				const value = normalizeYValue($$, tick, id);
-				const tx = margin.left + targetScale(value);
-				const ty = margin.top + targetScale(value);
+				const tx = plotMargin.left + targetScale(value);
+				const ty = plotMargin.top + targetScale(value);
 				const pos = isRotated ? tx : ty;
 
 				if (!isDrawable(pos)) {
@@ -1868,7 +1962,7 @@ export default class CanvasAxisRenderer {
 				addDrawableTick(tick, drawableLineTicks);
 			}
 
-			if (axisOptions || config[`${prefix}_tick_show`]) {
+			if (tickShow) {
 				painter.strokePath(() => {
 					for (const {tx, ty} of drawableLineTicks) {
 						if (isRotated) {
@@ -1880,7 +1974,7 @@ export default class CanvasAxisRenderer {
 				});
 			}
 
-			if (axisOptions || config[`${prefix}_tick_text_show`]) {
+			if (tickTextShow) {
 				for (const {tick, tx, ty} of drawableTicks) {
 					if (isRotated) {
 						painter.text(

@@ -165,10 +165,14 @@ export default {
 		const barPath: BarConnectLine[] = [];
 		const connectLineCache = new Map<string, string | null>();
 		const getRadius = getBarRadiusResolver($$);
+		const barColor = $$.generateUpdateBarColor();
 
 		// Computes the target path string and performs bar.connectLine side-effects.
 		const getBarPath = function(this: SVGPathElement, d, i, arr): string {
-			const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
+			const isDrawable = isNumber(d.value) ||
+				$$.isBarRangeType(d) ||
+				$$.isSubchartCandlestickBarValue?.(d, isSub);
+			const path = isDrawable ? drawFn(d, i) : [""];
 
 			// Memoize per series id: config lookup + regex runs once per id, not per bar
 			let connectLineType = connectLineCache.get(d.id);
@@ -220,7 +224,7 @@ export default {
 
 		return [
 			barTransition
-				.style("fill", $$.generateUpdateBarColor())
+				.style("fill", d => $$.getSubchartCandlestickBarColor?.(d, isSub) || barColor(d))
 				.style("clip-path", d => d.clipPath)
 				.style("opacity", null)
 		];
