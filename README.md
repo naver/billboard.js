@@ -3,7 +3,7 @@
   <img src="https://naver.github.io/billboard.js/img/logo/billboard.js.svg" width="350" alt="billboard.js"><br>
 </picture>
 
-[![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version] [![bb][badge-@billboard.js/react]][link-@billboard.js/react]<br> 
+[![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version]<br>
  [![semantic-release][badge-semantic-release]][link-semantic-release] ![React][badge-react]
 
 [![download][badge-download]][link-download] [![download][badge-download-weekly]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![jsDelivr][badge-jsDelivr-weekly]][link-jsDelivr]<br>
@@ -165,11 +165,36 @@ $ pnpm add billboard.js@next
 $ pnpm add billboard.js
 ```
 
-### Packages
+### React
 
-Name | For | Description
-:---: | :---:| :---:
-[![bb][badge-@billboard.js/react]][link-@billboard.js/react] | ![React][badge-react] | React component for billboard.js
+The React component is available from the `billboard.js/react` subpath.
+
+```tsx
+import bb, {line} from "billboard.js";
+import BillboardJS from "billboard.js/react";
+
+<BillboardJS
+  bb={bb}
+  options={{
+    data: {
+      columns: [["data1", 30, 120, 80]],
+      type: line()
+    }
+  }}
+/>;
+```
+
+For local visual testing of the React component, run:
+
+```bash
+$ pnpm run storybook
+```
+
+To verify the Storybook bundle, run:
+
+```bash
+$ pnpm run build:storybook
+```
 
 ### Using CDN
 
@@ -327,7 +352,6 @@ THE SOFTWARE.
 [badge-next]: https://img.shields.io/npm/v/billboard.js/next.svg
 [badge-semantic-release]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
 [badge-react]: https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=fff&labelColor=grey&color=62d9fb
-[badge-@billboard.js/react]: https://img.shields.io/npm/v/@billboard.js/react?style=flat&labelColor=grey&label=%40billboard.js%2Freact
 
 <!-- links -->
 [link-download]: https://npm-stat.com/charts.html?package=billboard.js&from=2017-06-08
@@ -337,6 +361,5 @@ THE SOFTWARE.
 [link-snyk]: https://snyk.io/test/github/naver/billboard.js?targetFile=package.json
 [link-gzip-size]: https://unpkg.com/billboard.js/dist/billboard.min.js
 [link-semantic-release]: https://github.com/semantic-release/semantic-release
-[link-@billboard.js/react]: https://www.npmjs.com/package/@billboard.js/react
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js?ref=badge_large)

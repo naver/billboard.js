@@ -11,7 +11,21 @@ const config = {
 		"billboard.min": [
 			"./src/scss/billboard.scss",
 			"./src/index.ts"
-		]
+		],
+		"billboard.react": {
+			import: "./src/react/index.ts",
+			library: {
+				name: "BillboardReact",
+				type: "umd"
+			}
+		},
+		"billboard.react.min": {
+			import: "./src/react/index.ts",
+			library: {
+				name: "BillboardReact",
+				type: "umd"
+			}
+		}
 	},
 	module: {
 		rules: [
