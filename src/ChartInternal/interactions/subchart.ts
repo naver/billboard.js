@@ -626,6 +626,7 @@ export default {
 			!config.subchart_show ||
 			$$.isSubchartBrushEnabled() ||
 			config.grid_focus_show === false ||
+			config.subchart_grid_focus === false ||
 			!config.tooltip_show ||
 			config.axis_tooltip
 		) {

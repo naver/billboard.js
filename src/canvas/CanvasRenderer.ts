@@ -2428,6 +2428,7 @@ export default class CanvasRenderer {
 			config.subchart_grid_focus_continuous ||
 			config.subchart_brush_enabled !== false ||
 			config.grid_focus_show === false ||
+			config.subchart_grid_focus === false ||
 			!config.tooltip_show ||
 			config.axis_tooltip ||
 			!scale.subX ||
@@ -2479,7 +2480,8 @@ export default class CanvasRenderer {
 			hasCanvasDrawableValue($$, d)
 		);
 
-		!isContinuousGridFocusEnabled($$) &&
+		$$.config.subchart_grid_focus !== false &&
+			!isContinuousGridFocusEnabled($$) &&
 			this.drawSubchartFocus($$, selectedData);
 
 		painter.withTranslation(margin.left, margin.top, () => {

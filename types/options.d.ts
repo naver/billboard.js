@@ -798,7 +798,7 @@ export interface SubchartOptions {
 	};
 
 	grid?: {
-		focus?: {
+		focus?: boolean | {
 			/**
 			 * Render x focus grid line as one continuous line across main chart and subchart when subchart brush is disabled.
 			 */
