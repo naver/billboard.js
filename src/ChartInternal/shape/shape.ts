@@ -214,7 +214,7 @@ function _getGroupedDataPointsFn(d) {
  * Get shape color with gradient support
  * @param {object} d Data object
  * @param {string} configKey Configuration key for linearGradient (e.g., 'bar_linearGradient', 'area_linearGradient')
- * @param {function} colorFn Fallback color function when gradient is not enabled
+ * @param {function(IDataRow): string|null} colorFn Fallback color function when gradient is not enabled
  * @returns {string | null} Color string or gradient URL
  * @private
  */
