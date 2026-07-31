@@ -8,9 +8,9 @@
  * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient)
  */
 export type LinearGradientOption = boolean | {
-	x?: [number, number],
-	y?: [number, number],
-	stops?: [number, string | null | Function, number][]
+	x?: number[],
+	y?: number[],
+	stops?: Array<Array<number | string | null | Function>>
 };
 
 /**

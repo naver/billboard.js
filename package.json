@@ -10,6 +10,9 @@
 		"*": {
 			"canvas": [
 				"types/canvas.d.ts"
+			],
+			"react": [
+				"types/react/index.d.ts"
 			]
 		}
 	},
@@ -24,6 +27,11 @@
 			"types": "./types/canvas.d.ts",
 			"import": "./dist-esm/index.canvas.js",
 			"require": "./dist/billboard.pkgd.js"
+		},
+		"./react": {
+			"types": "./types/react/index.d.ts",
+			"import": "./dist-esm/react/index.js",
+			"require": "./dist/billboard.react.js"
 		},
 		"./dist/plugin/*": {
 			"types": "./types/plugin/*.d.ts",
@@ -55,7 +63,7 @@
 		"coverage": "vitest run",
 		"coverage:ci": "cross-env NODE_ENV=CI vitest run",
 		"jsdoc": "node ./config/jsdoc.js",
-		"jsdoc:cmd": "jsdoc -c jsdoc.json",
+		"jsdoc:cmd": "node ./config/jsdoc.cmd.js",
 		"lint-staged": "lint-staged --config ./config/.lintstagedrc.json",
 		"prepare": "husky"
 	},
@@ -112,6 +120,14 @@
 		"d3-transition": "^3.0.1",
 		"d3-zoom": "^3.0.0"
 	},
+	"peerDependencies": {
+		"react": ">=16.8.0"
+	},
+	"peerDependenciesMeta": {
+		"react": {
+			"optional": true
+		}
+	},
 	"devDependencies": {
 		"@commitlint/cli": "^21.1.0",
 		"@commitlint/config-conventional": "^21.1.0",
@@ -126,6 +142,8 @@
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/react": "^16.3.2",
 		"@types/d3": "^7.4.3",
+		"@types/react": "^19.2.17",
+		"@types/react-dom": "^19.2.3",
 		"@types/sinon": "^21.0.1",
 		"@vitest/browser": "^4.1.9",
 		"@vitest/browser-playwright": "^4.1.9",
@@ -151,6 +169,8 @@
 		"lint-staged": "^17.0.8",
 		"mini-css-extract-plugin": "^2.10.2",
 		"playwright": "^1.61.1",
+		"react": "^19.2.8",
+		"react-dom": "^19.2.8",
 		"regenerator-runtime": "^0.14.1",
 		"rolldown": "^1.1.5",
 		"sass": "^1.101.0",

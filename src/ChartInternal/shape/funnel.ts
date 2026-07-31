@@ -400,7 +400,7 @@ export default {
 
 	/**
 	 * Generate funnel coordinate points data for text labels
-	 * @returns {(d: IDataRow) => [number, number][]} Point getter function
+	 * @returns {function} Point getter function
 	 * @private
 	 */
 	generateGetFunnelPoints(): (d: IDataRow) => [number, number][] {

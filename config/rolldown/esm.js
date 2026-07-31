@@ -48,7 +48,7 @@ const plugins = [
 	})
 ];
 
-const external = id => /^d3-/.test(id);
+const external = id => /^d3-/.test(id) || /^react(?:\/|$)/.test(id);
 const hasSideEffects = id => /[/\\]src[/\\]Chart[/\\]api[/\\]stubs\.ts$/.test(id);
 
 const bbPlugins = readdirSync(resolvePath("../src/Plugin/"), {
@@ -75,7 +75,8 @@ export default [
 	{
 		input: [
 			"src/index.esm.ts",
-			"src/index.canvas.ts"
+			"src/index.canvas.ts",
+			"src/react/index.ts"
 		],
 		output: {
 			dir: distPath,

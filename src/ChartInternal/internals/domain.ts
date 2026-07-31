@@ -185,7 +185,7 @@ export default {
 	 * Get both min and max Y domain values in a single pass.
 	 * Avoids calling getValuesAsIdKeyed twice.
 	 * @param {Array} targets Target data
-	 * @returns {[number|Date|undefined, number|Date|undefined]} [min, max]
+	 * @returns {Array} [min, max]
 	 * @private
 	 */
 	getYDomainMinMaxBoth(targets): [number | Date | undefined, number | Date | undefined] {

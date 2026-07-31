@@ -72,7 +72,7 @@ export default class AxisRendererHelper {
 	/**
 	 * Get tick transform setter function
 	 * @param {string} id Axis id
-	 * @returns {(selection: d3Selection, scale) => void} transfrom setter function
+	 * @returns {function} transfrom setter function
 	 * @private
 	 */
 	getTickTransformSetter(id: string): (selection: d3Selection, scale) => void {
