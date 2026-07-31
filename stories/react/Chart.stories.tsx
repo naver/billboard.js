@@ -1,6 +1,12 @@
 import type {Meta, StoryObj} from "@storybook/react-vite";
 
-import bb, {area, bar, line, zoom} from "../../src/index.esm";
+import canvasBb, {
+	canvas as canvasRenderer,
+	grid as canvasGrid,
+	line as canvasLine,
+	selection as canvasSelection
+} from "../../src/index.canvas";
+import bb, {area, bar, grid, line, selection, zoom} from "../../src/index.esm";
 import BillboardJS, {type IProp} from "../../src/react";
 
 const chartStyle = {
@@ -9,10 +15,17 @@ const chartStyle = {
 };
 
 const billboard = bb as unknown as IProp["bb"];
+const canvasBillboard = canvasBb as unknown as IProp["bb"];
 const lineType = line as IProp["type"];
 const barType = bar as IProp["type"];
 const areaType = area as IProp["type"];
+const canvasLineType = canvasLine as IProp["type"];
+const gridModule = grid as NonNullable<IProp["modules"]>[number];
+const selectionModule = selection as NonNullable<IProp["modules"]>[number];
 const zoomModule = zoom as NonNullable<IProp["modules"]>[number];
+const canvasRendererModule = canvasRenderer as NonNullable<IProp["modules"]>[number];
+const canvasGridModule = canvasGrid as NonNullable<IProp["modules"]>[number];
+const canvasSelectionModule = canvasSelection as NonNullable<IProp["modules"]>[number];
 
 const meta = {
 	title: "React/Chart",
@@ -33,6 +46,7 @@ type Story = StoryObj<typeof meta>;
 export const Line: Story = {
 	args: {
 		type: lineType,
+		modules: [gridModule],
 		options: {
 			data: {
 				columns: [
@@ -47,7 +61,7 @@ export const Line: Story = {
 				}
 			},
 			point: {
-				show: false
+				r: 4
 			}
 		}
 	}
@@ -56,6 +70,7 @@ export const Line: Story = {
 export const Bar: Story = {
 	args: {
 		type: barType,
+		modules: [gridModule],
 		options: {
 			data: {
 				columns: [
@@ -76,6 +91,7 @@ export const Bar: Story = {
 export const Area: Story = {
 	args: {
 		type: areaType,
+		modules: [gridModule],
 		options: {
 			data: {
 				columns: [
@@ -93,10 +109,38 @@ export const Area: Story = {
 	}
 };
 
+export const SelectableLine: Story = {
+	args: {
+		type: lineType,
+		modules: [gridModule, selectionModule],
+		options: {
+			data: {
+				columns: [
+					["visits", 80, 160, 120, 240, 210, 310],
+					["orders", 30, 60, 70, 110, 130, 170]
+				],
+				selection: {
+					enabled: true,
+					multiple: false
+				}
+			},
+			axis: {
+				x: {
+					type: "category",
+					categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+				}
+			},
+			point: {
+				r: 5
+			}
+		}
+	}
+};
+
 export const WithZoomModule: Story = {
 	args: {
 		type: lineType,
-		modules: [zoomModule],
+		modules: [gridModule, zoomModule],
 		options: {
 			data: {
 				columns: [
@@ -105,10 +149,41 @@ export const WithZoomModule: Story = {
 				]
 			},
 			zoom: {
-				enabled: true
+				enabled: true,
+				type: "drag"
 			},
 			point: {
-				show: false
+				r: 4
+			}
+		}
+	}
+};
+
+export const CanvasLine: Story = {
+	args: {
+		bb: canvasBillboard,
+		type: canvasLineType,
+		modules: [canvasRendererModule, canvasGridModule, canvasSelectionModule],
+		options: {
+			render: {
+				mode: "canvas"
+			},
+			size: {
+				width: 720,
+				height: 360
+			},
+			transition: {
+				duration: 0
+			},
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400, 150, 250],
+					["data2", 130, 100, 140, 200, 150, 50]
+				],
+				selection: {
+					enabled: true,
+					multiple: false
+				}
 			}
 		}
 	}
