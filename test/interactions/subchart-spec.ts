@@ -720,6 +720,38 @@ describe("SUBCHART", () => {
 
 			expect(continuousLine.style("visibility")).to.be.equal("hidden");
 		});
+
+		it("set options subchart.grid.focus=false", () => {
+			args.subchart.grid = {
+				focus: {
+					continuous: true
+				}
+			};
+			args.subchart.grid.focus = false;
+		});
+
+		it("should map subchart.grid.focus=false to config", () => {
+			expect(chart.internal.config.subchart_grid_focus).to.be.false;
+			expect(chart.internal.config.subchart_grid_focus_continuous).to.be.false;
+		});
+
+		it("should not render x focus grid line in subchart when disabled", () => {
+			const {internal: {$el: {main, subchart}}} = chart;
+			const subchartLine = subchart.main
+				.select(`g.${$FOCUS.xgridFocus} line.${$FOCUS.xgridFocus}`);
+			const continuousLine = main.select(`line.${$FOCUS.xgridFocusContinuous}`);
+
+			expect(continuousLine.empty()).to.be.true;
+
+			util.hoverChart(chart, "mousemove", {
+				clientX: 250,
+				clientY: 100
+			});
+
+			expect(chart.$.grid.main.select(`line.${$FOCUS.xgridFocus}`).style("visibility"))
+				.to.not.be.equal("hidden");
+			expect(subchartLine.style("visibility")).to.be.equal("hidden");
+		});
 	});
 
 	describe("subchart selection", () => {

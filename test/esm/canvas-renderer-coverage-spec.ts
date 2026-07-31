@@ -755,6 +755,35 @@ describe("ESM canvas renderer coverage", () => {
 		)).to.be.true;
 	});
 
+	it("does not draw subchart focus grid line when grid focus subchart is disabled", () => {
+		const {renderer} = makeRenderer();
+		const ctx = makeContext();
+		const focus = ctx.data.targets[2].values[1];
+		const traceLine = vi.spyOn(renderer.painter, "traceLine");
+		const drawSubchartFocus = vi.spyOn(renderer, "drawSubchartFocus");
+
+		ctx.config.axis_tooltip = false;
+		ctx.config.grid_focus_show = true;
+		ctx.config.subchart_grid_focus = false;
+		ctx.config.subchart_brush_enabled = false;
+		ctx.config.subchart_grid_focus_continuous = true;
+		ctx.config.tooltip_show = true;
+
+		renderer.drawFocus(ctx, [focus]);
+
+		expect(drawSubchartFocus).not.toHaveBeenCalled();
+		expect(traceLine.mock.calls.some(([x1, y1, x2, y2]) =>
+			x1 === x2 &&
+			y1 >= 0 &&
+			Math.abs(y2 - ctx.state.height) <= 0.5
+		)).to.be.true;
+		expect(traceLine.mock.calls.some(([x1, y1, x2, y2]) =>
+			x1 === x2 &&
+			y1 >= 0 &&
+			y2 > ctx.state.height + 1
+		)).to.be.false;
+	});
+
 	it("positions treemap labels using SVG-compatible centered option", () => {
 		const {renderer} = makeRenderer();
 		const ctx = makeContext();
