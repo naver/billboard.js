@@ -78,6 +78,31 @@ function getOptions(options: ChartOptions, type?: IProp["type"]): ChartOptions {
  *   }}
  * />;
  * @example
+ * import bb, {canvas, line} from "billboard.js/canvas";
+ * import BillboardJS from "billboard.js/react";
+ *
+ * <BillboardJS
+ *   bb={bb}
+ *   type={line}
+ *   modules={[canvas]}
+ *   style={{
+ *     width: "480px",
+ *     height: "320px"
+ *   }}
+ *   options={{
+ *     render: {
+ *       mode: "canvas"
+ *     },
+ *     size: {
+ *       width: 480,
+ *       height: 320
+ *     },
+ *     data: {
+ *       columns: [["data1", 30, 120, 80]]
+ *     }
+ *   }}
+ * />;
+ * @example
  * import bb, {line, zoom} from "billboard.js";
  * import {Chart} from "billboard.js/react";
  *

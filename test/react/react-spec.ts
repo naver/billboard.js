@@ -5,6 +5,7 @@
 import {act, createElement, createRef} from "react";
 import {createRoot, type Root} from "react-dom/client";
 import {afterEach, describe, expect, it, vi} from "vitest";
+import canvasBb, {canvas as canvasModule, line as canvasLine} from "../../src/index.canvas";
 import Chart, {Chart as NamedChart, type IChart, type IProp} from "../../src/react";
 
 type GeneratedOptions = IProp["options"] & {
@@ -130,6 +131,45 @@ describe("React wrapper", () => {
 		});
 
 		expect(bb.generate.mock.calls[0][0].data?.type).to.equal("area");
+	});
+
+	it("renders a canvas chart when the canvas module is registered", async () => {
+		const ref = createRef<IChart>();
+
+		const mounted = await mountChart({
+			bb: canvasBb as unknown as IProp["bb"],
+			modules: [canvasModule as NonNullable<IProp["modules"]>[number]],
+			options: {
+				render: {
+					mode: "canvas"
+				},
+				size: {
+					width: 320,
+					height: 180
+				},
+				transition: {
+					duration: 0
+				},
+				data: {
+					columns: [["data1", 30, 120, 80]]
+				}
+			},
+			ref,
+			style: {
+				width: "320px",
+				height: "180px"
+			},
+			type: canvasLine as IProp["type"]
+		} as IProp & {ref: typeof ref});
+		const canvas = mounted.container.querySelector("canvas");
+
+		expect(canvas).not.to.be.null;
+		expect(mounted.container.querySelector("svg")).to.be.null;
+		expect(canvas?.style.width).to.equal("320px");
+		expect(canvas?.style.height).not.to.equal("");
+		expect(canvas?.width).to.be.greaterThan(0);
+		expect(canvas?.height).to.be.greaterThan(0);
+		expect(ref.current?.instance).not.to.be.undefined;
 	});
 
 	it("warns and skips generation when required props are missing", async () => {
