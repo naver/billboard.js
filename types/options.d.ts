@@ -113,7 +113,8 @@ export interface ChartOptions {
 		 * Use Web Worker as possible for processing.
 		 * - **NOTE:**
 		 *   - For now, only applies for data conversion at the initial time.
-		 *   - As of Web Worker's async nature, handling chart instance synchrously is not recommended.
+		 *   - As of Web Worker's async nature, handling chart instance synchronously is not recommended.
+		 *   - When Worker isn't available, fails or times out, data conversion falls back to main thread.
 		 */
 		useWorker?: boolean;
 	};

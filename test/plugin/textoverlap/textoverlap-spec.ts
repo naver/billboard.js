@@ -38,7 +38,9 @@ describe("PLUGIN: TEXTOVERLAP", () => {
 		chart = util.generate(args);
 	});
 
-    it("should move data labels into correct position", () => {
+    it("should move data labels into correct position", async () => {
+		await chart.plugins[0].preventLabelOverlap(chart.$.text.texts);
+
         const {texts} = chart.$.text;
 
         chart.data().forEach((v, i) => {
@@ -69,7 +71,9 @@ describe("PLUGIN: TEXTOVERLAP", () => {
         ];
     });
 
-    it("should move data labels into correct position with specified extent and area", () => {
+    it("should move data labels into correct position with specified extent and area", async () => {
+		await chart.plugins[0].preventLabelOverlap(chart.$.text.texts);
+
         const expected = [
             {data1: "", data2: "none", data3: ""},
             {data1: "", data2: "", data3: ""},

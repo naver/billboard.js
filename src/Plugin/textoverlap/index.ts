@@ -2,11 +2,24 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {Delaunay as d3Delaunay} from "d3-delaunay";
 import type {d3Selection} from "../../../types/types";
 import {polygonArea, polygonCentroid} from "../../module/polygon";
 import Plugin from "../Plugin";
 import Options from "./Options";
+
+let d3Delaunay: Promise<typeof import("d3-delaunay").Delaunay> | null = null;
+
+/**
+ * Load d3-delaunay only when the plugin actually needs Voronoi layout.
+ * @returns {Promise} Delaunay constructor
+ * @private
+ */
+function getDelaunay() {
+	return d3Delaunay ?? (
+		d3Delaunay = import("d3-delaunay")
+			.then(({Delaunay}) => Delaunay)
+	);
+}
 
 /**
  * TextOverlap plugin<br>
@@ -50,6 +63,8 @@ import Options from "./Options";
  * })
  */
 export default class TextOverlap extends Plugin {
+	private redrawId = 0;
+
 	constructor(options?: Options) {
 		super(options);
 		this.config = new Options();
@@ -64,8 +79,11 @@ export default class TextOverlap extends Plugin {
 	$redraw(): void {
 		const {$$: {$el}, config: {selector}} = this;
 		const text = selector ? $el.main.selectAll(selector) : $el.text;
+		const redrawId = ++this.redrawId;
 
-		!text.empty() && this.preventLabelOverlap(text);
+		if (!text.empty()) {
+			void this.preventLabelOverlap(text, redrawId);
+		}
 	}
 
 	/**
@@ -74,14 +92,15 @@ export default class TextOverlap extends Plugin {
 	 * @returns {object} Voronoi layout points and corresponding Data points
 	 * @private
 	 */
-	generateVoronoi(points: [number, number][]) {
+	async generateVoronoi(points: [number, number][]) {
 		const {$$} = this;
 		const {scale} = $$;
 		const [min, max] = ["x", "y"].map(v => scale[v].domain());
+		const Delaunay = await getDelaunay();
 
 		[min[1], max[0]] = [max[0], min[1]];
 
-		return d3Delaunay
+		return Delaunay
 			.from(points)
 			.voronoi([
 				...min as [number, number],
@@ -92,13 +111,18 @@ export default class TextOverlap extends Plugin {
 	/**
 	 * Set text label's position to preventg overlap.
 	 * @param {d3Selection} text target text selection
+	 * @param {number} redrawId Redraw request identifier
 	 * @private
 	 */
-	preventLabelOverlap(text: d3Selection): void {
+	async preventLabelOverlap(text: d3Selection, redrawId = this.redrawId): Promise<void> {
 		const {extent, area} = this.config;
 		const points = text.data().map(v => [v.index, v.value]) as [number, number][];
-		const voronoi = this.generateVoronoi(points);
+		const voronoi = await this.generateVoronoi(points).catch(() => null);
 		let i = 0;
+
+		if (!voronoi || redrawId !== this.redrawId) {
+			return;
+		}
 
 		text.each(function() {
 			const cell = voronoi.cellPolygon(i);

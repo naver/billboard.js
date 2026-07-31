@@ -240,6 +240,120 @@ describe("MODULE coverage helpers", () => {
 			}
 		});
 
+		it("falls back to sync execution when worker postMessage fails", () => {
+			const OriginalWorker = window.Worker;
+			const originalCreateObjectURL = window.URL.createObjectURL;
+			const originalRevokeObjectURL = window.URL.revokeObjectURL;
+			const values: number[] = [];
+			const revoked: string[] = [];
+			const terminated: string[] = [];
+
+			try {
+				window.Worker = class {
+					src;
+
+					constructor(src) {
+						this.src = src;
+					}
+
+					addEventListener() {}
+					removeEventListener() {}
+					postMessage() {
+						throw new Error("postMessage blocked");
+					}
+					terminate() {
+						terminated.push(this.src);
+					}
+				};
+				window.URL.createObjectURL = () => "blob:post-message";
+				window.URL.revokeObjectURL = url => revoked.push(url);
+
+				runWorker(true, value => value * 4, value => values.push(value))(3);
+
+				expect(values).to.be.deep.equal([12]);
+				expect(terminated).to.be.deep.equal(["blob:post-message"]);
+				expect(revoked).to.be.deep.equal(["blob:post-message"]);
+			} finally {
+				window.Worker = OriginalWorker;
+				window.URL.createObjectURL = originalCreateObjectURL;
+				window.URL.revokeObjectURL = originalRevokeObjectURL;
+			}
+		});
+
+		it("falls back to sync execution when worker emits an error", () => new Promise(done => {
+			const OriginalWorker = window.Worker;
+			const originalCreateObjectURL = window.URL.createObjectURL;
+			const originalRevokeObjectURL = window.URL.revokeObjectURL;
+
+			class MockWorker {
+				src;
+				listeners = {error: [], message: []};
+
+				constructor(src) {
+					this.src = src;
+				}
+
+				addEventListener(type, fn) {
+					this.listeners[type].push(fn);
+				}
+
+				removeEventListener(type, fn) {
+					this.listeners[type] = this.listeners[type].filter(f => f !== fn);
+				}
+
+				postMessage() {
+					setTimeout(() => {
+						this.listeners.error.slice().forEach(fn => fn(new Error("worker failed")));
+					});
+				}
+
+				terminate() {}
+			}
+
+			window.Worker = MockWorker;
+			window.URL.createObjectURL = () => "blob:error";
+			window.URL.revokeObjectURL = () => {};
+
+			runWorker(true, value => value + 2, value => {
+				try {
+					expect(value).to.be.equal(7);
+				} finally {
+					window.Worker = OriginalWorker;
+					window.URL.createObjectURL = originalCreateObjectURL;
+					window.URL.revokeObjectURL = originalRevokeObjectURL;
+				}
+				done(1);
+			})(5);
+		}));
+
+		it("falls back to sync execution when worker response times out", () => new Promise(done => {
+			const OriginalWorker = window.Worker;
+			const originalCreateObjectURL = window.URL.createObjectURL;
+			const originalRevokeObjectURL = window.URL.revokeObjectURL;
+
+			class MockWorker {
+				addEventListener() {}
+				removeEventListener() {}
+				postMessage() {}
+				terminate() {}
+			}
+
+			window.Worker = MockWorker;
+			window.URL.createObjectURL = () => "blob:timeout";
+			window.URL.revokeObjectURL = () => {};
+
+			runWorker(true, value => value - 1, value => {
+				try {
+					expect(value).to.be.equal(4);
+				} finally {
+					window.Worker = OriginalWorker;
+					window.URL.createObjectURL = originalCreateObjectURL;
+					window.URL.revokeObjectURL = originalRevokeObjectURL;
+				}
+				done(1);
+			}, undefined, 10)(5);
+		}));
+
 	});
 
 	describe("geometry and brush helpers", () => {
