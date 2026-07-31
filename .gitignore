@@ -15,7 +15,10 @@ package-lock.json
 /docs
 /monitor
 /node_modules
+/storybook-static
 /test/**/__screenshots__
 /test-results
 /benchmark/results.json
 /benchmark/current.json
+!/.storybook/
+!/.storybook/**

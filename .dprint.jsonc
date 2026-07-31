@@ -4,6 +4,8 @@
 	"useTabs": true,
 	"newLineKind": "lf",
 	"includes": [
+		".storybook/**/*.ts",
+		"stories/**/*.{ts,tsx,js,jsx,json}",
 		"src/**/*.{ts,tsx,js,jsx,json}",
 		"packages/**/src/**/*.{ts,tsx,js,jsx,json}"
 	],

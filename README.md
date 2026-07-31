@@ -184,6 +184,18 @@ import BillboardJS from "billboard.js/react";
 />;
 ```
 
+For local visual testing of the React component, run:
+
+```bash
+$ pnpm run storybook
+```
+
+To verify the Storybook bundle, run:
+
+```bash
+$ pnpm run build:storybook
+```
+
 ### Using CDN
 
 If you want to use 'billboard.js' without installation, load files directly from one of the CDN providers.
