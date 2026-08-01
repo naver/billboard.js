@@ -5,11 +5,10 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.0.3-nightly-20260730005642
+ * @version 4.0.3-nightly-20260801010035
  * @requires billboard.js
  * @summary billboard.js plugin
 */
-import { Delaunay } from "d3-delaunay";
 //#region src/module/polygon.ts
 /**
 * Compute the signed area of a polygon using the Shoelace formula.
@@ -104,7 +103,7 @@ var Plugin = class {
 	$$;
 	options;
 	config;
-	static version = "4.0.3-nightly-20260730005642";
+	static version = "4.0.3-nightly-20260801010035";
 	/**
 	* Constructor
 	* @param {Any} options config option object
@@ -205,10 +204,15 @@ var Options = class {
 };
 //#endregion
 //#region src/Plugin/textoverlap/index.ts
+let d3Delaunay = null;
 /**
-* Copyright (c) 2017 ~ present NAVER Corp.
-* billboard.js project is licensed under the MIT license
+* Load d3-delaunay only when the plugin actually needs Voronoi layout.
+* @returns {Promise} Delaunay constructor
+* @private
 */
+function getDelaunay() {
+	return d3Delaunay ?? (d3Delaunay = import("d3-delaunay").then(({ Delaunay }) => Delaunay));
+}
 /**
 * TextOverlap plugin<br>
 * Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram).
@@ -253,6 +257,7 @@ var Options = class {
 var TextOverlap = class extends Plugin {
 	constructor(options) {
 		super(options);
+		this.redrawId = 0;
 		this.config = new Options();
 		return this;
 	}
@@ -262,7 +267,8 @@ var TextOverlap = class extends Plugin {
 	$redraw() {
 		const { $$: { $el }, config: { selector } } = this;
 		const text = selector ? $el.main.selectAll(selector) : $el.text;
-		!text.empty() && this.preventLabelOverlap(text);
+		const redrawId = ++this.redrawId;
+		if (!text.empty()) this.preventLabelOverlap(text, redrawId);
 	}
 	/**
 	* Generates the voronoi layout for data labels
@@ -270,23 +276,26 @@ var TextOverlap = class extends Plugin {
 	* @returns {object} Voronoi layout points and corresponding Data points
 	* @private
 	*/
-	generateVoronoi(points) {
+	async generateVoronoi(points) {
 		const { $$ } = this;
 		const { scale } = $$;
 		const [min, max] = ["x", "y"].map((v) => scale[v].domain());
+		const Delaunay = await getDelaunay();
 		[min[1], max[0]] = [max[0], min[1]];
 		return Delaunay.from(points).voronoi([...min, ...max]);
 	}
 	/**
 	* Set text label's position to preventg overlap.
 	* @param {d3Selection} text target text selection
+	* @param {number} redrawId Redraw request identifier
 	* @private
 	*/
-	preventLabelOverlap(text) {
+	async preventLabelOverlap(text, redrawId = this.redrawId) {
 		const { extent, area } = this.config;
 		const points = text.data().map((v) => [v.index, v.value]);
-		const voronoi = this.generateVoronoi(points);
+		const voronoi = await this.generateVoronoi(points).catch(() => null);
 		let i = 0;
+		if (!voronoi || redrawId !== this.redrawId) return;
 		text.each(function() {
 			const cell = voronoi.cellPolygon(i);
 			if (cell && this) {

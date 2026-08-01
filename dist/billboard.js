@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.3-nightly-20260730005642
+ * @version 4.0.3-nightly-20260801010035
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3877,7 +3877,7 @@ class CanvasEngine {
 ;// ./src/ChartInternal/internals/subchart.util.ts
 function isContinuousGridFocusEnabled($$) {
   const { config, state } = $$;
-  return !!(config.subchart_grid_focus_continuous && config.subchart_show && config.subchart_brush_enabled === false && state.width2 > 0 && state.height2 > 0);
+  return !!(config.subchart_grid_focus_continuous && config.subchart_grid_focus !== false && config.subchart_show && config.subchart_brush_enabled === false && state.width2 > 0 && state.height2 > 0);
 }
 function getMainCoordFromSubchartCoord($$, subCoord) {
   var _a;
@@ -6800,7 +6800,7 @@ class CanvasRenderer {
     const focus = selectedData == null ? void 0 : selectedData.find(
       (d) => d && hasCanvasDrawableValue($$, d)
     );
-    if (!focus || !config.subchart_show || config.subchart_grid_focus_continuous || config.subchart_brush_enabled !== false || config.grid_focus_show === false || !config.tooltip_show || config.axis_tooltip || !scale.subX || state.width2 <= 0 || state.height2 <= 0) {
+    if (!focus || !config.subchart_show || config.subchart_grid_focus_continuous || config.subchart_brush_enabled !== false || config.grid_focus_show === false || config.subchart_grid_focus === false || !config.tooltip_show || config.axis_tooltip || !scale.subX || state.width2 <= 0 || state.height2 <= 0) {
       return;
     }
     const { margin2, width2, height2 } = state;
@@ -6836,7 +6836,7 @@ class CanvasRenderer {
     const focus = selectedData.find(
       (d) => d && hasCanvasDrawableValue($$, d)
     );
-    !isContinuousGridFocusEnabled($$) && this.drawSubchartFocus($$, selectedData);
+    $$.config.subchart_grid_focus !== false && !isContinuousGridFocusEnabled($$) && this.drawSubchartFocus($$, selectedData);
     painter.withTranslation(margin.left, margin.top, () => {
       if ($$.config.tooltip_show && $$.config.grid_focus_show !== false && !$$.config.axis_tooltip && focus) {
         const { x, y } = getRenderDataPoint($$, focus);
@@ -8462,7 +8462,8 @@ const $ZOOM = {
    * @property {boolean} [boost.useWorker=false] Use Web Worker as possible for processing.
    * - **NOTE:**
    *   - For now, only applies for data conversion at the initial time.
-   *   - As of Web Worker's async nature, handling chart instance synchrously is not recommended.
+   *   - As of Web Worker's async nature, handling chart instance synchronously is not recommended.
+   *   - When Worker isn't available, fails or times out, data conversion falls back to main thread.
    *   - When given data is empty, useWorker will be ignored.
    * @example
    *  boost: {
@@ -8482,9 +8483,9 @@ const $ZOOM = {
    * @memberof Options
    * @type {object}
    * @property {object} color color object
-   * @property {string|object|((this: Chart, d: DataItem) => string)} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
+   * @property {string|object|function(DataItem): string} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
    * @property {Array|null} [color.pattern=[]] Set custom color pattern. Passing `null` will not set a color for these elements, which requires the usage of custom CSS-based theming to work.
-   * @property {(this: Chart) => SVGPathElement[]} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
+   * @property {function(): Array.<SVGPatternElement>} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
    *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
    *    ex. When color pattern value is `['red', '#fff']` and defined 2 patterns,then ids for pattern elements are:<br>
    *    - `bb-colorize-pattern-red`
@@ -11340,26 +11341,65 @@ function generateWait() {
 ;// ./src/module/worker.ts
 
 const cache = {};
+const disabledKeys = /* @__PURE__ */ new Set();
+const DEFAULT_WORKER_TIMEOUT = 5e3;
 let messageId = 0;
+function getWorkerAPI() {
+  const { Blob, Worker, URL } = win;
+  return Worker && Blob && (URL == null ? void 0 : URL.createObjectURL) && (URL == null ? void 0 : URL.revokeObjectURL) ? { Blob, Worker, URL } : null;
+}
+function hashString(str) {
+  let hash = 2166136261;
+  for (let i = 0, len = str.length; i < len; i++) {
+    hash ^= str.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `worker-${str.length}-${(hash >>> 0).toString(36)}`;
+}
+function releaseWorker(key, disable = false) {
+  var _a;
+  const cached = cache[key];
+  const api = getWorkerAPI();
+  if (disable) {
+    disabledKeys.add(key);
+  }
+  if (cached) {
+    (_a = cached.worker) == null ? void 0 : _a.terminate();
+    cached.src && (api == null ? void 0 : api.URL.revokeObjectURL(cached.src));
+    delete cache[key];
+  }
+}
 function getOrCreateWorkerResources(fn, depsFn) {
   var _a;
+  const api = getWorkerAPI();
   const fnString = fn.toString();
   const depsString = (_a = depsFn == null ? void 0 : depsFn.map(String).join(";")) != null ? _a : "";
-  const key = (fnString + depsString).replace(/(function|[\s\W\n])/g, "").substring(0, 30);
+  const key = hashString(`${fnString}
+${depsString}`);
+  if (!api || disabledKeys.has(key)) {
+    return null;
+  }
   if (!(key in cache)) {
     try {
-      const blob = new win.Blob([
+      const blob = new api.Blob([
         `${depsString}
 
 				self.onmessage=function({data}) {
-					const result = (${fnString}).apply(null, data.args);
-					self.postMessage({id: data.id, result});
+					try {
+						const result = (${fnString}).apply(null, data.args);
+						self.postMessage({id: data.id, result});
+					} catch (error) {
+						self.postMessage({
+							id: data.id,
+							error: error && (error.message || error.name) || String(error)
+						});
+					}
 				};`
       ], {
         type: "text/javascript"
       });
       cache[key] = {
-        src: win.URL.createObjectURL(blob),
+        src: api.URL.createObjectURL(blob),
         worker: null
       };
     } catch (e) {
@@ -11370,59 +11410,89 @@ function getOrCreateWorkerResources(fn, depsFn) {
 }
 function getWorker(key, src) {
   const cached = cache[key];
-  if (!cached) {
+  const api = getWorkerAPI();
+  if (!cached || !api || disabledKeys.has(key)) {
     return null;
   }
   if (!cached.worker) {
     try {
-      cached.worker = new win.Worker(src);
+      cached.worker = new api.Worker(src);
     } catch (e) {
+      releaseWorker(key, true);
       return null;
-    }
-    if (cached.worker) {
-      cached.worker.onerror = function(e) {
-        console.error ? console.error(e) : console.log(e);
-      };
     }
   }
   return cached.worker;
 }
-function runWorker(useWorker = true, fn, callback, depsFn) {
-  let runFn = function(...args) {
+function runWorker(useWorker = true, fn, callback, depsFn, timeout = DEFAULT_WORKER_TIMEOUT) {
+  const runSync = function(...args) {
     const res = fn(...args);
     callback(res);
   };
-  if (win.Worker && useWorker) {
+  let runFn = runSync;
+  if (useWorker) {
     const workerResources = getOrCreateWorkerResources(fn, depsFn);
-    const worker = workerResources && getWorker(workerResources.key, workerResources.src);
-    if (worker) {
+    const worker = workerResources ? getWorker(workerResources.key, workerResources.src) : null;
+    if (worker && workerResources) {
+      const { key } = workerResources;
       runFn = function(...args) {
         const id = ++messageId;
+        let settled = false;
+        const fallback = () => {
+          if (!settled) {
+            settled = true;
+            cleanup();
+            releaseWorker(key, true);
+            runFn = runSync;
+            runSync(...args);
+          }
+        };
         const handler = function(e) {
           var _a;
           if (((_a = e.data) == null ? void 0 : _a.id) === id) {
-            worker.removeEventListener("message", handler);
+            if (e.data.error) {
+              fallback();
+              return;
+            }
+            settled = true;
+            cleanup();
             callback(e.data.result);
           }
         };
+        const errorHandler = function() {
+          fallback();
+        };
+        const timer = setTimeout(fallback, timeout);
+        const cleanup = () => {
+          clearTimeout(timer);
+          worker.removeEventListener("message", handler);
+          worker.removeEventListener("error", errorHandler);
+        };
         worker.addEventListener("message", handler);
-        worker.postMessage({ id, args });
+        worker.addEventListener("error", errorHandler);
+        try {
+          worker.postMessage({ id, args });
+        } catch (e) {
+          fallback();
+        }
       };
     }
   }
   return runFn;
 }
 function cleanupWorkers() {
+  const api = getWorkerAPI();
   for (const key in cache) {
     const cached = cache[key];
     if (cached.worker) {
       cached.worker.terminate();
     }
     if (cached.src) {
-      win.URL.revokeObjectURL(cached.src);
+      api == null ? void 0 : api.URL.revokeObjectURL(cached.src);
     }
     delete cache[key];
   }
+  disabledKeys.clear();
 }
 
 ;// ./src/module/dsv.ts
@@ -13777,7 +13847,7 @@ function getTargetXMinMax(targets, type) {
    * Get both min and max Y domain values in a single pass.
    * Avoids calling getValuesAsIdKeyed twice.
    * @param {Array} targets Target data
-   * @returns {[number|Date|undefined, number|Date|undefined]} [min, max]
+   * @returns {Array.<number|Date|undefined>} [min, max]
    * @private
    */
   getYDomainMinMaxBoth(targets) {
@@ -23163,7 +23233,7 @@ function _smoothLines(el, type) {
       if (config.grid_focus_y && !config.tooltip_grouped) {
         grid.append("g").attr("class", $FOCUS.ygridFocus).append("line").attr("class", $FOCUS.ygridFocus);
       }
-      config.subchart_grid_focus_continuous && $el.main.insert("g", className).attr("class", $FOCUS.xgridFocusContinuous).append("line").attr("class", `${$FOCUS.xgridFocus} ${$FOCUS.xgridFocusContinuous}`).style("visibility", "hidden");
+      config.subchart_grid_focus_continuous && config.subchart_grid_focus !== false && $el.main.insert("g", className).attr("class", $FOCUS.xgridFocusContinuous).append("line").attr("class", `${$FOCUS.xgridFocus} ${$FOCUS.xgridFocusContinuous}`).style("visibility", "hidden");
     }
   },
   showAxisGridFocus() {
@@ -24535,7 +24605,7 @@ function dispatchSubchartEvent($$, type, event, context) {
   showSubchartGridFocus(data) {
     const $$ = this;
     const { config, state, $el: { subchart: { main } } } = $$;
-    if (!main || !config.subchart_show || $$.isSubchartBrushEnabled() || config.grid_focus_show === false || !config.tooltip_show || config.axis_tooltip) {
+    if (!main || !config.subchart_show || $$.isSubchartBrushEnabled() || config.grid_focus_show === false || config.subchart_grid_focus === false || !config.tooltip_show || config.axis_tooltip) {
       return;
     }
     const focusData = Array.isArray(data) ? data : [data];
@@ -24627,6 +24697,7 @@ function dispatchSubchartEvent($$, type, event, context) {
    * @property {object} [subchart.types] Set chart type for each data in the subchart. Defaults to data.types.
    * @property {boolean} [subchart.brush.enabled=true] Enable subchart brush interaction.
    * @property {boolean} [subchart.showHandle=false] Show sub chart's handle.
+   * @property {boolean|object} [subchart.grid.focus=true] Show x focus grid line in subchart when subchart brush is disabled.
    * @property {boolean} [subchart.grid.focus.continuous=false] Render x focus grid line as one continuous line across main chart and subchart when subchart brush is disabled.
    * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
    * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
@@ -24686,6 +24757,8 @@ function dispatchSubchartEvent($$, type, event, context) {
    *      	enabled: false
    *      },
    *      grid: {
+   *      	// set false to hide focus grid line in subchart
+   *      	// focus: false,
    *      	focus: {
    *      		// NOTE: works only when 'brush.enabled=false'
    *      		continuous: true
@@ -24730,6 +24803,7 @@ function dispatchSubchartEvent($$, type, event, context) {
   subchart_brush_enabled: true,
   subchart_showHandle: false,
   subchart_size_height: 60,
+  subchart_grid_focus: true,
   subchart_grid_focus_continuous: false,
   subchart_axis_x_show: true,
   subchart_axis_x_tick_show: true,
@@ -27154,7 +27228,7 @@ class AxisRendererHelper {
   /**
    * Get tick transform setter function
    * @param {string} id Axis id
-   * @returns {(selection: d3Selection, scale) => void} transfrom setter function
+   * @returns {function(d3Selection, d3Scale): void} transform setter function
    * @private
    */
   getTickTransformSetter(id) {
@@ -34243,7 +34317,7 @@ function _getSplineClipPath() {
   },
   /**
    * Generate funnel coordinate points data for text labels
-   * @returns {(d: IDataRow) => [number, number][]} Point getter function
+   * @returns {function(IDataRow): Array.<Array.<number>>} Point getter function
    * @private
    */
   generateGetFunnelPoints() {
@@ -35857,7 +35931,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.3-nightly-20260730005642",
+  version: "4.0.3-nightly-20260801010035",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

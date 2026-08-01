@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.3-nightly-20260730005642
+ * @version 4.0.3-nightly-20260801010035
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -57,6 +57,36 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/create fake namespace object */
+/******/ 	!function() {
+/******/ 		var getProto = Object.getPrototypeOf ? function(obj) { return Object.getPrototypeOf(obj); } : function(obj) { return obj.__proto__; };
+/******/ 		var leafPrototypes;
+/******/ 		// create a fake namespace object
+/******/ 		// mode & 1: value is a module id, require it
+/******/ 		// mode & 2: merge all properties of value into the ns
+/******/ 		// mode & 4: return value when already ns object
+/******/ 		// mode & 16: return value when it's Promise-like
+/******/ 		// mode & 8|1: behave like require
+/******/ 		__webpack_require__.t = function(value, mode) {
+/******/ 			if(mode & 1) value = this(value);
+/******/ 			if(mode & 8) return value;
+/******/ 			if(typeof value === 'object' && value) {
+/******/ 				if((mode & 4) && value.__esModule) return value;
+/******/ 				if((mode & 16) && typeof value.then === 'function') return value;
+/******/ 			}
+/******/ 			var ns = Object.create(null);
+/******/ 			__webpack_require__.r(ns);
+/******/ 			var def = {};
+/******/ 			leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
+/******/ 			for(var current = mode & 2 && value; (typeof current == 'object' || typeof current == 'function') && !~leafPrototypes.indexOf(current); current = getProto(current)) {
+/******/ 				Object.getOwnPropertyNames(current).forEach(function(key) { def[key] = function() { return value[key]; }; });
+/******/ 			}
+/******/ 			def['default'] = function() { return value; };
+/******/ 			__webpack_require__.d(ns, def);
+/******/ 			return ns;
+/******/ 		};
+/******/ 	}();
+/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	!function() {
 /******/ 		// define getter/value functions for harmony exports
@@ -89,6 +119,17 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
 /******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
 /******/ 	}();
 /******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
@@ -99,8 +140,6 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ TextOverlap; }
 });
 
-// EXTERNAL MODULE: external {"commonjs":"d3-delaunay","commonjs2":"d3-delaunay","amd":"d3-delaunay","root":"d3"}
-var external_commonjs_d3_delaunay_commonjs2_d3_delaunay_amd_d3_delaunay_root_d3_ = __webpack_require__(9);
 ;// ./src/module/polygon.ts
 function polygonArea(polygon) {
   const n = polygon.length;
@@ -244,7 +283,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "4.0.3-nightly-20260730005642");
+__publicField(Plugin, "version", "4.0.3-nightly-20260801010035");
 
 ;// ./src/Plugin/textoverlap/Options.ts
 class Options {
@@ -287,13 +326,40 @@ class Options {
 }
 
 ;// ./src/Plugin/textoverlap/index.ts
+var textoverlap_defProp = Object.defineProperty;
+var textoverlap_defNormalProp = (obj, key, value) => key in obj ? textoverlap_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var textoverlap_publicField = (obj, key, value) => textoverlap_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+var __async = (__this, __arguments, generator) => {
+  return new Promise((resolve, reject) => {
+    var fulfilled = (value) => {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var rejected = (value) => {
+      try {
+        step(generator.throw(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+    step((generator = generator.apply(__this, __arguments)).next());
+  });
+};
 
 
 
-
+let d3Delaunay = null;
+function getDelaunay() {
+  return d3Delaunay != null ? d3Delaunay : d3Delaunay = Promise.resolve(/* import() */).then(__webpack_require__.t.bind(__webpack_require__, 9, 23)).then(({ Delaunay }) => Delaunay);
+}
 class TextOverlap extends Plugin {
   constructor(options) {
     super(options);
+    textoverlap_publicField(this, "redrawId", 0);
     this.config = new Options();
     return this;
   }
@@ -303,7 +369,10 @@ class TextOverlap extends Plugin {
   $redraw() {
     const { $$: { $el }, config: { selector } } = this;
     const text = selector ? $el.main.selectAll(selector) : $el.text;
-    !text.empty() && this.preventLabelOverlap(text);
+    const redrawId = ++this.redrawId;
+    if (!text.empty()) {
+      void this.preventLabelOverlap(text, redrawId);
+    }
   }
   /**
    * Generates the voronoi layout for data labels
@@ -312,41 +381,50 @@ class TextOverlap extends Plugin {
    * @private
    */
   generateVoronoi(points) {
-    const { $$ } = this;
-    const { scale } = $$;
-    const [min, max] = ["x", "y"].map((v) => scale[v].domain());
-    [min[1], max[0]] = [max[0], min[1]];
-    return external_commonjs_d3_delaunay_commonjs2_d3_delaunay_amd_d3_delaunay_root_d3_.Delaunay.from(points).voronoi([
-      ...min,
-      ...max
-    ]);
+    return __async(this, null, function* () {
+      const { $$ } = this;
+      const { scale } = $$;
+      const [min, max] = ["x", "y"].map((v) => scale[v].domain());
+      const Delaunay = yield getDelaunay();
+      [min[1], max[0]] = [max[0], min[1]];
+      return Delaunay.from(points).voronoi([
+        ...min,
+        ...max
+      ]);
+    });
   }
   /**
    * Set text label's position to preventg overlap.
    * @param {d3Selection} text target text selection
+   * @param {number} redrawId Redraw request identifier
    * @private
    */
-  preventLabelOverlap(text) {
-    const { extent, area } = this.config;
-    const points = text.data().map((v) => [v.index, v.value]);
-    const voronoi = this.generateVoronoi(points);
-    let i = 0;
-    text.each(function() {
-      const cell = voronoi.cellPolygon(i);
-      if (cell && this) {
-        const [x, y] = points[i];
-        const [cx, cy] = polygonCentroid(cell);
-        const cellArea = Math.abs(polygonArea(cell));
-        const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
-        const xTranslate = extent * (angle === 0 ? 1 : -1);
-        const yTranslate = angle === -1 ? -extent : extent + 5;
-        const txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end";
-        this.style.display = cellArea < area ? "none" : "";
-        this.setAttribute("text-anchor", txtAnchor);
-        this.setAttribute("dy", `0.${angle === 1 ? 71 : 35}em`);
-        this.setAttribute("transform", `translate(${xTranslate}, ${yTranslate})`);
+  preventLabelOverlap(_0) {
+    return __async(this, arguments, function* (text, redrawId = this.redrawId) {
+      const { extent, area } = this.config;
+      const points = text.data().map((v) => [v.index, v.value]);
+      const voronoi = yield this.generateVoronoi(points).catch(() => null);
+      let i = 0;
+      if (!voronoi || redrawId !== this.redrawId) {
+        return;
       }
-      i++;
+      text.each(function() {
+        const cell = voronoi.cellPolygon(i);
+        if (cell && this) {
+          const [x, y] = points[i];
+          const [cx, cy] = polygonCentroid(cell);
+          const cellArea = Math.abs(polygonArea(cell));
+          const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
+          const xTranslate = extent * (angle === 0 ? 1 : -1);
+          const yTranslate = angle === -1 ? -extent : extent + 5;
+          const txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end";
+          this.style.display = cellArea < area ? "none" : "";
+          this.setAttribute("text-anchor", txtAnchor);
+          this.setAttribute("dy", `0.${angle === 1 ? 71 : 35}em`);
+          this.setAttribute("transform", `translate(${xTranslate}, ${yTranslate})`);
+        }
+        i++;
+      });
     });
   }
 }
