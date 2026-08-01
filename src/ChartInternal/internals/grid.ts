@@ -354,11 +354,12 @@ export default {
 					.attr("class", $FOCUS.ygridFocus);
 			}
 
-			config.subchart_grid_focus_continuous && $el.main.insert("g", className)
-				.attr("class", $FOCUS.xgridFocusContinuous)
-				.append("line")
-				.attr("class", `${$FOCUS.xgridFocus} ${$FOCUS.xgridFocusContinuous}`)
-				.style("visibility", "hidden");
+			config.subchart_grid_focus_continuous && config.subchart_grid_focus !== false &&
+				$el.main.insert("g", className)
+					.attr("class", $FOCUS.xgridFocusContinuous)
+					.append("line")
+					.attr("class", `${$FOCUS.xgridFocus} ${$FOCUS.xgridFocusContinuous}`)
+					.style("visibility", "hidden");
 		}
 	},
 

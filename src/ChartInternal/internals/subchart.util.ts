@@ -16,6 +16,7 @@ export function isContinuousGridFocusEnabled($$): boolean {
 
 	return !!(
 		config.subchart_grid_focus_continuous &&
+		config.subchart_grid_focus !== false &&
 		config.subchart_show &&
 		config.subchart_brush_enabled === false &&
 		state.width2 > 0 &&

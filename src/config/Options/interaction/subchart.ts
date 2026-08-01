@@ -22,6 +22,7 @@ export default {
 	 * @property {object} [subchart.types] Set chart type for each data in the subchart. Defaults to data.types.
 	 * @property {boolean} [subchart.brush.enabled=true] Enable subchart brush interaction.
 	 * @property {boolean} [subchart.showHandle=false] Show sub chart's handle.
+	 * @property {boolean|object} [subchart.grid.focus=true] Show x focus grid line in subchart when subchart brush is disabled.
 	 * @property {boolean} [subchart.grid.focus.continuous=false] Render x focus grid line as one continuous line across main chart and subchart when subchart brush is disabled.
 	 * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
 	 * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
@@ -81,6 +82,8 @@ export default {
 	 *      	enabled: false
 	 *      },
 	 *      grid: {
+	 *      	// set false to hide focus grid line in subchart
+	 *      	// focus: false,
 	 *      	focus: {
 	 *      		// NOTE: works only when 'brush.enabled=false'
 	 *      		continuous: true
@@ -125,6 +128,7 @@ export default {
 	subchart_brush_enabled: true,
 	subchart_showHandle: false,
 	subchart_size_height: 60,
+	subchart_grid_focus: <boolean | object>true,
 	subchart_grid_focus_continuous: false,
 	subchart_axis_x_show: true,
 	subchart_axis_x_tick_show: true,

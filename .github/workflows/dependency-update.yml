@@ -29,9 +29,7 @@ jobs:
       with:
         node-version: 24.x
         cache: 'pnpm'
-        cache-dependency-path: |
-          pnpm-lock.yaml
-          packages/react/pnpm-lock.yaml
+        cache-dependency-path: pnpm-lock.yaml
         
     - name: Configure git
       run: |
@@ -45,25 +43,20 @@ jobs:
     - name: Install dependencies
       run: |
         pnpm install --frozen-lockfile
-        pnpm --dir packages/react install --frozen-lockfile
         
     - name: Update all dependencies
       run: |
         pnpm update --latest
-        pnpm --dir packages/react update --latest
         
     - name: Install updated dependencies
       run: |
         pnpm install
-        pnpm --dir packages/react install
         sudo pnpm exec playwright install-deps
         pnpm exec playwright install
-        pnpm --dir packages/react exec playwright install
         
     - name: Run tests
       run: |
         pnpm run coverage:ci
-        pnpm --dir packages/react test
         
     - name: Check if there are changes
       id: check_changes

@@ -23,6 +23,15 @@ const config = {
 		publicPath: "/dist"
 	},
 	externals: ({context, request}, callback) => {
+		if (/^react(?:\/|$)/.test(request)) {
+			return callback(null, {
+				commonjs: request,
+				commonjs2: request,
+				amd: request,
+				root: "React"
+			});
+		}
+
 		// every 'd3-*' import, will be externally required as their name except root as 'd3'
 		if (/^d3-/.test(request)) {
 			return callback(null, {
