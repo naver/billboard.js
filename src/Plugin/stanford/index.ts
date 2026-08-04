@@ -48,15 +48,11 @@ function hsl(h: number, s: number, l: number, opacity: number = 1): HSLColor {
  * - **Required modules:**
  *   - [d3-selection](https://github.com/d3/d3-selection)
  *   - [d3-interpolate](https://github.com/d3/d3-interpolate)
- *   - [d3-scale](https://github.com/d3/d3-scale)
  *   - [d3-brush](https://github.com/d3/d3-brush)
- *   - [d3-axis](https://github.com/d3/d3-axis)
  * @class plugin-stanford
  * @requires d3-selection
  * @requires d3-interpolate
- * @requires d3-scale
  * @requires d3-brush
- * @requires d3-axis
  * @param {object} options Stanford plugin options
  * @augments Plugin
  * @returns {Stanford}

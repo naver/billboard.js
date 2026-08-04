@@ -4,13 +4,44 @@
  */
 import {window} from "./browser";
 
+/**
+ * The worker source constant (declared in config/globals.d.ts) is pre-bundled from
+ * `src/module/worker.entry.ts` and injected at build time by config/worker-src.js.
+ * Never name that constant outside the single reference in getWorkerSrc(): the
+ * rolldown injection is textual, so a mention in a comment would inline the whole
+ * source string a second time.
+ *
+ * Offloaded work is addressed by op name and the worker code is built
+ * independently of the application bundle, so no application function is ever
+ * stringified. Host toolchains that rewrite function bodies - coverage
+ * instrumentation, babel helpers, bundler-hoisted module scope - cannot break
+ * the worker anymore.
+ */
 // Store worker cache in memory
-const cache: {[key: string]: {src: string, worker: Worker | null}} = {};
+const cache: {[key: string]: {revoke: boolean, src: string, worker: Worker | null}} = {};
 const disabledKeys = new Set<string>();
+const verifiedKeys = new Set<string>();
 const DEFAULT_WORKER_TIMEOUT = 5000;
 
 // Correlation id for worker request/response matching
 let messageId = 0;
+
+type TWorkerOptions = {timeout?: number, workerUrl?: string};
+
+/**
+ * Get the build-injected worker source.
+ * @returns {string} Worker source, or empty string when it wasn't injected
+ * @private
+ */
+function getWorkerSrc(): string {
+	try {
+		// referenced exactly once: each occurrence inlines the whole source string
+		return __WORKER_SRC__;
+	} catch {
+		// not injected (e.g. consuming src/*.ts directly) - stay on the main thread
+		return "";
+	}
+}
 
 /**
  * Get Web Worker related browser APIs when all required primitives are available.
@@ -28,20 +59,25 @@ function getWorkerAPI():
 }
 
 /**
- * Generate a stable cache key from the worker source.
- * @param {string} str Worker source string
- * @returns {string} Cache key
+ * Get Worker constructor when available.
+ * @returns {function|null} Worker constructor
  * @private
  */
-function hashString(str: string): string {
-	let hash = 2166136261;
+function getWorkerConstructor(): typeof Worker | null {
+	return window.Worker || null;
+}
 
-	for (let i = 0, len = str.length; i < len; i++) {
-		hash ^= str.charCodeAt(i);
-		hash = Math.imul(hash, 16777619);
-	}
-
-	return `worker-${str.length}-${(hash >>> 0).toString(36)}`;
+/**
+ * Normalize worker options while preserving the legacy numeric timeout argument.
+ * @param {number|object} options Worker timeout or options
+ * @returns {object} Normalized worker options
+ * @private
+ */
+function normalizeWorkerOptions(options?: number | TWorkerOptions): Required<TWorkerOptions> {
+	return typeof options === "number" ? {timeout: options, workerUrl: ""} : {
+		timeout: options?.timeout ?? DEFAULT_WORKER_TIMEOUT,
+		workerUrl: options?.workerUrl ?? ""
+	};
 }
 
 /**
@@ -52,7 +88,6 @@ function hashString(str: string): string {
  */
 function releaseWorker(key: string, disable = false): void {
 	const cached = cache[key];
-	const api = getWorkerAPI();
 
 	if (disable) {
 		disabledKeys.add(key);
@@ -60,56 +95,80 @@ function releaseWorker(key: string, disable = false): void {
 
 	if (cached) {
 		cached.worker?.terminate();
-		cached.src && api?.URL.revokeObjectURL(cached.src);
+		cached.revoke && getWorkerAPI()?.URL.revokeObjectURL(cached.src);
 		delete cache[key];
+	}
+
+	// entries are stored per op as `${key}:${op}`, so a bare key never matches:
+	// drop every op verified against the worker being released
+	for (const verified of verifiedKeys) {
+		if (verified.startsWith(`${key}:`)) {
+			verifiedKeys.delete(verified);
+		}
+	}
+}
+
+/**
+ * Compare worker and main-thread results for the parity self-test.
+ * @param {unknown} actual Worker result
+ * @param {unknown} expected Main-thread result
+ * @returns {boolean} Whether results match
+ * @private
+ */
+function isSameResult(actual, expected): boolean {
+	if (actual === expected) {
+		return true;
+	}
+
+	try {
+		return JSON.stringify(actual) === JSON.stringify(expected);
+	} catch {
+		// Structured-cloned worker results should normally be serializable. If a custom
+		// worker returns an exotic value, don't disable the worker on an unverifiable result.
+		return true;
 	}
 }
 
 /**
  * Get or create cached worker resources (Object URL, Worker)
- * @param {function} fn Function to be executed in worker
- * @param {Array} depsFn Dependency functions to run given function(fn).
+ * @param {string} op Worker op name
+ * @param {string} workerUrl Custom worker script URL.
  * @returns {{key: string, src: string}} Cache key and Object URL
  * @private
  */
-function getOrCreateWorkerResources(fn: Function, depsFn?: Function[]):
+function getOrCreateWorkerResources(op: string, workerUrl = ""):
 	| {key: string, src: string}
 	| null {
-	const api = getWorkerAPI();
-	const fnString = fn.toString();
-	// Include depsFn in cache key to handle different dependencies
-	const depsString = depsFn?.map(String).join(";") ?? "";
-	const key = hashString(`${fnString}\n${depsString}`);
+	const hasWorker = !!getWorkerConstructor();
+	const api = workerUrl ? null : getWorkerAPI();
+	const src = workerUrl ? "" : getWorkerSrc();
+	// one worker per source: ops share a single cached worker per script
+	const key = workerUrl || "blob";
 
-	if (!api || disabledKeys.has(key)) {
+	if (!hasWorker || (!workerUrl && (!api || !src)) || disabledKeys.has(key)) {
 		return null;
 	}
 
 	if (!(key in cache)) {
 		try {
-			// Create Blob and Object URL for Web Worker
-			const blob = new api.Blob([
-				`${depsString}
+			if (workerUrl) {
+				cache[key] = {
+					revoke: false,
+					src: workerUrl,
+					worker: null
+				};
+			} else if (api) {
+				// Create Blob and Object URL for Web Worker
+				const blob = new api.Blob([src], {
+					type: "text/javascript"
+				});
 
-				self.onmessage=function({data}) {
-					try {
-						const result = (${fnString}).apply(null, data.args);
-						self.postMessage({id: data.id, result});
-					} catch (error) {
-						self.postMessage({
-							id: data.id,
-							error: error && (error.message || error.name) || String(error)
-						});
-					}
-				};`
-			], {
-				type: "text/javascript"
-			});
-
-			cache[key] = {
-				src: api.URL.createObjectURL(blob),
-				worker: null
-			};
+				cache[key] = {
+					revoke: true,
+					src: api.URL.createObjectURL(blob),
+					worker: null
+				};
+			}
 		} catch {
 			return null;
 		}
@@ -127,16 +186,16 @@ function getOrCreateWorkerResources(fn: Function, depsFn?: Function[]):
  */
 export function getWorker(key: string, src: string): Worker | null {
 	const cached = cache[key];
-	const api = getWorkerAPI();
+	const Worker = getWorkerConstructor();
 
 	// Return null if cache entry doesn't exist
-	if (!cached || !api || disabledKeys.has(key)) {
+	if (!cached || !Worker || disabledKeys.has(key)) {
 		return null;
 	}
 
 	if (!cached.worker) {
 		try {
-			cached.worker = new api.Worker(src);
+			cached.worker = new Worker(src);
 		} catch {
 			releaseWorker(key, true);
 			return null;
@@ -149,34 +208,28 @@ export function getWorker(key: string, src: string): Worker | null {
 /**
  * Create and run on Web Worker
  * @param {boolean} useWorker Use Web Worker
- * @param {function} fn Function to be executed in worker
+ * @param {string} op Op name registered in src/module/worker.entry.ts
+ * @param {function} fn Equivalent main-thread function, used for fallback and parity check
  * @param {function} callback Callback function to receive result from worker
- * @param {Array} depsFn Dependency functions to run given function(fn).
- * @param {number} timeout Worker response timeout in milliseconds.
+ * @param {number|object} options Worker response timeout or options.
  * @returns {function}
  * @example
- * 	const worker = runWorker(function(arg) {
- * 		  // do some tasks...
- * 		  console.log("param:", A(arg));
- *
- * 		  return 1234;
- * 	   }, function(data) {
+ * 	const worker = runWorker(true, "rows", rows, function(data) {
  * 		  // callback after worker is done
  * 	 	  console.log("result:", data);
- * 	   },
- * 	   [function A(){}]
- * 	);
+ * 	   });
  *
  * 	worker(11111);
  * @private
  */
 export function runWorker(
 	useWorker = true,
+	op: string,
 	fn: Function,
 	callback: Function,
-	depsFn?: Function[],
-	timeout = DEFAULT_WORKER_TIMEOUT
+	options?: number | TWorkerOptions
 ): Function {
+	const {timeout, workerUrl} = normalizeWorkerOptions(options);
 	const runSync = function(...args: unknown[]) {
 		const res = fn(...args);
 
@@ -185,7 +238,7 @@ export function runWorker(
 	let runFn = runSync;
 
 	if (useWorker) {
-		const workerResources = getOrCreateWorkerResources(fn, depsFn);
+		const workerResources = getOrCreateWorkerResources(op, workerUrl);
 		const worker = workerResources ? getWorker(workerResources.key, workerResources.src) : null;
 
 		if (worker && workerResources) {
@@ -216,6 +269,20 @@ export function runWorker(
 
 						settled = true;
 						cleanup();
+
+						if (!verifiedKeys.has(`${key}:${op}`)) {
+							const expected = fn(...args);
+
+							if (!isSameResult(e.data.result, expected)) {
+								releaseWorker(key, true);
+								runFn = runSync;
+								callback(expected);
+								return;
+							}
+
+							verifiedKeys.add(`${key}:${op}`);
+						}
+
 						callback(e.data.result);
 					}
 				};
@@ -235,7 +302,7 @@ export function runWorker(
 				worker.addEventListener("error", errorHandler);
 
 				try {
-					worker.postMessage({id, args});
+					worker.postMessage({args, id, op});
 				} catch {
 					fallback();
 				}
@@ -261,11 +328,12 @@ export function cleanupWorkers(): void {
 		}
 
 		if (cached.src) {
-			api?.URL.revokeObjectURL(cached.src);
+			cached.revoke && api?.URL.revokeObjectURL(cached.src);
 		}
 
 		delete cache[key];
 	}
 
 	disabledKeys.clear();
+	verifiedKeys.clear();
 }

@@ -8204,10 +8204,28 @@ setTimeout(function() {
 			}
 		},
 		useWorker: {
-			description: "Given data will be formatted in Worker thread at the initial time.",
+			description: "Given data will be formatted in Worker thread at the initial time.<br>*Under a strict CSP which blocks <code>blob:</code> workers, serve <code>dist/billboard.worker.js</code> and point <code>boost.workerUrl</code> at it.",
 			options: {
 				boost: {
+					// the worker source is inlined in the bundle and run through a
+					// blob: URL, so there's no extra file to serve
 					useWorker: true
+
+					// "auto" offloads only past ~5,000 cells, below which structured
+					// cloning costs more than the offload saves:
+					//   useWorker: "auto"
+
+					// a strict CSP blocks blob: workers. Serve the script shipped in the
+					// package and point at it instead - 'useWorker' must stay on, since
+					// 'workerUrl' only picks where the source comes from:
+					//   useWorker: true,
+					//   workerUrl: "$YOUR_PATH/dist/billboard.worker.js"
+
+					// ESM - the file is reachable as a package subpath:
+					//   import workerUrl from "billboard.js/dist/billboard.worker.js?url";
+					// Vite inlines assets under 4KB as a data: URI, which a strict CSP
+					// rejects just like blob:. Either opt this file out of inlining via
+					// build.assetsInlineLimit, or copy it into public/ and use that path.
 				},
 				data: {
 					columns: [

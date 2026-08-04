@@ -119,6 +119,34 @@ function getOptions(options: ChartOptions, type?: IProp["type"]): ChartOptions {
  *     }
  *   }}
  * />;
+ * @example
+ * // UMD: 'dist/billboard.react.js' exposes the 'BillboardReact' global, holding
+ * // the same component as both '.Chart' and '.default'. React is expected on the
+ * // page as the 'React' global, so this path needs a UMD build of React - React
+ * // 18 and below ship one, React 19 does not.
+ * <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+ * <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+ *
+ * <link rel="stylesheet" href="$YOUR_PATH/billboard.css">
+ * <script src="$YOUR_PATH/billboard.pkgd.js"></script>
+ * <script src="$YOUR_PATH/billboard.react.js"></script>
+ *
+ * <div id="root"></div>
+ * <script>
+ *   const {Chart} = BillboardReact;
+ *
+ *   ReactDOM.createRoot(document.getElementById("root")).render(
+ *     React.createElement(Chart, {
+ *       bb,
+ *       options: {
+ *         data: {
+ *           columns: [["data1", 30, 120, 80]],
+ *           type: "line"
+ *         }
+ *       }
+ *     })
+ *   );
+ * </script>
  */
 const Chart = forwardRef<IChart, IProp>((props, ref) => {
 	const container = useRef<HTMLDivElement>(null);

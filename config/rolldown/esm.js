@@ -1,10 +1,26 @@
 import {readdirSync, rmSync} from "fs";
 import {replacePlugin} from "rolldown/plugins";
 import {getBanner, readJson, resolvePath} from "../util.js";
+import {getWorkerSource} from "../worker-src.js";
 
 const pkg = readJson("package.json");
 const prefix = readJson("./const.json").pluginPrefix;
 const distPath = "dist-esm";
+
+// Inject the separately bundled worker source (see config/worker-src.js).
+// Done with split/join rather than replacePlugin: the minified worker source
+// contains `${...}` sequences that regex-based replacement mangles or skips.
+const workerSrcPlugin = {
+	name: "bb-worker-src",
+	transform(code) {
+		if (code.includes("__WORKER_SRC__")) {
+			return {
+				code: code.split("__WORKER_SRC__").join(JSON.stringify(getWorkerSource())),
+				map: null
+			};
+		}
+	}
+};
 
 const {plugin, production} = getBanner();
 const version = process.env.VERSION || pkg.version;
@@ -45,7 +61,8 @@ const plugins = [
 	replacePlugin({
 		"__VERSION__": version,
 		preventAssignment: true
-	})
+	}),
+	workerSrcPlugin
 ];
 
 const external = id => /^d3-/.test(id) || /^react(?:\/|$)/.test(id);

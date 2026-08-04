@@ -2,7 +2,6 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {scaleOrdinal as d3ScaleOrdinal} from "d3-scale";
 import {select as d3Select} from "d3-selection";
 import {d3Selection} from "../../../types";
 import {$ARC, $COLOR, $SHAPE} from "../../config/classes";
@@ -93,9 +92,10 @@ export default {
 		const hasGradient = config.area_linearGradient || config.bar_linearGradient ||
 			config.point_radialGradient;
 
+		// was `d3ScaleOrdinal(colors).range()`, which only ever copied the array
 		let pattern = notEmpty(config.color_pattern) ?
 			config.color_pattern :
-			d3ScaleOrdinal(_getColorFromCss($el.chart) || schemeCategory10).range();
+			[...(_getColorFromCss($el.chart) || schemeCategory10)];
 
 		const originalColorPattern = pattern;
 

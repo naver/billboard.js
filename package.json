@@ -163,6 +163,7 @@
 		"d3-time": "^3.1.0",
 		"docdash": "^2.0.2",
 		"dprint": "^0.54.0",
+		"esbuild": "^0.28.1",
 		"esbuild-loader": "^4.5.0",
 		"eslint": "^10.5.0",
 		"eslint-plugin-import": "^2.32.0",

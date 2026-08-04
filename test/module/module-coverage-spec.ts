@@ -176,7 +176,7 @@ describe("MODULE coverage helpers", () => {
 			window.URL.createObjectURL = () => "blob:worker";
 			window.URL.revokeObjectURL = url => revoked.push(url);
 
-			runWorker(true, value => value * 3, value => {
+			runWorker(true, "rows", value => value * 3, value => {
 				try {
 					expect(value).to.be.equal(12);
 					expect(created).to.be.deep.equal(["blob:worker"]);
@@ -205,7 +205,7 @@ describe("MODULE coverage helpers", () => {
 					throw new Error("CSP blocked");
 				};
 
-				runWorker(true, value => value * 2, value => values.push(value))(5);
+				runWorker(true, "rows", value => value * 2, value => values.push(value))(5);
 
 				expect(values).to.be.deep.equal([10]);
 			} finally {
@@ -229,7 +229,7 @@ describe("MODULE coverage helpers", () => {
 				window.URL.createObjectURL = () => "blob:blocked";
 				window.URL.revokeObjectURL = () => {};
 
-				runWorker(true, value => value + 1, value => values.push(value))(5);
+				runWorker(true, "rows", value => value + 1, value => values.push(value))(5);
 
 				expect(values).to.be.deep.equal([6]);
 			} finally {
@@ -268,7 +268,7 @@ describe("MODULE coverage helpers", () => {
 				window.URL.createObjectURL = () => "blob:post-message";
 				window.URL.revokeObjectURL = url => revoked.push(url);
 
-				runWorker(true, value => value * 4, value => values.push(value))(3);
+				runWorker(true, "rows", value => value * 4, value => values.push(value))(3);
 
 				expect(values).to.be.deep.equal([12]);
 				expect(terminated).to.be.deep.equal(["blob:post-message"]);
@@ -314,7 +314,7 @@ describe("MODULE coverage helpers", () => {
 			window.URL.createObjectURL = () => "blob:error";
 			window.URL.revokeObjectURL = () => {};
 
-			runWorker(true, value => value + 2, value => {
+			runWorker(true, "rows", value => value + 2, value => {
 				try {
 					expect(value).to.be.equal(7);
 				} finally {
@@ -342,7 +342,7 @@ describe("MODULE coverage helpers", () => {
 			window.URL.createObjectURL = () => "blob:timeout";
 			window.URL.revokeObjectURL = () => {};
 
-			runWorker(true, value => value - 1, value => {
+			runWorker(true, "rows", value => value - 1, value => {
 				try {
 					expect(value).to.be.equal(4);
 				} finally {
@@ -352,6 +352,119 @@ describe("MODULE coverage helpers", () => {
 				}
 				done(1);
 			}, undefined, 10)(5);
+		}));
+
+		it("disables worker when the parity self-test result differs", () => new Promise(done => {
+			const OriginalWorker = window.Worker;
+			const originalCreateObjectURL = window.URL.createObjectURL;
+			const originalRevokeObjectURL = window.URL.revokeObjectURL;
+			const terminated: string[] = [];
+
+			class MockWorker {
+				src;
+				listeners = {error: [], message: []};
+
+				constructor(src) {
+					this.src = src;
+				}
+
+				addEventListener(type, fn) {
+					this.listeners[type].push(fn);
+				}
+
+				removeEventListener(type, fn) {
+					this.listeners[type] = this.listeners[type].filter(f => f !== fn);
+				}
+
+				postMessage(data) {
+					setTimeout(() => {
+						this.listeners.message.slice().forEach(fn => fn({
+							data: {id: data.id, result: "wrong"}
+						}));
+					});
+				}
+
+				terminate() {
+					terminated.push(this.src);
+				}
+			}
+
+			window.Worker = MockWorker;
+			window.URL.createObjectURL = () => "blob:parity";
+			window.URL.revokeObjectURL = () => {};
+
+			runWorker(true, "rows", value => value * 2, value => {
+				try {
+					expect(value).to.be.equal(10);
+					expect(terminated).to.be.deep.equal(["blob:parity"]);
+				} finally {
+					window.Worker = OriginalWorker;
+					window.URL.createObjectURL = originalCreateObjectURL;
+					window.URL.revokeObjectURL = originalRevokeObjectURL;
+				}
+				done(1);
+			})(5);
+		}));
+
+		it("uses a custom static worker URL without creating a Blob URL", () => new Promise(done => {
+			const OriginalWorker = window.Worker;
+			const originalCreateObjectURL = window.URL.createObjectURL;
+			const originalRevokeObjectURL = window.URL.revokeObjectURL;
+			const created: string[] = [];
+			let posted;
+
+			class MockWorker {
+				listeners = {error: [], message: []};
+
+				constructor(src) {
+					created.push(src);
+				}
+
+				addEventListener(type, fn) {
+					this.listeners[type].push(fn);
+				}
+
+				removeEventListener(type, fn) {
+					this.listeners[type] = this.listeners[type].filter(f => f !== fn);
+				}
+
+				postMessage(data) {
+					posted = data;
+
+					setTimeout(() => {
+						this.listeners.message.slice().forEach(fn => fn({
+							data: {id: data.id, result: data.args[0] + 3}
+						}));
+					});
+				}
+
+				terminate() {}
+			}
+
+			window.Worker = MockWorker;
+			window.URL.createObjectURL = () => {
+				throw new Error("Blob URL should not be created");
+			};
+			window.URL.revokeObjectURL = () => {};
+
+			runWorker(true, "rows", value => value + 3, value => {
+				try {
+					expect(value).to.be.equal(8);
+					expect(created).to.be.deep.equal(["/static/billboard-worker.js"]);
+					// op-name protocol: no function source is transferred
+					expect(posted.op).to.be.equal("rows");
+					expect(posted.args).to.be.deep.equal([5]);
+					expect(posted.fn).to.be.undefined;
+					expect(posted.deps).to.be.undefined;
+				} finally {
+					window.Worker = OriginalWorker;
+					window.URL.createObjectURL = originalCreateObjectURL;
+					window.URL.revokeObjectURL = originalRevokeObjectURL;
+				}
+				done(1);
+			}, {
+				workerUrl: "/static/billboard-worker.js"
+			})(5);
 		}));
 
 	});

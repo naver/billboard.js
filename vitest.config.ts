@@ -1,6 +1,7 @@
 import {resolve} from "node:path";
 import {defineConfig} from "vitest/config";
 import {playwright} from "@vitest/browser-playwright";
+import {getWorkerSource} from "./config/worker-src.js";
 
 const utilAliasPlugin = {
     name: "util-alias-resolver",
@@ -20,6 +21,11 @@ const utilAliasPlugin = {
 
 export default defineConfig({
     plugins: [utilAliasPlugin],
+    define: {
+        // same injection the production builds do, so worker specs exercise the
+        // real pre-bundled worker source instead of an undefined constant
+        __WORKER_SRC__: JSON.stringify(getWorkerSource())
+    },
     optimizeDeps: {
         include: ["@vitest/coverage-istanbul"]
     },

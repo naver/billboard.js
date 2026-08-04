@@ -18,7 +18,7 @@ export default {
 	 * 	- dice ([d3.treemapDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapDice))
 	 * 	- slice ([d3.treemapSlice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSlice))
 	 * 	- sliceDice ([d3.treemapSliceDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSliceDice))
-	 * 	- squrify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
+	 * 	- squarify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
 	 * 	- resquarify ([d3.treemapResquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapResquarify))
 	 * @property {function} [treemap.label.format] Set formatter for the label text.<br>
 	 * - **Arguments:**
@@ -31,7 +31,7 @@ export default {
 	 * @see [Demo: treemap](https://naver.github.io/billboard.js/demo/#Chart.TreemapChart)
 	 * @example
 	 *  treemap: {
-	 *      // "binary", "dice", "slice", "sliceDice", "squrify", "resquarify"
+	 *      // "binary", "dice", "slice", "sliceDice", "squarify", "resquarify"
 	 *      tile: "dice",
 	 *
 	 *      label: {

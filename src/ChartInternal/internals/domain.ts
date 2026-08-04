@@ -115,8 +115,11 @@ function getTargetValueMinMax($$, targets: IData[]): DomainMinMax {
 
 	for (let i = 0; i < targets.length; i++) {
 		const target = targets[i];
-		const isCandlestick = $$.isCandlestickType?.(target) ||
-			$$.isSubchartSourceTypeOf?.(target, TYPE.CANDLESTICK);
+		const isCandlestick = $$.isCandlestickType?.(target);
+		// resolved per target, not per value: the projection is keyed by target id, so
+		// asking per row made every main-chart domain pass walk the subchart type chain
+		const isSubchartCandlestick = !isCandlestick &&
+			!!$$.isSubchartSourceTypeOf?.(target, TYPE.CANDLESTICK);
 		const {values} = target;
 
 		for (let j = 0; j < values.length; j++) {
@@ -127,11 +130,13 @@ function getTargetValueMinMax($$, targets: IData[]): DomainMinMax {
 				continue;
 			}
 
-			const subchartCandlestickValue = $$.getSubchartCandlestickShapeValue?.(row, true);
+			const subchartCandlestickValue = isSubchartCandlestick ?
+				$$.getSubchartCandlestickShapeValue?.(row, true) :
+				undefined;
 
 			if (isNumber(subchartCandlestickValue)) {
 				value = subchartCandlestickValue;
-			} else if (value !== null && isCandlestick) {
+			} else if (value !== null && (isCandlestick || isSubchartCandlestick)) {
 				value = Array.isArray(value) ?
 					value.slice(0, 4) :
 					[value.open, value.high, value.low, value.close];

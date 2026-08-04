@@ -12,6 +12,7 @@
 	},
 	"include": [
 		"src/**/index*.ts",
+		"config/globals.d.ts",
 	],
 	"exclude": [
 		"test/**/*.ts"
