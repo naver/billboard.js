@@ -167,7 +167,9 @@ $ pnpm add billboard.js
 
 ### React
 
-The React component is available from the `billboard.js/react` subpath.
+The React component is available from the `billboard.js/react` subpath. The billboard namespace is
+passed in through the `bb` prop, so importing the React subpath never pulls the root bundle into a
+non-React bundle.
 
 ```tsx
 import bb, {line} from "billboard.js";
@@ -183,6 +185,46 @@ import BillboardJS from "billboard.js/react";
   }}
 />;
 ```
+
+Without a bundler, load `dist/billboard.react.js`. It is a UMD build exposing the `BillboardReact`
+global, which holds the component as both `.Chart` and `.default`:
+
+```html
+<!-- React first: this path reads the 'React' global, so it needs a UMD build of
+     React. React 18 and below ship one; React 19 does not. -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+<link rel="stylesheet" href="$YOUR_PATH/billboard.css">
+<script src="$YOUR_PATH/billboard.pkgd.js"></script>
+<script src="$YOUR_PATH/billboard.react.js"></script>
+
+<div id="root"></div>
+<script>
+  const {Chart} = BillboardReact;
+
+  ReactDOM.createRoot(document.getElementById("root")).render(
+    React.createElement(Chart, {
+      bb,
+      options: {
+        data: {
+          columns: [["data1", 30, 120, 80]],
+          type: "line"
+        }
+      }
+    })
+  );
+</script>
+```
+
+> [!NOTE]
+> - `billboard.react.js` treats `react` as an external, so React must already be on the page. It
+>   does **not** bundle billboard.js either — load `billboard.js`/`billboard.pkgd.js` first and hand
+>   the `bb` global to the component.
+> - On **React 19+** there is no UMD build of React to load. Use a bundler, or import both packages
+>   as ESM in the browser through an import map.
+> - The packaged build registers every chart type, so string types (`type: "line"`) work as-is. With
+>   the ESM entry, pass the module instead (`type: line()`) or through the `type` prop.
 
 For local visual testing of the React component, run:
 
@@ -238,7 +280,17 @@ Load billboard.js after D3.js.
 <!-- 2) or Load billboard.js packaged with D3.js -->
     <link rel="stylesheet" href="$YOUR_PATH/billboard.css">
     <script src="$YOUR_PATH/billboard.pkgd.js"></script>
+
+<!-- 3) optionally, the React component on top of either of the above.
+     Needs the 'React' global, so load a UMD build of React first
+     (React 18 and below ship one; React 19 does not). -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="$YOUR_PATH/billboard.react.js"></script>
 ```
+
+Loading `billboard.js` exposes the `bb` global, and `billboard.react.js` exposes `BillboardReact`.
+See [React](#react) for a full example.
 
 or by importing ESM.
 > [!TIP]

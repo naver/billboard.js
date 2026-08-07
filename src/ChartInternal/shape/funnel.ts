@@ -3,8 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
-import {line as d3Line} from "d3-shape";
-import {curveLinear as d3CurveLinear} from "d3-shape";
+import {curveLinear as d3CurveLinear, line as d3Line} from "d3-shape";
 import {$COMMON, $FUNNEL} from "../../config/classes";
 import {isObject} from "../../module/util";
 import type {IData, IDataRow, IFunnelData} from "../data/IData";

@@ -128,6 +128,7 @@ describe("MODULE", function() {
 
             runWorker(
                 false,
+                "rows",
                 function(val: number) { return val * 2; },
                 function(res: number) { result = res; }
             )(5);
@@ -135,19 +136,15 @@ describe("MODULE", function() {
             expect(result).to.be.equal(10);
         });
 
-        it("check with dependency function", () => new Promise(done => {
-            function depsFn() {
-                return 1234;
-            }
-
+        it("check unknown op falls back to the main thread", () => new Promise(done => {
             runWorker(
                 true,
-                function() { return depsFn(); },
+                "__unknown_op__",
+                function() { return 1234; },
                 function(res: number) {
                     expect(res).to.be.equal(1234);
                     done(1);
-                },
-                [depsFn]
+                }
             )();
 
             setTimeout(() => done(1), 2000);

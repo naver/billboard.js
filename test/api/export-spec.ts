@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {beforeEach, beforeAll, describe, expect, it} from "vitest";
+import {beforeEach, beforeAll, describe, expect, it, vi} from "vitest";
 // @ts-ignore
 import fontUrl from "../assets/font/alfa-slab-one.woff2?url";
 import util from "../assets/util";
@@ -253,17 +253,41 @@ describe("API export", () => {
 			});
 		}));
 
-		it("check when 'preserveFontStyle=true'", () => new Promise(done => {
+		it("check when 'preserveFontStyle=true'", async () => {
 			// use a bundled font asset: fetching from fonts.gstatic.com made this test
 			// fail on CI whenever the network was slow (fallback font → pattern mismatch)
 			const font = new FontFace("Alfa Slab One", `url(${fontUrl})`, {
 				style: "normal",
 				weight: "400"
 			});
+			const renderedTexts: Array<{text: string, font: string}> = [];
+			const originalFillText = CanvasRenderingContext2D.prototype.fillText;
+			const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText")
+				.mockImplementation(function(
+					this: CanvasRenderingContext2D,
+					text: string,
+					x: number,
+					y: number,
+					maxWidth?: number
+				) {
+					renderedTexts.push({
+						text: String(text),
+						font: this.font
+					});
+
+					if (arguments.length > 3) {
+						return originalFillText.call(this, text, x, y, maxWidth);
+					}
+
+					return originalFillText.call(this, text, x, y);
+				});
 
 			document.fonts.add(font);
 
-			font.load().then(() => {
+			try {
+				await font.load();
+				await document.fonts.ready;
+
 				chart.$.chart
 					.style("margin-left", "100px")
 					.style("padding-top", "50px");
@@ -271,20 +295,28 @@ describe("API export", () => {
 				chart.$.svg
 					.style("font-family", "Alfa Slab One");
 
-				chart.export({
-					preserveFontStyle: true
-				}, function(dataUrl) {
-					expect(
-						expected.some(pttr => pttr.every(v => dataUrl.indexOf(v) >= 0))
-					).to.be.true;
-
-					chart.$.chart
-						.style("margin-left", null)
-						.style("padding-top", null);
-
-					done(1);
+				const dataUrl = await new Promise<string>(resolve => {
+					chart.export({
+						preserveFontStyle: true
+					}, resolve);
 				});
-			});
-		}));
+
+				expect(dataUrl).to.match(/^data:image\/png;base64,/);
+				expect(renderedTexts.length).to.be.greaterThan(0);
+				expect(
+					renderedTexts.some(({font}) => font.indexOf("Alfa Slab One") >= 0)
+				).to.be.true;
+			} finally {
+				fillText.mockRestore();
+				document.fonts.delete(font);
+
+				chart.$.chart
+					.style("margin-left", null)
+					.style("padding-top", null);
+
+				chart.$.svg
+					.style("font-family", null);
+			}
+		});
 	});
 });

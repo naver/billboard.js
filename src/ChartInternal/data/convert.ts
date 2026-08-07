@@ -17,6 +17,39 @@ import type {IData} from "../data/IData";
 import {columns, json, rows, url} from "./convert.helper";
 
 /**
+ * Cell count from which `boost.useWorker: "auto"` offloads conversion.
+ *
+ * Below this, structured cloning the payload to the worker and back costs more
+ * than the parsing it saves.
+ * @private
+ */
+const WORKER_CELL_THRESHOLD = 5000;
+
+/**
+ * Estimate the number of data cells to be converted.
+ * @param {Array} data Raw json(array form)/rows/columns data
+ * @returns {number} Approximate cell count
+ * @private
+ */
+function _getCellCount(data): number {
+	const first = data[0];
+
+	// rows/columns: array of arrays
+	if (isArray(first)) {
+		let count = 0;
+
+		for (let i = 0, len = data.length; i < len; i++) {
+			count += data[i]?.length ?? 0;
+		}
+
+		return count;
+	}
+
+	// json: array of objects
+	return data.length * Object.keys(first ?? {}).length;
+}
+
+/**
  * Get data key for JSON
  * @param {string|object} keysParam Key params
  * @param {object} config Config object
@@ -101,7 +134,22 @@ export default {
 	 */
 	convertData(args, callback: Function): void {
 		const {config} = this;
-		const useWorker = d => d?.length && !isEmpty(d[0]) ? config.boost_useWorker : false;
+		const useWorker = d => {
+			if (!d?.length || isEmpty(d[0])) {
+				return false;
+			}
+
+			// "auto": offloading small payloads costs more in structured cloning than
+			// it saves, so only hand over datasets past the threshold
+			return config.boost_useWorker === "auto" ?
+				_getCellCount(d) >= WORKER_CELL_THRESHOLD :
+				!!config.boost_useWorker;
+		};
+		const workerOptions = config.boost_workerUrl ?
+			{
+				workerUrl: config.boost_workerUrl
+			} :
+			undefined;
 		let data = args;
 
 		if (args.bindto) {
@@ -121,14 +169,16 @@ export default {
 			url(data.url, data.mimeType, data.headers, _getDataKeyForJson(data.keys, config),
 				callback);
 		} else if (data.json) {
-			runWorker(useWorker(data.json), json, callback, [columns, rows])(
+			runWorker(useWorker(data.json), "json", json, callback, workerOptions)(
 				data.json,
 				_getDataKeyForJson(data.keys, config)
 			);
 		} else if (data.rows) {
-			runWorker(useWorker(data.rows), rows, callback)(data.rows);
+			runWorker(useWorker(data.rows), "rows", rows, callback, workerOptions)(data.rows);
 		} else if (data.columns) {
-			runWorker(useWorker(data.columns), columns, callback)(data.columns);
+			runWorker(useWorker(data.columns), "columns", columns, callback, workerOptions)(
+				data.columns
+			);
 		} else if (args.bindto) {
 			throw Error("url or json or rows or columns is required.");
 		}

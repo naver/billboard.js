@@ -103,7 +103,10 @@ function getLinePointGroupTypeFilter($$): Function {
  * @private
  */
 function getShapeOffsetValue($$, d, isSub?: boolean) {
-	const subchartCandlestickValue = getSubchartCandlestickShapeValue($$, d, isSub);
+	// per data point: only the subchart can carry a projected value
+	const subchartCandlestickValue = isSub ?
+		getSubchartCandlestickShapeValue($$, d, isSub) :
+		undefined;
 
 	if (isNumber(subchartCandlestickValue)) {
 		return subchartCandlestickValue;
@@ -532,7 +535,9 @@ export default {
 
 		return d => {
 			let {value} = d;
-			const subchartCandlestickValue = getSubchartCandlestickShapeValue($$, d, isSub);
+			const subchartCandlestickValue = isSub ?
+				getSubchartCandlestickShapeValue($$, d, isSub) :
+				undefined;
 
 			if (isNumber(d)) {
 				value = d;
@@ -742,8 +747,18 @@ export default {
 		const lineOffset = $$.getShapeOffset(typeFilter || $$.isLineType, lineIndices, isSub);
 		const yScale = $$.getYScaleById.bind($$);
 
+		// per-series cache: y0 depends only on the id and is stable within one draw pass,
+		// as in generateGetAreaPoints()
+		const y0Cache = new Map<string, number>();
+
 		return (d, i) => {
-			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id, isSub));
+			let y0 = y0Cache.get(d.id);
+
+			if (y0 === undefined) {
+				y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id, isSub)) as number;
+				y0Cache.set(d.id, y0);
+			}
+
 			const offset = lineOffset(d, i) || y0;
 			const posX = x(d);
 			let posY = y(d);

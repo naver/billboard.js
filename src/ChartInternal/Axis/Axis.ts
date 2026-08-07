@@ -3,15 +3,9 @@
  * billboard.js project is licensed under the MIT license
  */
 
-import {
-	axisBottom as d3AxisBottom,
-	axisLeft as d3AxisLeft,
-	axisRight as d3AxisRight,
-	axisTop as d3AxisTop
-} from "d3-axis";
 import type {AxisType} from "../../../types/types";
 import {$AXIS, $COMMON} from "../../config/classes";
-import {AXIS_TICK_LINE_OVERLAP_PADDING, AXIS_TICK_SIZE} from "../../config/const";
+import {AXIS_TICK_LINE_OVERLAP_PADDING} from "../../config/const";
 import {KEY} from "../../module/Cache";
 import {
 	capitalize,
@@ -611,17 +605,17 @@ class Axis {
 	generateAxes(id: string) {
 		const $$ = this.owner;
 		const {config} = $$;
-		const axes: any[] = [];
+		const axes: AxisRenderer[] = [];
 		const axesConfig = config[`axis_${id}_axes`];
 		const isRotated = config.axis_rotated;
-		let d3Axis;
+		let orient;
 
 		if (id === "x") {
-			d3Axis = isRotated ? d3AxisLeft : d3AxisBottom;
+			orient = isRotated ? "left" : "bottom";
 		} else if (id === "y") {
-			d3Axis = isRotated ? d3AxisBottom : d3AxisLeft;
+			orient = isRotated ? "bottom" : "left";
 		} else if (id === "y2") {
-			d3Axis = isRotated ? d3AxisTop : d3AxisRight;
+			orient = isRotated ? "top" : "right";
 		}
 
 		if (axesConfig.length) {
@@ -631,15 +625,27 @@ class Axis {
 
 				v.domain && scale.domain(v.domain);
 
-				axes.push(
-					d3Axis(scale)
-						.ticks(tick.count)
-						.tickFormat(
-							isFunction(tick.format) ? tick.format.bind($$.api) : ((x: any) => x)
-						)
-						.tickValues(tick.values)
-						.tickSizeOuter(tick.outer === false ? 0 : AXIS_TICK_SIZE)
-				);
+				// reuses the same renderer as the main axes, which is what removed the
+				// d3-axis dependency: `tick.outer` maps onto `outerTick`, and the rest
+				// of the surface (ticks/tickValues/tickFormat) is identical
+				const axis = new AxisRenderer({
+					outerTick: tick.outer !== false,
+					noTransition: false,
+					config,
+					id,
+					isSubAxes: true,
+					owner: $$
+				})
+					.scale(scale)
+					.orient(orient)
+					.tickFormat(
+						isFunction(tick.format) ? tick.format.bind($$.api) : ((x: any) => x)
+					);
+
+				isValue(tick.count) && axis.ticks(tick.count);
+				tick.values && axis.tickValues(tick.values);
+
+				axes.push(axis);
 			});
 		}
 
@@ -671,15 +677,17 @@ class Axis {
 				const className = `${this.getAxisClassName(id)}-${i + 1}`;
 				let g = main.select(`.${className.replace(/\s/, ".")}`);
 
+				// AxisRenderer renders through create(), unlike d3-axis' callable form
 				if (g.empty()) {
 					g = main.append("g")
 						.attr("class", className)
-						.style("visibility", config[`axis_${id}_show`] ? null : "hidden")
-						.call(v);
+						.style("visibility", config[`axis_${id}_show`] ? null : "hidden");
+
+					v.create(g);
 				} else {
 					axesConfig[i].domain && scale.domain(axesConfig[i].domain);
 
-					$T(g).call(v.scale(scale));
+					v.scale(scale).create($T(g));
 				}
 
 				g.attr("transform", $$.getTranslate(id, i + 1));
