@@ -64,9 +64,12 @@ describe("WORKER real execution", () => {
 		const [{errors, replies}] = instances;
 
 		expect(errors, "Worker error events").to.be.deep.equal([]);
-		expect(replies.length, "the Worker replied (not a fallback)").to.be.equal(1);
-		expect(replies[0].error).to.be.undefined;
-		expect(replies[0].result).to.be.deep.equal(expected);
+		// Two replies on a cold worker: the sampled parity self-test, then the real
+		// payload. The sample is posted first and the worker answers in order, so the
+		// real result is the last reply.
+		expect(replies.length, "the Worker replied (not a fallback)").to.be.equal(2);
+		replies.forEach(reply => expect(reply.error).to.be.undefined);
+		expect(replies[replies.length - 1].result).to.be.deep.equal(expected);
 	}
 
 	// the worker cache is module state shared across spec files in the same browser

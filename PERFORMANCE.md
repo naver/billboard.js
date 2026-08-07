@@ -166,8 +166,26 @@ interleaved before acting on it.
 - Worker data conversion must always fall back to the main thread on creation
   failure, postMessage failure, worker error, unknown op, timeout, or parity
   mismatch.
-- The first successful result per op is compared with the main-thread result. A
-  mismatch disables the worker for the session.
+- **The parity self-test runs on a sampled payload, not the real one.** The first
+  time a worker is asked for an op, `startVerify()` posts a truncated copy of the
+  arguments (3 leading entries, 3 leading cells each) and compares the reply with
+  the main thread's result for that same sample. A mismatch disables the worker for
+  the session and the real payload falls back.
+  - The sample is posted *before* the real request. The worker answers in order, so
+    the check overlaps the real conversion instead of adding a round trip after it,
+    and a cold worker shows two replies rather than one.
+  - The question the check answers is "does this worker implement this op the way
+    the main thread does", which a sample settles as well as the full dataset. Do
+    not restore the full re-parse: it costs one whole main-thread conversion, which
+    is the exact work the offload exists to avoid, and `boost.useWorker` only covers
+    the initial conversion — so a single-chart page paid it every time and came out
+    behind `useWorker: false`.
+  - Truncation is shape-generic on purpose: `args[0]` is the data array for all three
+    ops, so slicing it (and its entries, when they are arrays) stays valid for
+    `columns`, `rows` and `json` alike without per-op fixtures.
+  - Guarded by "self-tests on a sampled payload, not the full one" in
+    `test/module/module-coverage-spec.ts`, which asserts the main-thread converter
+    sees 3x3 cells while the worker gets the whole payload.
 - `boost.workerUrl` can point to a static worker script for strict CSP
   environments that disallow Blob worker URLs. `dist/billboard.worker.js` is
   emitted for exactly this purpose (703 bytes gzip). The protocol is
