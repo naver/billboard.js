@@ -121,7 +121,7 @@ module.exports = async () => {
 	// worker source is bundled separately (ESM helper), so the worker never depends on
 	// Function.prototype.toString() of transformed application code
 	const {getWorkerSource} = await import("./config/worker-src.js");
-	const workerSrc = getWorkerSource();
+	const workerSrc = await getWorkerSource();
 
 	// assigned, not appended: the factory may run more than once in a process, and
 	// pushing onto the shared config would stack up duplicate plugins

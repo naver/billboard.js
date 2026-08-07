@@ -51,14 +51,19 @@ pooled 10. Bundle figures are `gzip -9`.
 
 | gzip | 4.0.3 | HEAD | delta |
 |---|---:|---:|---:|
-| ESM app bundle<sup>*</sup> | 122,283 | 124,279 | +1,996 |
-| `billboard.pkgd.min.js` | 264,577 | 270,150 | +5,573 |
-| `billboard.min.js` | 149,512 | 156,566 | +7,054 |
-| d3-family packages installed | 20 | 20 | 0 |
+| ESM app bundle<sup>*</sup> | 120,049 | 121,827 | +1,778 |
+| `billboard.pkgd.min.js` | 264,577 | 270,413 | +5,836 |
+| `billboard.min.js` | 149,512 | 156,826 | +7,314 |
+| d3-family packages installed | 19 | 19 | 0 |
 
-<sup>*</sup> esbuild `--bundle --minify --format=esm --target=es2015` over
-`import bb, {bar, line, area, pie, zoom} from "billboard.js"`, with each
-version's own dependency tree installed from npm.
+<sup>*</sup> rolldown `{format: "esm", minify: true}` over an entry that imports **and
+uses** `bb, {bar, line, area, pie, zoom}` - a bare import would be tree-shaken away.
+Each version is installed in its own project so it brings its own dependency tree,
+4.0.3 from npm and HEAD from `npm pack` of the working tree. Everything resolves into
+one chunk, with no bare imports left unbundled.
+
+Use `gzip -9 -n`, not `gzip -9 <file>`: the latter stores the filename and mtime in the
+header, so the figure moves with the filename.
 
 The growth is the post-4.0.3 feature work - configurable subchart rendering,
 canvas grid selectors, the React subpath and the pre-bundled worker. The
@@ -150,10 +155,16 @@ interleaved before acting on it.
 
 - **The worker source is pre-bundled at build time, never derived from
   `Function.prototype.toString()`.** `src/module/worker.entry.ts` is bundled by
-  `config/worker-src.js` (esbuild, IIFE) and injected as a string constant by all
-  three pipelines: webpack `DefinePlugin`, the `bb-worker-src` rolldown plugin, and
-  vitest `define`. Work is addressed by **op name** (`json`, `rows`, `columns`), so
+  `config/worker-src.js` (rolldown, minified IIFE) and injected as a string constant
+  by all three pipelines: webpack `DefinePlugin`, the `bb-worker-src` rolldown plugin,
+  and vitest `define`. Work is addressed by **op name** (`json`, `rows`, `columns`), so
   no application function is ever stringified or evaluated.
+  - Bundled with rolldown, which the ESM build already uses. **Do not reach for another
+    bundler here**: it would become a declared devDependency for this single call, and
+    every bundler already in the tree is reached indirectly, through a loader or plugin.
+  - `getWorkerSource()` is therefore **async** - rolldown has no `buildSync`. It
+    memoizes the promise, so the worker is bundled at most once per process, and
+    `vitest.config.ts` exports an async config to await it.
 - Why this matters: stringifying a live function carries whatever the host
   toolchain injected into its body - coverage counters, babel helpers,
   bundler-hoisted module scope - into a context where those bindings don't exist.
@@ -207,7 +218,7 @@ interleaved before acting on it.
 
 ## Worker Environment Matrix
 
-Verified in a real Chromium page through the Vite/esbuild pipeline
+Verified in a real Chromium page through the Vite pipeline
 (`test/internals/boost-worker-env-spec.ts`). Each row must end with the same
 rendered chart:
 

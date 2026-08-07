@@ -172,9 +172,6 @@ importers:
       dprint:
         specifier: ^0.54.0
         version: 0.54.0
-      esbuild:
-        specifier: ^0.28.1
-        version: 0.28.1
       esbuild-loader:
         specifier: ^4.5.0
         version: 4.5.0(webpack@5.108.0)

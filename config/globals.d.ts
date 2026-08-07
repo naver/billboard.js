@@ -5,8 +5,8 @@
  * global declared there would leak `__WORKER_SRC__` into every consumer program
  * that picked the file up.
  *
- * Declared here rather than inside the consuming module on purpose: esbuild only
- * substitutes `define` values for identifiers that are not bound in scope, and a
+ * Declared here rather than inside the consuming module on purpose: a `define`-based
+ * substitution only replaces identifiers that are not bound in scope, and a
  * module-level `declare const` binds the name and silently disables the
  * replacement.
  */

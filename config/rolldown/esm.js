@@ -12,10 +12,10 @@ const distPath = "dist-esm";
 // contains `${...}` sequences that regex-based replacement mangles or skips.
 const workerSrcPlugin = {
 	name: "bb-worker-src",
-	transform(code) {
+	async transform(code) {
 		if (code.includes("__WORKER_SRC__")) {
 			return {
-				code: code.split("__WORKER_SRC__").join(JSON.stringify(getWorkerSource())),
+				code: code.split("__WORKER_SRC__").join(JSON.stringify(await getWorkerSource())),
 				map: null
 			};
 		}

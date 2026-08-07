@@ -67,7 +67,7 @@ a function`.
 > roughly **~19 KB minified / ~6.3 KB gzipped** vs v3 for the same chart (≈ 6.5–7 % of a minimal bar
 > chart bundle).
 
-Measured with `esbuild --bundle --minify --tree-shaking=true` on a minimal bar chart entry. Each row
+Measured by bundling a minimal bar chart entry with minification and tree-shaking enabled. Each row
 adds only the named module to the baseline.
 
 | Configuration | Minified | Gzipped |
@@ -495,12 +495,13 @@ What a consumer downloads, measured against published 4.0.3 (`gzip -9`):
 
 | | 4.0.3 | next | |
 |---|---:|---:|---:|
-| ESM app bundle<sup>*</sup> | 122,283 | 124,279 | +1,996 |
-| `billboard.pkgd.min.js` | 264,577 | 270,150 | +5,573 |
-| `billboard.min.js` | 149,512 | 156,566 | +7,054 |
+| ESM app bundle<sup>*</sup> | 120,049 | 121,827 | +1,778 |
+| `billboard.pkgd.min.js` | 264,577 | 270,413 | +5,836 |
+| `billboard.min.js` | 149,512 | 156,826 | +7,314 |
 
-<sup>*</sup> esbuild bundle of `import bb, {bar, line, area, pie, zoom} from "billboard.js"`
-with each version's own dependency tree installed.
+<sup>*</sup> rolldown bundle of an entry importing and using
+`bb, {bar, line, area, pie, zoom}` from `billboard.js`, with each version's own
+dependency tree installed. See [PERFORMANCE.md](./PERFORMANCE.md) for the method.
 
 The growth is the new feature work — configurable subchart rendering, canvas grid
 selectors, the React subpath and the pre-bundled worker. The d3 dependency graph

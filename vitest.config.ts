@@ -19,12 +19,13 @@ const utilAliasPlugin = {
     }
 };
 
-export default defineConfig({
+// async because the worker source is bundled on demand (see config/worker-src.js)
+export default defineConfig(async () => ({
     plugins: [utilAliasPlugin],
     define: {
         // same injection the production builds do, so worker specs exercise the
         // real pre-bundled worker source instead of an undefined constant
-        __WORKER_SRC__: JSON.stringify(getWorkerSource())
+        __WORKER_SRC__: JSON.stringify(await getWorkerSource())
     },
     optimizeDeps: {
         include: ["@vitest/coverage-istanbul"]
@@ -87,4 +88,4 @@ export default defineConfig({
         },
         open: !process.env.CI
     }
-});
+}));
