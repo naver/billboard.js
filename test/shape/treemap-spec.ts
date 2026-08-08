@@ -191,6 +191,32 @@ describe("TREEMAP", () => {
 			treemap.destroy();
 		});
 
+		it("should render all tile variants with finite rect dimensions", () => {
+			["binary", "dice", "slice", "sliceDice", "squarify", "resquarify"].forEach(tile => {
+				const treemap = util.generate({
+					data: {
+						columns: [
+							["data1", 1000],
+							["data2", 200],
+							["data3", 500],
+							["data4", 50]
+						],
+						type: "treemap"
+					},
+					treemap: {
+						tile
+					}
+				});
+
+				treemap.internal.$el.treemap.selectAll("rect").each(function() {
+					expect(Number.isFinite(+this.getAttribute("width"))).to.be.true;
+					expect(Number.isFinite(+this.getAttribute("height"))).to.be.true;
+				});
+
+				treemap.destroy();
+			});
+		});
+
 		it("should generate w/o error", () => {
 			const param = {
 				data: {

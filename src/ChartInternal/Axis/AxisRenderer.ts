@@ -150,14 +150,19 @@ export default class AxisRenderer {
 		// // get the axis' tick position configuration
 		const id = params.id;
 		const type = getBaseAxisId(id);
-		const tickTextPos = type && /^(x|y|y2)$/.test(type) ?
+		// `axis.*.axes` entries carry their own tick options only (outer/format/count/
+		// values). The main axis' visibility and text position never reached them while
+		// they were rendered by d3-axis, which reads no billboard config, so they keep
+		// the defaults here.
+		const {isSubAxes} = params;
+		const tickTextPos = !isSubAxes && type && /^(x|y|y2)$/.test(type) ?
 			params.config[`axis_${type}_tick_text_position`] :
 			{x: 0, y: 0};
 
 		// tick visiblity
 		const prefix = getAxisOptionPrefix(id);
 		const axisShow = params.config[`${prefix}_show`];
-		const tickShow = {
+		const tickShow = isSubAxes ? {tick: true, text: true} : {
 			tick: axisShow ? params.config[`${prefix}_tick_show`] : false,
 			text: axisShow ? params.config[`${prefix}_tick_text_show`] : false
 		};

@@ -115,6 +115,16 @@ describe("BOOST", () => {
 			expect(config.boost_useWorker).to.be.true;
 		});
 
+		it("should set custom Web Worker URL option", () => {
+			args.boost.useWorker = false;
+			args.boost.workerUrl = "/static/billboard-worker.js";
+
+			chart = util.generate(args);
+			const {config} = chart.internal;
+
+			expect(config.boost_workerUrl).to.be.equal("/static/billboard-worker.js");
+		});
+
 		it("should disable Web Worker option when boost.useWorker is false", () => {
 			args.boost.useWorker = false;
 			chart = util.generate(args);
@@ -342,7 +352,7 @@ describe("BOOST", () => {
 	describe("runWorker function tests", function() {
 		it("check if given function run without WebWorker", () => {
 			return new Promise((resolve) => {
-				runWorker(false, function test_for_worker(p) {
+				runWorker(false, "rows", function test_for_worker(p) {
 						return `${p}_123`;
 					},
 					function(res) {
@@ -353,7 +363,10 @@ describe("BOOST", () => {
 			});
 		});
 
-		it("check if given function run on WebWorker thread", function() {
+		// real worker execution of the registered ops is covered by
+		// test/module/worker-real-spec.ts; this asserts the result is still correct
+		// when the op isn't the one the worker would run
+		it("check if given function returns the correct result with useWorker", function() {
 			// Skip this test in environments where WebWorker is not properly supported
 			if (typeof Worker === 'undefined' || typeof window === 'undefined' || !window.Worker) {
 				this.skip();
@@ -366,7 +379,7 @@ describe("BOOST", () => {
 					reject(new Error("WebWorker test timed out"));
 				}, 3000);
 
-				runWorker(true, function test_for_worker(p) {
+				runWorker(true, "rows", function test_for_worker(p) {
 						return `${p}_123`;
 					},
 					function(res) {
@@ -394,7 +407,7 @@ describe("BOOST", () => {
 
 			// Run multiple times with same function using sync mode
 			["a", "b", "c"].forEach(value => {
-				runWorker(false, reusable_worker_test, function(result) {
+				runWorker(false, "rows", reusable_worker_test, function(result) {
 					results.push(result);
 					callCount++;
 				})(value);

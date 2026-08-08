@@ -523,6 +523,20 @@ var billboardDemo = {
 				) + ", // for ESM specify as: " + module +"()";
 			});
 
+		// boost.useWorker only says *whether* to offload, not where the worker source
+		// comes from - spell the CSP/ESM variants out next to it
+		code.data = code.data.replace(
+			/^([\t ]*)(useWorker: (?:true|"auto"))(,?)$/m,
+			function(match, indent, decl, comma) {
+				return indent + decl + comma +
+					" // inline blob: worker, nothing extra to serve\r\n" +
+					indent + '// "auto" instead of true: offload only past ~5,000 cells\r\n' +
+					indent + "// strict CSP blocks blob: workers - serve the shipped script and add:\r\n" +
+					indent + '//   workerUrl: "$YOUR_PATH/dist/billboard.worker.js"\r\n' +
+					indent + '// for ESM specify as: import workerUrl from "billboard.js/dist/billboard.worker.js?url"';
+			}
+		);
+
 		this.$code.innerHTML = '// for ESM environment, need to import modules as:\r\n' +
 '// import bb, {'+ code.esm.join(", ") +'} from "'+
 			(code.esm.indexOf("canvas") > -1 ? "billboard.js/canvas" : "billboard.js") +'";\r\n';

@@ -333,6 +333,29 @@ time, so `chart.xgrids()`, `chart.export()`, etc. work out of the box:
 </script>
 ```
 
+The same holds for the React component: `dist/billboard.react.js` is a UMD build exposing the
+`BillboardReact` global, and the packaged entry it is paired with has every module registered, so
+no resolver call is needed.
+
+```html
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.pkgd.min.js"></script>
+<script src="$YOUR_PATH/billboard.react.js"></script>
+<script>
+  ReactDOM.createRoot(document.getElementById("root")).render(
+    React.createElement(BillboardReact.Chart, {
+      bb,
+      options: { data: { type: "bar", columns: [["data1", 30, 200, 100]] } }
+    })
+  );
+</script>
+```
+
+The `modules` prop is only meaningful for the ESM entries — under UMD there is nothing left to
+register. React itself is an external here, so a UMD build of React must be on the page: React 18
+and below ship one, React 19 does not.
+
 ## See also
 
 - Release-specific changes: [CHANGELOG-v4.md](./CHANGELOG-v4.md),

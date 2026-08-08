@@ -111,12 +111,36 @@ export interface ChartOptions {
 
 		/**
 		 * Use Web Worker as possible for processing.
+		 * - **Available values:**
+		 *   - `false`: never offload.
+		 *   - `true`: always offload when a Worker can be created.
+		 *   - `"auto"`: offload only when the given data exceeds ~5,000 cells, since smaller
+		 *     payloads lose more to structured cloning than they gain.
 		 * - **NOTE:**
 		 *   - For now, only applies for data conversion at the initial time.
 		 *   - As of Web Worker's async nature, handling chart instance synchronously is not recommended.
 		 *   - When Worker isn't available, fails or times out, data conversion falls back to main thread.
 		 */
-		useWorker?: boolean;
+		useWorker?: boolean | "auto";
+
+		/**
+		 * Use a custom static worker script URL instead of an inline Blob worker.
+		 * - **NOTE:**
+		 *   - **Requires `boost.useWorker` to be enabled** — this option only selects where the
+		 *     worker source comes from, it does not turn offloading on by itself.
+		 *   - Useful for strict CSP environments that disallow `blob:` workers. Without it under
+		 *     such a policy, worker creation throws and each conversion waits out the 5s timeout
+		 *     before falling back, so the chart still renders but the initial draw is delayed.
+		 *   - Point it at `dist/billboard.worker.js`, shipped in the package, or any script
+		 *     implementing the same protocol: receive `{id, op, args}` and post back
+		 *     `{id, result}` or `{id, error}`. No `eval()` is involved.
+		 *   - With a bundler, make sure the file is emitted as a **real asset**, not inlined:
+		 *     it is ~1.5KB, and inlining turns it into a `data:` URI, which a strict CSP
+		 *     blocks exactly like `blob:`. Copying it into the static/public directory is the
+		 *     option that works everywhere.
+		 *   - Any failure (load error, unknown op, timeout, result mismatch) falls back to the main thread.
+		 */
+		workerUrl?: string;
 	};
 
 	size?: {
