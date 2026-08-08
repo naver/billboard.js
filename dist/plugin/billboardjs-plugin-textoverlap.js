@@ -5,88 +5,26 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.3-nightly-20260801010035
+ * @version 4.0.3-nightly-20260808004624
  * @requires billboard.js
  * @summary billboard.js plugin
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-delaunay"));
+		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define("bb", ["d3-delaunay"], factory);
+		define("bb", [], factory);
 	else if(typeof exports === 'object')
-		exports["bb"] = factory(require("d3-delaunay"));
+		exports["bb"] = factory();
 	else
-		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["textoverlap"] = factory(root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__9__) {
+		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["textoverlap"] = factory();
+})(this, function() {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
-
-/***/ 9:
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
-
-/***/ })
-
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
+/******/ 	// The require scope
+/******/ 	var __webpack_require__ = {};
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/create fake namespace object */
-/******/ 	!function() {
-/******/ 		var getProto = Object.getPrototypeOf ? function(obj) { return Object.getPrototypeOf(obj); } : function(obj) { return obj.__proto__; };
-/******/ 		var leafPrototypes;
-/******/ 		// create a fake namespace object
-/******/ 		// mode & 1: value is a module id, require it
-/******/ 		// mode & 2: merge all properties of value into the ns
-/******/ 		// mode & 4: return value when already ns object
-/******/ 		// mode & 16: return value when it's Promise-like
-/******/ 		// mode & 8|1: behave like require
-/******/ 		__webpack_require__.t = function(value, mode) {
-/******/ 			if(mode & 1) value = this(value);
-/******/ 			if(mode & 8) return value;
-/******/ 			if(typeof value === 'object' && value) {
-/******/ 				if((mode & 4) && value.__esModule) return value;
-/******/ 				if((mode & 16) && typeof value.then === 'function') return value;
-/******/ 			}
-/******/ 			var ns = Object.create(null);
-/******/ 			__webpack_require__.r(ns);
-/******/ 			var def = {};
-/******/ 			leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
-/******/ 			for(var current = mode & 2 && value; (typeof current == 'object' || typeof current == 'function') && !~leafPrototypes.indexOf(current); current = getProto(current)) {
-/******/ 				Object.getOwnPropertyNames(current).forEach(function(key) { def[key] = function() { return value[key]; }; });
-/******/ 			}
-/******/ 			def['default'] = function() { return value; };
-/******/ 			__webpack_require__.d(ns, def);
-/******/ 			return ns;
-/******/ 		};
-/******/ 	}();
-/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	!function() {
 /******/ 		// define getter/value functions for harmony exports
@@ -119,21 +57,8 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
 /******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
 /******/ 	}();
 /******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	!function() {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = function(exports) {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	}();
-/******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
-!function() {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
@@ -168,6 +93,62 @@ function polygonCentroid(polygon) {
   }
   k *= 3;
   return [x / k, y / k];
+}
+
+;// ./src/module/voronoi.ts
+const EPSILON = 1e-9;
+function clipByBisector(polygon, a, b) {
+  const dx = b[0] - a[0];
+  const dy = b[1] - a[1];
+  const c = (dx * (a[0] + b[0]) + dy * (a[1] + b[1])) / 2;
+  const output = [];
+  const n = polygon.length;
+  let prev = polygon[n - 1];
+  let prevDist = dx * prev[0] + dy * prev[1] - c;
+  for (let i = 0; i < n; i++) {
+    const curr = polygon[i];
+    const currDist = dx * curr[0] + dy * curr[1] - c;
+    if (prevDist > 0 !== currDist > 0) {
+      const t = prevDist / (prevDist - currDist);
+      output.push([
+        prev[0] + t * (curr[0] - prev[0]),
+        prev[1] + t * (curr[1] - prev[1])
+      ]);
+    }
+    if (currDist <= 0) {
+      output.push(curr);
+    }
+    prev = curr;
+    prevDist = currDist;
+  }
+  return output;
+}
+function voronoiCells(points, bounds) {
+  const [x0, y0, x1, y1] = [
+    Math.min(bounds[0], bounds[2]),
+    Math.min(bounds[1], bounds[3]),
+    Math.max(bounds[0], bounds[2]),
+    Math.max(bounds[1], bounds[3])
+  ];
+  const rect = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+  const n = points.length;
+  return points.map((site, i) => {
+    let cell = rect;
+    for (let j = 0; j < n && cell.length > 2; j++) {
+      if (j === i) {
+        continue;
+      }
+      const other = points[j];
+      if (Math.abs(other[0] - site[0]) < EPSILON && Math.abs(other[1] - site[1]) < EPSILON) {
+        if (j < i) {
+          return null;
+        }
+        continue;
+      }
+      cell = clipByBisector(cell, site, other);
+    }
+    return cell.length > 2 ? [...cell, cell[0]] : null;
+  });
 }
 
 ;// ./src/module/util/type-checks.ts
@@ -283,7 +264,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "4.0.3-nightly-20260801010035");
+__publicField(Plugin, "version", "4.0.3-nightly-20260808004624");
 
 ;// ./src/Plugin/textoverlap/Options.ts
 class Options {
@@ -326,40 +307,13 @@ class Options {
 }
 
 ;// ./src/Plugin/textoverlap/index.ts
-var textoverlap_defProp = Object.defineProperty;
-var textoverlap_defNormalProp = (obj, key, value) => key in obj ? textoverlap_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var textoverlap_publicField = (obj, key, value) => textoverlap_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
 
 
 
-let d3Delaunay = null;
-function getDelaunay() {
-  return d3Delaunay != null ? d3Delaunay : d3Delaunay = Promise.resolve(/* import() */).then(__webpack_require__.t.bind(__webpack_require__, 9, 23)).then(({ Delaunay }) => Delaunay);
-}
+
 class TextOverlap extends Plugin {
   constructor(options) {
     super(options);
-    textoverlap_publicField(this, "redrawId", 0);
     this.config = new Options();
     return this;
   }
@@ -369,67 +323,53 @@ class TextOverlap extends Plugin {
   $redraw() {
     const { $$: { $el }, config: { selector } } = this;
     const text = selector ? $el.main.selectAll(selector) : $el.text;
-    const redrawId = ++this.redrawId;
     if (!text.empty()) {
-      void this.preventLabelOverlap(text, redrawId);
+      this.preventLabelOverlap(text);
     }
   }
   /**
    * Generates the voronoi layout for data labels
    * @param {Array} points Indices values
-   * @returns {object} Voronoi layout points and corresponding Data points
+   * @returns {Array} Voronoi cell polygons, in point order
    * @private
    */
   generateVoronoi(points) {
-    return __async(this, null, function* () {
-      const { $$ } = this;
-      const { scale } = $$;
-      const [min, max] = ["x", "y"].map((v) => scale[v].domain());
-      const Delaunay = yield getDelaunay();
-      [min[1], max[0]] = [max[0], min[1]];
-      return Delaunay.from(points).voronoi([
-        ...min,
-        ...max
-      ]);
-    });
+    const { $$ } = this;
+    const { scale } = $$;
+    const [min, max] = ["x", "y"].map((v) => scale[v].domain());
+    [min[1], max[0]] = [max[0], min[1]];
+    return voronoiCells(points, [...min, ...max]);
   }
   /**
    * Set text label's position to preventg overlap.
    * @param {d3Selection} text target text selection
-   * @param {number} redrawId Redraw request identifier
    * @private
    */
-  preventLabelOverlap(_0) {
-    return __async(this, arguments, function* (text, redrawId = this.redrawId) {
-      const { extent, area } = this.config;
-      const points = text.data().map((v) => [v.index, v.value]);
-      const voronoi = yield this.generateVoronoi(points).catch(() => null);
-      let i = 0;
-      if (!voronoi || redrawId !== this.redrawId) {
-        return;
+  preventLabelOverlap(text) {
+    const { extent, area } = this.config;
+    const points = text.data().map((v) => [v.index, v.value]);
+    const cells = this.generateVoronoi(points);
+    let i = 0;
+    text.each(function() {
+      const cell = cells[i];
+      if (cell && this) {
+        const [x, y] = points[i];
+        const [cx, cy] = polygonCentroid(cell);
+        const cellArea = Math.abs(polygonArea(cell));
+        const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
+        const xTranslate = extent * (angle === 0 ? 1 : -1);
+        const yTranslate = angle === -1 ? -extent : extent + 5;
+        const txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end";
+        this.style.display = cellArea < area ? "none" : "";
+        this.setAttribute("text-anchor", txtAnchor);
+        this.setAttribute("dy", `0.${angle === 1 ? 71 : 35}em`);
+        this.setAttribute("transform", `translate(${xTranslate}, ${yTranslate})`);
       }
-      text.each(function() {
-        const cell = voronoi.cellPolygon(i);
-        if (cell && this) {
-          const [x, y] = points[i];
-          const [cx, cy] = polygonCentroid(cell);
-          const cellArea = Math.abs(polygonArea(cell));
-          const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
-          const xTranslate = extent * (angle === 0 ? 1 : -1);
-          const yTranslate = angle === -1 ? -extent : extent + 5;
-          const txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end";
-          this.style.display = cellArea < area ? "none" : "";
-          this.setAttribute("text-anchor", txtAnchor);
-          this.setAttribute("dy", `0.${angle === 1 ? 71 : 35}em`);
-          this.setAttribute("transform", `translate(${xTranslate}, ${yTranslate})`);
-        }
-        i++;
-      });
+      i++;
     });
   }
 }
 
-}();
 __webpack_exports__ = __webpack_exports__["default"];
 /******/ 	return __webpack_exports__;
 /******/ })()

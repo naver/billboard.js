@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.3-nightly-20260801010035
+ * @version 4.0.3-nightly-20260808004624
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -30553,12 +30553,20 @@ var path_spreadValues = (a, b) => {
 };
 var path_spreadProps = (a, b) => path_defProps(a, path_getOwnPropDescs(b));
 
-function getPathValue($$, d, isSub) {
-  var _a;
-  const value = (_a = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _a.call($$, d, isSub);
-  return value === void 0 ? $$.getBaseValue(d) : value;
+function getPathValueFn($$, isSub) {
+  if (!isSub) {
+    return (d) => $$.getBaseValue(d);
+  }
+  return (d) => {
+    var _a;
+    const value = (_a = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _a.call($$, d, true);
+    return value === void 0 ? $$.getBaseValue(d) : value;
+  };
 }
 function getProjectedValues($$, values, isSub) {
+  if (!isSub) {
+    return values;
+  }
   return values.map((d) => {
     var _a;
     const value = (_a = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _a.call($$, d, isSub);
@@ -30574,15 +30582,16 @@ function generateDrawLinePath($$, lineIndices, isSub, context) {
   const isRotated = config.axis_rotated;
   const getPoints = $$.generateGetLinePoints(lineIndices, isSub);
   const yScale = $$.getYScaleById.bind($$);
+  const pathValue = getPathValueFn($$, isSub);
   const xValue = (d) => (isSub ? $$.subxx : $$.xx).call($$, d);
   const yValue = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)(
-    getPathValue($$, d, isSub)
+    pathValue(d)
   );
   let line = src_line();
   line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
   context && (line = line.context(context));
   if (!lineConnectNull) {
-    line = line.defined((d) => getPathValue($$, d, isSub) !== null);
+    line = line.defined((d) => pathValue(d) !== null);
   }
   const x = isSub ? scale.subX : scale.x;
   return (d) => {
@@ -30608,7 +30617,7 @@ function generateDrawLinePath($$, lineIndices, isSub, context) {
     } else {
       if (values[0]) {
         x0 = x(values[0].x);
-        y0 = y(getPathValue($$, values[0], isSub));
+        y0 = y(pathValue(values[0]));
       }
       path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
     }
@@ -30621,12 +30630,22 @@ function generateDrawAreaPath($$, areaIndices, isSub, context) {
   const isRotated = config.axis_rotated;
   const getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
   const yScale = $$.getYScaleById.bind($$);
+  const pathValue = getPathValueFn($$, isSub);
+  const shapeYMin = /* @__PURE__ */ new Map();
+  const getShapeYMin = (id) => {
+    let min = shapeYMin.get(id);
+    if (min === void 0) {
+      min = $$.getShapeYMin(id, isSub);
+      shapeYMin.set(id, min);
+    }
+    return min;
+  };
   const xValue = (d) => (isSub ? $$.subxx : $$.xx).call($$, d);
   const value0 = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)(
-    $$.isAreaRangeType(d) ? $$.getRangedData(d, "high") : $$.getShapeYMin(d.id, isSub)
+    $$.isAreaRangeType(d) ? $$.getRangedData(d, "high") : getShapeYMin(d.id)
   );
   const value1 = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[1][1] : yScale(d.id, isSub)(
-    $$.isAreaRangeType(d) ? $$.getRangedData(d, "low") : getPathValue($$, d, isSub)
+    $$.isAreaRangeType(d) ? $$.getRangedData(d, "low") : pathValue(d)
   );
   return (d) => {
     let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
@@ -30638,7 +30657,7 @@ function generateDrawAreaPath($$, areaIndices, isSub, context) {
       area = isRotated ? area.y(xValue).x0(value0).x1(value1) : area.x(xValue).y0(config.area_above ? 0 : config.area_below ? isSub ? $$.state.height2 : $$.state.height : value0).y1(value1);
       context && (area = area.context(context));
       if (!lineConnectNull) {
-        area = area.defined((d2) => getPathValue($$, d2, isSub) !== null);
+        area = area.defined((d2) => pathValue(d2) !== null);
       }
       values = getProjectedValues($$, values, isSub);
       if ($$.isStepType(d)) {
@@ -30648,7 +30667,7 @@ function generateDrawAreaPath($$, areaIndices, isSub, context) {
     } else {
       if (values[0]) {
         x0 = (isSub ? $$.scale.subX : $$.scale.x)(values[0].x);
-        y0 = $$.getYScaleById(d.id, isSub)(getPathValue($$, values[0], isSub));
+        y0 = $$.getYScaleById(d.id, isSub)(pathValue(values[0]));
       }
       path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
     }
@@ -34793,20 +34812,79 @@ const $ZOOM = {
    * - **NOTE:**
    *   - Will append &lt;style> to the head tag and will add shpes' CSS rules dynamically.
    *   - For now, covers colors related properties (fill, stroke, etc.) only.
-   * @property {boolean} [boost.useWorker=false] Use Web Worker as possible for processing.
+   * @property {boolean|string} [boost.useWorker=false] Use Web Worker as possible for processing.
+   * - **Available values:**
+   *   - `false`: never offload.
+   *   - `true`: always offload when a Worker can be created.
+   *   - `"auto"`: offload only when the given data exceeds ~5,000 cells, since smaller
+   *     payloads lose more to structured cloning than they gain.
    * - **NOTE:**
    *   - For now, only applies for data conversion at the initial time.
    *   - As of Web Worker's async nature, handling chart instance synchronously is not recommended.
    *   - When Worker isn't available, fails or times out, data conversion falls back to main thread.
    *   - When given data is empty, useWorker will be ignored.
+   * @property {string} [boost.workerUrl=undefined] Use a custom static worker script URL instead of an inline Blob worker.
+   * - **NOTE:**
+   *   - **Requires `boost.useWorker` to be enabled** — this option only selects where the
+   *     worker source comes from, it does not turn offloading on by itself.
+   *   - Useful for strict CSP environments that disallow `blob:` workers. Without it under
+   *     such a policy, worker creation throws and each conversion waits out the 5s timeout
+   *     before falling back, so the chart still renders but the initial draw is delayed.
+   *   - Point it at `dist/billboard.worker.js`, shipped in the package, or any script
+   *     implementing the same protocol: receive `{id, op, args}` and post back
+   *     `{id, result}` or `{id, error}`. No `eval()` is involved.
+   *   - With a bundler, make sure the file is emitted as a **real asset**, not inlined:
+   *     it is ~1.5KB, and inlining turns it into a `data:` URI, which a strict CSP
+   *     blocks exactly like `blob:`. Copying it into the static/public directory is the
+   *     option that works everywhere.
+   *   - Any failure (load error, unknown op, timeout, result mismatch) falls back to the main thread.
    * @example
+   * // offload data conversion on a Worker, using the inline Blob worker
    *  boost: {
    *      useCssRule: true,
-   *      useWorker: false
+   *      useWorker: true
    *  }
+   * @example
+   * // offload only past ~5,000 cells
+   *  boost: {
+   *      useWorker: "auto"
+   *  }
+   * @example
+   * // strict CSP: serve the shipped script and point at it.
+   * // 'useWorker' still has to be on - 'workerUrl' alone offloads nothing.
+   *  boost: {
+   *      useWorker: true,
+   *      workerUrl: "$YOUR_PATH/dist/billboard.worker.js"
+   *  }
+   * @example
+   * // ESM: the file is reachable as a package subpath.
+   * // Vite - '?url' resolves it, but assets under 4KB are inlined as a 'data:' URI,
+   * // which a strict CSP rejects. Opt that one file out of inlining:
+   * //
+   * //   // vite.config.js
+   * //   export default {
+   * //     build: {
+   * //       assetsInlineLimit: path => /billboard\.worker\.js$/.test(path) ? false : undefined
+   * //     }
+   * //   };
+   * import bb, {bar} from "billboard.js";
+   * import workerUrl from "billboard.js/dist/billboard.worker.js?url";
+   *
+   * bb.generate({
+   *     boost: {useWorker: true, workerUrl},
+   *     data: {columns: [["data1", 30, 200, 100]], type: bar()}
+   * });
+   * @example
+   * // ESM, bundler-agnostic: copy the file into the served static directory
+   * //   cp node_modules/billboard.js/dist/billboard.worker.js public/
+   * bb.generate({
+   *     boost: {useWorker: true, workerUrl: "/billboard.worker.js"},
+   *     data: {columns: [["data1", 30, 200, 100]]}
+   * });
    */
   boost_useCssRule: false,
-  boost_useWorker: false
+  boost_useWorker: false,
+  boost_workerUrl: void 0
 });
 
 ;// ./src/config/Options/common/color.ts
@@ -37704,66 +37782,147 @@ function generateWait() {
 
 const cache = {};
 const disabledKeys = /* @__PURE__ */ new Set();
+const verifiedOps = /* @__PURE__ */ new Map();
 const DEFAULT_WORKER_TIMEOUT = 5e3;
+const VERIFY_SAMPLE_SIZE = 3;
 let messageId = 0;
+function getWorkerSrc() {
+  try {
+    return "var bbWorker=(function(e){Object.defineProperty(e,Symbol.toStringTag,{value:`Module`});function t(e){let t=[];return e.forEach(function(e,n){let r=e[0];e.forEach(function(e,i){if(i>0){if(t[i-1]===void 0&&(t[i-1]={}),e===void 0)throw Error(`Source data is missing a component at (${n}, ${i})!`);t[i-1][r]=e}})}),t}function n(e){let t=e[0],n=[];return e.forEach(function(e,r){if(r>0){let i={};e.forEach(function(e,n){if(e===void 0)throw Error(`Source data is missing a component at (${r}, ${n})!`);i[t[n]]=e}),n.push(i)}}),n}function r(e,r){let i=[],a,o;if(Array.isArray(e)){let t=function(e,t){if(e[t]!==void 0)return e[t];let n=t.replace(/\\[(\\w+)\\]/g,`.$1`).replace(/^\\./,``).split(`.`),r=e;return n.some(function(e){return!(r=r&&typeof r==`object`&&e in r?r[e]:void 0)}),r};a=r.x?r.value.concat(r.x):r.value,i.push(a),e.forEach(function(e){let n=a.map(function(n){let r=t(e,n);return r===void 0&&(r=null),r});i.push(n)}),o=n(i)}else Object.keys(e).forEach(function(t){let n=[].concat(e[t]);n.unshift?.(t),i.push(n)}),o=t(i);return o}let i={columns:t,json:r,rows:n},a=self;function o({data:e}){let{args:t,id:n,op:r}=e;try{let e=i[r];if(!e)throw Error(`Unknown worker op: ${r}`);a.postMessage({id:n,result:e(...t)})}catch(e){a.postMessage({id:n,error:e&&(e.message||e.name)||String(e)})}}return typeof window>`u`&&(a.onmessage=o),e.handleMessage=o,e.ops=i,e})({});";
+  } catch (e) {
+    return "";
+  }
+}
 function getWorkerAPI() {
   const { Blob, Worker, URL } = win;
   return Worker && Blob && (URL == null ? void 0 : URL.createObjectURL) && (URL == null ? void 0 : URL.revokeObjectURL) ? { Blob, Worker, URL } : null;
 }
-function hashString(str) {
-  let hash = 2166136261;
-  for (let i = 0, len = str.length; i < len; i++) {
-    hash ^= str.charCodeAt(i);
-    hash = Math.imul(hash, 16777619);
-  }
-  return `worker-${str.length}-${(hash >>> 0).toString(36)}`;
+function getWorkerConstructor() {
+  return win.Worker || null;
+}
+function normalizeWorkerOptions(options) {
+  var _a, _b;
+  return typeof options === "number" ? { timeout: options, workerUrl: "" } : {
+    timeout: (_a = options == null ? void 0 : options.timeout) != null ? _a : DEFAULT_WORKER_TIMEOUT,
+    workerUrl: (_b = options == null ? void 0 : options.workerUrl) != null ? _b : ""
+  };
 }
 function releaseWorker(key, disable = false) {
-  var _a;
+  var _a, _b;
   const cached = cache[key];
-  const api = getWorkerAPI();
   if (disable) {
     disabledKeys.add(key);
   }
   if (cached) {
     (_a = cached.worker) == null ? void 0 : _a.terminate();
-    cached.src && (api == null ? void 0 : api.URL.revokeObjectURL(cached.src));
+    cached.revoke && ((_b = getWorkerAPI()) == null ? void 0 : _b.URL.revokeObjectURL(cached.src));
     delete cache[key];
   }
+  for (const verified of verifiedOps.keys()) {
+    if (verified.startsWith(`${key}:`)) {
+      verifiedOps.delete(verified);
+    }
+  }
 }
-function getOrCreateWorkerResources(fn, depsFn) {
-  var _a;
-  const api = getWorkerAPI();
-  const fnString = fn.toString();
-  const depsString = (_a = depsFn == null ? void 0 : depsFn.map(String).join(";")) != null ? _a : "";
-  const key = hashString(`${fnString}
-${depsString}`);
-  if (!api || disabledKeys.has(key)) {
+function isSameResult(actual, expected) {
+  if (actual === expected) {
+    return true;
+  }
+  try {
+    return JSON.stringify(actual) === JSON.stringify(expected);
+  } catch (e) {
+    return true;
+  }
+}
+function getVerifySample(args) {
+  const [data, ...rest] = args;
+  if (!Array.isArray(data)) {
+    return args;
+  }
+  return [
+    data.slice(0, VERIFY_SAMPLE_SIZE).map(
+      (entry) => (
+        // +1: a column/row entry leads with its name, which the values follow
+        Array.isArray(entry) ? entry.slice(0, VERIFY_SAMPLE_SIZE + 1) : entry
+      )
+    ),
+    ...rest
+  ];
+}
+function request(worker, op, args, timeout) {
+  const id = ++messageId;
+  let settled = false;
+  let cleanup;
+  const promise = new Promise((resolve, reject) => {
+    const settle = (fn, value) => {
+      if (!settled) {
+        settled = true;
+        cleanup();
+        fn(value);
+      }
+    };
+    const handler = function(e) {
+      var _a;
+      if (((_a = e.data) == null ? void 0 : _a.id) === id) {
+        e.data.error ? settle(reject, new Error(e.data.error)) : settle(resolve, e.data.result);
+      }
+    };
+    const errorHandler = function() {
+      settle(reject, new Error("worker error"));
+    };
+    const timer = setTimeout(() => settle(reject, new Error("worker timeout")), timeout);
+    cleanup = () => {
+      clearTimeout(timer);
+      worker.removeEventListener("message", handler);
+      worker.removeEventListener("error", errorHandler);
+    };
+    worker.addEventListener("message", handler);
+    worker.addEventListener("error", errorHandler);
+  });
+  try {
+    worker.postMessage({ args, id, op });
+  } catch (error) {
+    settled = true;
+    cleanup();
+    throw error;
+  }
+  return promise;
+}
+function startVerify(worker, verifyKey, op, fn, args, timeout) {
+  const sample = getVerifySample(args);
+  const check = request(worker, op, sample, timeout).then((result) => isSameResult(result, fn(...sample)), () => false).then((matched) => {
+    matched ? verifiedOps.set(verifyKey, true) : verifiedOps.delete(verifyKey);
+    return matched;
+  });
+  verifiedOps.set(verifyKey, check);
+  return check;
+}
+function getOrCreateWorkerResources(op, workerUrl = "") {
+  const hasWorker = !!getWorkerConstructor();
+  const api = workerUrl ? null : getWorkerAPI();
+  const src = workerUrl ? "" : getWorkerSrc();
+  const key = workerUrl || "blob";
+  if (!hasWorker || !workerUrl && (!api || !src) || disabledKeys.has(key)) {
     return null;
   }
   if (!(key in cache)) {
     try {
-      const blob = new api.Blob([
-        `${depsString}
-
-				self.onmessage=function({data}) {
-					try {
-						const result = (${fnString}).apply(null, data.args);
-						self.postMessage({id: data.id, result});
-					} catch (error) {
-						self.postMessage({
-							id: data.id,
-							error: error && (error.message || error.name) || String(error)
-						});
-					}
-				};`
-      ], {
-        type: "text/javascript"
-      });
-      cache[key] = {
-        src: api.URL.createObjectURL(blob),
-        worker: null
-      };
+      if (workerUrl) {
+        cache[key] = {
+          revoke: false,
+          src: workerUrl,
+          worker: null
+        };
+      } else if (api) {
+        const blob = new api.Blob([src], {
+          type: "text/javascript"
+        });
+        cache[key] = {
+          revoke: true,
+          src: api.URL.createObjectURL(blob),
+          worker: null
+        };
+      }
     } catch (e) {
       return null;
     }
@@ -37772,13 +37931,13 @@ ${depsString}`);
 }
 function getWorker(key, src) {
   const cached = cache[key];
-  const api = getWorkerAPI();
-  if (!cached || !api || disabledKeys.has(key)) {
+  const Worker = getWorkerConstructor();
+  if (!cached || !Worker || disabledKeys.has(key)) {
     return null;
   }
   if (!cached.worker) {
     try {
-      cached.worker = new api.Worker(src);
+      cached.worker = new Worker(src);
     } catch (e) {
       releaseWorker(key, true);
       return null;
@@ -37786,54 +37945,35 @@ function getWorker(key, src) {
   }
   return cached.worker;
 }
-function runWorker(useWorker = true, fn, callback, depsFn, timeout = DEFAULT_WORKER_TIMEOUT) {
+function runWorker(useWorker = true, op, fn, callback, options) {
+  const { timeout, workerUrl } = normalizeWorkerOptions(options);
   const runSync = function(...args) {
     const res = fn(...args);
     callback(res);
   };
   let runFn = runSync;
   if (useWorker) {
-    const workerResources = getOrCreateWorkerResources(fn, depsFn);
+    const workerResources = getOrCreateWorkerResources(op, workerUrl);
     const worker = workerResources ? getWorker(workerResources.key, workerResources.src) : null;
     if (worker && workerResources) {
       const { key } = workerResources;
       runFn = function(...args) {
-        const id = ++messageId;
-        let settled = false;
+        var _a;
         const fallback = () => {
-          if (!settled) {
-            settled = true;
-            cleanup();
-            releaseWorker(key, true);
-            runFn = runSync;
-            runSync(...args);
-          }
+          releaseWorker(key, true);
+          runFn = runSync;
+          runSync(...args);
         };
-        const handler = function(e) {
-          var _a;
-          if (((_a = e.data) == null ? void 0 : _a.id) === id) {
-            if (e.data.error) {
-              fallback();
-              return;
-            }
-            settled = true;
-            cleanup();
-            callback(e.data.result);
-          }
-        };
-        const errorHandler = function() {
-          fallback();
-        };
-        const timer = setTimeout(fallback, timeout);
-        const cleanup = () => {
-          clearTimeout(timer);
-          worker.removeEventListener("message", handler);
-          worker.removeEventListener("error", errorHandler);
-        };
-        worker.addEventListener("message", handler);
-        worker.addEventListener("error", errorHandler);
         try {
-          worker.postMessage({ id, args });
+          const verifyKey = `${key}:${op}`;
+          const verified = (_a = verifiedOps.get(verifyKey)) != null ? _a : startVerify(worker, verifyKey, op, fn, args, timeout);
+          request(worker, op, args, timeout).then((result) => {
+            if (verified === true) {
+              callback(result);
+            } else {
+              verified.then((matched) => matched ? callback(result) : fallback());
+            }
+          }, fallback);
         } catch (e) {
           fallback();
         }
@@ -37850,11 +37990,12 @@ function cleanupWorkers() {
       cached.worker.terminate();
     }
     if (cached.src) {
-      api == null ? void 0 : api.URL.revokeObjectURL(cached.src);
+      cached.revoke && (api == null ? void 0 : api.URL.revokeObjectURL(cached.src));
     }
     delete cache[key];
   }
   disabledKeys.clear();
+  verifiedOps.clear();
 }
 
 ;// ./src/module/dsv.ts
@@ -38093,6 +38234,19 @@ function convert_helper_tsv(tsv2) {
 
 
 
+const WORKER_CELL_THRESHOLD = 5e3;
+function _getCellCount(data) {
+  var _a, _b;
+  const first = data[0];
+  if (isArray(first)) {
+    let count = 0;
+    for (let i = 0, len = data.length; i < len; i++) {
+      count += (_b = (_a = data[i]) == null ? void 0 : _a.length) != null ? _b : 0;
+    }
+    return count;
+  }
+  return data.length * Object.keys(first != null ? first : {}).length;
+}
 function _getDataKeyForJson(keysParam, config) {
   const keys = keysParam || (config == null ? void 0 : config.data_keys);
   if (keys == null ? void 0 : keys.x) {
@@ -38138,7 +38292,15 @@ function _setXS(ids, data, params) {
    */
   convertData(args, callback) {
     const { config } = this;
-    const useWorker = (d) => (d == null ? void 0 : d.length) && !isEmpty(d[0]) ? config.boost_useWorker : false;
+    const useWorker = (d) => {
+      if (!(d == null ? void 0 : d.length) || isEmpty(d[0])) {
+        return false;
+      }
+      return config.boost_useWorker === "auto" ? _getCellCount(d) >= WORKER_CELL_THRESHOLD : !!config.boost_useWorker;
+    };
+    const workerOptions = config.boost_workerUrl ? {
+      workerUrl: config.boost_workerUrl
+    } : void 0;
     let data = args;
     if (args.bindto) {
       data = {};
@@ -38158,14 +38320,16 @@ function _setXS(ids, data, params) {
         callback
       );
     } else if (data.json) {
-      runWorker(useWorker(data.json), json, callback, [columns, rows])(
+      runWorker(useWorker(data.json), "json", json, callback, workerOptions)(
         data.json,
         _getDataKeyForJson(data.keys, config)
       );
     } else if (data.rows) {
-      runWorker(useWorker(data.rows), rows, callback)(data.rows);
+      runWorker(useWorker(data.rows), "rows", rows, callback, workerOptions)(data.rows);
     } else if (data.columns) {
-      runWorker(useWorker(data.columns), columns, callback)(data.columns);
+      runWorker(useWorker(data.columns), "columns", columns, callback, workerOptions)(
+        data.columns
+      );
     } else if (args.bindto) {
       throw Error("url or json or rows or columns is required.");
     }
@@ -40148,102 +40312,7 @@ const RE_SELECTOR_SUFFIX = /[\x00-\x20\x7F-\xA0\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`
   }
 });
 
-;// ./node_modules/.pnpm/internmap@2.0.3/node_modules/internmap/src/index.js
-class InternMap extends Map {
-  constructor(entries, key = keyof) {
-    super();
-    Object.defineProperties(this, { _intern: { value: /* @__PURE__ */ new Map() }, _key: { value: key } });
-    if (entries != null) for (const [key2, value] of entries) this.set(key2, value);
-  }
-  get(key) {
-    return super.get(intern_get(this, key));
-  }
-  has(key) {
-    return super.has(intern_get(this, key));
-  }
-  set(key, value) {
-    return super.set(intern_set(this, key), value);
-  }
-  delete(key) {
-    return super.delete(intern_delete(this, key));
-  }
-}
-class InternSet extends Set {
-  constructor(values, key = keyof) {
-    super();
-    Object.defineProperties(this, { _intern: { value: /* @__PURE__ */ new Map() }, _key: { value: key } });
-    if (values != null) for (const value of values) this.add(value);
-  }
-  has(value) {
-    return super.has(intern_get(this, value));
-  }
-  add(value) {
-    return super.add(intern_set(this, value));
-  }
-  delete(value) {
-    return super.delete(intern_delete(this, value));
-  }
-}
-function intern_get({ _intern, _key }, value) {
-  const key = _key(value);
-  return _intern.has(key) ? _intern.get(key) : value;
-}
-function intern_set({ _intern, _key }, value) {
-  const key = _key(value);
-  if (_intern.has(key)) return _intern.get(key);
-  _intern.set(key, value);
-  return value;
-}
-function intern_delete({ _intern, _key }, value) {
-  const key = _key(value);
-  if (_intern.has(key)) {
-    value = _intern.get(key);
-    _intern.delete(key);
-  }
-  return value;
-}
-function keyof(value) {
-  return value !== null && typeof value === "object" ? value.valueOf() : value;
-}
-
-;// ./node_modules/.pnpm/d3-scale@4.0.2/node_modules/d3-scale/src/ordinal.js
-
-
-const implicit = /* @__PURE__ */ Symbol("implicit");
-function ordinal() {
-  var index = new InternMap(), domain = [], range = [], unknown = implicit;
-  function scale(d) {
-    let i = index.get(d);
-    if (i === void 0) {
-      if (unknown !== implicit) return unknown;
-      index.set(d, i = domain.push(d) - 1);
-    }
-    return range[i % range.length];
-  }
-  scale.domain = function(_) {
-    if (!arguments.length) return domain.slice();
-    domain = [], index = new InternMap();
-    for (const value of _) {
-      if (index.has(value)) continue;
-      index.set(value, domain.push(value) - 1);
-    }
-    return scale;
-  };
-  scale.range = function(_) {
-    return arguments.length ? (range = Array.from(_), scale) : range.slice();
-  };
-  scale.unknown = function(_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  };
-  scale.copy = function() {
-    return ordinal(domain, range).unknown(unknown);
-  };
-  initRange.apply(scale, arguments);
-  return scale;
-}
-
 ;// ./src/ChartInternal/internals/color.ts
-
 
 
 
@@ -40290,7 +40359,7 @@ const schemeCategory10 = [
     const { $el, config } = $$;
     const ids = [];
     const hasGradient = config.area_linearGradient || config.bar_linearGradient || config.point_radialGradient;
-    let pattern = notEmpty(config.color_pattern) ? config.color_pattern : ordinal(_getColorFromCss($el.chart) || schemeCategory10).range();
+    let pattern = notEmpty(config.color_pattern) ? config.color_pattern : [..._getColorFromCss($el.chart) || schemeCategory10];
     const originalColorPattern = pattern;
     if (isFunction(config.color_tiles)) {
       const tiles = config.color_tiles.bind($$.api)();
@@ -42040,7 +42109,8 @@ function getTargetValueMinMax($$, targets) {
   const hasAxis = $$.state.hasAxis;
   for (let i = 0; i < targets.length; i++) {
     const target = targets[i];
-    const isCandlestick = ((_a = $$.isCandlestickType) == null ? void 0 : _a.call($$, target)) || ((_b = $$.isSubchartSourceTypeOf) == null ? void 0 : _b.call($$, target, TYPE.CANDLESTICK));
+    const isCandlestick = (_a = $$.isCandlestickType) == null ? void 0 : _a.call($$, target);
+    const isSubchartCandlestick = !isCandlestick && !!((_b = $$.isSubchartSourceTypeOf) == null ? void 0 : _b.call($$, target, TYPE.CANDLESTICK));
     const { values } = target;
     for (let j = 0; j < values.length; j++) {
       const row = values[j];
@@ -42048,10 +42118,10 @@ function getTargetValueMinMax($$, targets) {
       if (!(isValue(value) || value === null)) {
         continue;
       }
-      const subchartCandlestickValue = (_c = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _c.call($$, row, true);
+      const subchartCandlestickValue = isSubchartCandlestick ? (_c = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _c.call($$, row, true) : void 0;
       if (isNumber(subchartCandlestickValue)) {
         value = subchartCandlestickValue;
-      } else if (value !== null && isCandlestick) {
+      } else if (value !== null && (isCandlestick || isSubchartCandlestick)) {
         value = Array.isArray(value) ? value.slice(0, 4) : [value.open, value.high, value.low, value.close];
       }
       if (Array.isArray(value)) {
@@ -44536,13 +44606,23 @@ function batchGetBBox(elements) {
     const textNode = textNodes.filter((node) => node.data.id === id);
     const translate = getTranslation(textNode.node());
     const calcHypo = (x, y) => Math.sqrt(x * x + y * y);
-    textNode.node() && filteredTextNodes.each(function() {
+    if (!textNode.node()) {
+      return;
+    }
+    const fontSize = parseInt(textNode.style("font-size"), 10);
+    const overlapStates = [];
+    filteredTextNodes.each(function() {
       const coordinate = getTranslation(this);
-      const filteredTextNode = src_select(this);
-      const nodeForWidth = calcHypo(translate.e, translate.f) > calcHypo(coordinate.e, coordinate.f) ? textNode : filteredTextNode;
+      const nodeForWidth = calcHypo(translate.e, translate.f) > calcHypo(coordinate.e, coordinate.f) ? textNode : src_select(this);
       const overlapsX = Math.ceil(Math.abs(translate.e - coordinate.e)) < Math.ceil(nodeForWidth.node().getComputedTextLength());
-      const overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) < parseInt(textNode.style("font-size"), 10);
-      filteredTextNode.classed($TEXT.TextOverlapping, overlapsX && overlapsY);
+      const overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) < fontSize;
+      overlapStates.push({
+        node: this,
+        overlaps: overlapsX && overlapsY
+      });
+    });
+    overlapStates.forEach(({ node, overlaps }) => {
+      src_select(node).classed($TEXT.TextOverlapping, overlaps);
     });
   },
   /**
@@ -46487,7 +46567,7 @@ function getLinePointGroupTypeFilter($$) {
 }
 function getShapeOffsetValue($$, d, isSub) {
   var _a, _b, _c;
-  const subchartCandlestickValue = getSubchartCandlestickShapeValue($$, d, isSub);
+  const subchartCandlestickValue = isSub ? getSubchartCandlestickShapeValue($$, d, isSub) : void 0;
   if (isNumber(subchartCandlestickValue)) {
     return subchartCandlestickValue;
   }
@@ -46755,7 +46835,7 @@ function updateTargetsForShape(targets, config) {
     const isStackNormalized = $$.isStackNormalized();
     return (d) => {
       let { value } = d;
-      const subchartCandlestickValue = getSubchartCandlestickShapeValue($$, d, isSub);
+      const subchartCandlestickValue = isSub ? getSubchartCandlestickShapeValue($$, d, isSub) : void 0;
       if (isNumber(d)) {
         value = d;
       } else if (isNumber(subchartCandlestickValue)) {
@@ -46908,8 +46988,13 @@ function updateTargetsForShape(targets, config) {
     const y = $$.getShapeY(isSub);
     const lineOffset = $$.getShapeOffset(typeFilter || $$.isLineType, lineIndices, isSub);
     const yScale = $$.getYScaleById.bind($$);
+    const y0Cache = /* @__PURE__ */ new Map();
     return (d, i) => {
-      const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id, isSub));
+      let y0 = y0Cache.get(d.id);
+      if (y0 === void 0) {
+        y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id, isSub));
+        y0Cache.set(d.id, y0);
+      }
       const offset = lineOffset(d, i) || y0;
       const posX = x(d);
       let posY = y(d);
@@ -56740,109 +56825,6 @@ const axis = {
   }
 });
 
-;// ./node_modules/.pnpm/d3-axis@3.0.0/node_modules/d3-axis/src/identity.js
-/* harmony default export */ function d3_axis_src_identity(x) {
-  return x;
-}
-
-;// ./node_modules/.pnpm/d3-axis@3.0.0/node_modules/d3-axis/src/axis.js
-
-var axis_top = 1, right = 2, bottom = 3, left = 4, axis_epsilon = 1e-6;
-function translateX(x) {
-  return "translate(" + x + ",0)";
-}
-function translateY(y) {
-  return "translate(0," + y + ")";
-}
-function axis_number(scale) {
-  return (d) => +scale(d);
-}
-function center(scale, offset) {
-  offset = Math.max(0, scale.bandwidth() - offset * 2) / 2;
-  if (scale.round()) offset = Math.round(offset);
-  return (d) => +scale(d) + offset;
-}
-function entering() {
-  return !this.__axis;
-}
-function axis_axis(orient, scale) {
-  var tickArguments = [], tickValues = null, tickFormat = null, tickSizeInner = 6, tickSizeOuter = 6, tickPadding = 3, offset = typeof window !== "undefined" && window.devicePixelRatio > 1 ? 0 : 0.5, k = orient === axis_top || orient === left ? -1 : 1, x = orient === left || orient === right ? "x" : "y", transform = orient === axis_top || orient === bottom ? translateX : translateY;
-  function axis2(context) {
-    var values = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues, format = tickFormat == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : d3_axis_src_identity : tickFormat, spacing = Math.max(tickSizeInner, 0) + tickPadding, range = scale.range(), range0 = +range[0] + offset, range1 = +range[range.length - 1] + offset, position = (scale.bandwidth ? center : axis_number)(scale.copy(), offset), selection = context.selection ? context.selection() : context, path = selection.selectAll(".domain").data([null]), tick = selection.selectAll(".tick").data(values, scale).order(), tickExit = tick.exit(), tickEnter = tick.enter().append("g").attr("class", "tick"), line = tick.select("line"), text = tick.select("text");
-    path = path.merge(path.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor"));
-    tick = tick.merge(tickEnter);
-    line = line.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x + "2", k * tickSizeInner));
-    text = text.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x, k * spacing).attr("dy", orient === axis_top ? "0em" : orient === bottom ? "0.71em" : "0.32em"));
-    if (context !== selection) {
-      path = path.transition(context);
-      tick = tick.transition(context);
-      line = line.transition(context);
-      text = text.transition(context);
-      tickExit = tickExit.transition(context).attr("opacity", axis_epsilon).attr("transform", function(d) {
-        return isFinite(d = position(d)) ? transform(d + offset) : this.getAttribute("transform");
-      });
-      tickEnter.attr("opacity", axis_epsilon).attr("transform", function(d) {
-        var p = this.parentNode.__axis;
-        return transform((p && isFinite(p = p(d)) ? p : position(d)) + offset);
-      });
-    }
-    tickExit.remove();
-    path.attr("d", orient === left || orient === right ? tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H" + offset + "V" + range1 + "H" + k * tickSizeOuter : "M" + offset + "," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V" + offset + "H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + "," + offset + "H" + range1);
-    tick.attr("opacity", 1).attr("transform", function(d) {
-      return transform(position(d) + offset);
-    });
-    line.attr(x + "2", k * tickSizeInner);
-    text.attr(x, k * spacing).text(format);
-    selection.filter(entering).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === right ? "start" : orient === left ? "end" : "middle");
-    selection.each(function() {
-      this.__axis = position;
-    });
-  }
-  axis2.scale = function(_) {
-    return arguments.length ? (scale = _, axis2) : scale;
-  };
-  axis2.ticks = function() {
-    return tickArguments = Array.from(arguments), axis2;
-  };
-  axis2.tickArguments = function(_) {
-    return arguments.length ? (tickArguments = _ == null ? [] : Array.from(_), axis2) : tickArguments.slice();
-  };
-  axis2.tickValues = function(_) {
-    return arguments.length ? (tickValues = _ == null ? null : Array.from(_), axis2) : tickValues && tickValues.slice();
-  };
-  axis2.tickFormat = function(_) {
-    return arguments.length ? (tickFormat = _, axis2) : tickFormat;
-  };
-  axis2.tickSize = function(_) {
-    return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis2) : tickSizeInner;
-  };
-  axis2.tickSizeInner = function(_) {
-    return arguments.length ? (tickSizeInner = +_, axis2) : tickSizeInner;
-  };
-  axis2.tickSizeOuter = function(_) {
-    return arguments.length ? (tickSizeOuter = +_, axis2) : tickSizeOuter;
-  };
-  axis2.tickPadding = function(_) {
-    return arguments.length ? (tickPadding = +_, axis2) : tickPadding;
-  };
-  axis2.offset = function(_) {
-    return arguments.length ? (offset = +_, axis2) : offset;
-  };
-  return axis2;
-}
-function axisTop(scale) {
-  return axis_axis(axis_top, scale);
-}
-function axisRight(scale) {
-  return axis_axis(right, scale);
-}
-function axisBottom(scale) {
-  return axis_axis(bottom, scale);
-}
-function axisLeft(scale) {
-  return axis_axis(left, scale);
-}
-
 ;// ./src/ChartInternal/Axis/AxisRendererHelper.ts
 var AxisRendererHelper_defProp = Object.defineProperty;
 var AxisRendererHelper_defNormalProp = (obj, key, value) => key in obj ? AxisRendererHelper_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -57063,10 +57045,11 @@ class AxisRenderer {
     const { innerTickSize, tickLength, range } = config;
     const id = params.id;
     const type = getBaseAxisId(id);
-    const tickTextPos = type && /^(x|y|y2)$/.test(type) ? params.config[`axis_${type}_tick_text_position`] : { x: 0, y: 0 };
+    const { isSubAxes } = params;
+    const tickTextPos = !isSubAxes && type && /^(x|y|y2)$/.test(type) ? params.config[`axis_${type}_tick_text_position`] : { x: 0, y: 0 };
     const prefix = getAxisOptionPrefix(id);
     const axisShow = params.config[`${prefix}_show`];
-    const tickShow = {
+    const tickShow = isSubAxes ? { tick: true, text: true } : {
       tick: axisShow ? params.config[`${prefix}_tick_show`] : false,
       text: axisShow ? params.config[`${prefix}_tick_text_show`] : false
     };
@@ -57460,7 +57443,6 @@ var Axis_publicField = (obj, key, value) => Axis_defNormalProp(obj, typeof key !
 
 
 
-
 function Axis_getBaseAxisId(id) {
   return id === "subX" ? "x" : id === "subY" ? "y" : id === "subY2" ? "y2" : id;
 }
@@ -57800,24 +57782,32 @@ class Axis_Axis {
     const axes = [];
     const axesConfig = config[`axis_${id}_axes`];
     const isRotated = config.axis_rotated;
-    let d3Axis;
+    let orient;
     if (id === "x") {
-      d3Axis = isRotated ? axisLeft : axisBottom;
+      orient = isRotated ? "left" : "bottom";
     } else if (id === "y") {
-      d3Axis = isRotated ? axisBottom : axisLeft;
+      orient = isRotated ? "bottom" : "left";
     } else if (id === "y2") {
-      d3Axis = isRotated ? axisTop : axisRight;
+      orient = isRotated ? "top" : "right";
     }
     if (axesConfig.length) {
       axesConfig.forEach((v) => {
         const tick = v.tick || {};
         const scale = $$.scale[id].copy();
         v.domain && scale.domain(v.domain);
-        axes.push(
-          d3Axis(scale).ticks(tick.count).tickFormat(
-            isFunction(tick.format) ? tick.format.bind($$.api) : ((x) => x)
-          ).tickValues(tick.values).tickSizeOuter(tick.outer === false ? 0 : AXIS_TICK_SIZE)
+        const axis = new AxisRenderer({
+          outerTick: tick.outer !== false,
+          noTransition: false,
+          config,
+          id,
+          isSubAxes: true,
+          owner: $$
+        }).scale(scale).orient(orient).tickFormat(
+          isFunction(tick.format) ? tick.format.bind($$.api) : ((x) => x)
         );
+        isValue(tick.count) && axis.ticks(tick.count);
+        tick.values && axis.tickValues(tick.values);
+        axes.push(axis);
       });
     }
     this.axesList[id] = axes;
@@ -57841,10 +57831,11 @@ class Axis_Axis {
         const className = `${this.getAxisClassName(id)}-${i + 1}`;
         let g = main.select(`.${className.replace(/\s/, ".")}`);
         if (g.empty()) {
-          g = main.append("g").attr("class", className).style("visibility", config[`axis_${id}_show`] ? null : "hidden").call(v);
+          g = main.append("g").attr("class", className).style("visibility", config[`axis_${id}_show`] ? null : "hidden");
+          v.create(g);
         } else {
           axesConfig[i].domain && scale.domain(axesConfig[i].domain);
-          $T(g).call(v.scale(scale));
+          v.scale(scale).create($T(g));
         }
         g.attr("transform", $$.getTranslate(id, i + 1));
       });
@@ -61155,7 +61146,7 @@ var axis_spreadValues = (a, b) => {
 
 
 
-/* harmony default export */ var Options_axis_axis = (axis_spreadValues(axis_spreadValues(axis_spreadValues({
+/* harmony default export */ var axis_axis = (axis_spreadValues(axis_spreadValues(axis_spreadValues({
   /**
    * Setup the way to evaluate tick text size.
    * - **NOTE:**
@@ -61436,7 +61427,7 @@ const internal = {
 };
 const options = {
   optDataAxis: data_axis,
-  optAxis: Options_axis_axis
+  optAxis: axis_axis
 };
 
 ;// ./src/config/resolver/axis.core.ts
@@ -63948,7 +63939,6 @@ var funnel_spreadValues = (a, b) => {
 
 
 
-
 function _getSize(checkNeck = false) {
   const $$ = this;
   const { config, state: { current: { width, height } } } = $$;
@@ -66157,7 +66147,7 @@ ${percentValue}%`;
    * 	- dice ([d3.treemapDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapDice))
    * 	- slice ([d3.treemapSlice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSlice))
    * 	- sliceDice ([d3.treemapSliceDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSliceDice))
-   * 	- squrify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
+   * 	- squarify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
    * 	- resquarify ([d3.treemapResquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapResquarify))
    * @property {function} [treemap.label.format] Set formatter for the label text.<br>
    * - **Arguments:**
@@ -66170,7 +66160,7 @@ ${percentValue}%`;
    * @see [Demo: treemap](https://naver.github.io/billboard.js/demo/#Chart.TreemapChart)
    * @example
    *  treemap: {
-   *      // "binary", "dice", "slice", "sliceDice", "squrify", "resquarify"
+   *      // "binary", "dice", "slice", "sliceDice", "squarify", "resquarify"
    *      tile: "dice",
    *
    *      label: {
@@ -66251,7 +66241,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.3-nightly-20260801010035",
+  version: "4.0.3-nightly-20260808004624",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

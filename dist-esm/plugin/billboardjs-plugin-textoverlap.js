@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.0.3-nightly-20260801010035
+ * @version 4.0.3-nightly-20260808004624
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -48,6 +48,78 @@ function polygonCentroid(polygon) {
 	}
 	k *= 3;
 	return [x / k, y / k];
+}
+//#endregion
+//#region src/module/voronoi.ts
+const EPSILON = 1e-9;
+/**
+* Clip a convex polygon by the half-plane of points at least as close to `a` as
+* to `b`, i.e. the side of the perpendicular bisector of `ab` that contains `a`.
+* @param {Array} polygon Convex polygon as an open ring of [x, y]
+* @param {Array} a Site kept by the half-plane
+* @param {Array} b Opposing site
+* @returns {Array} Clipped polygon, empty when fully outside
+* @private
+*/
+function clipByBisector(polygon, a, b) {
+	const dx = b[0] - a[0];
+	const dy = b[1] - a[1];
+	const c = (dx * (a[0] + b[0]) + dy * (a[1] + b[1])) / 2;
+	const output = [];
+	const n = polygon.length;
+	let prev = polygon[n - 1];
+	let prevDist = dx * prev[0] + dy * prev[1] - c;
+	for (let i = 0; i < n; i++) {
+		const curr = polygon[i];
+		const currDist = dx * curr[0] + dy * curr[1] - c;
+		if (prevDist > 0 !== currDist > 0) {
+			const t = prevDist / (prevDist - currDist);
+			output.push([prev[0] + t * (curr[0] - prev[0]), prev[1] + t * (curr[1] - prev[1])]);
+		}
+		if (currDist <= 0) output.push(curr);
+		prev = curr;
+		prevDist = currDist;
+	}
+	return output;
+}
+/**
+* Compute bounded Voronoi cells for the given sites.
+*
+* Cells are returned in site order, closed (first vertex repeated last) as
+* d3-delaunay does. A site yields `null` when it has no cell: it lies outside
+* the bounds, or it coincides with an earlier site.
+* @param {Array} points Sites as [x, y]
+* @param {Array} bounds Clip extent as [xmin, ymin, xmax, ymax]
+* @returns {Array} Cell polygons in site order
+* @private
+*/
+function voronoiCells(points, bounds) {
+	const [x0, y0, x1, y1] = [
+		Math.min(bounds[0], bounds[2]),
+		Math.min(bounds[1], bounds[3]),
+		Math.max(bounds[0], bounds[2]),
+		Math.max(bounds[1], bounds[3])
+	];
+	const rect = [
+		[x0, y0],
+		[x1, y0],
+		[x1, y1],
+		[x0, y1]
+	];
+	const n = points.length;
+	return points.map((site, i) => {
+		let cell = rect;
+		for (let j = 0; j < n && cell.length > 2; j++) {
+			if (j === i) continue;
+			const other = points[j];
+			if (Math.abs(other[0] - site[0]) < EPSILON && Math.abs(other[1] - site[1]) < EPSILON) {
+				if (j < i) return null;
+				continue;
+			}
+			cell = clipByBisector(cell, site, other);
+		}
+		return cell.length > 2 ? [...cell, cell[0]] : null;
+	});
 }
 //#endregion
 //#region src/module/util/type-checks.ts
@@ -103,7 +175,7 @@ var Plugin = class {
 	$$;
 	options;
 	config;
-	static version = "4.0.3-nightly-20260801010035";
+	static version = "4.0.3-nightly-20260808004624";
 	/**
 	* Constructor
 	* @param {Any} options config option object
@@ -204,26 +276,13 @@ var Options = class {
 };
 //#endregion
 //#region src/Plugin/textoverlap/index.ts
-let d3Delaunay = null;
-/**
-* Load d3-delaunay only when the plugin actually needs Voronoi layout.
-* @returns {Promise} Delaunay constructor
-* @private
-*/
-function getDelaunay() {
-	return d3Delaunay ?? (d3Delaunay = import("d3-delaunay").then(({ Delaunay }) => Delaunay));
-}
 /**
 * TextOverlap plugin<br>
 * Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram).
 * - **NOTE:**
 *   - Plugins aren't built-in. Need to be loaded or imported to be used.
-*   - Non required modules from billboard.js core, need to be installed separately.
 *   - Appropriate and works for axis based chart.
-* - **Required modules:**
-*   - [d3-delaunay](https://github.com/d3/d3-delaunay)
 * @class plugin-textoverlap
-* @requires d3-delaunay
 * @param {object} options TextOverlap plugin options
 * @augments Plugin
 * @returns {TextOverlap}
@@ -257,7 +316,6 @@ function getDelaunay() {
 var TextOverlap = class extends Plugin {
 	constructor(options) {
 		super(options);
-		this.redrawId = 0;
 		this.config = new Options();
 		return this;
 	}
@@ -267,37 +325,33 @@ var TextOverlap = class extends Plugin {
 	$redraw() {
 		const { $$: { $el }, config: { selector } } = this;
 		const text = selector ? $el.main.selectAll(selector) : $el.text;
-		const redrawId = ++this.redrawId;
-		if (!text.empty()) this.preventLabelOverlap(text, redrawId);
+		if (!text.empty()) this.preventLabelOverlap(text);
 	}
 	/**
 	* Generates the voronoi layout for data labels
 	* @param {Array} points Indices values
-	* @returns {object} Voronoi layout points and corresponding Data points
+	* @returns {Array} Voronoi cell polygons, in point order
 	* @private
 	*/
-	async generateVoronoi(points) {
+	generateVoronoi(points) {
 		const { $$ } = this;
 		const { scale } = $$;
 		const [min, max] = ["x", "y"].map((v) => scale[v].domain());
-		const Delaunay = await getDelaunay();
 		[min[1], max[0]] = [max[0], min[1]];
-		return Delaunay.from(points).voronoi([...min, ...max]);
+		return voronoiCells(points, [...min, ...max]);
 	}
 	/**
 	* Set text label's position to preventg overlap.
 	* @param {d3Selection} text target text selection
-	* @param {number} redrawId Redraw request identifier
 	* @private
 	*/
-	async preventLabelOverlap(text, redrawId = this.redrawId) {
+	preventLabelOverlap(text) {
 		const { extent, area } = this.config;
 		const points = text.data().map((v) => [v.index, v.value]);
-		const voronoi = await this.generateVoronoi(points).catch(() => null);
+		const cells = this.generateVoronoi(points);
 		let i = 0;
-		if (!voronoi || redrawId !== this.redrawId) return;
 		text.each(function() {
-			const cell = voronoi.cellPolygon(i);
+			const cell = cells[i];
 			if (cell && this) {
 				const [x, y] = points[i];
 				const [cx, cy] = polygonCentroid(cell);

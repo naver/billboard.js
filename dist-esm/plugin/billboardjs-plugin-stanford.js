@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.0.3-nightly-20260801010035
+ * @version 4.0.3-nightly-20260808004624
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -238,7 +238,7 @@ var Plugin = class {
 	$$;
 	options;
 	config;
-	static version = "4.0.3-nightly-20260801010035";
+	static version = "4.0.3-nightly-20260808004624";
 	/**
 	* Constructor
 	* @param {Any} options config option object
@@ -701,15 +701,11 @@ function hsl(h, s, l, opacity = 1) {
 * - **Required modules:**
 *   - [d3-selection](https://github.com/d3/d3-selection)
 *   - [d3-interpolate](https://github.com/d3/d3-interpolate)
-*   - [d3-scale](https://github.com/d3/d3-scale)
 *   - [d3-brush](https://github.com/d3/d3-brush)
-*   - [d3-axis](https://github.com/d3/d3-axis)
 * @class plugin-stanford
 * @requires d3-selection
 * @requires d3-interpolate
-* @requires d3-scale
 * @requires d3-brush
-* @requires d3-axis
 * @param {object} options Stanford plugin options
 * @augments Plugin
 * @returns {Stanford}

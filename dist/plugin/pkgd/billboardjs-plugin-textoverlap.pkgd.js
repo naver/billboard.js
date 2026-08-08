@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.3-nightly-20260801010035
+ * @version 4.0.3-nightly-20260808004624
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23080,6 +23080,62 @@ function polygonCentroid(polygon) {
   return [x / k, y / k];
 }
 
+;// ./src/module/voronoi.ts
+const EPSILON = 1e-9;
+function clipByBisector(polygon, a, b) {
+  const dx = b[0] - a[0];
+  const dy = b[1] - a[1];
+  const c = (dx * (a[0] + b[0]) + dy * (a[1] + b[1])) / 2;
+  const output = [];
+  const n = polygon.length;
+  let prev = polygon[n - 1];
+  let prevDist = dx * prev[0] + dy * prev[1] - c;
+  for (let i = 0; i < n; i++) {
+    const curr = polygon[i];
+    const currDist = dx * curr[0] + dy * curr[1] - c;
+    if (prevDist > 0 !== currDist > 0) {
+      const t = prevDist / (prevDist - currDist);
+      output.push([
+        prev[0] + t * (curr[0] - prev[0]),
+        prev[1] + t * (curr[1] - prev[1])
+      ]);
+    }
+    if (currDist <= 0) {
+      output.push(curr);
+    }
+    prev = curr;
+    prevDist = currDist;
+  }
+  return output;
+}
+function voronoiCells(points, bounds) {
+  const [x0, y0, x1, y1] = [
+    Math.min(bounds[0], bounds[2]),
+    Math.min(bounds[1], bounds[3]),
+    Math.max(bounds[0], bounds[2]),
+    Math.max(bounds[1], bounds[3])
+  ];
+  const rect = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+  const n = points.length;
+  return points.map((site, i) => {
+    let cell = rect;
+    for (let j = 0; j < n && cell.length > 2; j++) {
+      if (j === i) {
+        continue;
+      }
+      const other = points[j];
+      if (Math.abs(other[0] - site[0]) < EPSILON && Math.abs(other[1] - site[1]) < EPSILON) {
+        if (j < i) {
+          return null;
+        }
+        continue;
+      }
+      cell = clipByBisector(cell, site, other);
+    }
+    return cell.length > 2 ? [...cell, cell[0]] : null;
+  });
+}
+
 ;// ./src/module/util/type-checks.ts
 const isValue = (v) => v || v === 0;
 const isFunction = (v) => typeof v === "function";
@@ -23193,7 +23249,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "4.0.3-nightly-20260801010035");
+__publicField(Plugin, "version", "4.0.3-nightly-20260808004624");
 
 ;// ./src/Plugin/textoverlap/Options.ts
 class Options {
@@ -23236,40 +23292,13 @@ class Options {
 }
 
 ;// ./src/Plugin/textoverlap/index.ts
-var textoverlap_defProp = Object.defineProperty;
-var textoverlap_defNormalProp = (obj, key, value) => key in obj ? textoverlap_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var textoverlap_publicField = (obj, key, value) => textoverlap_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
 
 
 
-let d3Delaunay = null;
-function getDelaunay() {
-  return d3Delaunay != null ? d3Delaunay : d3Delaunay = __webpack_require__.e(/* import() */ 5).then(__webpack_require__.bind(__webpack_require__, 632)).then(({ Delaunay }) => Delaunay);
-}
+
 class TextOverlap extends Plugin {
   constructor(options) {
     super(options);
-    textoverlap_publicField(this, "redrawId", 0);
     this.config = new Options();
     return this;
   }
@@ -23279,62 +23308,49 @@ class TextOverlap extends Plugin {
   $redraw() {
     const { $$: { $el }, config: { selector } } = this;
     const text = selector ? $el.main.selectAll(selector) : $el.text;
-    const redrawId = ++this.redrawId;
     if (!text.empty()) {
-      void this.preventLabelOverlap(text, redrawId);
+      this.preventLabelOverlap(text);
     }
   }
   /**
    * Generates the voronoi layout for data labels
    * @param {Array} points Indices values
-   * @returns {object} Voronoi layout points and corresponding Data points
+   * @returns {Array} Voronoi cell polygons, in point order
    * @private
    */
   generateVoronoi(points) {
-    return __async(this, null, function* () {
-      const { $$ } = this;
-      const { scale } = $$;
-      const [min, max] = ["x", "y"].map((v) => scale[v].domain());
-      const Delaunay = yield getDelaunay();
-      [min[1], max[0]] = [max[0], min[1]];
-      return Delaunay.from(points).voronoi([
-        ...min,
-        ...max
-      ]);
-    });
+    const { $$ } = this;
+    const { scale } = $$;
+    const [min, max] = ["x", "y"].map((v) => scale[v].domain());
+    [min[1], max[0]] = [max[0], min[1]];
+    return voronoiCells(points, [...min, ...max]);
   }
   /**
    * Set text label's position to preventg overlap.
    * @param {d3Selection} text target text selection
-   * @param {number} redrawId Redraw request identifier
    * @private
    */
-  preventLabelOverlap(_0) {
-    return __async(this, arguments, function* (text, redrawId = this.redrawId) {
-      const { extent, area } = this.config;
-      const points = text.data().map((v) => [v.index, v.value]);
-      const voronoi = yield this.generateVoronoi(points).catch(() => null);
-      let i = 0;
-      if (!voronoi || redrawId !== this.redrawId) {
-        return;
+  preventLabelOverlap(text) {
+    const { extent, area } = this.config;
+    const points = text.data().map((v) => [v.index, v.value]);
+    const cells = this.generateVoronoi(points);
+    let i = 0;
+    text.each(function() {
+      const cell = cells[i];
+      if (cell && this) {
+        const [x, y] = points[i];
+        const [cx, cy] = polygonCentroid(cell);
+        const cellArea = Math.abs(polygonArea(cell));
+        const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
+        const xTranslate = extent * (angle === 0 ? 1 : -1);
+        const yTranslate = angle === -1 ? -extent : extent + 5;
+        const txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end";
+        this.style.display = cellArea < area ? "none" : "";
+        this.setAttribute("text-anchor", txtAnchor);
+        this.setAttribute("dy", `0.${angle === 1 ? 71 : 35}em`);
+        this.setAttribute("transform", `translate(${xTranslate}, ${yTranslate})`);
       }
-      text.each(function() {
-        const cell = voronoi.cellPolygon(i);
-        if (cell && this) {
-          const [x, y] = points[i];
-          const [cx, cy] = polygonCentroid(cell);
-          const cellArea = Math.abs(polygonArea(cell));
-          const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
-          const xTranslate = extent * (angle === 0 ? 1 : -1);
-          const yTranslate = angle === -1 ? -extent : extent + 5;
-          const txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end";
-          this.style.display = cellArea < area ? "none" : "";
-          this.setAttribute("text-anchor", txtAnchor);
-          this.setAttribute("dy", `0.${angle === 1 ? 71 : 35}em`);
-          this.setAttribute("transform", `translate(${xTranslate}, ${yTranslate})`);
-        }
-        i++;
-      });
+      i++;
     });
   }
 }
@@ -23367,9 +23383,6 @@ class TextOverlap extends Plugin {
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = __webpack_modules__;
-/******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	!function() {
@@ -23398,173 +23411,9 @@ class TextOverlap extends Plugin {
 /******/ 		};
 /******/ 	}();
 /******/ 	
-/******/ 	/* webpack/runtime/ensure chunk */
-/******/ 	!function() {
-/******/ 		__webpack_require__.f = {};
-/******/ 		// This file contains only the entry chunk.
-/******/ 		// The chunk loading function for additional chunks
-/******/ 		__webpack_require__.e = function(chunkId) {
-/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce(function(promises, key) {
-/******/ 				__webpack_require__.f[key](chunkId, promises);
-/******/ 				return promises;
-/******/ 			}, []));
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/get javascript chunk filename */
-/******/ 	!function() {
-/******/ 		// This function allow to reference async chunks
-/******/ 		__webpack_require__.u = function(chunkId) {
-/******/ 			// return url for filenames based on template
-/******/ 			return "" + chunkId + ".bundle.js";
-/******/ 		};
-/******/ 	}();
-/******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	!function() {
 /******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/load script */
-/******/ 	!function() {
-/******/ 		var inProgress = {};
-/******/ 		var dataWebpackPrefix = "bb.plugin:";
-/******/ 		// loadScript function to load a script via script tag
-/******/ 		__webpack_require__.l = function(url, done, key, chunkId) {
-/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
-/******/ 			var script, needAttach;
-/******/ 			if(key !== undefined) {
-/******/ 				var scripts = document.getElementsByTagName("script");
-/******/ 				for(var i = 0; i < scripts.length; i++) {
-/******/ 					var s = scripts[i];
-/******/ 					if(s.getAttribute("src") == url || s.getAttribute("data-webpack") == dataWebpackPrefix + key) { script = s; break; }
-/******/ 				}
-/******/ 			}
-/******/ 			if(!script) {
-/******/ 				needAttach = true;
-/******/ 				script = document.createElement('script');
-/******/ 		
-/******/ 				script.charset = 'utf-8';
-/******/ 				if (__webpack_require__.nc) {
-/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
-/******/ 				}
-/******/ 				script.setAttribute("data-webpack", dataWebpackPrefix + key);
-/******/ 		
-/******/ 				script.src = url;
-/******/ 			}
-/******/ 			inProgress[url] = [done];
-/******/ 			var onScriptComplete = function(prev, event) {
-/******/ 				// avoid mem leaks in IE.
-/******/ 				script.onerror = script.onload = null;
-/******/ 				clearTimeout(timeout);
-/******/ 				var doneFns = inProgress[url];
-/******/ 				delete inProgress[url];
-/******/ 				script.parentNode && script.parentNode.removeChild(script);
-/******/ 				doneFns && doneFns.forEach(function(fn) { return fn(event); });
-/******/ 				if(prev) return prev(event);
-/******/ 			}
-/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
-/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
-/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
-/******/ 			needAttach && document.head.appendChild(script);
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/publicPath */
-/******/ 	!function() {
-/******/ 		__webpack_require__.p = "/dist/plugin";
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/jsonp chunk loading */
-/******/ 	!function() {
-/******/ 		// no baseURI
-/******/ 		
-/******/ 		// object to store loaded and loading chunks
-/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
-/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
-/******/ 		var installedChunks = {
-/******/ 			4: 0
-/******/ 		};
-/******/ 		
-/******/ 		__webpack_require__.f.j = function(chunkId, promises) {
-/******/ 				// JSONP chunk loading for javascript
-/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
-/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
-/******/ 		
-/******/ 					// a Promise means "currently loading".
-/******/ 					if(installedChunkData) {
-/******/ 						promises.push(installedChunkData[2]);
-/******/ 					} else {
-/******/ 						if(true) { // all chunks have JS
-/******/ 							// setup Promise in chunk cache
-/******/ 							var promise = new Promise(function(resolve, reject) { installedChunkData = installedChunks[chunkId] = [resolve, reject]; });
-/******/ 							promises.push(installedChunkData[2] = promise);
-/******/ 		
-/******/ 							// start chunk loading
-/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
-/******/ 							// create error before stack unwound to get useful stacktrace later
-/******/ 							var error = new Error();
-/******/ 							var loadingEnded = function(event) {
-/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
-/******/ 									installedChunkData = installedChunks[chunkId];
-/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
-/******/ 									if(installedChunkData) {
-/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
-/******/ 										var realSrc = event && event.target && event.target.src;
-/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
-/******/ 										error.name = 'ChunkLoadError';
-/******/ 										error.type = errorType;
-/******/ 										error.request = realSrc;
-/******/ 										installedChunkData[1](error);
-/******/ 									}
-/******/ 								}
-/******/ 							};
-/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
-/******/ 						}
-/******/ 					}
-/******/ 				}
-/******/ 		};
-/******/ 		
-/******/ 		// no prefetching
-/******/ 		
-/******/ 		// no preloaded
-/******/ 		
-/******/ 		// no HMR
-/******/ 		
-/******/ 		// no HMR manifest
-/******/ 		
-/******/ 		// no on chunks loaded
-/******/ 		
-/******/ 		// install a JSONP callback for chunk loading
-/******/ 		var webpackJsonpCallback = function(parentChunkLoadingFunction, data) {
-/******/ 			var chunkIds = data[0];
-/******/ 			var moreModules = data[1];
-/******/ 			var runtime = data[2];
-/******/ 			// add "moreModules" to the modules object,
-/******/ 			// then flag all "chunkIds" as loaded and fire callback
-/******/ 			var moduleId, chunkId, i = 0;
-/******/ 			if(chunkIds.some(function(id) { return installedChunks[id] !== 0; })) {
-/******/ 				for(moduleId in moreModules) {
-/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
-/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
-/******/ 					}
-/******/ 				}
-/******/ 				if(runtime) var result = runtime(__webpack_require__);
-/******/ 			}
-/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
-/******/ 			for(;i < chunkIds.length; i++) {
-/******/ 				chunkId = chunkIds[i];
-/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
-/******/ 					installedChunks[chunkId][0]();
-/******/ 				}
-/******/ 				installedChunks[chunkId] = 0;
-/******/ 			}
-/******/ 		
-/******/ 		}
-/******/ 		
-/******/ 		var chunkLoadingGlobal = this["webpackChunkbb_plugin"] = this["webpackChunkbb_plugin"] || [];
-/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
-/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
 /******/ 	}();
 /******/ 	
 /************************************************************************/

@@ -5,18 +5,18 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.3-nightly-20260801010035
+ * @version 4.0.3-nightly-20260808004624
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-axis"), require("d3-brush"), require("d3-drag"), require("d3-hierarchy"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom"));
+		module.exports = factory(require("d3-brush"), require("d3-drag"), require("d3-hierarchy"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom"));
 	else if(typeof define === 'function' && define.amd)
-		define(["d3-axis", "d3-brush", "d3-drag", "d3-hierarchy", "d3-interpolate", "d3-scale", "d3-selection", "d3-shape", "d3-time-format", "d3-transition", "d3-zoom"], factory);
+		define(["d3-brush", "d3-drag", "d3-hierarchy", "d3-interpolate", "d3-scale", "d3-selection", "d3-shape", "d3-time-format", "d3-transition", "d3-zoom"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("d3-axis"), require("d3-brush"), require("d3-drag"), require("d3-hierarchy"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
+		var a = typeof exports === 'object' ? factory(require("d3-brush"), require("d3-drag"), require("d3-hierarchy"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
@@ -80,12 +80,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
 /***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__11__;
-
-/***/ }),
-/* 12 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__12__;
 
 /***/ })
 /******/ 	]);
@@ -4217,12 +4211,20 @@ var path_spreadValues = (a, b) => {
 };
 var path_spreadProps = (a, b) => path_defProps(a, path_getOwnPropDescs(b));
 
-function getPathValue($$, d, isSub) {
-  var _a;
-  const value = (_a = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _a.call($$, d, isSub);
-  return value === void 0 ? $$.getBaseValue(d) : value;
+function getPathValueFn($$, isSub) {
+  if (!isSub) {
+    return (d) => $$.getBaseValue(d);
+  }
+  return (d) => {
+    var _a;
+    const value = (_a = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _a.call($$, d, true);
+    return value === void 0 ? $$.getBaseValue(d) : value;
+  };
 }
 function getProjectedValues($$, values, isSub) {
+  if (!isSub) {
+    return values;
+  }
   return values.map((d) => {
     var _a;
     const value = (_a = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _a.call($$, d, isSub);
@@ -4238,15 +4240,16 @@ function generateDrawLinePath($$, lineIndices, isSub, context) {
   const isRotated = config.axis_rotated;
   const getPoints = $$.generateGetLinePoints(lineIndices, isSub);
   const yScale = $$.getYScaleById.bind($$);
+  const pathValue = getPathValueFn($$, isSub);
   const xValue = (d) => (isSub ? $$.subxx : $$.xx).call($$, d);
   const yValue = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)(
-    getPathValue($$, d, isSub)
+    pathValue(d)
   );
   let line = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.line)();
   line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
   context && (line = line.context(context));
   if (!lineConnectNull) {
-    line = line.defined((d) => getPathValue($$, d, isSub) !== null);
+    line = line.defined((d) => pathValue(d) !== null);
   }
   const x = isSub ? scale.subX : scale.x;
   return (d) => {
@@ -4272,7 +4275,7 @@ function generateDrawLinePath($$, lineIndices, isSub, context) {
     } else {
       if (values[0]) {
         x0 = x(values[0].x);
-        y0 = y(getPathValue($$, values[0], isSub));
+        y0 = y(pathValue(values[0]));
       }
       path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
     }
@@ -4285,12 +4288,22 @@ function generateDrawAreaPath($$, areaIndices, isSub, context) {
   const isRotated = config.axis_rotated;
   const getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
   const yScale = $$.getYScaleById.bind($$);
+  const pathValue = getPathValueFn($$, isSub);
+  const shapeYMin = /* @__PURE__ */ new Map();
+  const getShapeYMin = (id) => {
+    let min = shapeYMin.get(id);
+    if (min === void 0) {
+      min = $$.getShapeYMin(id, isSub);
+      shapeYMin.set(id, min);
+    }
+    return min;
+  };
   const xValue = (d) => (isSub ? $$.subxx : $$.xx).call($$, d);
   const value0 = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)(
-    $$.isAreaRangeType(d) ? $$.getRangedData(d, "high") : $$.getShapeYMin(d.id, isSub)
+    $$.isAreaRangeType(d) ? $$.getRangedData(d, "high") : getShapeYMin(d.id)
   );
   const value1 = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[1][1] : yScale(d.id, isSub)(
-    $$.isAreaRangeType(d) ? $$.getRangedData(d, "low") : getPathValue($$, d, isSub)
+    $$.isAreaRangeType(d) ? $$.getRangedData(d, "low") : pathValue(d)
   );
   return (d) => {
     let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
@@ -4302,7 +4315,7 @@ function generateDrawAreaPath($$, areaIndices, isSub, context) {
       area = isRotated ? area.y(xValue).x0(value0).x1(value1) : area.x(xValue).y0(config.area_above ? 0 : config.area_below ? isSub ? $$.state.height2 : $$.state.height : value0).y1(value1);
       context && (area = area.context(context));
       if (!lineConnectNull) {
-        area = area.defined((d2) => getPathValue($$, d2, isSub) !== null);
+        area = area.defined((d2) => pathValue(d2) !== null);
       }
       values = getProjectedValues($$, values, isSub);
       if ($$.isStepType(d)) {
@@ -4312,7 +4325,7 @@ function generateDrawAreaPath($$, areaIndices, isSub, context) {
     } else {
       if (values[0]) {
         x0 = (isSub ? $$.scale.subX : $$.scale.x)(values[0].x);
-        y0 = $$.getYScaleById(d.id, isSub)(getPathValue($$, values[0], isSub));
+        y0 = $$.getYScaleById(d.id, isSub)(pathValue(values[0]));
       }
       path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
     }
@@ -8459,20 +8472,79 @@ const $ZOOM = {
    * - **NOTE:**
    *   - Will append &lt;style> to the head tag and will add shpes' CSS rules dynamically.
    *   - For now, covers colors related properties (fill, stroke, etc.) only.
-   * @property {boolean} [boost.useWorker=false] Use Web Worker as possible for processing.
+   * @property {boolean|string} [boost.useWorker=false] Use Web Worker as possible for processing.
+   * - **Available values:**
+   *   - `false`: never offload.
+   *   - `true`: always offload when a Worker can be created.
+   *   - `"auto"`: offload only when the given data exceeds ~5,000 cells, since smaller
+   *     payloads lose more to structured cloning than they gain.
    * - **NOTE:**
    *   - For now, only applies for data conversion at the initial time.
    *   - As of Web Worker's async nature, handling chart instance synchronously is not recommended.
    *   - When Worker isn't available, fails or times out, data conversion falls back to main thread.
    *   - When given data is empty, useWorker will be ignored.
+   * @property {string} [boost.workerUrl=undefined] Use a custom static worker script URL instead of an inline Blob worker.
+   * - **NOTE:**
+   *   - **Requires `boost.useWorker` to be enabled** — this option only selects where the
+   *     worker source comes from, it does not turn offloading on by itself.
+   *   - Useful for strict CSP environments that disallow `blob:` workers. Without it under
+   *     such a policy, worker creation throws and each conversion waits out the 5s timeout
+   *     before falling back, so the chart still renders but the initial draw is delayed.
+   *   - Point it at `dist/billboard.worker.js`, shipped in the package, or any script
+   *     implementing the same protocol: receive `{id, op, args}` and post back
+   *     `{id, result}` or `{id, error}`. No `eval()` is involved.
+   *   - With a bundler, make sure the file is emitted as a **real asset**, not inlined:
+   *     it is ~1.5KB, and inlining turns it into a `data:` URI, which a strict CSP
+   *     blocks exactly like `blob:`. Copying it into the static/public directory is the
+   *     option that works everywhere.
+   *   - Any failure (load error, unknown op, timeout, result mismatch) falls back to the main thread.
    * @example
+   * // offload data conversion on a Worker, using the inline Blob worker
    *  boost: {
    *      useCssRule: true,
-   *      useWorker: false
+   *      useWorker: true
    *  }
+   * @example
+   * // offload only past ~5,000 cells
+   *  boost: {
+   *      useWorker: "auto"
+   *  }
+   * @example
+   * // strict CSP: serve the shipped script and point at it.
+   * // 'useWorker' still has to be on - 'workerUrl' alone offloads nothing.
+   *  boost: {
+   *      useWorker: true,
+   *      workerUrl: "$YOUR_PATH/dist/billboard.worker.js"
+   *  }
+   * @example
+   * // ESM: the file is reachable as a package subpath.
+   * // Vite - '?url' resolves it, but assets under 4KB are inlined as a 'data:' URI,
+   * // which a strict CSP rejects. Opt that one file out of inlining:
+   * //
+   * //   // vite.config.js
+   * //   export default {
+   * //     build: {
+   * //       assetsInlineLimit: path => /billboard\.worker\.js$/.test(path) ? false : undefined
+   * //     }
+   * //   };
+   * import bb, {bar} from "billboard.js";
+   * import workerUrl from "billboard.js/dist/billboard.worker.js?url";
+   *
+   * bb.generate({
+   *     boost: {useWorker: true, workerUrl},
+   *     data: {columns: [["data1", 30, 200, 100]], type: bar()}
+   * });
+   * @example
+   * // ESM, bundler-agnostic: copy the file into the served static directory
+   * //   cp node_modules/billboard.js/dist/billboard.worker.js public/
+   * bb.generate({
+   *     boost: {useWorker: true, workerUrl: "/billboard.worker.js"},
+   *     data: {columns: [["data1", 30, 200, 100]]}
+   * });
    */
   boost_useCssRule: false,
-  boost_useWorker: false
+  boost_useWorker: false,
+  boost_workerUrl: void 0
 });
 
 ;// ./src/config/Options/common/color.ts
@@ -11342,66 +11414,147 @@ function generateWait() {
 
 const cache = {};
 const disabledKeys = /* @__PURE__ */ new Set();
+const verifiedOps = /* @__PURE__ */ new Map();
 const DEFAULT_WORKER_TIMEOUT = 5e3;
+const VERIFY_SAMPLE_SIZE = 3;
 let messageId = 0;
+function getWorkerSrc() {
+  try {
+    return "var bbWorker=(function(e){Object.defineProperty(e,Symbol.toStringTag,{value:`Module`});function t(e){let t=[];return e.forEach(function(e,n){let r=e[0];e.forEach(function(e,i){if(i>0){if(t[i-1]===void 0&&(t[i-1]={}),e===void 0)throw Error(`Source data is missing a component at (${n}, ${i})!`);t[i-1][r]=e}})}),t}function n(e){let t=e[0],n=[];return e.forEach(function(e,r){if(r>0){let i={};e.forEach(function(e,n){if(e===void 0)throw Error(`Source data is missing a component at (${r}, ${n})!`);i[t[n]]=e}),n.push(i)}}),n}function r(e,r){let i=[],a,o;if(Array.isArray(e)){let t=function(e,t){if(e[t]!==void 0)return e[t];let n=t.replace(/\\[(\\w+)\\]/g,`.$1`).replace(/^\\./,``).split(`.`),r=e;return n.some(function(e){return!(r=r&&typeof r==`object`&&e in r?r[e]:void 0)}),r};a=r.x?r.value.concat(r.x):r.value,i.push(a),e.forEach(function(e){let n=a.map(function(n){let r=t(e,n);return r===void 0&&(r=null),r});i.push(n)}),o=n(i)}else Object.keys(e).forEach(function(t){let n=[].concat(e[t]);n.unshift?.(t),i.push(n)}),o=t(i);return o}let i={columns:t,json:r,rows:n},a=self;function o({data:e}){let{args:t,id:n,op:r}=e;try{let e=i[r];if(!e)throw Error(`Unknown worker op: ${r}`);a.postMessage({id:n,result:e(...t)})}catch(e){a.postMessage({id:n,error:e&&(e.message||e.name)||String(e)})}}return typeof window>`u`&&(a.onmessage=o),e.handleMessage=o,e.ops=i,e})({});";
+  } catch (e) {
+    return "";
+  }
+}
 function getWorkerAPI() {
   const { Blob, Worker, URL } = win;
   return Worker && Blob && (URL == null ? void 0 : URL.createObjectURL) && (URL == null ? void 0 : URL.revokeObjectURL) ? { Blob, Worker, URL } : null;
 }
-function hashString(str) {
-  let hash = 2166136261;
-  for (let i = 0, len = str.length; i < len; i++) {
-    hash ^= str.charCodeAt(i);
-    hash = Math.imul(hash, 16777619);
-  }
-  return `worker-${str.length}-${(hash >>> 0).toString(36)}`;
+function getWorkerConstructor() {
+  return win.Worker || null;
+}
+function normalizeWorkerOptions(options) {
+  var _a, _b;
+  return typeof options === "number" ? { timeout: options, workerUrl: "" } : {
+    timeout: (_a = options == null ? void 0 : options.timeout) != null ? _a : DEFAULT_WORKER_TIMEOUT,
+    workerUrl: (_b = options == null ? void 0 : options.workerUrl) != null ? _b : ""
+  };
 }
 function releaseWorker(key, disable = false) {
-  var _a;
+  var _a, _b;
   const cached = cache[key];
-  const api = getWorkerAPI();
   if (disable) {
     disabledKeys.add(key);
   }
   if (cached) {
     (_a = cached.worker) == null ? void 0 : _a.terminate();
-    cached.src && (api == null ? void 0 : api.URL.revokeObjectURL(cached.src));
+    cached.revoke && ((_b = getWorkerAPI()) == null ? void 0 : _b.URL.revokeObjectURL(cached.src));
     delete cache[key];
   }
+  for (const verified of verifiedOps.keys()) {
+    if (verified.startsWith(`${key}:`)) {
+      verifiedOps.delete(verified);
+    }
+  }
 }
-function getOrCreateWorkerResources(fn, depsFn) {
-  var _a;
-  const api = getWorkerAPI();
-  const fnString = fn.toString();
-  const depsString = (_a = depsFn == null ? void 0 : depsFn.map(String).join(";")) != null ? _a : "";
-  const key = hashString(`${fnString}
-${depsString}`);
-  if (!api || disabledKeys.has(key)) {
+function isSameResult(actual, expected) {
+  if (actual === expected) {
+    return true;
+  }
+  try {
+    return JSON.stringify(actual) === JSON.stringify(expected);
+  } catch (e) {
+    return true;
+  }
+}
+function getVerifySample(args) {
+  const [data, ...rest] = args;
+  if (!Array.isArray(data)) {
+    return args;
+  }
+  return [
+    data.slice(0, VERIFY_SAMPLE_SIZE).map(
+      (entry) => (
+        // +1: a column/row entry leads with its name, which the values follow
+        Array.isArray(entry) ? entry.slice(0, VERIFY_SAMPLE_SIZE + 1) : entry
+      )
+    ),
+    ...rest
+  ];
+}
+function request(worker, op, args, timeout) {
+  const id = ++messageId;
+  let settled = false;
+  let cleanup;
+  const promise = new Promise((resolve, reject) => {
+    const settle = (fn, value) => {
+      if (!settled) {
+        settled = true;
+        cleanup();
+        fn(value);
+      }
+    };
+    const handler = function(e) {
+      var _a;
+      if (((_a = e.data) == null ? void 0 : _a.id) === id) {
+        e.data.error ? settle(reject, new Error(e.data.error)) : settle(resolve, e.data.result);
+      }
+    };
+    const errorHandler = function() {
+      settle(reject, new Error("worker error"));
+    };
+    const timer = setTimeout(() => settle(reject, new Error("worker timeout")), timeout);
+    cleanup = () => {
+      clearTimeout(timer);
+      worker.removeEventListener("message", handler);
+      worker.removeEventListener("error", errorHandler);
+    };
+    worker.addEventListener("message", handler);
+    worker.addEventListener("error", errorHandler);
+  });
+  try {
+    worker.postMessage({ args, id, op });
+  } catch (error) {
+    settled = true;
+    cleanup();
+    throw error;
+  }
+  return promise;
+}
+function startVerify(worker, verifyKey, op, fn, args, timeout) {
+  const sample = getVerifySample(args);
+  const check = request(worker, op, sample, timeout).then((result) => isSameResult(result, fn(...sample)), () => false).then((matched) => {
+    matched ? verifiedOps.set(verifyKey, true) : verifiedOps.delete(verifyKey);
+    return matched;
+  });
+  verifiedOps.set(verifyKey, check);
+  return check;
+}
+function getOrCreateWorkerResources(op, workerUrl = "") {
+  const hasWorker = !!getWorkerConstructor();
+  const api = workerUrl ? null : getWorkerAPI();
+  const src = workerUrl ? "" : getWorkerSrc();
+  const key = workerUrl || "blob";
+  if (!hasWorker || !workerUrl && (!api || !src) || disabledKeys.has(key)) {
     return null;
   }
   if (!(key in cache)) {
     try {
-      const blob = new api.Blob([
-        `${depsString}
-
-				self.onmessage=function({data}) {
-					try {
-						const result = (${fnString}).apply(null, data.args);
-						self.postMessage({id: data.id, result});
-					} catch (error) {
-						self.postMessage({
-							id: data.id,
-							error: error && (error.message || error.name) || String(error)
-						});
-					}
-				};`
-      ], {
-        type: "text/javascript"
-      });
-      cache[key] = {
-        src: api.URL.createObjectURL(blob),
-        worker: null
-      };
+      if (workerUrl) {
+        cache[key] = {
+          revoke: false,
+          src: workerUrl,
+          worker: null
+        };
+      } else if (api) {
+        const blob = new api.Blob([src], {
+          type: "text/javascript"
+        });
+        cache[key] = {
+          revoke: true,
+          src: api.URL.createObjectURL(blob),
+          worker: null
+        };
+      }
     } catch (e) {
       return null;
     }
@@ -11410,13 +11563,13 @@ ${depsString}`);
 }
 function getWorker(key, src) {
   const cached = cache[key];
-  const api = getWorkerAPI();
-  if (!cached || !api || disabledKeys.has(key)) {
+  const Worker = getWorkerConstructor();
+  if (!cached || !Worker || disabledKeys.has(key)) {
     return null;
   }
   if (!cached.worker) {
     try {
-      cached.worker = new api.Worker(src);
+      cached.worker = new Worker(src);
     } catch (e) {
       releaseWorker(key, true);
       return null;
@@ -11424,54 +11577,35 @@ function getWorker(key, src) {
   }
   return cached.worker;
 }
-function runWorker(useWorker = true, fn, callback, depsFn, timeout = DEFAULT_WORKER_TIMEOUT) {
+function runWorker(useWorker = true, op, fn, callback, options) {
+  const { timeout, workerUrl } = normalizeWorkerOptions(options);
   const runSync = function(...args) {
     const res = fn(...args);
     callback(res);
   };
   let runFn = runSync;
   if (useWorker) {
-    const workerResources = getOrCreateWorkerResources(fn, depsFn);
+    const workerResources = getOrCreateWorkerResources(op, workerUrl);
     const worker = workerResources ? getWorker(workerResources.key, workerResources.src) : null;
     if (worker && workerResources) {
       const { key } = workerResources;
       runFn = function(...args) {
-        const id = ++messageId;
-        let settled = false;
+        var _a;
         const fallback = () => {
-          if (!settled) {
-            settled = true;
-            cleanup();
-            releaseWorker(key, true);
-            runFn = runSync;
-            runSync(...args);
-          }
+          releaseWorker(key, true);
+          runFn = runSync;
+          runSync(...args);
         };
-        const handler = function(e) {
-          var _a;
-          if (((_a = e.data) == null ? void 0 : _a.id) === id) {
-            if (e.data.error) {
-              fallback();
-              return;
-            }
-            settled = true;
-            cleanup();
-            callback(e.data.result);
-          }
-        };
-        const errorHandler = function() {
-          fallback();
-        };
-        const timer = setTimeout(fallback, timeout);
-        const cleanup = () => {
-          clearTimeout(timer);
-          worker.removeEventListener("message", handler);
-          worker.removeEventListener("error", errorHandler);
-        };
-        worker.addEventListener("message", handler);
-        worker.addEventListener("error", errorHandler);
         try {
-          worker.postMessage({ id, args });
+          const verifyKey = `${key}:${op}`;
+          const verified = (_a = verifiedOps.get(verifyKey)) != null ? _a : startVerify(worker, verifyKey, op, fn, args, timeout);
+          request(worker, op, args, timeout).then((result) => {
+            if (verified === true) {
+              callback(result);
+            } else {
+              verified.then((matched) => matched ? callback(result) : fallback());
+            }
+          }, fallback);
         } catch (e) {
           fallback();
         }
@@ -11488,11 +11622,12 @@ function cleanupWorkers() {
       cached.worker.terminate();
     }
     if (cached.src) {
-      api == null ? void 0 : api.URL.revokeObjectURL(cached.src);
+      cached.revoke && (api == null ? void 0 : api.URL.revokeObjectURL(cached.src));
     }
     delete cache[key];
   }
   disabledKeys.clear();
+  verifiedOps.clear();
 }
 
 ;// ./src/module/dsv.ts
@@ -11731,6 +11866,19 @@ function convert_helper_tsv(tsv2) {
 
 
 
+const WORKER_CELL_THRESHOLD = 5e3;
+function _getCellCount(data) {
+  var _a, _b;
+  const first = data[0];
+  if (isArray(first)) {
+    let count = 0;
+    for (let i = 0, len = data.length; i < len; i++) {
+      count += (_b = (_a = data[i]) == null ? void 0 : _a.length) != null ? _b : 0;
+    }
+    return count;
+  }
+  return data.length * Object.keys(first != null ? first : {}).length;
+}
 function _getDataKeyForJson(keysParam, config) {
   const keys = keysParam || (config == null ? void 0 : config.data_keys);
   if (keys == null ? void 0 : keys.x) {
@@ -11776,7 +11924,15 @@ function _setXS(ids, data, params) {
    */
   convertData(args, callback) {
     const { config } = this;
-    const useWorker = (d) => (d == null ? void 0 : d.length) && !isEmpty(d[0]) ? config.boost_useWorker : false;
+    const useWorker = (d) => {
+      if (!(d == null ? void 0 : d.length) || isEmpty(d[0])) {
+        return false;
+      }
+      return config.boost_useWorker === "auto" ? _getCellCount(d) >= WORKER_CELL_THRESHOLD : !!config.boost_useWorker;
+    };
+    const workerOptions = config.boost_workerUrl ? {
+      workerUrl: config.boost_workerUrl
+    } : void 0;
     let data = args;
     if (args.bindto) {
       data = {};
@@ -11796,14 +11952,16 @@ function _setXS(ids, data, params) {
         callback
       );
     } else if (data.json) {
-      runWorker(useWorker(data.json), json, callback, [columns, rows])(
+      runWorker(useWorker(data.json), "json", json, callback, workerOptions)(
         data.json,
         _getDataKeyForJson(data.keys, config)
       );
     } else if (data.rows) {
-      runWorker(useWorker(data.rows), rows, callback)(data.rows);
+      runWorker(useWorker(data.rows), "rows", rows, callback, workerOptions)(data.rows);
     } else if (data.columns) {
-      runWorker(useWorker(data.columns), columns, callback)(data.columns);
+      runWorker(useWorker(data.columns), "columns", columns, callback, workerOptions)(
+        data.columns
+      );
     } else if (args.bindto) {
       throw Error("url or json or rows or columns is required.");
     }
@@ -13499,7 +13657,6 @@ const RE_SELECTOR_SUFFIX = /[\x00-\x20\x7F-\xA0\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`
 
 
 
-
 const _colorizePattern = (pattern, color, id) => {
   const node = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(pattern.cloneNode(true));
   node.attr("id", id).insert("rect", ":first-child").attr("width", node.attr("width")).attr("height", node.attr("height")).style("fill", color);
@@ -13541,7 +13698,7 @@ const schemeCategory10 = [
     const { $el, config } = $$;
     const ids = [];
     const hasGradient = config.area_linearGradient || config.bar_linearGradient || config.point_radialGradient;
-    let pattern = notEmpty(config.color_pattern) ? config.color_pattern : (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleOrdinal)(_getColorFromCss($el.chart) || schemeCategory10).range();
+    let pattern = notEmpty(config.color_pattern) ? config.color_pattern : [..._getColorFromCss($el.chart) || schemeCategory10];
     const originalColorPattern = pattern;
     if (isFunction(config.color_tiles)) {
       const tiles = config.color_tiles.bind($$.api)();
@@ -13802,7 +13959,8 @@ function getTargetValueMinMax($$, targets) {
   const hasAxis = $$.state.hasAxis;
   for (let i = 0; i < targets.length; i++) {
     const target = targets[i];
-    const isCandlestick = ((_a = $$.isCandlestickType) == null ? void 0 : _a.call($$, target)) || ((_b = $$.isSubchartSourceTypeOf) == null ? void 0 : _b.call($$, target, TYPE.CANDLESTICK));
+    const isCandlestick = (_a = $$.isCandlestickType) == null ? void 0 : _a.call($$, target);
+    const isSubchartCandlestick = !isCandlestick && !!((_b = $$.isSubchartSourceTypeOf) == null ? void 0 : _b.call($$, target, TYPE.CANDLESTICK));
     const { values } = target;
     for (let j = 0; j < values.length; j++) {
       const row = values[j];
@@ -13810,10 +13968,10 @@ function getTargetValueMinMax($$, targets) {
       if (!(isValue(value) || value === null)) {
         continue;
       }
-      const subchartCandlestickValue = (_c = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _c.call($$, row, true);
+      const subchartCandlestickValue = isSubchartCandlestick ? (_c = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _c.call($$, row, true) : void 0;
       if (isNumber(subchartCandlestickValue)) {
         value = subchartCandlestickValue;
-      } else if (value !== null && isCandlestick) {
+      } else if (value !== null && (isCandlestick || isSubchartCandlestick)) {
         value = Array.isArray(value) ? value.slice(0, 4) : [value.open, value.high, value.low, value.close];
       }
       if (Array.isArray(value)) {
@@ -16293,13 +16451,23 @@ function batchGetBBox(elements) {
     const textNode = textNodes.filter((node) => node.data.id === id);
     const translate = getTranslation(textNode.node());
     const calcHypo = (x, y) => Math.sqrt(x * x + y * y);
-    textNode.node() && filteredTextNodes.each(function() {
+    if (!textNode.node()) {
+      return;
+    }
+    const fontSize = parseInt(textNode.style("font-size"), 10);
+    const overlapStates = [];
+    filteredTextNodes.each(function() {
       const coordinate = getTranslation(this);
-      const filteredTextNode = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
-      const nodeForWidth = calcHypo(translate.e, translate.f) > calcHypo(coordinate.e, coordinate.f) ? textNode : filteredTextNode;
+      const nodeForWidth = calcHypo(translate.e, translate.f) > calcHypo(coordinate.e, coordinate.f) ? textNode : (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
       const overlapsX = Math.ceil(Math.abs(translate.e - coordinate.e)) < Math.ceil(nodeForWidth.node().getComputedTextLength());
-      const overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) < parseInt(textNode.style("font-size"), 10);
-      filteredTextNode.classed($TEXT.TextOverlapping, overlapsX && overlapsY);
+      const overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) < fontSize;
+      overlapStates.push({
+        node: this,
+        overlaps: overlapsX && overlapsY
+      });
+    });
+    overlapStates.forEach(({ node, overlaps }) => {
+      (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(node).classed($TEXT.TextOverlapping, overlaps);
     });
   },
   /**
@@ -17366,7 +17534,7 @@ function getLinePointGroupTypeFilter($$) {
 }
 function getShapeOffsetValue($$, d, isSub) {
   var _a, _b, _c;
-  const subchartCandlestickValue = getSubchartCandlestickShapeValue($$, d, isSub);
+  const subchartCandlestickValue = isSub ? getSubchartCandlestickShapeValue($$, d, isSub) : void 0;
   if (isNumber(subchartCandlestickValue)) {
     return subchartCandlestickValue;
   }
@@ -17634,7 +17802,7 @@ function updateTargetsForShape(targets, config) {
     const isStackNormalized = $$.isStackNormalized();
     return (d) => {
       let { value } = d;
-      const subchartCandlestickValue = getSubchartCandlestickShapeValue($$, d, isSub);
+      const subchartCandlestickValue = isSub ? getSubchartCandlestickShapeValue($$, d, isSub) : void 0;
       if (isNumber(d)) {
         value = d;
       } else if (isNumber(subchartCandlestickValue)) {
@@ -17787,8 +17955,13 @@ function updateTargetsForShape(targets, config) {
     const y = $$.getShapeY(isSub);
     const lineOffset = $$.getShapeOffset(typeFilter || $$.isLineType, lineIndices, isSub);
     const yScale = $$.getYScaleById.bind($$);
+    const y0Cache = /* @__PURE__ */ new Map();
     return (d, i) => {
-      const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id, isSub));
+      let y0 = y0Cache.get(d.id);
+      if (y0 === void 0) {
+        y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id, isSub));
+        y0Cache.set(d.id, y0);
+      }
       const offset = lineOffset(d, i) || y0;
       const posX = x(d);
       let posY = y(d);
@@ -27171,8 +27344,6 @@ const axis = {
   }
 });
 
-// EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
-var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(10);
 ;// ./src/ChartInternal/Axis/AxisRendererHelper.ts
 var AxisRendererHelper_defProp = Object.defineProperty;
 var AxisRendererHelper_defNormalProp = (obj, key, value) => key in obj ? AxisRendererHelper_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -27393,10 +27564,11 @@ class AxisRenderer {
     const { innerTickSize, tickLength, range } = config;
     const id = params.id;
     const type = getBaseAxisId(id);
-    const tickTextPos = type && /^(x|y|y2)$/.test(type) ? params.config[`axis_${type}_tick_text_position`] : { x: 0, y: 0 };
+    const { isSubAxes } = params;
+    const tickTextPos = !isSubAxes && type && /^(x|y|y2)$/.test(type) ? params.config[`axis_${type}_tick_text_position`] : { x: 0, y: 0 };
     const prefix = getAxisOptionPrefix(id);
     const axisShow = params.config[`${prefix}_show`];
-    const tickShow = {
+    const tickShow = isSubAxes ? { tick: true, text: true } : {
       tick: axisShow ? params.config[`${prefix}_tick_show`] : false,
       text: axisShow ? params.config[`${prefix}_tick_text_show`] : false
     };
@@ -27790,7 +27962,6 @@ var Axis_publicField = (obj, key, value) => Axis_defNormalProp(obj, typeof key !
 
 
 
-
 function Axis_getBaseAxisId(id) {
   return id === "subX" ? "x" : id === "subY" ? "y" : id === "subY2" ? "y2" : id;
 }
@@ -28130,24 +28301,32 @@ class Axis_Axis {
     const axes = [];
     const axesConfig = config[`axis_${id}_axes`];
     const isRotated = config.axis_rotated;
-    let d3Axis;
+    let orient;
     if (id === "x") {
-      d3Axis = isRotated ? external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisLeft : external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisBottom;
+      orient = isRotated ? "left" : "bottom";
     } else if (id === "y") {
-      d3Axis = isRotated ? external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisBottom : external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisLeft;
+      orient = isRotated ? "bottom" : "left";
     } else if (id === "y2") {
-      d3Axis = isRotated ? external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisTop : external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisRight;
+      orient = isRotated ? "top" : "right";
     }
     if (axesConfig.length) {
       axesConfig.forEach((v) => {
         const tick = v.tick || {};
         const scale = $$.scale[id].copy();
         v.domain && scale.domain(v.domain);
-        axes.push(
-          d3Axis(scale).ticks(tick.count).tickFormat(
-            isFunction(tick.format) ? tick.format.bind($$.api) : ((x) => x)
-          ).tickValues(tick.values).tickSizeOuter(tick.outer === false ? 0 : AXIS_TICK_SIZE)
+        const axis = new AxisRenderer({
+          outerTick: tick.outer !== false,
+          noTransition: false,
+          config,
+          id,
+          isSubAxes: true,
+          owner: $$
+        }).scale(scale).orient(orient).tickFormat(
+          isFunction(tick.format) ? tick.format.bind($$.api) : ((x) => x)
         );
+        isValue(tick.count) && axis.ticks(tick.count);
+        tick.values && axis.tickValues(tick.values);
+        axes.push(axis);
       });
     }
     this.axesList[id] = axes;
@@ -28171,10 +28350,11 @@ class Axis_Axis {
         const className = `${this.getAxisClassName(id)}-${i + 1}`;
         let g = main.select(`.${className.replace(/\s/, ".")}`);
         if (g.empty()) {
-          g = main.append("g").attr("class", className).style("visibility", config[`axis_${id}_show`] ? null : "hidden").call(v);
+          g = main.append("g").attr("class", className).style("visibility", config[`axis_${id}_show`] ? null : "hidden");
+          v.create(g);
         } else {
           axesConfig[i].domain && scale.domain(axesConfig[i].domain);
-          $T(g).call(v.scale(scale));
+          v.scale(scale).create($T(g));
         }
         g.attr("transform", $$.getTranslate(id, i + 1));
       });
@@ -32976,7 +33156,7 @@ let candlestick_candlestick = () => (extendAxis(
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
-var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(11);
+var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(10);
 ;// ./src/ChartInternal/internals/text.arc.ts
 
 
@@ -34080,7 +34260,6 @@ var funnel_spreadValues = (a, b) => {
     }
   return a;
 };
-
 
 
 
@@ -35563,7 +35742,7 @@ let scatter_scatter = () => (extendAxis(
 ), (scatter_scatter = () => TYPE.SCATTER)());
 
 // EXTERNAL MODULE: external {"commonjs":"d3-hierarchy","commonjs2":"d3-hierarchy","amd":"d3-hierarchy","root":"d3"}
-var external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_ = __webpack_require__(12);
+var external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_ = __webpack_require__(11);
 ;// ./src/ChartInternal/shape/core/treemap.ts
 
 function convertDataToTreemapData(data) {
@@ -35837,7 +36016,7 @@ ${percentValue}%`;
    * 	- dice ([d3.treemapDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapDice))
    * 	- slice ([d3.treemapSlice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSlice))
    * 	- sliceDice ([d3.treemapSliceDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSliceDice))
-   * 	- squrify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
+   * 	- squarify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
    * 	- resquarify ([d3.treemapResquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapResquarify))
    * @property {function} [treemap.label.format] Set formatter for the label text.<br>
    * - **Arguments:**
@@ -35850,7 +36029,7 @@ ${percentValue}%`;
    * @see [Demo: treemap](https://naver.github.io/billboard.js/demo/#Chart.TreemapChart)
    * @example
    *  treemap: {
-   *      // "binary", "dice", "slice", "sliceDice", "squrify", "resquarify"
+   *      // "binary", "dice", "slice", "sliceDice", "squarify", "resquarify"
    *      tile: "dice",
    *
    *      label: {
@@ -35931,7 +36110,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.3-nightly-20260801010035",
+  version: "4.0.3-nightly-20260808004624",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
