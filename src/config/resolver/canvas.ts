@@ -20,6 +20,7 @@ import {
 	isCanvasTreemapType
 } from "../../canvas/util";
 import ChartInternal from "../../ChartInternal/ChartInternal";
+import {getMainCoordFromSubchartCoord} from "../../ChartInternal/internals/subchart.util";
 import {getRenderDataPoint} from "../../ChartInternal/shape/core/geometry";
 import {$FOCUS, $LEGEND} from "../../config/classes";
 import {window} from "../../module/browser";
@@ -418,10 +419,11 @@ function bindCanvasHtmlLegendInteractions($$, item): void {
 				if (
 					!callFn(config.legend_item_onover, api, id, !state.hiddenTargetIds.has(id))
 				) {
-					setCanvasHtmlLegendFocus($$, id);
-					!state.transiting &&
-						$$.isTargetToShow(id) &&
+					// hidden data's legend shouldn't react on hover (mirrors SVG focus guard)
+					if (!state.transiting && $$.isTargetToShow(id)) {
+						setCanvasHtmlLegendFocus($$, id);
 						setCanvasLegendTargetFocus($$, id);
+					}
 				}
 			} :
 			null)
@@ -694,6 +696,35 @@ function isCanvasSubchartPoint($$, point: number[]): boolean {
 		point[0] <= rect.x + rect.w &&
 		point[1] >= rect.y &&
 		point[1] <= rect.y + rect.h;
+}
+
+/**
+ * Convert a canvas subchart point to the equivalent main plot point.
+ * @param {object} $$ ChartInternal instance
+ * @param {Array} point Canvas-local point
+ * @returns {Array|null} Main plot point or null when not applicable
+ * @private
+ */
+function getCanvasMainPointFromSubchart($$, point: number[]): number[] | null {
+	const {config, state} = $$;
+	const rect = getCanvasSubchartRect($$);
+
+	if (config.subchart_brush_enabled !== false || !rect || !isCanvasSubchartPoint($$, point)) {
+		return null;
+	}
+
+	const mainCoord = getMainCoordFromSubchartCoord(
+		$$,
+		config.axis_rotated ? point[1] - rect.y : point[0] - rect.x
+	);
+
+	if (mainCoord === null) {
+		return null;
+	}
+
+	return config.axis_rotated ?
+		[state.margin.left + (state.width / 2), state.margin.top + mainCoord] :
+		[state.margin.left + mainCoord, state.margin.top + (state.height / 2)];
 }
 
 /**
@@ -1138,8 +1169,10 @@ function syncCanvasFlowYDomains($$): void {
 		scale[key]?.domain($$.getYDomain(targetsToShow, key));
 	});
 
-	scale.subY?.domain($$.getYDomain(targetsToShow, "y"));
-	scale.subY2?.domain($$.getYDomain(targetsToShow, "y2"));
+	$$.withSubchartTypeContext(() => {
+		scale.subY?.domain($$.getYDomain(targetsToShow, "y"));
+		scale.subY2?.domain($$.getYDomain(targetsToShow, "y2"));
+	});
 }
 
 const canvasInternal = {
@@ -2035,11 +2068,32 @@ const canvasInternal = {
 		const {config, state} = $$;
 		const selected = state.canvasSelection;
 		const selectionGrouped = config.data_selection_grouped;
-		const targetIds = getCanvasSelectionIds(ids);
+		let targetIds = getCanvasSelectionIds(ids);
 		let changed = false;
+		const singleSelection = isSelection && !config.data_selection_multiple;
+		let resetDone = !singleSelection;
 
 		if (!config.data_selection_enabled) {
 			return;
+		}
+
+		// When multiple selection is disabled, only one data point (or one x-index
+		// group when 'grouped' is enabled) can hold the selected state at a time.
+		// Clear any current selection only when the narrowed request can select a point.
+		if (singleSelection) {
+			indices = indices?.length ? [indices[0]] : [0];
+
+			// non-grouped single selection targets exactly one point, so narrow to a
+			// single id (the first requested, or the first shown when none given).
+			if (!selectionGrouped) {
+				if (targetIds) {
+					targetIds = targetIds.slice(0, 1);
+				} else {
+					const [firstTarget] = $$.filterTargetsToShow($$.data.targets);
+
+					targetIds = firstTarget ? [firstTarget.id] : [];
+				}
+			}
 		}
 
 		eachCanvasSelectableData($$, d => {
@@ -2049,11 +2103,20 @@ const canvasInternal = {
 			const isSelected = selected.has(key);
 
 			if (isSelection) {
-				if (isTargetId && isTargetIndex && !isSelected) {
+				if (isTargetId && isTargetIndex && (!isSelected || singleSelection)) {
+					if (!resetDone) {
+						$$.setCanvasSelection(false);
+						resetDone = true;
+					}
+
+					if (selected.has(key)) {
+						return;
+					}
+
 					selected.add(key);
 					callFn(config.data_onselected, $$.api, d, $$.canvasEngine.canvas);
 					changed = true;
-				} else if (resetOther && isSelected) {
+				} else if ((!singleSelection || resetDone) && resetOther && isSelected) {
 					selected.delete(key);
 					callFn(config.data_onunselected, $$.api, d, $$.canvasEngine.canvas);
 					changed = true;
@@ -2353,13 +2416,19 @@ const canvasInternal = {
 	 */
 	updateCanvasSubchartBrush(event: MouseEvent | PointerEvent | TouchEvent): boolean {
 		const $$ = this;
-		const {state} = $$;
+		const {config, state} = $$;
 		const start = state.canvasSubchartBrushStart;
 		const origin = state.canvasSubchartBrushOrigin;
 		const mode = state.canvasSubchartBrushMode;
 		const coord = getCanvasSubchartBrushCoord($$, event, true);
 
-		if (!state.canvasSubchartBrushDragging || start === null || coord === null || !mode) {
+		if (
+			config.subchart_brush_enabled === false ||
+			!state.canvasSubchartBrushDragging ||
+			start === null ||
+			coord === null ||
+			!mode
+		) {
 			return false;
 		}
 
@@ -2422,6 +2491,12 @@ const canvasInternal = {
 	updateCanvasSubchartCursor(event: MouseEvent | PointerEvent | TouchEvent): boolean {
 		const $$ = this;
 		const canvas = $$.$el.canvas.node();
+
+		if ($$.config.subchart_brush_enabled === false) {
+			canvas.style.cursor = "";
+			return false;
+		}
+
 		const coord = getCanvasSubchartBrushCoord($$, event);
 
 		if (coord === null) {
@@ -2445,6 +2520,11 @@ const canvasInternal = {
 	startCanvasSubchartBrush(event: MouseEvent | PointerEvent | TouchEvent): boolean {
 		const $$ = this;
 		const {state} = $$;
+
+		if ($$.config.subchart_brush_enabled === false) {
+			return false;
+		}
+
 		const coord = getCanvasSubchartBrushCoord($$, event);
 
 		if (coord === null) {
@@ -2866,7 +2946,8 @@ const canvasInternal = {
 			return;
 		}
 
-		const point = getCanvasEventPoint($$, event);
+		const rawPoint = getCanvasEventPoint($$, event);
+		const point = rawPoint && (getCanvasMainPointFromSubchart($$, rawPoint) || rawPoint);
 		const d = point ? getCanvasHoverDatumFromPoint($$, point) : null;
 
 		if (!d) {
@@ -2875,8 +2956,8 @@ const canvasInternal = {
 				state.canvasFocusKey = null;
 				$$.clearCanvasFocus();
 			}
-			if (point && config.axis_tooltip && isCanvasAxisTooltipArea($$, point)) {
-				$$.renderCanvasAxisTooltip(point);
+			if (rawPoint && config.axis_tooltip && isCanvasAxisTooltipArea($$, rawPoint)) {
+				$$.renderCanvasAxisTooltip(rawPoint);
 				$$.hideTooltip?.();
 				return;
 			}
@@ -3032,6 +3113,7 @@ const canvasInternal = {
 				$$.canvasAxisRenderer.drawGridLines($$);
 			$$.canvasRenderer.drawSubchart($$, drawShape);
 			state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
+			state.hasAxis && $$.canvasAxisRenderer.drawSubYAxes($$);
 			$$.canvasRenderer.drawEmptyLabel($$);
 			rebuildHit && $$.hitDetector.rebuild($$, drawShape);
 		} finally {
@@ -3068,6 +3150,7 @@ const canvasInternal = {
 					$$.canvasAxisRenderer.drawGridLines($$);
 				$$.canvasRenderer.drawSubchart($$, drawShape);
 				state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
+				state.hasAxis && $$.canvasAxisRenderer.drawSubYAxes($$);
 				$$.canvasRenderer.drawEmptyLabel($$);
 			} finally {
 				$$.canvasEngine.endFrame();

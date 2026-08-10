@@ -13,6 +13,21 @@ export type YAxisId = Exclude<AxisType, "x">;
 type XDataTickCache = {key: string, values: AxisTickValue[], comparable: number[]};
 
 /**
+ * Get tick option value for main/subchart canvas axes.
+ * @param {object} config Chart config
+ * @param {string} id Base axis id
+ * @param {string} key Tick option key
+ * @param {string} prefix Option prefix
+ * @returns {boolean|number|string|Array|object|function|null|undefined} Tick option value
+ * @private
+ */
+function getAxisTickOption(config, id: AxisType, key: string, prefix = `axis_${id}`) {
+	const value = config[`${prefix}_tick_${key}`];
+
+	return value !== undefined ? value : config[`axis_${id}_tick_${key}`];
+}
+
+/**
  * Get explicitly configured tick values.
  * @param {Array|function} values Tick values option
  * @param {object} api Chart API
@@ -578,14 +593,17 @@ export function getXTickValues($$, cull = true): AxisTickValue[] {
 function getSubXTickCullMax($$): number | undefined {
 	const {config, state: {height2, width2}} = $$;
 	const size = config.axis_rotated ? height2 : width2;
+	const count = getAxisTickOption(config, "x", "count", "subchart_axis_x");
+	const culling = getAxisTickOption(config, "x", "culling", "subchart_axis_x");
+	const cullingMax = getAxisTickOption(config, "x", "culling_max", "subchart_axis_x");
 
-	if (config.axis_x_tick_count) {
-		return config.axis_x_tick_count;
+	if (count) {
+		return count;
 	}
 
-	if (config.axis_x_tick_culling !== false) {
+	if (culling !== false) {
 		return Math.min(
-			config.axis_x_tick_culling_max || AXIS_DEFAULT_TICK_COUNT,
+			cullingMax || AXIS_DEFAULT_TICK_COUNT,
 			Math.max(2, Math.floor(size / 70))
 		);
 	}
@@ -596,57 +614,66 @@ function getSubXTickCullMax($$): number | undefined {
 /**
  * Get x ticks for the canvas subchart axis.
  * @param {object} $$ ChartInternal context
+ * @param {boolean} culling Whether to cull tick values
  * @returns {Array} Tick values
  * @private
  */
-export function getSubXTickValues($$): AxisTickValue[] {
+export function getSubXTickValues($$, culling = true): AxisTickValue[] {
 	const {axis, config, scale} = $$;
 	const targetScale = scale.subX;
 	const targetsToShow = $$.getTargetsToShow?.() || $$.filterTargetsToShow();
+	const tickCount = getAxisTickOption(config, "x", "count", "subchart_axis_x");
 	const cullMax = getSubXTickCullMax($$);
-	const cull = (ticks: AxisTickValue[]): AxisTickValue[] => cullTicks(ticks, cullMax);
+	const cullData = (ticks: AxisTickValue[], sorted = false): AxisTickValue[] =>
+		culling ? cullDataTicks($$, ticks, sorted, "subchart_axis_x", cullMax) : ticks;
 
 	if (!targetScale || !targetsToShow?.length) {
 		return [];
 	}
 
-	const explicit = getOptionTickValues(config.axis_x_tick_values, $$.api);
+	const explicit = getOptionTickValues(
+		getAxisTickOption(config, "x", "values", "subchart_axis_x"),
+		$$.api
+	);
 
 	if (explicit) {
-		return cull(normalizeXTickValues($$, explicit));
+		return cullData(normalizeXTickValues($$, explicit));
 	}
 
 	if (config.axis_x_tick_fit && $$.mapTargetsToUniqueXs) {
 		const generated = generateTickValues(
 			$$,
 			$$.mapTargetsToUniqueXs(targetsToShow),
-			config.axis_x_tick_count,
+			tickCount,
 			axis?.isTimeSeries?.()
 		);
 
-		return cull(generated);
+		return cullData(generated, true);
 	}
 
 	if (axis?.isCategorized?.() && config.axis_x_categories?.length) {
-		return cull(config.axis_x_categories.map((_, i) => i));
+		return cullData(config.axis_x_categories.map((_, i) => i), true);
 	}
 
 	const generated = getScaleTicks(
 		targetScale,
-		config.axis_x_tick_count || AXIS_DEFAULT_TICK_COUNT
+		tickCount || AXIS_DEFAULT_TICK_COUNT
 	);
 
-	return cull(generated);
+	return cullData(generated, true);
 }
 
 /**
  * Get raw category boundary tick values for x axis tick lines.
  * @param {object} $$ ChartInternal context
+ * @param {function} targetScale X scale
+ * @param {boolean} outerTick Whether outer ticks are shown
  * @returns {Array} Category boundary values
  * @private
  */
-function getCategoryXTickLineValues($$): AxisTickValue[] {
-	const scale = getXScale($$);
+function getCategoryXTickLineValues($$, targetScale = getXScale($$),
+	outerTick = $$.config.axis_x_tick_outer): AxisTickValue[] {
+	const scale = targetScale;
 	const domain = scale.orgDomain?.() || scale.domain?.();
 
 	if (!domain?.length) {
@@ -664,7 +691,7 @@ function getCategoryXTickLineValues($$): AxisTickValue[] {
 	const max = Math.floor(Math.max(start, end));
 	const values = Array.from({length: Math.max(0, max - min + 1)}, (_, i) => min + i);
 
-	return $$.config.axis_x_tick_outer ? values.slice(1, -1) : values;
+	return outerTick ? values.slice(1, -1) : values;
 }
 
 /**
@@ -700,18 +727,19 @@ export function getXTickLinePosition($$, value: AxisTickValue,
  * @param {object} $$ ChartInternal context
  * @param {Array} ticks Sorted tick values
  * @param {number} tickLineWidth Tick line stroke width
+ * @param {function} targetScale X scale
  * @returns {boolean} Whether tick lines should follow culled text ticks
  * @private
  */
-function hasOverlappedXTickLineIntervals($$, ticks: AxisTickValue[],
-	tickLineWidth: number): boolean {
+function hasOverlappedXTickLineIntervals($$, ticks: AxisTickValue[], tickLineWidth: number,
+	targetScale = getXScale($$)): boolean {
 	if (ticks.length < 2) {
 		return false;
 	}
 
 	const halfWidth = Math.max(1, tickLineWidth) / 2;
 	const positions = ticks
-		.map(tick => getXTickLinePosition($$, tick))
+		.map(tick => getXTickLinePosition($$, tick, targetScale))
 		.filter(Number.isFinite)
 		.sort((a, b) => a - b);
 
@@ -739,14 +767,16 @@ function hasOverlappedXTickLineIntervals($$, ticks: AxisTickValue[],
  * Remove line ticks that map to the same canvas pixel.
  * @param {object} $$ ChartInternal context
  * @param {Array} ticks Tick values
+ * @param {function} targetScale X scale
  * @returns {Array} Pixel-deduped tick values
  * @private
  */
-function dedupeXTickLineValues($$, ticks: AxisTickValue[]): AxisTickValue[] {
+function dedupeXTickLineValues($$, ticks: AxisTickValue[],
+	targetScale = getXScale($$)): AxisTickValue[] {
 	const seen = new Set<number>();
 
 	return ticks.filter(tick => {
-		const pos = getXTickLinePosition($$, tick);
+		const pos = getXTickLinePosition($$, tick, targetScale);
 		const key = Math.round(pos);
 
 		if (!Number.isFinite(pos) || seen.has(key)) {
@@ -789,11 +819,50 @@ export function getXTickLineValues($$, textTicks: AxisTickValue[],
 }
 
 /**
+ * Get subchart x tick values for tick lines, following SVG culling options.
+ * @param {object} $$ ChartInternal context
+ * @param {Array} textTicks Text tick values
+ * @param {number} tickLineWidth Tick line stroke width
+ * @returns {Array} Tick line values
+ * @private
+ */
+export function getSubXTickLineValues($$, textTicks: AxisTickValue[],
+	tickLineWidth = 1): AxisTickValue[] {
+	const {axis, config, scale} = $$;
+	const targetScale = scale.subX;
+	const culling = getAxisTickOption(config, "x", "culling", "subchart_axis_x");
+	const cullingLines = getAxisTickOption(config, "x", "culling_lines", "subchart_axis_x");
+	const outerTick = getAxisTickOption(config, "x", "outer", "subchart_axis_x");
+
+	if (!targetScale) {
+		return [];
+	}
+
+	if (axis?.isCategorized?.()) {
+		const categoryLineTicks = getCategoryXTickLineValues($$, targetScale, outerTick);
+
+		return dedupeXTickLineValues($$, categoryLineTicks, targetScale);
+	}
+
+	if (culling === false || cullingLines === false) {
+		return textTicks;
+	}
+
+	const lineTicks = getSubXTickValues($$, false);
+
+	return hasOverlappedXTickLineIntervals($$, lineTicks, tickLineWidth, targetScale) ?
+		textTicks :
+		dedupeXTickLineValues($$, lineTicks, targetScale);
+}
+
+/**
  * Get y ticks for indexed/linear canvas mode.
  * @param {object} $$ ChartInternal context
  * @param {string} id Axis id
  * @param {number} count Optional tick count override
  * @param {boolean} culling Whether to apply tick culling
+ * @param {d3Scale} targetScale Scale to generate ticks from
+ * @param {string} optionPrefix Tick option prefix
  * @returns {Array} Tick values
  * @private
  */
@@ -801,13 +870,18 @@ export function getYTickValues(
 	$$,
 	id: YAxisId = "y",
 	count?: number,
-	culling = true
+	culling = true,
+	targetScale = $$.scale[id],
+	optionPrefix = `axis_${id}`
 ): AxisTickValue[] {
-	const {axis, config, scale} = $$;
+	const {axis, config} = $$;
 	const prefix = `axis_${id}`;
-	const targetScale = scale[id];
-	const explicit = getOptionTickValues(config[`${prefix}_tick_values`], $$.api);
-	const maybeCull = (ticks: AxisTickValue[]) => culling ? cullAxisTicks($$, id, ticks) : ticks;
+	const explicit = getOptionTickValues(
+		getAxisTickOption(config, id, "values", optionPrefix),
+		$$.api
+	);
+	const maybeCull = (ticks: AxisTickValue[]) =>
+		culling ? cullAxisTicks($$, id, ticks, optionPrefix) : ticks;
 
 	if (explicit) {
 		return maybeCull(normalizeYTickValues($$, explicit, id));
@@ -819,7 +893,7 @@ export function getYTickValues(
 		return maybeCull(stepTicks);
 	}
 
-	const tickCount = count ?? config[`${prefix}_tick_count`];
+	const tickCount = count ?? getAxisTickOption(config, id, "count", optionPrefix);
 
 	if (axis?.isTimeSeries?.(id) && config[`${prefix}_tick_time_value`]) {
 		return maybeCull(getScaleTicks(targetScale, config[`${prefix}_tick_time_value`]));
@@ -929,17 +1003,22 @@ function cullTicks(ticks: AxisTickValue[], count?: number): AxisTickValue[] {
  * @param {object} $$ ChartInternal context
  * @param {string} id Axis id
  * @param {Array} ticks Tick values
+ * @param {string} optionPrefix Tick option prefix
  * @returns {Array} Culled tick values
  * @private
  */
-function cullAxisTicks($$, id: AxisType, ticks: AxisTickValue[]): AxisTickValue[] {
+function cullAxisTicks($$, id: AxisType, ticks: AxisTickValue[],
+	optionPrefix = `axis_${id}`): AxisTickValue[] {
 	const {config} = $$;
-	const prefix = `axis_${id}_tick_culling`;
+	const culling = getAxisTickOption(config, id, "culling", optionPrefix);
 
-	if (!config[prefix]) {
+	if (!culling) {
 		return ticks;
 	}
 
+	const cullingMax = getAxisTickOption(config, id, "culling_max", optionPrefix) ||
+		AXIS_DEFAULT_TICK_COUNT;
+	const reverse = getAxisTickOption(config, id, "culling_reverse", optionPrefix);
 	const sortedTicks = ticks.slice().sort((a, b) => {
 		const av = +a;
 		const bv = +b;
@@ -947,10 +1026,9 @@ function cullAxisTicks($$, id: AxisType, ticks: AxisTickValue[]): AxisTickValue[
 			av - bv :
 			String(a).localeCompare(String(b));
 
-		return config[`${prefix}_reverse`] ? -order : order;
+		return reverse ? -order : order;
 	});
 	const tickSize = sortedTicks.length;
-	const cullingMax = config[`${prefix}_max`] || AXIS_DEFAULT_TICK_COUNT;
 	let intervalForCulling = 0;
 
 	for (let i = 1; i < tickSize; i++) {
@@ -976,17 +1054,23 @@ function cullAxisTicks($$, id: AxisType, ticks: AxisTickValue[]): AxisTickValue[
  * @param {object} $$ ChartInternal context
  * @param {Array} ticks Tick values
  * @param {boolean} sorted Whether ticks are already sorted in x order
+ * @param {string} optionPrefix Tick option prefix
+ * @param {number} max Optional culling max override
  * @returns {Array} Culled tick values
  * @private
  */
-function cullDataTicks($$, ticks: AxisTickValue[], sorted = false): AxisTickValue[] {
+function cullDataTicks($$, ticks: AxisTickValue[], sorted = false, optionPrefix = "axis_x",
+	max?: number): AxisTickValue[] {
 	const {config} = $$;
+	const culling = getAxisTickOption(config, "x", "culling", optionPrefix);
 
-	if (config.axis_x_tick_culling === false) {
+	if (culling === false) {
 		return ticks;
 	}
 
-	const cullingMax = config.axis_x_tick_culling_max || AXIS_DEFAULT_TICK_COUNT;
+	const cullingMax = max || getAxisTickOption(config, "x", "culling_max", optionPrefix) ||
+		AXIS_DEFAULT_TICK_COUNT;
+	const reverse = getAxisTickOption(config, "x", "culling_reverse", optionPrefix);
 	const sortedTicks = sorted ? ticks : ticks
 		.slice()
 		.sort((a, b) => {
@@ -994,10 +1078,10 @@ function cullDataTicks($$, ticks: AxisTickValue[], sorted = false): AxisTickValu
 			const bv = +b;
 
 			if (Number.isFinite(av) && Number.isFinite(bv)) {
-				return config.axis_x_tick_culling_reverse ? bv - av : av - bv;
+				return reverse ? bv - av : av - bv;
 			}
 
-			return config.axis_x_tick_culling_reverse ?
+			return reverse ?
 				String(b).localeCompare(String(a)) :
 				String(a).localeCompare(String(b));
 		});
@@ -1017,9 +1101,7 @@ function cullDataTicks($$, ticks: AxisTickValue[], sorted = false): AxisTickValu
 
 	if (sorted) {
 		return ticks.filter((_, i) =>
-			config.axis_x_tick_culling_reverse ?
-				(tickSize - 1 - i) % intervalForCulling === 0 :
-				i % intervalForCulling === 0
+			reverse ? (tickSize - 1 - i) % intervalForCulling === 0 : i % intervalForCulling === 0
 		);
 	}
 

@@ -932,6 +932,64 @@ describe("ESM canvas helper coverage", () => {
 			container.remove();
 		});
 
+		it("maps optional grid line class selectors to per-line canvas styles", () => {
+			const container = document.createElement("div");
+			const theme = new CanvasTheme();
+
+			document.body.appendChild(container);
+			theme.load(container, {
+				selectors: {
+					".bb-grid line": {stroke: "#999999", "stroke-width": 9},
+					".iaq-good line": {
+						stroke: "#00aa00",
+						"stroke-width": 2,
+						"stroke-dasharray": "4 2"
+					},
+					".bb-xgrid-line.iaq-good line": {
+						stroke: "#0000ff"
+					},
+					".bb-ygrid-line.iaq-good text": {
+						fill: "#111111",
+						font: "13px serif"
+					},
+					".bb-ygrid line": {
+						stroke: "#ff0000"
+					}
+				}
+			});
+
+			expect(theme.getGridLineStyle("y", {class: "iaq-good"})).to.deep.include({
+				lineColor: "#00aa00",
+				lineWidth: 2
+			});
+			expect(theme.getGridLineStyle("y", {class: "iaq-good"})!.dashArray)
+				.to.deep.equal([4, 2]);
+			expect(theme.getGridLineStyle("y", {class: "iaq-good"}, "text")).to.deep.include({
+				labelColor: "#111111",
+				labelFont: "13px serif"
+			});
+			expect(theme.getGridLineStyle("x", {class: "iaq-good"})!.lineColor)
+				.to.be.equal("#0000ff");
+			expect(theme.getGridLineStyle("y", {class: "iaq-bad"})).to.be.undefined;
+
+			theme.load(container, {
+				selectors: {
+					".iaq-good line": {
+						stroke: "#00aa00",
+						"stroke-width": 2
+					}
+				},
+				grid: {
+					lineWidth: 7
+				}
+			});
+			expect(theme.getGridLineStyle("y", {class: "iaq-good"})).to.deep.equal({
+				lineColor: "#00aa00"
+			});
+
+			container.remove();
+		});
+
 		it("normalizes theme override fallbacks and composed font selector values", () => {
 			const container = document.createElement("div");
 			const theme = new CanvasTheme();

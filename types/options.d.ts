@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {Axis} from "./axis.js";
+import {Axis, AxisTickValues} from "./axis.js";
 import {ChartTypes, d3Selection, DataItem, PrimitiveArray} from "./types.js";
 import {Chart} from "./chart.js";
 import {IArcData, IData, IDataPoint, IDataRow} from "../src/ChartInternal/data/IData.js";
@@ -111,11 +111,36 @@ export interface ChartOptions {
 
 		/**
 		 * Use Web Worker as possible for processing.
+		 * - **Available values:**
+		 *   - `false`: never offload.
+		 *   - `true`: always offload when a Worker can be created.
+		 *   - `"auto"`: offload only when the given data exceeds ~5,000 cells, since smaller
+		 *     payloads lose more to structured cloning than they gain.
 		 * - **NOTE:**
 		 *   - For now, only applies for data conversion at the initial time.
-		 *   - As of Web Worker's async nature, handling chart instance synchrously is not recommended.
+		 *   - As of Web Worker's async nature, handling chart instance synchronously is not recommended.
+		 *   - When Worker isn't available, fails or times out, data conversion falls back to main thread.
 		 */
-		useWorker?: boolean;
+		useWorker?: boolean | "auto";
+
+		/**
+		 * Use a custom static worker script URL instead of an inline Blob worker.
+		 * - **NOTE:**
+		 *   - **Requires `boost.useWorker` to be enabled** — this option only selects where the
+		 *     worker source comes from, it does not turn offloading on by itself.
+		 *   - Useful for strict CSP environments that disallow `blob:` workers. Without it under
+		 *     such a policy, worker creation throws and each conversion waits out the 5s timeout
+		 *     before falling back, so the chart still renders but the initial draw is delayed.
+		 *   - Point it at `dist/billboard.worker.js`, shipped in the package, or any script
+		 *     implementing the same protocol: receive `{id, op, args}` and post back
+		 *     `{id, result}` or `{id, error}`. No `eval()` is involved.
+		 *   - With a bundler, make sure the file is emitted as a **real asset**, not inlined:
+		 *     it is ~1.5KB, and inlining turns it into a `data:` URI, which a strict CSP
+		 *     blocks exactly like `blob:`. Copying it into the static/public directory is the
+		 *     option that works everywhere.
+		 *   - Any failure (load error, unknown op, timeout, result mismatch) falls back to the main thread.
+		 */
+		workerUrl?: string;
 	};
 
 	size?: {
@@ -777,6 +802,35 @@ export interface SubchartOptions {
 	 */
 	showHandle?: boolean;
 
+	/**
+	 * Set chart type for the subchart.
+	 * If this option is specified, the type will be applied to every data in the subchart.
+	 * This setting can be overwritten by subchart.types.
+	 */
+	type?: ChartTypes;
+
+	/**
+	 * Set chart type for each data in the subchart.
+	 * This setting overwrites subchart.type setting.
+	 */
+	types?: { [key: string]: ChartTypes };
+
+	brush?: {
+		/**
+		 * Enable subchart brush interaction.
+		 */
+		enabled?: boolean;
+	};
+
+	grid?: {
+		focus?: boolean | {
+			/**
+			 * Render x focus grid line as one continuous line across main chart and subchart when subchart brush is disabled.
+			 */
+			continuous?: boolean;
+		};
+	};
+
 	size?: {
 		/**
 		 * Change the height of the subchart.
@@ -791,6 +845,41 @@ export interface SubchartOptions {
 			 */
 			show?: boolean;
 			tick?: {
+				/**
+				 * The number of x axis ticks to show.
+				 */
+				count?: number;
+
+				/**
+				 * Set the x values of ticks manually.
+				 */
+				values?: AxisTickValues;
+
+				/**
+				 * Setting for culling ticks.
+				 */
+				culling?: boolean | {
+					/**
+					 * The number of tick texts will be adjusted to less than this value.
+					 */
+					max?: number;
+
+					/**
+					 * Control visibility of tick lines within culling option, along with tick text.
+					 */
+					lines?: boolean;
+
+					/**
+					 * Control culling start point to be reversed.
+					 */
+					reverse?: boolean;
+				};
+
+				/**
+				 * Show x axis outer tick.
+				 */
+				outer?: boolean;
+
 				/**
 				 * Use custom format for x axis ticks - see 'axis.x.tick.format' option for details.
 				 */
@@ -814,6 +903,120 @@ export interface SubchartOptions {
 						first?: boolean;
 						last?: boolean;
 					}
+				};
+			};
+		};
+		y?: {
+			/**
+			 * Show or hide y axis.
+			 */
+			show?: boolean;
+			tick?: {
+				/**
+				 * Set the number of y axis ticks.
+				 */
+				count?: number;
+
+				/**
+				 * Set y axis tick values manually.
+				 */
+				values?: AxisTickValues;
+
+				/**
+				 * Setting for culling ticks.
+				 */
+				culling?: boolean | {
+					/**
+					 * The number of tick texts will be adjusted to less than this value.
+					 */
+					max?: number;
+
+					/**
+					 * Control visibility of tick lines within culling option, along with tick text.
+					 */
+					lines?: boolean;
+
+					/**
+					 * Control culling start point to be reversed.
+					 */
+					reverse?: boolean;
+				};
+
+				/**
+				 * Show y axis outer tick.
+				 */
+				outer?: boolean;
+
+				/**
+				 * Use custom format for y axis ticks - see 'axis.y.tick.format' option for details.
+				 */
+				format?: (this: Chart, x: number | Date) => string | number;
+				/**
+				 * Show or hide y axis tick line.
+				 */
+				show?: boolean;
+				text?: {
+					/**
+					 * Show or hide y axis tick text.
+					 */
+					show?: boolean;
+				};
+			};
+		};
+		y2?: {
+			/**
+			 * Show or hide y2 axis.
+			 */
+			show?: boolean;
+			tick?: {
+				/**
+				 * Set the number of y2 axis ticks.
+				 */
+				count?: number;
+
+				/**
+				 * Set y2 axis tick values manually.
+				 */
+				values?: AxisTickValues;
+
+				/**
+				 * Setting for culling ticks.
+				 */
+				culling?: boolean | {
+					/**
+					 * The number of tick texts will be adjusted to less than this value.
+					 */
+					max?: number;
+
+					/**
+					 * Control visibility of tick lines within culling option, along with tick text.
+					 */
+					lines?: boolean;
+
+					/**
+					 * Control culling start point to be reversed.
+					 */
+					reverse?: boolean;
+				};
+
+				/**
+				 * Show y2 axis outer tick.
+				 */
+				outer?: boolean;
+
+				/**
+				 * Use custom format for y2 axis ticks - see 'axis.y2.tick.format' option for details.
+				 */
+				format?: (this: Chart, x: number | Date) => string | number;
+				/**
+				 * Show or hide y2 axis tick line.
+				 */
+				show?: boolean;
+				text?: {
+					/**
+					 * Show or hide y2 axis tick text.
+					 */
+					show?: boolean;
 				};
 			};
 		};

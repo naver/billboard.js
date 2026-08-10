@@ -3187,10 +3187,45 @@ describe("AXIS", function() {
 
 						expect(domain).to.be.deep.equal(args.axis[id].axes[i].domain);
 						expect(+axis.select(`.tick text`).text()).to.be.equal(domain[0]);
-						expect(+axis.select(`.tick:last-child text`).text()).to.be.equal(domain[1]);
+						// ':last-of-type' rather than ':last-child': the axis renderer
+						// appends <path.domain> after the ticks, as it does for main axes
+						expect(+axis.select(`.tick:last-of-type text`).text())
+							.to.be.equal(domain[1]);
 					});
 			});
 		})
+
+		describe("main axis tick options don't leak into the sub axes", () => {
+			beforeAll(() => {
+				args = {
+					data: {
+						columns: [["data1", 30, 200, 100, 400, 150]]
+					},
+					axis: {
+						x: {
+							tick: {show: false, text: {show: false}},
+							axes: [{tick: {count: 3}}]
+						}
+					}
+				};
+			});
+
+			// the sub axes were rendered by d3-axis, which reads no billboard config, so
+			// `axis.x.tick.show`/`text.show` never applied to them
+			it("sub axis keeps its ticks while the main axis hides them", () => {
+				const main = chart.$.main;
+
+				expect(main.select(`.${$AXIS.axis}-x`).selectAll(".tick line").size())
+					.to.be.equal(0);
+				expect(main.select(`.${$AXIS.axis}-x`).selectAll(".tick text").size())
+					.to.be.equal(0);
+
+				const subAxis = main.select(`.${$AXIS.axis}-x-1`);
+
+				expect(subAxis.selectAll(".tick line").size()).to.be.above(0);
+				expect(subAxis.selectAll(".tick text").size()).to.be.above(0);
+			});
+		});
 	});
 
 	describe("y Axis size", () => {

@@ -125,6 +125,17 @@ function makeContext() {
 			targets[2].values[0]
 		],
 		getCandlestickData: d => ({_isUp: d.index === 1}),
+		getDrawShape() {
+			return this.state.canvasShape || {
+				indices: {
+					[TYPE.AREA]: {},
+					[TYPE.BAR]: {},
+					[TYPE.CANDLESTICK]: {},
+					[TYPE.LINE]: {}
+				},
+				pos: {}
+			};
+		},
 		getShapeIndices: () => ({}),
 		getYScaleById: () => value => value,
 		isBarType: target => target.id === "bar",
@@ -155,12 +166,13 @@ function makeContext() {
 		},
 		subxx: d => d.index * 30,
 		updateCircleY: () => (d, i) => i * 12 + 5,
+		withSubchartTypeContext: fn => fn(),
 		xx: d => d.index * 30
 	};
 }
 
 describe("ESM canvas renderer coverage", () => {
-	it("draws subchart bars, candlesticks, points, brush handles and selections", () => {
+	it("draws subchart bars, candlesticks, scatter points, brush handles and selections", () => {
 		const {renderer} = makeRenderer();
 		const ctx = makeContext();
 		const shape = {
@@ -171,10 +183,33 @@ describe("ESM canvas renderer coverage", () => {
 			pos: {}
 		};
 
+		ctx.canvasTheme = renderer.theme;
 		renderer.drawSubchart(ctx, shape);
 		renderer.drawSelections(ctx, shape);
 
 		expect(renderer.ctx).to.not.be.null;
+	});
+
+	it("draws only the selection ring for point shapes when point.focus.only=true", () => {
+		const {renderer} = makeRenderer();
+		const ctx = makeContext();
+		const shape = {indices: {}, pos: {}};
+		const pointSpy = vi.spyOn(renderer.painter, "point");
+
+		// default (focus.only off): selected point draws both ring and data point
+		ctx.isPointFocusOnly = () => false;
+		renderer.drawSelections(ctx, shape);
+		const normalCalls = pointSpy.mock.calls.length;
+
+		pointSpy.mockClear();
+
+		// focus.only on: the data point is hidden, so only the ring is drawn
+		ctx.isPointFocusOnly = () => true;
+		renderer.drawSelections(ctx, shape);
+		const focusOnlyCalls = pointSpy.mock.calls.length;
+
+		expect(focusOnlyCalls).to.be.greaterThan(0);
+		expect(focusOnlyCalls).to.be.lessThan(normalCalls);
 	});
 
 	it("covers rotated subchart brush and early return branches", () => {
@@ -695,6 +730,58 @@ describe("ESM canvas renderer coverage", () => {
 		renderer.drawTreemaps(ctx);
 
 		expect(renderer.ctx).to.not.be.null;
+	});
+
+	it("draws one continuous focus grid line across main and subchart", () => {
+		const {renderer} = makeRenderer();
+		const ctx = makeContext();
+		const focus = ctx.data.targets[2].values[1];
+		const traceLine = vi.spyOn(renderer.painter, "traceLine");
+		const drawSubchartFocus = vi.spyOn(renderer, "drawSubchartFocus");
+
+		ctx.config.axis_tooltip = false;
+		ctx.config.subchart_grid_focus_continuous = true;
+		ctx.config.grid_focus_show = true;
+		ctx.config.subchart_brush_enabled = false;
+		ctx.config.tooltip_show = true;
+
+		renderer.drawFocus(ctx, [focus]);
+
+		expect(drawSubchartFocus).not.toHaveBeenCalled();
+		expect(traceLine.mock.calls.some(([x1, y1, x2, y2]) =>
+			x1 === x2 &&
+			y1 >= 0 &&
+			y2 > ctx.state.height
+		)).to.be.true;
+	});
+
+	it("does not draw subchart focus grid line when grid focus subchart is disabled", () => {
+		const {renderer} = makeRenderer();
+		const ctx = makeContext();
+		const focus = ctx.data.targets[2].values[1];
+		const traceLine = vi.spyOn(renderer.painter, "traceLine");
+		const drawSubchartFocus = vi.spyOn(renderer, "drawSubchartFocus");
+
+		ctx.config.axis_tooltip = false;
+		ctx.config.grid_focus_show = true;
+		ctx.config.subchart_grid_focus = false;
+		ctx.config.subchart_brush_enabled = false;
+		ctx.config.subchart_grid_focus_continuous = true;
+		ctx.config.tooltip_show = true;
+
+		renderer.drawFocus(ctx, [focus]);
+
+		expect(drawSubchartFocus).not.toHaveBeenCalled();
+		expect(traceLine.mock.calls.some(([x1, y1, x2, y2]) =>
+			x1 === x2 &&
+			y1 >= 0 &&
+			Math.abs(y2 - ctx.state.height) <= 0.5
+		)).to.be.true;
+		expect(traceLine.mock.calls.some(([x1, y1, x2, y2]) =>
+			x1 === x2 &&
+			y1 >= 0 &&
+			y2 > ctx.state.height + 1
+		)).to.be.false;
 	});
 
 	it("positions treemap labels using SVG-compatible centered option", () => {

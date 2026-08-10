@@ -91,12 +91,22 @@ Font longhands are `font-size`, `font-family`, `font-style`, `font-variant`, `fo
 | `.bb-xgrid` | `stroke`, `stroke-width`, `stroke-dasharray` | X grid lines |
 | `.bb-ygrid` | `stroke`, `stroke-width`, `stroke-dasharray` | Y grid lines |
 | `.bb-grid text` | `fill`, `font`, font longhands | Optional grid labels |
+| `.<grid-line-class> line` | `stroke`, `stroke-width`, `stroke-dasharray` | Optional x/y grid line with matching `grid.x.lines[].class` or `grid.y.lines[].class` |
+| `.bb-xgrid-line.<grid-line-class> line` | `stroke`, `stroke-width`, `stroke-dasharray` | Optional x grid line with matching `grid.x.lines[].class` |
+| `.bb-ygrid-line.<grid-line-class> line` | `stroke`, `stroke-width`, `stroke-dasharray` | Optional y grid line with matching `grid.y.lines[].class` |
+| `.<grid-line-class> text` | `fill`, `font`, font longhands | Optional x/y grid label with matching `grid.x.lines[].class` or `grid.y.lines[].class` |
+| `.bb-xgrid-line.<grid-line-class> text` | `fill`, `font`, font longhands | Optional x grid label with matching `grid.x.lines[].class` |
+| `.bb-ygrid-line.<grid-line-class> text` | `fill`, `font`, font longhands | Optional y grid label with matching `grid.y.lines[].class` |
 | `.bb-xgrid-focus line` | `stroke`, `stroke-width`, `stroke-dasharray` | Focus grid line |
 | `.bb-grid .bb-xgrid-focus line` | `stroke`, `stroke-width`, `stroke-dasharray` | Focus grid line |
 | `.bb-grid .bb-xgrid-focus` | `stroke`, `stroke-width`, `stroke-dasharray` | Focus grid line |
 | `.bb-region rect` | `fill`, `opacity`, `fill-opacity` | Regions |
 | `.bb-region` | `fill`, `opacity`, `fill-opacity` | Regions |
 | `.bb-region text` | `fill`, `font`, font longhands | Region labels |
+
+`<grid-line-class>` means a class name supplied through `grid.x.lines[].class` or
+`grid.y.lines[].class`. These selectors are matched against optional grid lines only. They do not
+style generated tick grid lines from `grid.x.show`, `grid.y.show`, or `grid.y.ticks`.
 
 ### Shapes
 
@@ -165,6 +175,12 @@ bb.generate({
         ".bb-grid line": {
           stroke: "#ddd",
           "stroke-width": 1
+        },
+        ".iaq-good line": {
+          stroke: "green"
+        },
+        ".iaq-bad line": {
+          stroke: "red"
         }
       },
       grid: {

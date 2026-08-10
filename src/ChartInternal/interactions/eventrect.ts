@@ -380,7 +380,7 @@ export default {
 	 */
 	selectRectForSingle(context: SVGRectElement, index: number): void {
 		const $$ = this;
-		const {config, $el: {main, circle}} = $$;
+		const {config, state, $el: {main, circle}} = $$;
 		const isSelectionEnabled = config.data_selection_enabled;
 		const isSelectionGrouped = config.data_selection_grouped;
 		const isSelectable = config.data_selection_isselectable;
@@ -390,6 +390,7 @@ export default {
 		if (isTooltipGrouped) {
 			$$.showTooltip(selectedData, context);
 			$$.showGridFocus?.(selectedData);
+			$$.showSubchartGridFocus?.(selectedData);
 
 			if (!isSelectionEnabled || isSelectionGrouped) {
 				return;
@@ -410,13 +411,6 @@ export default {
 				return $$.isWithinShape(this, d);
 			});
 
-		if (shapeAtIndex.empty() && !isTooltipGrouped && config.interaction_onout) {
-			$$.hideGridFocus?.();
-			$$.hideTooltip();
-
-			!isSelectionGrouped && $$.setExpand(index);
-		}
-
 		shapeAtIndex
 			.call(selected => {
 				const d = selected.data();
@@ -431,11 +425,60 @@ export default {
 				if (!isTooltipGrouped) {
 					$$.showTooltip(d, context);
 					$$.showGridFocus?.(d);
+					$$.showSubchartGridFocus?.(d);
 					$$.unexpandCircles?.();
 
 					selected.each(d => $$.setExpand(index, d.id));
 				}
 			});
+
+		if (!isTooltipGrouped && shapeAtIndex.empty()) {
+			// `point.focus.only` can render focus points away from the hovered data point.
+			// Fall back to data distance so ungrouped tooltips can still focus the intended point.
+			const mouse = getPointer(state.event, context);
+			const closestData = selectedData.filter(d => {
+				if ($$.isTargetToShow(d.id)) {
+					const dist = $$.dist(d, mouse);
+					return dist < $$.getPointSensitivity(d);
+				}
+				return false;
+			});
+
+			if (closestData.length > 0) {
+				let closest = closestData[0];
+				let minDist = $$.dist(closest, mouse);
+
+				for (let i = 1; i < closestData.length; i++) {
+					const d = closestData[i];
+					const dist = $$.dist(d, mouse);
+
+					if (dist < minDist) {
+						minDist = dist;
+						closest = d;
+					}
+				}
+
+				$$.showTooltip([closest], context);
+				$$.showGridFocus?.([closest]);
+				$$.showSubchartGridFocus?.([closest]);
+				$$.unexpandCircles?.();
+
+				$$.setExpand(index, closest.id, true);
+
+				if (
+					isSelectionEnabled &&
+					(isSelectionGrouped || isSelectable?.bind($$.api)(closest))
+				) {
+					context.style.cursor = "pointer";
+				}
+			} else if (config.interaction_onout) {
+				$$.hideGridFocus?.();
+				$$.hideSubchartGridFocus?.();
+				$$.hideTooltip();
+
+				!isSelectionGrouped && $$.setExpand(index);
+			}
+		}
 	},
 
 	/**
@@ -483,6 +526,7 @@ export default {
 
 		// Show xgrid focus line (optional module — grid resolver)
 		$$.showGridFocus?.(selectedData);
+		$$.showSubchartGridFocus?.(selectedData);
 
 		const dist = $$.dist(closest, mouse);
 
@@ -521,6 +565,7 @@ export default {
 
 		$$.$el.eventRect?.style("cursor", null);
 		$$.hideGridFocus?.();
+		$$.hideSubchartGridFocus?.();
 
 		if (tooltip) {
 			$$.hideTooltip();

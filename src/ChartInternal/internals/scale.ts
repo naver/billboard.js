@@ -211,7 +211,8 @@ export default {
 			axis.setAxis("x", scale.x, config.axis_x_tick_outer, isInit);
 
 			if (config.subchart_show) {
-				axis.setAxis("subX", scale.subX, config.axis_x_tick_outer, isInit);
+				axis.setAxis("subX", scale.subX,
+					config.subchart_axis_x_tick_outer ?? config.axis_x_tick_outer, isInit);
 			}
 
 			// y Axis
@@ -226,9 +227,12 @@ export default {
 			);
 
 			axis.setAxis("y", scale.y, config.axis_y_tick_outer, isInit);
+			config.subchart_show && config.subchart_axis_y_show &&
+				axis.setAxis("subY", scale.subY,
+					config.subchart_axis_y_tick_outer ?? config.axis_y_tick_outer, isInit);
 
 			// y2 Axis
-			if (config.axis_y2_show) {
+			if (config.axis_y2_show || config.subchart_axis_y2_show) {
 				scale.y2 = $$.getYScale("y2", min.y, max.y,
 					scale.y2 ? scale.y2.domain() : config.axis_y2_default, scale.y2);
 				scale.subY2 = $$.getYScale(
@@ -240,6 +244,9 @@ export default {
 				);
 
 				axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit);
+				config.subchart_show && config.subchart_axis_y2_show &&
+					axis.setAxis("subY2", scale.subY2,
+						config.subchart_axis_y2_tick_outer ?? config.axis_y2_tick_outer, isInit);
 			}
 		} else if (hasTreemap) {
 			const padding = $$.getCurrentPadding();

@@ -598,22 +598,35 @@ export default {
 		const translate = getTranslation(textNode.node());
 
 		// Calculates the length of the hypotenuse
-		const calcHypo = (x, y) => Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+		const calcHypo = (x, y) => Math.sqrt(x * x + y * y);
 
-		textNode.node() && filteredTextNodes.each(function() {
+		if (!textNode.node()) {
+			return;
+		}
+
+		const fontSize = parseInt(textNode.style("font-size"), 10);
+		const overlapStates: {node: Element, overlaps: boolean}[] = [];
+
+		filteredTextNodes.each(function() {
 			const coordinate = getTranslation(this);
-			const filteredTextNode = d3Select(this);
 			const nodeForWidth =
 				calcHypo(translate.e, translate.f) > calcHypo(coordinate.e, coordinate.f) ?
 					textNode :
-					filteredTextNode;
+					d3Select(this);
 
 			const overlapsX = Math.ceil(Math.abs(translate.e - coordinate.e)) <
 				Math.ceil(nodeForWidth.node().getComputedTextLength());
 			const overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) <
-				parseInt(textNode.style("font-size"), 10);
+				fontSize;
 
-			filteredTextNode.classed($TEXT.TextOverlapping, overlapsX && overlapsY);
+			overlapStates.push({
+				node: this,
+				overlaps: overlapsX && overlapsY
+			});
+		});
+
+		overlapStates.forEach(({node, overlaps}) => {
+			d3Select(node).classed($TEXT.TextOverlapping, overlaps);
 		});
 	},
 

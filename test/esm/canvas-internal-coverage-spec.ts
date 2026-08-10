@@ -103,6 +103,7 @@ function makeContext(overrides = {}) {
 			drawFocusedXAxisTick: vi.fn(),
 			drawGridLines: vi.fn(),
 			drawSubXAxis: vi.fn(),
+			drawSubYAxes: vi.fn(),
 			drawTitle: vi.fn(),
 			withContext(ctx, cb) {
 				cb();

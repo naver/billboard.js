@@ -3,11 +3,16 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
-import type {d3Selection, DataRow} from "../../../types/types";
+import type {d3Selection, d3Transition, DataRow} from "../../../types/types";
 import {$BAR, $COMMON} from "../../config/classes";
 import {getRandom, isNumber} from "../../module/util";
 import type {IBarData} from "../data/IData";
-import {getBarRadiusInfo, getBarRadiusResolver, getStackingBarRadiusSet} from "./core/barRadius";
+import {
+	getBarPathInterpolator,
+	getBarRadiusInfo,
+	getBarRadiusResolver,
+	getStackingBarRadiusSet
+} from "./core/barRadius";
 import {getShapeColorWithGradient, updateTargetsForShape} from "./shape";
 
 type BarTypeDataRow = DataRow<number | number[]>;
@@ -110,12 +115,25 @@ export default {
 
 		$root.bar = bar.enter().append("path")
 			.attr("class", classBar)
-			.style("fill", $$.updateBarColor.bind($$))
+			.style("fill", $$.generateUpdateBarColor())
 			.merge(bar)
 			.style("opacity", initialOpacity);
 
 		// calculate ratio if grouped data exists
 		$$.setRatioForGroupedData($root.bar.data());
+	},
+
+	/**
+	 * Generate bar color accessor, hoisting the bound color function
+	 * to be created once per call (not per datum)
+	 * @returns {function} Color accessor
+	 * @private
+	 */
+	generateUpdateBarColor(): (d: IBarData) => string | null {
+		const $$ = this;
+		const fn = $$.getStylePropValue($$.color) || (() => null);
+
+		return (d: IBarData) => getShapeColorWithGradient.call($$, d, "bar_linearGradient", fn);
 	},
 
 	/**
@@ -125,10 +143,7 @@ export default {
 	 * @private
 	 */
 	updateBarColor(d: IBarData): string | null {
-		const $$ = this;
-		const fn = $$.getStylePropValue($$.color);
-
-		return getShapeColorWithGradient.call($$, d, "bar_linearGradient", fn || (() => null));
+		return this.generateUpdateBarColor()(d);
 	},
 
 	/**
@@ -149,41 +164,67 @@ export default {
 		const {bar} = isSub ? $$.$el.subchart : $$.$el;
 		const barPath: BarConnectLine[] = [];
 		const connectLineCache = new Map<string, string | null>();
+		const getRadius = getBarRadiusResolver($$);
+		const barColor = $$.generateUpdateBarColor();
+
+		// Computes the target path string and performs bar.connectLine side-effects.
+		const getBarPath = function(this: SVGPathElement, d, i, arr): string {
+			const isDrawable = isNumber(d.value) ||
+				$$.isBarRangeType(d) ||
+				$$.isSubchartCandlestickBarValue?.(d, isSub);
+			const path = isDrawable ? drawFn(d, i) : [""];
+
+			// Memoize per series id: config lookup + regex runs once per id, not per bar
+			let connectLineType = connectLineCache.get(d.id);
+
+			if (connectLineType === undefined) {
+				connectLineType = _getConnectLineType.call($$, d.id);
+				connectLineCache.set(d.id, connectLineType);
+			}
+
+			// for bar.connectLine option
+			if (path.length > 1) {
+				barPath.push(path[1] as BarConnectLine);
+			}
+
+			// flush per series even when the last datum is null,
+			// otherwise the accumulated path leaks into the next series
+			if (i === arr.length - 1 && barPath.length) {
+				const barConnectLineNode = $$.$T(
+					d3Select(
+						(this.parentNode as ParentNode).querySelector(`.${$BAR.barConnectLine}`)
+					),
+					withTransition,
+					getRandom()
+				);
+
+				$$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
+				barPath.splice(0);
+			}
+
+			return path[0] as string;
+		};
+
+		const barTransition = $$.$T(bar, withTransition, getRandom());
+
+		// Radius bars are rendered as <path> with arc commands whose flags must
+		// stay integers. d3's default interpolator turns them into fractions
+		// during transitions (ex. chart.load()), producing invalid path syntax
+		// and console parse errors. Use a flag-aware interpolator instead. #4166
+		if (getRadius && typeof (barTransition as d3Transition).attrTween === "function") {
+			(barTransition as d3Transition).attrTween("d",
+				function(this: SVGPathElement, d, i, arr) {
+					const target = getBarPath.call(this, d, i, arr);
+
+					return getBarPathInterpolator(this.getAttribute("d") ?? "", target);
+				});
+		} else {
+			barTransition.attr("d", getBarPath);
+		}
 
 		return [
-			$$.$T(bar, withTransition, getRandom())
-				.attr("d", function(d, i, arr) {
-					const path = (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d, i);
-
-					// Memoize per series id: config lookup + regex runs once per id, not per bar
-					let connectLineType = connectLineCache.get(d.id);
-
-					if (connectLineType === undefined) {
-						connectLineType = _getConnectLineType.call($$, d.id);
-						connectLineCache.set(d.id, connectLineType);
-					}
-
-					// for bar.connectLine option
-					if (path.length > 1) {
-						barPath.push(path[1]);
-					}
-
-					// flush per series even when the last datum is null,
-					// otherwise the accumulated path leaks into the next series
-					if (i === arr.length - 1 && barPath.length) {
-						const barConnectLineNode = $$.$T(
-							d3Select(this.parentNode.querySelector(`.${$BAR.barConnectLine}`)),
-							withTransition,
-							getRandom()
-						);
-
-						$$.updateConnectLine(barConnectLineNode, connectLineType, barPath);
-						barPath.splice(0);
-					}
-
-					return path[0];
-				})
-				.style("fill", $$.updateBarColor.bind($$))
+			barTransition
+				.style("fill", d => $$.getSubchartCandlestickBarColor?.(d, isSub) || barColor(d))
 				.style("clip-path", d => d.clipPath)
 				.style("opacity", null)
 		];
@@ -215,6 +256,7 @@ export default {
 		const getPoints = $$.generateGetBarPoints(barIndices, isSub);
 		const getRadius = getBarRadiusResolver($$);
 		const stackingRadiusSet = getRadius ? getStackingBarRadiusSet($$) : new Set<string>();
+		const connectLineCache = new Map<string, string | null>();
 
 		return (d: IBarData, i: number): BarPath => {
 			// 4 points that make a bar
@@ -264,7 +306,15 @@ export default {
 
 			const coords: BarPath = [`M${points[0][indexX]},${points[0][indexY]}${path}z`];
 
-			if (_getConnectLineType.call($$, d.id)) {
+			// Memoize per series id: config lookup + regex runs once per id, not per bar
+			let connectLineType = connectLineCache.get(d.id);
+
+			if (connectLineType === undefined) {
+				connectLineType = _getConnectLineType.call($$, d.id);
+				connectLineCache.set(d.id, connectLineType);
+			}
+
+			if (connectLineType) {
 				coords.push(config.axis_rotated ?
 					{
 						x: points[0][indexX],

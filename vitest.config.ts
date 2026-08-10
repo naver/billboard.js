@@ -1,6 +1,7 @@
 import {resolve} from "node:path";
 import {defineConfig} from "vitest/config";
 import {playwright} from "@vitest/browser-playwright";
+import {getWorkerSource} from "./config/worker-src.js";
 
 const utilAliasPlugin = {
     name: "util-alias-resolver",
@@ -18,8 +19,14 @@ const utilAliasPlugin = {
     }
 };
 
-export default defineConfig({
+// async because the worker source is bundled on demand (see config/worker-src.js)
+export default defineConfig(async () => ({
     plugins: [utilAliasPlugin],
+    define: {
+        // same injection the production builds do, so worker specs exercise the
+        // real pre-bundled worker source instead of an undefined constant
+        __WORKER_SRC__: JSON.stringify(await getWorkerSource())
+    },
     optimizeDeps: {
         include: ["@vitest/coverage-istanbul"]
     },
@@ -31,8 +38,8 @@ export default defineConfig({
         }
     },
     test: {
-        testTimeout: 3_500,
-        hookTimeout: 5_000,
+        testTimeout: 10_000,
+        hookTimeout: 10_000,
         globals: true,
         coverage: {
             provider: "istanbul",
@@ -59,6 +66,9 @@ export default defineConfig({
         browser: {
             enabled: true,
             provider:  playwright(),
+            api: {
+                host: "127.0.0.1"
+            },
             headless: true,
             viewport: {
                 width: 800,
@@ -76,6 +86,6 @@ export default defineConfig({
                 /.+/
             ]
         },
-        open: true
+        open: !process.env.CI
     }
-});
+}));

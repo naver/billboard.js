@@ -10,6 +10,7 @@ import {
 	getAdditionalAxisScale,
 	getAdditionalAxisTickFormat,
 	getAdditionalAxisTickValues,
+	getSubXTickLineValues,
 	getSubXTickValues,
 	getXScale,
 	getXTickLinePosition,
@@ -250,15 +251,38 @@ describe("ESM canvas axis tick coverage", () => {
 			axis: {isCategorized: () => true},
 			config: {
 				axis_x_categories: ["a", "b", "c"],
-				axis_x_tick_fit: false
+				axis_x_tick_fit: false,
+				subchart_axis_x_tick_culling: false
 			}
 		}))).to.be.deep.equal([0, 1, 2]);
 		expect(getSubXTickValues(getInternal({
 			config: {
 				axis_x_tick_count: 3,
-				axis_x_tick_fit: false
+				axis_x_tick_fit: false,
+				subchart_axis_x_tick_culling: false
 			}
 		}))).to.have.length(3);
+		expect(getSubXTickValues(getInternal({
+			config: {
+				axis_x_tick_values: [0, 1],
+				subchart_axis_x_tick_culling: false,
+				subchart_axis_x_tick_values: [2, 4]
+			}
+		}))).to.be.deep.equal([2, 4]);
+	});
+
+	it("resolves subchart x tick lines from subchart culling options", () => {
+		const $$ = getInternal({
+			config: {
+				subchart_axis_x_tick_count: 3,
+				subchart_axis_x_tick_culling: true,
+				subchart_axis_x_tick_culling_lines: false
+			}
+		});
+		const ticks = getSubXTickValues($$);
+
+		expect(ticks).to.have.length(2);
+		expect(getSubXTickLineValues($$, ticks, 1)).to.be.deep.equal(ticks);
 	});
 
 	it("deduplicates x tick lines and handles category boundaries", () => {
@@ -315,6 +339,14 @@ describe("ESM canvas axis tick coverage", () => {
 			config: {axis_y_tick_count: 3},
 			scale: {y: makeScale([0, 0])}
 		}))).to.be.deep.equal([0]);
+		expect(getYTickValues(getInternal({
+			config: {
+				axis_y_tick_values: [9],
+				subchart_axis_y_tick_culling: true,
+				subchart_axis_y_tick_culling_max: 2,
+				subchart_axis_y_tick_values: [0, 1, 2, 3]
+			}
+		}), "y", undefined, true, undefined, "subchart_axis_y")).to.be.deep.equal([0, 3]);
 		expect(getYGridTickValues(getInternal({
 			axis: {y: {getGeneratedTicks: () => [9, 10]}},
 			config: {grid_y_ticks: 2}

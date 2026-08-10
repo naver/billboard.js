@@ -10,34 +10,34 @@ billboard.js is a D3.js v6+ based JavaScript charting library (MIT). Written in 
 
 ```bash
 # Dev server
-npm start
+pnpm start
 
 # Build (full: production + packaged + theme + plugin + esm + cjs)
-npm run build
+pnpm run build
 
 # Build dev only
-npm run build:dev
+pnpm run build:dev
 
 # Lint
-npm run lint
+pnpm run lint
 
 # Format
-npm run format
+pnpm run format
 
 # Run all tests (vitest + playwright/chromium, browser mode)
-npm test
+pnpm test
 
 # Run a single test file
-npx vitest test/shape/bar-spec.ts
+pnpm exec vitest test/shape/bar-spec.ts
 
 # Run tests matching a pattern
-npx vitest -t "pattern"
+pnpm exec vitest -t "pattern"
 
 # Coverage
-npm run coverage
+pnpm run coverage
 ```
 
-Package manager: `yarn@4.3.1` (corepack)
+Package manager: `pnpm@10.16.0` (corepack)
 
 ## Architecture
 

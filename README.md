@@ -3,13 +3,13 @@
   <img src="https://naver.github.io/billboard.js/img/logo/billboard.js.svg" width="350" alt="billboard.js"><br>
 </picture>
 
-[![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version] [![bb][badge-@billboard.js/react]][link-@billboard.js/react]<br> 
+[![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version]<br>
  [![semantic-release][badge-semantic-release]][link-semantic-release] ![React][badge-react]
 
 [![download][badge-download]][link-download] [![download][badge-download-weekly]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![jsDelivr][badge-jsDelivr-weekly]][link-jsDelivr]<br>
 ![CI Status][badge-ci-status] [![Coverage Status][badge-coverage]][link-coverage] [![Known Vulnerabilities][badge-snyk]][link-snyk] [![gzip size][badge-gzip-size]][link-gzip-size]
 
-billboard.js is a re-usable, easy interface JavaScript chart library, based on [D3.js](https://d3js.org/).
+billboard.js is a re-usable, easy interface JavaScript chart library based on [D3.js](https://d3js.org/), with SVG and Canvas rendering support.
 > The name "billboard" comes from the famous `billboard chart` which everybody knows.<br>
 > - [Why we decided to start billboard.js?](https://github.com/naver/billboard.js/wiki/Why-we-decided-to-start-billboard.js%3F)
 
@@ -52,7 +52,7 @@ If you have any questions, check out the previous posts or create a new one at:
 
 ## Download and Installation
 
-Download dist files from the repo directly or install it via npm.
+Download dist files from the repo directly or install it with pnpm.
 
 <details>
   <summary>Dist file list from the repo. (click to expand)</summary>
@@ -147,7 +147,7 @@ There are two ways to install from the `nightly` branch directly.
 
 ```sh
 # Run install command from shell
-$ npm install git+https://github.com/naver/billboard.js.git#nightly --save
+$ pnpm add git+https://github.com/naver/billboard.js.git#nightly
 ```
 
 ### Next (Release Candidate) version
@@ -156,20 +156,87 @@ Next version is the 'release candidate' build, prior to the latest official rele
 
 ```sh
 # Run install command from shell
-$ npm install billboard.js@next --save
+$ pnpm add billboard.js@next
 ```
 
-### Installation with npm
+### Installation with pnpm
 
 ```bash
-$ npm install billboard.js
+$ pnpm add billboard.js
 ```
 
-### Packages
+### React
 
-Name | For | Description
-:---: | :---:| :---:
-[![bb][badge-@billboard.js/react]][link-@billboard.js/react] | ![React][badge-react] | React component for billboard.js
+The React component is available from the `billboard.js/react` subpath. The billboard namespace is
+passed in through the `bb` prop, so importing the React subpath never pulls the root bundle into a
+non-React bundle.
+
+```tsx
+import bb, {line} from "billboard.js";
+import BillboardJS from "billboard.js/react";
+
+<BillboardJS
+  bb={bb}
+  options={{
+    data: {
+      columns: [["data1", 30, 120, 80]],
+      type: line()
+    }
+  }}
+/>;
+```
+
+Without a bundler, load `dist/billboard.react.js`. It is a UMD build exposing the `BillboardReact`
+global, which holds the component as both `.Chart` and `.default`:
+
+```html
+<!-- React first: this path reads the 'React' global, so it needs a UMD build of
+     React. React 18 and below ship one; React 19 does not. -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+<link rel="stylesheet" href="$YOUR_PATH/billboard.css">
+<script src="$YOUR_PATH/billboard.pkgd.js"></script>
+<script src="$YOUR_PATH/billboard.react.js"></script>
+
+<div id="root"></div>
+<script>
+  const {Chart} = BillboardReact;
+
+  ReactDOM.createRoot(document.getElementById("root")).render(
+    React.createElement(Chart, {
+      bb,
+      options: {
+        data: {
+          columns: [["data1", 30, 120, 80]],
+          type: "line"
+        }
+      }
+    })
+  );
+</script>
+```
+
+> [!NOTE]
+> - `billboard.react.js` treats `react` as an external, so React must already be on the page. It
+>   does **not** bundle billboard.js either — load `billboard.js`/`billboard.pkgd.js` first and hand
+>   the `bb` global to the component.
+> - On **React 19+** there is no UMD build of React to load. Use a bundler, or import both packages
+>   as ESM in the browser through an import map.
+> - The packaged build registers every chart type, so string types (`type: "line"`) work as-is. With
+>   the ESM entry, pass the module instead (`type: line()`) or through the `type` prop.
+
+For local visual testing of the React component, run:
+
+```bash
+$ pnpm run storybook
+```
+
+To verify the Storybook bundle, run:
+
+```bash
+$ pnpm run build:storybook
+```
 
 ### Using CDN
 
@@ -213,7 +280,17 @@ Load billboard.js after D3.js.
 <!-- 2) or Load billboard.js packaged with D3.js -->
     <link rel="stylesheet" href="$YOUR_PATH/billboard.css">
     <script src="$YOUR_PATH/billboard.pkgd.js"></script>
+
+<!-- 3) optionally, the React component on top of either of the above.
+     Needs the 'React' global, so load a UMD build of React first
+     (React 18 and below ship one; React 19 does not). -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="$YOUR_PATH/billboard.react.js"></script>
 ```
+
+Loading `billboard.js` exposes the `bb` global, and `billboard.react.js` exposes `BillboardReact`.
+See [React](#react) for a full example.
 
 or by importing ESM.
 > [!TIP]
@@ -327,7 +404,6 @@ THE SOFTWARE.
 [badge-next]: https://img.shields.io/npm/v/billboard.js/next.svg
 [badge-semantic-release]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
 [badge-react]: https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=fff&labelColor=grey&color=62d9fb
-[badge-@billboard.js/react]: https://img.shields.io/npm/v/@billboard.js/react?style=flat&labelColor=grey&label=%40billboard.js%2Freact
 
 <!-- links -->
 [link-download]: https://npm-stat.com/charts.html?package=billboard.js&from=2017-06-08
@@ -337,6 +413,5 @@ THE SOFTWARE.
 [link-snyk]: https://snyk.io/test/github/naver/billboard.js?targetFile=package.json
 [link-gzip-size]: https://unpkg.com/billboard.js/dist/billboard.min.js
 [link-semantic-release]: https://github.com/semantic-release/semantic-release
-[link-@billboard.js/react]: https://www.npmjs.com/package/@billboard.js/react
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js?ref=badge_large)

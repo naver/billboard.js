@@ -4,6 +4,7 @@
  */
 import {select as d3Select} from "d3-selection";
 import {$BAR, $CANDLESTICK, $COMMON} from "../../config/classes";
+import {TYPE} from "../../config/const";
 import {KEY} from "../../module/Cache";
 import {
 	findIndex,
@@ -34,6 +35,16 @@ const rangedDataKeyIndex: Record<string, Record<string, number>> = {
 	areaRange: {high: 0, mid: 1, low: 2},
 	candlestick: {open: 0, high: 1, low: 2, close: 3, volume: 4}
 };
+
+/**
+ * Normalize target ids to an array
+ * @param {Array|string} targetIds Target ids
+ * @returns {Array} Target ids array
+ * @private
+ */
+function normalizeTargetIds(targetIds: string[] | string): string[] {
+	return (isArray(targetIds) ? targetIds : [targetIds]) as string[];
+}
 
 export default {
 	isX(key) {
@@ -628,9 +639,8 @@ export default {
 	 */
 	addTargetIds(type: string, targetIds: string[] | string): void {
 		const {state} = this;
-		const ids = (isArray(targetIds) ? targetIds : [targetIds]) as string[];
 
-		ids.forEach(v => state[type].add(v));
+		normalizeTargetIds(targetIds).forEach(v => state[type].add(v));
 	},
 
 	/**
@@ -641,9 +651,8 @@ export default {
 	 */
 	removeTargetIds(type: string, targetIds: string[] | string): void {
 		const {state} = this;
-		const ids = (isArray(targetIds) ? targetIds : [targetIds]) as string[];
 
-		ids.forEach(v => state[type].delete(v));
+		normalizeTargetIds(targetIds).forEach(v => state[type].delete(v));
 	},
 
 	addHiddenTargetIds(targetIds: string[]): void {
@@ -1177,8 +1186,10 @@ export default {
 		const yIndex = +!isRotated; // true: 0, false: 1
 		const y = $$.circleY(data, data.index);
 		const x = (scale.zoom || scale.x)(data.x);
+		const dx = x - pos[xIndex];
+		const dy = y - pos[yIndex];
 
-		return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
+		return Math.sqrt(dx * dx + dy * dy);
 	},
 
 	/**
@@ -1448,7 +1459,9 @@ export default {
 		const $$ = this;
 		const {value} = d;
 
-		return $$.isBarType(d) && isArray(value) && value.length >= 2 &&
+		return $$.isBarType(d) &&
+			!$$.isSubchartSourceTypeOf?.(d, TYPE.CANDLESTICK) &&
+			isArray(value) && value.length >= 2 &&
 			value.every(isNumber);
 	},
 

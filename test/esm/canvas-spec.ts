@@ -596,6 +596,48 @@ describe("ESM canvas", function() {
 		}
 	});
 
+	it("should not react on hover when the legend item is hidden", () => {
+		chart = generateWithOptions({
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400],
+					["data2", 50, 20, 10, 40],
+					["data3", 10, 60, 40, 80]
+				],
+				type: line()
+			}
+		});
+
+		// hide data1 by clicking its legend
+		let item1 = container.querySelector(".bb-legend-item-data1") as HTMLElement;
+
+		item1.dispatchEvent(new MouseEvent("click", {bubbles: true}));
+
+		// re-query after the legend re-renders
+		item1 = container.querySelector(".bb-legend-item-data1") as HTMLElement;
+		const item2 = container.querySelector(".bb-legend-item-data2") as HTMLElement;
+		const item3 = container.querySelector(".bb-legend-item-data3") as HTMLElement;
+
+		expect(item1.classList.contains($LEGEND.legendItemHidden)).to.be.true;
+
+		// hovering the hidden legend must not focus itself nor dim visible legends
+		item1.dispatchEvent(new MouseEvent("mouseover", {bubbles: true}));
+
+		expect(item1.classList.contains($FOCUS.legendItemFocused)).to.be.false;
+		expect(item2.style.opacity).to.be.equal("");
+		expect(item3.style.opacity).to.be.equal("");
+
+		item1.dispatchEvent(new MouseEvent("mouseout", {bubbles: true}));
+
+		// a visible legend hover still dims the others (unchanged behavior)
+		item2.dispatchEvent(new MouseEvent("mouseover", {bubbles: true}));
+
+		expect(item2.classList.contains($FOCUS.legendItemFocused)).to.be.true;
+		expect(item3.style.opacity).to.be.equal("0.3");
+
+		item2.dispatchEvent(new MouseEvent("mouseout", {bubbles: true}));
+	});
+
 	it("should measure and wrap canvas template legend size when requested", () => {
 		const legendElement = document.createElement("div");
 
@@ -4000,18 +4042,13 @@ describe("ESM canvas", function() {
 		}
 	});
 
-	it("should keep target-color stroke on subchart points when CSS overrides canvas point fill", () => {
-		const style = document.createElement("style");
-		const pointStrokeRecords: Array<{
-			lineWidth: number,
+	it("should skip line data points on canvas subchart to match SVG", () => {
+		const pointArcRecords: Array<{
 			r: number,
-			strokeStyle: string,
 			tx: number,
 			ty: number
 		}> = [];
 		const originalArc = CanvasRenderingContext2D.prototype.arc;
-		const originalStroke = CanvasRenderingContext2D.prototype.stroke;
-		let lastArc: {r: number, tx: number, ty: number} | null = null;
 		const arc = vi.spyOn(CanvasRenderingContext2D.prototype, "arc")
 			.mockImplementation(function(
 				this: CanvasRenderingContext2D,
@@ -4024,30 +4061,10 @@ describe("ESM canvas", function() {
 			) {
 				const transform = this.getTransform();
 
-				lastArc = {r, tx: transform.e, ty: transform.f};
+				pointArcRecords.push({r, tx: transform.e, ty: transform.f});
 
 				return originalArc.call(this, x, y, r, startAngle, endAngle, counterclockwise);
 			});
-		const stroke = vi.spyOn(CanvasRenderingContext2D.prototype, "stroke")
-			.mockImplementation(function(this: CanvasRenderingContext2D, ...args) {
-				if (lastArc) {
-					pointStrokeRecords.push({
-						...lastArc,
-						lineWidth: this.lineWidth,
-						strokeStyle: String(this.strokeStyle)
-					});
-					lastArc = null;
-				}
-
-				return originalStroke.apply(this, args as []);
-			});
-
-		style.textContent = `
-			.bb-circle {
-				fill: rgb(255, 255, 255) !important;
-			}
-		`;
-		document.head.appendChild(style);
 
 		try {
 			generateWithOptions({
@@ -4060,22 +4077,19 @@ describe("ESM canvas", function() {
 				}
 			});
 
-			const {margin2} = chart.internal.state;
-			const color = chart.internal.color("data1");
+			const {margin, margin2} = chart.internal.state;
 
-			expect(chart.internal.canvasTheme.style.shape.pointFillColor)
-				.to.be.equal("rgb(255, 255, 255)");
-			expect(chart.internal.canvasTheme.style.shape.pointStrokeColor).to.be.undefined;
-			expect(pointStrokeRecords.some(({lineWidth, r, strokeStyle, tx, ty}) =>
-				strokeStyle === color &&
-				lineWidth === 1 &&
+			expect(pointArcRecords.some(({r, tx, ty}) =>
+				r <= 3 &&
+				Math.abs(tx - margin.left) < 0.1 &&
+				Math.abs(ty - margin.top) < 0.1
+			)).to.be.true;
+			expect(pointArcRecords.some(({r, tx, ty}) =>
 				r <= 3 &&
 				Math.abs(tx - margin2.left) < 0.1 &&
 				Math.abs(ty - margin2.top) < 0.1
-			)).to.be.true;
+			)).to.be.false;
 		} finally {
-			style.remove();
-			stroke.mockRestore();
 			arc.mockRestore();
 		}
 	});
@@ -5899,63 +5913,156 @@ describe("ESM canvas", function() {
 		}
 	});
 
-	it("should draw explicit canvas grid lines with solid stroke", () => {
-		const style = document.createElement("style");
-		const dashRecords: number[][] = [];
-		const originalSetLineDash = CanvasRenderingContext2D.prototype.setLineDash;
-		const setLineDash = vi.spyOn(CanvasRenderingContext2D.prototype, "setLineDash")
-			.mockImplementation(function(this: CanvasRenderingContext2D, segments: Iterable<number>) {
-				dashRecords.push(Array.from(segments));
+		it("should draw explicit canvas grid lines with solid stroke", () => {
+			const style = document.createElement("style");
+			const dashRecords: number[][] = [];
+			const originalSetLineDash = CanvasRenderingContext2D.prototype.setLineDash;
+			const setLineDash = vi.spyOn(CanvasRenderingContext2D.prototype, "setLineDash")
+				.mockImplementation(function(this: CanvasRenderingContext2D, segments: Iterable<number>) {
+					dashRecords.push(Array.from(segments));
 
-				return originalSetLineDash.call(this, segments);
-			});
+					return originalSetLineDash.call(this, segments);
+				});
 
-		style.textContent = `
-			.bb-ygrid {
-				stroke-dasharray: 3 3;
-			}
-		`;
-		document.head.appendChild(style);
-
-		try {
-			generateWithOptions({
-				data: {
-					columns: [
-						["data1", 30, -200, -100, 400, 150, 250],
-						["data2", -50, 150, -150, 150, -50, -150],
-						["data3", -100, 100, -40, 100, -150, -50]
-					],
-					groups: [
-						["data1", "data2"]
-					],
-					type: bar(),
-					labels: true
-				},
-				grid: {
-					y: {
-						show: true,
-						lines: [{value: 0}]
-					}
+			style.textContent = `
+				.bb-ygrid {
+					stroke-dasharray: 3 3;
 				}
-			});
+			`;
+			document.head.appendChild(style);
 
-			const gridDashIndex = dashRecords.findIndex(dash => dash.length > 0);
-			const solidGridLineIndex = dashRecords.findIndex((dash, index) =>
-				index > gridDashIndex && dash.length === 0
-			);
+			try {
+				generateWithOptions({
+					data: {
+						columns: [
+							["data1", 30, -200, -100, 400, 150, 250],
+							["data2", -50, 150, -150, 150, -50, -150],
+							["data3", -100, 100, -40, 100, -150, -50]
+						],
+						groups: [
+							["data1", "data2"]
+						],
+						type: bar(),
+						labels: true
+					},
+					grid: {
+						y: {
+							show: true,
+							lines: [{value: 0}]
+						}
+					}
+				});
 
-			expect(chart.internal.canvasTheme.style.grid.dashArray).to.deep.equal([3, 3]);
-			expect(gridDashIndex).not.to.be.equal(-1);
-			expect(solidGridLineIndex).not.to.be.equal(-1);
-		} finally {
-			style.remove();
-			setLineDash.mockRestore();
-		}
-	});
+				const gridDashIndex = dashRecords.findIndex(dash => dash.length > 0);
+				const solidGridLineIndex = dashRecords.findIndex((dash, index) =>
+					index > gridDashIndex && dash.length === 0
+				);
 
-	it("should keep optional canvas y grid line coordinates like SVG", () => {
-		const lineTos: Array<{x: number, y: number}> = [];
-		const originalLineTo = CanvasRenderingContext2D.prototype.lineTo;
+				expect(chart.internal.canvasTheme.style.grid.dashArray).to.deep.equal([3, 3]);
+				expect(gridDashIndex).not.to.be.equal(-1);
+				expect(solidGridLineIndex).not.to.be.equal(-1);
+			} finally {
+				style.remove();
+				setLineDash.mockRestore();
+			}
+		});
+
+		it("should apply canvas selector styles for optional grid line classes", () => {
+			const strokeRecords: Array<{dash: number[], lineWidth: number, strokeStyle: string}> = [];
+			const textRecords: Array<{fillStyle: string, font: string, text: string}> = [];
+			const originalStroke = CanvasRenderingContext2D.prototype.stroke;
+			const originalFillText = CanvasRenderingContext2D.prototype.fillText;
+			const stroke = vi.spyOn(CanvasRenderingContext2D.prototype, "stroke")
+				.mockImplementation(function(this: CanvasRenderingContext2D) {
+					strokeRecords.push({
+						dash: this.getLineDash(),
+						lineWidth: this.lineWidth,
+						strokeStyle: String(this.strokeStyle)
+					});
+
+					return originalStroke.call(this);
+				});
+			const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText")
+				.mockImplementation(function(
+					this: CanvasRenderingContext2D,
+					text: string,
+					x: number,
+					y: number,
+					maxWidth?: number
+				) {
+					textRecords.push({
+						fillStyle: String(this.fillStyle),
+						font: this.font,
+						text: String(text)
+					});
+
+					return maxWidth === undefined ?
+						originalFillText.call(this, text, x, y) :
+						originalFillText.call(this, text, x, y, maxWidth);
+				});
+
+			try {
+				generateWithOptions({
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400]
+						],
+						type: line()
+					},
+					grid: {
+						y: {
+							lines: [
+								{value: 50, text: "Good", class: "iaq-good"},
+								{value: 150, text: "Bad", class: "iaq-bad"}
+							]
+						}
+					},
+					canvas: {
+						theme: {
+							selectors: {
+								".iaq-good line": {
+									stroke: "#123456",
+									"stroke-width": 3,
+									"stroke-dasharray": "5 2"
+								},
+								".iaq-bad line": {
+									stroke: "#654321",
+									"stroke-width": 4
+								},
+								".iaq-bad text": {
+									fill: "#abcdef",
+									font: "15px serif"
+								}
+							}
+						}
+					}
+				});
+
+				expect(strokeRecords.some(({dash, lineWidth, strokeStyle}) =>
+					strokeStyle === "#123456" &&
+					lineWidth === 3 &&
+					dash[0] === 5 &&
+					dash[1] === 2
+				)).to.be.true;
+				expect(strokeRecords.some(({dash, lineWidth, strokeStyle}) =>
+					strokeStyle === "#654321" &&
+					lineWidth === 4 &&
+					dash.length === 0
+				)).to.be.true;
+				expect(textRecords.some(({fillStyle, font, text}) =>
+					text === "Bad" &&
+					fillStyle === "#abcdef" &&
+					font.indexOf("15px") > -1
+				)).to.be.true;
+			} finally {
+				stroke.mockRestore();
+				fillText.mockRestore();
+			}
+		});
+
+		it("should keep optional canvas y grid line coordinates like SVG", () => {
+			const lineTos: Array<{x: number, y: number}> = [];
+			const originalLineTo = CanvasRenderingContext2D.prototype.lineTo;
 		const lineTo = vi.spyOn(CanvasRenderingContext2D.prototype, "lineTo")
 			.mockImplementation(function(this: CanvasRenderingContext2D, x: number, y: number) {
 				lineTos.push({x, y});

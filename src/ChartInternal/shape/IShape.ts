@@ -7,10 +7,13 @@
  * Linear gradient option type for bar and area charts
  * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient)
  */
+export type LinearGradientCoordinate = [number, number];
+export type LinearGradientStop = [number, string | null | Function, number];
+
 export type LinearGradientOption = boolean | {
-	x?: [number, number],
-	y?: [number, number],
-	stops?: [number, string | null | Function, number][]
+	x?: LinearGradientCoordinate,
+	y?: LinearGradientCoordinate,
+	stops?: LinearGradientStop[]
 };
 
 /**

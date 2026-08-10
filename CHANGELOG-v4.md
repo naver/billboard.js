@@ -9,6 +9,9 @@ change.
 For the persistent guide on **how to import modules**, see [MODULE_IMPORTS.md](./MODULE_IMPORTS.md)
 — that document is the canonical reference and is linked from runtime error messages.
 
+Changes released after 4.0 are collected under
+[Post-4.0 improvements](#post-40-improvements) below.
+
 ## BREAKING CHANGES
 
 ### ESM: optional APIs require explicit import
@@ -64,7 +67,7 @@ a function`.
 > roughly **~19 KB minified / ~6.3 KB gzipped** vs v3 for the same chart (≈ 6.5–7 % of a minimal bar
 > chart bundle).
 
-Measured with `esbuild --bundle --minify --tree-shaking=true` on a minimal bar chart entry. Each row
+Measured by bundling a minimal bar chart entry with minification and tree-shaking enabled. Each row
 adds only the named module to the baseline.
 
 | Configuration | Minified | Gzipped |
@@ -423,6 +426,132 @@ Current SVG parity backlog and implementation plan:
 
 Each completed parity item should remove the corresponding `warnUnsupportedCanvasOptions()` warning,
 update the canvas ESM exports when API surface changes, and add SVG-vs-canvas regression coverage.
+## Post-4.0 improvements
+
+Landing in the next 4.x minor. Refinements on top of v4: the module-import
+contract, the option surface and the rendered output are unchanged, apart from
+the two notes below.
+
+### TextOverlap no longer needs `d3-delaunay`
+
+The plugin used exactly one call, `voronoi().cellPolygon(i)`. `src/module/voronoi.ts`
+computes bounded Voronoi cells by half-plane clipping instead, so the plugin has
+no third-party dependency left and its label positioning is synchronous again —
+the dynamic `import()` and the two lazy chunks (39.7 KB + 113.2 KB raw) it used
+to emit are gone.
+
+`d3-delaunay` was never a declared dependency (the plugin documented it as
+"install separately"), so nothing changes for consumers who did not install it.
+If you installed it only for this plugin, you can drop it.
+
+### Behavior changes to check
+
+Two externally visible differences. Everything else is byte-identical output —
+verified by diffing the rendered DOM of published 4.0.3 against this build across
+every chart type, all 18 spline curves, all 6 treemap tiles, timeseries
+formatting, `log` scales, data parsing and both affected plugins, with no config
+key or API method removed.
+
+#### `axis.{x,y,y2}.axes` sub-axes are now rendered by `AxisRenderer`
+
+The additional axes were the last thing still drawn by `d3-axis`. They now go through the same
+renderer as the main axes, which changes three things about the markup. The chart body, the main
+axes and every other chart type are byte-identical; this is the only rendered difference in the
+release.
+
+**1. Ticks moved 0.5px — into alignment.** `d3-axis` offsets its output by half a pixel for crisp
+edges on non-retina displays; `AxisRenderer` never did, so the sub-axes used to sit half a pixel off
+from the main axis they sat under:
+
+| x-axis tick[0] | 4.0.3 | next |
+|---|---|---|
+| main (`.bb-axis-x`) | `translate(5.088…)` | `translate(5.088…)` |
+| sub (`.bb-axis-x-1`) | `translate(5.588…)` | `translate(5.088…)` |
+
+The main axis is unchanged; the sub-axis now matches it. If you compensated for that half pixel in
+your own overlay, drop the compensation.
+
+**2. `<path class="domain">` is now the last child.** `AxisRenderer` appends the domain path first
+but *inserts* each tick before it, so it ends up last. Only position-based selectors break:
+
+```diff
+- .bb-axis-x-1 .tick:last-child
++ .bb-axis-x-1 .tick:last-of-type
+```
+
+`:first-child` on ticks is affected the same way. Class-based selectors (`.tick`, `.domain`) need no
+change.
+
+**3. Four presentation attributes are gone** from the sub-axis group: `fill="none"`,
+`font-size="10"`, `font-family="sans-serif"` and `text-anchor="middle"`, which `d3-axis` set and
+`AxisRenderer` does not. **This does not change how it looks**: `billboard.css` styles `.bb-axis`
+text, and CSS wins over presentation attributes, so the computed style is `10px / sans-serif /
+rgb(0,0,0)` in both versions. It matters only if you queried those attributes directly, or render
+without the stylesheet.
+
+#### Bundle sizes shift
+
+What a consumer downloads, measured against published 4.0.3 (`gzip -9`):
+
+| | 4.0.3 | next | |
+|---|---:|---:|---:|
+| ESM app bundle<sup>*</sup> | 120,049 | 121,827 | +1,778 |
+| `billboard.pkgd.min.js` | 264,577 | 270,413 | +5,836 |
+| `billboard.min.js` | 149,512 | 156,826 | +7,314 |
+
+<sup>*</sup> rolldown bundle of an entry importing and using
+`bb, {bar, line, area, pie, zoom}` from `billboard.js`, with each version's own
+dependency tree installed. See [PERFORMANCE.md](./PERFORMANCE.md) for the method.
+
+The growth is the new feature work — configurable subchart rendering, canvas grid
+selectors, the React subpath and the pre-bundled worker. The d3 dependency graph
+is unchanged from 4.0.3.
+
+Runtime is at parity: every benchmark scenario lands within ±4% of 4.0.3 once
+re-measured at 40 samples. A 7–13% canvas line/area regression introduced by
+`feat(subchart)` was found and fixed in the process; see
+[PERFORMANCE.md](./PERFORMANCE.md).
+
+### New options
+
+#### `billboard.js/react` subpath
+
+A React component wrapper, shipped as its own entry so importing it never pulls the root bundle into
+a non-React bundle. The billboard namespace comes in through the `bb` prop.
+
+```tsx
+import bb, {line} from "billboard.js";
+import BillboardJS from "billboard.js/react";
+
+<BillboardJS bb={bb} options={{data: {columns: [["data1", 30, 120, 80]], type: line()}}} />;
+```
+
+`dist/billboard.react.js` is the UMD counterpart, exposing the `BillboardReact` global. It treats
+`react` as an external and does not bundle billboard.js, so both must already be on the page — and
+since it reads the `React` global, that path needs a UMD build of React, which React 18 and below
+ship and React 19 does not. See [README](./README.md#react) for the full markup.
+
+#### `boost.workerUrl`
+
+Points the data-conversion Worker at a static script instead of an inline `blob:` worker, for strict
+CSP environments. `billboard.worker.js` ships in `dist/` for this purpose.
+
+```js
+boost: {
+    useWorker: true,
+    workerUrl: "/path/to/billboard.worker.js"
+}
+```
+
+A custom script must implement the same protocol: receive `{id, op, args}`, post back `{id, result}`
+or `{id, error}`. No `eval()` is involved — the worker is addressed by op name, so no application
+function is ever stringified. Any failure (load error, unknown op, timeout, result mismatch) falls
+back to the main thread.
+
+#### `boost.useWorker: "auto"`
+
+Offloads conversion only when the data exceeds ~5,000 cells, below which structured cloning costs
+more than the offload saves.
 
 ## Previous major versions
 

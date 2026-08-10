@@ -2,10 +2,71 @@
  * Copyright (c) 2021 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isNumber, tplProcess} from "../../module/util";
+import {
+	isArray,
+	isBoolean,
+	isFunction,
+	isNumber,
+	isObjectType,
+	isString,
+	tplProcess
+} from "../../module/util";
 import Plugin from "../Plugin";
 import {defaultStyle, tpl} from "./const";
 import Options from "./Options";
+
+export interface TableViewOptions {
+	selector?: string;
+	categoryTitle?: string;
+	categoryFormat?: (v: Date | number | string) => string;
+	class?: string;
+	style?: boolean;
+	title?: string;
+	updateOnToggle?: boolean;
+	nullString?: string;
+	numberFormat?: (v: number | string) => string;
+}
+
+/**
+ * Expected value type for each supported option, used to validate user input.
+ * Acts as the single source of truth for the set of allowed option keys.
+ * @private
+ */
+const optionValidators: { [key in keyof Required<TableViewOptions>]: (v: unknown) => boolean } = {
+	selector: isString,
+	categoryTitle: isString,
+	categoryFormat: isFunction,
+	class: isString,
+	style: isBoolean,
+	title: isString,
+	updateOnToggle: isBoolean,
+	nullString: isString,
+	numberFormat: isFunction
+};
+
+/**
+ * Check whether the given value is a valid TableView options object.
+ * An empty object is valid (every option falls back to its default) and
+ * unknown keys are ignored, so only a known option holding a value of the
+ * wrong type makes the object invalid. An explicit `undefined` value is
+ * allowed so a consumer can opt out of an option and let it fall back to
+ * the default.
+ * @param {unknown} options Value given to the TableView constructor
+ * @returns {boolean} `true` when `options` is a valid TableView options object
+ * @private
+ */
+export function isValidTableViewOptions(options: unknown): options is TableViewOptions {
+	if (!isObjectType(options) || isArray(options) || options === null) {
+		return false;
+	}
+
+	return Object.entries(options).every(([key, value]) => {
+		const validate = optionValidators[key];
+
+		// unknown keys are ignored; known keys must match their expected type
+		return !isFunction(validate) || value === undefined || validate(value);
+	});
+}
 
 /**
  * Table view plugin.<br>
@@ -36,7 +97,18 @@ import Options from "./Options";
  *          style: true,
  *          title: "My Data List",
  *          updateOnToggle: false,
- *          nullString: "N/A"
+ *          nullString: "N/A",
+ *          numberFormat: function(v) {
+ *              // do some transformation like number formatting
+ *              // return typeof v === "number" ? v.toFixed(2) : v;
+ *              // or use d3.format
+ *              // return typeof v === "number" ? d3.format(".2f")(v) : v;
+ *              // or use Intl.NumberFormat
+ *              // return typeof v === "number" ? new Intl.NumberFormat("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(v) : v;
+ *              // or any other number formatting library
+ *              ...
+ *              return v;
+ *          }
  *        }),
  *     ]
  *  });
@@ -54,8 +126,18 @@ import Options from "./Options";
 export default class TableView extends Plugin {
 	private element;
 
-	constructor(options) {
+	constructor(options: TableViewOptions = {}) {
 		super(options);
+
+		// warn (but don't throw) on invalid options so that unsupported values
+		// simply fall back to their defaults, keeping behavior non-breaking.
+		if (!isValidTableViewOptions(options)) {
+			console?.error?.(
+				"[billboard.js] TableView plugin received invalid options; unsupported values will be ignored.",
+				options
+			);
+		}
+
 		this.config = new Options();
 
 		return this;

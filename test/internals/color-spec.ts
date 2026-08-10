@@ -501,6 +501,17 @@ describe("COLOR", () => {
 				expect(filterHtml).to.not.include("<script>");
 				expect(filterHtml).to.not.include("</script>");
 			});
+
+			it("set options: backgroundColors with attribute injection attempt", () => {
+				args.data.labels.backgroundColors = `red" x="y`;
+			});
+
+			it("should not inject extra attribute from backgroundColors value", () => {
+				const feFlood = chart.internal.$el.defs.select("filter feFlood");
+
+				expect(feFlood.attr("flood-color")).to.be.equal(`red" x="y`);
+				expect(feFlood.attr("x")).to.be.null;
+			});
 		});
 	});
 });

@@ -32,10 +32,12 @@ function getArcType(excludeMultiGauge = false): string | undefined {
 /**
  * Label line configuration type
  */
+type LabelLineFormatter = (value: number, ratio: number, id: string) => string;
+
 type LabelLineConfig = {
 	chartType: string | undefined,
 	line: {show: boolean, distance: number},
-	text: {formatter: ((value: number, ratio: number, id: string) => string) | null}
+	text: {formatter: LabelLineFormatter | null}
 };
 
 /**

@@ -2,9 +2,9 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {Delaunay as d3Delaunay} from "d3-delaunay";
 import type {d3Selection} from "../../../types/types";
 import {polygonArea, polygonCentroid} from "../../module/polygon";
+import {voronoiCells} from "../../module/voronoi";
 import Plugin from "../Plugin";
 import Options from "./Options";
 
@@ -13,12 +13,8 @@ import Options from "./Options";
  * Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram).
  * - **NOTE:**
  *   - Plugins aren't built-in. Need to be loaded or imported to be used.
- *   - Non required modules from billboard.js core, need to be installed separately.
  *   - Appropriate and works for axis based chart.
- * - **Required modules:**
- *   - [d3-delaunay](https://github.com/d3/d3-delaunay)
  * @class plugin-textoverlap
- * @requires d3-delaunay
  * @param {object} options TextOverlap plugin options
  * @augments Plugin
  * @returns {TextOverlap}
@@ -65,13 +61,15 @@ export default class TextOverlap extends Plugin {
 		const {$$: {$el}, config: {selector}} = this;
 		const text = selector ? $el.main.selectAll(selector) : $el.text;
 
-		!text.empty() && this.preventLabelOverlap(text);
+		if (!text.empty()) {
+			this.preventLabelOverlap(text);
+		}
 	}
 
 	/**
 	 * Generates the voronoi layout for data labels
 	 * @param {Array} points Indices values
-	 * @returns {object} Voronoi layout points and corresponding Data points
+	 * @returns {Array} Voronoi cell polygons, in point order
 	 * @private
 	 */
 	generateVoronoi(points: [number, number][]) {
@@ -81,12 +79,8 @@ export default class TextOverlap extends Plugin {
 
 		[min[1], max[0]] = [max[0], min[1]];
 
-		return d3Delaunay
-			.from(points)
-			.voronoi([
-				...min as [number, number],
-				...max as [number, number]
-			]); // bounds = [xmin, ymin, xmax, ymax], default value: [0, 0, 960, 500]
+		// bounds = [xmin, ymin, xmax, ymax]
+		return voronoiCells(points, [...min, ...max]);
 	}
 
 	/**
@@ -97,11 +91,11 @@ export default class TextOverlap extends Plugin {
 	preventLabelOverlap(text: d3Selection): void {
 		const {extent, area} = this.config;
 		const points = text.data().map(v => [v.index, v.value]) as [number, number][];
-		const voronoi = this.generateVoronoi(points);
+		const cells = this.generateVoronoi(points);
 		let i = 0;
 
 		text.each(function() {
-			const cell = voronoi.cellPolygon(i);
+			const cell = cells[i];
 
 			if (cell && this) {
 				const [x, y] = points[i];

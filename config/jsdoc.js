@@ -5,7 +5,7 @@ import {readFile, writeFile} from "fs";
 
 const pkg = readJson("package.json");
 
-exec("npm run jsdoc:cmd", () => {
+exec("pnpm run jsdoc:cmd", () => {
 	// Replace version info
 	const file = resolvePath("../doc/bb.html");
 

@@ -37,8 +37,10 @@ function getTargetDomainCacheKey($$, targets: IData[]): string {
 		const last = values[values.length - 1];
 		const firstX = first ? $$.getXCacheKey?.(first.x) ?? first.x : "";
 		const lastX = last ? $$.getXCacheKey?.(last.x) ?? last.x : "";
+		const targetType = $$.getTargetType?.(target) ?? "";
+		const sourceType = $$.state?.subchartSourceTypes?.[target.id] ?? "";
 
-		return `${target.id}:${values.length}:${firstX}:${lastX}`;
+		return `${target.id}:${targetType}:${sourceType}:${values.length}:${firstX}:${lastX}`;
 	}).join("|");
 }
 
@@ -114,6 +116,10 @@ function getTargetValueMinMax($$, targets: IData[]): DomainMinMax {
 	for (let i = 0; i < targets.length; i++) {
 		const target = targets[i];
 		const isCandlestick = $$.isCandlestickType?.(target);
+		// resolved per target, not per value: the projection is keyed by target id, so
+		// asking per row made every main-chart domain pass walk the subchart type chain
+		const isSubchartCandlestick = !isCandlestick &&
+			!!$$.isSubchartSourceTypeOf?.(target, TYPE.CANDLESTICK);
 		const {values} = target;
 
 		for (let j = 0; j < values.length; j++) {
@@ -124,7 +130,13 @@ function getTargetValueMinMax($$, targets: IData[]): DomainMinMax {
 				continue;
 			}
 
-			if (value !== null && isCandlestick) {
+			const subchartCandlestickValue = isSubchartCandlestick ?
+				$$.getSubchartCandlestickShapeValue?.(row, true) :
+				undefined;
+
+			if (isNumber(subchartCandlestickValue)) {
+				value = subchartCandlestickValue;
+			} else if (value !== null && (isCandlestick || isSubchartCandlestick)) {
 				value = Array.isArray(value) ?
 					value.slice(0, 4) :
 					[value.open, value.high, value.low, value.close];
@@ -178,7 +190,7 @@ export default {
 	 * Get both min and max Y domain values in a single pass.
 	 * Avoids calling getValuesAsIdKeyed twice.
 	 * @param {Array} targets Target data
-	 * @returns {[number|Date|undefined, number|Date|undefined]} [min, max]
+	 * @returns {Array.<number|Date|undefined>} [min, max]
 	 * @private
 	 */
 	getYDomainMinMaxBoth(targets): [number | Date | undefined, number | Date | undefined] {

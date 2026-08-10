@@ -2,13 +2,13 @@
  * Performance benchmark for billboard.js
  *
  * Usage:
- *   npm run build && npx playwright test --config benchmark/playwright.config.ts
- *   BILLBOARD_CANVAS_EXTREME=1 npm run build && npx playwright test --config benchmark/playwright.config.ts
+ *   pnpm run build && pnpm exec playwright test --config benchmark/playwright.config.ts
+ *   BILLBOARD_CANVAS_EXTREME=1 pnpm run build && pnpm exec playwright test --config benchmark/playwright.config.ts
  *
  * Comparing branches:
- *   1. On master:  npm run build && npx playwright test --config benchmark/playwright.config.ts
+ *   1. On master:  pnpm run build && pnpm exec playwright test --config benchmark/playwright.config.ts
  *   2. cp benchmark/results.json benchmark/baseline.json
- *   3. On branch:  npm run build && npx playwright test --config benchmark/playwright.config.ts
+ *   3. On branch:  pnpm run build && pnpm exec playwright test --config benchmark/playwright.config.ts
  *   → comparison table is printed automatically if baseline.json exists
  */
 import * as fs from "fs";
@@ -161,7 +161,7 @@ function getOptionalMetricCell(values?: number[], baseline?: {avg: number}): str
 
 test("performance benchmark", async ({page}) => {
 	if (!fs.existsSync(DIST_PATH)) {
-		throw new Error(`Build not found: ${DIST_PATH}\nRun 'npm run build' first.`);
+		throw new Error(`Build not found: ${DIST_PATH}\nRun 'pnpm run build' first.`);
 	}
 
 	await page.setContent(

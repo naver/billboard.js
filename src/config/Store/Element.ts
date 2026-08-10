@@ -22,7 +22,9 @@ export default class Element {
 				x: null,
 				y: null,
 				y2: null,
-				subX: null
+				subX: null,
+				subY: null,
+				subY2: null
 			},
 			axisTooltip: {
 				x: null,
