@@ -4,11 +4,11 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {describe, expect, it} from "vitest";
+import {afterEach, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import {timeParse as d3TimeParse} from "d3-time-format";
 import {window} from "../../src/module/browser";
-import {toArray, getBoundingRect, getCssRules, getPathBox, getPointer, getUnique, isArray, isNumber, sortValue, parseDate} from "../assets/module/util";
+import {toArray, getBoundingRect, getCssRules, getPathBox, getPointer, getUnique, isArray, isEmpty, isNumber, sortValue, parseDate} from "../assets/module/util";
 
 describe("UTIL", function() {
 	describe("toArray", () => {
@@ -207,6 +207,23 @@ describe("UTIL", function() {
 
 			// rollback
 			window.console = console;
+		});
+	});
+
+	describe("isEmpty", () => {
+		const polluteKey = "__bb_polluted__";
+
+		afterEach(() => {
+			delete Object.prototype[polluteKey];
+			delete Array.prototype[polluteKey];
+		});
+
+		it("should detect empty objects when their prototype is polluted", () => {
+			Object.prototype[polluteKey] = "polluted";
+			Array.prototype[polluteKey] = "polluted";
+
+			expect(isEmpty({})).to.be.true;
+			expect(isEmpty([])).to.be.true;
 		});
 	});
 });
