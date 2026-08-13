@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.0.3-nightly-20260811004637
+ * @version 4.0.3-nightly-20260813004654
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -27,7 +27,7 @@ const isUndefined = (v) => typeof v === "undefined";
 const isDefined = (v) => typeof v !== "undefined";
 const isObjectType = (v) => typeof v === "object";
 const isEmptyObject = (obj) => {
-	for (const x in obj) return false;
+	for (const x in obj) if (Object.prototype.hasOwnProperty.call(obj, x)) return false;
 	return true;
 };
 const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
@@ -238,7 +238,7 @@ var Plugin = class {
 	$$;
 	options;
 	config;
-	static version = "4.0.3-nightly-20260811004637";
+	static version = "4.0.3-nightly-20260813004654";
 	/**
 	* Constructor
 	* @param {Any} options config option object

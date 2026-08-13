@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.3-nightly-20260811004637
+ * @version 4.0.3-nightly-20260813004654
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -26388,7 +26388,9 @@ const diffDomain = (d) => d[1] - d[0];
 const isObjectType = (v) => typeof v === "object";
 const isEmptyObject = (obj) => {
   for (const x in obj) {
-    return false;
+    if (Object.prototype.hasOwnProperty.call(obj, x)) {
+      return false;
+    }
   }
   return true;
 };
@@ -66241,7 +66243,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.3-nightly-20260811004637",
+  version: "4.0.3-nightly-20260813004654",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
