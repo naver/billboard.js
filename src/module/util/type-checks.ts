@@ -18,7 +18,9 @@ const isObjectType = (v: unknown): v is Record<string | number, any> => typeof v
 
 const isEmptyObject = (obj: object): boolean => {
 	for (const x in obj) {
-		return false;
+		if (Object.prototype.hasOwnProperty.call(obj, x)) {
+			return false;
+		}
 	}
 	return true;
 };

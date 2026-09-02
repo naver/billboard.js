@@ -646,7 +646,7 @@ export default {
 						}
 					}
 
-					$$.showAxisGridFocus();
+					$$.showAxisGridFocus?.();
 
 					const eventOnSameIdx = config.tooltip_grouped &&
 						index === eventReceiver.currentIdx;
@@ -692,7 +692,7 @@ export default {
 						return;
 					}
 
-					$$.hideAxisGridFocus();
+					$$.hideAxisGridFocus?.();
 
 					$$.unselectRect();
 					$$.setOverOut(false, eventReceiver.currentIdx);

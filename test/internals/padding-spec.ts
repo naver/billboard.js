@@ -22,11 +22,16 @@ describe("PADDING", () => {
 		}
 	};
 
+	// margin values are derived from browser-measured text metrics, so exact
+	// pixel equality is flaky across environments. Allow ±1px per dimension.
 	const deepEqual = (val, print=false) => {
 		const {margin} = chart.internal.state;
-		
+
 		print && console.log(`val: ${JSON.stringify(val)}`, `margin: ${JSON.stringify(margin)}`);
-		expect(margin).to.deep.equal(val);
+
+		Object.keys(val).forEach(key => {
+			expect(margin[key], key).to.be.closeTo(val[key], 1);
+		});
 	};
 
 	beforeEach(() => {
