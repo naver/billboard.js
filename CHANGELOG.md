@@ -1,3 +1,11 @@
+# [4.1.0-next.2](https://github.com/naver/billboard.js/compare/4.1.0-next.1...4.1.0-next.2) (2026-09-02)
+
+
+### Bug Fixes
+
+* **grid:** guard optional grid focus handlers ([ce448fb](https://github.com/naver/billboard.js/commit/ce448fbf015dc5e982d551ae4e22eef48cf282d3)), closes [#4205](https://github.com/naver/billboard.js/issues/4205)
+* **util:** Correctly detect empty objects with polluted prototype ([78d47ff](https://github.com/naver/billboard.js/commit/78d47ff19ef3cc3254f89612b96bf584191db667)), closes [#4193](https://github.com/naver/billboard.js/issues/4193)
+
 # [4.1.0-next.1](https://github.com/naver/billboard.js/compare/4.0.3...4.1.0-next.1) (2026-08-10)
 
 
