@@ -105,6 +105,31 @@ describe("ESM build", function() {
     });
 
     describe("Optional API modules", function() {
+        it("should handle hover without the optional grid module", () => {
+            chart = bb.bb.generate({
+                data: {
+                    columns: [["data1", 10, 20, 30]],
+                    type: bb.line()
+                }
+            });
+
+            const {eventRect} = chart.internal.$el;
+            const eventRectNode = eventRect.node();
+
+            chart.internal.getDataIndexFromEvent = () => 0;
+
+            expect(chart.internal.showAxisGridFocus).to.be.undefined;
+            expect(chart.internal.hideAxisGridFocus).to.be.undefined;
+            expect(() => eventRect.on("mousemove").call(
+                eventRectNode,
+                new MouseEvent("mousemove", {clientX: 100, clientY: 100})
+            )).to.not.throw();
+            expect(() => eventRect.on("mouseout").call(
+                eventRectNode,
+                new MouseEvent("mouseout")
+            )).to.not.throw();
+        });
+
         it("should export optional resolvers as functions", () => {
             expect(typeof bb.exportApi).to.equal("function");
             expect(typeof bb.flow).to.equal("function");
