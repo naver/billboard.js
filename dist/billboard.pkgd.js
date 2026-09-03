@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.3-nightly-20260813004654
+ * @version 4.0.3-nightly-20260903010615
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -59055,6 +59055,7 @@ var eventrect_pow = Math.pow;
         $$.updateEventRect();
         Object.values($$.$el.axisTooltip).forEach((v) => v == null ? void 0 : v.style("display", null));
       }).on("mousemove", function(event) {
+        var _a;
         const d = getData(event);
         state.event = event;
         if (!d) {
@@ -59072,7 +59073,7 @@ var eventrect_pow = Math.pow;
             index += 1;
           }
         }
-        $$.showAxisGridFocus();
+        (_a = $$.showAxisGridFocus) == null ? void 0 : _a.call($$);
         const eventOnSameIdx = config.tooltip_grouped && index === eventReceiver.currentIdx;
         if (state.dragging || state.flowing || $$.hasArcType() || eventOnSameIdx) {
           if (config.tooltip_show && eventOnSameIdx) {
@@ -59092,11 +59093,12 @@ var eventrect_pow = Math.pow;
         index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, index);
         $$.setOverOut(index !== -1, index);
       }).on("mouseout", (event) => {
+        var _a;
         state.event = event;
         if (!$$.config || $$.hasArcType() || eventReceiver.currentIdx === -1 || !config.interaction_onout) {
           return;
         }
-        $$.hideAxisGridFocus();
+        (_a = $$.hideAxisGridFocus) == null ? void 0 : _a.call($$);
         $$.unselectRect();
         $$.setOverOut(false, eventReceiver.currentIdx);
         eventReceiver.currentIdx = -1;
@@ -66243,7 +66245,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.3-nightly-20260813004654",
+  version: "4.0.3-nightly-20260903010615",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
