@@ -135,7 +135,7 @@
 		"@commitlint/config-conventional": "^21.1.0",
 		"@eslint/js": "^10.0.1",
 		"@playwright/test": "^1.61.1",
-		"@semantic-release/changelog": "^6.0.3",
+		"@semantic-release/changelog": "^7.0.0",
 		"@semantic-release/commit-analyzer": "^13.0.1",
 		"@semantic-release/exec": "^7.1.0",
 		"@semantic-release/git": "^10.0.1",
