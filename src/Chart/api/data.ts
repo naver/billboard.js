@@ -83,9 +83,11 @@ extend(data, {
 				values = [];
 
 				targets.forEach(v => {
-					const dataValue = v.values.map(d => d.value);
-
-					flat ? (values = values.concat(dataValue)) : values.push(dataValue);
+					if (flat) {
+						v.values.forEach(d => values.push(d.value));
+					} else {
+						values.push(v.values.map(d => d.value));
+					}
 				});
 			}
 		}
