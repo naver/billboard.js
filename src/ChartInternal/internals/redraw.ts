@@ -90,7 +90,14 @@ export default {
 				state._cachedDrawShape = shape;
 			}
 
-			$$.updateHtmlLegend?.();
+			// Legend contents and dimensions were updated before updateSizes().
+			// Only its position depends on the newly computed chart margins.
+			if (
+				config.legend_show && $el.legend &&
+				!(config.legend_contents_bindto && config.legend_contents_template)
+			) {
+				$$.positionHtmlLegend?.();
+			}
 			$$.resizeCanvas?.();
 
 			state.canvasFocusKey = null;

@@ -956,6 +956,46 @@ describe("ESM canvas", function() {
 		expect(chart.internal.zoom).to.be.undefined;
 	});
 
+	it("should update legend contents once and preserve layout after resizing", () => {
+		generate(line());
+		const update = vi.spyOn(chart.internal, "updateHtmlLegend");
+		const measure = vi.spyOn(chart.internal, "updateHtmlLegendSize");
+
+		try {
+			chart.resize({width: 160, height: 300});
+			expect(update).toHaveBeenCalledTimes(1);
+			expect(measure).toHaveBeenCalledTimes(1);
+			const legend = chart.$.legend.node();
+			expect(parseFloat(legend.style.top)).toBe(
+				300 - chart.internal.getLegendHeight()
+			);
+			expect(legend.querySelectorAll("button")).toHaveLength(2);
+		} finally {
+			update.mockRestore();
+			measure.mockRestore();
+		}
+	});
+
+	it("should invoke a custom legend template once per series on redraw", () => {
+		const legend = document.createElement("div");
+		const template = vi.fn(id => `<span>${id}</span>`);
+		document.body.appendChild(legend);
+
+		try {
+			generateWithOptions({
+				data: {columns, type: line()},
+				legend: {contents: {bindto: legend, template}}
+			});
+			template.mockClear();
+			chart.flush();
+			expect(template).toHaveBeenCalledTimes(columns.length);
+			expect(legend.children).toHaveLength(columns.length);
+			expect(legend.style.top).toBe("");
+		} finally {
+			legend.remove();
+		}
+	});
+
 	it("should redraw and update legend state when target visibility toggles through API", () => {
 		const chart = generate(line());
 		const {state} = chart.internal;
