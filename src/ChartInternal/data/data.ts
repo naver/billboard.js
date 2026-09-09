@@ -402,7 +402,8 @@ export default {
 		const $$ = this;
 		const {config} = $$;
 		const cacheKey = targetId ? `${KEY.dataTotalPerIndex}-${targetId}` : KEY.dataTotalPerIndex;
-		let sum = $$.cache.get(cacheKey);
+		const cached = $$.cache.get(cacheKey);
+		let sum = cached?.generation === $$.state.dataGeneration ? cached.value : null;
 
 		if (($$.config.data_groups.length || $$.isStackNormalized()) && !sum) {
 			sum = [];
@@ -434,10 +435,72 @@ export default {
 				});
 			});
 
-			$$.cache.add(cacheKey, sum);
+			$$.cache.add(cacheKey, {generation: $$.state.dataGeneration, value: sum});
 		}
 
 		return sum;
+	},
+
+	/**
+	 * Get per-index totals excluding hidden series, cached until data or visibility changes.
+	 * @param {string} targetId Target ID for per-group normalization
+	 * @returns {Array|null} Visible totals, or null for an ungrouped target
+	 * @private
+	 */
+	getVisibleTotalPerIndex(targetId?: string) {
+		const $$ = this;
+		const {api, config, state, cache} = $$;
+		let cached = cache.get(KEY.visibleTotalPerIndex);
+
+		if (!cached || cached.generation !== state.dataGeneration) {
+			cached = cache.add(KEY.visibleTotalPerIndex, {
+				generation: state.dataGeneration,
+				values: new Map()
+			});
+		}
+
+		if (cached.values.has(targetId)) {
+			return cached.values.get(targetId);
+		}
+
+		const dataValues = api.data.values.bind(api);
+		const {hiddenTargetIds} = state;
+
+		// For normalized stack per group, get total per group
+		let total = $$.getTotalPerIndex(targetId);
+
+		// If total is null, the data is not in any group - don't normalize
+		if (total === null) {
+			cached.values.set(targetId, total);
+			return total;
+		}
+
+		if (hiddenTargetIds.size) {
+			// When normalized per group, only subtract hidden data from the same group
+			let hiddenIds: string[] = [...hiddenTargetIds];
+
+			if (targetId) {
+				const group = config.data_groups.find(g => g.indexOf(targetId) >= 0);
+				if (group) {
+					// Only consider hidden IDs in the same group
+					hiddenIds = hiddenIds.filter(id => group.indexOf(id) >= 0);
+				}
+			}
+
+			if (hiddenIds.length) {
+				let hiddenSum = dataValues(hiddenIds, false);
+
+				if (hiddenSum.length) {
+					hiddenSum = hiddenSum
+						.reduce((acc, curr) => acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i]));
+
+					total = total.map((v, i) => v - hiddenSum[i]);
+				}
+			}
+		}
+
+		cached.values.set(targetId, total);
+		return total;
 	},
 
 	/**
@@ -657,10 +720,12 @@ export default {
 
 	addHiddenTargetIds(targetIds: string[]): void {
 		this.addTargetIds("hiddenTargetIds", targetIds);
+		this.cache.remove(KEY.visibleTotalPerIndex);
 	},
 
 	removeHiddenTargetIds(targetIds: string[]): void {
 		this.removeTargetIds("hiddenTargetIds", targetIds);
+		this.cache.remove(KEY.visibleTotalPerIndex);
 	},
 
 	addHiddenLegendIds(targetIds: string[]): void {
@@ -1345,43 +1410,12 @@ export default {
 					ratio = (d.endAngle - d.startAngle) / arcLength;
 				}
 			} else if (type === "index") {
-				const dataValues = api.data.values.bind(api);
-				const {hiddenTargetIds} = state;
-
-				// For normalized stack per group, get total per group
-				let total = this.getTotalPerIndex(
+				const total = $$.getVisibleTotalPerIndex(
 					$$.isStackNormalizedPerGroup() ? d.id : undefined
 				);
 
-				// If total is null, the data is not in any group - don't normalize
 				if (total === null) {
 					return ratio;
-				}
-
-				if (hiddenTargetIds.size) {
-					// When normalized per group, only subtract hidden data from the same group
-					let hiddenIds: string[] = [...hiddenTargetIds];
-
-					if ($$.isStackNormalizedPerGroup() && d.id) {
-						const group = config.data_groups.find(g => g.indexOf(d.id) >= 0);
-						if (group) {
-							// Only consider hidden IDs in the same group
-							hiddenIds = hiddenIds.filter(id => group.indexOf(id) >= 0);
-						}
-					}
-
-					if (hiddenIds.length) {
-						let hiddenSum = dataValues(hiddenIds, false);
-
-						if (hiddenSum.length) {
-							hiddenSum = hiddenSum
-								.reduce((acc, curr) =>
-									acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i])
-								);
-
-							total = total.map((v, i) => v - hiddenSum[i]);
-						}
-					}
 				}
 
 				const divisor = total[d.index];
