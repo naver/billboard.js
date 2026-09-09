@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.3-nightly-20260903010615
+ * @version 4.0.3-nightly-20260909010449
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.11
@@ -37268,9 +37268,9 @@ const KEY = {
   dataMinMax: "$dataMinMax",
   dataTotalSum: "$dataTotalSum",
   dataTotalPerIndex: "$totalPerIndex",
+  visibleTotalPerIndex: "$visibleTotalPerIndex",
   domainMinMax: "$domainMinMax",
   filteredTargets: "$filteredTargets",
-  filteredNullish: "$filteredNullish",
   svgLeft: "$svgLeft",
   valuesByX: "$valuesByX",
   legendItemTextBox: "legendItemTextBox",
@@ -38714,7 +38714,8 @@ function normalizeTargetIds(targetIds) {
     const $$ = this;
     const { config } = $$;
     const cacheKey = targetId ? `${KEY.dataTotalPerIndex}-${targetId}` : KEY.dataTotalPerIndex;
-    let sum = $$.cache.get(cacheKey);
+    const cached = $$.cache.get(cacheKey);
+    let sum = (cached == null ? void 0 : cached.generation) === $$.state.dataGeneration ? cached.value : null;
     if (($$.config.data_groups.length || $$.isStackNormalized()) && !sum) {
       sum = [];
       let { targets } = $$.data;
@@ -38734,9 +38735,54 @@ function normalizeTargetIds(targetIds) {
           sum[i] += isNumber(v.value) ? v.value : 0;
         });
       });
-      $$.cache.add(cacheKey, sum);
+      $$.cache.add(cacheKey, { generation: $$.state.dataGeneration, value: sum });
     }
     return sum;
+  },
+  /**
+   * Get per-index totals excluding hidden series, cached until data or visibility changes.
+   * @param {string} targetId Target ID for per-group normalization
+   * @returns {Array|null} Visible totals, or null for an ungrouped target
+   * @private
+   */
+  getVisibleTotalPerIndex(targetId) {
+    const $$ = this;
+    const { api, config, state, cache } = $$;
+    let cached = cache.get(KEY.visibleTotalPerIndex);
+    if (!cached || cached.generation !== state.dataGeneration) {
+      cached = cache.add(KEY.visibleTotalPerIndex, {
+        generation: state.dataGeneration,
+        values: /* @__PURE__ */ new Map()
+      });
+    }
+    if (cached.values.has(targetId)) {
+      return cached.values.get(targetId);
+    }
+    const dataValues = api.data.values.bind(api);
+    const { hiddenTargetIds } = state;
+    let total = $$.getTotalPerIndex(targetId);
+    if (total === null) {
+      cached.values.set(targetId, total);
+      return total;
+    }
+    if (hiddenTargetIds.size) {
+      let hiddenIds = [...hiddenTargetIds];
+      if (targetId) {
+        const group = config.data_groups.find((g) => g.indexOf(targetId) >= 0);
+        if (group) {
+          hiddenIds = hiddenIds.filter((id) => group.indexOf(id) >= 0);
+        }
+      }
+      if (hiddenIds.length) {
+        let hiddenSum = dataValues(hiddenIds, false);
+        if (hiddenSum.length) {
+          hiddenSum = hiddenSum.reduce((acc, curr) => acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i]));
+          total = total.map((v, i) => v - hiddenSum[i]);
+        }
+      }
+    }
+    cached.values.set(targetId, total);
+    return total;
   },
   /**
    * Get total data sum
@@ -38906,9 +38952,11 @@ function normalizeTargetIds(targetIds) {
   },
   addHiddenTargetIds(targetIds) {
     this.addTargetIds("hiddenTargetIds", targetIds);
+    this.cache.remove(KEY.visibleTotalPerIndex);
   },
   removeHiddenTargetIds(targetIds) {
     this.removeTargetIds("hiddenTargetIds", targetIds);
+    this.cache.remove(KEY.visibleTotalPerIndex);
   },
   addHiddenLegendIds(targetIds) {
     this.addTargetIds("hiddenLegendIds", targetIds);
@@ -39418,31 +39466,11 @@ function normalizeTargetIds(targetIds) {
           ratio = (d.endAngle - d.startAngle) / arcLength;
         }
       } else if (type === "index") {
-        const dataValues = api.data.values.bind(api);
-        const { hiddenTargetIds } = state;
-        let total = this.getTotalPerIndex(
+        const total = $$.getVisibleTotalPerIndex(
           $$.isStackNormalizedPerGroup() ? d.id : void 0
         );
         if (total === null) {
           return ratio;
-        }
-        if (hiddenTargetIds.size) {
-          let hiddenIds = [...hiddenTargetIds];
-          if ($$.isStackNormalizedPerGroup() && d.id) {
-            const group = config.data_groups.find((g) => g.indexOf(d.id) >= 0);
-            if (group) {
-              hiddenIds = hiddenIds.filter((id) => group.indexOf(id) >= 0);
-            }
-          }
-          if (hiddenIds.length) {
-            let hiddenSum = dataValues(hiddenIds, false);
-            if (hiddenSum.length) {
-              hiddenSum = hiddenSum.reduce(
-                (acc, curr) => acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i])
-              );
-              total = total.map((v, i) => v - hiddenSum[i]);
-            }
-          }
         }
         const divisor = total[d.index];
         d.ratio = isNumber(d.value) && total && divisor ? d.value / divisor : 0;
@@ -43461,7 +43489,9 @@ function _getLegendTouchOption($$) {
       if (needShapeUpdate) {
         state._cachedDrawShape = shape;
       }
-      (_d = $$.updateHtmlLegend) == null ? void 0 : _d.call($$);
+      if (config.legend_show && $el.legend && !(config.legend_contents_bindto && config.legend_contents_template)) {
+        (_d = $$.positionHtmlLegend) == null ? void 0 : _d.call($$);
+      }
       (_e = $$.resizeCanvas) == null ? void 0 : _e.call($$);
       state.canvasFocusKey = null;
       $$.renderCanvasFrame(shape, null, true);
@@ -50572,8 +50602,11 @@ object_extend(api_data_data, {
       if (isArray(targets)) {
         values = [];
         targets.forEach((v) => {
-          const dataValue = v.values.map((d) => d.value);
-          flat ? values = values.concat(dataValue) : values.push(dataValue);
+          if (flat) {
+            v.values.forEach((d) => values.push(d.value));
+          } else {
+            values.push(v.values.map((d) => d.value));
+          }
         });
       }
     }
@@ -66245,7 +66278,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.3-nightly-20260903010615",
+  version: "4.0.3-nightly-20260909010449",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
