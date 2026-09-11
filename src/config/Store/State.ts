@@ -162,6 +162,10 @@ export default class State {
 			transiting: false,
 			redrawing: false, // if redraw() is on process
 			resizing: false, // resize event called
+			resizePreview: false, // rendered surface is stretched, pending an exact redraw
+			resizeRedrawTime: 0, // ms the last resize redraw took, decides resize.live strategy
+			// stretch instead of redrawing for the rest of this resize; null until decided
+			resizeLiveScale: <boolean | null>null,
 			toggling: false, // legend toggle
 			zooming: false,
 			hasNegativeValue: false,
