@@ -49,6 +49,10 @@ export const API_MODULE_NEEDED = {
  * Axis rendering constants shared by SVG and canvas renderers.
  * @private
  */
+// A resize redraw costing more than one frame makes the whole drag stretch the
+// rendering instead of redrawing it. 16ms is the budget of a 60fps frame.
+export const RESIZE_FRAME_BUDGET = 16;
+
 export const AXIS_DEFAULT_TICK_COUNT = 10;
 export const AXIS_TICK_SIZE = 6;
 export const AXIS_TICK_PADDING = 3;
