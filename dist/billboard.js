@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.0.3-nightly-20260909010449
+ * @version 4.0.3-nightly-20260912010221
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -239,6 +239,7 @@ const API_MODULE_NEEDED = {
   category: "category",
   categories: "category"
 };
+const RESIZE_FRAME_BUDGET = 16;
 const AXIS_DEFAULT_TICK_COUNT = 10;
 const AXIS_TICK_SIZE = 6;
 const AXIS_TICK_PADDING = 3;
@@ -8961,12 +8962,50 @@ const $ZOOM = {
    *   - false: Disables automatic resize.
    *   - "parent": Enables automatic resize when the parent node is resized.
    *   - "viewBox": Enables automatic resize, and size will be fixed based on the viewbox.
+   * - **NOTE:** `true` listens to the window's resize event, so a container resized by anything
+   *   else(a splitter drag, a sibling element growing, a CSS resize handle) is not detected.
+   *   Use `"parent"`, which observes the parent node itself, for those.
    * @property {boolean|number} [resize.timer=true] Set resize timer option.
    * - **NOTE:** Available options
    *   - The resize function will be called using:
    *     - true: `setTimeout()`
    *     - false: `requestIdleCallback()`
    *   - Given number(delay in ms) value, resize function will be triggered using `setTimeout()` with given delay.
+   * - **NOTE:** With `resize.live`, this no longer decides when the size is reflected(every
+   *   animation frame does), but when the resize is treated as finished:
+   *   - `onresize`/`onresized` are called then, as they are without it.
+   *   - When the rendering is being stretched, this is also when it's redrawn to the exact
+   *     size. The stretched rendering stays on screen for this long after the resize stops,
+   *     so keep the delay short for charts large enough to be stretched.
+   *   - When every frame is redrawn, the last frame already drew the final size, so the
+   *     delayed call changes nothing on screen.
+   * @property {boolean} [resize.live=false] Follow the container size while resizing, instead of
+   * only when the delayed resize(`resize.timer`) runs.
+   * - **NOTE:** Applies only when `resize.auto` is `true` or `"parent"`.
+   * - **Strategy:** How the size is followed is measured, not configured. Two of them are used:
+   *   - **Redraw**: while a resize redraw fits in one animation frame(16ms), the chart is
+   *     redrawn on every frame, giving an exact rendering at every size.
+   *   - **Stretch**: once a redraw misses that budget, the rendering is stretched to the new
+   *     size for the rest of the resize, and redrawn when the resize settles. Stretching runs
+   *     no redraw at all: for SVG the `viewBox` is set to the drawn size and the width/height
+   *     attributes to the new one, and for canvas only the element's CSS box is resized, with
+   *     the backing store left as is. The size keeps following the container at any data amount.
+   * - **Switching:** within a resize the strategy only goes from redraw to stretch, never back,
+   *   so frames can't alternate between an exact and a stretched rendering. The measured time
+   *   outlives the resize, so a chart already known to be expensive stretches from the first
+   *   frame of the next one.
+   * - **While stretched:** text and stroke width are scaled with the box(SVG) and the drawn
+   *   bitmap is upscaled(canvas). Interaction is unaffected, as pointer coordinates are mapped
+   *   back through the element's transform. The redraw on settle restores the exact rendering.
+   * - **Cost:** resize redraws skip the shape data join and the axis tick measurement, so they
+   *   are far cheaper than an initial render. A 5x1,000 line chart redraws in about 6ms(SVG)
+   *   and 3ms(canvas), a 10x10,000 one in about 78ms and 53ms. Ordinary charts therefore redraw
+   *   on every frame, and only the large ones fall back to stretching.
+   * - **Several charts on a page:** the budget is measured per chart, and charts don't know
+   *   about each other. Eight charts of 2,000 points each spend about 75ms per frame together
+   *   while each one measures about 9ms and keeps redrawing. Turn it on for the charts the user
+   *   actually watches while resizing, rather than for every chart on a dense page.
+   * - `onrendered` is called on every redrawn frame while resizing, not once per resize.
    * @see [Demo: resize "parent"](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeParent)
    * @see [Demo: resize "viewBox"](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeViewBox)
    * @example
@@ -8986,11 +9025,15 @@ const $ZOOM = {
    *      timer: false,
    *
    *      // set resize function will be triggered using `setTimeout()` with a delay of `100ms`.
-   *      timer: 100
+   *      timer: 100,
+   *
+   *      // follow the container size while resizing
+   *      live: true
    *  }
    */
   resize_auto: true,
   resize_timer: true,
+  resize_live: false,
   /**
    * Set a callback to execute when the chart is clicked.
    * @name onclick
@@ -10837,6 +10880,12 @@ class State {
       // if redraw() is on process
       resizing: false,
       // resize event called
+      resizePreview: false,
+      // rendered surface is stretched, pending an exact redraw
+      resizeRedrawTime: 0,
+      // ms the last resize redraw took, decides resize.live strategy
+      // stretch instead of redrawing for the rest of this resize; null until decided
+      resizeLiveScale: null,
       toggling: false,
       // legend toggle
       zooming: false,
@@ -11349,11 +11398,18 @@ const emulateEvent = {
 
 
 const { setTimeout: generator_setTimeout, clearTimeout: generator_clearTimeout } = win;
-function generateResize(option) {
+function generateResize(option, live) {
   const fn = [];
   let timeout;
+  let rafId = null;
   const callResizeFn = function() {
     callResizeFn.clear();
+    if (live && rafId === null) {
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        live();
+      });
+    }
     if (option === false) {
       timeout = requestIdleCallback(() => {
         timeout = null;
@@ -11370,6 +11426,12 @@ function generateResize(option) {
     if (timeout) {
       (option === false ? cancelIdleCallback : generator_clearTimeout)(timeout);
       timeout = null;
+    }
+  };
+  callResizeFn.clearLive = () => {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
     }
   };
   callResizeFn.add = (f) => fn.push(f);
@@ -15536,9 +15598,22 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     return $$.config.size_width || $$.getParentRectValue("width");
   },
   getCurrentHeight() {
+    var _a, _b;
     const $$ = this;
-    const { config } = $$;
-    const h = config.size_height || $$.getParentHeight();
+    const { config, state, $el } = $$;
+    let h = config.size_height;
+    if (!h) {
+      const chartNode = state.isCanvasMode ? (_a = $el.chart) == null ? void 0 : _a.node() : null;
+      const minHeight = chartNode == null ? void 0 : chartNode.style.minHeight;
+      minHeight && (chartNode.style.minHeight = "");
+      h = $$.getParentHeight();
+      minHeight && (chartNode.style.minHeight = minHeight);
+      const surface = chartNode ? parseFloat((_b = $$.canvasEngine) == null ? void 0 : _b.canvas.style.height) || 0 : 0;
+      const reserve = state.current.height - surface;
+      if (reserve > 0 && Math.round(h) === Math.round(surface)) {
+        h += reserve;
+      }
+    }
     return h > 0 ? h : 320 / ($$.hasType("gauge") && !config.gauge_fullCircle ? 2 : 1);
   },
   /**
@@ -15606,6 +15681,52 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     cache.add(KEY.svgLeft, result);
     return result;
   },
+  /**
+   * Stretch the rendered surface to the container's current size, without redrawing.
+   * Gives an immediate size feedback while the delayed resize is pending.
+   * The drawn content keeps its previous geometry until the redraw takes place.
+   * @private
+   */
+  previewResize() {
+    var _a, _b, _c;
+    const $$ = this;
+    const { state, $el } = $$;
+    const { current } = state;
+    const width = $$.getCurrentWidth();
+    const height = $$.getCurrentHeight();
+    if (!width || !height || !current.width || !current.height || width === current.width && height === current.height) {
+      return;
+    }
+    if (state.isCanvasMode) {
+      const canvas = (_a = $$.canvasEngine) == null ? void 0 : _a.canvas;
+      if (!canvas) {
+        return;
+      }
+      $el.chart.style("min-height", `${height}px`);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${Math.max(0, height - ((_c = (_b = $$.getCanvasBottomLegendHeight) == null ? void 0 : _b.call($$)) != null ? _c : 0))}px`;
+    } else if ($el.svg) {
+      $el.svg.attr("viewBox", `0 0 ${current.width} ${current.height}`).attr("preserveAspectRatio", "none").attr("width", width).attr("height", height);
+    } else {
+      return;
+    }
+    state.resizePreview = true;
+  },
+  /**
+   * Drop the stretched state set by previewResize(), to render on exact pixels again.
+   * @private
+   */
+  clearResizePreview() {
+    const $$ = this;
+    const { config, state, $el } = $$;
+    if (!state.resizePreview) {
+      return;
+    }
+    state.resizePreview = false;
+    if (!state.isCanvasMode && $el.svg && config.resize_auto !== "viewBox") {
+      $el.svg.attr("viewBox", null).attr("preserveAspectRatio", null);
+    }
+  },
   updateDimension(withoutAxis) {
     var _a, _b;
     const $$ = this;
@@ -15629,6 +15750,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
       (_a = $$.resizeCanvas) == null ? void 0 : _a.call($$);
       return;
     }
+    $$.clearResizePreview();
     if (config.resize_auto === "viewBox") {
       svg.attr("viewBox", `0 0 ${current.width} ${current.height}`);
     } else {
@@ -18406,6 +18528,11 @@ var ChartInternal_publicField = (obj, key, value) => ChartInternal_defNormalProp
 
 
 
+
+function getTime() {
+  var _a, _b, _c;
+  return (_c = (_b = (_a = win.performance) == null ? void 0 : _a.now) == null ? void 0 : _b.call(_a)) != null ? _c : Date.now();
+}
 function getUnsupportedCanvasRenderType($$) {
   if ($$.hasArcType()) {
     return "arc charts";
@@ -18973,30 +19100,50 @@ class ChartInternal {
     var _a, _b;
     const $$ = this;
     const { $el, config, state } = $$;
-    const resizeFunction = generateResize(config.resize_timer);
-    const { resize_auto } = config;
+    const { resize_auto, resize_live } = config;
+    const isAutoResize = /^(true|parent)$/.test(resize_auto);
     const list = [];
+    const redrawOnResize = () => {
+      var _a2;
+      const prevWidth = state.current.width;
+      const prevHeight = state.current.height;
+      $$.setContainerSize();
+      if (!state.resizePreview && prevWidth === state.current.width && prevHeight === state.current.height) {
+        return false;
+      }
+      state.resizing = true;
+      state.dirty.size = true;
+      if (config.legend_show) {
+        $$.updateSizes();
+        state.isCanvasMode ? (_a2 = $$.updateHtmlLegend) == null ? void 0 : _a2.call($$) : $$.updateLegend();
+      }
+      $$.api.flush(false);
+      return true;
+    };
+    const liveResize = () => {
+      if (state.resizeLiveScale === null) {
+        state.resizeLiveScale = state.resizeRedrawTime > RESIZE_FRAME_BUDGET;
+      }
+      if (state.resizeLiveScale) {
+        $$.previewResize();
+        return;
+      }
+      const start = getTime();
+      if (redrawOnResize()) {
+        state.resizeRedrawTime = getTime() - start;
+        state.resizeLiveScale = state.resizeRedrawTime > RESIZE_FRAME_BUDGET;
+      }
+    };
+    const resizeFunction = generateResize(
+      config.resize_timer,
+      isAutoResize && resize_live ? liveResize : void 0
+    );
     list.push(() => callFn(config.onresize, $$.api));
-    if (/^(true|parent)$/.test(resize_auto)) {
-      list.push(() => {
-        var _a2;
-        const prevWidth = state.current.width;
-        const prevHeight = state.current.height;
-        $$.setContainerSize();
-        if (prevWidth === state.current.width && prevHeight === state.current.height) {
-          return;
-        }
-        state.resizing = true;
-        if (config.legend_show) {
-          $$.updateSizes();
-          state.isCanvasMode ? (_a2 = $$.updateHtmlLegend) == null ? void 0 : _a2.call($$) : $$.updateLegend();
-        }
-        $$.api.flush(false);
-      });
-    }
+    isAutoResize && list.push(redrawOnResize);
     list.push(() => {
       callFn(config.onresized, $$.api);
       state.resizing = false;
+      state.resizeLiveScale = null;
     });
     list.forEach((v) => resizeFunction.add(v));
     $$.resizeFunction = resizeFunction;
@@ -21220,6 +21367,7 @@ const canvasInternal = {
     const $$ = this;
     const { config, state, $el } = $$;
     const container = $el.chart.node();
+    $$.clearResizePreview();
     $el.chart.style("min-height", `${state.current.height}px`);
     (_a = $$.canvasEngine) == null ? void 0 : _a.resize(state.current.width, $$.getCanvasSurfaceHeight());
     (_b = $$.canvasTheme) == null ? void 0 : _b.reload(container, config.canvas_theme);
@@ -21405,7 +21553,7 @@ function loadConfig(config) {
    * chart.destroy();
    */
   destroy() {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
     const $$ = this.internal;
     const { state, $el: { chart, style, svg } } = $$;
     if (notEmpty($$)) {
@@ -21423,7 +21571,8 @@ function loadConfig(config) {
       (_f = $$.canvasRenderer) == null ? void 0 : _f.destroy();
       (_g = $$.canvasEngine) == null ? void 0 : _g.destroy();
       (_h = $$.resizeFunction) == null ? void 0 : _h.clear();
-      (_j = (_i = $$.resizeFunction) == null ? void 0 : _i.resizeObserver) == null ? void 0 : _j.disconnect();
+      (_j = (_i = $$.resizeFunction) == null ? void 0 : _i.clearLive) == null ? void 0 : _j.call(_i);
+      (_l = (_k = $$.resizeFunction) == null ? void 0 : _k.resizeObserver) == null ? void 0 : _l.disconnect();
       $$.resizeFunction && win.removeEventListener("resize", $$.resizeFunction);
       chart.classed("bb", false).style("position", null);
       if (state.isCanvasMode) {
@@ -36147,7 +36296,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.0.3-nightly-20260909010449",
+  version: "4.0.3-nightly-20260912010221",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
