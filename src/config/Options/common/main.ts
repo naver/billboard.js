@@ -168,12 +168,50 @@ export default {
 	 *   - false: Disables automatic resize.
 	 *   - "parent": Enables automatic resize when the parent node is resized.
 	 *   - "viewBox": Enables automatic resize, and size will be fixed based on the viewbox.
+	 * - **NOTE:** `true` listens to the window's resize event, so a container resized by anything
+	 *   else(a splitter drag, a sibling element growing, a CSS resize handle) is not detected.
+	 *   Use `"parent"`, which observes the parent node itself, for those.
 	 * @property {boolean|number} [resize.timer=true] Set resize timer option.
 	 * - **NOTE:** Available options
 	 *   - The resize function will be called using:
 	 *     - true: `setTimeout()`
 	 *     - false: `requestIdleCallback()`
 	 *   - Given number(delay in ms) value, resize function will be triggered using `setTimeout()` with given delay.
+	 * - **NOTE:** With `resize.live`, this no longer decides when the size is reflected(every
+	 *   animation frame does), but when the resize is treated as finished:
+	 *   - `onresize`/`onresized` are called then, as they are without it.
+	 *   - When the rendering is being stretched, this is also when it's redrawn to the exact
+	 *     size. The stretched rendering stays on screen for this long after the resize stops,
+	 *     so keep the delay short for charts large enough to be stretched.
+	 *   - When every frame is redrawn, the last frame already drew the final size, so the
+	 *     delayed call changes nothing on screen.
+	 * @property {boolean} [resize.live=false] Follow the container size while resizing, instead of
+	 * only when the delayed resize(`resize.timer`) runs.
+	 * - **NOTE:** Applies only when `resize.auto` is `true` or `"parent"`.
+	 * - **Strategy:** How the size is followed is measured, not configured. Two of them are used:
+	 *   - **Redraw**: while a resize redraw fits in one animation frame(16ms), the chart is
+	 *     redrawn on every frame, giving an exact rendering at every size.
+	 *   - **Stretch**: once a redraw misses that budget, the rendering is stretched to the new
+	 *     size for the rest of the resize, and redrawn when the resize settles. Stretching runs
+	 *     no redraw at all: for SVG the `viewBox` is set to the drawn size and the width/height
+	 *     attributes to the new one, and for canvas only the element's CSS box is resized, with
+	 *     the backing store left as is. The size keeps following the container at any data amount.
+	 * - **Switching:** within a resize the strategy only goes from redraw to stretch, never back,
+	 *   so frames can't alternate between an exact and a stretched rendering. The measured time
+	 *   outlives the resize, so a chart already known to be expensive stretches from the first
+	 *   frame of the next one.
+	 * - **While stretched:** text and stroke width are scaled with the box(SVG) and the drawn
+	 *   bitmap is upscaled(canvas). Interaction is unaffected, as pointer coordinates are mapped
+	 *   back through the element's transform. The redraw on settle restores the exact rendering.
+	 * - **Cost:** resize redraws skip the shape data join and the axis tick measurement, so they
+	 *   are far cheaper than an initial render. A 5x1,000 line chart redraws in about 6ms(SVG)
+	 *   and 3ms(canvas), a 10x10,000 one in about 78ms and 53ms. Ordinary charts therefore redraw
+	 *   on every frame, and only the large ones fall back to stretching.
+	 * - **Several charts on a page:** the budget is measured per chart, and charts don't know
+	 *   about each other. Eight charts of 2,000 points each spend about 75ms per frame together
+	 *   while each one measures about 9ms and keeps redrawing. Turn it on for the charts the user
+	 *   actually watches while resizing, rather than for every chart on a dense page.
+	 * - `onrendered` is called on every redrawn frame while resizing, not once per resize.
 	 * @see [Demo: resize "parent"](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeParent)
 	 * @see [Demo: resize "viewBox"](https://naver.github.io/billboard.js/demo/#ChartOptions.resizeViewBox)
 	 * @example
@@ -193,11 +231,15 @@ export default {
 	 *      timer: false,
 	 *
 	 *      // set resize function will be triggered using `setTimeout()` with a delay of `100ms`.
-	 *      timer: 100
+	 *      timer: 100,
+	 *
+	 *      // follow the container size while resizing
+	 *      live: true
 	 *  }
 	 */
 	resize_auto: <boolean | "parent" | "viewBox">true,
 	resize_timer: true,
+	resize_live: false,
 
 	/**
 	 * Set a callback to execute when the chart is clicked.

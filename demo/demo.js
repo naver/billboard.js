@@ -6660,6 +6660,20 @@ d3.select(".chart_area")
 				];
 			},
 		},
+		resizeLive: {
+			description: "Follow the container size while resizing. Redraws per frame when the chart draws within a frame, stretches the rendering when it doesn't.",
+			options: {
+				data: {
+					columns: [
+						["sample", 30, 200, 120, 400, 230, 250]
+					],
+					type: "line"
+				},
+				resize: {
+					live: true
+				}
+			}
+		},
 		resizeViewBox: [
 			{
 				options: {

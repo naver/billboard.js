@@ -151,6 +151,70 @@ interleaved before acting on it.
   collect all `getBBox()`, `getBoundingClientRect()`, `offsetWidth`, and
   `getComputedTextLength()` reads before changing attributes, styles, or classes.
 
+## Resize Cost
+
+`resize.auto` runs a full redraw, delayed by `resize.timer` so a drag produces one
+redraw instead of one per event. Until that delayed call runs, the rendered surface
+keeps its previous pixel size. `resize.live` decides what happens in between.
+
+- `false` (default): nothing. The size changes only when the delayed redraw runs.
+- `true`: the chart follows the container on every animation frame. Only one frame is
+  ever pending, so events coalesce instead of queueing up.
+
+Which strategy `live: true` uses is measured, not configured. The first frame of a resize
+redraws and times itself; the duration decides the rest of that resize.
+
+- Within `RESIZE_FRAME_BUDGET` (16ms): every frame redraws, giving an exact rendering at
+  every size.
+- Over it: the rendering is stretched instead. The SVG `viewBox` is set to the drawn size
+  and the width/height attributes to the new size (canvas: the CSS box only, the backing
+  store untouched), so the browser scales the existing rendering. That costs a handful of
+  attribute writes per frame and no redraw. Pointer coordinates stay correct, as the
+  `hasViewBox()` branches map them back through the element CTM.
+
+The decision is taken once per resize, not per frame: alternating exact and stretched
+frames jitters. The measurement is kept in `state.resizeRedrawTime` across resizes, so a
+chart already known to be expensive stretches from the very first frame.
+
+Resize redraws are much cheaper than a data redraw: `flush()` skips the `dirty.data` flag
+so shape data joins don't run, and `getMaxTickSize()` returns the cached size while
+`state.resizing` is set, skipping the dummy axis and text measurement. Measured on a
+900x500 line chart:
+
+| data | SVG | canvas |
+|---|---|---|
+| 5 x 1,000 | 6.0ms | 2.8ms |
+| 5 x 5,000 | 31.4ms | 11.4ms |
+| 10 x 10,000 | 77.6ms | 53.4ms |
+
+So an ordinary chart redraws live and only the large ones fall back to stretching.
+
+The budget is measured per chart, and charts don't know about each other. On a page with
+several of them the per-frame total is what the browser pays, while each chart only sees
+its own share:
+
+| charts (2,000 points each) | per frame | measured per chart |
+|---|---|---|
+| 1 | 11.6ms | 11.6ms |
+| 4 | 40.1ms | 10.0ms |
+| 8 | 74.9ms | 9.4ms |
+
+Every one of those charts concludes it fits in a frame and keeps redrawing. That is why
+`live` stays opt-in and off by default: a dense dashboard should enable it on the charts
+the user actually watches while resizing. Closing this would mean accumulating the time
+all live-resizing charts spend in a frame and deciding against that total.
+
+`onresize` and `onresized` still fire once per resize, but `onrendered` is called on every
+redrawn frame while resizing.
+
+`resize.timer` keeps its role of deciding when the resize is finished, not when the size is
+reflected. With every frame redrawn it changes nothing on screen, as the last frame already
+drew the final size. While the rendering is stretched it decides how long that stretched
+rendering stays up after the resize stops, so a long delay is felt exactly on the charts
+large enough to be stretched. Measured over a 6 frame resize of a 10x10,000 chart: the
+exact rendering came back 346ms after the last event with `timer: 200`, and 1,148ms with
+`timer: 1000`.
+
 ## Worker Safety
 
 - **The worker source is pre-bundled at build time, never derived from

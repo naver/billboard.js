@@ -36,8 +36,30 @@ export default {
 
 	getCurrentHeight(): number {
 		const $$ = this;
-		const {config} = $$;
-		const h = config.size_height || $$.getParentHeight();
+		const {config, state, $el} = $$;
+		let h = config.size_height;
+
+		if (!h) {
+			// The min-height reserved for the canvas surface is this element's own
+			// output. Measuring with it in place makes it the floor of every later
+			// measurement, so the chart could never shrink vertically.
+			const chartNode = state.isCanvasMode ? $el.chart?.node() : null;
+			const minHeight = chartNode?.style.minHeight;
+
+			minHeight && (chartNode.style.minHeight = "");
+			h = $$.getParentHeight();
+			minHeight && (chartNode.style.minHeight = minHeight);
+
+			// Without a height of its own, the container collapses onto the canvas,
+			// which is drawn shorter than the chart by the bottom legend's room. The
+			// legend is positioned absolutely, so it adds nothing back: keep that room.
+			const surface = chartNode ? parseFloat($$.canvasEngine?.canvas.style.height) || 0 : 0;
+			const reserve = state.current.height - surface;
+
+			if (reserve > 0 && Math.round(h) === Math.round(surface)) {
+				h += reserve;
+			}
+		}
 
 		return h > 0 ? h : 320 / ($$.hasType("gauge") && !config.gauge_fullCircle ? 2 : 1);
 	},
@@ -135,6 +157,78 @@ export default {
 		return result;
 	},
 
+	/**
+	 * Stretch the rendered surface to the container's current size, without redrawing.
+	 * Gives an immediate size feedback while the delayed resize is pending.
+	 * The drawn content keeps its previous geometry until the redraw takes place.
+	 * @private
+	 */
+	previewResize(): void {
+		const $$ = this;
+		const {state, $el} = $$;
+		const {current} = state;
+		const width = $$.getCurrentWidth();
+		const height = $$.getCurrentHeight();
+
+		if (
+			!width || !height || !current.width || !current.height ||
+			(width === current.width && height === current.height)
+		) {
+			return;
+		}
+
+		if (state.isCanvasMode) {
+			const canvas = $$.canvasEngine?.canvas;
+
+			if (!canvas) {
+				return;
+			}
+
+			// Bottom legend is a DOM node keeping its own height, so only the
+			// remaining surface stretches.
+			$el.chart.style("min-height", `${height}px`);
+			canvas.style.width = `${width}px`;
+			canvas.style.height = `${
+				Math.max(0, height - ($$.getCanvasBottomLegendHeight?.() ?? 0))
+			}px`;
+		} else if ($el.svg) {
+			// viewBox of the drawn size + the new size as the layout box stretches the
+			// rendering exactly to the container. Pointer coordinates stay correct, as
+			// the viewBox branches(hasViewBox) map them back through the CTM.
+			$el.svg
+				.attr("viewBox", `0 0 ${current.width} ${current.height}`)
+				.attr("preserveAspectRatio", "none")
+				.attr("width", width)
+				.attr("height", height);
+		} else {
+			return;
+		}
+
+		state.resizePreview = true;
+	},
+
+	/**
+	 * Drop the stretched state set by previewResize(), to render on exact pixels again.
+	 * @private
+	 */
+	clearResizePreview(): void {
+		const $$ = this;
+		const {config, state, $el} = $$;
+
+		if (!state.resizePreview) {
+			return;
+		}
+
+		state.resizePreview = false;
+
+		// canvas surfaces are restored by resizeCanvas()
+		if (!state.isCanvasMode && $el.svg && config.resize_auto !== "viewBox") {
+			$el.svg
+				.attr("viewBox", null)
+				.attr("preserveAspectRatio", null);
+		}
+	},
+
 	updateDimension(withoutAxis?: boolean): void {
 		const $$ = this;
 		const {config, state: {hasAxis, isCanvasMode}, $el} = $$;
@@ -163,6 +257,9 @@ export default {
 			$$.resizeCanvas?.();
 			return;
 		}
+
+		// about to draw on exact pixels: drop any stretched state
+		$$.clearResizePreview();
 
 		if (config.resize_auto === "viewBox") {
 			svg

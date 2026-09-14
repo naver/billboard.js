@@ -148,6 +148,7 @@ export default {
 			$$.canvasRenderer?.destroy();
 			$$.canvasEngine?.destroy();
 			$$.resizeFunction?.clear();
+			$$.resizeFunction?.clearLive?.();
 
 			$$.resizeFunction?.resizeObserver?.disconnect();
 			$$.resizeFunction && window.removeEventListener("resize", $$.resizeFunction);

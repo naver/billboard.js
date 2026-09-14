@@ -3,7 +3,13 @@
  * billboard.js project is licensed under the MIT license
  */
 import type {d3Transition} from "../../types/types";
-import {cancelIdleCallback, requestIdleCallback, window} from "./browser";
+import {
+	cancelAnimationFrame,
+	cancelIdleCallback,
+	requestAnimationFrame,
+	requestIdleCallback,
+	window
+} from "./browser";
 import {isArray, isNumber, isTabVisible, runUntil} from "./util";
 
 const {setTimeout, clearTimeout} = window;
@@ -11,16 +17,28 @@ const {setTimeout, clearTimeout} = window;
 /**
  * Generate resize queue function
  * @param {boolean|number} option Resize option
+ * @param {()=>void} live Called on every resize event, throttled by animation frame.
+ *  Used to reflect the size change before the delayed call takes place.
  * @returns {Fucntion}
  * @private
  */
-export function generateResize(option: boolean | number) {
+export function generateResize(option: boolean | number, live?: Function) {
 	const fn: Function[] = [];
 	let timeout;
+	let rafId: number | null = null;
 
 	const callResizeFn = function() {
 		// Delay all resize functions call, to prevent unintended excessive call from resize event
 		callResizeFn.clear();
+
+		// One pending frame at most: when the live call takes longer than a frame,
+		// events coalesce instead of piling up.
+		if (live && rafId === null) {
+			rafId = requestAnimationFrame(() => {
+				rafId = null;
+				live();
+			});
+		}
 
 		if (option === false) {
 			timeout = requestIdleCallback(() => {
@@ -39,6 +57,13 @@ export function generateResize(option: boolean | number) {
 		if (timeout) {
 			(option === false ? cancelIdleCallback : clearTimeout)(timeout);
 			timeout = null;
+		}
+	};
+
+	callResizeFn.clearLive = () => {
+		if (rafId !== null) {
+			cancelAnimationFrame(rafId);
+			rafId = null;
 		}
 	};
 

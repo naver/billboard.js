@@ -3208,6 +3208,9 @@ const canvasInternal = {
 		const {config, state, $el} = $$;
 		const container = $el.chart.node();
 
+		// about to draw on exact pixels: drop any stretched state
+		$$.clearResizePreview();
+
 		$el.chart.style("min-height", `${state.current.height}px`);
 		$$.canvasEngine?.resize(state.current.width, $$.getCanvasSurfaceHeight());
 		$$.canvasTheme?.reload(container, config.canvas_theme);

@@ -12,6 +12,7 @@ import {
 } from "d3-time-format";
 import type {d3Selection, d3Transition} from "../../types/types";
 import {$CIRCLE, $COMMON, $TEXT} from "../config/classes";
+import {RESIZE_FRAME_BUDGET} from "../config/const";
 import Options from "../config/Options/Options";
 import Store from "../config/Store/Store";
 import {document, window} from "../module/browser";
@@ -59,6 +60,15 @@ import tooltip from "./internals/tooltip";
 import transform from "./internals/transform";
 import typeInternals from "./internals/type";
 import shape from "./shape/shape";
+
+/**
+ * Get the current time in ms.
+ * @returns {number} Timestamp
+ * @private
+ */
+function getTime(): number {
+	return window.performance?.now?.() ?? Date.now();
+}
 
 /**
  * Get SVG-only chart type reason for canvas render fallback.
@@ -876,42 +886,79 @@ export default class ChartInternal {
 	bindResize(): void {
 		const $$ = <any>this;
 		const {$el, config, state} = $$;
-		const resizeFunction = generateResize(config.resize_timer);
-		const {resize_auto} = config;
+		const {resize_auto, resize_live} = config;
+		const isAutoResize = /^(true|parent)$/.test(resize_auto);
 		const list: (() => void)[] = [];
+
+		const redrawOnResize = (): boolean => {
+			// Skip resize if dimensions haven't changed
+			const prevWidth = state.current.width;
+			const prevHeight = state.current.height;
+
+			$$.setContainerSize();
+
+			if (
+				!state.resizePreview &&
+				prevWidth === state.current.width &&
+				prevHeight === state.current.height
+			) {
+				return false;
+			}
+
+			state.resizing = true;
+			state.dirty.size = true;
+
+			// https://github.com/naver/billboard.js/issues/2650
+			if (config.legend_show) {
+				$$.updateSizes();
+				state.isCanvasMode ? $$.updateHtmlLegend?.() : $$.updateLegend();
+			}
+
+			$$.api.flush(false);
+
+			return true;
+		};
+
+		// Called on every animation frame while resizing, before the delayed call.
+		// Redraws when the chart draws within a frame, and stretches the rendering
+		// when it doesn't: the size follows the container either way.
+		const liveResize = () => {
+			// Decided once per resize and kept until it settles, as alternating exact
+			// and stretched frames jitters. The measured time outlives the resize, so a
+			// chart already known to be expensive stretches from the very first frame.
+			if (state.resizeLiveScale === null) {
+				state.resizeLiveScale = state.resizeRedrawTime > RESIZE_FRAME_BUDGET;
+			}
+
+			if (state.resizeLiveScale) {
+				$$.previewResize();
+				return;
+			}
+
+			const start = getTime();
+
+			if (redrawOnResize()) {
+				state.resizeRedrawTime = getTime() - start;
+
+				// A redraw that missed the frame stretches the rest of this resize. The
+				// switch only goes this way, so frames can't alternate exact/stretched.
+				state.resizeLiveScale = state.resizeRedrawTime > RESIZE_FRAME_BUDGET;
+			}
+		};
+
+		const resizeFunction = generateResize(
+			config.resize_timer,
+			isAutoResize && resize_live ? liveResize : undefined
+		);
 
 		list.push(() => callFn(config.onresize, $$.api));
 
-		if (/^(true|parent)$/.test(resize_auto)) {
-			list.push(() => {
-				// Skip resize if dimensions haven't changed
-				const prevWidth = state.current.width;
-				const prevHeight = state.current.height;
-
-				$$.setContainerSize();
-
-				if (
-					prevWidth === state.current.width &&
-					prevHeight === state.current.height
-				) {
-					return;
-				}
-
-				state.resizing = true;
-
-				// https://github.com/naver/billboard.js/issues/2650
-				if (config.legend_show) {
-					$$.updateSizes();
-					state.isCanvasMode ? $$.updateHtmlLegend?.() : $$.updateLegend();
-				}
-
-				$$.api.flush(false);
-			});
-		}
+		isAutoResize && list.push(redrawOnResize);
 
 		list.push(() => {
 			callFn(config.onresized, $$.api);
 			state.resizing = false;
+			state.resizeLiveScale = null;
 		});
 
 		// add resize functions
