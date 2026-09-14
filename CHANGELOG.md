@@ -1,3 +1,10 @@
+# [4.1.0-next.3](https://github.com/naver/billboard.js/compare/4.1.0-next.2...4.1.0-next.3) (2026-09-14)
+
+
+### Features
+
+* **resize:** add resize.live to follow the container while resizing ([e0309c8](https://github.com/naver/billboard.js/commit/e0309c8d0143f267235e8e925908a82a34cfb226)), closes [#4219](https://github.com/naver/billboard.js/issues/4219)
+
 # [4.1.0-next.2](https://github.com/naver/billboard.js/compare/4.1.0-next.1...4.1.0-next.2) (2026-09-02)
 
 
