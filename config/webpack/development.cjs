@@ -8,7 +8,12 @@ const config = {
 		static: {
 			directory: path.join(__dirname, "../../"),
 			serveIndex: true,
-			watch: true,
+			// watching the project root means watching node_modules too, which
+			// exhausts the file descriptor limit (EMFILE) under chokidar 5.
+			// Only the files the demo pages actually load need a watch.
+			watch: {
+				ignored: /[\\/](?:node_modules|\.git|coverage|dist|dist-esm|storybook-static)[\\/]/
+			}
 		},
 		compress: true,
 		hot: true,
