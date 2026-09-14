@@ -3,6 +3,23 @@ import {defineConfig} from "vitest/config";
 import {playwright} from "@vitest/browser-playwright";
 import {getWorkerSource} from "./config/worker-src.js";
 
+// Inject the separately bundled worker source the same way config/rolldown/esm.js
+// does. `define` can't do it under Vite 8: the transform-time replacement quotes
+// string values on its own, so a pre-stringified source lands double-encoded and
+// the Blob ends up holding a string literal instead of the worker code.
+// split/join rather than a regex: the minified source contains `${...}` sequences.
+const workerSrcPlugin = {
+    name: "bb-worker-src",
+    async transform(code: string) {
+        if (code.includes("__WORKER_SRC__")) {
+            return {
+                code: code.split("__WORKER_SRC__").join(JSON.stringify(await getWorkerSource())),
+                map: null
+            };
+        }
+    }
+};
+
 const utilAliasPlugin = {
     name: "util-alias-resolver",
     enforce: "pre" as const,
@@ -19,14 +36,8 @@ const utilAliasPlugin = {
     }
 };
 
-// async because the worker source is bundled on demand (see config/worker-src.js)
-export default defineConfig(async () => ({
-    plugins: [utilAliasPlugin],
-    define: {
-        // same injection the production builds do, so worker specs exercise the
-        // real pre-bundled worker source instead of an undefined constant
-        __WORKER_SRC__: JSON.stringify(await getWorkerSource())
-    },
+export default defineConfig(() => ({
+    plugins: [utilAliasPlugin, workerSrcPlugin],
     optimizeDeps: {
         include: ["@vitest/coverage-istanbul"]
     },
@@ -63,12 +74,12 @@ export default defineConfig(async () => ({
             "src/scss/billboard.scss"
         ],
         pool: "threads",
+        api: {
+            host: "127.0.0.1"
+        },
         browser: {
             enabled: true,
             provider:  playwright(),
-            api: {
-                host: "127.0.0.1"
-            },
             headless: true,
             viewport: {
                 width: 800,
