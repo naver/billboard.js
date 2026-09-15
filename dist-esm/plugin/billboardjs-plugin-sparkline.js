@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.0.3-nightly-20260912010221
+ * @version 4.0.3-nightly-20260915010558
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -31,20 +31,6 @@ const $COMMON = {
 //#region src/module/util/type-checks.ts
 const isDefined = (v) => typeof v !== "undefined";
 const isObjectType = (v) => typeof v === "object";
-/**
-* Check if is array
-* @param {Array} arr Data to be checked
-* @returns {boolean}
-* @private
-*/
-const isArray = (arr) => Array.isArray(arr);
-/**
-* Check if is object
-* @param {object} obj Data to be checked
-* @returns {boolean}
-* @private
-*/
-const isObject = (obj) => obj && !obj?.nodeType && isObjectType(obj) && !isArray(obj);
 //#endregion
 //#region src/module/browser.ts
 /**
@@ -84,30 +70,6 @@ function getFallback(w) {
 const win = getGlobal();
 const doc = win?.document;
 const [requestAnimationFrame, cancelAnimationFrame, requestIdleCallback, cancelIdleCallback] = getFallback(win);
-//#endregion
-//#region src/module/util/object.ts
-/**
-* Merge object returning new object
-* @param {object} target Target object
-* @param {object} objectN Source object
-* @returns {object} merged target object
-* @private
-*/
-function mergeObj(target, ...objectN) {
-	if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
-	const source = objectN.shift();
-	if (isObject(target) && isObject(source)) Object.keys(source).forEach((key) => {
-		if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
-			const value = source[key];
-			if (value instanceof Date) target[key] = new Date(value.getTime());
-			else if (isObject(value)) {
-				!target[key] && (target[key] = {});
-				target[key] = mergeObj(target[key], value);
-			} else target[key] = isArray(value) ? value.concat() : value;
-		}
-	});
-	return mergeObj(target, ...objectN);
-}
 //#endregion
 //#region src/module/util/dom.ts
 /**
@@ -207,7 +169,7 @@ var Plugin = class {
 	$$;
 	options;
 	config;
-	static version = "4.0.3-nightly-20260912010221";
+	static version = "4.0.3-nightly-20260915010558";
 	/**
 	* Constructor
 	* @param {Any} options config option object

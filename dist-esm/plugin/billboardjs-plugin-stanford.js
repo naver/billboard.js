@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.0.3-nightly-20260912010221
+ * @version 4.0.3-nightly-20260915010558
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -31,20 +31,6 @@ const isEmptyObject = (obj) => {
 	return true;
 };
 const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
-/**
-* Check if is array
-* @param {Array} arr Data to be checked
-* @returns {boolean}
-* @private
-*/
-const isArray = (arr) => Array.isArray(arr);
-/**
-* Check if is object
-* @param {object} obj Data to be checked
-* @returns {boolean}
-* @private
-*/
-const isObject = (obj) => obj && !obj?.nodeType && isObjectType(obj) && !isArray(obj);
 //#endregion
 //#region src/module/browser.ts
 /**
@@ -84,30 +70,6 @@ function getFallback(w) {
 const win = getGlobal();
 const doc = win?.document;
 const [requestAnimationFrame, cancelAnimationFrame, requestIdleCallback, cancelIdleCallback] = getFallback(win);
-//#endregion
-//#region src/module/util/object.ts
-/**
-* Merge object returning new object
-* @param {object} target Target object
-* @param {object} objectN Source object
-* @returns {object} merged target object
-* @private
-*/
-function mergeObj(target, ...objectN) {
-	if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
-	const source = objectN.shift();
-	if (isObject(target) && isObject(source)) Object.keys(source).forEach((key) => {
-		if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
-			const value = source[key];
-			if (value instanceof Date) target[key] = new Date(value.getTime());
-			else if (isObject(value)) {
-				!target[key] && (target[key] = {});
-				target[key] = mergeObj(target[key], value);
-			} else target[key] = isArray(value) ? value.concat() : value;
-		}
-	});
-	return mergeObj(target, ...objectN);
-}
 /**
 * Get range
 * @param {number} start Start number
@@ -238,7 +200,7 @@ var Plugin = class {
 	$$;
 	options;
 	config;
-	static version = "4.0.3-nightly-20260912010221";
+	static version = "4.0.3-nightly-20260915010558";
 	/**
 	* Constructor
 	* @param {Any} options config option object
@@ -424,7 +386,8 @@ var ColorScale = class {
 		if (this.colorScale) this.colorScale.remove();
 		this.colorScale = $$.$el.svg.append("g").attr("width", 50).attr("height", height).attr("class", classes_default.colorScale);
 		this.colorScale.append("g").attr("transform", `translate(0, ${config.padding_top})`).selectAll("bars").data(points).enter().append("rect").attr("y", (d, i) => i * barHeight).attr("x", 0).attr("width", barWidth).attr("height", barHeight).attr("fill", (d) => inverseScale(d));
-		const legendAxis = axisRight(scaleSymlog().domain([target.minEpochs, target.maxEpochs]).range([points[0] + config.padding_top + points[points.length - 1] + barHeight - 1, points[0] + config.padding_top]));
+		const axisScale = scaleSymlog().domain([target.minEpochs, target.maxEpochs]).range([points[0] + config.padding_top + points[points.length - 1] + barHeight - 1, points[0] + config.padding_top]);
+		const legendAxis = axisRight(axisScale);
 		const scaleFormat = config.scale_format;
 		if (scaleFormat === "pow10") legendAxis.tickValues([
 			1,
