@@ -37,6 +37,36 @@ import {$AXIS, $COMMON, $FOCUS, $LEGEND} from "../../src/config/classes";
 import {AXIS_TICK_PADDING, AXIS_TICK_SIZE, TYPE} from "../../src/config/const";
 import {funnel, pie} from "../../src/config/resolver/shape";
 
+/**
+ * Drive a canvas flow animation off a fixed clock.
+ *
+ * `animateCanvasFlow` derives its progress ratio from the frame timestamp, so when
+ * the first animation frame arrives later than the flow duration - which is what
+ * happens on a loaded CI runner - the ratio is already 1. Every frame then reports
+ * the end domain and the progression assertions have nothing left to compare.
+ * Pinning the first frame to the start of the animation and the next one past its
+ * end makes the interpolation observable regardless of machine speed.
+ * @param {number} duration Flow duration in ms
+ * @returns {Function} Restores the real scheduler
+ */
+function stubFlowFrames(duration: number) {
+	const originalRequestAnimationFrame = window.requestAnimationFrame;
+	const started = window.performance.now();
+	let first = true;
+
+	window.requestAnimationFrame = cb => {
+		const timestamp = started + (first ? 0 : duration * 2);
+
+		first = false;
+
+		return originalRequestAnimationFrame(() => cb(timestamp));
+	};
+
+	return () => {
+		window.requestAnimationFrame = originalRequestAnimationFrame;
+	};
+}
+
 describe("ESM canvas", function() {
 	let chart;
 	let container;
@@ -7502,6 +7532,7 @@ describe("ESM canvas", function() {
 
 				return originalRenderCanvasFrame.apply(this, args);
 			});
+		const restoreFrames = stubFlowFrames(30);
 
 		chart.flow({
 			columns: [
@@ -7510,6 +7541,8 @@ describe("ESM canvas", function() {
 			duration: 30,
 			done() {
 				const values = this.data("data1")[0].values.map(v => v.value);
+
+				restoreFrames();
 
 				expect(values).to.deep.equal([40, 50, 60]);
 				expect(domains.length).to.be.greaterThan(1);
@@ -7667,6 +7700,7 @@ describe("ESM canvas", function() {
 
 				return originalRenderCanvasFrame.apply(this, args);
 			});
+		const restoreFrames = stubFlowFrames(30);
 
 		chart.flow({
 			columns: [
@@ -7677,6 +7711,8 @@ describe("ESM canvas", function() {
 			done() {
 				const values = this.data("data1")[0].values.map(v => v.value);
 				const xs = this.data("data1")[0].values.map(v => +v.x);
+
+				restoreFrames();
 
 				expect(values).to.deep.equal([40, 50, 60]);
 				expect(xs.every(x => x > 0)).to.be.true;

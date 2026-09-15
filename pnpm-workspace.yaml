@@ -25,5 +25,6 @@ overrides:
   "@babel/runtime": "^7.29.7"
   "@isaacs/brace-expansion": "^5.0.1"
   "fast-uri": "3.1.2"
-  "path-to-regexp": "0.1.13"
+  "path-to-regexp@<0.1.12": ">=0.1.12"
+  "path-to-regexp@>=1.0.0 <6.3.0": ">=6.3.0"
   "uuid@<11.1.1": ">=11.1.1"

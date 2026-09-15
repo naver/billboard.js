@@ -277,8 +277,8 @@ export default {
 			];
 		}
 
-		const fn = $$.point("update", $$, cx, cy, updateCircleColor, withTransition,
-			flow, selectedCircles);
+		const fn = $$.point("update", $$, cx, cy, updateCircleColor, withTransition, flow,
+			selectedCircles);
 		const mainCircles: any[] = [];
 
 		$root.circle.each(function(d) {
