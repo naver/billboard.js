@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>module/worker.ts - billboard.js API doc</title>
+    
+    <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
+    
+        <meta name="keywords" content="chart, SVG, D3, Data Visualization" />
+        <meta name="keyword" content="chart, SVG, D3, Data Visualization" />
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://naver.github.io/billboard.js/demo/" target="_blank" >Examples</a></h2><h2><a href="https://github.com/naver/billboard.js" target="_blank" >GitHub</a></h2><h3>Namespaces</h3><ul><li><a href="bb.html">bb</a><ul class='members'><li data-type='member'><a href="bb.html#.instance">instance</a></li><li data-type='member'><a href="bb.html#.plugin">plugin</a></li><li data-type='member'><a href="bb.html#.version">version</a></li></ul><ul class='methods'><li data-type='method'><a href="bb.html#.defaults">defaults</a></li><li data-type='method'><a href="bb.html#.generate">generate</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="Chart.html">Chart</a><ul class='members'><li data-type='member'><a href="Chart.html#.$">$</a></li><li data-type='member'><a href="Chart.html#.plugins">plugins</a></li></ul><ul class='methods'><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4labels">axis․labels</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4max">axis․max</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4min">axis․min</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4range">axis․range</a></li><li data-type='method'><a href="Chart.html#categories">categories</a></li><li data-type='method'><a href="Chart.html#category">category</a></li><li data-type='method'><a href="Chart.html#color">color</a></li><li data-type='method'><a href="Chart.html#config">config</a></li><li data-type='method'><a href="Chart.html#data">data</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4axes">data․axes</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4colors">data․colors</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4max">data․max</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4min">data․min</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4names">data․names</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4shown">data․shown</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4values">data․values</a></li><li data-type='method'><a href="Chart.html#defocus">defocus</a></li><li data-type='method'><a href="Chart.html#destroy">destroy</a></li><li data-type='method'><a href="Chart.html#export">export</a></li><li data-type='method'><a href="Chart.html#flow">flow</a></li><li data-type='method'><a href="Chart.html#flush">flush</a></li><li data-type='method'><a href="Chart.html#focus">focus</a></li><li data-type='method'><a href="Chart.html#groups">groups</a></li><li data-type='method'><a href="Chart.html#hide">hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4hide">legend․hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4show">legend․show</a></li><li data-type='method'><a href="Chart.html#load">load</a></li><li data-type='method'><a href="Chart.html#regions">regions</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4add">regions․add</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4remove">regions․remove</a></li><li data-type='method'><a href="Chart.html#resize">resize</a></li><li data-type='method'><a href="Chart.html#revert">revert</a></li><li data-type='method'><a href="Chart.html#select">select</a></li><li data-type='method'><a href="Chart.html#selected">selected</a></li><li data-type='method'><a href="Chart.html#show">show</a></li><li data-type='method'><a href="Chart.html#subchart">subchart</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4hide">subchart․hide</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4reset">subchart․reset</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4show">subchart․show</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4toggle">subchart․toggle</a></li><li data-type='method'><a href="Chart.html#toggle">toggle</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4hide">tooltip․hide</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4show">tooltip․show</a></li><li data-type='method'><a href="Chart.html#unload">unload</a></li><li data-type='method'><a href="Chart.html#unselect">unselect</a></li><li data-type='method'><a href="Chart.html#unzoom">unzoom</a></li><li data-type='method'><a href="Chart.html#x">x</a></li><li data-type='method'><a href="Chart.html#xgrids">xgrids</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4add">xgrids․add</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4remove">xgrids․remove</a></li><li data-type='method'><a href="Chart.html#xs">xs</a></li><li data-type='method'><a href="Chart.html#ygrids">ygrids</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4add">ygrids․add</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4remove">ygrids․remove</a></li><li data-type='method'><a href="Chart.html#zoom">zoom</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4enable">zoom․enable</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4max">zoom․max</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4min">zoom․min</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4range">zoom․range</a></li></ul></li><li><a href="Options.html">Options</a><ul class='members'><li data-type='member'><a href="Options.html#.arc">arc</a></li><li data-type='member'><a href="Options.html#.area">area</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4evalTextSize">axis․evalTextSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4rotated">axis․rotated</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4tooltip">axis․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4axes">axis․x․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4categories">axis․x․categories</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4clipPath">axis․x․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4extent">axis․x․extent</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4forceAsSingle">axis․x․forceAsSingle</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4height">axis․x․height</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4inverted">axis․x․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4label">axis․x․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4localtime">axis․x․localtime</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4max">axis․x․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4min">axis․x․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4padding">axis․x․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4show">axis․x․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4autorotate">axis․x․tick․autorotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4centered">axis․x․tick․centered</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4count">axis․x․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․x․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․x․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․x․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4reverse">axis․x․tick․culling․reverse</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4fit">axis․x․tick․fit</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4format">axis․x․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4inner">axis․x․tick․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4multiline">axis․x․tick․multiline</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․x․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․x․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4show">axis․x․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4inner">axis․x․tick․text․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․x․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․x․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4tooltip">axis․x․tick․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4values">axis․x․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4width">axis․x․tick․width</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4type">axis․x․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4axes">axis․y2․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4center">axis․y2․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4default">axis․y2․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inner">axis․y2․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inverted">axis․y2․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4label">axis․y2․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4max">axis․y2․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4min">axis․y2․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4padding">axis․y2․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4show">axis․y2․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y2․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y2․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․y2․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y2․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4reverse">axis․y2․tick․culling․reverse</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y2․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4inner">axis․y2․tick․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y2․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y2․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y2․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y2․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y2․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y2․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y2․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4type">axis․y2․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4axes">axis․y․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4center">axis․y․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4clipPath">axis․y․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4default">axis․y․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inner">axis․y․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inverted">axis․y․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4label">axis․y․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4max">axis․y․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4min">axis․y․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4padding">axis․y․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4show">axis․y․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․y․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4reverse">axis․y․tick․culling․reverse</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4inner">axis․y․tick․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4type">axis․y․type</a></li><li data-type='member'><a href="Options.html#.background">background</a></li><li data-type='member'><a href="Options.html#.bar">bar</a></li><li data-type='member'><a href="Options.html#.bindto">bindto</a></li><li data-type='member'><a href="Options.html#.boost">boost</a></li><li data-type='member'><a href="Options.html#.bubble">bubble</a></li><li data-type='member'><a href="Options.html#.candlestick">candlestick</a></li><li data-type='member'><a href="Options.html#.canvas">canvas</a></li><li data-type='member'><a href="Options.html#.clipPath">clipPath</a></li><li data-type='member'><a href="Options.html#.color">color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4axes">data․axes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4classes">data․classes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4color">data․color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4colors">data․colors</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4columns">data․columns</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4empty%25E2%2580%25A4label%25E2%2580%25A4text">data․empty․label․text</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4filter">data․filter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groups">data․groups</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groupsZeroAs">data․groupsZeroAs</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4headers">data․headers</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4hide">data․hide</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4idConverter">data․idConverter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4json">data․json</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4keys">data․keys</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4labels">data․labels</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4mimeType">data․mimeType</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4names">data․names</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onclick">data․onclick</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onhidden">data․onhidden</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmax">data․onmax</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmin">data․onmin</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onout">data․onout</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onover">data․onover</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onselected">data․onselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onshown">data․onshown</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onunselected">data․onunselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4order">data․order</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4regions">data․regions</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4rows">data․rows</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4draggable">data․selection․draggable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled">data․selection․enabled</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4grouped">data․selection․grouped</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4isselectable">data․selection․isselectable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4multiple">data․selection․multiple</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4stack%25E2%2580%25A4normalize">data․stack․normalize</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4type">data․type</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4types">data․types</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4url">data․url</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4x">data․x</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xFormat">data․xFormat</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xLocaltime">data․xLocaltime</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xSort">data․xSort</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xs">data․xs</a></li><li data-type='member'><a href="Options.html#.donut">donut</a></li><li data-type='member'><a href="Options.html#.funnel">funnel</a></li><li data-type='member'><a href="Options.html#.gauge">gauge</a></li><li data-type='member'><a href="Options.html#.grid">grid</a></li><li data-type='member'><a href="Options.html#.interaction">interaction</a></li><li data-type='member'><a href="Options.html#.legend">legend</a></li><li data-type='member'><a href="Options.html#.line">line</a></li><li data-type='member'><a href="Options.html#.onafterinit">onafterinit</a></li><li data-type='member'><a href="Options.html#.onbeforeinit">onbeforeinit</a></li><li data-type='member'><a href="Options.html#.onclick">onclick</a></li><li data-type='member'><a href="Options.html#.oninit">oninit</a></li><li data-type='member'><a href="Options.html#.onout">onout</a></li><li data-type='member'><a href="Options.html#.onover">onover</a></li><li data-type='member'><a href="Options.html#.onrendered">onrendered</a></li><li data-type='member'><a href="Options.html#.onresize">onresize</a></li><li data-type='member'><a href="Options.html#.onresized">onresized</a></li><li data-type='member'><a href="Options.html#.padding">padding</a></li><li data-type='member'><a href="Options.html#.pie">pie</a></li><li data-type='member'><a href="Options.html#.plugins">plugins</a></li><li data-type='member'><a href="Options.html#.point">point</a></li><li data-type='member'><a href="Options.html#.polar">polar</a></li><li data-type='member'><a href="Options.html#.radar">radar</a></li><li data-type='member'><a href="Options.html#.regions">regions</a></li><li data-type='member'><a href="Options.html#.render">render</a></li><li data-type='member'><a href="Options.html#.resize">resize</a></li><li data-type='member'><a href="Options.html#.scatter">scatter</a></li><li data-type='member'><a href="Options.html#.size">size</a></li><li data-type='member'><a href="Options.html#.spline">spline</a></li><li data-type='member'><a href="Options.html#.subchart">subchart</a></li><li data-type='member'><a href="Options.html#.svg">svg</a></li><li data-type='member'><a href="Options.html#.title">title</a></li><li data-type='member'><a href="Options.html#.tooltip">tooltip</a></li><li data-type='member'><a href="Options.html#.transition">transition</a></li><li data-type='member'><a href="Options.html#.treemap">treemap</a></li><li data-type='member'><a href="Options.html#.zoom">zoom</a></li></ul></li><li><a href="billboard.module_js_react.html">React Component</a></li><li><a href="Plugin.html">Plugin</a><ul class='members'><li data-type='member'><a href="Plugin.html#.version">version</a></li></ul></li><li><a href="plugin-bubblecompare.html">plugin-bubblecompare</a><ul class='members'><li data-type='member'><a href="plugin-bubblecompare.html#.expandScale">expandScale</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.maxR">maxR</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.minR">minR</a></li></ul></li><li><a href="plugin-sparkline.html">plugin-sparkline</a><ul class='members'><li data-type='member'><a href="plugin-sparkline.html#.selector">selector</a></li></ul></li><li><a href="plugin-stanford.html">plugin-stanford</a><ul class='members'><li data-type='member'><a href="plugin-stanford.html#.colors">colors</a></li><li data-type='member'><a href="plugin-stanford.html#.epochs">epochs</a></li><li data-type='member'><a href="plugin-stanford.html#.lines">lines</a></li><li data-type='member'><a href="plugin-stanford.html#.padding">padding</a></li><li data-type='member'><a href="plugin-stanford.html#.regions">regions</a></li><li data-type='member'><a href="plugin-stanford.html#.scale">scale</a></li></ul></li><li><a href="plugin-tableview.html">plugin-tableview</a><ul class='members'><li data-type='member'><a href="plugin-tableview.html#.categoryFormat">categoryFormat</a></li><li data-type='member'><a href="plugin-tableview.html#.categoryTitle">categoryTitle</a></li><li data-type='member'><a href="plugin-tableview.html#.class">class</a></li><li data-type='member'><a href="plugin-tableview.html#.nullString">nullString</a></li><li data-type='member'><a href="plugin-tableview.html#.numberFormat">numberFormat</a></li><li data-type='member'><a href="plugin-tableview.html#.selector">selector</a></li><li data-type='member'><a href="plugin-tableview.html#.style">style</a></li><li data-type='member'><a href="plugin-tableview.html#.title">title</a></li><li data-type='member'><a href="plugin-tableview.html#.updateOnToggle">updateOnToggle</a></li></ul></li><li><a href="plugin-textoverlap.html">plugin-textoverlap</a><ul class='members'><li data-type='member'><a href="plugin-textoverlap.html#.area">area</a></li><li data-type='member'><a href="plugin-textoverlap.html#.extent">extent</a></li><li data-type='member'><a href="plugin-textoverlap.html#.selector">selector</a></li></ul></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">module/worker.ts</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+import {window} from "./browser";
+
+/**
+ * The worker source constant (declared in config/globals.d.ts) is pre-bundled from
+ * `src/module/worker.entry.ts` and injected at build time by config/worker-src.js.
+ * Never name that constant outside the single reference in getWorkerSrc(): the
+ * rolldown injection is textual, so a mention in a comment would inline the whole
+ * source string a second time.
+ *
+ * Offloaded work is addressed by op name and the worker code is built
+ * independently of the application bundle, so no application function is ever
+ * stringified. Host toolchains that rewrite function bodies - coverage
+ * instrumentation, babel helpers, bundler-hoisted module scope - cannot break
+ * the worker anymore.
+ */
+// Store worker cache in memory
+const cache: {[key: string]: {revoke: boolean, src: string, worker: Worker | null}} = {};
+const disabledKeys = new Set&lt;string>();
+
+/**
+ * Parity self-test state, keyed as `${key}:${op}`: the in-flight check while it runs,
+ * `true` once the worker agreed with the main thread.
+ * @private
+ */
+const verifiedOps = new Map&lt;string, true | Promise&lt;boolean>>();
+
+const DEFAULT_WORKER_TIMEOUT = 5000;
+
+/**
+ * Number of leading entries kept when sampling arguments for the parity self-test.
+ * @private
+ */
+const VERIFY_SAMPLE_SIZE = 3;
+
+// Correlation id for worker request/response matching
+let messageId = 0;
+
+type TWorkerOptions = {timeout?: number, workerUrl?: string};
+
+/**
+ * Get the build-injected worker source.
+ * @returns {string} Worker source, or empty string when it wasn't injected
+ * @private
+ */
+function getWorkerSrc(): string {
+	try {
+		// referenced exactly once: each occurrence inlines the whole source string
+		return __WORKER_SRC__;
+	} catch {
+		// not injected (e.g. consuming src/*.ts directly) - stay on the main thread
+		return "";
+	}
+}
+
+/**
+ * Get Web Worker related browser APIs when all required primitives are available.
+ * @returns {object|null} Worker API handles
+ * @private
+ */
+function getWorkerAPI():
+	| {Blob: typeof Blob, Worker: typeof Worker, URL: typeof URL}
+	| null {
+	const {Blob, Worker, URL} = window;
+
+	return Worker &amp;&amp; Blob &amp;&amp; URL?.createObjectURL &amp;&amp; URL?.revokeObjectURL ?
+		{Blob, Worker, URL} :
+		null;
+}
+
+/**
+ * Get Worker constructor when available.
+ * @returns {function|null} Worker constructor
+ * @private
+ */
+function getWorkerConstructor(): typeof Worker | null {
+	return window.Worker || null;
+}
+
+/**
+ * Normalize worker options while preserving the legacy numeric timeout argument.
+ * @param {number|object} options Worker timeout or options
+ * @returns {object} Normalized worker options
+ * @private
+ */
+function normalizeWorkerOptions(options?: number | TWorkerOptions): Required&lt;TWorkerOptions> {
+	return typeof options === "number" ? {timeout: options, workerUrl: ""} : {
+		timeout: options?.timeout ?? DEFAULT_WORKER_TIMEOUT,
+		workerUrl: options?.workerUrl ?? ""
+	};
+}
+
+/**
+ * Release cached worker resources and optionally disable this worker for the session.
+ * @param {string} key Cache key
+ * @param {boolean} disable Whether to disable future worker attempts
+ * @private
+ */
+function releaseWorker(key: string, disable = false): void {
+	const cached = cache[key];
+
+	if (disable) {
+		disabledKeys.add(key);
+	}
+
+	if (cached) {
+		cached.worker?.terminate();
+		cached.revoke &amp;&amp; getWorkerAPI()?.URL.revokeObjectURL(cached.src);
+		delete cache[key];
+	}
+
+	// entries are stored per op as `${key}:${op}`, so a bare key never matches:
+	// drop every op verified against the worker being released
+	for (const verified of verifiedOps.keys()) {
+		if (verified.startsWith(`${key}:`)) {
+			verifiedOps.delete(verified);
+		}
+	}
+}
+
+/**
+ * Compare worker and main-thread results for the parity self-test.
+ * @param {unknown} actual Worker result
+ * @param {unknown} expected Main-thread result
+ * @returns {boolean} Whether results match
+ * @private
+ */
+function isSameResult(actual, expected): boolean {
+	if (actual === expected) {
+		return true;
+	}
+
+	try {
+		return JSON.stringify(actual) === JSON.stringify(expected);
+	} catch {
+		// Structured-cloned worker results should normally be serializable. If a custom
+		// worker returns an exotic value, don't disable the worker on an unverifiable result.
+		return true;
+	}
+}
+
+/**
+ * Truncate conversion arguments to a small payload of the same shape.
+ *
+ * `args[0]` is the data array for every op: an array of series for `columns`, of rows
+ * for `rows`, of records for `json`. Keeping a few leading entries - and, where those
+ * entries are themselves arrays, a few leading cells of each - stays a valid payload
+ * for all three while costing a fixed amount regardless of the real data size.
+ * Anything that isn't an array is passed through untouched.
+ * @param {Array} args Conversion arguments
+ * @returns {Array} Sampled arguments
+ * @private
+ */
+function getVerifySample(args: unknown[]): unknown[] {
+	const [data, ...rest] = args;
+
+	if (!Array.isArray(data)) {
+		return args;
+	}
+
+	return [
+		data.slice(0, VERIFY_SAMPLE_SIZE).map(entry =>
+			// +1: a column/row entry leads with its name, which the values follow
+			Array.isArray(entry) ? entry.slice(0, VERIFY_SAMPLE_SIZE + 1) : entry
+		),
+		...rest
+	];
+}
+
+/**
+ * Post a single request to the worker and resolve with its result.
+ * @param {Worker} worker Worker instance
+ * @param {string} op Worker op name
+ * @param {Array} args Arguments to hand over
+ * @param {number} timeout Response timeout in milliseconds
+ * @returns {Promise} Worker result
+ * @private
+ */
+function request(worker: Worker, op: string, args: unknown[], timeout: number): Promise&lt;unknown> {
+	// workers are cached and shared: match the response by id so concurrent callers
+	// don't steal each other's result
+	const id = ++messageId;
+	let settled = false;
+	let cleanup: () => void;
+
+	const promise = new Promise((resolve, reject) => {
+		const settle = (fn: Function, value: unknown) => {
+			if (!settled) {
+				settled = true;
+				cleanup();
+				fn(value);
+			}
+		};
+		const handler = function(e: MessageEvent) {
+			if (e.data?.id === id) {
+				e.data.error ?
+					settle(reject, new Error(e.data.error)) :
+					settle(resolve, e.data.result);
+			}
+		};
+		const errorHandler = function() {
+			settle(reject, new Error("worker error"));
+		};
+		const timer = setTimeout(() => settle(reject, new Error("worker timeout")), timeout);
+
+		cleanup = () => {
+			clearTimeout(timer);
+			worker.removeEventListener("message", handler);
+			worker.removeEventListener("error", errorHandler);
+		};
+
+		worker.addEventListener("message", handler);
+		worker.addEventListener("error", errorHandler);
+	});
+
+	// Thrown synchronously, not turned into a rejection: a worker that cannot even
+	// accept a message must fall back on the main thread synchronously, so that
+	// `bb.generate()` stays as synchronous as it is with `useWorker: false`.
+	try {
+		worker.postMessage({args, id, op});
+	} catch (error) {
+		settled = true;
+		cleanup!();
+		throw error;
+	}
+
+	return promise;
+}
+
+/**
+ * Start the parity self-test for an op, on a sampled payload rather than the real one.
+ *
+ * The check answers "does this worker implement this op the way the main thread does",
+ * which the sample settles just as well as the full dataset - and at a cost that does
+ * not grow with it. Re-parsing the real payload here would hand back the very
+ * main-thread work the offload was meant to avoid.
+ * @param {Worker} worker Worker instance
+ * @param {string} verifyKey Cache key as `${key}:${op}`
+ * @param {string} op Worker op name
+ * @param {function} fn Equivalent main-thread function
+ * @param {Array} args Conversion arguments to sample from
+ * @param {number} timeout Response timeout in milliseconds
+ * @returns {Promise} Whether the worker matched the main thread
+ * @private
+ */
+function startVerify(
+	worker: Worker,
+	verifyKey: string,
+	op: string,
+	fn: Function,
+	args: unknown[],
+	timeout: number
+): Promise&lt;boolean> {
+	const sample = getVerifySample(args);
+	const check = request(worker, op, sample, timeout)
+		// a worker that errors or times out on the sample is handled by the real
+		// request's own fallback: report it as unverified and let that path run
+		.then(result => isSameResult(result, fn(...sample)), () => false)
+		.then(matched => {
+			matched ? verifiedOps.set(verifyKey, true) : verifiedOps.delete(verifyKey);
+
+			return matched;
+		});
+
+	verifiedOps.set(verifyKey, check);
+
+	return check;
+}
+
+/**
+ * Get or create cached worker resources (Object URL, Worker)
+ * @param {string} op Worker op name
+ * @param {string} workerUrl Custom worker script URL.
+ * @returns {{key: string, src: string}} Cache key and Object URL
+ * @private
+ */
+function getOrCreateWorkerResources(op: string, workerUrl = ""):
+	| {key: string, src: string}
+	| null {
+	const hasWorker = !!getWorkerConstructor();
+	const api = workerUrl ? null : getWorkerAPI();
+	const src = workerUrl ? "" : getWorkerSrc();
+	// one worker per source: ops share a single cached worker per script
+	const key = workerUrl || "blob";
+
+	if (!hasWorker || (!workerUrl &amp;&amp; (!api || !src)) || disabledKeys.has(key)) {
+		return null;
+	}
+
+	if (!(key in cache)) {
+		try {
+			if (workerUrl) {
+				cache[key] = {
+					revoke: false,
+					src: workerUrl,
+					worker: null
+				};
+			} else if (api) {
+				// Create Blob and Object URL for Web Worker
+				const blob = new api.Blob([src], {
+					type: "text/javascript"
+				});
+
+				cache[key] = {
+					revoke: true,
+					src: api.URL.createObjectURL(blob),
+					worker: null
+				};
+			}
+		} catch {
+			return null;
+		}
+	}
+
+	return {key, src: cache[key].src};
+}
+
+/**
+ * Get or create cached WebWorker instance
+ * @param {string} key Cache key
+ * @param {string} src URL object as string
+ * @returns {Worker} WebWorker instance
+ * @private
+ */
+export function getWorker(key: string, src: string): Worker | null {
+	const cached = cache[key];
+	const Worker = getWorkerConstructor();
+
+	// Return null if cache entry doesn't exist
+	if (!cached || !Worker || disabledKeys.has(key)) {
+		return null;
+	}
+
+	if (!cached.worker) {
+		try {
+			cached.worker = new Worker(src);
+		} catch {
+			releaseWorker(key, true);
+			return null;
+		}
+	}
+
+	return cached.worker;
+}
+
+/**
+ * Create and run on Web Worker
+ * @param {boolean} useWorker Use Web Worker
+ * @param {string} op Op name registered in src/module/worker.entry.ts
+ * @param {function} fn Equivalent main-thread function, used for fallback and for the
+ * sampled parity self-test
+ * @param {function} callback Callback function to receive result from worker
+ * @param {number|object} options Worker response timeout or options.
+ * @returns {function}
+ * @example
+ * 	const worker = runWorker(true, "rows", rows, function(data) {
+ * 		  // callback after worker is done
+ * 	 	  console.log("result:", data);
+ * 	   });
+ *
+ * 	worker(11111);
+ * @private
+ */
+export function runWorker(
+	useWorker = true,
+	op: string,
+	fn: Function,
+	callback: Function,
+	options?: number | TWorkerOptions
+): Function {
+	const {timeout, workerUrl} = normalizeWorkerOptions(options);
+	const runSync = function(...args: unknown[]) {
+		const res = fn(...args);
+
+		callback(res);
+	};
+	let runFn = runSync;
+
+	if (useWorker) {
+		const workerResources = getOrCreateWorkerResources(op, workerUrl);
+		const worker = workerResources ? getWorker(workerResources.key, workerResources.src) : null;
+
+		if (worker &amp;&amp; workerResources) {
+			const {key} = workerResources;
+
+			runFn = function(...args: unknown[]) {
+				// any failure - worker error, {error} reply, timeout, postMessage throw,
+				// parity mismatch - gives up on this worker for the session and redoes the
+				// work on the main thread
+				const fallback = () => {
+					releaseWorker(key, true);
+					runFn = runSync;
+					runSync(...args);
+				};
+
+				try {
+					const verifyKey = `${key}:${op}`;
+					// Started before the real request is posted: the worker processes
+					// messages in order, so the sampled result comes back first and the
+					// check overlaps the real conversion instead of following it.
+					const verified = verifiedOps.get(verifyKey) ??
+						startVerify(worker, verifyKey, op, fn, args, timeout);
+
+					request(worker, op, args, timeout).then(result => {
+						// already verified: hand the result over without touching the
+						// main-thread converter at all
+						if (verified === true) {
+							callback(result);
+						} else {
+							verified.then(matched => (matched ? callback(result) : fallback()));
+						}
+					}, fallback);
+				} catch {
+					// postMessage refused the payload outright - stay synchronous
+					fallback();
+				}
+			};
+		}
+	}
+
+	return runFn;
+}
+
+/**
+ * Clean-up all cached workers and release resources
+ * @private
+ */
+export function cleanupWorkers(): void {
+	const api = getWorkerAPI();
+
+	for (const key in cache) {
+		const cached = cache[key];
+
+		if (cached.worker) {
+			cached.worker.terminate();
+		}
+
+		if (cached.src) {
+			cached.revoke &amp;&amp; api?.URL.revokeObjectURL(cached.src);
+		}
+
+		delete cache[key];
+	}
+
+	disabledKeys.clear();
+	verifiedOps.clear();
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="static/doc.css">
+    
+    <script src="static/analytics.js"></script>
+    
+</body>
+</html>
