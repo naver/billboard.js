@@ -1,3 +1,25 @@
+# [4.1.0](https://github.com/naver/billboard.js/compare/4.0.3...4.1.0) (2026-09-16)
+
+
+### Bug Fixes
+
+* **bar:** prevent invalid SVG arc flags on load() with bar.radius ([f195b91](https://github.com/naver/billboard.js/commit/f195b91c18d8f4e5f684b4033f632610d1ba18d2)), closes [#4166](https://github.com/naver/billboard.js/issues/4166)
+* **boost:** harden worker fallback paths ([b4fe41a](https://github.com/naver/billboard.js/commit/b4fe41a54789d0288708093e7ac4b6a35dd4f850))
+* **grid:** guard optional grid focus handlers ([ce448fb](https://github.com/naver/billboard.js/commit/ce448fbf015dc5e982d551ae4e22eef48cf282d3)), closes [#4205](https://github.com/naver/billboard.js/issues/4205)
+* **plugin-tableview:** validate constructor options and warn on invalid input ([b98bb3f](https://github.com/naver/billboard.js/commit/b98bb3f18a2241c63a3f6597ff9514b0c1b98d41)), closes [#4140](https://github.com/naver/billboard.js/issues/4140)
+* **selection:** honor multiple=false and point.focus.only in select API ([0b7255c](https://github.com/naver/billboard.js/commit/0b7255c96521e1d7cf5effc4739b3e23fff8f68f))
+* **util:** Correctly detect empty objects with polluted prototype ([78d47ff](https://github.com/naver/billboard.js/commit/78d47ff19ef3cc3254f89612b96bf584191db667)), closes [#4193](https://github.com/naver/billboard.js/issues/4193)
+
+
+### Features
+
+* **boost:** pre-bundle the worker source and add workerUrl ([79aa7ec](https://github.com/naver/billboard.js/commit/79aa7ec41413115861fc77f032e28e66e12192db))
+* **canvas:** support grid line class selectors ([61cb9b7](https://github.com/naver/billboard.js/commit/61cb9b77a83995fa332ee6ef3a0f6280bbd4b0cf)), closes [#4164](https://github.com/naver/billboard.js/issues/4164)
+* **react:** add react subpath export ([e801ccf](https://github.com/naver/billboard.js/commit/e801ccf75800a442335771870e5e50652683cce8))
+* **resize:** add resize.live to follow the container while resizing ([e0309c8](https://github.com/naver/billboard.js/commit/e0309c8d0143f267235e8e925908a82a34cfb226)), closes [#4219](https://github.com/naver/billboard.js/issues/4219)
+* **subchart:** add focus grid toggle ([2762d02](https://github.com/naver/billboard.js/commit/2762d0240dc32e930b431606fd5d9f9f7e9a24a9)), closes [#4176](https://github.com/naver/billboard.js/issues/4176)
+* **subchart:** support configurable subchart rendering ([37ec4b7](https://github.com/naver/billboard.js/commit/37ec4b7c849b13d8252b3f2fe3d2852177029d5a)), closes [#4175](https://github.com/naver/billboard.js/issues/4175)
+
 ## [4.0.3](https://github.com/naver/billboard.js/compare/4.0.2...4.0.3) (2026-07-06)
 
 
