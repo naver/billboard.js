@@ -219,23 +219,24 @@ describe("API show", () => {
 
 				// show data
 				chart.toggle();
+
+				// wait from the show call, not from the start of the test
+				setTimeout(() => {
+					main.selectAll(`.${$LINE.chartLine}`).each(function() {
+						expect(this.style.opacity).to.be.equal("");
+					});
+
+					legend = internal.$el.svg.selectAll(`.${$LEGEND.legendItemHidden}`);
+
+					expect(+legend.size()).to.be.equal(0);
+
+					legend.each(function() {
+						expect(d3Select(this).style("opacity")).to.be.equal("");
+					});
+
+					done(1);
+				}, 350);
 			}, 350);
-
-			setTimeout(() => {
-				main.selectAll(`.${$LINE.chartLine}`).each(function() {
-					expect(this.style.opacity).to.be.equal("");
-				});
-
-				legend = internal.$el.svg.selectAll(`.${$LEGEND.legendItemHidden}`);
-
-				expect(+legend.size()).to.be.equal(0);
-
-				legend.each(function() {
-					expect(d3Select(this).style("opacity")).to.be.equal("");
-				});
-
-				done(1);
-			}, 700);
 		}));
 	});
 
