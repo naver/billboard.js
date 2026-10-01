@@ -172,8 +172,9 @@ export default {
 		const {axis, config, scale, state, $el: {grid, main}} = $$;
 		const isRotated = config.axis_rotated;
 		const pos = d => scale.y(d);
-		const gridValues = axis.y.getGeneratedTicks(config.grid_y_ticks) ||
-			$$.scale.y.ticks(config.grid_y_ticks);
+		const generated = axis.y.getGeneratedTicks(config.grid_y_ticks);
+		// when the y axis (or its ticks) isn't rendered, no ticks are generated
+		const gridValues = generated?.length ? generated : $$.scale.y.ticks(config.grid_y_ticks);
 
 		grid.y = main.select(`.${$GRID.ygrids}`)
 			.selectAll(`.${$GRID.ygrid}`)

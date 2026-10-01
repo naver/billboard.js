@@ -52,12 +52,14 @@ import {funnel, pie} from "../../src/config/resolver/shape";
 function stubFlowFrames(duration: number) {
 	const originalRequestAnimationFrame = window.requestAnimationFrame;
 	const started = window.performance.now();
-	let first = true;
+	// keyed by callback: flow re-requests the same render function every frame,
+	// so an unrelated rAF call can't take its first frame
+	const requested = new WeakSet<FrameRequestCallback>();
 
 	window.requestAnimationFrame = cb => {
-		const timestamp = started + (first ? 0 : duration * 2);
+		const timestamp = started + (requested.has(cb) ? duration * 2 : 0);
 
-		first = false;
+		requested.add(cb);
 
 		return originalRequestAnimationFrame(() => cb(timestamp));
 	};

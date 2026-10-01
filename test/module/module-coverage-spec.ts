@@ -829,14 +829,16 @@ describe("MODULE coverage helpers", () => {
 			const state = {pendingRaf: null};
 			let calls = 0;
 
+			// first call runs synchronously, the following one is deferred to the next frame
 			scheduleRAFUpdate(state, () => calls++);
-			scheduleRAFUpdate(state, () => calls++);
+			expect(calls).to.be.equal(1);
 
-			setTimeout(() => {
+			scheduleRAFUpdate(state, () => {
+				calls++;
 				expect(calls).to.be.equal(2);
 				svg.remove();
 				done(1);
-			}, 30);
+			});
 		}));
 
 		it("emulates mouse and touch events", () => {

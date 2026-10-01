@@ -177,6 +177,33 @@ describe("GRID", function() {
 			});
 		});
 
+		it("set options: axis.y.show=false", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				axis: {
+					y: {
+						show: false
+					}
+				},
+				grid: {
+					y: {
+						show: true
+					}
+				}
+			};
+		});
+
+		it("should show y grids when the y axis is hidden", () => {
+			const ygrids = chart.$.main.select(`.${$GRID.ygrids}`);
+
+			expect(ygrids.size()).to.be.equal(1);
+			expect(ygrids.selectAll(`.${$GRID.ygrid}`).size()).to.be.equal(9);
+		});
+
 		it("set options", () => {
 				args = {
 					data: {

@@ -430,6 +430,9 @@ describe("ZOOM", function() {
 				zoom: {
 					rescale: true,
 					enabled: true
+				},
+				transition: {
+					duration: 0
 				}
 			};
 		});
