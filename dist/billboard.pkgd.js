@@ -5,10 +5,10 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.0-nightly-20260917010543
+ * @version 4.1.0-nightly-20261001012054
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
- * - @types/d3-selection ^3.0.11
+ * - @types/d3-selection ^3.0.12
  * - @types/d3-transition ^3.0.9
  * - d3-axis ^3.0.0
  * - d3-brush ^3.0.0
@@ -53825,7 +53825,8 @@ function _smoothLines(el, type) {
     const { axis, config, scale, state, $el: { grid, main } } = $$;
     const isRotated = config.axis_rotated;
     const pos = (d) => scale.y(d);
-    const gridValues = axis.y.getGeneratedTicks(config.grid_y_ticks) || $$.scale.y.ticks(config.grid_y_ticks);
+    const generated = axis.y.getGeneratedTicks(config.grid_y_ticks);
+    const gridValues = (generated == null ? void 0 : generated.length) ? generated : $$.scale.y.ticks(config.grid_y_ticks);
     grid.y = main.select(`.${$GRID.ygrids}`).selectAll(`.${$GRID.ygrid}`).data(gridValues);
     grid.y.exit().remove();
     grid.y = grid.y.enter().append("line").attr("class", $GRID.ygrid).merge(grid.y);
@@ -67721,7 +67722,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.1.0-nightly-20260917010543",
+  version: "4.1.0-nightly-20261001012054",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

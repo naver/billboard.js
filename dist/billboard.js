@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.0-nightly-20260917010543
+ * @version 4.1.0-nightly-20261001012054
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -23489,7 +23489,8 @@ function _smoothLines(el, type) {
     const { axis, config, scale, state, $el: { grid, main } } = $$;
     const isRotated = config.axis_rotated;
     const pos = (d) => scale.y(d);
-    const gridValues = axis.y.getGeneratedTicks(config.grid_y_ticks) || $$.scale.y.ticks(config.grid_y_ticks);
+    const generated = axis.y.getGeneratedTicks(config.grid_y_ticks);
+    const gridValues = (generated == null ? void 0 : generated.length) ? generated : $$.scale.y.ticks(config.grid_y_ticks);
     grid.y = main.select(`.${$GRID.ygrids}`).selectAll(`.${$GRID.ygrid}`).data(gridValues);
     grid.y.exit().remove();
     grid.y = grid.y.enter().append("line").attr("class", $GRID.ygrid).merge(grid.y);
@@ -36287,7 +36288,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.1.0-nightly-20260917010543",
+  version: "4.1.0-nightly-20261001012054",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
