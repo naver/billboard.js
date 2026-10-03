@@ -1,3 +1,10 @@
+## [4.1.1](https://github.com/naver/billboard.js/compare/4.1.0...4.1.1) (2026-09-30)
+
+
+### Bug Fixes
+
+* **grid:** render y grid when the y axis is hidden ([86468cb](https://github.com/naver/billboard.js/commit/86468cbe045d411af27bb60986c0d4bfc3427673)), closes [#4229](https://github.com/naver/billboard.js/issues/4229) [#4230](https://github.com/naver/billboard.js/issues/4230)
+
 # [4.1.0](https://github.com/naver/billboard.js/compare/4.0.3...4.1.0) (2026-09-16)
 
 
