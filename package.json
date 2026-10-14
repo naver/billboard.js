@@ -166,7 +166,7 @@
 		"esbuild-loader": "^4.5.0",
 		"eslint": "^10.11.0",
 		"eslint-plugin-import": "^2.32.0",
-		"eslint-plugin-jsdoc": "^64.5.4",
+		"eslint-plugin-jsdoc": "^65.2.4",
 		"husky": "^9.1.7",
 		"jsdoc": "^4.0.5",
 		"lint-staged": "^17.6.0",
