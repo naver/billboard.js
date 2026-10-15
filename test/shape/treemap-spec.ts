@@ -740,6 +740,40 @@ describe("TREEMAP", () => {
 				treemap.destroy();
 				container.remove();
 			});
+
+			it("should keep single-line label position on redraw", () => new Promise(done => {
+				const treemap = util.generate({
+					data: {
+						columns: [
+							["A", 660], ["B", 377], ["C", 368], ["D", 240], ["E", 105]
+						],
+						type: "treemap",
+						labels: {
+							centered: true
+						}
+					},
+					transition: {
+						duration: 0
+					},
+					treemap: {
+						tile: "binary",
+						label: {
+							format: (value, ratio, id) => id
+						}
+					}
+				});
+				const getY = () => treemap.$.text.texts.nodes().map(t => t.getAttribute("y"));
+				const expected = getY();
+
+				treemap.flush();
+
+				setTimeout(() => {
+					expect(getY()).to.be.deep.equal(expected);
+
+					treemap.destroy();
+					done(1);
+				}, 100);
+			}));
 		});
 
 		describe("with centered labels disabled", () => {

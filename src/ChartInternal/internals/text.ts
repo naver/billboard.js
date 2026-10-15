@@ -433,9 +433,14 @@ export default {
 					return isPositive ? h : -h - 2;
 				}
 			} else if (isTreemapType) {
+				// single-line labels are positioned by 'y' attribute, which is included in bbox.
+				// exclude it to get the position-independent offset.
+				const rectY = rect.y -
+					(textElement.childElementCount ? 0 : +(textElement.getAttribute("y") || 0));
+
 				return type === "x" ?
 					(points[1][0] - points[0][0]) / 2 : // X: Move to horizontal center of rect
-					(points[1][1] - points[0][1]) / 2 - rect.y - rect.height / 2; // Y: Calculate true vertical center
+					(points[1][1] - points[0][1]) / 2 - rectY - rect.height / 2; // Y: Calculate true vertical center
 			}
 		}
 
