@@ -1,0 +1,59 @@
+body { 
+    font-family: 'Noto Sans', Arial, sans-serif;
+    font-style: normal;
+}
+
+nav {
+    padding-bottom: 50px;
+}
+
+nav #nav-search {
+    border: solid 4px #2980b9;
+    height: 40px;
+    font-size: 1.1em;
+    font-weight: 800;
+    position: fixed;
+}
+
+nav #nav-search::placeholder {
+    color: #aaa;
+}
+
+nav h2:nth-of-type(1) {
+    margin-top: 70px;
+}
+
+nav ul a:hover, nav ul a:active {
+    color: #fff;
+    background-color: #16a085;
+}
+
+nav ul ul a, nav ul ul a:active {
+    font-size: 13px;
+}
+
+nav > ul > li > a {
+    font-weight: bold;
+    font-size: 1.1em !important;
+    background-color: #eee;
+    margin-bottom: 7px;
+}
+
+nav > ul > li > a, nav > ul > li > a:active {
+    padding: 7px;
+}
+
+h4[id$='$'] > span:first-child {
+    display: none;
+}
+
+.details p {
+    margin: 0;
+}
+
+.experimental:before {
+    content: "EXPERIMENTAL";
+    color: #fff;
+    background-color: red;
+    padding: 2px;
+}

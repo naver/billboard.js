@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.1
+ * @version 4.1.2
 */
 import { extend, parseDate } from "../../module/util/object.js";
 import { $COMMON } from "../../config/classes.js";

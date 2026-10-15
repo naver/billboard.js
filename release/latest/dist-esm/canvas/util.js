@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.1
+ * @version 4.1.2
 */
 import { TYPE, TYPE_BY_CATEGORY } from "../config/const.js";
 //#region src/canvas/util.ts

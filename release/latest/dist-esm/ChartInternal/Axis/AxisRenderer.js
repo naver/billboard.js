@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.1
+ * @version 4.1.2
 */
 import { isArray, isFunction, isNumber, isString } from "../../module/util/type-checks.js";
 import { toArray } from "../../module/util/object.js";

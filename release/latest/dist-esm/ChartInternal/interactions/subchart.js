@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.1
+ * @version 4.1.2
 */
 import { SUBCHART_BRUSH_HANDLE_PATH } from "../../config/const.js";
 import { window as win } from "../../module/browser.js";

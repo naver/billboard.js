@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.1
+ * @version 4.1.2
 */
 import { isNumber } from "../../module/util/type-checks.js";
 import { getBBox, getBoundingRect, getElementPos, setTextValue } from "../../module/util/dom.js";

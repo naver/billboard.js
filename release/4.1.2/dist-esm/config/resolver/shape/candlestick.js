@@ -1,0 +1,23 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.1.2
+*/
+import { TYPE } from "../../const.js";
+import point_default from "../../../ChartInternal/shape/core/point.js";
+import point_default$1 from "../../Options/common/point.js";
+import { extendAxis } from "./axis.helpers.js";
+import candlestick_default from "../../../ChartInternal/shape/candlestick.js";
+import candlestick_default$1 from "../../Options/shape/candlestick.js";
+//#region src/config/resolver/shape/candlestick.ts
+/**
+* Copyright (c) 2017 ~ present NAVER Corp.
+* billboard.js project is licensed under the MIT license
+*/
+let candlestick = () => (extendAxis([candlestick_default, point_default], [candlestick_default$1, point_default$1]), (candlestick = () => TYPE.CANDLESTICK)());
+//#endregion
+export { candlestick };

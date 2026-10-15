@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.1
+ * @version 4.1.2
 */
 import { isFunction, isNumber, isObject, isString } from "../../module/util/type-checks.js";
 import { capitalize, getRandom } from "../../module/util/object.js";
@@ -245,7 +245,10 @@ var text_default = {
 					const h = (isPositive ? points[0][1] - points[1][1] : points[1][1] - points[0][1]) / 2 + rect.height / 2;
 					return isPositive ? h : -h - 2;
 				}
-			} else if (isTreemapType) return type === "x" ? (points[1][0] - points[0][0]) / 2 : (points[1][1] - points[0][1]) / 2 - rect.y - rect.height / 2;
+			} else if (isTreemapType) {
+				const rectY = rect.y - (textElement.childElementCount ? 0 : +(textElement.getAttribute("y") || 0));
+				return type === "x" ? (points[1][0] - points[0][0]) / 2 : (points[1][1] - points[0][1]) / 2 - rectY - rect.height / 2;
+			}
 		}
 		return 0;
 	},

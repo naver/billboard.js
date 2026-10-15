@@ -1,0 +1,146 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.1.2
+*/
+import { $FOCUS, $GAUGE } from "../../config/classes.js";
+import { select } from "d3-selection";
+//#region src/Chart/api/focus.ts
+/**
+* Copyright (c) 2017 ~ present NAVER Corp.
+* billboard.js project is licensed under the MIT license
+*/
+var focus_default = {
+	/**
+	* This API highlights specified targets and fade out the others.<br><br>
+	* You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be highlighted.
+	* @function focus
+	* @instance
+	* @memberof Chart
+	* @param {string|Array} targetIdsValue Target ids to be highlighted.
+	* @example
+	*  // data1 will be highlighted and the others will be faded out
+	*  chart.focus("data1");
+	*
+	* // data1 and data2 will be highlighted and the others will be faded out
+	* chart.focus(["data1", "data2"]);
+	*
+	* // all targets will be highlighted
+	* chart.focus();
+	*/
+	focus(targetIdsValue) {
+		const $$ = this.internal;
+		const { state } = $$;
+		const targetIds = $$.mapToTargetIds(targetIdsValue);
+		if (state.isCanvasMode) {
+			const focusedIds = targetIds.filter($$.isTargetToShow, $$);
+			const focusedSet = new Set(focusedIds);
+			const defocusedIds = $$.mapToTargetIds().filter((id) => !focusedSet.has(id) && $$.isTargetToShow(id));
+			$$.revertLegend();
+			$$.toggleFocusLegend(defocusedIds, false);
+			$$.toggleFocusLegend(focusedIds, true);
+			state.focusedTargetIds = focusedSet;
+			state.defocusedTargetIds = new Set(defocusedIds);
+			$$.renderCanvasFrame?.(void 0, null, false);
+			return;
+		}
+		const candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
+		this.revert();
+		this.defocus();
+		candidates.classed($FOCUS.focused, true).classed($FOCUS.defocused, false);
+		if ($$.hasArcType() && !state.hasRadar) {
+			$$.expandArc(targetIds);
+			$$.hasType("gauge") && $$.markOverlapped(targetIdsValue, $$, `.${$GAUGE.gaugeValue}`);
+		}
+		$$.toggleFocusLegend(targetIds, true);
+		state.focusedTargetIds = new Set(targetIds);
+		targetIds.forEach((id) => state.defocusedTargetIds.delete(id));
+	},
+	/**
+	* This API fades out specified targets and reverts the others.<br><br>
+	* You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be faded out.
+	* @function defocus
+	* @instance
+	* @memberof Chart
+	* @param {string|Array} targetIdsValue Target ids to be faded out.
+	* @example
+	* // data1 will be faded out and the others will be reverted.
+	* chart.defocus("data1");
+	*
+	* // data1 and data2 will be faded out and the others will be reverted.
+	* chart.defocus(["data1", "data2"]);
+	*
+	* // all targets will be faded out.
+	* chart.defocus();
+	*/
+	defocus(targetIdsValue) {
+		const $$ = this.internal;
+		const { state } = $$;
+		const targetIds = $$.mapToTargetIds(targetIdsValue);
+		if (state.isCanvasMode) {
+			const defocusedIds = targetIds.filter($$.isTargetToShow, $$);
+			$$.toggleFocusLegend(defocusedIds, false);
+			defocusedIds.forEach((id) => state.focusedTargetIds.delete(id));
+			state.defocusedTargetIds = new Set(defocusedIds);
+			$$.renderCanvasFrame?.(void 0, null, false);
+			return;
+		}
+		$$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$))).classed($FOCUS.focused, false).classed($FOCUS.defocused, true);
+		if ($$.hasArcType(null, ["polar"])) {
+			$$.unexpandArc(targetIds);
+			$$.hasType("gauge") && $$.undoMarkOverlapped($$, `.${$GAUGE.gaugeValue}`);
+		}
+		$$.toggleFocusLegend(targetIds, false);
+		targetIds.forEach((id) => state.focusedTargetIds.delete(id));
+		state.defocusedTargetIds = new Set(targetIds);
+	},
+	/**
+	* Revert focused or defocused state to initial state.<br><br>
+	* You can specify multiple targets by giving an array that includes id as string. If no argument is given, all of targets will be reverted.
+	* @function revert
+	* @instance
+	* @memberof Chart
+	* @param {string|Array} targetIdsValue Target ids to be reverted
+	* @example
+	* // 'data1' will be reverted.
+	* chart.revert("data1");
+	*
+	* // 'data1' and 'data2' will be reverted.
+	* chart.revert(["data1", "data2"]);
+	*
+	* // all targets will be reverted.
+	* chart.revert();
+	*/
+	revert(targetIdsValue) {
+		const $$ = this.internal;
+		const { config, state, $el } = $$;
+		const targetIds = $$.mapToTargetIds(targetIdsValue);
+		const resetLegend = () => {
+			if (config.legend_show) {
+				$$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
+				$el.legend.selectAll($$.selectorLegends(targetIds)).filter(function() {
+					return select(this).classed($FOCUS.legendItemFocused);
+				}).classed($FOCUS.legendItemFocused, false);
+			}
+		};
+		if (state.isCanvasMode) {
+			const changed = !!state.focusedTargetIds?.size || !!state.defocusedTargetIds?.size;
+			resetLegend();
+			state.focusedTargetIds = /* @__PURE__ */ new Set();
+			state.defocusedTargetIds = /* @__PURE__ */ new Set();
+			changed && $$.renderCanvasFrame?.(void 0, null, false);
+			return;
+		}
+		$el.svg.selectAll($$.selectorTargets(targetIds)).classed($FOCUS.focused, false).classed($FOCUS.defocused, false);
+		$$.hasArcType(null, ["polar"]) && $$.unexpandArc(targetIds);
+		resetLegend();
+		state.focusedTargetIds = /* @__PURE__ */ new Set();
+		state.defocusedTargetIds = /* @__PURE__ */ new Set();
+	}
+};
+//#endregion
+export { focus_default as default };

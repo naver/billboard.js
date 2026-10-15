@@ -1,0 +1,1046 @@
+/*!
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ *
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ *
+ * @version 4.1.2
+ * @requires billboard.js
+ * @summary billboard.js plugin
+ */
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define("bb", [], factory);
+	else if(typeof exports === 'object')
+		exports["bb"] = factory();
+	else
+		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["tableview"] = factory();
+})(this, function() {
+return /******/ (function() { // webpackBootstrap
+/******/ 	// runtime can't be in strict mode because 'output.globalObject' reads 'this'.
+/******/ 	// The require scope
+/******/ 	var __webpack_require__ = {};
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	// define getter/value functions for harmony exports
+/******/ 	__webpack_require__.d = function(exports, definition) {
+/******/ 		for(var key in definition) {
+/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); };
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
+!function() {
+"use strict";
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "default": function() { return /* binding */ TableView; }
+});
+
+// UNUSED EXPORTS: isValidTableViewOptions
+
+;// ./src/module/util/type-checks.ts
+const isValue = (v) => v || v === 0;
+const isFunction = (v) => typeof v === "function";
+const isString = (v) => typeof v === "string";
+const isNumber = (v) => typeof v === "number";
+const isUndefined = (v) => typeof v === "undefined";
+const isDefined = (v) => typeof v !== "undefined";
+const isBoolean = (v) => typeof v === "boolean";
+const ceil10 = (v) => Math.ceil(v / 10) * 10;
+const asHalfPixel = (n) => Math.ceil(n) + 0.5;
+const diffDomain = (d) => d[1] - d[0];
+const isObjectType = (v) => typeof v === "object";
+const isEmptyObject = (obj) => {
+  for (const x in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, x)) {
+      return false;
+    }
+  }
+  return true;
+};
+const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
+const notEmpty = (o) => !isEmpty(o);
+const isArray = (arr) => Array.isArray(arr);
+const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
+
+
+;// ./src/module/browser.ts
+function getGlobal() {
+  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
+}
+function getFallback(w) {
+  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function";
+  const hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function" && typeof (w == null ? void 0 : w.cancelIdleCallback) === "function";
+  const request = (cb) => setTimeout(cb, 1);
+  const cancel = (id) => clearTimeout(id);
+  return [
+    hasRAF ? w.requestAnimationFrame : request,
+    hasRAF ? w.cancelAnimationFrame : cancel,
+    hasRIC ? w.requestIdleCallback : request,
+    hasRIC ? w.cancelIdleCallback : cancel
+  ];
+}
+const win = getGlobal();
+const doc = win == null ? void 0 : win.document;
+const [
+  requestAnimationFrame,
+  cancelAnimationFrame,
+  requestIdleCallback,
+  cancelIdleCallback
+] = getFallback(win);
+
+
+;// ./src/module/sanitize.ts
+const ALLOWED_TAGS = /* @__PURE__ */ new Set([
+  // HTML tags for tooltip/legend templates
+  "span",
+  "div",
+  "p",
+  "br",
+  "b",
+  "i",
+  "em",
+  "small",
+  "strong",
+  "mark",
+  "u",
+  "s",
+  "sub",
+  "sup",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "ul",
+  "ol",
+  "li",
+  "dl",
+  "dt",
+  "dd",
+  "table",
+  "thead",
+  "tbody",
+  "tfoot",
+  "tr",
+  "th",
+  "td",
+  "caption",
+  "colgroup",
+  "col",
+  "hr",
+  "pre",
+  "code",
+  "blockquote",
+  "abbr",
+  "ins",
+  "del",
+  "a",
+  "img",
+  "figure",
+  "figcaption",
+  // SVG tags for point patterns
+  "svg",
+  "g",
+  "path",
+  "circle",
+  "ellipse",
+  "rect",
+  "line",
+  "polyline",
+  "polygon",
+  "text",
+  "tspan",
+  "textPath",
+  "use",
+  "defs",
+  "symbol",
+  "clipPath",
+  "mask",
+  "linearGradient",
+  "radialGradient",
+  "stop",
+  "pattern",
+  "marker",
+  "title",
+  "desc"
+]);
+const ALLOWED_ATTRS = /* @__PURE__ */ new Set([
+  // Common attributes
+  "class",
+  "id",
+  "style",
+  "title",
+  "lang",
+  "dir",
+  // HTML specific
+  "href",
+  "src",
+  "alt",
+  "width",
+  "height",
+  "colspan",
+  "rowspan",
+  "scope",
+  "headers",
+  // SVG presentation attributes
+  "d",
+  "points",
+  "x",
+  "y",
+  "x1",
+  "x2",
+  "y1",
+  "y2",
+  "cx",
+  "cy",
+  "r",
+  "rx",
+  "ry",
+  "dx",
+  "dy",
+  "viewBox",
+  "preserveAspectRatio",
+  "transform",
+  "fill",
+  "fill-opacity",
+  "fill-rule",
+  "stroke",
+  "stroke-width",
+  "stroke-opacity",
+  "stroke-linecap",
+  "stroke-linejoin",
+  "stroke-dasharray",
+  "stroke-dashoffset",
+  "opacity",
+  "clip-path",
+  "clip-rule",
+  "mask",
+  "font-family",
+  "font-size",
+  "font-weight",
+  "font-style",
+  "text-anchor",
+  "dominant-baseline",
+  "offset",
+  "stop-color",
+  "stop-opacity",
+  "gradientUnits",
+  "gradientTransform",
+  "spreadMethod",
+  "patternUnits",
+  "patternTransform",
+  "marker-start",
+  "marker-mid",
+  "marker-end",
+  "markerWidth",
+  "markerHeight",
+  "refX",
+  "refY",
+  "xlink:href"
+]);
+const TAG_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_TAGS.forEach((tag) => TAG_CASE_MAP.set(tag.toLowerCase(), tag));
+const ATTR_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_ATTRS.forEach((attr) => ATTR_CASE_MAP.set(attr.toLowerCase(), attr));
+const ALLOWED_URI_PROTOCOLS = /* @__PURE__ */ new Set([
+  "http:",
+  "https:",
+  "mailto:"
+]);
+const URI_ATTRS = /* @__PURE__ */ new Set(["href", "src", "xlink:href"]);
+const TAG_NAME_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9]*)/;
+const CLOSING_TAG_REGEX = /^<\/([a-zA-Z][a-zA-Z0-9]*)\s*>$/;
+const OPENING_TAG_REGEX = /^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)(\/?)>$/;
+const ATTR_REGEX = /([a-zA-Z][\w:-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
+const URL_IN_STYLE_REGEX = /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi;
+const DANGEROUS_CSS_PATTERNS = [
+  "expression(",
+  "behavior:",
+  "binding:",
+  "@import",
+  "@charset",
+  "-moz-binding:"
+];
+function decodeHTMLEntities(str) {
+  return str.replace(/&colon;/gi, ":").replace(/&newline;/gi, "\n").replace(/&tab;/gi, "	").replace(/&nbsp;/gi, " ").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&apos;/gi, "'").replace(/&#(\d+);?/gi, (_, code) => String.fromCharCode(parseInt(code, 10))).replace(/&#x([0-9a-f]+);?/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
+}
+function isSafeURI(uri) {
+  const decoded = decodeHTMLEntities(uri).trim();
+  const normalized = decoded.replace(/[\s\u0000-\u001f]/g, "").toLowerCase();
+  if (!normalized || normalized.startsWith("#")) {
+    return true;
+  }
+  const schemeMatch = normalized.match(/^[^/?#]*:/);
+  if (schemeMatch) {
+    return ALLOWED_URI_PROTOCOLS.has(schemeMatch[0]);
+  }
+  return true;
+}
+function sanitizeStyleValue(style) {
+  const decoded = decodeHTMLEntities(style);
+  const cleaned = decoded.replace(/[\u0000-\u001f]/g, "");
+  URL_IN_STYLE_REGEX.lastIndex = 0;
+  let match;
+  while ((match = URL_IN_STYLE_REGEX.exec(cleaned)) !== null) {
+    if (!isSafeURI(match[1])) {
+      return null;
+    }
+  }
+  const normalizedLower = cleaned.toLowerCase().replace(/\s/g, "");
+  for (const pattern of DANGEROUS_CSS_PATTERNS) {
+    if (normalizedLower.includes(pattern)) {
+      return null;
+    }
+  }
+  return style;
+}
+const ATTR_ENCODE_MAP = {
+  '"': "&quot;",
+  "'": "&#39;",
+  "`": "&#96;"
+};
+const ATTR_ENCODE_REGEX = /["'`]/g;
+function encodeAttrValue(value) {
+  return value.replace(ATTR_ENCODE_REGEX, (char) => ATTR_ENCODE_MAP[char]);
+}
+function sanitizeAttrValue(name, value, wasUnquoted = false) {
+  if (URI_ATTRS.has(name)) {
+    if (!isSafeURI(value)) {
+      return null;
+    }
+    return wasUnquoted ? encodeAttrValue(value) : value;
+  }
+  if (name === "style") {
+    const sanitizedStyle = sanitizeStyleValue(value);
+    if (sanitizedStyle === null) {
+      return null;
+    }
+    return wasUnquoted ? encodeAttrValue(sanitizedStyle) : sanitizedStyle;
+  }
+  const decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
+  if (/\bon\w+=/.test(decoded)) {
+    return null;
+  }
+  return wasUnquoted ? encodeAttrValue(value) : value;
+}
+function extractTagName(tag) {
+  const match = tag.match(TAG_NAME_REGEX);
+  return match ? match[1].toLowerCase() : null;
+}
+function isAllowedTag(tag) {
+  const tagName = extractTagName(tag);
+  return tagName !== null && TAG_CASE_MAP.has(tagName);
+}
+function sanitizeTag(fullTag) {
+  var _a, _b, _c;
+  const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
+  if (closingMatch) {
+    const lowerName = closingMatch[1].toLowerCase();
+    return `</${(_a = TAG_CASE_MAP.get(lowerName)) != null ? _a : lowerName}>`;
+  }
+  const openingMatch = fullTag.match(OPENING_TAG_REGEX);
+  if (!openingMatch) {
+    return "";
+  }
+  const [, tagName, attrString, selfClose] = openingMatch;
+  const lowerTagName = tagName.toLowerCase();
+  const canonicalTagName = (_b = TAG_CASE_MAP.get(lowerTagName)) != null ? _b : lowerTagName;
+  const allowedAttrs = [];
+  ATTR_REGEX.lastIndex = 0;
+  let attrMatch;
+  while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
+    const lowerAttrName = attrMatch[1].toLowerCase();
+    const doubleQuotedValue = attrMatch[2];
+    const singleQuotedValue = attrMatch[3];
+    const unquotedValue = attrMatch[4];
+    if (lowerAttrName.startsWith("on")) {
+      continue;
+    }
+    const canonicalAttrName = (_c = ATTR_CASE_MAP.get(lowerAttrName)) != null ? _c : lowerAttrName;
+    let attrValue;
+    let quoteChar;
+    if (doubleQuotedValue !== void 0) {
+      attrValue = doubleQuotedValue;
+      quoteChar = '"';
+    } else if (singleQuotedValue !== void 0) {
+      attrValue = singleQuotedValue;
+      quoteChar = "'";
+    } else if (unquotedValue !== void 0) {
+      attrValue = unquotedValue;
+      quoteChar = '"';
+    } else {
+      if (ATTR_CASE_MAP.has(lowerAttrName)) {
+        allowedAttrs.push(canonicalAttrName);
+      }
+      continue;
+    }
+    if (ATTR_CASE_MAP.has(lowerAttrName)) {
+      const wasUnquoted = unquotedValue !== void 0;
+      const sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
+      if (sanitizedValue !== null) {
+        allowedAttrs.push(`${canonicalAttrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
+      }
+    }
+  }
+  const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
+  const selfCloseStr = selfClose ? "/>" : ">";
+  return `<${canonicalTagName}${attrsStr}${selfCloseStr}`;
+}
+function sanitize(str) {
+  if (typeof str !== "string" || !str || str.indexOf("<") === -1) {
+    return str;
+  }
+  return str.replace(
+    /<\/?[^>]*>|[^<>\s]+>/g,
+    (match) => {
+      if (match.startsWith("<!--")) {
+        return "";
+      }
+      if (!match.startsWith("<")) {
+        return match.slice(0, -1) + "&gt;";
+      }
+      if (isAllowedTag(match)) {
+        return sanitizeTag(match);
+      }
+      return match.replace(/</g, "&lt;");
+    }
+  );
+}
+
+;// ./src/module/util/object.ts
+var __defProp = Object.defineProperty;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+
+
+
+function _forEachValidItem(items, callback) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item !== null && isDefined(item)) {
+      callback(item, i);
+    }
+  }
+}
+function getOption(options, key, defaultValue) {
+  return isDefined(options[key]) ? options[key] : defaultValue;
+}
+function hasValue(dict, value) {
+  for (const key in dict) {
+    if (dict[key] === value) return true;
+  }
+  return false;
+}
+function callFn(fn, thisArg, ...args) {
+  const isFn = isFunction(fn);
+  isFn && fn.call(thisArg, ...args);
+  return isFn;
+}
+function endall(transition, cb) {
+  let n = 0;
+  const end = function(...args) {
+    !--n && cb.apply(this, args);
+  };
+  if ("duration" in transition) {
+    transition.each(() => ++n).on("end", end);
+  } else {
+    ++n;
+    transition.call(end);
+  }
+}
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+function camelize(str, separator = "-") {
+  return str.split(separator).map((v, i) => i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()).join("");
+}
+const toArray = (v) => [].slice.call(v);
+function deepClone(...objectN) {
+  const clone = (v) => {
+    if (isArray(v)) {
+      return v.map(clone);
+    } else if (isObject(v) && v.constructor) {
+      const r = new v.constructor();
+      for (const k in v) {
+        r[k] = clone(v[k]);
+      }
+      return r;
+    }
+    return v;
+  };
+  return objectN.map((v) => clone(v)).reduce((a, c) => __spreadValues(__spreadValues({}, a), c));
+}
+function extend(target = {}, source) {
+  if (isArray(source)) {
+    source.forEach((v) => extend(target, v));
+  }
+  for (const p in source) {
+    if (/^\d+$/.test(p) || p in target) {
+      continue;
+    }
+    target[p] = source[p];
+  }
+  return target;
+}
+function getUnique(data) {
+  const isDate = data[0] instanceof Date;
+  const d = Array.from(new Set(isDate ? data.map(Number) : data));
+  return isDate ? d.map((v) => new Date(v)) : d;
+}
+function mergeArray(arr) {
+  return arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : [];
+}
+function mergeObj(target, ...objectN) {
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) {
+    return target;
+  }
+  const source = objectN.shift();
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach((key) => {
+      if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
+        const value = source[key];
+        if (value instanceof Date) {
+          target[key] = new Date(value.getTime());
+        } else if (isObject(value)) {
+          !target[key] && (target[key] = {});
+          target[key] = mergeObj(target[key], value);
+        } else {
+          target[key] = isArray(value) ? value.concat() : value;
+        }
+      }
+    });
+  }
+  return mergeObj(target, ...objectN);
+}
+function sortValue(data, isAsc = true) {
+  let fn;
+  if (data[0] instanceof Date) {
+    fn = isAsc ? (a, b) => a - b : (a, b) => b - a;
+  } else {
+    if (isAsc && !data.every(isNaN)) {
+      fn = (a, b) => a - b;
+    } else if (!isAsc) {
+      fn = (a, b) => a > b && -1 || a < b && 1 || a === b && 0;
+    }
+  }
+  return data.concat().sort(fn);
+}
+function getMinMax(type, data) {
+  let res = data.filter((v) => notEmpty(v));
+  if (res.length) {
+    if (isNumber(res[0])) {
+      let result = type === "min" ? Infinity : -Infinity;
+      for (const v of res) {
+        if (type === "min" ? v < result : v > result) {
+          result = v;
+        }
+      }
+      res = result;
+    } else if (res[0] instanceof Date) {
+      res = sortValue(res, type === "min")[0];
+    }
+  } else {
+    res = void 0;
+  }
+  return res;
+}
+const getRange = (start, end, step = 1) => {
+  const res = [];
+  const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
+  for (let i = 0; i < n; i++) {
+    res.push(start + i * step);
+  }
+  return res;
+};
+let _transitionCounter = 0;
+function getRandom(asStr = true) {
+  const id = ++_transitionCounter;
+  return asStr ? String(id) : id;
+}
+function findIndex(arr, v, start, end, isRotated) {
+  if (start > end) {
+    return -1;
+  }
+  const mid = Math.floor((start + end) / 2);
+  let { x, w = 0 } = arr[mid];
+  if (isRotated) {
+    x = arr[mid].y;
+    w = arr[mid].h;
+  }
+  if (v >= x && v <= x + w) {
+    return mid;
+  }
+  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
+}
+function tplProcess(tpl, data) {
+  return sanitize(tpl.replace(/\{=([^}]+)\}/g, (_, key) => {
+    var _a;
+    return (_a = data[key]) != null ? _a : "";
+  }));
+}
+function parseDate(date) {
+  var _a;
+  let parsedDate;
+  if (date instanceof Date) {
+    parsedDate = date;
+  } else if (isString(date)) {
+    const { config, format } = this;
+    parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) != null ? _a : new Date(date);
+  } else if (isNumber(date) && !isNaN(date)) {
+    parsedDate = /* @__PURE__ */ new Date(+date);
+  }
+  if (!parsedDate || isNaN(+parsedDate)) {
+    console && console.error && console.error(`Failed to parse x '${date}' to Date object`);
+  }
+  return parsedDate;
+}
+function parseShorthand(value) {
+  if (isObject(value) && !isString(value)) {
+    const obj = value;
+    return {
+      top: obj.top || 0,
+      right: obj.right || 0,
+      bottom: obj.bottom || 0,
+      left: obj.left || 0
+    };
+  }
+  const values = (isString(value) ? value.trim().split(/\s+/) : [value]).map((v) => +v || 0);
+  const [a, b = a, c = a, d = b] = values;
+  return { top: a, right: b, bottom: c, left: d };
+}
+function runUntil(fn, conditionFn) {
+  if (conditionFn() === false) {
+    requestAnimationFrame(() => runUntil(fn, conditionFn));
+  } else {
+    fn();
+  }
+}
+function toSet(items, keyFn = ((item) => item)) {
+  const set = /* @__PURE__ */ new Set();
+  _forEachValidItem(items, (item, i) => {
+    set.add(keyFn(item, i));
+  });
+  return set;
+}
+function toMap(items, keyFn, valueFn = ((item) => item)) {
+  const map = /* @__PURE__ */ new Map();
+  _forEachValidItem(items, (item, i) => {
+    map.set(keyFn(item, i), valueFn(item, i));
+  });
+  return map;
+}
+
+
+;// ./src/config/config.ts
+
+function loadConfig(config) {
+  const thisConfig = this.config;
+  let target;
+  let keys;
+  let read;
+  const find = () => {
+    const key = keys.shift();
+    if (key && target && isObjectType(target) && key in target) {
+      target = target[key];
+      return find();
+    } else if (!key) {
+      return target;
+    }
+    return void 0;
+  };
+  Object.keys(thisConfig).forEach((key) => {
+    target = config;
+    keys = key.split("_");
+    read = find();
+    if (isDefined(read)) {
+      thisConfig[key] = read;
+    }
+  });
+  if (this.api) {
+    this.state.orgConfig = config;
+  }
+}
+
+;// ./src/Plugin/Plugin.ts
+var Plugin_defProp = Object.defineProperty;
+var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
+class Plugin {
+  /**
+   * Constructor
+   * @param {Any} options config option object
+   * @private
+   */
+  constructor(options = {}) {
+    __publicField(this, "$$");
+    __publicField(this, "options");
+    __publicField(this, "config");
+    this.options = options;
+  }
+  /**
+   * Load plugin config from options
+   * @private
+   */
+  loadConfig() {
+    loadConfig.call(this, this.options);
+  }
+  /**
+   * Lifecycle hook for 'beforeInit' phase.
+   * @private
+   */
+  $beforeInit() {
+  }
+  /**
+   * Lifecycle hook for 'init' phase.
+   * @private
+   */
+  $init() {
+  }
+  /**
+   * Lifecycle hook for 'afterInit' phase.
+   * @private
+   */
+  $afterInit() {
+  }
+  /**
+   * Lifecycle hook for 'redraw' phase.
+   * @private
+   */
+  $redraw() {
+  }
+  /**
+   * Lifecycle hook for 'willDestroy' phase.
+   * @private
+   */
+  $willDestroy() {
+    Object.keys(this).forEach((key) => {
+      this[key] = null;
+      delete this[key];
+    });
+  }
+}
+__publicField(Plugin, "version", "4.1.2");
+
+;// ./src/Plugin/tableview/const.ts
+
+const defaultStyle = {
+  id: "__tableview-style__",
+  class: "bb-tableview",
+  rule: `.bb-tableview {
+		border-collapse:collapse;
+		border-spacing:0;
+		background:#fff;
+		min-width:100%;
+		margin-top:10px;
+		font-family:sans-serif;
+		font-size:.9em;
+	}
+	.bb-tableview tr:hover {
+		background:#eef7ff;
+	}
+	.bb-tableview thead tr {
+		background:#f8f8f8;
+	}
+	.bb-tableview caption,.bb-tableview td,.bb-tableview th {
+		text-align: center;
+		border:1px solid silver;
+		padding:.5em;
+	}
+	.bb-tableview caption {
+		font-size:1.1em;
+		font-weight:700;
+		margin-bottom: -1px;
+	}`
+};
+const tpl = {
+  body: `<caption>{=title}</caption>
+		<thead><tr>{=thead}</tr></thead>
+		<tbody>{=tbody}</tbody>`,
+  thead: `<th scope="col">{=title}</th>`,
+  tbodyHeader: `<th scope="row">{=value}</th>`,
+  tbody: `<td>{=value}</td>`
+};
+
+;// ./src/Plugin/tableview/Options.ts
+class Options {
+  constructor() {
+    return {
+      /**
+       * Set tableview holder selector.
+       * - **NOTE:** If not set, will append new holder element dynamically right after chart element.
+       * @name selector
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default undefined
+       * @example
+       *   selector: "#table-holder"
+       */
+      selector: void 0,
+      /**
+       * Set category title text
+       * @name categoryTitle
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default "Category"
+       * @example
+       *   categoryTitle: "#table-holder"
+       */
+      categoryTitle: "Category",
+      /**
+       * Set category text format function.
+       * @name categoryFormat
+       * @memberof plugin-tableview
+       * @type {function}
+       * @returns {string}
+       * @default function(v) { // will return formatted value according x Axis type }}
+       * @example
+       *   categoryFormat: "#table-holder"
+       */
+      categoryFormat: function(v) {
+        let category = v;
+        if (this.$$.axis.isCategorized()) {
+          category = this.$$.categoryName(v);
+        } else if (this.$$.axis.isTimeSeries()) {
+          category = v.toLocaleDateString();
+        }
+        return category;
+      },
+      /**
+       * Set tableview holder class name.
+       * @name class
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default undefined
+       * @example
+       *   class: "table-class-name"
+       */
+      class: void 0,
+      /**
+       * Set to apply default style(`.bb-tableview`) to tableview element.
+       * @name style
+       * @memberof plugin-tableview
+       * @type {boolean}
+       * @default true
+       * @example
+       *   style: false
+       */
+      style: true,
+      /**
+       * Set tableview title text.
+       * - **NOTE:** If set [title.text](https://naver.github.io/billboard.js/release/latest/doc/Options.html#.title), will be used when this option value is empty.
+       * @name title
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default undefined
+       * @example
+       *   title: "Table Title Text"
+       */
+      title: void 0,
+      /**
+       * Update tableview from data visibility update(ex. legend toggle).
+       * @name updateOnToggle
+       * @memberof plugin-tableview
+       * @type {boolean}
+       * @default true
+       * @example
+       *   legendToggleUpdate: false
+       */
+      updateOnToggle: true,
+      /**
+       * Set how null value to be shown.
+       * @name nullString
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default "-"
+       * @example
+       *   nullString: "N/A"
+       */
+      nullString: "-",
+      /**
+       * Set number format function.
+       * @name numberFormat
+       * @memberof plugin-tableview
+       * @type {function}
+       * @returns {string}
+       * @default function(v) { // will return formatted value according to locale settings }
+       * @example
+       *   numberFormat: function(v) {
+       *     return v.toLocaleString();
+       *   }
+       */
+      numberFormat: function(v) {
+        return v.toLocaleString();
+      }
+    };
+  }
+}
+
+;// ./src/Plugin/tableview/index.ts
+var tableview_defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var tableview_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var tableview_hasOwnProp = Object.prototype.hasOwnProperty;
+var tableview_propIsEnum = Object.prototype.propertyIsEnumerable;
+var tableview_defNormalProp = (obj, key, value) => key in obj ? tableview_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var tableview_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (tableview_hasOwnProp.call(b, prop))
+      tableview_defNormalProp(a, prop, b[prop]);
+  if (tableview_getOwnPropSymbols)
+    for (var prop of tableview_getOwnPropSymbols(b)) {
+      if (tableview_propIsEnum.call(b, prop))
+        tableview_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+var tableview_publicField = (obj, key, value) => tableview_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
+
+
+
+const optionValidators = {
+  selector: isString,
+  categoryTitle: isString,
+  categoryFormat: isFunction,
+  class: isString,
+  style: isBoolean,
+  title: isString,
+  updateOnToggle: isBoolean,
+  nullString: isString,
+  numberFormat: isFunction
+};
+function isValidTableViewOptions(options) {
+  if (!isObjectType(options) || isArray(options) || options === null) {
+    return false;
+  }
+  return Object.entries(options).every(([key, value]) => {
+    const validate = optionValidators[key];
+    return !isFunction(validate) || value === void 0 || validate(value);
+  });
+}
+class TableView extends Plugin {
+  constructor(options = {}) {
+    var _a;
+    super(options);
+    tableview_publicField(this, "element");
+    if (!isValidTableViewOptions(options)) {
+      (_a = console == null ? void 0 : console.error) == null ? void 0 : _a.call(
+        console,
+        "[billboard.js] TableView plugin received invalid options; unsupported values will be ignored.",
+        options
+      );
+    }
+    this.config = new Options();
+    return this;
+  }
+  $beforeInit() {
+    this.loadConfig();
+  }
+  $init() {
+    const { class: className, selector, style } = this.config;
+    let element = document.querySelector(
+      selector || `.${className || defaultStyle.class}`
+    );
+    if (!element) {
+      const chart = this.$$.$el.chart.node();
+      element = document.createElement("table");
+      chart.parentNode.insertBefore(element, chart.nextSibling);
+    }
+    if (element.tagName !== "TABLE") {
+      const table = document.createElement("table");
+      element.appendChild(table);
+      element = table;
+    }
+    if (style && !document.getElementById(defaultStyle.id)) {
+      const s = document.createElement("style");
+      s.id = defaultStyle.id;
+      s.innerHTML = defaultStyle.rule;
+      (document.head || document.getElementsByTagName("head")[0]).appendChild(s);
+    }
+    element.classList.add(...[style && defaultStyle.class, className].filter(Boolean));
+    this.element = element;
+  }
+  /**
+   * Generate table
+   * @private
+   */
+  generateTable() {
+    const { $$, config, element } = this;
+    const dataToShow = $$.filterTargetsToShow($$.data.targets);
+    let thead = tplProcess(tpl.thead, {
+      title: dataToShow.length ? this.config.categoryTitle : ""
+    });
+    let tbody = "";
+    const rows = [];
+    dataToShow.forEach((v) => {
+      thead += tplProcess(tpl.thead, { title: v.id });
+      v.values.forEach((d, i) => {
+        if (!rows[i]) {
+          rows[i] = [d.x];
+        }
+        rows[i].push(d.value);
+      });
+    });
+    rows.forEach((v) => {
+      tbody += `<tr>${v.map(
+        (d, i) => tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
+          value: i === 0 ? config.categoryFormat.bind(this)(d) : isNumber(d) ? config.numberFormat.bind(this)(d) : config.nullString
+        })
+      ).join("")}</tr>`;
+    });
+    element.innerHTML = tplProcess(tpl.body, __spreadProps(tableview_spreadValues({}, config), {
+      title: config.title || $$.config.title_text || "",
+      thead,
+      tbody
+    }));
+  }
+  $redraw() {
+    const { state } = this.$$;
+    const doNotUpdate = state.resizing || !this.config.updateOnToggle && state.toggling;
+    !doNotUpdate && this.generateTable();
+  }
+  $willDestroy() {
+    var _a, _b;
+    (_a = this.element.parentNode) == null ? void 0 : _a.removeChild(this.element);
+    if (this.$$.charts.length === 1) {
+      const s = document.getElementById(defaultStyle.id);
+      (_b = s == null ? void 0 : s.parentNode) == null ? void 0 : _b.removeChild(s);
+    }
+  }
+}
+
+}();
+__webpack_exports__ = __webpack_exports__["default"];
+/******/ 	return __webpack_exports__;
+/******/ })()
+;
+});

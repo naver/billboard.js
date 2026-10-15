@@ -1,0 +1,1424 @@
+/*!
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ *
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ *
+ * @version 4.1.2
+ * @requires billboard.js
+ * @summary billboard.js plugin
+ */
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory(require("d3-selection"));
+	else if(typeof define === 'function' && define.amd)
+		define("bb", ["d3-selection"], factory);
+	else if(typeof exports === 'object')
+		exports["bb"] = factory(require("d3-selection"));
+	else
+		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["sparkline"] = factory(root["d3"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE__1__) {
+return /******/ (function() { // webpackBootstrap
+/******/ 	// runtime can't be in strict mode because 'output.globalObject' reads 'this'.
+/******/ 	var __webpack_modules__ = ([
+/* 0 */,
+/* 1 */
+/***/ (function(module) {
+
+"use strict";
+module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
+
+/***/ })
+/******/ 	]);
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	// define getter/value functions for harmony exports
+/******/ 	__webpack_require__.d = function(exports, definition) {
+/******/ 		for(var key in definition) {
+/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); };
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
+!function() {
+"use strict";
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "default": function() { return /* binding */ Sparkline; }
+});
+
+;// ./src/config/classes.ts
+var __defProp = Object.defineProperty;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+const $COMMON = {
+  button: "bb-button",
+  chart: "bb-chart",
+  empty: "bb-empty",
+  main: "bb-main",
+  target: "bb-target",
+  EXPANDED: "_expanded_",
+  dummy: "_dummy_"
+};
+const $ARC = {
+  arc: "bb-arc",
+  arcLabelLine: "bb-arc-label-line",
+  arcLabelLineText: "bb-arc-label-line-text",
+  arcRange: "bb-arc-range",
+  arcs: "bb-arcs",
+  chartArc: "bb-chart-arc",
+  chartArcs: "bb-chart-arcs",
+  chartArcsBackground: "bb-chart-arcs-background",
+  chartArcsTitle: "bb-chart-arcs-title",
+  needle: "bb-needle"
+};
+const $AREA = {
+  area: "bb-area",
+  areas: "bb-areas"
+};
+const $AXIS = {
+  axis: "bb-axis",
+  axisX: "bb-axis-x",
+  axisXLabel: "bb-axis-x-label",
+  axisY: "bb-axis-y",
+  axisY2: "bb-axis-y2",
+  axisY2Label: "bb-axis-y2-label",
+  axisYLabel: "bb-axis-y-label",
+  axisXTooltip: "bb-axis-x-tooltip",
+  axisYTooltip: "bb-axis-y-tooltip",
+  axisY2Tooltip: "bb-axis-y2-tooltip",
+  axisTooltipX: "bb-axis-tooltip-x",
+  axisTooltipY: "bb-axis-tooltip-y"
+};
+const $BAR = {
+  bar: "bb-bar",
+  bars: "bb-bars",
+  chartBar: "bb-chart-bar",
+  chartBars: "bb-chart-bars",
+  barConnectLine: "bb-bar-connectLine"
+};
+const $CANDLESTICK = {
+  candlestick: "bb-candlestick",
+  candlesticks: "bb-candlesticks",
+  chartCandlestick: "bb-chart-candlestick",
+  chartCandlesticks: "bb-chart-candlesticks",
+  valueDown: "bb-value-down",
+  valueUp: "bb-value-up"
+};
+const $CIRCLE = {
+  chartCircles: "bb-chart-circles",
+  circle: "bb-circle",
+  circles: "bb-circles"
+};
+const $COLOR = {
+  colorPattern: "bb-color-pattern",
+  colorScale: "bb-colorscale"
+};
+const $DRAG = {
+  dragarea: "bb-dragarea",
+  INCLUDED: "_included_"
+};
+const $FUNNEL = {
+  funnel: "bb-funnel",
+  chartFunnel: "bb-chart-funnel",
+  chartFunnels: "bb-chart-funnels",
+  funnelBackground: "bb-funnel-background"
+};
+const $GAUGE = {
+  chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
+  chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
+  chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
+  chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
+  gaugeValue: "bb-gauge-value"
+};
+const $LEGEND = {
+  legend: "bb-legend",
+  legendBackground: "bb-legend-background",
+  legendItem: "bb-legend-item",
+  legendItemEvent: "bb-legend-item-event",
+  legendItemHidden: "bb-legend-item-hidden",
+  legendItemPoint: "bb-legend-item-point",
+  legendItemTile: "bb-legend-item-tile"
+};
+const $LINE = {
+  chartLine: "bb-chart-line",
+  chartLines: "bb-chart-lines",
+  line: "bb-line",
+  lines: "bb-lines"
+};
+const $EVENT = {
+  eventRect: "bb-event-rect",
+  eventRects: "bb-event-rects",
+  eventRectsMultiple: "bb-event-rects-multiple",
+  eventRectsSingle: "bb-event-rects-single"
+};
+const $FOCUS = {
+  focused: "bb-focused",
+  defocused: "bb-defocused",
+  legendItemFocused: "bb-legend-item-focused",
+  xgridFocus: "bb-xgrid-focus",
+  xgridFocusContinuous: "bb-xgrid-focus-continuous",
+  ygridFocus: "bb-ygrid-focus"
+};
+const $GRID = {
+  grid: "bb-grid",
+  gridLines: "bb-grid-lines",
+  xgrid: "bb-xgrid",
+  xgridLine: "bb-xgrid-line",
+  xgridLines: "bb-xgrid-lines",
+  xgrids: "bb-xgrids",
+  ygrid: "bb-ygrid",
+  ygridLine: "bb-ygrid-line",
+  ygridLines: "bb-ygrid-lines",
+  ygrids: "bb-ygrids"
+};
+const $LEVEL = {
+  level: "bb-level",
+  levels: "bb-levels"
+};
+const $RADAR = {
+  chartRadar: "bb-chart-radar",
+  chartRadars: "bb-chart-radars"
+};
+const $REGION = {
+  region: "bb-region",
+  regions: "bb-regions"
+};
+const $SELECT = {
+  selectedCircle: "bb-selected-circle",
+  selectedCircles: "bb-selected-circles",
+  SELECTED: "_selected_"
+};
+const $SHAPE = {
+  shape: "bb-shape",
+  shapes: "bb-shapes"
+};
+const $SUBCHART = {
+  brush: "bb-brush",
+  subchart: "bb-subchart"
+};
+const $TEXT = {
+  chartText: "bb-chart-text",
+  chartTexts: "bb-chart-texts",
+  text: "bb-text",
+  texts: "bb-texts",
+  title: "bb-title",
+  textBorderRect: "bb-text-border",
+  textLabelImage: "bb-text-label-image",
+  TextOverlapping: "text-overlapping"
+};
+const $TOOLTIP = {
+  tooltip: "bb-tooltip",
+  tooltipContainer: "bb-tooltip-container",
+  tooltipName: "bb-tooltip-name"
+};
+const $TREEMAP = {
+  treemap: "bb-treemap",
+  chartTreemap: "bb-chart-treemap",
+  chartTreemaps: "bb-chart-treemaps"
+};
+const $ZOOM = {
+  buttonZoomReset: "bb-zoom-reset",
+  zoomBrush: "bb-zoom-brush"
+};
+/* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $LEVEL), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
+
+// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
+var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
+;// ./src/module/browser.ts
+function getGlobal() {
+  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
+}
+function getFallback(w) {
+  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function";
+  const hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function" && typeof (w == null ? void 0 : w.cancelIdleCallback) === "function";
+  const request = (cb) => setTimeout(cb, 1);
+  const cancel = (id) => clearTimeout(id);
+  return [
+    hasRAF ? w.requestAnimationFrame : request,
+    hasRAF ? w.cancelAnimationFrame : cancel,
+    hasRIC ? w.requestIdleCallback : request,
+    hasRIC ? w.cancelIdleCallback : cancel
+  ];
+}
+const win = getGlobal();
+const doc = win == null ? void 0 : win.document;
+const [
+  requestAnimationFrame,
+  cancelAnimationFrame,
+  requestIdleCallback,
+  cancelIdleCallback
+] = getFallback(win);
+
+
+;// ./src/module/sanitize.ts
+const ALLOWED_TAGS = /* @__PURE__ */ new Set([
+  // HTML tags for tooltip/legend templates
+  "span",
+  "div",
+  "p",
+  "br",
+  "b",
+  "i",
+  "em",
+  "small",
+  "strong",
+  "mark",
+  "u",
+  "s",
+  "sub",
+  "sup",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "ul",
+  "ol",
+  "li",
+  "dl",
+  "dt",
+  "dd",
+  "table",
+  "thead",
+  "tbody",
+  "tfoot",
+  "tr",
+  "th",
+  "td",
+  "caption",
+  "colgroup",
+  "col",
+  "hr",
+  "pre",
+  "code",
+  "blockquote",
+  "abbr",
+  "ins",
+  "del",
+  "a",
+  "img",
+  "figure",
+  "figcaption",
+  // SVG tags for point patterns
+  "svg",
+  "g",
+  "path",
+  "circle",
+  "ellipse",
+  "rect",
+  "line",
+  "polyline",
+  "polygon",
+  "text",
+  "tspan",
+  "textPath",
+  "use",
+  "defs",
+  "symbol",
+  "clipPath",
+  "mask",
+  "linearGradient",
+  "radialGradient",
+  "stop",
+  "pattern",
+  "marker",
+  "title",
+  "desc"
+]);
+const ALLOWED_ATTRS = /* @__PURE__ */ new Set([
+  // Common attributes
+  "class",
+  "id",
+  "style",
+  "title",
+  "lang",
+  "dir",
+  // HTML specific
+  "href",
+  "src",
+  "alt",
+  "width",
+  "height",
+  "colspan",
+  "rowspan",
+  "scope",
+  "headers",
+  // SVG presentation attributes
+  "d",
+  "points",
+  "x",
+  "y",
+  "x1",
+  "x2",
+  "y1",
+  "y2",
+  "cx",
+  "cy",
+  "r",
+  "rx",
+  "ry",
+  "dx",
+  "dy",
+  "viewBox",
+  "preserveAspectRatio",
+  "transform",
+  "fill",
+  "fill-opacity",
+  "fill-rule",
+  "stroke",
+  "stroke-width",
+  "stroke-opacity",
+  "stroke-linecap",
+  "stroke-linejoin",
+  "stroke-dasharray",
+  "stroke-dashoffset",
+  "opacity",
+  "clip-path",
+  "clip-rule",
+  "mask",
+  "font-family",
+  "font-size",
+  "font-weight",
+  "font-style",
+  "text-anchor",
+  "dominant-baseline",
+  "offset",
+  "stop-color",
+  "stop-opacity",
+  "gradientUnits",
+  "gradientTransform",
+  "spreadMethod",
+  "patternUnits",
+  "patternTransform",
+  "marker-start",
+  "marker-mid",
+  "marker-end",
+  "markerWidth",
+  "markerHeight",
+  "refX",
+  "refY",
+  "xlink:href"
+]);
+const TAG_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_TAGS.forEach((tag) => TAG_CASE_MAP.set(tag.toLowerCase(), tag));
+const ATTR_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_ATTRS.forEach((attr) => ATTR_CASE_MAP.set(attr.toLowerCase(), attr));
+const ALLOWED_URI_PROTOCOLS = /* @__PURE__ */ new Set([
+  "http:",
+  "https:",
+  "mailto:"
+]);
+const URI_ATTRS = /* @__PURE__ */ new Set(["href", "src", "xlink:href"]);
+const TAG_NAME_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9]*)/;
+const CLOSING_TAG_REGEX = /^<\/([a-zA-Z][a-zA-Z0-9]*)\s*>$/;
+const OPENING_TAG_REGEX = /^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)(\/?)>$/;
+const ATTR_REGEX = /([a-zA-Z][\w:-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
+const URL_IN_STYLE_REGEX = /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi;
+const DANGEROUS_CSS_PATTERNS = [
+  "expression(",
+  "behavior:",
+  "binding:",
+  "@import",
+  "@charset",
+  "-moz-binding:"
+];
+function decodeHTMLEntities(str) {
+  return str.replace(/&colon;/gi, ":").replace(/&newline;/gi, "\n").replace(/&tab;/gi, "	").replace(/&nbsp;/gi, " ").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&apos;/gi, "'").replace(/&#(\d+);?/gi, (_, code) => String.fromCharCode(parseInt(code, 10))).replace(/&#x([0-9a-f]+);?/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
+}
+function isSafeURI(uri) {
+  const decoded = decodeHTMLEntities(uri).trim();
+  const normalized = decoded.replace(/[\s\u0000-\u001f]/g, "").toLowerCase();
+  if (!normalized || normalized.startsWith("#")) {
+    return true;
+  }
+  const schemeMatch = normalized.match(/^[^/?#]*:/);
+  if (schemeMatch) {
+    return ALLOWED_URI_PROTOCOLS.has(schemeMatch[0]);
+  }
+  return true;
+}
+function sanitizeStyleValue(style) {
+  const decoded = decodeHTMLEntities(style);
+  const cleaned = decoded.replace(/[\u0000-\u001f]/g, "");
+  URL_IN_STYLE_REGEX.lastIndex = 0;
+  let match;
+  while ((match = URL_IN_STYLE_REGEX.exec(cleaned)) !== null) {
+    if (!isSafeURI(match[1])) {
+      return null;
+    }
+  }
+  const normalizedLower = cleaned.toLowerCase().replace(/\s/g, "");
+  for (const pattern of DANGEROUS_CSS_PATTERNS) {
+    if (normalizedLower.includes(pattern)) {
+      return null;
+    }
+  }
+  return style;
+}
+const ATTR_ENCODE_MAP = {
+  '"': "&quot;",
+  "'": "&#39;",
+  "`": "&#96;"
+};
+const ATTR_ENCODE_REGEX = /["'`]/g;
+function encodeAttrValue(value) {
+  return value.replace(ATTR_ENCODE_REGEX, (char) => ATTR_ENCODE_MAP[char]);
+}
+function sanitizeAttrValue(name, value, wasUnquoted = false) {
+  if (URI_ATTRS.has(name)) {
+    if (!isSafeURI(value)) {
+      return null;
+    }
+    return wasUnquoted ? encodeAttrValue(value) : value;
+  }
+  if (name === "style") {
+    const sanitizedStyle = sanitizeStyleValue(value);
+    if (sanitizedStyle === null) {
+      return null;
+    }
+    return wasUnquoted ? encodeAttrValue(sanitizedStyle) : sanitizedStyle;
+  }
+  const decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
+  if (/\bon\w+=/.test(decoded)) {
+    return null;
+  }
+  return wasUnquoted ? encodeAttrValue(value) : value;
+}
+function extractTagName(tag) {
+  const match = tag.match(TAG_NAME_REGEX);
+  return match ? match[1].toLowerCase() : null;
+}
+function isAllowedTag(tag) {
+  const tagName = extractTagName(tag);
+  return tagName !== null && TAG_CASE_MAP.has(tagName);
+}
+function sanitizeTag(fullTag) {
+  var _a, _b, _c;
+  const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
+  if (closingMatch) {
+    const lowerName = closingMatch[1].toLowerCase();
+    return `</${(_a = TAG_CASE_MAP.get(lowerName)) != null ? _a : lowerName}>`;
+  }
+  const openingMatch = fullTag.match(OPENING_TAG_REGEX);
+  if (!openingMatch) {
+    return "";
+  }
+  const [, tagName, attrString, selfClose] = openingMatch;
+  const lowerTagName = tagName.toLowerCase();
+  const canonicalTagName = (_b = TAG_CASE_MAP.get(lowerTagName)) != null ? _b : lowerTagName;
+  const allowedAttrs = [];
+  ATTR_REGEX.lastIndex = 0;
+  let attrMatch;
+  while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
+    const lowerAttrName = attrMatch[1].toLowerCase();
+    const doubleQuotedValue = attrMatch[2];
+    const singleQuotedValue = attrMatch[3];
+    const unquotedValue = attrMatch[4];
+    if (lowerAttrName.startsWith("on")) {
+      continue;
+    }
+    const canonicalAttrName = (_c = ATTR_CASE_MAP.get(lowerAttrName)) != null ? _c : lowerAttrName;
+    let attrValue;
+    let quoteChar;
+    if (doubleQuotedValue !== void 0) {
+      attrValue = doubleQuotedValue;
+      quoteChar = '"';
+    } else if (singleQuotedValue !== void 0) {
+      attrValue = singleQuotedValue;
+      quoteChar = "'";
+    } else if (unquotedValue !== void 0) {
+      attrValue = unquotedValue;
+      quoteChar = '"';
+    } else {
+      if (ATTR_CASE_MAP.has(lowerAttrName)) {
+        allowedAttrs.push(canonicalAttrName);
+      }
+      continue;
+    }
+    if (ATTR_CASE_MAP.has(lowerAttrName)) {
+      const wasUnquoted = unquotedValue !== void 0;
+      const sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
+      if (sanitizedValue !== null) {
+        allowedAttrs.push(`${canonicalAttrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
+      }
+    }
+  }
+  const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
+  const selfCloseStr = selfClose ? "/>" : ">";
+  return `<${canonicalTagName}${attrsStr}${selfCloseStr}`;
+}
+function sanitize(str) {
+  if (typeof str !== "string" || !str || str.indexOf("<") === -1) {
+    return str;
+  }
+  return str.replace(
+    /<\/?[^>]*>|[^<>\s]+>/g,
+    (match) => {
+      if (match.startsWith("<!--")) {
+        return "";
+      }
+      if (!match.startsWith("<")) {
+        return match.slice(0, -1) + "&gt;";
+      }
+      if (isAllowedTag(match)) {
+        return sanitizeTag(match);
+      }
+      return match.replace(/</g, "&lt;");
+    }
+  );
+}
+
+;// ./src/module/util/type-checks.ts
+const isValue = (v) => v || v === 0;
+const isFunction = (v) => typeof v === "function";
+const isString = (v) => typeof v === "string";
+const isNumber = (v) => typeof v === "number";
+const isUndefined = (v) => typeof v === "undefined";
+const isDefined = (v) => typeof v !== "undefined";
+const isBoolean = (v) => typeof v === "boolean";
+const ceil10 = (v) => Math.ceil(v / 10) * 10;
+const asHalfPixel = (n) => Math.ceil(n) + 0.5;
+const diffDomain = (d) => d[1] - d[0];
+const isObjectType = (v) => typeof v === "object";
+const isEmptyObject = (obj) => {
+  for (const x in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, x)) {
+      return false;
+    }
+  }
+  return true;
+};
+const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
+const notEmpty = (o) => !isEmpty(o);
+const isArray = (arr) => Array.isArray(arr);
+const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
+
+
+;// ./src/module/util/object.ts
+var object_defProp = Object.defineProperty;
+var object_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var object_hasOwnProp = Object.prototype.hasOwnProperty;
+var object_propIsEnum = Object.prototype.propertyIsEnumerable;
+var object_defNormalProp = (obj, key, value) => key in obj ? object_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var object_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (object_hasOwnProp.call(b, prop))
+      object_defNormalProp(a, prop, b[prop]);
+  if (object_getOwnPropSymbols)
+    for (var prop of object_getOwnPropSymbols(b)) {
+      if (object_propIsEnum.call(b, prop))
+        object_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+
+
+
+function _forEachValidItem(items, callback) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item !== null && isDefined(item)) {
+      callback(item, i);
+    }
+  }
+}
+function getOption(options, key, defaultValue) {
+  return isDefined(options[key]) ? options[key] : defaultValue;
+}
+function hasValue(dict, value) {
+  for (const key in dict) {
+    if (dict[key] === value) return true;
+  }
+  return false;
+}
+function callFn(fn, thisArg, ...args) {
+  const isFn = isFunction(fn);
+  isFn && fn.call(thisArg, ...args);
+  return isFn;
+}
+function endall(transition, cb) {
+  let n = 0;
+  const end = function(...args) {
+    !--n && cb.apply(this, args);
+  };
+  if ("duration" in transition) {
+    transition.each(() => ++n).on("end", end);
+  } else {
+    ++n;
+    transition.call(end);
+  }
+}
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+function camelize(str, separator = "-") {
+  return str.split(separator).map((v, i) => i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()).join("");
+}
+const toArray = (v) => [].slice.call(v);
+function deepClone(...objectN) {
+  const clone = (v) => {
+    if (isArray(v)) {
+      return v.map(clone);
+    } else if (isObject(v) && v.constructor) {
+      const r = new v.constructor();
+      for (const k in v) {
+        r[k] = clone(v[k]);
+      }
+      return r;
+    }
+    return v;
+  };
+  return objectN.map((v) => clone(v)).reduce((a, c) => object_spreadValues(object_spreadValues({}, a), c));
+}
+function extend(target = {}, source) {
+  if (isArray(source)) {
+    source.forEach((v) => extend(target, v));
+  }
+  for (const p in source) {
+    if (/^\d+$/.test(p) || p in target) {
+      continue;
+    }
+    target[p] = source[p];
+  }
+  return target;
+}
+function getUnique(data) {
+  const isDate = data[0] instanceof Date;
+  const d = Array.from(new Set(isDate ? data.map(Number) : data));
+  return isDate ? d.map((v) => new Date(v)) : d;
+}
+function mergeArray(arr) {
+  return arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : [];
+}
+function mergeObj(target, ...objectN) {
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) {
+    return target;
+  }
+  const source = objectN.shift();
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach((key) => {
+      if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
+        const value = source[key];
+        if (value instanceof Date) {
+          target[key] = new Date(value.getTime());
+        } else if (isObject(value)) {
+          !target[key] && (target[key] = {});
+          target[key] = mergeObj(target[key], value);
+        } else {
+          target[key] = isArray(value) ? value.concat() : value;
+        }
+      }
+    });
+  }
+  return mergeObj(target, ...objectN);
+}
+function sortValue(data, isAsc = true) {
+  let fn;
+  if (data[0] instanceof Date) {
+    fn = isAsc ? (a, b) => a - b : (a, b) => b - a;
+  } else {
+    if (isAsc && !data.every(isNaN)) {
+      fn = (a, b) => a - b;
+    } else if (!isAsc) {
+      fn = (a, b) => a > b && -1 || a < b && 1 || a === b && 0;
+    }
+  }
+  return data.concat().sort(fn);
+}
+function getMinMax(type, data) {
+  let res = data.filter((v) => notEmpty(v));
+  if (res.length) {
+    if (isNumber(res[0])) {
+      let result = type === "min" ? Infinity : -Infinity;
+      for (const v of res) {
+        if (type === "min" ? v < result : v > result) {
+          result = v;
+        }
+      }
+      res = result;
+    } else if (res[0] instanceof Date) {
+      res = sortValue(res, type === "min")[0];
+    }
+  } else {
+    res = void 0;
+  }
+  return res;
+}
+const getRange = (start, end, step = 1) => {
+  const res = [];
+  const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
+  for (let i = 0; i < n; i++) {
+    res.push(start + i * step);
+  }
+  return res;
+};
+let _transitionCounter = 0;
+function getRandom(asStr = true) {
+  const id = ++_transitionCounter;
+  return asStr ? String(id) : id;
+}
+function findIndex(arr, v, start, end, isRotated) {
+  if (start > end) {
+    return -1;
+  }
+  const mid = Math.floor((start + end) / 2);
+  let { x, w = 0 } = arr[mid];
+  if (isRotated) {
+    x = arr[mid].y;
+    w = arr[mid].h;
+  }
+  if (v >= x && v <= x + w) {
+    return mid;
+  }
+  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
+}
+function tplProcess(tpl, data) {
+  return sanitize(tpl.replace(/\{=([^}]+)\}/g, (_, key) => {
+    var _a;
+    return (_a = data[key]) != null ? _a : "";
+  }));
+}
+function parseDate(date) {
+  var _a;
+  let parsedDate;
+  if (date instanceof Date) {
+    parsedDate = date;
+  } else if (isString(date)) {
+    const { config, format } = this;
+    parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) != null ? _a : new Date(date);
+  } else if (isNumber(date) && !isNaN(date)) {
+    parsedDate = /* @__PURE__ */ new Date(+date);
+  }
+  if (!parsedDate || isNaN(+parsedDate)) {
+    console && console.error && console.error(`Failed to parse x '${date}' to Date object`);
+  }
+  return parsedDate;
+}
+function parseShorthand(value) {
+  if (isObject(value) && !isString(value)) {
+    const obj = value;
+    return {
+      top: obj.top || 0,
+      right: obj.right || 0,
+      bottom: obj.bottom || 0,
+      left: obj.left || 0
+    };
+  }
+  const values = (isString(value) ? value.trim().split(/\s+/) : [value]).map((v) => +v || 0);
+  const [a, b = a, c = a, d = b] = values;
+  return { top: a, right: b, bottom: c, left: d };
+}
+function runUntil(fn, conditionFn) {
+  if (conditionFn() === false) {
+    requestAnimationFrame(() => runUntil(fn, conditionFn));
+  } else {
+    fn();
+  }
+}
+function toSet(items, keyFn = ((item) => item)) {
+  const set = /* @__PURE__ */ new Set();
+  _forEachValidItem(items, (item, i) => {
+    set.add(keyFn(item, i));
+  });
+  return set;
+}
+function toMap(items, keyFn, valueFn = ((item) => item)) {
+  const map = /* @__PURE__ */ new Map();
+  _forEachValidItem(items, (item, i) => {
+    map.set(keyFn(item, i), valueFn(item, i));
+  });
+  return map;
+}
+
+
+;// ./src/module/util/dom.ts
+
+
+
+
+const RE_CSS_BB = /\s?(bb-)/g;
+const RE_CSS_DOTS = /\.+/g;
+function getCssSelector(s) {
+  return s.replace(RE_CSS_BB, ".$1").replace(RE_CSS_DOTS, ".");
+}
+function _getRect(relativeViewport, node, forceEval = false) {
+  const _ = (n) => n[relativeViewport ? "getBoundingClientRect" : "getBBox"]();
+  const cacheKey = relativeViewport ? "rectClient" : "rectBBox";
+  if (forceEval) {
+    return _(node);
+  } else {
+    const needEvaluate = !(cacheKey in node) || node.hasAttribute("width") && node[cacheKey].width !== +(node.getAttribute("width") || 0);
+    return needEvaluate ? node[cacheKey] = _(node) : node[cacheKey];
+  }
+}
+function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
+  if (!node || !isString(text)) {
+    return;
+  }
+  if (text.indexOf("\n") === -1) {
+    node.text(text);
+  } else {
+    const diff = [node.text(), text].map((v) => v.replace(/[\s\n]/g, ""));
+    if (diff[0] !== diff[1]) {
+      const multiline = text.split("\n");
+      const len = toMiddle ? multiline.length - 1 : 1;
+      node.html("");
+      multiline.forEach((v, i) => {
+        node.append("tspan").attr("x", 0).attr("dy", `${i === 0 ? dy[0] * len : dy[1]}em`).text(v);
+      });
+    }
+  }
+}
+function getRectSegList(path) {
+  const { x, y, width, height } = getBBox(path, true);
+  return [
+    { x, y: y + height },
+    // seg0
+    { x, y },
+    // seg1
+    { x: x + width, y },
+    // seg2
+    { x: x + width, y: y + height }
+    // seg3
+  ];
+}
+function getPathBox(path) {
+  const { width, height } = getBoundingRect(path);
+  const items = getRectSegList(path);
+  const x = items[0].x;
+  const y = Math.min(items[0].y, items[1].y);
+  return {
+    x,
+    y,
+    width,
+    height
+  };
+}
+function getPointer(event, element) {
+  var _a;
+  const touches = event && ((_a = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _a[0]);
+  let pointer = [0, 0];
+  try {
+    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
+  } catch (e) {
+  }
+  return pointer.map((v) => isNaN(v) ? 0 : v);
+}
+function getBoundingRect(node, forceEval = false) {
+  return _getRect(true, node, forceEval);
+}
+function getBBox(node, forceEval = false) {
+  return _getRect(false, node, forceEval);
+}
+function addCssRules(style, selector, prop) {
+  const { rootSelector = "", sheet } = style;
+  const rule = `${rootSelector} ${getCssSelector(selector)} {${prop.join(";")}}`;
+  return sheet[sheet.insertRule ? "insertRule" : "addRule"](
+    rule,
+    sheet.cssRules.length
+  );
+}
+function getCssRules(styleSheets) {
+  let rules = [];
+  styleSheets.forEach((sheet) => {
+    var _a;
+    try {
+      if (sheet.cssRules && sheet.cssRules.length) {
+        rules = rules.concat(toArray(sheet.cssRules));
+      }
+    } catch (e) {
+      (_a = win.console) == null ? void 0 : _a.warn(`Error while reading rules from ${sheet.href}: ${String(e)}`);
+    }
+  });
+  return rules;
+}
+function getScrollPosition(node) {
+  var _a, _b, _c, _d, _e, _f;
+  return {
+    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + ((_c = node.scrollLeft) != null ? _c : 0),
+    y: ((_e = (_d = win.pageYOffset) != null ? _d : win.scrollY) != null ? _e : 0) + ((_f = node.scrollTop) != null ? _f : 0)
+  };
+}
+function getTransformCTM(node, x = 0, y = 0, inverse = true) {
+  const point = new DOMPoint(x, y);
+  const screen = node.getScreenCTM();
+  const res = point.matrixTransform(
+    inverse ? screen == null ? void 0 : screen.inverse() : screen
+  );
+  if (inverse === false) {
+    const rect = getBoundingRect(node);
+    res.x -= rect.x;
+    res.y -= rect.y;
+  }
+  return res;
+}
+function getTranslation(node) {
+  const transform = node ? node.transform : null;
+  const baseVal = transform && transform.baseVal;
+  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
+}
+function getElementPos(element, type) {
+  var _a;
+  const attr = (_a = element == null ? void 0 : element.getAttribute) == null ? void 0 : _a.call(element, type);
+  if (attr) {
+    return parseFloat(attr);
+  }
+  const matrix = getTranslation(element);
+  return type === "x" ? matrix.e : matrix.f;
+}
+function hasViewBox(svg) {
+  const attr = svg.attr("viewBox");
+  return attr ? attr.trim().split(/[\s,]+/).length === 4 : false;
+}
+function hasStyle(node, condition, all = false) {
+  const isD3Node = !!node.node;
+  let has = false;
+  for (const [key, value] of Object.entries(condition)) {
+    has = isD3Node ? node.style(key) === value : node.style[key] === value;
+    if (all ? !has : has) {
+      break;
+    }
+  }
+  return has;
+}
+function isTabVisible() {
+  var _a, _b;
+  return ((_a = doc) == null ? void 0 : _a.hidden) === false || ((_b = doc) == null ? void 0 : _b.visibilityState) === "visible";
+}
+function convertInputType(mouse, touch) {
+  const { DocumentTouch, matchMedia, navigator } = win;
+  const hasPointerCoarse = matchMedia == null ? void 0 : matchMedia("(pointer:coarse)").matches;
+  let hasTouch = false;
+  if (touch) {
+    if (navigator && "maxTouchPoints" in navigator) {
+      hasTouch = navigator.maxTouchPoints > 0;
+    } else if ("ontouchmove" in win || DocumentTouch && doc instanceof DocumentTouch) {
+      hasTouch = true;
+    } else {
+      if (hasPointerCoarse) {
+        hasTouch = true;
+      } else {
+        const UA = navigator.userAgent;
+        hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
+      }
+    }
+  }
+  const hasMouse = mouse && !hasPointerCoarse && (matchMedia == null ? void 0 : matchMedia("(pointer:fine)").matches);
+  return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
+}
+function scheduleRAFUpdate(rafState, callback) {
+  if (rafState.pendingRaf !== null) {
+    win.cancelAnimationFrame(rafState.pendingRaf);
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+      callback();
+    });
+  } else {
+    rafState.pendingRaf = win.requestAnimationFrame(() => {
+      rafState.pendingRaf = null;
+    });
+    callback();
+  }
+}
+const emulateEvent = {
+  mouse: (() => {
+    const getParams = () => ({
+      bubbles: false,
+      cancelable: false,
+      screenX: 0,
+      screenY: 0,
+      clientX: 0,
+      clientY: 0
+    });
+    try {
+      new MouseEvent("t");
+      return (el, eventType, params = getParams()) => {
+        el.dispatchEvent(new MouseEvent(eventType, params));
+      };
+    } catch (e) {
+      return (el, eventType, params = getParams()) => {
+        const mouseEvent = doc.createEvent("MouseEvent");
+        mouseEvent.initMouseEvent(
+          eventType,
+          params.bubbles,
+          params.cancelable,
+          win,
+          0,
+          // the event's mouse click count
+          params.screenX,
+          params.screenY,
+          params.clientX,
+          params.clientY,
+          false,
+          false,
+          false,
+          false,
+          0,
+          null
+        );
+        el.dispatchEvent(mouseEvent);
+      };
+    }
+  })(),
+  touch: (el, eventType, params) => {
+    const touchObj = new Touch(mergeObj({
+      identifier: Date.now(),
+      target: el,
+      radiusX: 2.5,
+      radiusY: 2.5,
+      rotationAngle: 10,
+      force: 0.5
+    }, params));
+    el.dispatchEvent(new TouchEvent(eventType, {
+      cancelable: true,
+      bubbles: true,
+      shiftKey: true,
+      touches: [touchObj],
+      targetTouches: [],
+      changedTouches: [touchObj]
+    }));
+  }
+};
+
+
+;// ./src/config/config.ts
+
+function loadConfig(config) {
+  const thisConfig = this.config;
+  let target;
+  let keys;
+  let read;
+  const find = () => {
+    const key = keys.shift();
+    if (key && target && isObjectType(target) && key in target) {
+      target = target[key];
+      return find();
+    } else if (!key) {
+      return target;
+    }
+    return void 0;
+  };
+  Object.keys(thisConfig).forEach((key) => {
+    target = config;
+    keys = key.split("_");
+    read = find();
+    if (isDefined(read)) {
+      thisConfig[key] = read;
+    }
+  });
+  if (this.api) {
+    this.state.orgConfig = config;
+  }
+}
+
+;// ./src/Plugin/Plugin.ts
+var Plugin_defProp = Object.defineProperty;
+var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
+class Plugin {
+  /**
+   * Constructor
+   * @param {Any} options config option object
+   * @private
+   */
+  constructor(options = {}) {
+    __publicField(this, "$$");
+    __publicField(this, "options");
+    __publicField(this, "config");
+    this.options = options;
+  }
+  /**
+   * Load plugin config from options
+   * @private
+   */
+  loadConfig() {
+    loadConfig.call(this, this.options);
+  }
+  /**
+   * Lifecycle hook for 'beforeInit' phase.
+   * @private
+   */
+  $beforeInit() {
+  }
+  /**
+   * Lifecycle hook for 'init' phase.
+   * @private
+   */
+  $init() {
+  }
+  /**
+   * Lifecycle hook for 'afterInit' phase.
+   * @private
+   */
+  $afterInit() {
+  }
+  /**
+   * Lifecycle hook for 'redraw' phase.
+   * @private
+   */
+  $redraw() {
+  }
+  /**
+   * Lifecycle hook for 'willDestroy' phase.
+   * @private
+   */
+  $willDestroy() {
+    Object.keys(this).forEach((key) => {
+      this[key] = null;
+      delete this[key];
+    });
+  }
+}
+__publicField(Plugin, "version", "4.1.2");
+
+;// ./src/Plugin/sparkline/Options.ts
+class Options {
+  constructor() {
+    return {
+      /**
+       * Specify sparkline charts holder selector.
+       * - **NOTE:** The amount of holder should match with the amount of data. If has less, will append necessaray amount nodes as sibling of main chart.
+       * @name selector
+       * @memberof plugin-sparkline
+       * @type {string}
+       * @default undefined
+       * @example
+       *   selector: ".sparkline"
+       */
+      selector: void 0
+    };
+  }
+}
+
+;// ./src/Plugin/sparkline/index.ts
+var sparkline_defProp = Object.defineProperty;
+var sparkline_defNormalProp = (obj, key, value) => key in obj ? sparkline_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var sparkline_publicField = (obj, key, value) => sparkline_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
+
+
+
+class Sparkline extends Plugin {
+  constructor(options) {
+    super(options);
+    sparkline_publicField(this, "element");
+    this.config = new Options();
+    return this;
+  }
+  $beforeInit() {
+    this.loadConfig();
+    this.validate();
+    this.element = [].slice.call(document.querySelectorAll(this.config.selector));
+    this.overrideInternals();
+    this.overrideOptions();
+    this.overHandler = this.overHandler.bind(this);
+    this.moveHandler = this.moveHandler.bind(this);
+    this.outHandler = this.outHandler.bind(this);
+  }
+  validate() {
+    const { $$, config } = this;
+    let msg = "";
+    if (!config.selector || !document.querySelector(config.selector)) {
+      msg = "No holder elements found from given selector option.";
+    }
+    if ($$.hasType("bubble") || $$.hasType("scatter") || $$.hasArcType($$.data.targets)) {
+      msg = "Contains non supported chart types.";
+    }
+    if (msg) {
+      throw new Error(`[Sparkline plugin] ${msg}`);
+    }
+  }
+  overrideInternals() {
+    const { $$ } = this;
+    const { getBarW, getIndices } = $$;
+    $$.getIndices = function(indices, d, caller) {
+      return caller === "getShapeX" ? {} : getIndices.call(this, indices, d);
+    };
+    $$.getBarW = function(type, axis) {
+      return getBarW.call(this, type, axis, 1);
+    };
+  }
+  overrideOptions() {
+    const { config } = this.$$;
+    config.legend_show = false;
+    config.resize_auto = false;
+    config.axis_x_show = false;
+    if (config.padding !== false) {
+      const hasOption = (o) => Object.keys(o || {}).length > 0;
+      if (hasOption(config.axis_x_padding)) {
+        config.axis_x_padding = {
+          left: 15,
+          right: 15,
+          unit: "px"
+        };
+      }
+      if (hasOption(config.axis_y_padding)) {
+        config.axis_y_padding = 5;
+      }
+    }
+    config.axis_y_show = false;
+    if (!config.tooltip_position) {
+      config.tooltip_position = function(data, width, height) {
+        const { internal: { state: { event } } } = this;
+        let top = event.pageY - height * 1.35;
+        let left = event.pageX - width / 2;
+        if (top < 0) {
+          top = 0;
+        }
+        if (left < 0) {
+          left = 0;
+        }
+        return { top, left };
+      };
+    }
+  }
+  $init() {
+    var _a;
+    const { $$: { $el } } = this;
+    $el.chart.style("width", "0").style("height", "0").style("pointer-events", "none");
+    ((_a = $el.tooltip) == null ? void 0 : _a.node()) && document.body.appendChild($el.tooltip.node());
+  }
+  $afterInit() {
+    const { $$ } = this;
+    $$.$el.svg.attr("style", null).style("width", "0").style("height", "0");
+    this.bindEvents(true);
+  }
+  /**
+   * Bind tooltip event handlers for each sparkline elements.
+   * @param {boolean} bind or unbind
+   * @private
+   */
+  bindEvents(bind = true) {
+    const { $$: { config } } = this;
+    if (config.interaction_enabled && config.tooltip_show) {
+      const method = `${bind ? "add" : "remove"}EventListener`;
+      this.element.forEach((el) => {
+        const svg = el.querySelector("svg");
+        svg[method]("mouseover", this.overHandler);
+        svg[method]("mousemove", this.moveHandler);
+        svg[method]("mouseout", this.outHandler);
+      });
+    }
+  }
+  overHandler(e) {
+    const { $$ } = this;
+    const { state: { eventReceiver } } = $$;
+    eventReceiver.rect = getBoundingRect(e.target, true);
+  }
+  moveHandler(e) {
+    var _a, _b, _c, _d;
+    const { $$ } = this;
+    const index = $$.getDataIndexFromEvent(e);
+    const data = (_a = $$.api.data(e.target.__id)) == null ? void 0 : _a[0];
+    const d = (_b = data == null ? void 0 : data.values) == null ? void 0 : _b[index];
+    if (d && !d.name) {
+      d.name = d.id;
+    }
+    $$.state.event = e;
+    if (((_c = $$.isPointFocusOnly) == null ? void 0 : _c.call($$)) && d) {
+      (_d = $$.showCircleFocus) == null ? void 0 : _d.call($$, [d]);
+    }
+    $$.setExpand(index, data.id, true);
+    $$.showTooltip([d], e.target);
+  }
+  outHandler(e) {
+    const { $$ } = this;
+    $$.state.event = e;
+    $$.isPointFocusOnly() ? $$.hideCircleFocus() : $$.unexpandCircles();
+    $$.hideTooltip();
+  }
+  $redraw() {
+    var _a;
+    const { $$ } = this;
+    const { $el } = $$;
+    let el = this.element;
+    const data = $$.api.data();
+    const svgWrapper = (_a = $el.chart.html().match(/<svg[^>]*>/)) == null ? void 0 : _a[0];
+    if (el.length < data.length) {
+      const chart = $el.chart.node();
+      for (let i = data.length - el.length; i > 0; i--) {
+        chart.parentNode.insertBefore(el[0].cloneNode(), chart.nextSibling);
+      }
+      this.element = document.querySelectorAll(this.config.selector);
+      el = this.element;
+    }
+    data.map((v) => v.id).forEach((id, i) => {
+      const selector = `.${$COMMON.target}-${id}`;
+      const shape = $el.main.selectAll(selector);
+      let svg = el[i].querySelector("svg");
+      if (!svg) {
+        el[i].innerHTML = `${svgWrapper}</svg>`;
+        svg = el[i].querySelector("svg");
+        svg.__id = id;
+      }
+      if (!svg.querySelector(selector)) {
+        shape.style("opacity", null);
+      }
+      shape.style("fill", "none").style("opacity", null);
+      svg.innerHTML = "";
+      svg.appendChild(shape.node());
+    });
+  }
+  $willDestroy() {
+    this.bindEvents(false);
+    this.element.forEach((el) => {
+      el.innerHTML = "";
+    });
+  }
+}
+sparkline_publicField(Sparkline, "version", `0.0.1`);
+
+}();
+__webpack_exports__ = __webpack_exports__["default"];
+/******/ 	return __webpack_exports__;
+/******/ })()
+;
+});

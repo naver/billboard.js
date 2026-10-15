@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.1
+ * @version 4.1.2
 */
 import bubble_default$1 from "./core/bubble.js";
 //#region src/ChartInternal/shape/bubble.ts

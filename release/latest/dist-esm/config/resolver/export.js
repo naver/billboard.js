@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.1
+ * @version 4.1.2
 */
 import Chart from "../../Chart/Chart.js";
 import export_default from "../../Chart/api/export.js";

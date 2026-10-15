@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.1
+ * @version 4.1.2
 */
 import { createElement, forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 //#region src/react/index.ts

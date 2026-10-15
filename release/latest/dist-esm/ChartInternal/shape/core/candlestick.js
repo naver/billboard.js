@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.1
+ * @version 4.1.2
 */
 import { isArray, isNumber, isObject } from "../../../module/util/type-checks.js";
 //#region src/ChartInternal/shape/core/candlestick.ts

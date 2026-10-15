@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.1
+ * @version 4.1.2
 */
 import { $FOCUS, $GAUGE } from "../../config/classes.js";
 import { select } from "d3-selection";

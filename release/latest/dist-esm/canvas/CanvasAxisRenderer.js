@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.1
+ * @version 4.1.2
 */
 import { getFontSize } from "./util.js";
 import { getAdditionalAxisScale, getAdditionalAxisTickFormat, getAdditionalAxisTickValues, getSubXTickLineValues, getSubXTickValues, getXScale, getXTickLinePosition, getXTickLineValues, getXTickValues, getYGridTickValues, getYTickValues, isSameTickValue, normalizeXValue, normalizeYValue } from "./axisTicks.js";
