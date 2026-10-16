@@ -1,3 +1,10 @@
+## [4.1.2](https://github.com/naver/billboard.js/compare/4.1.1...4.1.2) (2026-10-15)
+
+
+### Bug Fixes
+
+* **treemap:** keep single-line centered label position on redraw ([#4249](https://github.com/naver/billboard.js/issues/4249)) ([8cebb67](https://github.com/naver/billboard.js/commit/8cebb6701181d2377614f1abdd1051c420dd63aa)), closes [#4248](https://github.com/naver/billboard.js/issues/4248)
+
 ## [4.1.1](https://github.com/naver/billboard.js/compare/4.1.0...4.1.1) (2026-09-30)
 
 
