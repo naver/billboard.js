@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.1-nightly-20261003010804
+ * @version 4.1.2-nightly-20261016010055
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.12
@@ -45914,9 +45914,10 @@ function batchGetBBox(elements) {
           return isPositive ? h : -h - 2;
         }
       } else if (isTreemapType) {
+        const rectY = rect.y - (textElement.childElementCount ? 0 : +(textElement.getAttribute("y") || 0));
         return type === "x" ? (points[1][0] - points[0][0]) / 2 : (
           // X: Move to horizontal center of rect
-          (points[1][1] - points[0][1]) / 2 - rect.y - rect.height / 2
+          (points[1][1] - points[0][1]) / 2 - rectY - rect.height / 2
         );
       }
     }
@@ -67722,7 +67723,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.1.1-nightly-20261003010804",
+  version: "4.1.2-nightly-20261016010055",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
