@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import { isNumber } from "../../../module/util/type-checks.js";
 //#region src/ChartInternal/shape/core/barRadius.ts

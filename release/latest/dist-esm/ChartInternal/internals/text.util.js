@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import { isFunction, isNumber } from "../../module/util/type-checks.js";
 import { parseShorthand, toMap, tplProcess } from "../../module/util/object.js";

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import { hierarchy, treemap, treemapBinary, treemapDice, treemapResquarify, treemapSlice, treemapSliceDice, treemapSquarify } from "d3-hierarchy";
 //#region src/ChartInternal/shape/core/treemap.ts

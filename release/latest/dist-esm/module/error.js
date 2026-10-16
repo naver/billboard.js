@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import { API_MODULE_NEEDED, TYPE, TYPE_METHOD_NEEDED } from "../config/const.js";
 import { window as win } from "./browser.js";

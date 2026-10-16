@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import { getRange } from "../../module/util/object.js";
 import { $LEVEL } from "../../config/classes.js";

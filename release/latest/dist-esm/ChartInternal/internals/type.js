@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import { TYPE, TYPE_BY_CATEGORY } from "../../config/const.js";
 import { isArray, isNumber, isString } from "../../module/util/type-checks.js";

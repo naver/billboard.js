@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -359,7 +359,8 @@ function sanitizeTag(fullTag) {
 */
 function sanitize(str) {
 	if (typeof str !== "string" || !str || str.indexOf("<") === -1) return str;
-	return str.replace(/<\/?[^>]*>|[^<>\s]+>/g, (match) => {
+	return str.replace(/<\/?[^>]*>|<[^>]*$|[^<>\s]+>/g, (match) => {
+		if (match.startsWith("<") && !match.endsWith(">")) return match.replace(/</g, "&lt;");
 		if (match.startsWith("<!--")) return "";
 		if (!match.startsWith("<")) return match.slice(0, -1) + "&gt;";
 		if (isAllowedTag(match)) return sanitizeTag(match);
@@ -428,7 +429,7 @@ var Plugin = class {
 	$$;
 	options;
 	config;
-	static version = "4.1.2";
+	static version = "4.1.3";
 	/**
 	* Constructor
 	* @param {Any} options config option object

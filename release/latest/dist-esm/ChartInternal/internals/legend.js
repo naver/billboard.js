@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import { document as doc } from "../../module/browser.js";
 import { isBoolean, isDefined, isEmpty, isFunction } from "../../module/util/type-checks.js";
@@ -226,8 +226,8 @@ var legend_default = {
 					html += content;
 				}
 			});
-			const legendItem = wrapper.html(html).selectAll(function() {
-				return this.childNodes;
+			const legendItem = wrapper.html(sanitize(html)).selectAll(function() {
+				return this.children;
 			}).data(ids);
 			$$.setLegendItem(legendItem);
 			$el.legend = wrapper;

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import { document as doc } from "../../module/browser.js";
 import { isDefined, isFunction, isNumber, isObject, isUndefined } from "../../module/util/type-checks.js";

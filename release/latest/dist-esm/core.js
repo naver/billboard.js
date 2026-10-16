@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import { isObject } from "./module/util/type-checks.js";
 import { mergeObj } from "./module/util/object.js";
@@ -18,7 +18,7 @@ import Chart from "./Chart/Chart.js";
 let defaults = Object.create(null);
 /**
 * @namespace bb
-* @version 4.1.2
+* @version 4.1.3
 */
 const bb = {
 	/**
@@ -28,7 +28,7 @@ const bb = {
 	*    bb.version;  // "1.0.0"
 	* @memberof bb
 	*/
-	version: "4.1.2",
+	version: "4.1.3",
 	/**
 	* Generate chart
 	* - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

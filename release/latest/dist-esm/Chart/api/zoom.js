@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import { isDefined, isObject } from "../../module/util/type-checks.js";
 import { extend, getMinMax, parseDate } from "../../module/util/object.js";

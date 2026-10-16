@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import { TYPE } from "../../const.js";
 import point_default from "../../../ChartInternal/shape/point.js";

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import "./Chart/api/stubs.js";
 import { selectionModule } from "./config/resolver/interaction/selection.js";

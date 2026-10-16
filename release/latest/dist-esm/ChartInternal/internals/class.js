@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import classes_default from "../../config/classes.js";
 //#region src/ChartInternal/internals/class.ts

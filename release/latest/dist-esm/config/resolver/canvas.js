@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.2
+ * @version 4.1.3
 */
 import { window as win } from "../../module/browser.js";
 import { isBoolean, isFunction } from "../../module/util/type-checks.js";
@@ -1182,7 +1182,7 @@ const canvasInternal = {
 				html += content;
 			}
 		});
-		const legendItem = wrapper.html(html).classed($LEGEND.legend, true).classed($CANVAS.legend, false).style("visibility", null).selectAll(function() {
+		const legendItem = wrapper.html(sanitize(html)).classed($LEGEND.legend, true).classed($CANVAS.legend, false).style("visibility", null).selectAll(function() {
 			return this.children;
 		}).data(ids);
 		setCanvasHtmlLegendItem($$, legendItem);

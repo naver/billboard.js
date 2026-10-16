@@ -1,0 +1,735 @@
+/*!
+* Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * https://naver.github.io/billboard.js/
+ * 
+ * @version 4.1.3
+*/
+import { parseDate } from "../module/util/object.js";
+import { getScale } from "../ChartInternal/internals/scale.js";
+import { getCanvasComparableValue, getCanvasComparableXDomain } from "./util.js";
+//#region src/canvas/axisTicks.ts
+/**
+* Get tick option value for main/subchart canvas axes.
+* @param {object} config Chart config
+* @param {string} id Base axis id
+* @param {string} key Tick option key
+* @param {string} prefix Option prefix
+* @returns {boolean|number|string|Array|object|function|null|undefined} Tick option value
+* @private
+*/
+function getAxisTickOption(config, id, key, prefix = `axis_${id}`) {
+	const value = config[`${prefix}_tick_${key}`];
+	return value !== void 0 ? value : config[`axis_${id}_tick_${key}`];
+}
+/**
+* Get explicitly configured tick values.
+* @param {Array|function} values Tick values option
+* @param {object} api Chart API
+* @returns {Array} Tick values
+* @private
+*/
+function getOptionTickValues(values, api) {
+	const resolved = typeof values === "function" ? values.call(api) : values;
+	return resolved?.length ? resolved : void 0;
+}
+/**
+* Normalize axis values that can be expressed as category names, dates or numbers.
+* @param {object} $$ ChartInternal context
+* @param {number|Date|string} value Axis value
+* @param {string} id Axis id
+* @returns {number|Date|string} Scale-compatible value
+* @private
+*/
+function normalizeAxisValue($$, value, id) {
+	if ($$.axis?.isTimeSeries?.(id)) return value instanceof Date ? value : parseDate.call($$, value);
+	if (id === "x" && $$.axis?.isCategorized?.() && typeof value === "string") {
+		const index = $$.config.axis_x_categories.indexOf(value);
+		return index >= 0 ? index : value;
+	}
+	if ($$.axis?.isLog?.(id) && value !== null && value !== void 0) return +value;
+	return value;
+}
+/**
+* Normalize x values that can be expressed as category names, dates or numbers.
+* @param {object} $$ ChartInternal context
+* @param {number|Date|string} value X value
+* @returns {number|Date|string} Scale-compatible value
+* @private
+*/
+function normalizeXValue($$, value) {
+	return normalizeAxisValue($$, value, "x");
+}
+/**
+* Normalize y/y2 tick or grid values.
+* @param {object} $$ ChartInternal context
+* @param {number|Date|string} value Axis value
+* @param {string} id Axis id
+* @returns {number|Date|string} Scale-compatible value
+* @private
+*/
+function normalizeYValue($$, value, id = "y") {
+	return normalizeAxisValue($$, value, id);
+}
+/**
+* Normalize y/y2 tick values.
+* @param {object} $$ ChartInternal context
+* @param {Array} values Tick values
+* @param {string} id Axis id
+* @returns {Array} Scale-compatible tick values
+* @private
+*/
+function normalizeYTickValues($$, values, id = "y") {
+	return values.map((value) => normalizeYValue($$, value, id));
+}
+/**
+* Normalize x tick values.
+* @param {object} $$ ChartInternal context
+* @param {Array} values Tick values
+* @returns {Array} Scale-compatible tick values
+* @private
+*/
+function normalizeXTickValues($$, values) {
+	return values.map((value) => normalizeXValue($$, value)).filter((value) => !(typeof value === "string" && $$.axis?.isCategorized?.()));
+}
+/**
+* Get tick values from scale.
+* @param {object} scale Scale function
+* @param {number} count Tick count
+* @returns {Array} Tick values
+* @private
+*/
+function getScaleTicks(scale, count) {
+	const tickCount = typeof count === "function" ? count() : count;
+	return scale.ticks ? scale.ticks(tickCount) : scale.domain();
+}
+/**
+* Generate ticks for billboard log axes using the same SVG helper behavior.
+* @param {object} scale Symlog display scale
+* @param {number|function} count Optional tick count
+* @returns {Array} Tick values
+* @private
+*/
+function getLogScaleTicks(scale, count) {
+	const [start, end] = scale.domain();
+	const numericStart = +start;
+	const numericEnd = +end;
+	if (count || !Number.isFinite(numericStart) || !Number.isFinite(numericEnd) || numericEnd <= 0) return getScaleTicks(scale, count);
+	const logScale = getScale("_log").domain([numericStart > 0 ? numericStart : 1, numericEnd]).range(scale.range());
+	let ticks = logScale.ticks();
+	for (let cnt = numericEnd.toFixed().length; ticks.length > 15; cnt--) ticks = logScale.ticks(cnt);
+	if (ticks.length) {
+		ticks.splice(0, 1, start);
+		ticks.splice(ticks.length - 1, 1, end);
+	}
+	return ticks;
+}
+/**
+* Check whether two tick values are equivalent.
+* @param {number|Date|string} a First value
+* @param {number|Date|string} b Second value
+* @returns {boolean} Whether values are equivalent
+* @private
+*/
+function isSameTickValue(a, b) {
+	const av = +a;
+	const bv = +b;
+	return Number.isFinite(av) && Number.isFinite(bv) ? Math.abs(av - bv) < 1e-6 : a === b;
+}
+/**
+* Keep the visible domain edges in generated canvas ticks.
+* @param {Array} ticks Generated tick values
+* @param {Array} domain Current x domain
+* @returns {Array} Tick values including domain edges
+* @private
+*/
+function includeDomainEndpoints(ticks, domain) {
+	const [start, end] = domain;
+	const values = ticks.slice();
+	if (start !== void 0 && !values.some((value) => isSameTickValue(value, start))) values.unshift(start);
+	if (end !== void 0 && !values.some((value) => isSameTickValue(value, end))) values.push(end);
+	return values;
+}
+/**
+* Convert an x value to a comparable number.
+* @param {object} $$ ChartInternal context
+* @param {number|Date|string} value X value
+* @returns {number|null} Comparable value
+* @private
+*/
+function toComparableValue($$, value) {
+	const normalized = normalizeXValue($$, value);
+	return getCanvasComparableValue(normalized);
+}
+/**
+* Check whether a zoom scale is showing a narrowed x domain.
+* @param {object} $$ ChartInternal context
+* @returns {boolean} Whether zoom scale should be used
+* @private
+*/
+function hasActiveXZoom($$) {
+	const { scale } = $$;
+	const zoomDomain = scale.zoom?.domain?.();
+	const xDomain = scale.subX?.domain?.() || scale.x?.orgDomain?.() || scale.x?.domain?.();
+	if (!zoomDomain?.length || !xDomain?.length) return false;
+	return !isSameTickValue(zoomDomain[0], xDomain[0]) || !isSameTickValue(zoomDomain[1], xDomain[1]);
+}
+/**
+* Get current x scale, using zoom scale when active.
+* @param {object} $$ ChartInternal context
+* @returns {function} X scale
+* @private
+*/
+function getXScale($$) {
+	return hasActiveXZoom($$) ? $$.scale.zoom : $$.scale.x;
+}
+/**
+* Check if an x tick is inside the current x scale domain.
+* @param {object} $$ ChartInternal context
+* @param {number|Date|string} value Tick value
+* @param {number} tolerance Domain tolerance
+* @returns {boolean} Whether value is visible in current domain
+* @private
+*/
+function isInCurrentXDomain($$, value, tolerance = 0) {
+	const domain = getXScale($$).domain?.();
+	if (!domain?.length) return true;
+	const target = toComparableValue($$, value);
+	const min = +domain[0];
+	const max = +domain[1];
+	if (target === null || !Number.isFinite(min) || !Number.isFinite(max)) return true;
+	return target >= Math.min(min, max) - tolerance && target <= Math.max(min, max) + tolerance;
+}
+/**
+* Get half-distance to the nearest neighboring x data point.
+* @param {Array} comparableValues Comparable x values
+* @param {number} index Current index
+* @returns {number} Half-distance tolerance
+* @private
+*/
+function getHalfNeighborDistance(comparableValues, index) {
+	const distances = [index > 0 ? Math.abs(comparableValues[index] - comparableValues[index - 1]) : Infinity, index < comparableValues.length - 1 ? Math.abs(comparableValues[index + 1] - comparableValues[index]) : Infinity].filter(Number.isFinite);
+	const distance = Math.min(...distances);
+	return Number.isFinite(distance) ? distance / 2 : 0;
+}
+/**
+* Find the first numeric value greater than or equal to the target.
+* @param {Array} values Sorted numbers
+* @param {number} target Target value
+* @returns {number} Value index
+* @private
+*/
+function lowerBoundNumbers(values, target) {
+	let low = 0;
+	let high = values.length;
+	while (low < high) {
+		const mid = low + high >> 1;
+		if (values[mid] < target) low = mid + 1;
+		else high = mid;
+	}
+	return low;
+}
+/**
+* Find the first numeric value greater than the target.
+* @param {Array} values Sorted numbers
+* @param {number} target Target value
+* @returns {number} Value index
+* @private
+*/
+function upperBoundNumbers(values, target) {
+	let low = 0;
+	let high = values.length;
+	while (low < high) {
+		const mid = low + high >> 1;
+		if (values[mid] <= target) low = mid + 1;
+		else high = mid;
+	}
+	return low;
+}
+/**
+* Get cached sorted x data ticks and numeric values.
+* @param {object} $$ ChartInternal context
+* @param {Array} targets Visible targets
+* @returns {object} Cached data ticks
+* @private
+*/
+function getCachedXDataTicks($$, targets) {
+	const { axis, state } = $$;
+	const key = [
+		state.dataGeneration,
+		axis?.isTimeSeries?.() ? 1 : 0,
+		targets.map((target) => `${target.id}:${target.values.length}`).join(",")
+	].join("|");
+	const cached = state._canvasXDataTickCache;
+	if (cached?.key === key) return cached;
+	const values = $$.mapTargetsToUniqueXs(targets);
+	const entry = {
+		key,
+		values,
+		comparable: values.map((value) => toComparableValue($$, value) ?? NaN)
+	};
+	state._canvasXDataTickCache = entry;
+	return entry;
+}
+/**
+* Include the nearest data ticks at zoom boundaries.
+* @param {object} $$ ChartInternal context
+* @param {object} dataTicks Cached data x ticks
+* @returns {Array} Data ticks visible in current zoom domain
+* @private
+*/
+function filterXDataTicksForZoom($$, dataTicks) {
+	const { values: ticks, comparable } = dataTicks;
+	if (!hasActiveXZoom($$)) return ticks;
+	const domain = getCanvasComparableXDomain($$);
+	if (!domain || comparable.length !== ticks.length || !Number.isFinite(comparable[0])) return ticks.filter((value) => isInCurrentXDomain($$, value));
+	const [start, end] = domain;
+	let startIndex = lowerBoundNumbers(comparable, start);
+	let endIndex = upperBoundNumbers(comparable, end);
+	const includeNearest = (edge) => {
+		const index = lowerBoundNumbers(comparable, edge);
+		let nearestIndex = -1;
+		let nearestDistance = Infinity;
+		for (const candidate of [index - 1, index]) {
+			const distance = Math.abs(comparable[candidate] - edge);
+			if (distance < nearestDistance) {
+				nearestDistance = distance;
+				nearestIndex = candidate;
+			}
+		}
+		if (nearestIndex > -1 && nearestIndex < comparable.length && nearestDistance <= getHalfNeighborDistance(comparable, nearestIndex) + 1e-6) {
+			startIndex = Math.min(startIndex, nearestIndex);
+			endIndex = Math.max(endIndex, nearestIndex + 1);
+		}
+	};
+	includeNearest(start);
+	includeNearest(end);
+	return ticks.slice(Math.max(0, startIndex), Math.min(ticks.length, endIndex));
+}
+/**
+* Get stable key part for configured explicit tick values.
+* @param {Array|function} values Tick values option
+* @param {number} generation Current redraw generation
+* @returns {string} Cache key
+* @private
+*/
+function getTickOptionCacheKey(values, generation) {
+	if (typeof values === "function") return `fn:${generation}`;
+	return Array.isArray(values) ? values.map((value) => value instanceof Date ? +value : String(value)).join(",") : "";
+}
+/**
+* Get x tick cache key for the current draw inputs.
+* @param {object} $$ ChartInternal context
+* @param {boolean} cull Whether ticks are text-culled
+* @returns {string} Cache key
+* @private
+*/
+function getXTickCacheKey($$, cull) {
+	const { config, state } = $$;
+	const domainKey = (getXScale($$).domain?.() || []).map((value) => value instanceof Date ? +value : String(value)).join(",");
+	return [
+		cull ? 1 : 0,
+		state.dataGeneration,
+		domainKey,
+		config.axis_rotated ? state.height : state.width,
+		config.axis_x_tick_fit ? 1 : 0,
+		config.axis_x_tick_count || "",
+		config.axis_x_tick_culling,
+		config.axis_x_tick_culling_max || "",
+		config.axis_x_tick_culling_reverse ? 1 : 0,
+		config.axis_x_categories?.length || 0,
+		getTickOptionCacheKey(config.axis_x_tick_values, state.redrawGeneration)
+	].join("|");
+}
+/**
+* Generate tick values reusing the axis helper when available.
+* @param {object} $$ ChartInternal context
+* @param {Array} values Base values
+* @param {number} count Tick count
+* @param {boolean} forTimeSeries Whether values are timeseries
+* @returns {Array} Tick values
+* @private
+*/
+function generateTickValues($$, values, count, forTimeSeries = false) {
+	return $$.axis?.generateTickValues ? $$.axis.generateTickValues(values, count, forTimeSeries) : values;
+}
+/**
+* Get step ticks for y axis.
+* @param {Array} domain Scale domain
+* @param {number} stepSize Step size
+* @returns {Array} Tick values
+* @private
+*/
+function getStepTicks(domain, stepSize) {
+	const [start, end] = domain;
+	const ticks = [];
+	if (!stepSize || !Number.isFinite(stepSize)) return ticks;
+	for (let value = Math.round(start); value <= end; value += stepSize) ticks.push(value);
+	return ticks;
+}
+/**
+* Get x ticks for indexed/linear canvas mode.
+* @param {object} $$ ChartInternal context
+* @param {boolean} cull Whether to cull tick values
+* @returns {Array} Tick values
+* @private
+*/
+function getXTickValues($$, cull = true) {
+	const { axis, config } = $$;
+	const targetScale = getXScale($$);
+	const targetsToShow = $$.getTargetsToShow?.() || $$.filterTargetsToShow();
+	const cache = $$.state._canvasXTickValuesCache || ($$.state._canvasXTickValuesCache = /* @__PURE__ */ new Map());
+	const cacheKey = getXTickCacheKey($$, cull);
+	const cached = cache.get(cacheKey);
+	if (cached) return cached;
+	const setCache = (ticks) => {
+		cache.set(cacheKey, ticks);
+		return ticks;
+	};
+	if (!targetsToShow?.length) return setCache([]);
+	const explicit = getOptionTickValues(config.axis_x_tick_values, $$.api);
+	if (explicit) {
+		const values = normalizeXTickValues($$, explicit);
+		return setCache(cull ? cullDataTicks($$, values) : values);
+	}
+	if (config.axis_x_tick_fit && targetsToShow?.length && $$.mapTargetsToUniqueXs) {
+		const generated = generateTickValues($$, filterXDataTicksForZoom($$, getCachedXDataTicks($$, targetsToShow)), config.axis_x_tick_count, axis?.isTimeSeries?.());
+		return setCache(cull ? cullDataTicks($$, generated, true) : generated);
+	}
+	if (hasActiveXZoom($$) && !axis?.isCategorized?.()) {
+		const domain = $$.zoom?.getDomain?.() || targetScale.domain();
+		const generated = includeDomainEndpoints(getScaleTicks(targetScale, config.axis_x_tick_count || 10), domain);
+		return setCache(cull ? cullTicks(generated, getXTickCullMax($$)) : generated);
+	}
+	if (axis?.isCategorized?.() && config.axis_x_categories?.length) {
+		const generated = config.axis_x_categories.map((_, i) => i);
+		return setCache(cull ? cullTicks(generated, getXTickCullMax($$)) : generated);
+	}
+	const generated = getScaleTicks(targetScale, config.axis_x_tick_count || 10);
+	return setCache(cull ? cullTicks(generated, getXTickCullMax($$)) : generated);
+}
+/**
+* Get max number of subchart x ticks to render.
+* @param {object} $$ ChartInternal context
+* @returns {number|undefined} Max tick count
+* @private
+*/
+function getSubXTickCullMax($$) {
+	const { config, state: { height2, width2 } } = $$;
+	const size = config.axis_rotated ? height2 : width2;
+	const count = getAxisTickOption(config, "x", "count", "subchart_axis_x");
+	const culling = getAxisTickOption(config, "x", "culling", "subchart_axis_x");
+	const cullingMax = getAxisTickOption(config, "x", "culling_max", "subchart_axis_x");
+	if (count) return count;
+	if (culling !== false) return Math.min(cullingMax || 10, Math.max(2, Math.floor(size / 70)));
+}
+/**
+* Get x ticks for the canvas subchart axis.
+* @param {object} $$ ChartInternal context
+* @param {boolean} culling Whether to cull tick values
+* @returns {Array} Tick values
+* @private
+*/
+function getSubXTickValues($$, culling = true) {
+	const { axis, config, scale } = $$;
+	const targetScale = scale.subX;
+	const targetsToShow = $$.getTargetsToShow?.() || $$.filterTargetsToShow();
+	const tickCount = getAxisTickOption(config, "x", "count", "subchart_axis_x");
+	const cullMax = getSubXTickCullMax($$);
+	const cullData = (ticks, sorted = false) => culling ? cullDataTicks($$, ticks, sorted, "subchart_axis_x", cullMax) : ticks;
+	if (!targetScale || !targetsToShow?.length) return [];
+	const explicit = getOptionTickValues(getAxisTickOption(config, "x", "values", "subchart_axis_x"), $$.api);
+	if (explicit) return cullData(normalizeXTickValues($$, explicit));
+	if (config.axis_x_tick_fit && $$.mapTargetsToUniqueXs) return cullData(generateTickValues($$, $$.mapTargetsToUniqueXs(targetsToShow), tickCount, axis?.isTimeSeries?.()), true);
+	if (axis?.isCategorized?.() && config.axis_x_categories?.length) return cullData(config.axis_x_categories.map((_, i) => i), true);
+	return cullData(getScaleTicks(targetScale, tickCount || 10), true);
+}
+/**
+* Get raw category boundary tick values for x axis tick lines.
+* @param {object} $$ ChartInternal context
+* @param {function} targetScale X scale
+* @param {boolean} outerTick Whether outer ticks are shown
+* @returns {Array} Category boundary values
+* @private
+*/
+function getCategoryXTickLineValues($$, targetScale = getXScale($$), outerTick = $$.config.axis_x_tick_outer) {
+	const scale = targetScale;
+	const domain = scale.orgDomain?.() || scale.domain?.();
+	if (!domain?.length) return [];
+	const start = +domain[0];
+	const end = +domain[domain.length - 1];
+	if (!Number.isFinite(start) || !Number.isFinite(end)) return [];
+	const min = Math.ceil(Math.min(start, end));
+	const values = Array.from({ length: Math.max(0, Math.floor(Math.max(start, end)) - min + 1) }, (_, i) => min + i);
+	return outerTick ? values.slice(1, -1) : values;
+}
+/**
+* Resolve x tick line coordinate. Category tick lines are drawn on raw scale boundaries.
+* @param {object} $$ ChartInternal context
+* @param {number|Date|string} value X tick value
+* @param {function} targetScale X scale
+* @returns {number} Pixel coordinate relative to plot area
+* @private
+*/
+function getXTickLinePosition($$, value, targetScale = getXScale($$)) {
+	const scale = targetScale;
+	const normalized = normalizeXValue($$, value);
+	if ($$.axis?.isCategorized?.()) {
+		const rawScale = scale.orgScale?.();
+		if (rawScale) return rawScale(normalized);
+		const offset = $$.axis.x?.tickOffset?.() || (scale(1) - scale(0)) / 2;
+		return scale(normalized) - offset;
+	}
+	return scale(normalized);
+}
+/**
+* Check whether adjacent x tick line intervals overlap on canvas.
+* @param {object} $$ ChartInternal context
+* @param {Array} ticks Sorted tick values
+* @param {number} tickLineWidth Tick line stroke width
+* @param {function} targetScale X scale
+* @returns {boolean} Whether tick lines should follow culled text ticks
+* @private
+*/
+function hasOverlappedXTickLineIntervals($$, ticks, tickLineWidth, targetScale = getXScale($$)) {
+	if (ticks.length < 2) return false;
+	const halfWidth = Math.max(1, tickLineWidth) / 2;
+	const positions = ticks.map((tick) => getXTickLinePosition($$, tick, targetScale)).filter(Number.isFinite).sort((a, b) => a - b);
+	if (positions.length < 2) return false;
+	let previousEnd = positions[0] + halfWidth;
+	for (let i = 1; i < positions.length; i++) {
+		const start = positions[i] - halfWidth;
+		const end = positions[i] + halfWidth;
+		if (start <= previousEnd + 1) return true;
+		previousEnd = Math.max(previousEnd, end);
+	}
+	return false;
+}
+/**
+* Remove line ticks that map to the same canvas pixel.
+* @param {object} $$ ChartInternal context
+* @param {Array} ticks Tick values
+* @param {function} targetScale X scale
+* @returns {Array} Pixel-deduped tick values
+* @private
+*/
+function dedupeXTickLineValues($$, ticks, targetScale = getXScale($$)) {
+	const seen = /* @__PURE__ */ new Set();
+	return ticks.filter((tick) => {
+		const pos = getXTickLinePosition($$, tick, targetScale);
+		const key = Math.round(pos);
+		if (!Number.isFinite(pos) || seen.has(key)) return false;
+		seen.add(key);
+		return true;
+	});
+}
+/**
+* Get x tick values for tick lines, following SVG culling options.
+* @param {object} $$ ChartInternal context
+* @param {Array} textTicks Text tick values
+* @param {number} tickLineWidth Tick line stroke width
+* @returns {Array} Tick line values
+* @private
+*/
+function getXTickLineValues($$, textTicks, tickLineWidth = 1) {
+	const { axis, config } = $$;
+	if (axis?.isCategorized?.()) return dedupeXTickLineValues($$, getCategoryXTickLineValues($$));
+	if (config.axis_x_tick_culling === false || config.axis_x_tick_culling_lines === false) return textTicks;
+	const lineTicks = getXTickValues($$, false);
+	return hasOverlappedXTickLineIntervals($$, lineTicks, tickLineWidth) ? textTicks : dedupeXTickLineValues($$, lineTicks);
+}
+/**
+* Get subchart x tick values for tick lines, following SVG culling options.
+* @param {object} $$ ChartInternal context
+* @param {Array} textTicks Text tick values
+* @param {number} tickLineWidth Tick line stroke width
+* @returns {Array} Tick line values
+* @private
+*/
+function getSubXTickLineValues($$, textTicks, tickLineWidth = 1) {
+	const { axis, config, scale } = $$;
+	const targetScale = scale.subX;
+	const culling = getAxisTickOption(config, "x", "culling", "subchart_axis_x");
+	const cullingLines = getAxisTickOption(config, "x", "culling_lines", "subchart_axis_x");
+	const outerTick = getAxisTickOption(config, "x", "outer", "subchart_axis_x");
+	if (!targetScale) return [];
+	if (axis?.isCategorized?.()) return dedupeXTickLineValues($$, getCategoryXTickLineValues($$, targetScale, outerTick), targetScale);
+	if (culling === false || cullingLines === false) return textTicks;
+	const lineTicks = getSubXTickValues($$, false);
+	return hasOverlappedXTickLineIntervals($$, lineTicks, tickLineWidth, targetScale) ? textTicks : dedupeXTickLineValues($$, lineTicks, targetScale);
+}
+/**
+* Get y ticks for indexed/linear canvas mode.
+* @param {object} $$ ChartInternal context
+* @param {string} id Axis id
+* @param {number} count Optional tick count override
+* @param {boolean} culling Whether to apply tick culling
+* @param {d3Scale} targetScale Scale to generate ticks from
+* @param {string} optionPrefix Tick option prefix
+* @returns {Array} Tick values
+* @private
+*/
+function getYTickValues($$, id = "y", count, culling = true, targetScale = $$.scale[id], optionPrefix = `axis_${id}`) {
+	const { axis, config } = $$;
+	const prefix = `axis_${id}`;
+	const explicit = getOptionTickValues(getAxisTickOption(config, id, "values", optionPrefix), $$.api);
+	const maybeCull = (ticks) => culling ? cullAxisTicks($$, id, ticks, optionPrefix) : ticks;
+	if (explicit) return maybeCull(normalizeYTickValues($$, explicit, id));
+	const stepTicks = getStepTicks(targetScale.domain(), config[`${prefix}_tick_stepSize`]);
+	if (stepTicks.length) return maybeCull(stepTicks);
+	const tickCount = count ?? getAxisTickOption(config, id, "count", optionPrefix);
+	if (axis?.isTimeSeries?.(id) && config[`${prefix}_tick_time_value`]) return maybeCull(getScaleTicks(targetScale, config[`${prefix}_tick_time_value`]));
+	if (axis?.isLog?.(id)) return maybeCull(getLogScaleTicks(targetScale, tickCount));
+	if (tickCount) {
+		const domain = targetScale.domain();
+		return maybeCull(generateTickValues($$, domain, domain.every((v) => v === 0) ? 1 : tickCount, axis?.isTimeSeries?.(id)));
+	}
+	return maybeCull(getScaleTicks(targetScale, 10));
+}
+/**
+* Get scale for an additional axis.
+* @param {object} $$ ChartInternal context
+* @param {string} id Axis id
+* @param {object} axisConfig Additional axis config
+* @returns {function} Scale
+* @private
+*/
+function getAdditionalAxisScale($$, id, axisConfig) {
+	const baseScale = id === "x" ? getXScale($$) : $$.scale[id];
+	const scale = baseScale?.copy ? baseScale.copy() : baseScale;
+	if (axisConfig.domain && scale?.domain) scale.domain(axisConfig.domain);
+	return scale;
+}
+/**
+* Get tick values for an additional axis.
+* @param {object} $$ ChartInternal context
+* @param {string} id Axis id
+* @param {function} scale Axis scale
+* @param {object} axisConfig Additional axis config
+* @returns {Array} Tick values
+* @private
+*/
+function getAdditionalAxisTickValues($$, id, scale, axisConfig) {
+	const tick = axisConfig.tick || {};
+	const explicit = getOptionTickValues(tick.values, $$.api);
+	if (explicit) return id === "x" ? normalizeXTickValues($$, explicit) : normalizeYTickValues($$, explicit, id);
+	if (id !== "x" && $$.axis?.isLog?.(id)) return getLogScaleTicks(scale, tick.count);
+	return getScaleTicks(scale, tick.count ?? 10);
+}
+/**
+* Get tick formatter for an additional axis.
+* @param {object} $$ ChartInternal context
+* @param {object} axisConfig Additional axis config
+* @returns {function} Formatter
+* @private
+*/
+function getAdditionalAxisTickFormat($$, axisConfig) {
+	const format = axisConfig.tick?.format;
+	return typeof format === "function" ? format.bind($$.api) : ((value) => value);
+}
+/**
+* Cull generated ticks like AxisRenderer.getGeneratedTicks().
+* @param {Array} ticks Tick values
+* @param {number} count Target count
+* @returns {Array} Culled tick values
+* @private
+*/
+function cullTicks(ticks, count) {
+	const len = ticks.length - 1;
+	if (count && len > count) {
+		const last = ticks.length - 1;
+		if (count <= 1) return [ticks[0]];
+		return Array.from({ length: count }, (_, i) => ticks[Math.round(i * last / (count - 1))]);
+	}
+	return ticks;
+}
+/**
+* Cull axis ticks following SVG manual culling.
+* @param {object} $$ ChartInternal context
+* @param {string} id Axis id
+* @param {Array} ticks Tick values
+* @param {string} optionPrefix Tick option prefix
+* @returns {Array} Culled tick values
+* @private
+*/
+function cullAxisTicks($$, id, ticks, optionPrefix = `axis_${id}`) {
+	const { config } = $$;
+	if (!getAxisTickOption(config, id, "culling", optionPrefix)) return ticks;
+	const cullingMax = getAxisTickOption(config, id, "culling_max", optionPrefix) || 10;
+	const reverse = getAxisTickOption(config, id, "culling_reverse", optionPrefix);
+	const sortedTicks = ticks.slice().sort((a, b) => {
+		const av = +a;
+		const bv = +b;
+		const order = Number.isFinite(av) && Number.isFinite(bv) ? av - bv : String(a).localeCompare(String(b));
+		return reverse ? -order : order;
+	});
+	const tickSize = sortedTicks.length;
+	let intervalForCulling = 0;
+	for (let i = 1; i < tickSize; i++) if (tickSize / i < cullingMax) {
+		intervalForCulling = i;
+		break;
+	}
+	if (!intervalForCulling) return ticks;
+	const visible = new Set(sortedTicks.filter((_, i) => i % intervalForCulling === 0));
+	return ticks.filter((tick) => visible.has(tick));
+}
+/**
+* Cull data-based x ticks like the SVG axis manual culling path.
+* @param {object} $$ ChartInternal context
+* @param {Array} ticks Tick values
+* @param {boolean} sorted Whether ticks are already sorted in x order
+* @param {string} optionPrefix Tick option prefix
+* @param {number} max Optional culling max override
+* @returns {Array} Culled tick values
+* @private
+*/
+function cullDataTicks($$, ticks, sorted = false, optionPrefix = "axis_x", max) {
+	const { config } = $$;
+	if (getAxisTickOption(config, "x", "culling", optionPrefix) === false) return ticks;
+	const cullingMax = max || getAxisTickOption(config, "x", "culling_max", optionPrefix) || 10;
+	const reverse = getAxisTickOption(config, "x", "culling_reverse", optionPrefix);
+	const sortedTicks = sorted ? ticks : ticks.slice().sort((a, b) => {
+		const av = +a;
+		const bv = +b;
+		if (Number.isFinite(av) && Number.isFinite(bv)) return reverse ? bv - av : av - bv;
+		return reverse ? String(b).localeCompare(String(a)) : String(a).localeCompare(String(b));
+	});
+	const tickSize = sortedTicks.length;
+	let intervalForCulling = 0;
+	for (let i = 1; i < tickSize; i++) if (tickSize / i < cullingMax) {
+		intervalForCulling = i;
+		break;
+	}
+	if (!intervalForCulling) return ticks;
+	if (sorted) return ticks.filter((_, i) => reverse ? (tickSize - 1 - i) % intervalForCulling === 0 : i % intervalForCulling === 0);
+	const visible = new Set(sortedTicks.filter((_, i) => i % intervalForCulling === 0));
+	return ticks.filter((tick) => visible.has(tick));
+}
+/**
+* Get max number of x ticks to render.
+* @param {object} $$ ChartInternal context
+* @returns {number|undefined} Max tick count
+* @private
+*/
+function getXTickCullMax($$) {
+	const { config, state: { height, width } } = $$;
+	const size = config.axis_rotated ? height : width;
+	if (config.axis_x_tick_count) return config.axis_x_tick_count;
+	if (config.axis_x_tick_culling !== false) return Math.min(config.axis_x_tick_culling_max || 10, Math.max(2, Math.floor(size / 70)));
+}
+/**
+* Get y grid ticks.
+* @param {object} $$ ChartInternal context
+* @returns {Array} Tick values
+* @private
+*/
+function getYGridTickValues($$) {
+	const { axis, config } = $$;
+	const generated = axis?.y?.getGeneratedTicks?.(config.grid_y_ticks);
+	if (generated?.length) return generated;
+	return config.grid_y_ticks ? cullTicks(getYTickValues($$, "y", void 0, false), config.grid_y_ticks) : getYTickValues($$, "y", void 0, false);
+}
+//#endregion
+export { getAdditionalAxisScale, getAdditionalAxisTickFormat, getAdditionalAxisTickValues, getSubXTickLineValues, getSubXTickValues, getXScale, getXTickLinePosition, getXTickLineValues, getXTickValues, getYGridTickValues, getYTickValues, isSameTickValue, normalizeXValue, normalizeYValue };
