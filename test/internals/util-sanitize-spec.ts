@@ -329,4 +329,17 @@ describe("UTIL: sanitize", () => {
 		const result7 = sanitize("<img src='x' alt='test'>");
 		expect(result7).to.be.equal("<img src='x' alt='test'>");
 	});
+
+	it("should escape a trailing unterminated tag", () => {
+		const payload = "<img src=x onerror=window.__pwned=1 ";
+
+		expect(sanitize(payload)).to.be.equal("&lt;img src=x onerror=window.__pwned=1 ");
+		expect(sanitize("<b>ok</b><img src=x onerror=alert(1)")).to.be.equal("<b>ok</b>&lt;img src=x onerror=alert(1)");
+
+		// joined with a following "  >" it must not form a live tag
+		const div = document.createElement("div");
+
+		div.innerHTML = sanitize(payload) + sanitize(" >");
+		expect(div.querySelector("img")).to.be.null;
+	});
 });

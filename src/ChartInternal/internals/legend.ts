@@ -321,7 +321,8 @@ export default {
 				}
 			});
 
-			const legendItem = wrapper.html(html)
+			// sanitize the concatenated html, as each item's content can form a tag when joined
+			const legendItem = wrapper.html(sanitize(html))
 				.selectAll(function() {
 					return this.children;
 				})

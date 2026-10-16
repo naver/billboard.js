@@ -1207,5 +1207,40 @@ describe("LEGEND", () => {
 				expect(html).to.not.include("</script>");
 			});
 		});
+
+		describe("tag split across multiple data ids", () => {
+			let legendElement: HTMLElement;
+
+			beforeAll(() => {
+				legendElement = document.createElement("div");
+				legendElement.id = "legend-xss-test3";
+				document.body.appendChild(legendElement);
+
+				args = {
+					data: {
+						columns: [
+							["<img src=x onerror=window.__pwned=1 ", 100],
+							[" >", 200]
+						]
+					},
+					legend: {
+						contents: {
+							bindto: "#legend-xss-test3",
+							// unclosed tag after {=TITLE}, so the next item can complete the split tag
+							template: "<span>{=TITLE}"
+						}
+					}
+				};
+			});
+
+			afterAll(() => {
+				legendElement.parentNode?.removeChild(legendElement);
+			});
+
+			it("should not form a live tag from concatenated legend items", () => {
+				expect(legendElement.querySelector("img")).to.be.null;
+				expect(legendElement.innerHTML).to.not.include("onerror=\"");
+			});
+		});
 	});
 });
