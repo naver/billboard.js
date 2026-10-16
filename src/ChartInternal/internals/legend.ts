@@ -323,7 +323,7 @@ export default {
 
 			const legendItem = wrapper.html(html)
 				.selectAll(function() {
-					return this.childNodes;
+					return this.children;
 				})
 				.data(ids);
 
