@@ -549,6 +549,34 @@ describe("ESM canvas", function() {
 		}
 	});
 
+	it("should not form a live tag from concatenated canvas legend template items", () => {
+		const legendElement = document.createElement("div");
+
+		document.body.appendChild(legendElement);
+
+		try {
+			chart = generateWithOptions({
+				data: {
+					columns: [
+						["<img src=x onerror=window.__pwned=1 ", 10, 20],
+						[" >", 30, 40]
+					],
+					type: line()
+				},
+				legend: {
+					contents: {
+						bindto: legendElement,
+						template: "{=TITLE}"
+					}
+				}
+			});
+
+			expect(legendElement.querySelector("img")).to.be.null;
+		} finally {
+			legendElement.remove();
+		}
+	});
+
 	it("should use canvas hover handlers for legend contents function template", () => {
 		const legendElement = document.createElement("div");
 

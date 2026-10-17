@@ -1695,8 +1695,9 @@ const canvasInternal = {
 			}
 		});
 
+		// sanitize the concatenated html, as each item's content can form a tag when joined
 		const legendItem = wrapper
-			.html(html)
+			.html(sanitize(html))
 			.classed($LEGEND.legend, true)
 			.classed($CANVAS.legend, false)
 			.style("visibility", null)

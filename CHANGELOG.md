@@ -1,3 +1,10 @@
+## [4.1.3](https://github.com/naver/billboard.js/compare/4.1.2...4.1.3) (2026-10-16)
+
+
+### Bug Fixes
+
+* **legend:** select only element nodes for legend template items ([b69e7c5](https://github.com/naver/billboard.js/commit/b69e7c54a7660338b6e1b0acd053fdca554322d7)), closes [#4250](https://github.com/naver/billboard.js/issues/4250)
+
 ## [4.1.2](https://github.com/naver/billboard.js/compare/4.1.1...4.1.2) (2026-10-15)
 
 

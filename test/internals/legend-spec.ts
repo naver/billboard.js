@@ -1086,6 +1086,51 @@ describe("LEGEND", () => {
 		});
 	});
 
+	describe("legend template with text nodes", () => {
+		let legendElement: HTMLElement;
+
+		beforeAll(() => {
+			legendElement = document.createElement("div");
+			legendElement.id = "legend-text-node";
+			document.body.appendChild(legendElement);
+
+			args = {
+				data: {
+					columns: [
+						["data1", 100],
+						["data2", 200]
+					]
+				},
+				legend: {
+					contents: {
+						bindto: "#legend-text-node",
+						template: "{=TITLE}"
+					}
+				}
+			};
+		});
+
+		afterAll(() => {
+			legendElement.parentNode?.removeChild(legendElement);
+		});
+
+		it("should render text only template without error", () => {
+			expect(legendElement.textContent).to.be.equal("data1data2");
+		});
+
+		it("set options: whitespace between template elements", () => {
+			args.legend.contents.template = "<span>{=TITLE}</span> ";
+		});
+
+		it("should bind legend items to elements only", () => {
+			const items = legendElement.querySelectorAll(`.${$LEGEND.legendItem}`);
+
+			expect(items.length).to.be.equal(2);
+			expect(items[0].classList.contains(`${$LEGEND.legendItem}-data1`)).to.be.true;
+			expect(items[1].classList.contains(`${$LEGEND.legendItem}-data2`)).to.be.true;
+		});
+	});
+
 	describe("XSS prevention", () => {
 		describe("legend.contents.template as function", () => {
 			let legendElement: HTMLElement;
@@ -1160,6 +1205,41 @@ describe("LEGEND", () => {
 
 				expect(html).to.not.include("<script>");
 				expect(html).to.not.include("</script>");
+			});
+		});
+
+		describe("tag split across multiple data ids", () => {
+			let legendElement: HTMLElement;
+
+			beforeAll(() => {
+				legendElement = document.createElement("div");
+				legendElement.id = "legend-xss-test3";
+				document.body.appendChild(legendElement);
+
+				args = {
+					data: {
+						columns: [
+							["<img src=x onerror=window.__pwned=1 ", 100],
+							[" >", 200]
+						]
+					},
+					legend: {
+						contents: {
+							bindto: "#legend-xss-test3",
+							// unclosed tag after {=TITLE}, so the next item can complete the split tag
+							template: "<span>{=TITLE}"
+						}
+					}
+				};
+			});
+
+			afterAll(() => {
+				legendElement.parentNode?.removeChild(legendElement);
+			});
+
+			it("should not form a live tag from concatenated legend items", () => {
+				expect(legendElement.querySelector("img")).to.be.null;
+				expect(legendElement.innerHTML).to.not.include("onerror=\"");
 			});
 		});
 	});
