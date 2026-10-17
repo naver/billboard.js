@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.2-nightly-20261016010055
+ * @version 4.1.3-nightly-20261017010212
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.12
@@ -28024,8 +28024,11 @@ function sanitize(str) {
     return str;
   }
   return str.replace(
-    /<\/?[^>]*>|[^<>\s]+>/g,
+    /<\/?[^>]*>|<[^>]*$|[^<>\s]+>/g,
     (match) => {
+      if (match.startsWith("<") && !match.endsWith(">")) {
+        return match.replace(/</g, "&lt;");
+      }
       if (match.startsWith("<!--")) {
         return "";
       }
@@ -44199,8 +44202,8 @@ function _getLegendTouchOption($$) {
           html += content;
         }
       });
-      const legendItem = wrapper.html(html).selectAll(function() {
-        return this.childNodes;
+      const legendItem = wrapper.html(sanitize(html)).selectAll(function() {
+        return this.children;
       }).data(ids);
       $$.setLegendItem(legendItem);
       $el.legend = wrapper;
@@ -50482,7 +50485,7 @@ const canvasInternal = {
         html += content;
       }
     });
-    const legendItem = wrapper.html(html).classed($LEGEND.legend, true).classed($CANVAS.legend, false).style("visibility", null).selectAll(function() {
+    const legendItem = wrapper.html(sanitize(html)).classed($LEGEND.legend, true).classed($CANVAS.legend, false).style("visibility", null).selectAll(function() {
       return this.children;
     }).data(ids);
     setCanvasHtmlLegendItem($$, legendItem);
@@ -67723,7 +67726,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.1.2-nightly-20261016010055",
+  version: "4.1.3-nightly-20261017010212",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.2-nightly-20261016010055
+ * @version 4.1.3-nightly-20261017010212
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -406,8 +406,11 @@ function sanitize(str) {
     return str;
   }
   return str.replace(
-    /<\/?[^>]*>|[^<>\s]+>/g,
+    /<\/?[^>]*>|<[^>]*$|[^<>\s]+>/g,
     (match) => {
+      if (match.startsWith("<") && !match.endsWith(">")) {
+        return match.replace(/</g, "&lt;");
+      }
       if (match.startsWith("<!--")) {
         return "";
       }
@@ -746,7 +749,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "4.1.2-nightly-20261016010055");
+__publicField(Plugin, "version", "4.1.3-nightly-20261017010212");
 
 ;// ./src/Plugin/tableview/const.ts
 
