@@ -5,8 +5,9 @@
 /* eslint-disable */
 // @ts-nocheck
 import {select} from "d3-selection";
-import {afterEach, describe, expect, it, vi} from "vitest";
+import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
+import {TYPE, TYPE_METHOD_NEEDED} from "../../src/config/const";
 import Cache from "../../src/module/Cache";
 import {csvParse, csvParseRows, tsvParse, tsvParseRows} from "../../src/module/dsv";
 import {checkApiModuleImport, checkModuleImport, logError} from "../../src/module/error";
@@ -630,6 +631,64 @@ describe("MODULE coverage helpers", () => {
 				config: {data_type: "bar", data_types: null},
 				hasType: type => type === "bar"
 			})).to.throw("'bar'");
+		});
+	});
+
+	describe("module import hint of every built-in type", () => {
+		beforeEach(() => {
+			vi.spyOn(window.console, "error").mockImplementation(() => {});
+			vi.spyOn(window.console, "info").mockImplementation(() => {});
+		});
+
+		Object.keys(TYPE_METHOD_NEEDED).forEach(key => {
+			const type = TYPE[key];
+			const method = TYPE_METHOD_NEEDED[key];
+			const ctx = (imported: boolean) => ({
+				config: {data_type: type, data_types: {}},
+				hasType: t => t === type,
+				...(imported ? {[method]: () => {}} : {})
+			});
+
+			it(`${type}: reports it when the module is not there`, () => {
+				expect(() => checkModuleImport(ctx(false))).to.throw("module has been imported");
+			});
+
+			it(`${type}: is silent when the module is there`, () => {
+				expect(() => checkModuleImport(ctx(true))).to.not.throw();
+			});
+		});
+	});
+
+	describe("module import hint of a custom type", () => {
+		const check = (config, isValid = false) => () => checkModuleImport({
+			config,
+			hasType: () => false,
+			isValidChartType: () => isValid
+		});
+
+		beforeEach(() => {
+			vi.spyOn(window.console, "error").mockImplementation(() => {});
+			vi.spyOn(window.console, "info").mockImplementation(() => {});
+		});
+
+		it("reports a custom type whose module is not there", () => {
+			expect(check({data_type: "bullet", data_types: {}})).to.throw("'bullet'");
+			expect(check({data_type: "line", data_types: {data1: "bullet"}})).to.throw("'bullet'");
+		});
+
+		it("does not report it when its module is there", () => {
+			expect(check({data_type: "bullet", data_types: {}}, true)).to.not.throw();
+			expect(check({data_type: "line", data_types: {data1: "bullet"}}, true)).to.not.throw();
+		});
+
+		it("does not report a name that is no custom type, a typo for example", () => {
+			expect(check({data_type: "buble", data_types: {}})).to.not.throw();
+			expect(check({data_type: "bulet", data_types: {data1: "lin"}})).to.not.throw();
+			expect(check({data_type: "BULLET", data_types: {}})).to.not.throw();
+		});
+
+		it("does not report a chart that does not use it", () => {
+			expect(check({data_type: "bar", data_types: {data1: "line"}}, true)).to.not.throw();
 		});
 	});
 

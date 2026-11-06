@@ -85,6 +85,12 @@ function getUnsupportedCanvasRenderType($$): string | null {
 		return "funnel chart";
 	}
 
+	// a type of its own module is drawn on canvas by the canvas part of that module:
+	// there is nothing to draw it when only the svg part was imported
+	if ($$.state.customType && !$$.drawCustomTypeOnCanvas) {
+		return `${$$.state.customType} chart without its canvas module`;
+	}
+
 	return null;
 }
 
@@ -243,6 +249,10 @@ export default class ChartInternal {
 		const {config, state, $el} = $$;
 		const {boost_useCssRule, bindto} = config;
 
+		// set by the module of a type that is neither axis based nor built in:
+		// the import check needs it to tell a type whose module is there
+		state.customType = $$.getCustomType?.() ?? null;
+
 		checkModuleImport($$);
 		fallbackUnsupportedCanvasRenderMode($$);
 
@@ -250,7 +260,7 @@ export default class ChartInternal {
 		state.hasRadar = !state.hasAxis && $$.hasType("radar");
 		state.hasFunnel = !state.hasAxis && $$.hasType("funnel");
 		state.hasTreemap = !state.hasAxis && $$.hasType("treemap");
-		state.hasAxis = !hasArcType && !state.hasFunnel && !state.hasTreemap;
+		state.hasAxis = !hasArcType && !state.customType && !state.hasFunnel && !state.hasTreemap;
 
 		// datetime to be used for uniqueness
 		state.datetimeId = `bb-${+new Date() * (getRandom() as number)}`;
@@ -405,7 +415,7 @@ export default class ChartInternal {
 	initWithData(data): void {
 		const $$ = <any>this;
 		const {config, scale, state, $el, org} = $$;
-		const {hasAxis, hasFunnel, hasTreemap} = state;
+		const {customType, hasAxis, hasFunnel, hasTreemap} = state;
 		const hasInteraction = config.interaction_enabled;
 		const hasPolar = $$.hasType("polar");
 		const labelsBGColor = config.data_labels_backgroundColors;
@@ -564,7 +574,8 @@ export default class ChartInternal {
 		// Define regions
 		const main = $el.svg.append("g")
 			.classed($COMMON.main, true)
-			.attr("transform", hasFunnel || hasTreemap ? null : $$.getTranslate("main"));
+			.attr("transform",
+				customType || hasFunnel || hasTreemap ? null : $$.getTranslate("main"));
 
 		$el.main = main;
 
@@ -673,6 +684,8 @@ export default class ChartInternal {
 			types.push("Treemap");
 		} else if ($$.hasType("funnel")) {
 			types.push("Funnel");
+		} else if ($$.state.customType) {
+			types.push(capitalize($$.state.customType));
 		} else {
 			const hasPolar = $$.hasType("polar");
 			const hasGauge = $$.hasType("gauge");
@@ -784,7 +797,7 @@ export default class ChartInternal {
 	 */
 	updateTargets(targets): void {
 		const $$ = <any>this;
-		const {hasAxis, hasFunnel, hasRadar, hasTreemap} = $$.state;
+		const {customType, hasAxis, hasFunnel, hasRadar, hasTreemap} = $$.state;
 		const helper = type =>
 			$$[`updateTargetsFor${type}`](
 				targets.filter($$[`is${type}Type`].bind($$))
@@ -818,6 +831,8 @@ export default class ChartInternal {
 			helper(type);
 		} else if (hasFunnel) {
 			helper("Funnel");
+		} else if (customType) {
+			helper(capitalize(customType));
 		} else if (hasTreemap) {
 			helper("Treemap");
 		}

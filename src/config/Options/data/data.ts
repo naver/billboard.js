@@ -90,6 +90,7 @@ export default {
 	 * - area-step-range
 	 * - bar
 	 * - bubble
+	 * - bullet
 	 * - candlestick
 	 * - donut
 	 * - funnel
@@ -122,6 +123,7 @@ export default {
 	 *   areaStepRange,
 	 *   bar,
 	 *   bubble,
+	 *   bullet,
 	 *   candlestick,
 	 *   donut,
 	 *   funnel,
@@ -172,6 +174,7 @@ export default {
 	 *   areaStepRange,
 	 *   bar,
 	 *   bubble,
+	 *   bullet,
 	 *   candlestick,
 	 *   donut,
 	 *   funnel,

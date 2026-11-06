@@ -18,6 +18,7 @@ export {
 	areaStepRange,
 	bar,
 	bubble,
+	bullet,
 	candlestick,
 	donut,
 	funnel,

@@ -91,6 +91,8 @@ export default {
 			}
 		}
 
-		return format.bind($$.api);
+		// the format given by the module of a custom type takes precedence, as treemap.label.format does
+		return $$.state.customType && $$.customTypeHooks?.labelFormat?.($$, targetId) ||
+			format.bind($$.api);
 	}
 };

@@ -179,10 +179,11 @@ export default class HitDetector {
 		this.pointGrid = new Map();
 		this.maxPointSensitivity = HIT_DISTANCE;
 		this.indexAxis = $$.config.axis_rotated ? "y" : "x";
-		this.plot = $$.state.hasTreemap ?
+		// a custom type and treemap are laid out over the whole chart area
+		this.plot = $$.state.customType || $$.state.hasTreemap ?
 			{x: 0, y: 0, w: current.width, h: current.height} :
 			{x: margin.left, y: margin.top, w: width, h: height};
-		this.grouped = !!$$.config.tooltip_grouped && !$$.state.hasTreemap;
+		this.grouped = !!$$.config.tooltip_grouped && !$$.state.customType && !$$.state.hasTreemap;
 		this.pointBased = !($$.config.axis_x_forceAsSingle && this.grouped) && (
 			!!$$.isMultipleX?.() ||
 			targets.some(target =>
@@ -208,6 +209,12 @@ export default class HitDetector {
 				indexMap.set(key, {x, y, data});
 			}
 		};
+
+		if ($$.state.customType) {
+			$$.addCustomTypeHitsOnCanvas?.(this);
+			this.indices = [];
+			return;
+		}
 
 		if ($$.state.hasTreemap) {
 			const root = $$.getTreemapRoot?.($$.data.targets);
@@ -529,7 +536,7 @@ export default class HitDetector {
 	 * @param {object} item Hit item
 	 * @private
 	 */
-	private addBar(item: HitItem): void {
+	addBar(item: HitItem): void {
 		this.bars.push(item);
 		addGridItem(this.barGrid, item, BAR_CELL_SIZE);
 	}

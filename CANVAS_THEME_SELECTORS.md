@@ -126,6 +126,9 @@ style generated tick grid lines from `grid.x.show`, `grid.y.show`, or `grid.y.ti
 | `.bb-circle._expanded_` | `fill`, `stroke`, `stroke-width` | Focused points |
 | `.bb-chart-treemaps rect` | `stroke`, `stroke-width` | Treemap tile borders |
 | `.bb-chart-treemaps` | `stroke`, `stroke-width` | Treemap tile borders |
+| `.bb-bullet-target` | `stroke`, `stroke-width` | Bullet comparative target marker |
+| `.bb-bullet-axis text` | `fill`, `font` | Bullet scale axis labels and lines |
+| `.bb-bullet-title` | `fill`, `font` | Bullet row title |
 
 ### Brushes And Text
 
@@ -159,6 +162,7 @@ direct keys only when a selector alias is not specific enough.
 | `zoomBrush` | `fill`, `opacity` |
 | `subchartBrush` | `fill`, `opacity`, `handleFill`, `handleOpacity`, `handleStroke`, `handleLineWidth` |
 | `treemap` | `stroke`, `lineWidth` |
+| `bullet` | `targetStroke`, `targetLineWidth`, `rangeMin`, `rangeMax`, `axisFont`, `axisColor`, `titleFont`, `titleColor` |
 | `label` | `font`, `color` |
 | `title` | `font`, `color` |
 

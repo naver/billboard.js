@@ -34,7 +34,9 @@ export default {
 	 * @private
 	 */
 	isValidChartType(type: string): boolean {
-		return !!(type && Object.values(TYPE).indexOf(type) > -1);
+		// the type of a custom type module is valid too
+		return !!(type &&
+			(Object.values(TYPE).indexOf(type) > -1 || type === this.state.customType));
 	},
 
 	/**
@@ -161,10 +163,12 @@ export default {
 	 */
 	updateTypesElements(): void {
 		const $$ = this;
-		const {state: {current}} = $$;
+		const {state: {current, customType}} = $$;
+		const types = Object.values(TYPE);
 
-		Object.keys(TYPE).forEach(v => {
-			const t = TYPE[v];
+		customType && types.push(customType);
+
+		types.forEach(t => {
 			const has = $$.hasType(t, null, true);
 			const idx = current.types.indexOf(t);
 
@@ -292,6 +296,19 @@ export default {
 		return this.isTypeOf(d, "bubble");
 	},
 
+	/**
+	 * Get the hooks of the module of a custom type, when the data belongs to that type.
+	 * The module installs them as `customTypeHooks`.
+	 * @param {object} d Data object
+	 * @returns {object|null} Hooks
+	 * @private
+	 */
+	getCustomTypeHooks(d) {
+		const {customType} = this.state;
+
+		return customType && this.isTypeOf(d, customType) ? this.customTypeHooks : null;
+	},
+
 	isCandlestickType(d): boolean {
 		return this.isTypeOf(d, "candlestick");
 	},
@@ -365,6 +382,12 @@ export default {
 	 * @private
 	 */
 	labelishData(d) {
+		const custom = this.getCustomTypeHooks(d);
+
+		if (custom) {
+			return custom.labelData?.(this, d) ?? [];
+		}
+
 		return this.isBarType(d) ||
 				this.isLineType(d) ||
 				this.isScatterType(d) ||

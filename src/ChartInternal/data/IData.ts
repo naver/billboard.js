@@ -15,6 +15,19 @@ export interface IFunnelData {
 	coords?: number[][];
 }
 
+export interface IBulletData {
+	id: string;
+	index: number;
+	x: number; // for compatibility
+	name: string;
+	value: number;
+	title: string; // empty when bullet.title.show is not set
+	ranges: number[];
+	targets: number[];
+	domainMin: number; // 0 or less, unless bullet.axis.min is given
+	domainMax: number;
+}
+
 export interface ITreemapData {
 	name: string;
 	id?: string; // for compatibility

@@ -30,6 +30,14 @@ export const TYPE = {
 };
 
 /**
+ * Names of the chart types that come with their own module and are not built in.
+ * Only used to tell that the module of such a type was not imported: no type is judged by this list
+ * when its module is there, and a name that is not here (a typo for example) is never reported.
+ * @private
+ */
+export const CUSTOM_TYPE_NAMES = ["bullet"];
+
+/**
  * Optional API modules and their resolver module name.
  * Used by checkApiModuleImport() to surface a helpful error when a user calls
  * chart.export() / chart.flow() without importing the matching resolver.

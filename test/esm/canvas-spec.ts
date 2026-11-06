@@ -15,6 +15,7 @@ import bb, {
 	areaStepRange,
 	bar,
 	bubble,
+	bullet,
 	canvas,
 	candlestick,
 	category,
@@ -243,6 +244,7 @@ describe("ESM canvas", function() {
 		["area-step-range", areaStepRange, rangeColumns],
 		["scatter", scatter],
 		["bubble", bubble],
+		["bullet", bullet],
 		["candlestick", candlestick, candlestickColumns],
 		["treemap", treemap]
 	];
@@ -1002,6 +1004,662 @@ describe("ESM canvas", function() {
 		fillText.mockRestore();
 		fillRect.mockRestore();
 		warn.mockRestore();
+	});
+
+	describe("bullet", () => {
+		const bulletOptions = {
+			data: {
+				columns: [
+					["data1", 10, 40],
+					["data2", 45]
+				],
+				type: bullet()
+			},
+			bullet: {
+				ranges: [100]
+			}
+		};
+
+		// canvas-local center of the given bullet part, from the shared row geometry
+		function getPoint(chart, id, part: "measure" | "range") {
+			const $$ = chart.internal;
+			const rows = $$.getBulletData();
+			const row = rows.find(d => d.id === id);
+			const {area, offset, measure, ranges} = $$.getBulletRowGeometry(row, $$.getBulletLayout());
+			const left = area.left + offset.x;
+			const top = area.top + offset.y;
+
+			// a dot measure is a circle
+			if (part === "measure" && "cx" in measure) {
+				return {x: left + measure.cx, y: top + measure.cy};
+			}
+
+			const rect = part === "measure" ? measure : ranges[0];
+
+			// the top edge of the range band lies above the (thinner) measure
+			return {
+				x: left + rect.x + rect.width / 4,
+				y: top + rect.y + (part === "measure" ? rect.height / 2 : 2)
+			};
+		}
+
+		function hover(point) {
+			container.querySelector(`canvas.${$CANVAS.canvas}`).dispatchEvent(
+				new MouseEvent("mousemove", {bubbles: true, clientX: point.x, clientY: point.y})
+			);
+
+			return container.querySelector(".bb-tooltip-container");
+		}
+
+		it("should draw bullets on canvas without unsupported warnings", () => {
+			const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+			const fillRect = vi.spyOn(CanvasRenderingContext2D.prototype, "fillRect");
+			const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText");
+
+			const chart = generateWithOptions(bulletOptions);
+			const messages = warn.mock.calls.map(([message]) => message).join("\n");
+
+			expect(messages).not.to.contain("bullet");
+			expect(chart.internal.state.isCanvasMode).to.be.true;
+			expect(container.querySelector("svg")).to.be.null;
+			expect(fillRect).toHaveBeenCalled();
+			// the axis tick labels
+			expect(fillText).toHaveBeenCalled();
+			expect(container.querySelector(".bb-legend")).to.not.be.null;
+
+			fillText.mockRestore();
+			fillRect.mockRestore();
+			warn.mockRestore();
+		});
+
+		it("should show the last value of a single series on measure hover", () => {
+			const chart = generateWithOptions(bulletOptions);
+			const tooltip = hover(getPoint(chart, "data1", "measure"));
+
+			expect(tooltip.style.display).to.not.be.equal("none");
+			expect(tooltip.textContent).to.contain("data1");
+			expect(tooltip.textContent).to.contain("40");
+			expect(tooltip.textContent).not.to.contain("data2");
+		});
+
+		it("should not show tooltip over a range band", () => {
+			const chart = generateWithOptions(bulletOptions);
+			const tooltip = hover(getPoint(chart, "data1", "range"));
+
+			expect(tooltip.style.display).to.be.equal("none");
+		});
+
+		it("should not hit a hidden row", () => {
+			const chart = generateWithOptions(bulletOptions);
+			const point = getPoint(chart, "data1", "measure");
+
+			chart.hide("data1");
+
+			expect(hover(point).style.display).to.be.equal("none");
+		});
+
+		it("should render rotated and dot bullets", () => {
+			[{rotated: true}, {type: "dot"}, {rotated: true, type: "dot", axis: {show: false}}]
+				.forEach(bulletOpt => {
+					const chart = generateWithOptions({
+						...bulletOptions,
+						bullet: {...bulletOptions.bullet, ...bulletOpt}
+					});
+
+					expect(chart.internal.state.isCanvasMode).to.be.true;
+					expect(hover(getPoint(chart, "data1", "measure")).style.display)
+						.to.not.be.equal("none");
+
+					chart.destroy();
+					container.remove();
+				});
+		});
+
+		function getGeometry(chart, id) {
+			const $$ = chart.internal;
+			const rows = $$.getBulletData();
+
+			return $$.getBulletRowGeometry(rows.find(d => d.id === id), $$.getBulletLayout());
+		}
+
+		it("should draw ranges and measure at the shared geometry", () => {
+			const fillRect = vi.spyOn(CanvasRenderingContext2D.prototype, "fillRect");
+			const chart = generateWithOptions(bulletOptions);
+			const {measure, ranges} = getGeometry(chart, "data1");
+			const calls = fillRect.mock.calls.map(args => args.join(","));
+
+			expect(calls).to.include(`${measure.x},${measure.y},${measure.width},${measure.height}`);
+			ranges.forEach(r => {
+				expect(calls).to.include(`${r.x},${r.y},${r.width},${r.height}`);
+			});
+
+			fillRect.mockRestore();
+		});
+
+		it("should draw the axis tick labels", () => {
+			const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText");
+			const chart = generateWithOptions(bulletOptions);
+			const {axis} = getGeometry(chart, "data1");
+			const ticks = axis.scale.ticks(axis.count).map(axis.scale.tickFormat(axis.count));
+			const texts = fillText.mock.calls.map(([text]) => text);
+
+			expect(ticks.length).to.be.above(1);
+			ticks.forEach(tick => expect(texts).to.include(tick));
+
+			fillText.mockRestore();
+		});
+
+		it("should draw a dot with the marker radius", () => {
+			const arc = vi.spyOn(CanvasRenderingContext2D.prototype, "arc");
+			const chart = generateWithOptions({
+				...bulletOptions,
+				bullet: {...bulletOptions.bullet, type: "dot", marker: {size: 7}}
+			});
+			const {measure} = getGeometry(chart, "data1");
+
+			expect(measure.r).to.be.equal(7);
+			expect(arc.mock.calls.map(args => args.join(",")))
+				.to.include(`${measure.cx},${measure.cy},7,0,${Math.PI * 2}`);
+
+			arc.mockRestore();
+		});
+
+		it("should call data.onclick with the row on click of the measure and the target", () => {
+			const onclick = vi.fn();
+			const chart = generateWithOptions({
+				...bulletOptions,
+				data: {...bulletOptions.data, onclick},
+				bullet: {...bulletOptions.bullet, target: 60}
+			});
+			const click = point => container.querySelector(`canvas.${$CANVAS.canvas}`).dispatchEvent(
+				new MouseEvent("click", {bubbles: true, clientX: point.x, clientY: point.y})
+			);
+			const {area, offset, targets: [target]} = getGeometry(chart, "data1");
+
+			click(getPoint(chart, "data1", "measure"));
+			click({
+				x: area.left + offset.x + target.x1,
+				y: area.top + offset.y + (target.y1 + target.y2) / 2
+			});
+			// a range band is not the data of the row
+			click(getPoint(chart, "data1", "range"));
+
+			expect(onclick).toHaveBeenCalledTimes(2);
+			onclick.mock.calls.forEach(([d]) => expect(d.id).to.be.equal("data1"));
+		});
+
+		it("should draw the target marker and hit it on hover", () => {
+			const lineTo = vi.spyOn(CanvasRenderingContext2D.prototype, "lineTo");
+			const chart = generateWithOptions({
+				...bulletOptions,
+				bullet: {...bulletOptions.bullet, target: 60}
+			});
+			const {area, offset, targets: [target]} = getGeometry(chart, "data1");
+			const tooltip = hover({
+				x: area.left + offset.x + target.x1,
+				y: area.top + offset.y + (target.y1 + target.y2) / 2
+			});
+
+			expect(lineTo.mock.calls.map(args => args.join(",")))
+				.to.include(`${target.x2},${target.y2}`);
+			// the measure (40) ends before the target (60): only the target region is hit here
+			expect(tooltip.style.display).to.not.be.equal("none");
+			expect(tooltip.textContent).to.contain("data1");
+
+			lineTo.mockRestore();
+		});
+
+		it("should draw and hit every target marker of a row", () => {
+			const lineTo = vi.spyOn(CanvasRenderingContext2D.prototype, "lineTo");
+			const chart = generateWithOptions({
+				...bulletOptions,
+				bullet: {...bulletOptions.bullet, target: [60, 80]}
+			});
+			const {area, offset, targets} = getGeometry(chart, "data1");
+			const drawn = lineTo.mock.calls.map(args => args.join(","));
+
+			expect(targets.length).to.be.equal(2);
+			targets.forEach(target => {
+				expect(drawn).to.include(`${target.x2},${target.y2}`);
+				expect(hover({
+					x: area.left + offset.x + target.x1,
+					y: area.top + offset.y + (target.y1 + target.y2) / 2
+				}).style.display).to.not.be.equal("none");
+			});
+
+			lineTo.mockRestore();
+		});
+
+		it("should draw the axis with the given scale and tick options", () => {
+			const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText");
+
+			generateWithOptions({
+				...bulletOptions,
+				bullet: {
+					...bulletOptions.bullet,
+					axis: {min: 0, max: 200, tick: {values: [0, 100, 200], format: v => `${v}%`}}
+				}
+			});
+
+			const texts = fillText.mock.calls.map(args => String(args[0]));
+
+			["0%", "100%", "200%"].forEach(label => expect(texts).to.include(label));
+			fillText.mockRestore();
+		});
+
+		it("should draw the row titles, and keep the room for them", () => {
+			const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText");
+			const chart = generateWithOptions({
+				...bulletOptions,
+				bullet: {...bulletOptions.bullet, title: {show: true, text: {data1: "Row One"}}}
+			});
+			const {area} = chart.internal.getBulletLayout();
+			const texts = fillText.mock.calls.map(args => String(args[0]));
+
+			fillText.mockRestore();
+
+			expect(texts).to.include("Row One");
+			expect(texts).to.include("data2");
+			// the plot starts after the padding, the room for the tick label, and the titles
+			expect(area.left).to.be.above(chart.internal.getCurrentPadding().left + 16);
+		});
+
+		describe("data labels", () => {
+			// 37 is not a tick of the axis: it can only be the label
+			const options = (labels, bulletOptions = {}) => ({
+				data: {columns: [["data1", 37]], type: bullet(), labels},
+				bullet: {ranges: [100], ...bulletOptions}
+			});
+
+			// labels are drawn after translating to their position: record where the text lands
+			function draw(opt) {
+				// a test draws more than once: do not leave the previous chart in the page
+				chart?.destroy();
+				container?.remove();
+
+				const calls: Array<{text: string, x: number, y: number, fill: string}> = [];
+				const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText")
+					.mockImplementation(function(this: CanvasRenderingContext2D, text, x, y) {
+						const t = this.getTransform();
+						const ratio = window.devicePixelRatio || 1;
+
+						calls.push({
+							text,
+							x: (t.a * x + t.c * y + t.e) / ratio,
+							y: (t.b * x + t.d * y + t.f) / ratio,
+							fill: this.fillStyle as string
+						});
+					});
+				const created = generateWithOptions(opt);
+
+				fillText.mockRestore();
+
+				return {chart: created, calls, label: calls.find(c => c.text === "37")};
+			}
+
+			it("should draw the label only when data.labels is set", () => {
+				expect(draw(options(undefined)).label).to.be.undefined;
+				expect(draw(options(true)).label).to.not.be.undefined;
+			});
+
+			it("should skip the label when bullet.label.show=false", () => {
+				expect(draw(options(true, {label: {show: false}})).label).to.be.undefined;
+			});
+
+			it("should draw the label at the shared label anchor", () => {
+				const {chart, label} = draw(options(true));
+				const $$ = chart.internal;
+				const {area, offset, label: anchor} = $$.getBulletRowGeometry(
+					$$.getBulletData()[0],
+					$$.getBulletLayout()
+				);
+
+				expect(label.x).to.be.closeTo(area.left + offset.x + anchor.x, 0.01);
+				expect(label.y).to.be.closeTo(area.top + offset.y + anchor.y, 0.01);
+			});
+
+			it("should draw the label where the SVG label points are", () => {
+				const {chart, label} = draw(options(true));
+				const [point] = chart.internal.generateGetBulletPoints()({id: "data1"});
+
+				// SVG positions its labels from these points: both renderers share them
+				expect(label.x).to.be.closeTo(point[0], 0.01);
+				expect(label.y).to.be.closeTo(point[1], 0.01);
+			});
+
+			it("should center the label on the measure with data.labels.centered", () => {
+				const {chart, label} = draw(options({centered: true}));
+				const [, center] = chart.internal.generateGetBulletPoints()({id: "data1"});
+
+				expect(label.x).to.be.closeTo(center[0], 0.01);
+				expect(label.y).to.be.closeTo(center[1], 0.01);
+			});
+
+			it("should move the label with data.labels.position", () => {
+				const base = draw(options(true)).label;
+				const moved = draw(options({position: {x: 20, y: 7}})).label;
+
+				expect(moved.x - base.x).to.be.closeTo(20, 0.01);
+				expect(moved.y - base.y).to.be.closeTo(7, 0.01);
+			});
+
+			it("should format with bullet.label.format over data.labels.format", () => {
+				const {calls} = draw(options({format: v => `d:${v}`}, {label: {format: (v, id) => `${id}:${v}`}}));
+
+				expect(calls.map(c => c.text)).to.include("data1:37");
+				expect(calls.map(c => c.text)).not.to.include("d:37");
+			});
+
+			it("should format with data.labels.format and color with data.labels.colors", () => {
+				const fillStyle = Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype, "fillStyle");
+				const styles: string[] = [];
+
+				Object.defineProperty(CanvasRenderingContext2D.prototype, "fillStyle", {
+					configurable: true,
+					get() {
+						return fillStyle.get.call(this);
+					},
+					set(value) {
+						styles.push(value);
+						fillStyle.set.call(this, value);
+					}
+				});
+
+				try {
+					const {calls} = draw(options({format: v => `d:${v}`, colors: "#ff0000"}));
+
+					expect(calls.map(c => c.text)).to.include("d:37");
+					expect(styles).to.include("#ff0000");
+				} finally {
+					Object.defineProperty(CanvasRenderingContext2D.prototype, "fillStyle", fillStyle);
+				}
+			});
+
+			it("should not color the label with the series color", () => {
+				const {chart, label} = draw(options(true));
+
+				expect(label.fill.toLowerCase()).to.not.be.equal(chart.color("data1").toLowerCase());
+			});
+
+			it("should draw the label of the last value of a series", () => {
+				const {calls} = draw({
+					data: {columns: [["data1", 10, 37]], type: bullet(), labels: true},
+					bullet: {ranges: [100]}
+				});
+
+				expect(calls.map(c => c.text)).to.include("37");
+				expect(calls.map(c => c.text)).not.to.include("10");
+			});
+		});
+
+		it("should add and remove rows on load and unload", () => new Promise(done => {
+			const chart = generateWithOptions(bulletOptions);
+
+			chart.load({
+				columns: [["data3", 20]],
+				done() {
+					expect(chart.internal.getBulletData().length).to.be.equal(3);
+					expect(hover(getPoint(chart, "data3", "measure")).textContent).to.contain("data3");
+
+					chart.unload({
+						ids: "data3",
+						done() {
+							expect(chart.internal.getBulletData().length).to.be.equal(2);
+							done(1);
+						}
+					});
+				}
+			});
+		}));
+
+		it("should reserve only the gap for a bottom legend", () => {
+			const {internal: $$} = generateWithOptions(bulletOptions);
+			const {top, height} = $$.getBulletSize();
+
+			// the legend is HTML outside of the canvas surface: only its 10px gap is reserved
+			expect(height).to.be.closeTo(
+				$$.getCanvasSurfaceHeight() - 10 - top - $$.getCurrentPadding().bottom,
+				0.01
+			);
+		});
+
+		it("should reserve no legend gap when the legend is hidden", () => {
+			const {internal: $$} = generateWithOptions({...bulletOptions, legend: {show: false}});
+			const {top, height} = $$.getBulletSize();
+
+			expect(height).to.be.closeTo(
+				$$.getCanvasSurfaceHeight() - top - $$.getCurrentPadding().bottom,
+				0.01
+			);
+		});
+
+		it("should dim the other rows on focus", () => {
+			const proto = CanvasRenderingContext2D.prototype;
+			const descriptor = Object.getOwnPropertyDescriptor(proto, "globalAlpha");
+			const alphas: number[] = [];
+
+			const chart = generateWithOptions(bulletOptions);
+
+			Object.defineProperty(proto, "globalAlpha", {
+				configurable: true,
+				get() {
+					return descriptor.get.call(this);
+				},
+				set(value) {
+					alphas.push(value);
+					descriptor.set.call(this, value);
+				}
+			});
+
+			try {
+				chart.focus("data1");
+			} finally {
+				Object.defineProperty(proto, "globalAlpha", descriptor);
+			}
+
+			expect(alphas).to.include(chart.internal.canvasTheme.style.shape.targetDefocusedOpacity);
+		});
+
+		it("should show and hide the tooltip by tooltip.show() and tooltip.hide()", () => {
+			const chart = generateWithOptions(bulletOptions);
+			const tooltip = container.querySelector(".bb-tooltip-container");
+
+			chart.tooltip.show({data: {id: "data1"}});
+
+			expect(tooltip.style.display).to.not.be.equal("none");
+			expect(tooltip.textContent).to.contain("data1");
+			// one row with the last value, not the value at an index
+			expect(tooltip.textContent).to.contain("40");
+			expect(tooltip.textContent).not.to.contain("data2");
+			// placed at the measure, not left at the origin
+			const [centerX] = chart.internal.getBulletMeasureCenter(chart.internal.getBulletData()[0]);
+
+			expect(parseFloat(tooltip.style.left)).to.be.closeTo(centerX, 2);
+
+			chart.tooltip.hide();
+			expect(tooltip.style.display).to.be.equal("none");
+
+			// a bullet is addressed by its row order
+			chart.tooltip.show({index: 1});
+			expect(tooltip.textContent).to.contain("data2");
+		});
+
+		it("should compute the layout once per frame, not per row", () => {
+			const columns = Array.from({length: 30}, (_, i) => [`d${i}`, 10 + i]);
+			const chart = generateWithOptions({data: {columns, type: bullet()}});
+			const $$ = chart.internal;
+			const calls = {descent: 0, surface: 0};
+			const descent = $$.getCanvasTitleDescent.bind($$);
+			const surface = $$.getCanvasSurfaceHeight.bind($$);
+
+			$$.getCanvasTitleDescent = () => (calls.descent++, descent());
+			$$.getCanvasSurfaceHeight = () => (calls.surface++, surface());
+
+			chart.flush();
+
+			// draw and hit detection used to do it for every row each
+			expect(calls.descent).to.be.below(5);
+			expect(calls.surface).to.be.below(10);
+		});
+
+		it("should keep the plot clear of the right legend", () => {
+			const chart = generateWithOptions({...bulletOptions, legend: {position: "right"}});
+			const $$ = chart.internal;
+			const {left, width} = $$.getBulletSize();
+			const legend = container.querySelector(".bb-legend").getBoundingClientRect();
+			const host = container.getBoundingClientRect();
+
+			expect(legend.left - host.left).to.be.above($$.state.current.width / 2);
+			expect(left + width).to.be.at.most(legend.left - host.left);
+		});
+
+		it("should apply width.target.ratio to the target marker", () => {
+			const chart = generateWithOptions({
+				...bulletOptions,
+				bullet: {...bulletOptions.bullet, target: 60, width: {target: {ratio: 0.3}}}
+			});
+			const {targets: [target]} = getGeometry(chart, "data1");
+
+			expect(Math.abs(target.y2 - target.y1))
+				.to.be.closeTo(chart.internal.getBulletLayout().bandInner * 0.3, 0.01);
+		});
+
+		describe("range band colors from the theme", () => {
+			// the color the canvas has when the band is drawn
+			function bandFills(opt) {
+				const fills: string[] = [];
+				const fillRect = vi.spyOn(CanvasRenderingContext2D.prototype, "fillRect")
+					.mockImplementation(function(this: CanvasRenderingContext2D) {
+						fills.push(this.fillStyle as string);
+					});
+
+				generateWithOptions(opt);
+				fillRect.mockRestore();
+
+				return fills;
+			}
+
+			it("should draw the default bands with the default lightness", () => {
+				const fills = bandFills(bulletOptions);
+				const {rangeMin, rangeMax} = chart.internal.canvasTheme.style.bullet;
+
+				expect([rangeMin, rangeMax]).to.deep.equal([55, 90]);
+				// a single band takes the first color
+				expect(fills).to.include("#8c8c8c");
+			});
+
+			it("should read the theme variables of the stylesheet", () => {
+				const style = document.createElement("style");
+
+				style.textContent = ".bb-chart-bullets {--bb-bullet-range-min: 10%; --bb-bullet-range-max: 30%;}";
+				document.head.appendChild(style);
+
+				try {
+					const fills = bandFills({...bulletOptions, bullet: {ranges: [40, 100]}});
+					const {rangeMin, rangeMax} = chart.internal.canvasTheme.style.bullet;
+
+					expect([rangeMin, rangeMax]).to.deep.equal([10, 30]);
+					// the smallest band is 10%, the largest 30%
+					expect(fills).to.include("#1a1a1a");
+					expect(fills).to.include("#4d4d4d");
+				} finally {
+					style.remove();
+				}
+			});
+
+			it("should use bullet.range.colors instead of the theme", () => {
+				const fills = bandFills({
+					...bulletOptions,
+					bullet: {ranges: [40, 100], range: {colors: ["#ff0000", "#00ff00"]}}
+				});
+
+				expect(fills).to.include("#ff0000");
+				expect(fills).to.include("#00ff00");
+				expect(fills).not.to.include("#8c8c8c");
+			});
+		});
+
+		it("should start below the title descent like SVG", () => {
+			const chart = generateWithOptions({...bulletOptions, title: {text: "Bullet"}});
+			const {internal: $$} = chart;
+			const descent = $$.getCanvasTitleDescent();
+
+			// SVG title padding includes the descent, canvas one stops at the baseline
+			expect(descent).to.be.above(0);
+			expect($$.getBulletSize().top).to.be.closeTo($$.getCurrentPadding().top + descent, 0.01);
+		});
+
+		it("should read bullet styles from canvas theme selectors", () => {
+			const chart = generateWithOptions({
+				...bulletOptions,
+				canvas: {
+					theme: {
+						selectors: {
+							".bb-bullet-target": {stroke: "#ff0000", "stroke-width": 3}
+						}
+					}
+				}
+			});
+			const {style} = chart.internal.canvasTheme;
+
+			expect(style.bullet.targetStroke).to.be.equal("#ff0000");
+			expect(style.bullet.targetLineWidth).to.be.equal(3);
+		});
+
+		it("should read the title style from canvas theme selectors", () => {
+			const chart = generateWithOptions({
+				...bulletOptions,
+				canvas: {
+					theme: {
+						selectors: {
+							".bb-bullet-title": {fill: "#0000ff", font: "bold 14px sans-serif"}
+						}
+					}
+				}
+			});
+			const {style} = chart.internal.canvasTheme;
+
+			expect(style.bullet.titleColor).to.be.equal("#0000ff");
+			expect(style.bullet.titleFont).to.be.equal("bold 14px sans-serif");
+		});
+
+		it("should draw the title with the color and the font of the stylesheet", () => {
+			const style = document.createElement("style");
+			const drawn: {text: string, fill: unknown, font: string}[] = [];
+			const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText")
+				.mockImplementation(function(this: CanvasRenderingContext2D, text: string) {
+					drawn.push({text, fill: this.fillStyle, font: this.font});
+				});
+
+			style.textContent = ".bb-chart-bullets .bb-bullet-title { fill: #ff0000; font: 14px serif; }";
+			document.head.appendChild(style);
+
+			try {
+				generateWithOptions({
+					...bulletOptions,
+					bullet: {...bulletOptions.bullet, title: {show: true}}
+				});
+			} finally {
+				fillText.mockRestore();
+				style.remove();
+			}
+
+			const title = drawn.find(v => v.text === "data1");
+
+			expect(title?.fill).to.be.equal("#ff0000");
+			expect(title?.font).to.contain("14px");
+		});
+
+		it("should not break the layout with a very long title", () => {
+			const chart = generateWithOptions({
+				...bulletOptions,
+				bullet: {...bulletOptions.bullet, title: {show: true, text: {data1: "x".repeat(300)}}}
+			});
+			const layout = chart.internal.getBulletLayout();
+
+			expect(layout.area.width).to.be.equal(0);
+			expect(Number.isFinite(layout.area.left)).to.be.true;
+		});
 	});
 
 	it("should not enable zoom on canvas treemap", () => {

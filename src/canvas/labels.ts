@@ -211,7 +211,9 @@ export function getLabelColor($$, d, fallback: string): string {
 
 	return typeof color === "string" ?
 		color :
-		($$.isTreemapType?.(d) ? fallback : ($$.color?.(d) || fallback));
+		($$.getCustomTypeHooks?.(d)?.themeTextColor || $$.isTreemapType?.(d) ?
+			fallback :
+			($$.color?.(d) || fallback));
 }
 
 /**

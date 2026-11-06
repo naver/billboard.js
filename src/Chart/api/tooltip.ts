@@ -73,9 +73,21 @@ const tooltip = {
 	 */
 	show: function(args): void {
 		const $$ = this.internal;
-		const {$el, config, state: {eventReceiver, hasFunnel, hasTreemap, inputType}} = $$;
+		const {
+			$el,
+			config,
+			state: {customType, eventReceiver, hasFunnel, hasTreemap, inputType, isCanvasMode}
+		} = $$;
 		let index;
 		let mouse;
+
+		// a custom type addresses its data by id: resolve the given index to it.
+		// canvas resolves it by itself below
+		if (customType && !isCanvasMode && !args.data) {
+			const id = $$.customTypeHooks?.tooltipTarget?.($$, args).data[0]?.id;
+
+			id && (args = {...args, data: {id}});
+		}
 
 		// determine mouse position on the chart
 		if (args.mouse) {
@@ -87,10 +99,13 @@ const tooltip = {
 			const {data} = args;
 			const y = $$.getYScaleById(data.id)?.(data.value);
 
-			if ((hasFunnel || hasTreemap) && data.id) {
-				const selector = $$.selectorTarget(data.id, undefined, `.${$SHAPE.shape}`);
-
-				eventReceiver.rect = $el.main.select(selector);
+			if ((customType || hasFunnel || hasTreemap) && data.id) {
+				// canvas has no shape elements: the tooltip is resolved from the data below
+				if (!isCanvasMode) {
+					eventReceiver.rect = $el.main.select(
+						$$.selectorTarget(data.id, undefined, `.${$SHAPE.shape}`)
+					);
+				}
 			} else if ($$.isMultipleX()) {
 				// if multiple xs, target point will be determined by mouse
 				mouse = [$$.xx(data), y];
@@ -113,28 +128,39 @@ const tooltip = {
 
 		if ($$.state.isCanvasMode) {
 			const targets = $$.filterTargetsToShow?.() || $$.data.targets;
-			const selectedData = args.data?.id && !config.tooltip_grouped ?
-				targets
-					.filter(target => target.id === args.data.id)
-					.map(target => target.values[index ?? args.data.index])
-					.filter(Boolean) :
-				targets
-					.map(target => target.values[index])
-					.filter(Boolean);
+			// a custom type can address its data other than by index
+			const custom = customType ? $$.customTypeHooks?.tooltipTarget?.($$, args) : null;
+			const selectedData = custom ?
+				custom.data :
+				(args.data?.id && !config.tooltip_grouped ?
+					targets
+						.filter(target => target.id === args.data.id)
+						.map(target => target.values[index ?? args.data.index])
+						.filter(Boolean) :
+					targets
+						.map(target => target.values[index])
+						.filter(Boolean));
 			const canvas = $el.canvas?.node?.();
 			const shape = $$.state.canvasShape || $$.getDrawShape?.();
 			const first = selectedData[0];
 			const point = mouse || (
-				first && shape?.pos?.cx && shape?.pos?.cy ?
+				custom ? custom.point : (first && shape?.pos?.cx && shape?.pos?.cy ?
 					[
 						$$.state.margin.left + shape.pos.cx(first),
 						$$.state.margin.top + shape.pos.cy(first)
 					] :
-					undefined
+					undefined)
 			);
 
 			if (!selectedData.length || !canvas) {
 				return;
+			}
+
+			// a programmatic show has no pointer: place the tooltip at the point of the custom type
+			if (custom && point) {
+				const rect = canvas.getBoundingClientRect();
+
+				$$.state.event = {clientX: rect.left + point[0], clientY: rect.top + point[1]};
 			}
 
 			$$.state.canvasFocusKey = selectedData

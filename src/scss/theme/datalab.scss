@@ -53,6 +53,41 @@ $text-font-size: 11px;
 	}
 }
 
+/*-- Bullet --*/
+.bb-chart-bullets {
+	// lightness of the first (smallest) and the last range band: the bands in between are interpolated
+	--bb-bullet-range-min: 55%;
+	--bb-bullet-range-max: 90%;
+
+	.bb-bullet-range {
+		stroke: none;
+		fill: hsl(0, 0%, calc(var(--bb-bullet-range-min) + var(--bb-t, 0) * (var(--bb-bullet-range-max) - var(--bb-bullet-range-min))));
+	}
+
+	.bb-bullet-target {
+		stroke: #000;
+		stroke-width: 2px;
+	}
+
+	.bb-bullet-title {
+		font-size: 11px;
+		fill: #000;
+	}
+
+	.bb-bullet-axis {
+		shape-rendering: crispEdges;
+		font-size: 10px;
+
+		text {
+			fill: #000;
+		}
+
+		path, line {
+			stroke: #000;
+		}
+	}
+}
+
 /*-- Axis --*/
 .bb-axis {
     stroke-width: $line-stroke-widdth;

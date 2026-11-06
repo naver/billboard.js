@@ -1,4 +1,4 @@
-import {API_MODULE_NEEDED, TYPE, TYPE_METHOD_NEEDED} from "../config/const";
+import {API_MODULE_NEEDED, CUSTOM_TYPE_NAMES, TYPE, TYPE_METHOD_NEEDED} from "../config/const";
 import {window} from "./browser";
 import {camelize, isEmpty} from "./util";
 
@@ -32,6 +32,14 @@ function checkModuleImport(ctx) {
 				break;
 			}
 		}
+	}
+
+	// a type of a custom type module, whose module is not there: its name is not a valid type then
+	if (!type) {
+		const types = [config.data_type, ...Object.values(config.data_types || {})];
+
+		type = CUSTOM_TYPE_NAMES.find(name => types.includes(name) && !$$.isValidChartType(name)) ??
+			"";
 	}
 
 	type &&

@@ -446,7 +446,10 @@ function bindCanvasHtmlLegendInteractions($$, item): void {
  * @returns {object|null} Text bounding rect
  * @private
  */
-function measureSvgLegendText($$, text: string): DOMRect | null {
+function measureSvgLegendText(
+	$$,
+	text: string
+): {width: number, height: number, ascent: number} | null {
 	const chart = $$.$el.chart?.node?.();
 	const doc = chart?.ownerDocument;
 
@@ -466,10 +469,12 @@ function measureSvgLegendText($$, text: string): DOMRect | null {
 	chart.appendChild(svg);
 
 	const rect = getBoundingRect(textElement);
+	// the text is drawn at y=0 of the svg: its top is the ascent above it
+	const ascent = svg.getBoundingClientRect().top - rect.top;
 
 	svg.remove();
 
-	return rect;
+	return {width: rect.width, height: rect.height, ascent};
 }
 
 /**
@@ -540,7 +545,7 @@ function isCanvasXIndexHoverArea($$, point: number[]): boolean {
 	const bottom = margin.top + height;
 	const axisBand = config.axis_x_show ? Math.max(xAxisHeight || 0, 24) : 0;
 
-	if ($$.isMultipleX?.() || state.hasTreemap) {
+	if ($$.isMultipleX?.() || state.customType || state.hasTreemap) {
 		return false;
 	}
 
@@ -592,12 +597,13 @@ function getCanvasTooltipData($$, d): any[] {
 	const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 	const pointBased = isCanvasPointBasedInteraction($$, d);
 	const sameXData = config.tooltip_grouped &&
+			!state.customType &&
 			!state.hasTreemap &&
 			!pointBased ?
 		$$.filterByX?.(targetsToShow, d.x) :
 		null;
 
-	return (state.hasTreemap ?
+	return (state.customType || state.hasTreemap ?
 		[d] :
 		(pointBased ?
 			[d] :
@@ -1479,7 +1485,7 @@ const canvasInternal = {
 		$el.canvas = d3Select($$.canvasEngine.canvas);
 
 		$$.canvasTheme = new CanvasTheme();
-		$$.canvasTheme.load(container, config.canvas_theme);
+		$$.canvasTheme.load(container, config.canvas_theme, $$.customCanvasTheme);
 
 		$$.canvasAxisRenderer = new CanvasAxisRenderer($$.canvasEngine, $$.canvasTheme);
 		$$.canvasRenderer = new CanvasRenderer($$.canvasEngine, $$.canvasTheme);
@@ -1794,7 +1800,8 @@ const canvasInternal = {
 					id,
 					hidden,
 					width,
-					height
+					height,
+					text: rect
 				};
 			});
 			const areaLength = isRightOrInset ? $$.getLegendHeight() : $$.getLegendWidth();
@@ -1854,8 +1861,12 @@ const canvasInternal = {
 				(id: string) => dimension.max.height * sizes.steps[id];
 			const titleX = 4 + itemTileSize.width;
 			const tileCenterY = 9;
+			// SVG draws the text with its baseline 14px below the top of the item (yText - yRect).
+			// The HTML text is centered in the line box of the item: place it where SVG has it.
+			const getTitleY = (id: string, text) =>
+				text ? 14 - text.ascent - (sizes.heights[id] - text.height) / 2 : 0;
 
-			measured.forEach(({id, hidden}) => {
+			measured.forEach(({id, hidden, text}) => {
 				const x = hidden ? 0 : xForLegend(id);
 				const y = hidden ? 0 : yForLegend(id);
 
@@ -1868,7 +1879,7 @@ const canvasInternal = {
 					},
 					title: {
 						x: titleX,
-						y: 0,
+						y: hidden ? 0 : getTitleY(id, text),
 						height: sizes.heights[id]
 					},
 					tile: {

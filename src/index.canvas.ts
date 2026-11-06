@@ -8,6 +8,7 @@
 import "./Chart/api/stubs";
 
 // canvas shape modules
+export {bullet} from "./config/resolver/canvasBullet";
 export {
 	area,
 	areaLineRange,

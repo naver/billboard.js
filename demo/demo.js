@@ -475,6 +475,73 @@ var demos = {
 				];
 			}
 		},
+		BulletChart: [
+			{
+				options: {
+					title: {
+						text: "Horizontal Bullet"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet",
+						labels: true
+					},
+					bullet: {
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Horizontal Bullet with Dot"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet",
+						labels: true
+					},
+					bullet: {
+						type: "dot",
+						marker: {
+							size: 6
+						},
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Vertical Bullet"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet",
+						labels: true
+					},
+					bullet: {
+						rotated: true,
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			}
+		],
 		FunnelChart: [
 			{
 				options: {
@@ -6191,6 +6258,182 @@ d3.select(".chart_area")
 				}
 			}
 		}
+	},
+	BulletChartOptions: {
+		BulletAxis: [
+			{
+				options: {
+					title: {
+						text: "Bullet with Shared Axis and Ticks"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet",
+						labels: true
+					},
+					bullet: {
+						// min and max make the bullets share the same scale
+						axis: {
+							min: 0,
+							max: 300,
+							tick: {
+								values: [0, 100, 200, 300],
+								format: function(value) {
+									return value + "k";
+								}
+							}
+						},
+						target: 250
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Bullet with Negative Values"
+					},
+					data: {
+						columns: [
+							["Profit change", -15],
+							["Cash flow", 38],
+							["Budget variance", -22]
+						],
+						type: "bullet",
+						labels: true
+					},
+					bullet: {
+						// the scale includes 0, and the measure is drawn from the 0 position
+						ranges: [-25, 25, 50],
+						target: 30
+					}
+				}
+			}
+		],
+		BulletTarget: [
+			{
+				options: {
+					title: {
+						text: "Bullet with Multiple Targets"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet",
+						labels: true
+					},
+					bullet: {
+						ranges: [150, 225, 300],
+
+						// an Array draws a marker for each value: warning and error lines
+						target: [200, 260]
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Bullet with Colors by Value"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet",
+						labels: true,
+
+						// the color of the measure follows its value
+						color: function(color, d) {
+							// the legend asks for the color of the id: keep the series color
+							if (d.value === undefined) {
+								return color;
+							}
+
+							return d.value >= 250 ? "#2ca02c" : d.value >= 100 ? "#ff7f0e" : "#d62728";
+						}
+					},
+					bullet: {
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			}
+		],
+		BulletTitle: [
+			{
+				options: {
+					title: {
+						text: "Bullet with Titles"
+					},
+					data: {
+						columns: [
+							["revenue", 275],
+							["profit", 55],
+							["orders", 180]
+						],
+						names: {
+							revenue: "Revenue",
+							profit: "Profit",
+							orders: "Orders"
+						},
+						type: "bullet",
+						labels: true
+					},
+					legend: {
+						show: false
+					},
+					bullet: {
+						// each bullet is told by its title, without the legend
+						title: {
+							show: true
+						},
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Vertical Titles"
+					},
+					data: {
+						columns: [
+							["revenue", 275],
+							["profit", 55],
+							["orders", 180]
+						],
+						names: {
+							revenue: "Revenue",
+							profit: "Profit",
+							orders: "Orders"
+						},
+						type: "bullet",
+						labels: true
+					},
+					legend: {
+						show: false
+					},
+					bullet: {
+						rotated: true,
+						// each bullet is told by its title, without the legend
+						title: {
+							show: true
+						},
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			}
+		]
 	},
 	ChartOptions: {
 		Background: [

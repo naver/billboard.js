@@ -153,7 +153,7 @@ function getPreservedAspectRatioRect(
 function getBackgroundImageOffset($$): {x: number, y: number} {
 	const {state} = $$;
 
-	return state.hasFunnel || state.hasTreemap ? {x: 0, y: 0} : {
+	return state.customType || state.hasFunnel || state.hasTreemap ? {x: 0, y: 0} : {
 		x: asHalfPixel(state.margin.left),
 		y: asHalfPixel(state.margin.top)
 	};
@@ -344,7 +344,7 @@ function isCanvasTargetFocused($$, d): boolean {
  * @returns {number} Target opacity
  * @private
  */
-function getCanvasTargetFocusOpacity($$, d): number {
+export function getCanvasTargetFocusOpacity($$, d): number {
 	const id = getCanvasTargetId(d);
 
 	return id && $$.state.defocusedTargetIds?.has(id) ?
@@ -817,7 +817,7 @@ function drawCanvasLineWithDataRegions($$, target, painter: CanvasPainter): void
  * @private
  */
 export default class CanvasRenderer {
-	private painter: CanvasPainter;
+	painter: CanvasPainter;
 	private labelImageCache = new Map<string, LabelImageCacheEntry>();
 	private backgroundImageCache = new Map<string, LabelImageCacheEntry>();
 	private backgroundClassStyleCache = new Map<string, CanvasBackgroundClassStyle>();
@@ -830,7 +830,7 @@ export default class CanvasRenderer {
 	 */
 	constructor(
 		private engine: CanvasEngine,
-		private theme: CanvasTheme
+		public theme: CanvasTheme
 	) {
 		this.painter = new CanvasPainter(engine.ctx);
 	}
@@ -1079,7 +1079,7 @@ export default class CanvasRenderer {
 	 * @param {number} y Label y coordinate
 	 * @private
 	 */
-	private drawDataLabel($$, d, text: string, x: number, y: number): void {
+	drawDataLabel($$, d, text: string, x: number, y: number): void {
 		const {painter, theme: {style}} = this;
 
 		({x, y} = this.drawLabelImage($$, d, text, x, y));
@@ -1156,6 +1156,12 @@ export default class CanvasRenderer {
 	draw($$, shape, focusData?): void {
 		if ($$.state.hasTreemap) {
 			this.drawTreemaps($$);
+			return;
+		}
+
+		if ($$.state.customType) {
+			// registered by the module of the type: bundles without it do not carry its drawing
+			$$.drawCustomTypeOnCanvas?.(this);
 			return;
 		}
 
@@ -1980,7 +1986,10 @@ export default class CanvasRenderer {
 	drawSelections($$, shape): void {
 		const selectedData = $$.getCanvasSelectedData?.();
 
-		if (!$$.config.data_selection_enabled || !selectedData?.length || $$.state.hasTreemap) {
+		if (
+			!$$.config.data_selection_enabled || !selectedData?.length ||
+			$$.state.customType || $$.state.hasTreemap
+		) {
 			return;
 		}
 
@@ -2468,7 +2477,8 @@ export default class CanvasRenderer {
 	 * @private
 	 */
 	drawFocus($$, selectedData): void {
-		if (!selectedData?.length) {
+		// a custom type has no axis, so there is no focus grid or point to draw
+		if (!selectedData?.length || $$.state.customType) {
 			return;
 		}
 

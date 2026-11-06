@@ -48,11 +48,11 @@ export default {
 	 * @private
 	 */
 	initText(): void {
-		const {$el} = this;
+		const {$el, state} = this;
 
 		$el.main.select(`.${$COMMON.chart}`).append("g")
 			.attr("class", $TEXT.chartTexts)
-			.style("pointer-events", $el.funnel || $el.treemap ? "none" : null);
+			.style("pointer-events", state.customType || $el.funnel || $el.treemap ? "none" : null);
 	},
 
 	/**
@@ -117,6 +117,12 @@ export default {
 					isEndAnchor = !data?._isUp;
 				} else if ($$.isTreemapType(d)) {
 					return labelsCentered ? "middle" : "start";
+				} else if ($$.state.customType) {
+					const anchor = $$.getCustomTypeHooks(d)?.textAnchor?.($$, d);
+
+					if (anchor) {
+						return anchor;
+					}
 				}
 
 				return (config.axis_rotated ? (isEndAnchor ? "end" : "start") : "middle");
@@ -157,7 +163,8 @@ export default {
 		const {config} = $$;
 		const labelColors = config.data_labels_colors;
 		const defaultColor =
-			($$.isArcType(d) && !$$.isRadarType(d)) || $$.isFunnelType(d) || $$.isTreemapType(d) ?
+			($$.isArcType(d) && !$$.isRadarType(d)) || $$.getCustomTypeHooks(d)?.themeTextColor ||
+				$$.isFunnelType(d) || $$.isTreemapType(d) ?
 				null :
 				$$.color(d);
 		let color;
@@ -366,11 +373,12 @@ export default {
 	generateXYForText(indices,
 		forX?: boolean): (d, i, labelDimension?: TTextLabelDimension) => number {
 		const $$ = this;
-		const {state: {hasRadar, hasFunnel, hasTreemap}} = $$;
+		const {state: {customType, hasRadar, hasFunnel, hasTreemap}} = $$;
 		const types = Object.keys(indices);
 		const points = {};
 		const getter = forX ? $$.getXForText : $$.getYForText;
 
+		customType && types.push(customType);
 		hasFunnel && types.push("funnel");
 		hasRadar && types.push("radar");
 		hasTreemap && types.push("treemap");
@@ -382,6 +390,7 @@ export default {
 		return function(d, i, labelDimension?: TTextLabelDimension) {
 			const type = ($$.isAreaType(d) && "area") ||
 				($$.isBarType(d) && "bar") ||
+				(customType && $$.isTypeOf(d, customType) && customType) ||
 				($$.isCandlestickType(d) && "candlestick") ||
 				($$.isFunnelType(d) && "funnel") ||
 				($$.isRadarType(d) && "radar") ||
@@ -465,7 +474,11 @@ export default {
 
 		let xPos = points ? points[0][0] : 0;
 
-		if ($$.isCandlestickType(d)) {
+		const custom = $$.getCustomTypeHooks(d);
+
+		if (custom) {
+			return custom.textX($$, points, d, textElement);
+		} else if ($$.isCandlestickType(d)) {
 			if (isRotated) {
 				xPos = $$.getCandlestickData(d)?._isUp ? points[2][2] + 4 : points[2][1] - 4;
 			} else {
@@ -524,7 +537,11 @@ export default {
 		let baseY = 3;
 		let yPos;
 
-		if ($$.isCandlestickType(d)) {
+		const custom = $$.getCustomTypeHooks(d);
+
+		if (custom) {
+			return custom.textY($$, points, d, textElement, rect);
+		} else if ($$.isCandlestickType(d)) {
 			value = $$.getCandlestickData(d);
 
 			if (isRotated) {
