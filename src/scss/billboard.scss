@@ -79,6 +79,23 @@
 	}
 }
 
+/*-- Bullet --*/
+.bb-chart-bullets {
+	.bb-bullet-range {
+		stroke: none;
+	}
+
+	.bb-bullet-target {
+		stroke: #000;
+		stroke-width: 2px;
+	}
+
+	.bb-bullet-label {
+		font-size: 11px;
+		fill: #000;
+	}
+}
+
 /*-- Axis --*/
 .bb-axis {
 	shape-rendering: crispEdges;

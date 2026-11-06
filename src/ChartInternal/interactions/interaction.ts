@@ -63,7 +63,7 @@ export default {
 	 */
 	setOverOut(isOver: boolean, d: number | IArcDataRow): void {
 		const $$ = this;
-		const {config, state: {hasFunnel, hasRadar, hasTreemap}, $el: {main}} = $$;
+		const {config, state: {hasBullet, hasFunnel, hasRadar, hasTreemap}, $el: {main}} = $$;
 		const isArcishData = isObject(d);
 
 		// Call event handler
@@ -74,7 +74,7 @@ export default {
 
 			if (isArcishData) {
 				const suffix = $$.getTargetSelectorSuffix((d as IArcDataRow).id);
-				const selector = hasFunnel || hasTreemap ?
+				const selector = hasBullet || hasFunnel || hasTreemap ?
 					`${$COMMON.target + suffix} .${$SHAPE.shape}` :
 					$ARC.arc + suffix;
 
@@ -187,14 +187,15 @@ export default {
 			state: {
 				eventReceiver,
 				hasAxis,
+				hasBullet,
 				hasFunnel,
 				hasRadar,
 				hasTreemap
 			},
-			$el: {eventRect, funnel, radar, svg, treemap}
+			$el: {bullet, eventRect, funnel, radar, svg, treemap}
 		} = $$;
 		let element = (
-			((hasFunnel || hasTreemap) && eventReceiver.rect) ||
+			((hasBullet || hasFunnel || hasTreemap) && eventReceiver.rect) ||
 			(hasRadar && radar.axes.select(`.${$AXIS.axis}-${index} text`)) || (
 				eventRect || $$.getArcElementByIdOrIndex?.(index)
 			)
@@ -242,9 +243,9 @@ export default {
 				bubbles: hasRadar // radar type needs to bubble up event
 			};
 
-			// for funnel and treemap event bound to <g> node
-			if (hasFunnel || hasTreemap) {
-				element = (funnel ?? treemap).node();
+			// for bullet, funnel and treemap event bound to <g> node
+			if (hasBullet || hasFunnel || hasTreemap) {
+				element = (bullet ?? funnel ?? treemap).node();
 			}
 
 			emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](
@@ -283,7 +284,7 @@ export default {
 	 */
 	unbindAllEvents(): void {
 		const $$ = this;
-		const {$el: {arcs, eventRect, legend, region, svg, treemap}, brush} = $$;
+		const {$el: {arcs, bullet, eventRect, legend, region, svg, treemap}, brush} = $$;
 		const list = [
 			"wheel",
 			"click",
@@ -311,6 +312,7 @@ export default {
 			brush?.getSelection(),
 			arcs?.selectAll("path"),
 			legend?.selectAll("g"),
+			bullet,
 			treemap
 		]
 			.forEach(v => v?.on(list, null));

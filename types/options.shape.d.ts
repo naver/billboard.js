@@ -473,6 +473,92 @@ export interface DonutOptions {
 	title?: string;
 }
 
+export interface BulletOptions {
+	/**
+	 * Set bullet orientation.
+	 * When `false` (default), bullets are rendered horizontally (measure grows to the right).
+	 * When `true`, bullets are rendered vertically (measure grows upward).
+	 */
+	rotated?: boolean;
+
+	/**
+	 * Set how the measure value is rendered.
+	 * - `bar`: render the measure as a solid bar growing from the baseline.
+	 * - `dot`: render the measure as a dot marker positioned at the measure value.
+	 */
+	type?: "bar" | "dot";
+
+	/**
+	 * Set the dot radius (in px) used when `type="dot"`.
+	 * When `0`, the radius is derived from the bullet thickness.
+	 */
+	marker?: {
+		size?: number;
+	};
+
+	/**
+	 * Set the qualitative range band thresholds.
+	 * - `Array`: shared ascending thresholds applied to every bullet.
+	 * - `object`: per-data-id thresholds.
+	 * - `Function`: callback returning thresholds per bullet.
+	 * When omitted, three bands are generated automatically from the measure/target domain.
+	 */
+	ranges?: number[] | {[key: string]: number[]} | ((id: string, value: number) => number[]);
+
+	/**
+	 * Set the comparative target marker value.
+	 * Can be given as a `number`, an `object` keyed by data id, or a `Function`.
+	 */
+	target?: number | {[key: string]: number} | ((id: string, value: number) => number) | {
+		/**
+		 * Set the target marker length.
+		 */
+		width?: {
+			ratio?: number;
+		};
+	};
+
+	/**
+	 * Set the measure thickness.
+	 */
+	width?: {
+		/**
+		 * Set the measure thickness as a ratio (0~1) of the bullet band.
+		 */
+		ratio?: number;
+	};
+
+	/**
+	 * Set the qualitative range band colors.
+	 * - `Array`: color strings ordered from the smallest to the largest band.
+	 * - `Function`: callback returning a color per band.
+	 * When omitted, a grayscale palette is used.
+	 */
+	range?: {
+		colors?: string[] | ((index: number, length: number) => string);
+	};
+
+	/**
+	 * Set the padding (in px) between each bullet band.
+	 */
+	padding?: number;
+
+	/**
+	 * Set the measure value label.
+	 */
+	label?: {
+		/**
+		 * Show or hide the measure value label.
+		 */
+		show?: boolean;
+
+		/**
+		 * Set a formatter for the measure value label.
+		 */
+		format?: (value: number, id: string) => string | number;
+	};
+}
+
 export interface FunnelOptions {
 	neck?: {
 		/**

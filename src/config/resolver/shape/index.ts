@@ -5,6 +5,7 @@
 export {area, areaLineRange, areaSpline, areaSplineRange, areaStep, areaStepRange} from "./area";
 export {bar} from "./bar";
 export {bubble} from "./bubble";
+export {bullet} from "./bullet";
 export {candlestick} from "./candlestick";
 export {donut} from "./donut";
 export {funnel} from "./funnel";

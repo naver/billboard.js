@@ -85,6 +85,10 @@ function getUnsupportedCanvasRenderType($$): string | null {
 		return "funnel chart";
 	}
 
+	if ($$.hasType("bullet")) {
+		return "bullet chart";
+	}
+
 	return null;
 }
 
@@ -248,9 +252,10 @@ export default class ChartInternal {
 
 		const hasArcType = $$.hasArcType();
 		state.hasRadar = !state.hasAxis && $$.hasType("radar");
+		state.hasBullet = !state.hasAxis && $$.hasType("bullet");
 		state.hasFunnel = !state.hasAxis && $$.hasType("funnel");
 		state.hasTreemap = !state.hasAxis && $$.hasType("treemap");
-		state.hasAxis = !hasArcType && !state.hasFunnel && !state.hasTreemap;
+		state.hasAxis = !hasArcType && !state.hasBullet && !state.hasFunnel && !state.hasTreemap;
 
 		// datetime to be used for uniqueness
 		state.datetimeId = `bb-${+new Date() * (getRandom() as number)}`;
@@ -405,7 +410,7 @@ export default class ChartInternal {
 	initWithData(data): void {
 		const $$ = <any>this;
 		const {config, scale, state, $el, org} = $$;
-		const {hasAxis, hasFunnel, hasTreemap} = state;
+		const {hasAxis, hasBullet, hasFunnel, hasTreemap} = state;
 		const hasInteraction = config.interaction_enabled;
 		const hasPolar = $$.hasType("polar");
 		const labelsBGColor = config.data_labels_backgroundColors;
@@ -564,7 +569,8 @@ export default class ChartInternal {
 		// Define regions
 		const main = $el.svg.append("g")
 			.classed($COMMON.main, true)
-			.attr("transform", hasFunnel || hasTreemap ? null : $$.getTranslate("main"));
+			.attr("transform",
+				hasBullet || hasFunnel || hasTreemap ? null : $$.getTranslate("main"));
 
 		$el.main = main;
 
@@ -673,6 +679,8 @@ export default class ChartInternal {
 			types.push("Treemap");
 		} else if ($$.hasType("funnel")) {
 			types.push("Funnel");
+		} else if ($$.hasType("bullet")) {
+			types.push("Bullet");
 		} else {
 			const hasPolar = $$.hasType("polar");
 			const hasGauge = $$.hasType("gauge");
@@ -784,7 +792,7 @@ export default class ChartInternal {
 	 */
 	updateTargets(targets): void {
 		const $$ = <any>this;
-		const {hasAxis, hasFunnel, hasRadar, hasTreemap} = $$.state;
+		const {hasAxis, hasBullet, hasFunnel, hasRadar, hasTreemap} = $$.state;
 		const helper = type =>
 			$$[`updateTargetsFor${type}`](
 				targets.filter($$[`is${type}Type`].bind($$))
@@ -818,6 +826,8 @@ export default class ChartInternal {
 			helper(type);
 		} else if (hasFunnel) {
 			helper("Funnel");
+		} else if (hasBullet) {
+			helper("Bullet");
 		} else if (hasTreemap) {
 			helper("Treemap");
 		}

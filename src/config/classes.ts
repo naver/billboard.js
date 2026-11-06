@@ -82,6 +82,16 @@ export const $DRAG = {
 	INCLUDED: "_included_"
 };
 
+export const $BULLET = {
+	bullet: "bb-bullet",
+	chartBullet: "bb-chart-bullet",
+	chartBullets: "bb-chart-bullets",
+	bulletRange: "bb-bullet-range",
+	bulletMeasure: "bb-bullet-measure",
+	bulletTarget: "bb-bullet-target",
+	bulletLabel: "bb-bullet-label"
+};
+
 export const $FUNNEL = {
 	funnel: "bb-funnel",
 	chartFunnel: "bb-chart-funnel",
@@ -208,6 +218,7 @@ export default {
 	...$AREA,
 	...$AXIS,
 	...$BAR,
+	...$BULLET,
 	...$CANDLESTICK,
 	...$CIRCLE,
 	...$COLOR,

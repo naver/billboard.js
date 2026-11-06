@@ -56,6 +56,23 @@ $font-family: sans-serif, Arial, "nanumgothic", "Dotum";
 	}
 }
 
+/*-- Bullet --*/
+.bb-chart-bullets {
+	.bb-bullet-range {
+		stroke: none;
+	}
+
+	.bb-bullet-target {
+		stroke: #fff;
+		stroke-width: 2px;
+	}
+
+	.bb-bullet-label {
+		font-size: 11px;
+		fill: #fff;
+	}
+}
+
 /*-- Axis --*/
 .bb-axis {
     shape-rendering: crispEdges;

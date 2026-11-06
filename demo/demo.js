@@ -475,6 +475,70 @@ var demos = {
 				];
 			}
 		},
+		BulletChart: [
+			{
+				options: {
+					title: {
+						text: "Horizontal Bullet"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet"
+					},
+					bullet: {
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Horizontal Bullet with Dot"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet"
+					},
+					bullet: {
+						type: "dot",
+						marker: {
+							size: 6
+						},
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Vertical Bullet"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet"
+					},
+					bullet: {
+						rotated: true,
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			}
+		],
 		FunnelChart: [
 			{
 				options: {

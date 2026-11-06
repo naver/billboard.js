@@ -292,6 +292,10 @@ export default {
 		return this.isTypeOf(d, "bubble");
 	},
 
+	isBulletType(d): boolean {
+		return this.isTypeOf(d, "bullet");
+	},
+
 	isCandlestickType(d): boolean {
 		return this.isTypeOf(d, "candlestick");
 	},

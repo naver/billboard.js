@@ -183,6 +183,9 @@ export default {
 			// funnel
 			$el.funnel && $$.redrawFunnel();
 
+			// bullet
+			$el.bullet && $$.redrawBullet();
+
 			// treemap
 			treemap && $$.updateTreemap(durationForExit);
 		}
