@@ -52,7 +52,7 @@ export default {
 
 		$el.main.select(`.${$COMMON.chart}`).append("g")
 			.attr("class", $TEXT.chartTexts)
-			.style("pointer-events", $el.funnel || $el.treemap ? "none" : null);
+			.style("pointer-events", $el.bullet || $el.funnel || $el.treemap ? "none" : null);
 	},
 
 	/**

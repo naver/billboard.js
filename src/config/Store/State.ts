@@ -39,6 +39,7 @@ export default class State {
 			xAxisHeight: 0,
 
 			hasAxis: false,
+			hasBullet: false,
 			hasFunnel: false,
 			hasRadar: false,
 			hasTreemap: false,

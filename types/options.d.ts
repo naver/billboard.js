@@ -11,6 +11,7 @@ import {
 	AreaOptions,
 	BarOptions,
 	BubbleOptions,
+	BulletOptions,
 	CandlestickOptions,
 	DonutOptions,
 	FunnelOptions,
@@ -378,6 +379,7 @@ export interface ChartOptions {
 	area?: AreaOptions;
 	bar?: BarOptions;
 	bubble?: BubbleOptions;
+	bullet?: BulletOptions;
 	candlestick?: CandlestickOptions;
 	donut?: DonutOptions;
 	funnel?: FunnelOptions;
