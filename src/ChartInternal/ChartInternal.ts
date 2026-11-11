@@ -17,7 +17,7 @@ import Options from "../config/Options/Options";
 import Store from "../config/Store/Store";
 import {document, window} from "../module/browser";
 import Cache from "../module/Cache";
-import {checkModuleImport} from "../module/error";
+import {checkModuleImport, getTypeMethod} from "../module/error";
 import {generateResize} from "../module/generator";
 import {
 	callFn,
@@ -81,17 +81,23 @@ function getUnsupportedCanvasRenderType($$): string | null {
 		return "arc charts";
 	}
 
-	if ($$.hasType("funnel")) {
-		return "funnel chart";
+	if ($$.state.customType) {
+		// the type tells it by itself when it is drawn by svg only
+		const unsupported = $$.customTypeHooks?.canvasUnsupported;
+
+		if (unsupported) {
+			return unsupported;
+		}
+
+		// otherwise it is drawn on canvas by the canvas part of its module:
+		// there is nothing to draw it when only the svg part was imported
+		if (!$$.getCustomTypeParts()?.canvas) {
+			return `${$$.state.customType} chart without its canvas module`;
+		}
 	}
 
-	// a type of its own module is drawn on canvas by the canvas part of that module:
-	// there is nothing to draw it when only the svg part was imported
-	if ($$.state.customType && !$$.drawCustomTypeOnCanvas) {
-		return `${$$.state.customType} chart without its canvas module`;
-	}
-
-	return null;
+	// the types drawn by canvas parts, which only the canvas module knows
+	return $$.getUnsupportedCanvasPart?.() ?? null;
 }
 
 /**
@@ -244,6 +250,17 @@ export default class ChartInternal {
 		callFn($$.config.onafterinit, $$.api);
 	}
 
+	/**
+	 * The hooks of the module of the custom type of the chart (see registerCustomType()).
+	 * @private
+	 */
+	get customTypeHooks() {
+		const $$ = <any>this;
+
+		// (reading it from the prototype, which has no state, is not an error)
+		return $$.state && $$.getCustomTypeParts()?.hooks;
+	}
+
 	init(): void {
 		const $$ = <any>this;
 		const {config, state, $el} = $$;
@@ -251,16 +268,15 @@ export default class ChartInternal {
 
 		// set by the module of a type that is neither axis based nor built in:
 		// the import check needs it to tell a type whose module is there
-		state.customType = $$.getCustomType?.() ?? null;
+		state.customType = $$.getCustomType();
 
 		checkModuleImport($$);
 		fallbackUnsupportedCanvasRenderMode($$);
 
 		const hasArcType = $$.hasArcType();
 		state.hasRadar = !state.hasAxis && $$.hasType("radar");
-		state.hasFunnel = !state.hasAxis && $$.hasType("funnel");
 		state.hasTreemap = !state.hasAxis && $$.hasType("treemap");
-		state.hasAxis = !hasArcType && !state.customType && !state.hasFunnel && !state.hasTreemap;
+		state.hasAxis = !hasArcType && !state.customType && !state.hasTreemap;
 
 		// datetime to be used for uniqueness
 		state.datetimeId = `bb-${+new Date() * (getRandom() as number)}`;
@@ -364,7 +380,7 @@ export default class ChartInternal {
 		}
 
 		if (config.render_mode !== "canvas" && ($$.hasPointType() || $$.hasLegendDefsPoint?.())) {
-			$$.point = $$.generatePoint();
+			$$.point = getTypeMethod($$, "generatePoint").call($$);
 		}
 
 		if (state.hasAxis) {
@@ -415,7 +431,7 @@ export default class ChartInternal {
 	initWithData(data): void {
 		const $$ = <any>this;
 		const {config, scale, state, $el, org} = $$;
-		const {customType, hasAxis, hasFunnel, hasTreemap} = state;
+		const {customType, hasAxis, hasTreemap} = state;
 		const hasInteraction = config.interaction_enabled;
 		const hasPolar = $$.hasType("polar");
 		const labelsBGColor = config.data_labels_backgroundColors;
@@ -574,8 +590,7 @@ export default class ChartInternal {
 		// Define regions
 		const main = $el.svg.append("g")
 			.classed($COMMON.main, true)
-			.attr("transform",
-				customType || hasFunnel || hasTreemap ? null : $$.getTranslate("main"));
+			.attr("transform", customType || hasTreemap ? null : $$.getTranslate("main"));
 
 		$el.main = main;
 
@@ -682,8 +697,6 @@ export default class ChartInternal {
 			}
 		} else if (hasTreemap) {
 			types.push("Treemap");
-		} else if ($$.hasType("funnel")) {
-			types.push("Funnel");
 		} else if ($$.state.customType) {
 			types.push(capitalize($$.state.customType));
 		} else {
@@ -704,7 +717,7 @@ export default class ChartInternal {
 		}
 
 		for (const type of types) {
-			$$[`init${type}`]();
+			getTypeMethod($$, `init${type}`).call($$);
 		}
 
 		if (notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"])) {
@@ -797,9 +810,10 @@ export default class ChartInternal {
 	 */
 	updateTargets(targets): void {
 		const $$ = <any>this;
-		const {customType, hasAxis, hasFunnel, hasRadar, hasTreemap} = $$.state;
+		const {customType, hasAxis, hasRadar, hasTreemap} = $$.state;
 		const helper = type =>
-			$$[`updateTargetsFor${type}`](
+			getTypeMethod($$, `updateTargetsFor${type}`).call(
+				$$,
 				targets.filter($$[`is${type}Type`].bind($$))
 			);
 
@@ -829,8 +843,6 @@ export default class ChartInternal {
 			}
 
 			helper(type);
-		} else if (hasFunnel) {
-			helper("Funnel");
 		} else if (customType) {
 			helper(capitalize(customType));
 		} else if (hasTreemap) {

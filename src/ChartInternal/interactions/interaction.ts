@@ -63,7 +63,7 @@ export default {
 	 */
 	setOverOut(isOver: boolean, d: number | IArcDataRow): void {
 		const $$ = this;
-		const {config, state: {customType, hasFunnel, hasRadar, hasTreemap}, $el: {main}} = $$;
+		const {config, state: {customType, hasRadar, hasTreemap}, $el: {main}} = $$;
 		const isArcishData = isObject(d);
 
 		// Call event handler
@@ -74,7 +74,7 @@ export default {
 
 			if (isArcishData) {
 				const suffix = $$.getTargetSelectorSuffix((d as IArcDataRow).id);
-				const selector = customType || hasFunnel || hasTreemap ?
+				const selector = customType || hasTreemap ?
 					`${$COMMON.target + suffix} .${$SHAPE.shape}` :
 					$ARC.arc + suffix;
 
@@ -188,14 +188,13 @@ export default {
 				eventReceiver,
 				hasAxis,
 				customType,
-				hasFunnel,
 				hasRadar,
 				hasTreemap
 			},
-			$el: {eventRect, funnel, radar, svg, treemap}
+			$el: {eventRect, radar, svg, treemap}
 		} = $$;
 		let element = (
-			((customType || hasFunnel || hasTreemap) && eventReceiver.rect) ||
+			((customType || hasTreemap) && eventReceiver.rect) ||
 			(hasRadar && radar.axes.select(`.${$AXIS.axis}-${index} text`)) || (
 				eventRect || $$.getArcElementByIdOrIndex?.(index)
 			)
@@ -243,9 +242,9 @@ export default {
 				bubbles: hasRadar // radar type needs to bubble up event
 			};
 
-			// for custom type, funnel and treemap event bound to <g> node
-			if (customType || hasFunnel || hasTreemap) {
-				element = ($$.$el[customType as string] ?? funnel ?? treemap).node();
+			// for custom type and treemap event bound to <g> node
+			if (customType || hasTreemap) {
+				element = ($$.$el[customType as string] ?? treemap).node();
 			}
 
 			emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](

@@ -76,7 +76,7 @@ const tooltip = {
 		const {
 			$el,
 			config,
-			state: {customType, eventReceiver, hasFunnel, hasTreemap, inputType, isCanvasMode}
+			state: {customType, eventReceiver, hasTreemap, inputType, isCanvasMode}
 		} = $$;
 		let index;
 		let mouse;
@@ -99,7 +99,7 @@ const tooltip = {
 			const {data} = args;
 			const y = $$.getYScaleById(data.id)?.(data.value);
 
-			if ((customType || hasFunnel || hasTreemap) && data.id) {
+			if ((customType || hasTreemap) && data.id) {
 				// canvas has no shape elements: the tooltip is resolved from the data below
 				if (!isCanvasMode) {
 					eventReceiver.rect = $el.main.select(

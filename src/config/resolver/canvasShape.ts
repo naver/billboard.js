@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import canvasTreemap from "../../canvas/treemap";
 import shapeBubbleCommon from "../../ChartInternal/shape/core/bubble";
 import shapeCandlestickCommon from "../../ChartInternal/shape/core/candlestick";
 import shapeTreemapCommon from "../../ChartInternal/shape/core/treemap";
@@ -16,6 +17,7 @@ import optScatter from "../Options/shape/scatter";
 import optSpline from "../Options/shape/spline";
 import optTreemap from "../Options/shape/treemap";
 import {extendAxisModules} from "./axis.core";
+import {registerCanvasType} from "./canvasType";
 
 /**
  * Canvas line shape marker.
@@ -254,5 +256,8 @@ export let treemap = (): string => (
 	extendCanvasAxisShape(
 		[canvasTreemapModule, shapeTreemapCommon],
 		[optTreemap]
-	), (treemap = () => TYPE.TREEMAP)()
+	),
+		// the canvas drawing, hit detection and theme of treemap: only when its module is there
+		registerCanvasType("treemap", canvasTreemap),
+		(treemap = () => TYPE.TREEMAP)()
 );

@@ -1150,7 +1150,8 @@ describe("SHAPE BULLET", () => {
 			expect(util.generate({data: {columns: [["data1", 1]], type: "bullet"}}).internal.state.customType)
 				.to.be.equal("bullet");
 
-			["line", "bar", "pie", "funnel"].forEach(type => {
+			// (funnel is a custom type of its own module as well: see custom-type-spec)
+			["line", "bar", "pie"].forEach(type => {
 				const $$ = util.generate({data: {columns: [["data1", 1]], type}}).internal;
 
 				expect($$.state.customType, type).to.be.null;

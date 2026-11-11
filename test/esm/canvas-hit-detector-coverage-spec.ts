@@ -7,6 +7,7 @@
 import {describe, expect, it} from "vitest";
 
 import HitDetector from "../../src/canvas/HitDetector";
+import canvasTreemap from "../../src/canvas/treemap";
 import {TYPE} from "../../src/config/const";
 
 function makeScale(domain = [0, 1], range = [0, 100]) {
@@ -182,6 +183,8 @@ describe("ESM canvas hit detector coverage", () => {
 			}
 		});
 
+		// the hit items of treemap are added by the canvas part of its module
+		ctx.getCanvasTypeParts = () => [canvasTreemap];
 		detector.rebuild(ctx, {indices: {}, pos: {}});
 
 		expect(detector.findNearest(20, 20).id).to.be.equal("data1");
@@ -267,6 +270,7 @@ describe("ESM canvas hit detector coverage", () => {
 			}
 		});
 
+		ctx.getCanvasTypeParts = () => [canvasTreemap];
 		ctx.getTreemapRoot = () => null;
 		detector.rebuild(ctx, {indices: {}, pos: {}});
 		expect(detector.findNearest(20, 20)).to.be.null;

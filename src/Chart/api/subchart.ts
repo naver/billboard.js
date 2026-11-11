@@ -35,7 +35,7 @@ const subchart = function<T = TDomain[]>(domainValue?: T): T | undefined {
 
 			if (Array.isArray(domain)) {
 				domain = axis.isTimeSeries() ? domain.map(x => parseDate.bind($$)(x)) : domain;
-				domain = $$.setCanvasSubchartDomain(domain) || state.domain;
+				domain = $$.setCanvasSubchartDomain?.(domain) || state.domain;
 			} else {
 				domain = state.domain ?? x.orgDomain();
 			}

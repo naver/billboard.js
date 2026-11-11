@@ -7,6 +7,8 @@
 import {describe, expect, it, vi} from "vitest";
 
 import CanvasAxisRenderer from "../../src/canvas/CanvasAxisRenderer";
+import {subchartDraw} from "../../src/canvas/subchart";
+import canvasGrid from "../../src/canvas/grid";
 
 function makeScale(initialDomain = [0, 10], initialRange = [0, 100]) {
 	let domain = initialDomain.slice();
@@ -243,7 +245,7 @@ describe("ESM canvas axis renderer coverage", () => {
 
 		renderer.draw(ctx);
 		renderer.drawTitle(ctx);
-		renderer.drawSubXAxis(ctx);
+		subchartDraw.drawXAxis.call(ctx, renderer);
 		renderer.drawFocusedXAxisTick(ctx, [{x: 2}]);
 		renderer.drawAxisTooltip(ctx, [70, 60]);
 
@@ -295,7 +297,7 @@ describe("ESM canvas axis renderer coverage", () => {
 
 		renderer.draw(ctx);
 		renderer.drawTitle(ctx);
-		renderer.drawSubXAxis(ctx);
+		subchartDraw.drawXAxis.call(ctx, renderer);
 		renderer.drawFocusedXAxisTick(ctx, [{x: "b"}]);
 		renderer.drawAxisTooltip(ctx, [80, 70]);
 		renderer.drawAxisTooltip(ctx, [-10, -10]);
@@ -328,9 +330,9 @@ describe("ESM canvas axis renderer coverage", () => {
 			}
 		});
 
-		renderer.drawGrid(ctx);
-		renderer.drawGridLines(ctx);
-		renderer.drawSubXAxis(ctx);
+		canvasGrid.draw.call(ctx, renderer);
+		canvasGrid.drawLines.call(ctx, renderer);
+		subchartDraw.drawXAxis.call(ctx, renderer);
 		renderer.drawTitle(ctx);
 		renderer.drawFocusedXAxisTick(ctx, []);
 		renderer.drawAxisTooltip(ctx, null);

@@ -392,8 +392,7 @@ export default {
 		const {$el: {eventRect, svg}, config, state} = $$;
 
 		const isRotated = config.axis_rotated;
-		const hasArcType = $$.hasArcType() || state.customType || state.hasFunnel ||
-			state.hasTreemap;
+		const hasArcType = $$.hasArcType() || state.customType || state.hasTreemap;
 		const target = (hasArcType ? svg : eventRect)?.node() ?? state.event.target;
 
 		let {x, y} = currPos;
@@ -412,7 +411,7 @@ export default {
 		let left = ctm.x + (tWidth / 2) + size;
 
 		if (hasArcType) {
-			if (state.customType || state.hasFunnel || state.hasTreemap || state.hasRadar) {
+			if (state.customType || state.hasTreemap || state.hasRadar) {
 				left -= (tWidth / 2) + size;
 				top += tHeight;
 			} else {
@@ -452,7 +451,6 @@ export default {
 			height,
 			current,
 			customType,
-			hasFunnel,
 			hasRadar,
 			hasTreemap,
 			isLegendRight,
@@ -484,7 +482,7 @@ export default {
 				x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
 				y += (hasGauge ? height : (height / 2) + tHeight) + titlePadding;
 			}
-		} else if (customType || hasFunnel || hasTreemap) {
+		} else if (customType || hasTreemap) {
 			y += tHeight;
 		} else {
 			const padding = {
@@ -505,9 +503,7 @@ export default {
 		// when tooltip left + tWidth > chart's width
 		if ((x + tWidth + 15) > chartRight) {
 			x -= tWidth +
-				(customType || hasFunnel || hasTreemap || hasArcType ?
-					0 :
-					(isRotated ? size * 2 : 38));
+				(customType || hasTreemap || hasArcType ? 0 : (isRotated ? size * 2 : 38));
 		}
 
 		if (y + tHeight > current.height) {
