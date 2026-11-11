@@ -3,9 +3,14 @@
  * billboard project is licensed under the MIT license
  */
 import canvasBullet from "./canvas/bullet";
+import canvasFlow from "./canvas/flow";
+import canvasGrid from "./canvas/grid";
+import canvasSelection, {selectionDraw} from "./canvas/selection";
+import canvasSubchart, {subchartDraw} from "./canvas/subchart";
 import canvasTreemap from "./canvas/treemap";
+import ChartInternal from "./ChartInternal/ChartInternal";
 import {canvas} from "./config/resolver/canvas";
-import {registerCanvasType} from "./config/resolver/canvasType";
+import {registerCanvasFeature, registerCanvasType} from "./config/resolver/canvasType";
 import {category} from "./config/resolver/category";
 import {registerCustomType} from "./config/resolver/customType";
 import {exportApi} from "./config/resolver/export";
@@ -14,6 +19,7 @@ import {grid} from "./config/resolver/grid";
 import * as interaction from "./config/resolver/interaction";
 import {regions} from "./config/resolver/regions";
 import * as shape from "./config/resolver/shape";
+import {extend} from "./module/util";
 
 // extends shape modules
 Object.keys(shape)
@@ -26,7 +32,13 @@ Object.keys(interaction)
 // always include optional API modules in UMD bundle
 exportApi();
 flow();
+extend(ChartInternal.prototype, canvasFlow);
 grid();
+registerCanvasFeature("grid", canvasGrid);
+extend(ChartInternal.prototype, canvasSubchart);
+registerCanvasFeature("subchart", subchartDraw);
+extend(ChartInternal.prototype, canvasSelection);
+registerCanvasFeature("selection", selectionDraw);
 regions();
 category();
 canvas();

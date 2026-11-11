@@ -15,7 +15,7 @@ import {
 	getShapePoint
 } from "../ChartInternal/shape/core/geometry";
 import {generateDrawAreaPath, generateDrawLinePath} from "../ChartInternal/shape/core/path";
-import {SUBCHART_BRUSH_HANDLE_PATH, TYPE} from "../config/const";
+import {TYPE} from "../config/const";
 import {window} from "../module/browser";
 import {asHalfPixel, isFunction, isNumber, isObject, isString} from "../module/util";
 import CanvasEngine from "./CanvasEngine";
@@ -66,7 +66,6 @@ const RENDERER_GROUPED_TYPE_FILTERS = [
 // fill() expensive, so canvas draws circles individually. SVG has no equivalent knob.
 const MAX_BATCHED_CIRCLE_POINTS = 1000;
 const canvasFocusLookupCache = new WeakMap<any[], Map<string, any>>();
-const subchartBrushHandlePathCache = new Map<string, Path2D>();
 
 type BarConnectLineType = "start-start" | "start-end" | "end-start" | "end-end";
 type CanvasBarConnectLineBox = {x: number, y: number, width: number, height: number};
@@ -164,7 +163,7 @@ function getBackgroundImageOffset($$): {x: number, y: number} {
  * @param {boolean} isSub Whether to use subchart scales
  * @private
  */
-function drawCanvasLine($$, target, indices, painter: CanvasPainter, isSub = false): void {
+export function drawCanvasLine($$, target, indices, painter: CanvasPainter, isSub = false): void {
 	painter.strokePath(ctx => {
 		generateDrawLinePath($$, indices, isSub, ctx)(target);
 	}, {lineDash: []});
@@ -179,7 +178,7 @@ function drawCanvasLine($$, target, indices, painter: CanvasPainter, isSub = fal
  * @param {boolean} isSub Whether to use subchart scales
  * @private
  */
-function drawCanvasArea($$, target, indices, painter: CanvasPainter, isSub = false): void {
+export function drawCanvasArea($$, target, indices, painter: CanvasPainter, isSub = false): void {
 	painter.fillPath(ctx => {
 		generateDrawAreaPath($$, indices, isSub, ctx)(target);
 	});
@@ -243,34 +242,6 @@ function getFocusedCanvasDatum(focusData, d) {
 }
 
 /**
- * Get cached Path2D for a subchart brush handle.
- * @param {string} axis Brush axis
- * @param {string} type Brush handle side
- * @returns {Path2D|null}
- * @private
- */
-function getSubchartBrushHandlePath(axis: "x" | "y", type: "start" | "end"): Path2D | null {
-	const Path2DCtor = window.Path2D;
-
-	if (!Path2DCtor) {
-		return null;
-	}
-
-	const key = `${axis}:${type}`;
-	const cached = subchartBrushHandlePathCache.get(key);
-
-	if (cached) {
-		return cached;
-	}
-
-	const path = new Path2DCtor(SUBCHART_BRUSH_HANDLE_PATH[axis][type]);
-
-	subchartBrushHandlePathCache.set(key, path);
-
-	return path;
-}
-
-/**
  * Resolve color.onover for a focused data row.
  * @param {object} $$ ChartInternal instance
  * @param {object} d Focused data row
@@ -327,7 +298,7 @@ function getCanvasTargetId(d): string | undefined {
  * @returns {boolean} Whether target is focused
  * @private
  */
-function isCanvasTargetFocused($$, d): boolean {
+export function isCanvasTargetFocused($$, d): boolean {
 	const id = getCanvasTargetId(d);
 
 	return !!id && $$.state.focusedTargetIds?.has(id);
@@ -466,7 +437,7 @@ function getCanvasLinearGradientFill(
  * @returns {boolean} Whether the target is supported
  * @private
  */
-function isCanvasRenderableTarget($$, target): boolean {
+export function isCanvasRenderableTarget($$, target): boolean {
 	return isCanvasTargetSupported($$, target, RENDERER_GROUPED_TYPE_FILTERS);
 }
 
@@ -477,7 +448,7 @@ function isCanvasRenderableTarget($$, target): boolean {
  * @returns {number} Point opacity
  * @private
  */
-function getPointOpacity($$, target): number {
+export function getPointOpacity($$, target): number {
 	const opacity = $$.config.point_opacity;
 
 	return Number.isFinite(opacity) ? opacity : (
@@ -493,7 +464,7 @@ function getPointOpacity($$, target): number {
  * @returns {number} Point radius
  * @private
  */
-function getTargetPointRadius($$, target, d): number {
+export function getTargetPointRadius($$, target, d): number {
 	const pointR = $$.config.point_r;
 
 	return isCanvasBubbleType($$, target) || isFunction(pointR) ? ($$.pointR?.(d) ?? 2.5) : pointR;
@@ -616,7 +587,7 @@ function drawBarConnectLine(
  * @returns {string} Canvas point shape
  * @private
  */
-function getPointType($$, target): CanvasPointPattern {
+export function getPointType($$, target): CanvasPointPattern {
 	const {config} = $$;
 
 	if (isCanvasBubbleType($$, target)) {
@@ -705,7 +676,7 @@ function getPointFillStyle(
  * @returns {string} Fill color
  * @private
  */
-function getCandlestickColor($$, d, value): string {
+export function getCandlestickColor($$, d, value): string {
 	const downColor = $$.config.candlestick_color_down;
 	const color = value?._isUp ? $$.color(d) : (
 		downColor && typeof downColor === "object" ? downColor[d.id] : downColor
@@ -1191,7 +1162,7 @@ export default class CanvasRenderer {
 				this.drawBars($$, shape, focusData);
 			}
 
-			this.drawSelections($$, shape);
+			$$.getCanvasFeature?.("selection")?.draw.call($$, this, shape);
 			this.drawLabels($$, shape);
 		};
 
@@ -1199,298 +1170,6 @@ export default class CanvasRenderer {
 			drawContent() :
 			this.painter.clipRect({x: margin.left, y: margin.top, w: width, h: height},
 				drawContent);
-	}
-
-	/**
-	 * Draw the canvas subchart overview and brush selection.
-	 * @param {object} $$ ChartInternal instance
-	 * @param {object} _shape Cached main shape object
-	 * @private
-	 */
-	drawSubchart($$, _shape?): void {
-		const {config, state} = $$;
-
-		// Keep accepting the main chart shape from existing internal calls.
-		void _shape;
-
-		if (!config.subchart_show || !state.hasAxis || state.width2 <= 0 || state.height2 <= 0) {
-			return;
-		}
-
-		const {ctx, painter, theme: {style}} = this;
-		const {margin2, width2, height2} = state;
-		const rect = {x: margin2.left, y: margin2.top, w: width2, h: height2};
-
-		$$.withSubchartTypeContext(() => {
-			const targets = $$.filterTargetsToShow()
-				.filter(isCanvasRenderableTarget.bind(null, $$));
-			const shape = $$.getDrawShape();
-
-			$$.updateSubchartYDomain?.(targets);
-
-			painter.withState(() => {
-				painter.clipRect(rect, () => {
-					painter.withTranslation(rect.x, rect.y, () => {
-						const areaTargets = targets.filter(isCanvasAreaType.bind(null, $$));
-						const areaIndices = getCanvasShapeIndices(
-							$$,
-							shape,
-							TYPE.AREA,
-							isCanvasAreaType.bind(null, $$)
-						);
-
-						for (const target of areaTargets) {
-							if (!target.values.some(hasCanvasDrawableValue.bind(null, $$))) {
-								continue;
-							}
-
-							ctx.globalAlpha = style.shape.areaOpacity *
-								getCanvasTargetFocusOpacity($$, target);
-							ctx.fillStyle = $$.color(target.id);
-							drawCanvasArea($$, target, areaIndices, painter, true);
-						}
-						ctx.globalAlpha = 1;
-
-						const barTargets = targets.filter(isCanvasBarType.bind(null, $$));
-						const barIndices = getCanvasShapeIndices(
-							$$,
-							shape,
-							TYPE.BAR,
-							isCanvasBarType.bind(null, $$)
-						);
-						const getBarPoints = $$.generateGetBarPoints?.(barIndices, true);
-
-						if (getBarPoints) {
-							for (const target of barTargets) {
-								ctx.globalAlpha = style.shape.barOpacity *
-									getCanvasTargetFocusOpacity($$, target);
-								ctx.fillStyle = $$.color(target.id);
-								target.values.forEach((d, i) => {
-									if (!hasCanvasDrawableValue($$, d)) {
-										return;
-									}
-
-									const geometry = getCanvasBarGeometry($$, getBarPoints, d, i);
-									const fill = $$.getSubchartCandlestickBarColor?.(d, true) ||
-										ctx.fillStyle;
-
-									geometry && painter.fillRect(geometry.rect, {fill});
-								});
-							}
-							ctx.globalAlpha = 1;
-						}
-
-						const candlestickTargets = targets.filter(
-							isCanvasCandlestickType.bind(null, $$)
-						);
-						const candlestickIndices = getCanvasShapeIndices(
-							$$,
-							shape,
-							TYPE.CANDLESTICK,
-							isCanvasCandlestickType.bind(null, $$)
-						);
-						const getCandlestickPoints = $$.generateGetCandlestickPoints?.(
-							candlestickIndices,
-							true
-						);
-
-						if (getCandlestickPoints) {
-							ctx.lineWidth = style.shape.candlestickLineWidth;
-							for (const target of candlestickTargets) {
-								const targetOpacity = getCanvasTargetFocusOpacity($$, target);
-
-								ctx.globalAlpha = targetOpacity;
-								target.values.forEach((d, i) => {
-									const value = $$.getCandlestickData?.(d);
-									const geometry = value && getCanvasCandlestickGeometry(
-										$$,
-										getCandlestickPoints,
-										d,
-										i
-									);
-
-									if (!geometry) {
-										return;
-									}
-
-									const color = getCandlestickColor($$, {id: target.id}, value);
-
-									ctx.strokeStyle = color;
-									ctx.fillStyle = color;
-									painter.strokePath(() => {
-										painter.traceLine(
-											geometry.wickStart[0],
-											geometry.wickStart[1],
-											geometry.wickEnd[0],
-											geometry.wickEnd[1]
-										);
-									});
-									painter.fillRect(geometry.body, {fill: ctx.fillStyle});
-								});
-							}
-						}
-
-						const lineTargets = targets.filter(isCanvasLineType.bind(null, $$));
-						const lineIndices = getCanvasShapeIndices(
-							$$,
-							shape,
-							TYPE.LINE,
-							isCanvasLineType.bind(null, $$)
-						);
-
-						ctx.globalAlpha = 1;
-						for (const target of lineTargets) {
-							if (!target.values.some(hasCanvasDrawableValue.bind(null, $$))) {
-								continue;
-							}
-
-							ctx.globalAlpha = getCanvasTargetFocusOpacity($$, target);
-							ctx.lineWidth = isCanvasTargetFocused($$, target) ?
-								style.shape.lineFocusedWidth :
-								style.shape.lineWidth;
-							ctx.strokeStyle = $$.color(target.id);
-							drawCanvasLine($$, target, lineIndices, painter, true);
-						}
-						ctx.globalAlpha = 1;
-
-						if (config.point_show && !$$.isPointFocusOnly?.()) {
-							const cy = $$.updateCircleY?.(true);
-							const cx = $$.subxx?.bind($$);
-
-							if (cx && cy) {
-								for (const target of targets) {
-									if (
-										!isCanvasScatterType($$, target) &&
-										!isCanvasBubbleType($$, target)
-									) {
-										continue;
-									}
-
-									const color = $$.color(target.id);
-									const pointFill = style.shape.pointFillColor || color;
-									const pointStroke = style.shape.pointStrokeColor || color;
-									const pointLineWidth = pointStroke ?
-										(style.shape.pointLineWidth ?? 1) :
-										0;
-									const pointStyle = pointStroke && pointLineWidth > 0 ?
-										{
-											fill: pointFill,
-											stroke: pointStroke,
-											lineWidth: pointLineWidth
-										} :
-										{fill: pointFill};
-
-									ctx.globalAlpha = getPointOpacity($$, target) *
-										getCanvasTargetFocusOpacity($$, target);
-									target.values.forEach((d, i) => {
-										if (!hasCanvasDrawableValue($$, d)) {
-											return;
-										}
-
-										const x = config.axis_rotated ? cy(d, i) : cx(d);
-										const y = config.axis_rotated ? cx(d) : cy(d, i);
-										const r = Math.min(getTargetPointRadius($$, target, d), 3);
-
-										if (isFiniteCanvasCoordinate(x, y)) {
-											drawPointPattern(painter, "circle", x, y, r,
-												pointStyle);
-										}
-									});
-								}
-								ctx.globalAlpha = 1;
-							}
-						}
-					});
-				});
-
-				this.drawSubchartBrush($$);
-			});
-		});
-	}
-
-	/**
-	 * Draw current subchart brush selection.
-	 * @param {object} $$ ChartInternal instance
-	 * @private
-	 */
-	drawSubchartBrush($$): void {
-		const {config, scale, state} = $$;
-		const domain = state.domain;
-
-		if (
-			!config.subchart_show ||
-			config.subchart_brush_enabled === false ||
-			!domain?.length ||
-			!scale.subX
-		) {
-			return;
-		}
-
-		const {margin2, width2, height2} = state;
-		const p0 = scale.subX(domain[0]);
-		const p1 = scale.subX(domain[1]);
-		const axisLength = config.axis_rotated ? height2 : width2;
-		const extent = $$.axis?.getExtent?.();
-		const extentValues =
-			Array.isArray(extent) && extent.length >= 2 && extent.every(Number.isFinite) ?
-				extent.slice(0, 2) :
-				[0, axisLength];
-		const extentStart = Math.max(0, Math.min(axisLength, Math.min(...extentValues)));
-		const extentEnd = Math.max(0, Math.min(axisLength, Math.max(...extentValues)));
-		const start = Math.max(extentStart, Math.min(extentEnd, Math.min(p0, p1)));
-		const end = Math.max(extentStart, Math.min(extentEnd, Math.max(p0, p1)));
-		const size = end - start;
-
-		if (size <= 0) {
-			return;
-		}
-
-		const rect = config.axis_rotated ?
-			{x: margin2.left, y: margin2.top + start, w: width2, h: size} :
-			{x: margin2.left + start, y: margin2.top, w: size, h: height2};
-
-		this.painter.fillRect(rect, {
-			fill: this.theme.style.subchartBrush.fill,
-			alpha: this.theme.style.subchartBrush.opacity
-		});
-
-		if (config.subchart_showHandle) {
-			this.drawSubchartBrushHandle($$, start, "start");
-			this.drawSubchartBrushHandle($$, end, "end");
-		}
-	}
-
-	/**
-	 * Draw a visible subchart brush resize handle.
-	 * @param {object} $$ ChartInternal instance
-	 * @param {number} coord Brush handle coordinate
-	 * @param {string} type Brush handle side
-	 * @private
-	 */
-	drawSubchartBrushHandle($$, coord: number, type: "start" | "end"): void {
-		const {config, state: {margin2, width2, height2}} = $$;
-		const {ctx, painter, theme: {style}} = this;
-		const isRotated = config.axis_rotated;
-		const fill = style.subchartBrush.handleFill;
-		const stroke = style.subchartBrush.handleStroke;
-		const x = isRotated ? margin2.left + (width2 / 2) : margin2.left + coord;
-		const y = isRotated ? margin2.top + coord : margin2.top + (height2 / 2);
-		const path = getSubchartBrushHandlePath(isRotated ? "y" : "x", type);
-
-		if (!path) {
-			return;
-		}
-
-		painter.withState(() => {
-			ctx.translate(x, y);
-			ctx.fillStyle = fill;
-			ctx.strokeStyle = stroke;
-			ctx.lineWidth = style.subchartBrush.handleLineWidth;
-			ctx.globalAlpha = style.subchartBrush.handleOpacity;
-			ctx.fill(path);
-			ctx.globalAlpha = 1;
-			ctx.stroke(path);
-		});
 	}
 
 	/**
@@ -1977,117 +1656,6 @@ export default class CanvasRenderer {
 	}
 
 	/**
-	 * Draw selected canvas shapes.
-	 * @param {object} $$ ChartInternal instance
-	 * @param {object} shape Cached draw shape object
-	 * @private
-	 */
-	drawSelections($$, shape): void {
-		const selectedData = $$.getCanvasSelectedData?.();
-
-		if (
-			!$$.config.data_selection_enabled || !selectedData?.length ||
-			$$.state.customType || $$.state.hasTreemap
-		) {
-			return;
-		}
-
-		const {ctx, painter, theme: {style}} = this;
-		const {margin} = $$.state;
-		const isBar = isCanvasBarType.bind(null, $$);
-		const isCandlestick = isCanvasCandlestickType.bind(null, $$);
-		const barPoints = selectedData.some(isBar) ?
-			$$.generateGetBarPoints(
-				getCanvasShapeIndices($$, shape, TYPE.BAR, isBar),
-				false
-			) :
-			null;
-		const candlestickPoints = selectedData.some(isCandlestick) ?
-			$$.generateGetCandlestickPoints?.(
-				getCanvasShapeIndices($$, shape, TYPE.CANDLESTICK, isCandlestick),
-				false
-			) :
-			null;
-		const getRadius = barPoints ? getBarRadiusResolver($$) : null;
-		const stackingRadiusSet = getRadius ? getStackingBarRadiusSet($$) : new Set<string>();
-
-		painter.withTranslation(margin.left, margin.top, () => {
-			selectedData.forEach(d => {
-				const color = $$.color(d.id);
-
-				if (isBar(d) && barPoints) {
-					const geometry = getCanvasBarGeometry($$, barPoints, d, d.index);
-
-					if (!geometry) {
-						return;
-					}
-
-					const {points, rect} = geometry;
-					const corners = getRadius ?
-						getBarRadiusInfo($$, d, points, getRadius, stackingRadiusSet).corners :
-						0;
-
-					getRadius ?
-						painter.fillRoundRect(rect, corners, {fill: "#fff", alpha: 0.3}) :
-						painter.fillRect(rect, {fill: "#fff", alpha: 0.3});
-					getRadius ?
-						painter.strokeRoundRect(rect, corners, {stroke: color, lineWidth: 2}) :
-						painter.strokeRect(rect, {stroke: color, lineWidth: 2});
-				} else if (isCandlestick(d) && candlestickPoints) {
-					const value = $$.getCandlestickData?.(d);
-
-					if (!value) {
-						return;
-					}
-
-					const geometry = getCanvasCandlestickGeometry($$, candlestickPoints, d,
-						d.index);
-
-					if (!geometry) {
-						return;
-					}
-
-					const {body, wickStart, wickEnd} = geometry;
-
-					painter.strokePath(() => {
-						painter.traceLine(wickStart[0], wickStart[1], wickEnd[0], wickEnd[1]);
-					}, {stroke: color, lineWidth: 3});
-					painter.fillRect(body, {fill: "#fff", alpha: 0.3});
-					painter.strokeRect(body, {stroke: color, lineWidth: 2});
-				} else if (isCanvasPointType($$, d)) {
-					const pointType = getPointType($$, {id: d.id});
-					const {x, y} = getRenderDataPoint($$, d);
-					const r = $$.pointR?.(d) ?? 2.5;
-					const selectR = $$.pointSelectR?.(d) ?? (r * 2);
-
-					if (!isFiniteCanvasCoordinate(x, y)) {
-						return;
-					}
-
-					drawPointPattern(painter, "circle", x, y, selectR, {
-						fill: style.selectedPoint.fill,
-						lineWidth: style.selectedPoint.lineWidth,
-						stroke: style.selectedPoint.stroke || color
-					});
-
-					// with point.focus.only, the data point is rendered only while it's
-					// focused, so a selected-but-unfocused point shows just the selection
-					// ring (matching SVG). Skip drawing the data point itself here.
-					if (!$$.isPointFocusOnly?.()) {
-						drawPointPattern(painter, pointType, x, y, r, {
-							fill: style.shape.pointFillColor || color,
-							stroke: style.shape.pointStrokeColor || color,
-							lineWidth: style.shape.pointLineWidth ?? 1
-						});
-					}
-				}
-			});
-
-			ctx.globalAlpha = 1;
-		});
-	}
-
-	/**
 	 * Draw data labels on canvas.
 	 * @param {object} $$ ChartInternal instance
 	 * @param {object} shape Cached draw shape object
@@ -2291,92 +1859,6 @@ export default class CanvasRenderer {
 	}
 
 	/**
-	 * Draw data selection drag area.
-	 * @param {object} $$ ChartInternal instance
-	 * @param {object} rect Selection rectangle
-	 * @private
-	 */
-	drawSelectionDragArea($$, rect): void {
-		const {margin, width, height} = $$.state;
-		const plot = {
-			x: margin.left,
-			y: margin.top,
-			w: width,
-			h: height
-		};
-		const x = Math.max(plot.x, rect.x);
-		const y = Math.max(plot.y, rect.y);
-		const right = Math.min(plot.x + plot.w, rect.x + rect.w);
-		const bottom = Math.min(plot.y + plot.h, rect.y + rect.h);
-
-		if (right <= x || bottom <= y) {
-			return;
-		}
-
-		this.painter.fillRect({
-			x,
-			y,
-			w: right - x,
-			h: bottom - y
-		}, {
-			fill: this.theme.style.zoomBrush.fill,
-			alpha: this.theme.style.zoomBrush.opacity
-		});
-	}
-
-	/**
-	 * Draw synchronized focus grid on the canvas subchart.
-	 * @param {object} $$ ChartInternal instance
-	 * @param {Array} selectedData Focused data rows
-	 * @private
-	 */
-	drawSubchartFocus($$, selectedData): void {
-		const {config, scale, state} = $$;
-		const focus = selectedData?.find(d =>
-			d &&
-			hasCanvasDrawableValue($$, d)
-		);
-
-		if (
-			!focus ||
-			!config.subchart_show ||
-			config.subchart_grid_focus_continuous ||
-			config.subchart_brush_enabled !== false ||
-			config.grid_focus_show === false ||
-			config.subchart_grid_focus === false ||
-			!config.tooltip_show ||
-			config.axis_tooltip ||
-			!scale.subX ||
-			state.width2 <= 0 ||
-			state.height2 <= 0
-		) {
-			return;
-		}
-
-		const {margin2, width2, height2} = state;
-		const pos = scale.subX(focus.x);
-
-		if (!Number.isFinite(pos)) {
-			return;
-		}
-
-		const {painter, theme: {style}} = this;
-		const lineWidth = style.axis.lineWidth;
-		const x = painter.crisp(margin2.left + pos, lineWidth);
-		const y = painter.crisp(margin2.top + pos, lineWidth);
-
-		painter.strokePath(() => {
-			config.axis_rotated ?
-				painter.traceLine(margin2.left, y, margin2.left + width2, y) :
-				painter.traceLine(x, margin2.top, x, margin2.top + height2);
-		}, {
-			lineDash: style.focusGrid.dashArray,
-			lineWidth: style.focusGrid.lineWidth,
-			stroke: style.focusGrid.lineColor
-		});
-	}
-
-	/**
 	 * Draw focus grid and focused points on canvas.
 	 * @param {object} $$ ChartInternal instance
 	 * @param {Array} selectedData Focused data rows
@@ -2398,7 +1880,7 @@ export default class CanvasRenderer {
 
 		$$.config.subchart_grid_focus !== false &&
 			!isContinuousGridFocusEnabled($$) &&
-			this.drawSubchartFocus($$, selectedData);
+			$$.getCanvasFeature?.("subchart")?.drawFocus.call($$, this, selectedData);
 
 		painter.withTranslation(margin.left, margin.top, () => {
 			if (

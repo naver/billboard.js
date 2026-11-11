@@ -30,14 +30,6 @@ export const TYPE = {
 };
 
 /**
- * Chart types that are drawn on canvas by the canvas part of their module (registerCanvasType()).
- * With the svg part only, nothing draws them: the canvas mode falls back to svg.
- * Only the names: a type is not judged by this list when its canvas part is there.
- * @private
- */
-export const CANVAS_PART_NEEDED = ["treemap"];
-
-/**
  * Optional API modules and their resolver module name.
  * Used by checkApiModuleImport() to surface a helpful error when a user calls
  * chart.export() / chart.flow() without importing the matching resolver.

@@ -34,3 +34,18 @@ export function registerCanvasType(name: string, parts: ICanvasTypeParts): void 
 
 	types[name] = {...types[name], ...parts};
 }
+
+/**
+ * Register the canvas drawing of an optional feature (grid, flow, subchart...), by feature name.
+ * The module of the feature adds it, so bundles without the module do not carry it.
+ * The functions are called with the chart (ChartInternal) as `this`.
+ * @param {string} name Feature name
+ * @param {object} parts Canvas functions of the feature
+ * @private
+ */
+export function registerCanvasFeature(name: string, parts: Record<string, any>): void {
+	const proto: any = ChartInternal.prototype;
+	const features = proto.canvasFeatures || (proto.canvasFeatures = {});
+
+	features[name] = {...features[name], ...parts};
+}

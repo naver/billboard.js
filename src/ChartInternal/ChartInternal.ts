@@ -12,7 +12,7 @@ import {
 } from "d3-time-format";
 import type {d3Selection, d3Transition} from "../../types/types";
 import {$CIRCLE, $COMMON, $TEXT} from "../config/classes";
-import {CANVAS_PART_NEEDED, RESIZE_FRAME_BUDGET} from "../config/const";
+import {RESIZE_FRAME_BUDGET} from "../config/const";
 import Options from "../config/Options/Options";
 import Store from "../config/Store/Store";
 import {document, window} from "../module/browser";
@@ -96,10 +96,8 @@ function getUnsupportedCanvasRenderType($$): string | null {
 		}
 	}
 
-	// the same for the types drawn by canvas parts that can be more than one in a chart
-	const missing = CANVAS_PART_NEEDED.find(name => $$.hasType(name) && !$$.canvasTypes?.[name]);
-
-	return missing ? `${missing} chart without its canvas module` : null;
+	// the types drawn by canvas parts, which only the canvas module knows
+	return $$.getUnsupportedCanvasPart?.() ?? null;
 }
 
 /**
