@@ -40,7 +40,6 @@ export default class State {
 
 			hasAxis: false,
 			customType: <string | null>null,
-			hasFunnel: false,
 			hasRadar: false,
 			hasTreemap: false,
 			isCanvasMode: false,

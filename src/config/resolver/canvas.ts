@@ -35,6 +35,7 @@ import {
 	sanitize,
 	tplProcess
 } from "../../module/util";
+import type {ICanvasTypeParts} from "./canvasType";
 
 const CANVAS_SELECTABLE_TYPE_FILTERS = [
 	isCanvasPointType,
@@ -1183,6 +1184,19 @@ function syncCanvasFlowYDomains($$): void {
 
 const canvasInternal = {
 	/**
+	 * Get the canvas parts of the chart types the chart has (registerCanvasType()).
+	 * @returns {Array} Parts of the types, in the order they were registered
+	 * @private
+	 */
+	getCanvasTypeParts(): ICanvasTypeParts[] {
+		const types = this.canvasTypes;
+
+		return types ?
+			Object.keys(types).filter(name => this.hasType(name)).map(name => types[name]) :
+			[];
+	},
+
+	/**
 	 * Normalize unsupported options before initializing canvas mode.
 	 * @private
 	 */
@@ -1485,7 +1499,8 @@ const canvasInternal = {
 		$el.canvas = d3Select($$.canvasEngine.canvas);
 
 		$$.canvasTheme = new CanvasTheme();
-		$$.canvasTheme.load(container, config.canvas_theme, $$.customCanvasTheme);
+		$$.canvasTheme.load(container, config.canvas_theme,
+			$$.getCustomTypeParts?.()?.canvas?.theme);
 
 		$$.canvasAxisRenderer = new CanvasAxisRenderer($$.canvasEngine, $$.canvasTheme);
 		$$.canvasRenderer = new CanvasRenderer($$.canvasEngine, $$.canvasTheme);
@@ -1517,8 +1532,7 @@ const canvasInternal = {
 			[config.boost_useCssRule, "boost.useCssRule"],
 			[this.hasArcType?.(), "arc charts"],
 			[this.hasType?.("radar"), "radar chart"],
-			[this.hasType?.("polar"), "polar chart"],
-			[this.hasType?.("funnel"), "funnel chart"]
+			[this.hasType?.("polar"), "polar chart"]
 		];
 
 		unsupported.forEach(([condition, name]) => {

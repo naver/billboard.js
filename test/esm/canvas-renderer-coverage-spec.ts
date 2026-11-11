@@ -7,6 +7,7 @@
 import {describe, expect, it, vi} from "vitest";
 
 import CanvasRenderer from "../../src/canvas/CanvasRenderer";
+import canvasTreemap from "../../src/canvas/treemap";
 import {TYPE} from "../../src/config/const";
 
 function makeRow(id, index, value = index) {
@@ -244,7 +245,6 @@ describe("ESM canvas renderer coverage", () => {
 		renderer.drawCircles = () => calls.push("circles");
 		renderer.drawSelections = () => calls.push("selections");
 		renderer.drawLabels = () => calls.push("labels");
-		renderer.drawTreemaps = () => calls.push("treemaps");
 
 		renderer.draw(ctx, {indices: {}, pos: {}});
 		expect(calls).to.deep.equal(["bars", "candles", "areas", "lines", "circles", "selections", "labels"]);
@@ -255,10 +255,12 @@ describe("ESM canvas renderer coverage", () => {
 		renderer.draw(ctx, {indices: {}, pos: {}});
 		expect(calls).to.deep.equal(["candles", "lines", "areas", "circles", "bars", "selections", "labels"]);
 
+		// a type that is the whole chart is drawn by the canvas part of its module, alone
 		calls.length = 0;
-		ctx.state.hasTreemap = true;
+		ctx.getCanvasTypeParts = () => [{exclusive: true, draw: () => calls.push("treemaps")}];
 		renderer.draw(ctx, {indices: {}, pos: {}});
 		expect(calls).to.deep.equal(["treemaps"]);
+		expect(canvasTreemap.exclusive).to.be.true;
 	});
 
 	it("draws background, empty label and brush overlays", () => {
@@ -727,7 +729,7 @@ describe("ESM canvas renderer coverage", () => {
 		ctx.scale.x = value => value * 20;
 		ctx.scale.y = value => value * 15;
 
-		renderer.drawTreemaps(ctx);
+		canvasTreemap.draw.call(ctx, renderer);
 
 		expect(renderer.ctx).to.not.be.null;
 	});
@@ -839,7 +841,7 @@ describe("ESM canvas renderer coverage", () => {
 		ctx.scale.x = value => value * 20;
 		ctx.scale.y = value => value * 10;
 
-		renderer.drawTreemaps(ctx);
+		canvasTreemap.draw.call(ctx, renderer);
 
 		const nonCentered = records.find(record => record.text === "tile");
 		const nonCenteredSecondLine = records.find(record => record.text === "80%");
@@ -852,7 +854,7 @@ describe("ESM canvas renderer coverage", () => {
 
 		records.length = 0;
 		ctx.config.data_labels.centered = true;
-		renderer.drawTreemaps(ctx);
+		canvasTreemap.draw.call(ctx, renderer);
 
 		const centered = records.find(record => record.text === "tile");
 		const centeredSecondLine = records.find(record => record.text === "80%");

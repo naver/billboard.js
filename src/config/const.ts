@@ -30,12 +30,12 @@ export const TYPE = {
 };
 
 /**
- * Names of the chart types that come with their own module and are not built in.
- * Only used to tell that the module of such a type was not imported: no type is judged by this list
- * when its module is there, and a name that is not here (a typo for example) is never reported.
+ * Chart types that are drawn on canvas by the canvas part of their module (registerCanvasType()).
+ * With the svg part only, nothing draws them: the canvas mode falls back to svg.
+ * Only the names: a type is not judged by this list when its canvas part is there.
  * @private
  */
-export const CUSTOM_TYPE_NAMES = ["bullet"];
+export const CANVAS_PART_NEEDED = ["treemap"];
 
 /**
  * Optional API modules and their resolver module name.
@@ -84,29 +84,35 @@ export const SUBCHART_BRUSH_HANDLE_PATH = {
 
 /**
  * Chart type module and its method from ChartInternal class, needed to be initialized.
+ * It is keyed by the name given to `data.type`, for the types of their own module too.
+ * The method has to be there for every mode: the module of "billboard.js/canvas" has no part
+ * for the svg mode (see getTypeMethod()), so it is a method of the part both of them have.
+ * Used by checkModuleImport() to tell that the module of a type was not imported: a name that is not
+ * here (a typo for example) is never reported.
  * @private
  */
-export const TYPE_METHOD_NEEDED = {
-	AREA: "initArea",
-	AREA_LINE_RANGE: "initArea",
-	AREA_SPLINE: "initArea",
-	AREA_SPLINE_RANGE: "initArea",
-	AREA_STEP: "initArea",
-	AREA_STEP_RANGE: "initArea",
-	BAR: "initBar",
-	BUBBLE: "initCircle",
-	CANDLESTICK: "initCandlestick",
-	DONUT: "initArc",
-	FUNNEL: "initFunnel",
-	GAUGE: "initArc",
-	LINE: "initLine",
-	PIE: "initArc",
-	POLAR: "initPolar",
-	RADAR: "initCircle",
-	SCATTER: "initCircle",
-	SPLINE: "initLine",
-	STEP: "initLine",
-	TREEMAP: "initTreemap"
+export const TYPE_METHOD_NEEDED: Record<string, string> = {
+	area: "initArea",
+	"area-line-range": "initArea",
+	"area-spline": "initArea",
+	"area-spline-range": "initArea",
+	"area-step": "initArea",
+	"area-step-range": "initArea",
+	bar: "initBar",
+	bubble: "initCircle",
+	bullet: "getBulletData",
+	candlestick: "initCandlestick",
+	donut: "initArc",
+	funnel: "initFunnel",
+	gauge: "initArc",
+	line: "initLine",
+	pie: "initArc",
+	polar: "initPolar",
+	radar: "initCircle",
+	scatter: "initCircle",
+	spline: "initLine",
+	step: "initLine",
+	treemap: "initTreemap"
 };
 
 /**

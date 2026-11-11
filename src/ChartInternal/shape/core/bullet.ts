@@ -501,71 +501,75 @@ function _getRowGeometry(d: IBulletData, layout: IBulletLayout): IBulletGeometry
 	};
 }
 
-export default {
-	/**
-	 * How the data labels of a bullet differ from the other types.
-	 * The shared data label code asks these through `getCustomTypeHooks()`.
-	 * @private
-	 */
-	customTypeHooks: {
-		// the label is not drawn with the color of the series
-		themeTextColor: true,
+/**
+ * How the data labels of a bullet differ from the other types.
+ * The shared data label code asks these through `getCustomTypeHooks()`.
+ * They are registered with the type name (registerCustomType()).
+ * @private
+ */
+export const customTypeHooks = {
+	// the legend is placed beside its own plot, not by the size of an arc
+	ownLegendLayout: true,
 
-		// beside the measure, or above it when rotated
-		textAnchor($$): string {
-			return $$.config.bullet_rotated || $$.config.data_labels.centered ? "middle" : "start";
-		},
+	// the label is not drawn with the color of the series
+	themeTextColor: true,
 
-		// a bullet has one label, for its measure: the last value
-		labelData($$, d): IBulletData[] {
-			const last = d.values[d.values.length - 1];
-
-			return $$.config.bullet_label_show && last &&
-					(isNumber(last.value) || Boolean(last.value)) ?
-				[last] :
-				[];
-		},
-
-		// bullet.label.format takes precedence over data.labels.format
-		labelFormat($$): ((value: number, id: string) => unknown) | undefined {
-			const format = $$.config.bullet_label_format;
-
-			return isFunction(format) ? (value, id) => format.call($$.api, value, id) : undefined;
-		},
-
-		// a bullet is one row per data id, not a value per index: tooltip.show() addresses it so,
-		// and the tooltip is placed at its measure
-		tooltipTarget($$, args): {data: IBulletData[], point?: number[]} {
-			const rows: IBulletData[] = $$.getBulletData().filter(d => $$.isTargetToShow(d.id));
-			const data = args.data?.id ?
-				rows.filter(d => d.id === args.data.id) :
-				[rows[args.index]].filter(Boolean);
-
-			return {data, point: data[0] && $$.getBulletMeasureCenter(data[0])};
-		},
-
-		// points[0]: label anchor, points[1]: center of the measure
-		// Preserve current position when points unavailable (during hide transition)
-		textX($$, points, d, textElement): number {
-			return points ?
-				points[$$.config.data_labels.centered ? 1 : 0][0] + getTextPos.call($$, d, "x") :
-				getElementPos(textElement, "x");
-		},
-
-		// beside the measure the label is centered on the row, above it (rotated) it sits on y
-		textY($$, points, d, textElement, rect): number {
-			if (!points) {
-				return getElementPos(textElement, "y");
-			}
-
-			const centered = $$.config.data_labels.centered;
-			const y = points[centered ? 1 : 0][1];
-
-			return (centered || !$$.config.bullet_rotated ? y + rect.height / 2 - 3 : y) +
-				getTextPos.call($$, d, "y");
-		}
+	// beside the measure, or above it when rotated
+	textAnchor($$): string {
+		return $$.config.bullet_rotated || $$.config.data_labels.centered ? "middle" : "start";
 	},
 
+	// a bullet has one label, for its measure: the last value
+	labelData($$, d): IBulletData[] {
+		const last = d.values[d.values.length - 1];
+
+		return $$.config.bullet_label_show && last &&
+				(isNumber(last.value) || Boolean(last.value)) ?
+			[last] :
+			[];
+	},
+
+	// bullet.label.format takes precedence over data.labels.format
+	labelFormat($$): ((value: number, id: string) => unknown) | undefined {
+		const format = $$.config.bullet_label_format;
+
+		return isFunction(format) ? (value, id) => format.call($$.api, value, id) : undefined;
+	},
+
+	// a bullet is one row per data id, not a value per index: tooltip.show() addresses it so,
+	// and the tooltip is placed at its measure
+	tooltipTarget($$, args): {data: IBulletData[], point?: number[]} {
+		const rows: IBulletData[] = $$.getBulletData().filter(d => $$.isTargetToShow(d.id));
+		const data = args.data?.id ?
+			rows.filter(d => d.id === args.data.id) :
+			[rows[args.index]].filter(Boolean);
+
+		return {data, point: data[0] && $$.getBulletMeasureCenter(data[0])};
+	},
+
+	// points[0]: label anchor, points[1]: center of the measure
+	// Preserve current position when points unavailable (during hide transition)
+	textX($$, points, d, textElement): number {
+		return points ?
+			points[$$.config.data_labels.centered ? 1 : 0][0] + getTextPos.call($$, d, "x") :
+			getElementPos(textElement, "x");
+	},
+
+	// beside the measure the label is centered on the row, above it (rotated) it sits on y
+	textY($$, points, d, textElement, rect): number {
+		if (!points) {
+			return getElementPos(textElement, "y");
+		}
+
+		const centered = $$.config.data_labels.centered;
+		const y = points[centered ? 1 : 0][1];
+
+		return (centered || !$$.config.bullet_rotated ? y + rect.height / 2 - 3 : y) +
+			getTextPos.call($$, d, "y");
+	}
+};
+
+export default {
 	/**
 	 * Whether the data belongs to the bullet type.
 	 * @param {object} d Data object
@@ -574,16 +578,6 @@ export default {
 	 */
 	isBulletType(d): boolean {
 		return this.isTypeOf(d, "bullet");
-	},
-
-	/**
-	 * Name of the type this module adds to the chart, when the chart has it.
-	 * The shared code works with it by name, without knowing the type.
-	 * @returns {string|null} Type name
-	 * @private
-	 */
-	getCustomType(): string | null {
-		return this.hasType("bullet") ? "bullet" : null;
 	},
 
 	/**

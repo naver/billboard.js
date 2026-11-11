@@ -441,8 +441,7 @@ export default {
 		const $$ = this;
 		const {config, state, $el: {legend}} = $$;
 		const isRotated = config.axis_rotated;
-		const isNonAxis = $$.hasArcType() || state.customType || state.hasFunnel ||
-			state.hasTreemap;
+		const isNonAxis = $$.hasArcType() || state.customType || state.hasTreemap;
 		const isFitPadding = config.padding?.mode === "fit";
 
 		!isInit && $$.setContainerSize();
@@ -580,8 +579,8 @@ export default {
 			$$.updateRadius?.();
 		}
 
-		// arc types center their legend by the arc size: a custom type places it beside its own plot
-		if (state.isLegendRight && isNonAxis && !state.customType) {
+		// arc types center their legend by the arc size: a custom type can place it beside its own plot
+		if (state.isLegendRight && isNonAxis && !$$.customTypeHooks?.ownLegendLayout) {
 			state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
 		}
 	}

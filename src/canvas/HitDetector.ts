@@ -2,7 +2,6 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {getTreemapNodeRect} from "../ChartInternal/shape/core/geometry";
 import {TYPE} from "../config/const";
 import {getCanvasBarGeometry, getCanvasCandlestickGeometry} from "./geometry";
 import {
@@ -17,7 +16,6 @@ import {
 	isCanvasPointType,
 	isCanvasScatterType,
 	isCanvasTargetSupported,
-	isCanvasTreemapType,
 	isFiniteCanvasCoordinate,
 	markCanvasPointOccupancy
 } from "./util";
@@ -211,34 +209,16 @@ export default class HitDetector {
 		};
 
 		if ($$.state.customType) {
-			$$.addCustomTypeHitsOnCanvas?.(this);
+			$$.getCustomTypeParts()?.canvas?.hits?.call($$, this);
 			this.indices = [];
 			return;
 		}
 
-		if ($$.state.hasTreemap) {
-			const root = $$.getTreemapRoot?.($$.data.targets);
-			const nodes = root?.children || [];
+		// the type that is the whole chart is hit by its module, alone
+		const exclusive = $$.getCanvasTypeParts?.().find(part => part.exclusive);
 
-			for (const node of nodes) {
-				const {data} = node;
-
-				if (!isCanvasTreemapType($$, data)) {
-					continue;
-				}
-
-				const {x, y, w, h} = getTreemapNodeRect($$, node, root, true);
-
-				if (
-					!isFiniteCanvasCoordinate(x, y) ||
-					!isFiniteCanvasCoordinate(x + w, y + h)
-				) {
-					continue;
-				}
-
-				this.addBar({x, y, w, h, data});
-			}
-
+		if (exclusive) {
+			exclusive.hits?.call($$, this);
 			this.indices = [];
 			return;
 		}

@@ -12,9 +12,7 @@ import {getLineRegionSegments} from "../ChartInternal/shape/core/dataRegion";
 import {
 	getRenderDataPoint,
 	getRenderPoint,
-	getShapePoint,
-	getTreemapLabelText,
-	getTreemapNodeRect
+	getShapePoint
 } from "../ChartInternal/shape/core/geometry";
 import {generateDrawAreaPath, generateDrawLinePath} from "../ChartInternal/shape/core/path";
 import {SUBCHART_BRUSH_HANDLE_PATH, TYPE} from "../config/const";
@@ -45,7 +43,6 @@ import {
 	DENSE_SCATTER_POINT_CULL_THRESHOLD,
 	getCanvasShapeIndices,
 	getCanvasTargetVisibleRange,
-	getFontSize,
 	hasCanvasDrawableValue,
 	isCanvasAreaType,
 	isCanvasBarType,
@@ -55,7 +52,6 @@ import {
 	isCanvasPointType,
 	isCanvasScatterType,
 	isCanvasTargetSupported,
-	isCanvasTreemapType,
 	isFiniteCanvasCoordinate,
 	markCanvasPointOccupancy
 } from "./util";
@@ -153,7 +149,7 @@ function getPreservedAspectRatioRect(
 function getBackgroundImageOffset($$): {x: number, y: number} {
 	const {state} = $$;
 
-	return state.customType || state.hasFunnel || state.hasTreemap ? {x: 0, y: 0} : {
+	return state.customType || state.hasTreemap ? {x: 0, y: 0} : {
 		x: asHalfPixel(state.margin.left),
 		y: asHalfPixel(state.margin.top)
 	};
@@ -1043,7 +1039,7 @@ export default class CanvasRenderer {
 	 * @returns {object} Adjusted text position
 	 * @private
 	 */
-	private drawLabelImage($$, d, text: string, x: number, y: number): {x: number, y: number} {
+	drawLabelImage($$, d, text: string, x: number, y: number): {x: number, y: number} {
 		const option = getLabelImageOption($$, d);
 
 		if (!option?.url) {
@@ -1154,14 +1150,17 @@ export default class CanvasRenderer {
 	 * @private
 	 */
 	draw($$, shape, focusData?): void {
-		if ($$.state.hasTreemap) {
-			this.drawTreemaps($$);
+		// the type that is the whole chart is drawn by its module, alone
+		const exclusive = $$.getCanvasTypeParts?.().find(part => part.exclusive);
+
+		if (exclusive) {
+			exclusive.draw?.call($$, this, shape, focusData);
 			return;
 		}
 
 		if ($$.state.customType) {
 			// registered by the module of the type: bundles without it do not carry its drawing
-			$$.drawCustomTypeOnCanvas?.(this);
+			$$.getCustomTypeParts()?.canvas?.draw?.call($$, this);
 			return;
 		}
 
@@ -2322,99 +2321,6 @@ export default class CanvasRenderer {
 		}, {
 			fill: this.theme.style.zoomBrush.fill,
 			alpha: this.theme.style.zoomBrush.opacity
-		});
-	}
-
-	/**
-	 * Draw treemap tiles and labels on canvas.
-	 * @param {object} $$ ChartInternal instance
-	 * @private
-	 */
-	drawTreemaps($$): void {
-		const {ctx, painter, theme: {style}} = this;
-		const {config} = $$;
-		const root = $$.getTreemapRoot?.($$.data.targets);
-		const nodes = root?.children || [];
-
-		painter.withState(() => {
-			ctx.lineWidth = style.treemap.lineWidth;
-			ctx.strokeStyle = style.treemap.stroke;
-
-			for (const node of nodes) {
-				const {data} = node;
-
-				if (!isCanvasTreemapType($$, data)) {
-					continue;
-				}
-
-				const {x, y, w, h} = getTreemapNodeRect($$, node, root, true);
-
-				if (
-					!isFiniteCanvasCoordinate(x, y) ||
-					!isFiniteCanvasCoordinate(x + w, y + h) ||
-					w <= 0 ||
-					h <= 0
-				) {
-					continue;
-				}
-
-				const rect = {x, y, w, h};
-
-				ctx.fillStyle = $$.color(data.name);
-				painter.fillRect(rect);
-				painter.strokeRect(rect);
-
-				if (
-					!config.treemap_label_show ||
-					(data.ratio || 0) < (config.treemap_label_threshold || 0)
-				) {
-					continue;
-				}
-
-				const label = getTreemapLabelText($$, data, w, h);
-
-				if (!label) {
-					continue;
-				}
-
-				const lines = label.split("\n");
-				const isCentered = !!config.data_labels.centered;
-
-				ctx.font = style.label.font;
-				const lineHeight = getFontSize(ctx.font);
-				const metrics = ctx.measureText(lines[0] ?? "");
-				const fontBoundingHeight = (
-					(metrics.fontBoundingBoxAscent || 0) +
-					(metrics.fontBoundingBoxDescent || 0)
-				) || (
-					(metrics.actualBoundingBoxAscent || 0) +
-					(metrics.actualBoundingBoxDescent || 0)
-				);
-				const textHeight = Math.max(lineHeight, fontBoundingHeight) +
-					((lines.length - 1) * lineHeight);
-				const blockY = isCentered ? y + h / 2 : y + textHeight + 5;
-				let textX = isCentered ? x + w / 2 : x + 5;
-				let textY = blockY - (lines.length - 1) * lineHeight / (isCentered ? 2 : 1);
-
-				ctx.textAlign = isCentered ? "center" : "left";
-				ctx.textBaseline = isCentered ? "middle" : "alphabetic";
-				({x: textX, y: textY} = this.drawLabelImage($$, data, label, textX, textY));
-				ctx.fillStyle = getLabelColor($$, data, style.label.color);
-				drawLabelDecorations(
-					$$,
-					painter,
-					data,
-					label,
-					textX,
-					isCentered ? textY + ((lines.length - 1) * lineHeight / 2) : blockY
-				);
-
-				lines.forEach((line, i) => {
-					painter.text(line, textX, textY + i * lineHeight, {
-						maxWidth: Math.max(0, w - 8)
-					});
-				});
-			}
 		});
 	}
 

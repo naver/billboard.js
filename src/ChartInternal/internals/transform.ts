@@ -97,13 +97,13 @@ export default {
 
 	transformAll(withTransition: boolean, transitions): void {
 		const $$ = this;
-		const {config, state: {customType, hasAxis, hasFunnel, hasTreemap, isCanvasMode}, $el} = $$;
+		const {config, state: {customType, hasAxis, hasTreemap, isCanvasMode}, $el} = $$;
 
 		if (isCanvasMode) {
 			return;
 		}
 
-		!customType && !hasFunnel && !hasTreemap && $$.transformMain(withTransition, transitions);
+		!customType && !hasTreemap && $$.transformMain(withTransition, transitions);
 
 		hasAxis && config.subchart_show &&
 			$$.transformContext(withTransition, transitions);

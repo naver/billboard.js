@@ -121,7 +121,7 @@ const bulletTheme: CanvasThemeExtension = {
  * Added to the chart by bullet(): bundles without bullet do not carry it.
  */
 export default {
-	customCanvasTheme: bulletTheme,
+	theme: bulletTheme,
 
 	/**
 	 * Draw bullet rows on canvas.
@@ -129,7 +129,7 @@ export default {
 	 * @param {CanvasRenderer} renderer Canvas renderer
 	 * @private
 	 */
-	drawCustomTypeOnCanvas(renderer: CanvasRenderer): void {
+	draw(renderer: CanvasRenderer): void {
 		const $$ = this;
 		const {ctx, painter, theme: {style}} = renderer;
 		const {bullet} = style;
@@ -230,7 +230,7 @@ export default {
 	 * @param {HitDetector} detector Hit detector
 	 * @private
 	 */
-	addCustomTypeHitsOnCanvas(detector: HitDetector): void {
+	hits(detector: HitDetector): void {
 		const $$ = this;
 		const layout = $$.getBulletLayout();
 		const margin = 4;

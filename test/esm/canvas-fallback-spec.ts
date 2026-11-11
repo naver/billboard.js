@@ -54,6 +54,26 @@ describe("ESM canvas mode with the svg modules", () => {
 		expect(container.querySelectorAll(".bb-bullet-measure").length).to.be.equal(1);
 	});
 
+	it("should fall back to SVG for treemap when its canvas part is not imported", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+		try {
+			generate(svgEsm.treemap(), {data: {columns: [["data1", 30], ["data2", 20]], type: "treemap"}});
+
+			const messages = warn.mock.calls.map(([message]) => String(message)).join("\n");
+
+			expect(messages).to.contain("render.mode='canvas' is ignored for treemap chart");
+			expect(messages).to.contain("falling back to SVG");
+		} finally {
+			warn.mockRestore();
+		}
+
+		// the svg part draws it: it is not left blank
+		expect(chart.internal.config.render_mode).to.be.equal("svg");
+		expect(container.querySelector("canvas")).to.be.null;
+		expect(container.querySelectorAll("rect.bb-shape").length).to.be.equal(2);
+	});
+
 	it("should keep the canvas mode for a type the canvas engine draws by itself", () => {
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 
