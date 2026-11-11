@@ -1,3 +1,10 @@
+## [4.1.4](https://github.com/naver/billboard.js/compare/4.1.3...4.1.4) (2026-11-11)
+
+
+### Bug Fixes
+
+* **treemap:** clear the parent transform of a label that became single-line ([f220e4c](https://github.com/naver/billboard.js/commit/f220e4cee450728106fb930bdb0c38311bec6d2f)), closes [#4273](https://github.com/naver/billboard.js/issues/4273)
+
 ## [4.1.3](https://github.com/naver/billboard.js/compare/4.1.2...4.1.3) (2026-10-16)
 
 
