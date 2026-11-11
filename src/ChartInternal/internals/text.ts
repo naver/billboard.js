@@ -302,6 +302,10 @@ export default {
 				node.attr("transform", `translate(${pos.x} ${pos.y}) ${rotateString}`);
 			} else {
 				node.attr("x", pos.x).attr("y", pos.y);
+
+				// the position is on the text itself: drop the transform that the parent
+				// got when the label was multiline, or both would be applied
+				hasTreemap && (this.parentNode as SVGGElement)?.removeAttribute("transform");
 			}
 
 			config.data_labels.border &&
