@@ -774,6 +774,64 @@ describe("TREEMAP", () => {
 					done(1);
 				}, 100);
 			}));
+
+			it("should not keep the position of the previous line count on redraw", () => new Promise(done => {
+				let multiLine = true;
+				const columns = [["A", 660], ["B", 377], ["C", 368], ["D", 240], ["E", 105]];
+				const options = () => ({
+					data: {
+						columns,
+						type: "treemap",
+						labels: {
+							centered: true
+						}
+					},
+					transition: {
+						duration: 0
+					},
+					treemap: {
+						tile: "binary",
+						label: {
+							format: (value, ratio, id) => multiLine ? `${id}\n${value}` : id
+						}
+					}
+				});
+				// where the labels are really drawn, relative to the chart
+				const getRects = target => {
+					const {left, top} = target.$.svg.node().getBoundingClientRect();
+
+					return [...target.$.svg.node().querySelectorAll("text.bb-text")].map(t => {
+						const r = t.getBoundingClientRect();
+
+						return [Math.round(r.left - left), Math.round(r.top - top)];
+					});
+				};
+				const treemap = util.generate(options());
+
+				// two lines -> one line
+				multiLine = false;
+				treemap.load({columns});
+
+				setTimeout(() => {
+					const fresh = util.generate({...options(), bindto: "#chart2"});
+
+					expect(getRects(treemap)).to.be.deep.equal(getRects(fresh));
+
+					// one line -> two lines
+					multiLine = true;
+					treemap.load({columns});
+					fresh.load({columns});
+
+					setTimeout(() => {
+						expect(getRects(treemap)).to.be.deep.equal(getRects(fresh));
+
+						treemap.destroy();
+						fresh.destroy();
+						document.getElementById("chart2")?.remove();
+						done(1);
+					}, 100);
+				}, 100);
+			}));
 		});
 
 		describe("with centered labels disabled", () => {
