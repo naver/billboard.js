@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.3
+ * @version 4.1.4
 */
 import { isNumber, isObject } from "../../module/util/type-checks.js";
 import { emulateEvent, getBoundingRect, getPointer, getTransformCTM, hasViewBox } from "../../module/util/dom.js";

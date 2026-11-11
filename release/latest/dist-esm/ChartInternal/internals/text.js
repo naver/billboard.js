@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.3
+ * @version 4.1.4
 */
 import { isFunction, isNumber, isObject, isString } from "../../module/util/type-checks.js";
 import { capitalize, getRandom } from "../../module/util/object.js";
@@ -161,7 +161,10 @@ var text_default = {
 			}
 			updateTextImagePos.call($$, this, pos, labelDimension?.rect);
 			if (this.childElementCount || angle) node.attr("transform", `translate(${pos.x} ${pos.y}) ${rotateString}`);
-			else node.attr("x", pos.x).attr("y", pos.y);
+			else {
+				node.attr("x", pos.x).attr("y", pos.y);
+				hasTreemap && this.parentNode?.removeAttribute("transform");
+			}
 			config.data_labels.border && updateTextBorder.call($$, node.node(), pos, `${$TEXT.textBorderRect}-${i}`);
 		});
 		return true;

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.3
+ * @version 4.1.4
 */
 import { parseDate } from "../module/util/object.js";
 import { getScale } from "../ChartInternal/internals/scale.js";

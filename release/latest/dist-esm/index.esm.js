@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.3
+ * @version 4.1.4
 */
 import "./Chart/api/stubs.js";
 import { area, areaLineRange, areaSpline, areaSplineRange, areaStep, areaStepRange } from "./config/resolver/shape/area.js";

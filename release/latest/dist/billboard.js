@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.3
+ * @version 4.1.4
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -16350,6 +16350,7 @@ function batchGetBBox(elements) {
       });
     }
     text.each(function(d, i) {
+      var _a;
       const labelDimension = dimensions.get(this);
       const node = $T(
         hasTreemap && this.childElementCount ? this.parentNode : this,
@@ -16370,6 +16371,7 @@ function batchGetBBox(elements) {
         node.attr("transform", `translate(${pos.x} ${pos.y}) ${rotateString}`);
       } else {
         node.attr("x", pos.x).attr("y", pos.y);
+        hasTreemap && ((_a = this.parentNode) == null ? void 0 : _a.removeAttribute("transform"));
       }
       config.data_labels.border && updateTextBorder.call($$, node.node(), pos, `${$TEXT.textBorderRect}-${i}`);
     });
@@ -36292,7 +36294,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.1.3",
+  version: "4.1.4",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
