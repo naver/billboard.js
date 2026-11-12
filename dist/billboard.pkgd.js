@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.3-nightly-20261026010805
+ * @version 4.1.4-nightly-20261112004457
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.12
@@ -24377,6 +24377,7 @@ __webpack_require__.d(shape_namespaceObject, {
   areaStepRange: function() { return areaStepRange; },
   bar: function() { return bar_bar; },
   bubble: function() { return bubble_bubble; },
+  bullet: function() { return bullet_bullet; },
   candlestick: function() { return candlestick_candlestick; },
   donut: function() { return donut_donut; },
   funnel: function() { return funnel_funnel; },
@@ -24391,854 +24392,1368 @@ __webpack_require__.d(shape_namespaceObject, {
   treemap: function() { return treemap_treemap; }
 });
 
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selector.js
-function none() {
+;// ./src/module/util/type-checks.ts
+const isValue = (v) => v || v === 0;
+const isFunction = (v) => typeof v === "function";
+const isString = (v) => typeof v === "string";
+const isNumber = (v) => typeof v === "number";
+const isUndefined = (v) => typeof v === "undefined";
+const isDefined = (v) => typeof v !== "undefined";
+const isBoolean = (v) => typeof v === "boolean";
+const ceil10 = (v) => Math.ceil(v / 10) * 10;
+const asHalfPixel = (n) => Math.ceil(n) + 0.5;
+const diffDomain = (d) => d[1] - d[0];
+const isObjectType = (v) => typeof v === "object";
+const isEmptyObject = (obj) => {
+  for (const x in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, x)) {
+      return false;
+    }
+  }
+  return true;
+};
+const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
+const notEmpty = (o) => !isEmpty(o);
+const isArray = (arr) => Array.isArray(arr);
+const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
+
+
+;// ./src/ChartInternal/internals/subchart.util.ts
+function isContinuousGridFocusEnabled($$) {
+  const { config, state } = $$;
+  return !!(config.subchart_grid_focus_continuous && config.subchart_grid_focus !== false && config.subchart_show && config.subchart_brush_enabled === false && state.width2 > 0 && state.height2 > 0);
 }
-/* harmony default export */ function selector(selector) {
-  return selector == null ? none : function() {
-    return this.querySelector(selector);
-  };
+function getMainCoordFromSubchartCoord($$, subCoord) {
+  var _a;
+  const { config, scale, state } = $$;
+  const mainX = scale.zoom || scale.x;
+  const subX = scale.subX;
+  if (!mainX || !subX) {
+    return null;
+  }
+  const subLength = config.axis_rotated ? state.height2 : state.width2;
+  const mainLength = config.axis_rotated ? state.height : state.width;
+  const domainValue = (_a = subX.invert) == null ? void 0 : _a.call(subX, subCoord);
+  let mainCoord = domainValue == null ? NaN : mainX(domainValue);
+  if (!Number.isFinite(mainCoord) && subLength > 0) {
+    mainCoord = Math.max(0, Math.min(1, subCoord / subLength)) * mainLength;
+  }
+  return Number.isFinite(mainCoord) ? Math.max(0, Math.min(mainLength, mainCoord)) : null;
 }
 
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/select.js
+;// ./src/ChartInternal/shape/core/barRadius.ts
 
-
-/* harmony default export */ function selection_select(select) {
-  if (typeof select !== "function") select = selector(select);
-  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
-    for (var group = groups[j], n = group.length, subgroup = subgroups[j] = new Array(n), node, subnode, i = 0; i < n; ++i) {
-      if ((node = group[i]) && (subnode = select.call(node, node.__data__, i, group))) {
-        if ("__data__" in node) subnode.__data__ = node.__data__;
-        subgroup[i] = subnode;
+const RE_PATH_NUMBER = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g;
+const RE_PATH_TOKEN = /([aAcChHlLmMqQsStTvVzZ])|([-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?)/g;
+function getArcFlagTokenIndexes(path) {
+  const flags = /* @__PURE__ */ new Set();
+  let numIndex = -1;
+  let argIndex = 0;
+  let inArc = false;
+  let token;
+  RE_PATH_TOKEN.lastIndex = 0;
+  while (token = RE_PATH_TOKEN.exec(path)) {
+    if (token[1]) {
+      inArc = token[1] === "a" || token[1] === "A";
+      argIndex = 0;
+    } else {
+      numIndex++;
+      if (inArc) {
+        const pos = argIndex % 7;
+        if (pos === 2 || pos === 3 || pos === 4) {
+          flags.add(numIndex);
+        }
+        argIndex++;
       }
     }
   }
-  return new Selection(subgroups, this._parents);
+  return flags;
 }
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/array.js
-function array(x) {
-  return x == null ? [] : Array.isArray(x) ? x : Array.from(x);
+function getBarPathInterpolator(a, b) {
+  const flagSet = getArcFlagTokenIndexes(b);
+  const segments = [];
+  const interpolators = [];
+  let bIndex = 0;
+  let segIndex = -1;
+  let numIndex = -1;
+  let am;
+  let bm;
+  const append = (text) => {
+    if (segments[segIndex]) {
+      segments[segIndex] += text;
+    } else {
+      segments[++segIndex] = text;
+    }
+  };
+  RE_PATH_NUMBER.lastIndex = 0;
+  const reA = RE_PATH_NUMBER;
+  const reB = new RegExp(RE_PATH_NUMBER.source, "g");
+  a += "";
+  b += "";
+  while ((am = reA.exec(a)) && (bm = reB.exec(b))) {
+    numIndex++;
+    if (bm.index > bIndex) {
+      append(b.slice(bIndex, bm.index));
+    }
+    if (am[0] === bm[0]) {
+      append(bm[0]);
+    } else {
+      const from = +am[0];
+      const to = +bm[0];
+      const isFlag = flagSet.has(numIndex);
+      segments[++segIndex] = null;
+      interpolators.push({
+        index: segIndex,
+        fn: isFlag ? (t) => Math.round(from + (to - from) * t) : (t) => from + (to - from) * t
+      });
+    }
+    bIndex = reB.lastIndex;
+  }
+  if (bIndex < b.length) {
+    append(b.slice(bIndex));
+  }
+  if (!interpolators.length) {
+    const result = segments.join("");
+    return () => result;
+  }
+  return (t) => {
+    for (let i = 0, len = interpolators.length; i < len; i++) {
+      const { index, fn } = interpolators[i];
+      segments[index] = String(fn(t));
+    }
+    return segments.join("");
+  };
 }
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selectorAll.js
-function empty() {
-  return [];
+function getBarRadiusResolver($$) {
+  const { bar_radius: radius, bar_radius_ratio: ratio } = $$.config;
+  return isNumber(radius) && radius > 0 ? () => radius : isNumber(ratio) ? (width) => width * ratio : null;
 }
-/* harmony default export */ function selectorAll(selector) {
-  return selector == null ? empty : function() {
-    return this.querySelectorAll(selector);
+function getStackingBarRadiusSet($$) {
+  const { config, data } = $$;
+  const set = /* @__PURE__ */ new Set();
+  if (!config.data_groups.length) {
+    return set;
+  }
+  const orderedTargets = $$.orderTargets(
+    $$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))
+  );
+  for (const group of config.data_groups) {
+    const ids = new Set(group);
+    const lastPosByIndex = /* @__PURE__ */ new Map();
+    const lastNegByIndex = /* @__PURE__ */ new Map();
+    for (const target of orderedTargets) {
+      if (!ids.has(target.id)) {
+        continue;
+      }
+      for (const d of target.values) {
+        if (d.value === null || d.value === 0) {
+          continue;
+        }
+        (d.value > 0 ? lastPosByIndex : lastNegByIndex).set(d.index, target.id);
+      }
+    }
+    for (const [index, id] of lastPosByIndex) {
+      set.add(`${id}:${index}`);
+    }
+    for (const [index, id] of lastNegByIndex) {
+      set.add(`${id}:${index}`);
+    }
+  }
+  return set;
+}
+function getBarRadiusCorners(isRotated, isNegative, radius) {
+  if (!radius) {
+    return 0;
+  }
+  return isRotated ? isNegative ? { tl: radius, bl: radius } : { tr: radius, br: radius } : isNegative ? { br: radius, bl: radius } : { tl: radius, tr: radius };
+}
+function getBarRadiusClipPath(init, pos, isRotated, isNegative) {
+  let clipPath = "";
+  if (isRotated) {
+    if (isNegative && init[0] < pos) {
+      clipPath = `0 ${pos - init[0]}px 0 0`;
+    } else if (!isNegative && init[0] > pos) {
+      clipPath = `0 0 0 ${init[0] - pos}px`;
+    }
+  } else {
+    if (isNegative && init[1] > pos) {
+      clipPath = `${init[1] - pos}px 0 0 0`;
+    } else if (!isNegative && init[1] < pos) {
+      clipPath = `0 0 ${pos - init[1]}px 0`;
+    }
+  }
+  return clipPath ? `inset(${clipPath})` : null;
+}
+function getBarRadiusInfo($$, d, points, getRadius, stackingRadiusSet, isStackingRadiusData) {
+  const { config, state } = $$;
+  const isRotated = config.axis_rotated;
+  const indexX = +isRotated;
+  const indexY = +!indexX;
+  const isUnderZero = d.value < 0;
+  const isInverted = config[`axis_${$$.axis.getId(d.id)}_inverted`];
+  const isNegative = !isInverted && isUnderZero || isInverted && !isUnderZero;
+  const isGrouped = $$.isGrouped(d.id);
+  const isRadiusData = getRadius && isGrouped && d.value !== 0 ? state.hiddenTargetIds.has(d.id) && isStackingRadiusData ? isStackingRadiusData(d) : stackingRadiusSet.has(`${d.id}:${d.index}`) : false;
+  const init = [
+    points[0][indexX],
+    points[0][indexY]
+  ];
+  let radius = 0;
+  if (getRadius) {
+    const index = isRotated ? indexY : indexX;
+    const barW = Math.abs(points[2][index] - points[0][index]);
+    radius = Math.max(0, !isGrouped || isRadiusData ? getRadius(barW) : 0);
+  }
+  const pos = isRotated ? points[1][indexX] + (isNegative ? radius : -radius) : points[1][indexY] + (isNegative ? -radius : radius);
+  return {
+    radius,
+    corners: getBarRadiusCorners(isRotated, isNegative, radius),
+    clipPath: radius ? getBarRadiusClipPath(init, pos, isRotated, isNegative) : null,
+    indexX,
+    indexY,
+    isNegative,
+    pos
   };
 }
 
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/selectAll.js
-
-
-
-function arrayAll(select) {
-  return function() {
-    return array(select.apply(this, arguments));
-  };
+;// ./src/module/browser.ts
+function getGlobal() {
+  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
 }
-/* harmony default export */ function selectAll(select) {
-  if (typeof select === "function") select = arrayAll(select);
-  else select = selectorAll(select);
-  for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
-    for (var group = groups[j], n = group.length, node, i = 0; i < n; ++i) {
-      if (node = group[i]) {
-        subgroups.push(select.call(node, node.__data__, i, group));
-        parents.push(node);
+function getFallback(w) {
+  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function";
+  const hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function" && typeof (w == null ? void 0 : w.cancelIdleCallback) === "function";
+  const request = (cb) => setTimeout(cb, 1);
+  const cancel = (id) => clearTimeout(id);
+  return [
+    hasRAF ? w.requestAnimationFrame : request,
+    hasRAF ? w.cancelAnimationFrame : cancel,
+    hasRIC ? w.requestIdleCallback : request,
+    hasRIC ? w.cancelIdleCallback : cancel
+  ];
+}
+const win = getGlobal();
+const browser_doc = win == null ? void 0 : win.document;
+const [
+  requestAnimationFrame,
+  cancelAnimationFrame,
+  requestIdleCallback,
+  cancelIdleCallback
+] = getFallback(win);
+
+
+;// ./src/module/sanitize.ts
+const ALLOWED_TAGS = /* @__PURE__ */ new Set([
+  // HTML tags for tooltip/legend templates
+  "span",
+  "div",
+  "p",
+  "br",
+  "b",
+  "i",
+  "em",
+  "small",
+  "strong",
+  "mark",
+  "u",
+  "s",
+  "sub",
+  "sup",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "ul",
+  "ol",
+  "li",
+  "dl",
+  "dt",
+  "dd",
+  "table",
+  "thead",
+  "tbody",
+  "tfoot",
+  "tr",
+  "th",
+  "td",
+  "caption",
+  "colgroup",
+  "col",
+  "hr",
+  "pre",
+  "code",
+  "blockquote",
+  "abbr",
+  "ins",
+  "del",
+  "a",
+  "img",
+  "figure",
+  "figcaption",
+  // SVG tags for point patterns
+  "svg",
+  "g",
+  "path",
+  "circle",
+  "ellipse",
+  "rect",
+  "line",
+  "polyline",
+  "polygon",
+  "text",
+  "tspan",
+  "textPath",
+  "use",
+  "defs",
+  "symbol",
+  "clipPath",
+  "mask",
+  "linearGradient",
+  "radialGradient",
+  "stop",
+  "pattern",
+  "marker",
+  "title",
+  "desc"
+]);
+const ALLOWED_ATTRS = /* @__PURE__ */ new Set([
+  // Common attributes
+  "class",
+  "id",
+  "style",
+  "title",
+  "lang",
+  "dir",
+  // HTML specific
+  "href",
+  "src",
+  "alt",
+  "width",
+  "height",
+  "colspan",
+  "rowspan",
+  "scope",
+  "headers",
+  // SVG presentation attributes
+  "d",
+  "points",
+  "x",
+  "y",
+  "x1",
+  "x2",
+  "y1",
+  "y2",
+  "cx",
+  "cy",
+  "r",
+  "rx",
+  "ry",
+  "dx",
+  "dy",
+  "viewBox",
+  "preserveAspectRatio",
+  "transform",
+  "fill",
+  "fill-opacity",
+  "fill-rule",
+  "stroke",
+  "stroke-width",
+  "stroke-opacity",
+  "stroke-linecap",
+  "stroke-linejoin",
+  "stroke-dasharray",
+  "stroke-dashoffset",
+  "opacity",
+  "clip-path",
+  "clip-rule",
+  "mask",
+  "font-family",
+  "font-size",
+  "font-weight",
+  "font-style",
+  "text-anchor",
+  "dominant-baseline",
+  "offset",
+  "stop-color",
+  "stop-opacity",
+  "gradientUnits",
+  "gradientTransform",
+  "spreadMethod",
+  "patternUnits",
+  "patternTransform",
+  "marker-start",
+  "marker-mid",
+  "marker-end",
+  "markerWidth",
+  "markerHeight",
+  "refX",
+  "refY",
+  "xlink:href"
+]);
+const TAG_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_TAGS.forEach((tag) => TAG_CASE_MAP.set(tag.toLowerCase(), tag));
+const ATTR_CASE_MAP = /* @__PURE__ */ new Map();
+ALLOWED_ATTRS.forEach((attr) => ATTR_CASE_MAP.set(attr.toLowerCase(), attr));
+const ALLOWED_URI_PROTOCOLS = /* @__PURE__ */ new Set([
+  "http:",
+  "https:",
+  "mailto:"
+]);
+const URI_ATTRS = /* @__PURE__ */ new Set(["href", "src", "xlink:href"]);
+const TAG_NAME_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9]*)/;
+const CLOSING_TAG_REGEX = /^<\/([a-zA-Z][a-zA-Z0-9]*)\s*>$/;
+const OPENING_TAG_REGEX = /^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)(\/?)>$/;
+const ATTR_REGEX = /([a-zA-Z][\w:-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
+const URL_IN_STYLE_REGEX = /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi;
+const DANGEROUS_CSS_PATTERNS = [
+  "expression(",
+  "behavior:",
+  "binding:",
+  "@import",
+  "@charset",
+  "-moz-binding:"
+];
+function decodeHTMLEntities(str) {
+  return str.replace(/&colon;/gi, ":").replace(/&newline;/gi, "\n").replace(/&tab;/gi, "	").replace(/&nbsp;/gi, " ").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&apos;/gi, "'").replace(/&#(\d+);?/gi, (_, code) => String.fromCharCode(parseInt(code, 10))).replace(/&#x([0-9a-f]+);?/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
+}
+function isSafeURI(uri) {
+  const decoded = decodeHTMLEntities(uri).trim();
+  const normalized = decoded.replace(/[\s\u0000-\u001f]/g, "").toLowerCase();
+  if (!normalized || normalized.startsWith("#")) {
+    return true;
+  }
+  const schemeMatch = normalized.match(/^[^/?#]*:/);
+  if (schemeMatch) {
+    return ALLOWED_URI_PROTOCOLS.has(schemeMatch[0]);
+  }
+  return true;
+}
+function sanitizeStyleValue(style) {
+  const decoded = decodeHTMLEntities(style);
+  const cleaned = decoded.replace(/[\u0000-\u001f]/g, "");
+  URL_IN_STYLE_REGEX.lastIndex = 0;
+  let match;
+  while ((match = URL_IN_STYLE_REGEX.exec(cleaned)) !== null) {
+    if (!isSafeURI(match[1])) {
+      return null;
+    }
+  }
+  const normalizedLower = cleaned.toLowerCase().replace(/\s/g, "");
+  for (const pattern of DANGEROUS_CSS_PATTERNS) {
+    if (normalizedLower.includes(pattern)) {
+      return null;
+    }
+  }
+  return style;
+}
+const ATTR_ENCODE_MAP = {
+  '"': "&quot;",
+  "'": "&#39;",
+  "`": "&#96;"
+};
+const ATTR_ENCODE_REGEX = /["'`]/g;
+function encodeAttrValue(value) {
+  return value.replace(ATTR_ENCODE_REGEX, (char) => ATTR_ENCODE_MAP[char]);
+}
+function sanitizeAttrValue(name, value, wasUnquoted = false) {
+  if (URI_ATTRS.has(name)) {
+    if (!isSafeURI(value)) {
+      return null;
+    }
+    return wasUnquoted ? encodeAttrValue(value) : value;
+  }
+  if (name === "style") {
+    const sanitizedStyle = sanitizeStyleValue(value);
+    if (sanitizedStyle === null) {
+      return null;
+    }
+    return wasUnquoted ? encodeAttrValue(sanitizedStyle) : sanitizedStyle;
+  }
+  const decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
+  if (/\bon\w+=/.test(decoded)) {
+    return null;
+  }
+  return wasUnquoted ? encodeAttrValue(value) : value;
+}
+function extractTagName(tag) {
+  const match = tag.match(TAG_NAME_REGEX);
+  return match ? match[1].toLowerCase() : null;
+}
+function isAllowedTag(tag) {
+  const tagName = extractTagName(tag);
+  return tagName !== null && TAG_CASE_MAP.has(tagName);
+}
+function sanitizeTag(fullTag) {
+  var _a, _b, _c;
+  const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
+  if (closingMatch) {
+    const lowerName = closingMatch[1].toLowerCase();
+    return `</${(_a = TAG_CASE_MAP.get(lowerName)) != null ? _a : lowerName}>`;
+  }
+  const openingMatch = fullTag.match(OPENING_TAG_REGEX);
+  if (!openingMatch) {
+    return "";
+  }
+  const [, tagName, attrString, selfClose] = openingMatch;
+  const lowerTagName = tagName.toLowerCase();
+  const canonicalTagName = (_b = TAG_CASE_MAP.get(lowerTagName)) != null ? _b : lowerTagName;
+  const allowedAttrs = [];
+  ATTR_REGEX.lastIndex = 0;
+  let attrMatch;
+  while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
+    const lowerAttrName = attrMatch[1].toLowerCase();
+    const doubleQuotedValue = attrMatch[2];
+    const singleQuotedValue = attrMatch[3];
+    const unquotedValue = attrMatch[4];
+    if (lowerAttrName.startsWith("on")) {
+      continue;
+    }
+    const canonicalAttrName = (_c = ATTR_CASE_MAP.get(lowerAttrName)) != null ? _c : lowerAttrName;
+    let attrValue;
+    let quoteChar;
+    if (doubleQuotedValue !== void 0) {
+      attrValue = doubleQuotedValue;
+      quoteChar = '"';
+    } else if (singleQuotedValue !== void 0) {
+      attrValue = singleQuotedValue;
+      quoteChar = "'";
+    } else if (unquotedValue !== void 0) {
+      attrValue = unquotedValue;
+      quoteChar = '"';
+    } else {
+      if (ATTR_CASE_MAP.has(lowerAttrName)) {
+        allowedAttrs.push(canonicalAttrName);
+      }
+      continue;
+    }
+    if (ATTR_CASE_MAP.has(lowerAttrName)) {
+      const wasUnquoted = unquotedValue !== void 0;
+      const sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
+      if (sanitizedValue !== null) {
+        allowedAttrs.push(`${canonicalAttrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
       }
     }
   }
-  return new Selection(subgroups, parents);
+  const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
+  const selfCloseStr = selfClose ? "/>" : ">";
+  return `<${canonicalTagName}${attrsStr}${selfCloseStr}`;
 }
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/matcher.js
-/* harmony default export */ function matcher(selector) {
-  return function() {
-    return this.matches(selector);
-  };
-}
-function childMatcher(selector) {
-  return function(node) {
-    return node.matches(selector);
-  };
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/selectChild.js
-
-var find = Array.prototype.find;
-function childFind(match) {
-  return function() {
-    return find.call(this.children, match);
-  };
-}
-function childFirst() {
-  return this.firstElementChild;
-}
-/* harmony default export */ function selectChild(match) {
-  return this.select(match == null ? childFirst : childFind(typeof match === "function" ? match : childMatcher(match)));
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/selectChildren.js
-
-var filter = Array.prototype.filter;
-function children() {
-  return Array.from(this.children);
-}
-function childrenFilter(match) {
-  return function() {
-    return filter.call(this.children, match);
-  };
-}
-/* harmony default export */ function selectChildren(match) {
-  return this.selectAll(match == null ? children : childrenFilter(typeof match === "function" ? match : childMatcher(match)));
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/filter.js
-
-
-/* harmony default export */ function selection_filter(match) {
-  if (typeof match !== "function") match = matcher(match);
-  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
-    for (var group = groups[j], n = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n; ++i) {
-      if ((node = group[i]) && match.call(node, node.__data__, i, group)) {
-        subgroup.push(node);
+function sanitize(str) {
+  if (typeof str !== "string" || !str || str.indexOf("<") === -1) {
+    return str;
+  }
+  return str.replace(
+    /<\/?[^>]*>|<[^>]*$|[^<>\s]+>/g,
+    (match) => {
+      if (match.startsWith("<") && !match.endsWith(">")) {
+        return match.replace(/</g, "&lt;");
       }
+      if (match.startsWith("<!--")) {
+        return "";
+      }
+      if (!match.startsWith("<")) {
+        return match.slice(0, -1) + "&gt;";
+      }
+      if (isAllowedTag(match)) {
+        return sanitizeTag(match);
+      }
+      return match.replace(/</g, "&lt;");
     }
-  }
-  return new Selection(subgroups, this._parents);
+  );
 }
 
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/sparse.js
-/* harmony default export */ function sparse(update) {
-  return new Array(update.length);
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/enter.js
-
-
-/* harmony default export */ function enter() {
-  return new Selection(this._enter || this._groups.map(sparse), this._parents);
-}
-function EnterNode(parent, datum) {
-  this.ownerDocument = parent.ownerDocument;
-  this.namespaceURI = parent.namespaceURI;
-  this._next = null;
-  this._parent = parent;
-  this.__data__ = datum;
-}
-EnterNode.prototype = {
-  constructor: EnterNode,
-  appendChild: function(child) {
-    return this._parent.insertBefore(child, this._next);
-  },
-  insertBefore: function(child, next) {
-    return this._parent.insertBefore(child, next);
-  },
-  querySelector: function(selector) {
-    return this._parent.querySelector(selector);
-  },
-  querySelectorAll: function(selector) {
-    return this._parent.querySelectorAll(selector);
-  }
+;// ./src/module/util/object.ts
+var __defProp = Object.defineProperty;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
 };
 
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/constant.js
+
+
+function _forEachValidItem(items, callback) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item !== null && isDefined(item)) {
+      callback(item, i);
+    }
+  }
+}
+function getOption(options, key, defaultValue) {
+  return isDefined(options[key]) ? options[key] : defaultValue;
+}
+function hasValue(dict, value) {
+  for (const key in dict) {
+    if (dict[key] === value) return true;
+  }
+  return false;
+}
+function callFn(fn, thisArg, ...args) {
+  const isFn = isFunction(fn);
+  isFn && fn.call(thisArg, ...args);
+  return isFn;
+}
+function endall(transition, cb) {
+  let n = 0;
+  const end = function(...args) {
+    !--n && cb.apply(this, args);
+  };
+  if ("duration" in transition) {
+    transition.each(() => ++n).on("end", end);
+  } else {
+    ++n;
+    transition.call(end);
+  }
+}
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+function camelize(str, separator = "-") {
+  return str.split(separator).map((v, i) => i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()).join("");
+}
+const toArray = (v) => [].slice.call(v);
+function deepClone(...objectN) {
+  const clone = (v) => {
+    if (isArray(v)) {
+      return v.map(clone);
+    } else if (isObject(v) && v.constructor) {
+      const r = new v.constructor();
+      for (const k in v) {
+        r[k] = clone(v[k]);
+      }
+      return r;
+    }
+    return v;
+  };
+  return objectN.map((v) => clone(v)).reduce((a, c) => __spreadValues(__spreadValues({}, a), c));
+}
+function extend(target = {}, source) {
+  if (isArray(source)) {
+    source.forEach((v) => extend(target, v));
+  }
+  for (const p in source) {
+    if (/^\d+$/.test(p) || p in target) {
+      continue;
+    }
+    target[p] = source[p];
+  }
+  return target;
+}
+function getUnique(data) {
+  const isDate = data[0] instanceof Date;
+  const d = Array.from(new Set(isDate ? data.map(Number) : data));
+  return isDate ? d.map((v) => new Date(v)) : d;
+}
+function mergeArray(arr) {
+  return arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : [];
+}
+function mergeObj(target, ...objectN) {
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) {
+    return target;
+  }
+  const source = objectN.shift();
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach((key) => {
+      if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
+        const value = source[key];
+        if (value instanceof Date) {
+          target[key] = new Date(value.getTime());
+        } else if (isObject(value)) {
+          !target[key] && (target[key] = {});
+          target[key] = mergeObj(target[key], value);
+        } else {
+          target[key] = isArray(value) ? value.concat() : value;
+        }
+      }
+    });
+  }
+  return mergeObj(target, ...objectN);
+}
+function sortValue(data, isAsc = true) {
+  let fn;
+  if (data[0] instanceof Date) {
+    fn = isAsc ? (a, b) => a - b : (a, b) => b - a;
+  } else {
+    if (isAsc && !data.every(isNaN)) {
+      fn = (a, b) => a - b;
+    } else if (!isAsc) {
+      fn = (a, b) => a > b && -1 || a < b && 1 || a === b && 0;
+    }
+  }
+  return data.concat().sort(fn);
+}
+function getMinMax(type, data) {
+  let res = data.filter((v) => notEmpty(v));
+  if (res.length) {
+    if (isNumber(res[0])) {
+      let result = type === "min" ? Infinity : -Infinity;
+      for (const v of res) {
+        if (type === "min" ? v < result : v > result) {
+          result = v;
+        }
+      }
+      res = result;
+    } else if (res[0] instanceof Date) {
+      res = sortValue(res, type === "min")[0];
+    }
+  } else {
+    res = void 0;
+  }
+  return res;
+}
+const getRange = (start, end, step = 1) => {
+  const res = [];
+  const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
+  for (let i = 0; i < n; i++) {
+    res.push(start + i * step);
+  }
+  return res;
+};
+let _transitionCounter = 0;
+function getRandom(asStr = true) {
+  const id = ++_transitionCounter;
+  return asStr ? String(id) : id;
+}
+function findIndex(arr, v, start, end, isRotated) {
+  if (start > end) {
+    return -1;
+  }
+  const mid = Math.floor((start + end) / 2);
+  let { x, w = 0 } = arr[mid];
+  if (isRotated) {
+    x = arr[mid].y;
+    w = arr[mid].h;
+  }
+  if (v >= x && v <= x + w) {
+    return mid;
+  }
+  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
+}
+function tplProcess(tpl, data) {
+  return sanitize(tpl.replace(/\{=([^}]+)\}/g, (_, key) => {
+    var _a;
+    return (_a = data[key]) != null ? _a : "";
+  }));
+}
+function parseDate(date) {
+  var _a;
+  let parsedDate;
+  if (date instanceof Date) {
+    parsedDate = date;
+  } else if (isString(date)) {
+    const { config, format } = this;
+    parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) != null ? _a : new Date(date);
+  } else if (isNumber(date) && !isNaN(date)) {
+    parsedDate = /* @__PURE__ */ new Date(+date);
+  }
+  if (!parsedDate || isNaN(+parsedDate)) {
+    console && console.error && console.error(`Failed to parse x '${date}' to Date object`);
+  }
+  return parsedDate;
+}
+function parseShorthand(value) {
+  if (isObject(value) && !isString(value)) {
+    const obj = value;
+    return {
+      top: obj.top || 0,
+      right: obj.right || 0,
+      bottom: obj.bottom || 0,
+      left: obj.left || 0
+    };
+  }
+  const values = (isString(value) ? value.trim().split(/\s+/) : [value]).map((v) => +v || 0);
+  const [a, b = a, c = a, d = b] = values;
+  return { top: a, right: b, bottom: c, left: d };
+}
+function runUntil(fn, conditionFn) {
+  if (conditionFn() === false) {
+    requestAnimationFrame(() => runUntil(fn, conditionFn));
+  } else {
+    fn();
+  }
+}
+function toSet(items, keyFn = ((item) => item)) {
+  const set = /* @__PURE__ */ new Set();
+  _forEachValidItem(items, (item, i) => {
+    set.add(keyFn(item, i));
+  });
+  return set;
+}
+function toMap(items, keyFn, valueFn = ((item) => item)) {
+  const map = /* @__PURE__ */ new Map();
+  _forEachValidItem(items, (item, i) => {
+    map.set(keyFn(item, i), valueFn(item, i));
+  });
+  return map;
+}
+
+
+;// ./src/ChartInternal/shape/core/dataRegion.ts
+
+const DEFAULT_DASHARRAY = "2 2";
+function normalizeDataRegions($$, values, regions) {
+  const isTimeSeries = $$.axis.isTimeSeries();
+  const getValue = (value, fallback) => isUndefined(value) ? fallback : isTimeSeries ? parseDate.call($$, value) : value;
+  return (regions || []).map((region) => {
+    var _a, _b;
+    return {
+      start: getValue(region.start, (_a = values[0]) == null ? void 0 : _a.x),
+      end: getValue(region.end, (_b = values[values.length - 1]) == null ? void 0 : _b.x),
+      style: region.style || { dasharray: DEFAULT_DASHARRAY }
+    };
+  });
+}
+function getDataRegionStyle(x, regions) {
+  for (let i = 0, region; region = regions[i]; i++) {
+    if (region.start < x && x <= region.end) {
+      return region.style;
+    }
+  }
+  return false;
+}
+function getDataRegionDash(style) {
+  const dash = String((style == null ? void 0 : style.dasharray) || DEFAULT_DASHARRAY).split(/[\s,]+/).map(Number).filter(Number.isFinite);
+  return dash.length ? dash : [2, 2];
+}
+function getLineRegionSegments($$, values, x, y, regions) {
+  const isRotated = $$.config.axis_rotated;
+  const normalizedRegions = normalizeDataRegions($$, values, regions);
+  const segments = [];
+  for (let i = 1; i < values.length; i++) {
+    const prev = values[i - 1];
+    const current = values[i];
+    if (!isValue(prev.value) || !isValue(current.value)) {
+      segments.push({ isBreak: true });
+      continue;
+    }
+    const style = getDataRegionStyle(current.x, normalizedRegions);
+    const x0 = x(prev.x);
+    const y0 = y(prev.value);
+    const x1 = x(current.x);
+    const y1 = y(current.value);
+    segments.push({
+      start: isRotated ? [y0, x0] : [x0, y0],
+      end: isRotated ? [y1, x1] : [x1, y1],
+      dash: style ? getDataRegionDash(style) : []
+    });
+  }
+  return segments;
+}
+
+;// ./src/ChartInternal/shape/core/geometry.ts
+function getRenderPoint($$, point) {
+  return $$.config.axis_rotated ? [point[1], point[0]] : [point[0], point[1]];
+}
+function getRenderRect($$, points, minSize = 1) {
+  const renderPoints = points.map((point) => getRenderPoint($$, point));
+  const xs = renderPoints.map(([x]) => x);
+  const ys = renderPoints.map(([, y]) => y);
+  const rawX = Math.min(...xs);
+  const rawY = Math.min(...ys);
+  const rawW = Math.max(...xs) - rawX;
+  const rawH = Math.max(...ys) - rawY;
+  const w = Math.max(minSize, rawW);
+  const h = Math.max(minSize, rawH);
+  return {
+    x: rawX - (w - rawW) / 2,
+    y: rawY - (h - rawH) / 2,
+    w,
+    h
+  };
+}
+function getRenderDataPoint($$, d) {
+  var _a, _b;
+  const value = ((_a = $$.isGrouped) == null ? void 0 : _a.call($$, d.id)) && $$.circleY ? $$.circleY(d, d.index) : $$.getYScaleById(d.id)($$.getBaseValue(d));
+  const index = (_b = $$.xx(d)) != null ? _b : NaN;
+  return $$.config.axis_rotated ? { x: value, y: index } : { x: index, y: value };
+}
+function getShapePoint(pos, d, i) {
+  return {
+    x: pos.cx(d, i),
+    y: pos.cy(d, i)
+  };
+}
+function getCandlestickGeometry($$, points) {
+  return {
+    body: getRenderRect($$, [points[0], points[1]]),
+    wickStart: getRenderPoint($$, [points[2][0], points[2][1]]),
+    wickEnd: getRenderPoint($$, [points[2][0], points[2][2]])
+  };
+}
+function getTreemapNodeRect($$, node, root, clamp = false) {
+  if (node === root) {
+    return {
+      x: 0,
+      y: 0,
+      w: $$.state.width,
+      h: 0
+    };
+  }
+  const { scale: { x, y } } = $$;
+  const left = x(node.x0);
+  const top = y(node.y0);
+  const w = x(node.x1) - left;
+  const h = y(node.y1) - top;
+  return {
+    x: left,
+    y: top,
+    w: clamp ? Math.max(0, w) : w,
+    h: clamp ? Math.max(0, h) : h
+  };
+}
+function getTreemapLabelText($$, data, width, height) {
+  const { config } = $$;
+  const { id, value, ratio = 0 } = data;
+  const format = config.treemap_label_format;
+  const text = typeof format === "function" ? format.bind($$.api)(value, ratio, id, { width, height }) : `${id}
+${(ratio * 100).toFixed(2)}%`;
+  return text === null || text === void 0 ? null : String(text);
+}
+
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/array.js
+var slice = Array.prototype.slice;
+/* harmony default export */ function array(x) {
+  return typeof x === "object" && "length" in x ? x : Array.from(x);
+}
+
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/constant.js
 /* harmony default export */ function constant(x) {
-  return function() {
+  return function constant() {
     return x;
   };
 }
 
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/data.js
-
-
-
-function bindIndex(parent, group, enter, update, exit, data) {
-  var i = 0, node, groupLength = group.length, dataLength = data.length;
-  for (; i < dataLength; ++i) {
-    if (node = group[i]) {
-      node.__data__ = data[i];
-      update[i] = node;
-    } else {
-      enter[i] = new EnterNode(parent, data[i]);
-    }
-  }
-  for (; i < groupLength; ++i) {
-    if (node = group[i]) {
-      exit[i] = node;
-    }
-  }
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/linear.js
+function Linear(context) {
+  this._context = context;
 }
-function bindKey(parent, group, enter, update, exit, data, key) {
-  var i, node, nodeByKeyValue = /* @__PURE__ */ new Map(), groupLength = group.length, dataLength = data.length, keyValues = new Array(groupLength), keyValue;
-  for (i = 0; i < groupLength; ++i) {
-    if (node = group[i]) {
-      keyValues[i] = keyValue = key.call(node, node.__data__, i, group) + "";
-      if (nodeByKeyValue.has(keyValue)) {
-        exit[i] = node;
-      } else {
-        nodeByKeyValue.set(keyValue, node);
-      }
-    }
-  }
-  for (i = 0; i < dataLength; ++i) {
-    keyValue = key.call(parent, data[i], i, data) + "";
-    if (node = nodeByKeyValue.get(keyValue)) {
-      update[i] = node;
-      node.__data__ = data[i];
-      nodeByKeyValue.delete(keyValue);
-    } else {
-      enter[i] = new EnterNode(parent, data[i]);
-    }
-  }
-  for (i = 0; i < groupLength; ++i) {
-    if ((node = group[i]) && nodeByKeyValue.get(keyValues[i]) === node) {
-      exit[i] = node;
-    }
-  }
-}
-function datum(node) {
-  return node.__data__;
-}
-/* harmony default export */ function data(value, key) {
-  if (!arguments.length) return Array.from(this, datum);
-  var bind = key ? bindKey : bindIndex, parents = this._parents, groups = this._groups;
-  if (typeof value !== "function") value = constant(value);
-  for (var m = groups.length, update = new Array(m), enter = new Array(m), exit = new Array(m), j = 0; j < m; ++j) {
-    var parent = parents[j], group = groups[j], groupLength = group.length, data = arraylike(value.call(parent, parent && parent.__data__, j, parents)), dataLength = data.length, enterGroup = enter[j] = new Array(dataLength), updateGroup = update[j] = new Array(dataLength), exitGroup = exit[j] = new Array(groupLength);
-    bind(parent, group, enterGroup, updateGroup, exitGroup, data, key);
-    for (var i0 = 0, i1 = 0, previous, next; i0 < dataLength; ++i0) {
-      if (previous = enterGroup[i0]) {
-        if (i0 >= i1) i1 = i0 + 1;
-        while (!(next = updateGroup[i1]) && ++i1 < dataLength) ;
-        previous._next = next || null;
-      }
-    }
-  }
-  update = new Selection(update, parents);
-  update._enter = enter;
-  update._exit = exit;
-  return update;
-}
-function arraylike(data) {
-  return typeof data === "object" && "length" in data ? data : Array.from(data);
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/exit.js
-
-
-/* harmony default export */ function exit() {
-  return new Selection(this._exit || this._groups.map(sparse), this._parents);
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/join.js
-/* harmony default export */ function join(onenter, onupdate, onexit) {
-  var enter = this.enter(), update = this, exit = this.exit();
-  if (typeof onenter === "function") {
-    enter = onenter(enter);
-    if (enter) enter = enter.selection();
-  } else {
-    enter = enter.append(onenter + "");
-  }
-  if (onupdate != null) {
-    update = onupdate(update);
-    if (update) update = update.selection();
-  }
-  if (onexit == null) exit.remove();
-  else onexit(exit);
-  return enter && update ? enter.merge(update).order() : update;
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/merge.js
-
-/* harmony default export */ function merge(context) {
-  var selection = context.selection ? context.selection() : context;
-  for (var groups0 = this._groups, groups1 = selection._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
-    for (var group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = new Array(n), node, i = 0; i < n; ++i) {
-      if (node = group0[i] || group1[i]) {
-        merge[i] = node;
-      }
-    }
-  }
-  for (; j < m0; ++j) {
-    merges[j] = groups0[j];
-  }
-  return new Selection(merges, this._parents);
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/order.js
-/* harmony default export */ function order() {
-  for (var groups = this._groups, j = -1, m = groups.length; ++j < m; ) {
-    for (var group = groups[j], i = group.length - 1, next = group[i], node; --i >= 0; ) {
-      if (node = group[i]) {
-        if (next && node.compareDocumentPosition(next) ^ 4) next.parentNode.insertBefore(node, next);
-        next = node;
-      }
-    }
-  }
-  return this;
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/sort.js
-
-/* harmony default export */ function sort(compare) {
-  if (!compare) compare = ascending;
-  function compareNode(a, b) {
-    return a && b ? compare(a.__data__, b.__data__) : !a - !b;
-  }
-  for (var groups = this._groups, m = groups.length, sortgroups = new Array(m), j = 0; j < m; ++j) {
-    for (var group = groups[j], n = group.length, sortgroup = sortgroups[j] = new Array(n), node, i = 0; i < n; ++i) {
-      if (node = group[i]) {
-        sortgroup[i] = node;
-      }
-    }
-    sortgroup.sort(compareNode);
-  }
-  return new Selection(sortgroups, this._parents).order();
-}
-function ascending(a, b) {
-  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/call.js
-/* harmony default export */ function call() {
-  var callback = arguments[0];
-  arguments[0] = this;
-  callback.apply(null, arguments);
-  return this;
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/nodes.js
-/* harmony default export */ function nodes() {
-  return Array.from(this);
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/node.js
-/* harmony default export */ function node() {
-  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
-    for (var group = groups[j], i = 0, n = group.length; i < n; ++i) {
-      var node = group[i];
-      if (node) return node;
-    }
-  }
-  return null;
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/size.js
-/* harmony default export */ function size() {
-  let size = 0;
-  for (const node of this) ++size;
-  return size;
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/empty.js
-/* harmony default export */ function selection_empty() {
-  return !this.node();
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/each.js
-/* harmony default export */ function each(callback) {
-  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
-    for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
-      if (node = group[i]) callback.call(node, node.__data__, i, group);
-    }
-  }
-  return this;
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/namespaces.js
-var xhtml = "http://www.w3.org/1999/xhtml";
-/* harmony default export */ var namespaces = ({
-  svg: "http://www.w3.org/2000/svg",
-  xhtml,
-  xlink: "http://www.w3.org/1999/xlink",
-  xml: "http://www.w3.org/XML/1998/namespace",
-  xmlns: "http://www.w3.org/2000/xmlns/"
-});
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/namespace.js
-
-/* harmony default export */ function namespace(name) {
-  var prefix = name += "", i = prefix.indexOf(":");
-  if (i >= 0 && (prefix = name.slice(0, i)) !== "xmlns") name = name.slice(i + 1);
-  return namespaces.hasOwnProperty(prefix) ? { space: namespaces[prefix], local: name } : name;
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/attr.js
-
-function attrRemove(name) {
-  return function() {
-    this.removeAttribute(name);
-  };
-}
-function attrRemoveNS(fullname) {
-  return function() {
-    this.removeAttributeNS(fullname.space, fullname.local);
-  };
-}
-function attrConstant(name, value) {
-  return function() {
-    this.setAttribute(name, value);
-  };
-}
-function attrConstantNS(fullname, value) {
-  return function() {
-    this.setAttributeNS(fullname.space, fullname.local, value);
-  };
-}
-function attrFunction(name, value) {
-  return function() {
-    var v = value.apply(this, arguments);
-    if (v == null) this.removeAttribute(name);
-    else this.setAttribute(name, v);
-  };
-}
-function attrFunctionNS(fullname, value) {
-  return function() {
-    var v = value.apply(this, arguments);
-    if (v == null) this.removeAttributeNS(fullname.space, fullname.local);
-    else this.setAttributeNS(fullname.space, fullname.local, v);
-  };
-}
-/* harmony default export */ function attr(name, value) {
-  var fullname = namespace(name);
-  if (arguments.length < 2) {
-    var node = this.node();
-    return fullname.local ? node.getAttributeNS(fullname.space, fullname.local) : node.getAttribute(fullname);
-  }
-  return this.each((value == null ? fullname.local ? attrRemoveNS : attrRemove : typeof value === "function" ? fullname.local ? attrFunctionNS : attrFunction : fullname.local ? attrConstantNS : attrConstant)(fullname, value));
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/window.js
-/* harmony default export */ function src_window(node) {
-  return node.ownerDocument && node.ownerDocument.defaultView || node.document && node || node.defaultView;
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/style.js
-
-function styleRemove(name) {
-  return function() {
-    this.style.removeProperty(name);
-  };
-}
-function styleConstant(name, value, priority) {
-  return function() {
-    this.style.setProperty(name, value, priority);
-  };
-}
-function styleFunction(name, value, priority) {
-  return function() {
-    var v = value.apply(this, arguments);
-    if (v == null) this.style.removeProperty(name);
-    else this.style.setProperty(name, v, priority);
-  };
-}
-/* harmony default export */ function style(name, value, priority) {
-  return arguments.length > 1 ? this.each((value == null ? styleRemove : typeof value === "function" ? styleFunction : styleConstant)(name, value, priority == null ? "" : priority)) : styleValue(this.node(), name);
-}
-function styleValue(node, name) {
-  return node.style.getPropertyValue(name) || src_window(node).getComputedStyle(node, null).getPropertyValue(name);
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/property.js
-function propertyRemove(name) {
-  return function() {
-    delete this[name];
-  };
-}
-function propertyConstant(name, value) {
-  return function() {
-    this[name] = value;
-  };
-}
-function propertyFunction(name, value) {
-  return function() {
-    var v = value.apply(this, arguments);
-    if (v == null) delete this[name];
-    else this[name] = v;
-  };
-}
-/* harmony default export */ function property(name, value) {
-  return arguments.length > 1 ? this.each((value == null ? propertyRemove : typeof value === "function" ? propertyFunction : propertyConstant)(name, value)) : this.node()[name];
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/classed.js
-function classArray(string) {
-  return string.trim().split(/^|\s+/);
-}
-function classList(node) {
-  return node.classList || new ClassList(node);
-}
-function ClassList(node) {
-  this._node = node;
-  this._names = classArray(node.getAttribute("class") || "");
-}
-ClassList.prototype = {
-  add: function(name) {
-    var i = this._names.indexOf(name);
-    if (i < 0) {
-      this._names.push(name);
-      this._node.setAttribute("class", this._names.join(" "));
-    }
+Linear.prototype = {
+  areaStart: function() {
+    this._line = 0;
   },
-  remove: function(name) {
-    var i = this._names.indexOf(name);
-    if (i >= 0) {
-      this._names.splice(i, 1);
-      this._node.setAttribute("class", this._names.join(" "));
-    }
+  areaEnd: function() {
+    this._line = NaN;
   },
-  contains: function(name) {
-    return this._names.indexOf(name) >= 0;
+  lineStart: function() {
+    this._point = 0;
+  },
+  lineEnd: function() {
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function(x, y) {
+    x = +x, y = +y;
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
+        break;
+      case 1:
+        this._point = 2;
+      // falls through
+      default:
+        this._context.lineTo(x, y);
+        break;
+    }
   }
 };
-function classedAdd(node, names) {
-  var list = classList(node), i = -1, n = names.length;
-  while (++i < n) list.add(names[i]);
+/* harmony default export */ function linear(context) {
+  return new Linear(context);
 }
-function classedRemove(node, names) {
-  var list = classList(node), i = -1, n = names.length;
-  while (++i < n) list.remove(names[i]);
-}
-function classedTrue(names) {
-  return function() {
-    classedAdd(this, names);
-  };
-}
-function classedFalse(names) {
-  return function() {
-    classedRemove(this, names);
-  };
-}
-function classedFunction(names, value) {
-  return function() {
-    (value.apply(this, arguments) ? classedAdd : classedRemove)(this, names);
-  };
-}
-/* harmony default export */ function classed(name, value) {
-  var names = classArray(name + "");
-  if (arguments.length < 2) {
-    var list = classList(this.node()), i = -1, n = names.length;
-    while (++i < n) if (!list.contains(names[i])) return false;
-    return true;
+
+;// ./node_modules/.pnpm/d3-path@3.1.0/node_modules/d3-path/src/path.js
+var __pow = Math.pow;
+const pi = Math.PI, tau = 2 * pi, epsilon = 1e-6, tauEpsilon = tau - epsilon;
+function append(strings) {
+  this._ += strings[0];
+  for (let i = 1, n = strings.length; i < n; ++i) {
+    this._ += arguments[i] + strings[i];
   }
-  return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
 }
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/text.js
-function textRemove() {
-  this.textContent = "";
-}
-function textConstant(value) {
-  return function() {
-    this.textContent = value;
-  };
-}
-function textFunction(value) {
-  return function() {
-    var v = value.apply(this, arguments);
-    this.textContent = v == null ? "" : v;
-  };
-}
-/* harmony default export */ function selection_text(value) {
-  return arguments.length ? this.each(value == null ? textRemove : (typeof value === "function" ? textFunction : textConstant)(value)) : this.node().textContent;
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/html.js
-function htmlRemove() {
-  this.innerHTML = "";
-}
-function htmlConstant(value) {
-  return function() {
-    this.innerHTML = value;
-  };
-}
-function htmlFunction(value) {
-  return function() {
-    var v = value.apply(this, arguments);
-    this.innerHTML = v == null ? "" : v;
-  };
-}
-/* harmony default export */ function html(value) {
-  return arguments.length ? this.each(value == null ? htmlRemove : (typeof value === "function" ? htmlFunction : htmlConstant)(value)) : this.node().innerHTML;
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/raise.js
-function raise() {
-  if (this.nextSibling) this.parentNode.appendChild(this);
-}
-/* harmony default export */ function selection_raise() {
-  return this.each(raise);
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/lower.js
-function lower() {
-  if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
-}
-/* harmony default export */ function selection_lower() {
-  return this.each(lower);
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/creator.js
-
-
-function creatorInherit(name) {
-  return function() {
-    var document = this.ownerDocument, uri = this.namespaceURI;
-    return uri === xhtml && document.documentElement.namespaceURI === xhtml ? document.createElement(name) : document.createElementNS(uri, name);
-  };
-}
-function creatorFixed(fullname) {
-  return function() {
-    return this.ownerDocument.createElementNS(fullname.space, fullname.local);
-  };
-}
-/* harmony default export */ function creator(name) {
-  var fullname = namespace(name);
-  return (fullname.local ? creatorFixed : creatorInherit)(fullname);
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/append.js
-
-/* harmony default export */ function append(name) {
-  var create = typeof name === "function" ? name : creator(name);
-  return this.select(function() {
-    return this.appendChild(create.apply(this, arguments));
-  });
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/insert.js
-
-
-function constantNull() {
-  return null;
-}
-/* harmony default export */ function insert(name, before) {
-  var create = typeof name === "function" ? name : creator(name), select = before == null ? constantNull : typeof before === "function" ? before : selector(before);
-  return this.select(function() {
-    return this.insertBefore(create.apply(this, arguments), select.apply(this, arguments) || null);
-  });
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/remove.js
-function remove() {
-  var parent = this.parentNode;
-  if (parent) parent.removeChild(this);
-}
-/* harmony default export */ function selection_remove() {
-  return this.each(remove);
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/clone.js
-function selection_cloneShallow() {
-  var clone = this.cloneNode(false), parent = this.parentNode;
-  return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
-}
-function selection_cloneDeep() {
-  var clone = this.cloneNode(true), parent = this.parentNode;
-  return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
-}
-/* harmony default export */ function clone(deep) {
-  return this.select(deep ? selection_cloneDeep : selection_cloneShallow);
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/datum.js
-/* harmony default export */ function selection_datum(value) {
-  return arguments.length ? this.property("__data__", value) : this.node().__data__;
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/on.js
-function contextListener(listener) {
-  return function(event) {
-    listener.call(this, event, this.__data__);
-  };
-}
-function parseTypenames(typenames) {
-  return typenames.trim().split(/^|\s+/).map(function(t) {
-    var name = "", i = t.indexOf(".");
-    if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
-    return { type: t, name };
-  });
-}
-function onRemove(typename) {
-  return function() {
-    var on = this.__on;
-    if (!on) return;
-    for (var j = 0, i = -1, m = on.length, o; j < m; ++j) {
-      if (o = on[j], (!typename.type || o.type === typename.type) && o.name === typename.name) {
-        this.removeEventListener(o.type, o.listener, o.options);
-      } else {
-        on[++i] = o;
-      }
+function appendRound(digits) {
+  let d = Math.floor(digits);
+  if (!(d >= 0)) throw new Error(`invalid digits: ${digits}`);
+  if (d > 15) return append;
+  const k = __pow(10, d);
+  return function(strings) {
+    this._ += strings[0];
+    for (let i = 1, n = strings.length; i < n; ++i) {
+      this._ += Math.round(arguments[i] * k) / k + strings[i];
     }
-    if (++i) on.length = i;
-    else delete this.__on;
   };
 }
-function onAdd(typename, value, options) {
-  return function() {
-    var on = this.__on, o, listener = contextListener(value);
-    if (on) for (var j = 0, m = on.length; j < m; ++j) {
-      if ((o = on[j]).type === typename.type && o.name === typename.name) {
-        this.removeEventListener(o.type, o.listener, o.options);
-        this.addEventListener(o.type, o.listener = listener, o.options = options);
-        o.value = value;
-        return;
-      }
+class Path {
+  constructor(digits) {
+    this._x0 = this._y0 = // start of current subpath
+    this._x1 = this._y1 = null;
+    this._ = "";
+    this._append = digits == null ? append : appendRound(digits);
+  }
+  moveTo(x, y) {
+    this._append`M${this._x0 = this._x1 = +x},${this._y0 = this._y1 = +y}`;
+  }
+  closePath() {
+    if (this._x1 !== null) {
+      this._x1 = this._x0, this._y1 = this._y0;
+      this._append`Z`;
     }
-    this.addEventListener(typename.type, listener, options);
-    o = { type: typename.type, name: typename.name, value, listener, options };
-    if (!on) this.__on = [o];
-    else on.push(o);
-  };
+  }
+  lineTo(x, y) {
+    this._append`L${this._x1 = +x},${this._y1 = +y}`;
+  }
+  quadraticCurveTo(x1, y1, x, y) {
+    this._append`Q${+x1},${+y1},${this._x1 = +x},${this._y1 = +y}`;
+  }
+  bezierCurveTo(x1, y1, x2, y2, x, y) {
+    this._append`C${+x1},${+y1},${+x2},${+y2},${this._x1 = +x},${this._y1 = +y}`;
+  }
+  arcTo(x1, y1, x2, y2, r) {
+    x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
+    if (r < 0) throw new Error(`negative radius: ${r}`);
+    let x0 = this._x1, y0 = this._y1, x21 = x2 - x1, y21 = y2 - y1, x01 = x0 - x1, y01 = y0 - y1, l01_2 = x01 * x01 + y01 * y01;
+    if (this._x1 === null) {
+      this._append`M${this._x1 = x1},${this._y1 = y1}`;
+    } else if (!(l01_2 > epsilon)) ;
+    else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon) || !r) {
+      this._append`L${this._x1 = x1},${this._y1 = y1}`;
+    } else {
+      let x20 = x2 - x0, y20 = y2 - y0, l21_2 = x21 * x21 + y21 * y21, l20_2 = x20 * x20 + y20 * y20, l21 = Math.sqrt(l21_2), l01 = Math.sqrt(l01_2), l = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2), t01 = l / l01, t21 = l / l21;
+      if (Math.abs(t01 - 1) > epsilon) {
+        this._append`L${x1 + t01 * x01},${y1 + t01 * y01}`;
+      }
+      this._append`A${r},${r},0,0,${+(y01 * x20 > x01 * y20)},${this._x1 = x1 + t21 * x21},${this._y1 = y1 + t21 * y21}`;
+    }
+  }
+  arc(x, y, r, a0, a1, ccw) {
+    x = +x, y = +y, r = +r, ccw = !!ccw;
+    if (r < 0) throw new Error(`negative radius: ${r}`);
+    let dx = r * Math.cos(a0), dy = r * Math.sin(a0), x0 = x + dx, y0 = y + dy, cw = 1 ^ ccw, da = ccw ? a0 - a1 : a1 - a0;
+    if (this._x1 === null) {
+      this._append`M${x0},${y0}`;
+    } else if (Math.abs(this._x1 - x0) > epsilon || Math.abs(this._y1 - y0) > epsilon) {
+      this._append`L${x0},${y0}`;
+    }
+    if (!r) return;
+    if (da < 0) da = da % tau + tau;
+    if (da > tauEpsilon) {
+      this._append`A${r},${r},0,1,${cw},${x - dx},${y - dy}A${r},${r},0,1,${cw},${this._x1 = x0},${this._y1 = y0}`;
+    } else if (da > epsilon) {
+      this._append`A${r},${r},0,${+(da >= pi)},${cw},${this._x1 = x + r * Math.cos(a1)},${this._y1 = y + r * Math.sin(a1)}`;
+    }
+  }
+  rect(x, y, w, h) {
+    this._append`M${this._x0 = this._x1 = +x},${this._y0 = this._y1 = +y}h${w = +w}v${+h}h${-w}Z`;
+  }
+  toString() {
+    return this._;
+  }
 }
-/* harmony default export */ function on(typename, value, options) {
-  var typenames = parseTypenames(typename + ""), i, n = typenames.length, t;
-  if (arguments.length < 2) {
-    var on = this.node().__on;
-    if (on) for (var j = 0, m = on.length, o; j < m; ++j) {
-      for (i = 0, o = on[j]; i < n; ++i) {
-        if ((t = typenames[i]).type === o.type && t.name === o.name) {
-          return o.value;
+function path() {
+  return new Path();
+}
+path.prototype = Path.prototype;
+function pathRound(digits = 3) {
+  return new Path(+digits);
+}
+
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/path.js
+
+function withPath(shape) {
+  let digits = 3;
+  shape.digits = function(_) {
+    if (!arguments.length) return digits;
+    if (_ == null) {
+      digits = null;
+    } else {
+      const d = Math.floor(_);
+      if (!(d >= 0)) throw new RangeError(`invalid digits: ${_}`);
+      digits = d;
+    }
+    return shape;
+  };
+  return () => new Path(digits);
+}
+
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/point.js
+function point_x(p) {
+  return p[0];
+}
+function point_y(p) {
+  return p[1];
+}
+
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/line.js
+
+
+
+
+
+/* harmony default export */ function src_line(x, y) {
+  var defined = constant(true), context = null, curve = linear, output = null, path = withPath(line);
+  x = typeof x === "function" ? x : x === void 0 ? point_x : constant(x);
+  y = typeof y === "function" ? y : y === void 0 ? point_y : constant(y);
+  function line(data) {
+    var i, n = (data = array(data)).length, d, defined0 = false, buffer;
+    if (context == null) output = curve(buffer = path());
+    for (i = 0; i <= n; ++i) {
+      if (!(i < n && defined(d = data[i], i, data)) === defined0) {
+        if (defined0 = !defined0) output.lineStart();
+        else output.lineEnd();
+      }
+      if (defined0) output.point(+x(d, i, data), +y(d, i, data));
+    }
+    if (buffer) return output = null, buffer + "" || null;
+  }
+  line.x = function(_) {
+    return arguments.length ? (x = typeof _ === "function" ? _ : constant(+_), line) : x;
+  };
+  line.y = function(_) {
+    return arguments.length ? (y = typeof _ === "function" ? _ : constant(+_), line) : y;
+  };
+  line.defined = function(_) {
+    return arguments.length ? (defined = typeof _ === "function" ? _ : constant(!!_), line) : defined;
+  };
+  line.curve = function(_) {
+    return arguments.length ? (curve = _, context != null && (output = curve(context)), line) : curve;
+  };
+  line.context = function(_) {
+    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), line) : context;
+  };
+  return line;
+}
+
+;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/area.js
+
+
+
+
+
+
+/* harmony default export */ function src_area(x0, y0, y1) {
+  var x1 = null, defined = constant(true), context = null, curve = linear, output = null, path = withPath(area);
+  x0 = typeof x0 === "function" ? x0 : x0 === void 0 ? point_x : constant(+x0);
+  y0 = typeof y0 === "function" ? y0 : y0 === void 0 ? constant(0) : constant(+y0);
+  y1 = typeof y1 === "function" ? y1 : y1 === void 0 ? point_y : constant(+y1);
+  function area(data) {
+    var i, j, k, n = (data = array(data)).length, d, defined0 = false, buffer, x0z = new Array(n), y0z = new Array(n);
+    if (context == null) output = curve(buffer = path());
+    for (i = 0; i <= n; ++i) {
+      if (!(i < n && defined(d = data[i], i, data)) === defined0) {
+        if (defined0 = !defined0) {
+          j = i;
+          output.areaStart();
+          output.lineStart();
+        } else {
+          output.lineEnd();
+          output.lineStart();
+          for (k = i - 1; k >= j; --k) {
+            output.point(x0z[k], y0z[k]);
+          }
+          output.lineEnd();
+          output.areaEnd();
         }
       }
+      if (defined0) {
+        x0z[i] = +x0(d, i, data), y0z[i] = +y0(d, i, data);
+        output.point(x1 ? +x1(d, i, data) : x0z[i], y1 ? +y1(d, i, data) : y0z[i]);
+      }
     }
-    return;
+    if (buffer) return output = null, buffer + "" || null;
   }
-  on = value ? onAdd : onRemove;
-  for (i = 0; i < n; ++i) this.each(on(typenames[i], value, options));
-  return this;
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/dispatch.js
-
-function dispatchEvent(node, type, params) {
-  var window = src_window(node), event = window.CustomEvent;
-  if (typeof event === "function") {
-    event = new event(type, params);
-  } else {
-    event = window.document.createEvent("Event");
-    if (params) event.initEvent(type, params.bubbles, params.cancelable), event.detail = params.detail;
-    else event.initEvent(type, false, false);
+  function arealine() {
+    return src_line().defined(defined).curve(curve).context(context);
   }
-  node.dispatchEvent(event);
-}
-function dispatchConstant(type, params) {
-  return function() {
-    return dispatchEvent(this, type, params);
+  area.x = function(_) {
+    return arguments.length ? (x0 = typeof _ === "function" ? _ : constant(+_), x1 = null, area) : x0;
   };
-}
-function dispatchFunction(type, params) {
-  return function() {
-    return dispatchEvent(this, type, params.apply(this, arguments));
+  area.x0 = function(_) {
+    return arguments.length ? (x0 = typeof _ === "function" ? _ : constant(+_), area) : x0;
   };
-}
-/* harmony default export */ function dispatch(type, params) {
-  return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
+  area.x1 = function(_) {
+    return arguments.length ? (x1 = _ == null ? null : typeof _ === "function" ? _ : constant(+_), area) : x1;
+  };
+  area.y = function(_) {
+    return arguments.length ? (y0 = typeof _ === "function" ? _ : constant(+_), y1 = null, area) : y0;
+  };
+  area.y0 = function(_) {
+    return arguments.length ? (y0 = typeof _ === "function" ? _ : constant(+_), area) : y0;
+  };
+  area.y1 = function(_) {
+    return arguments.length ? (y1 = _ == null ? null : typeof _ === "function" ? _ : constant(+_), area) : y1;
+  };
+  area.lineX0 = area.lineY0 = function() {
+    return arealine().x(x0).y(y0);
+  };
+  area.lineY1 = function() {
+    return arealine().x(x0).y(y1);
+  };
+  area.lineX1 = function() {
+    return arealine().x(x1).y(y0);
+  };
+  area.defined = function(_) {
+    return arguments.length ? (defined = typeof _ === "function" ? _ : constant(!!_), area) : defined;
+  };
+  area.curve = function(_) {
+    return arguments.length ? (curve = _, context != null && (output = curve(context)), area) : curve;
+  };
+  area.context = function(_) {
+    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), area) : context;
+  };
+  return area;
 }
 
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/iterator.js
-/* harmony default export */ function* iterator() {
-  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
-    for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
-      if (node = group[i]) yield node;
+;// ./src/ChartInternal/shape/core/path.ts
+var path_defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var path_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var path_hasOwnProp = Object.prototype.hasOwnProperty;
+var path_propIsEnum = Object.prototype.propertyIsEnumerable;
+var path_defNormalProp = (obj, key, value) => key in obj ? path_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var path_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (path_hasOwnProp.call(b, prop))
+      path_defNormalProp(a, prop, b[prop]);
+  if (path_getOwnPropSymbols)
+    for (var prop of path_getOwnPropSymbols(b)) {
+      if (path_propIsEnum.call(b, prop))
+        path_defNormalProp(a, prop, b[prop]);
     }
-  }
-}
-
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var root = [null];
-function Selection(groups, parents) {
-  this._groups = groups;
-  this._parents = parents;
-}
-function selection() {
-  return new Selection([[document.documentElement]], root);
-}
-function selection_selection() {
-  return this;
-}
-Selection.prototype = selection.prototype = {
-  constructor: Selection,
-  select: selection_select,
-  selectAll: selectAll,
-  selectChild: selectChild,
-  selectChildren: selectChildren,
-  filter: selection_filter,
-  data: data,
-  enter: enter,
-  exit: exit,
-  join: join,
-  merge: merge,
-  selection: selection_selection,
-  order: order,
-  sort: sort,
-  call: call,
-  nodes: nodes,
-  node: node,
-  size: size,
-  empty: selection_empty,
-  each: each,
-  attr: attr,
-  style: style,
-  property: property,
-  classed: classed,
-  text: selection_text,
-  html: html,
-  raise: selection_raise,
-  lower: selection_lower,
-  append: append,
-  insert: insert,
-  remove: selection_remove,
-  clone: clone,
-  datum: selection_datum,
-  on: on,
-  dispatch: dispatch,
-  [Symbol.iterator]: iterator
+  return a;
 };
-/* harmony default export */ var src_selection = (selection);
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 
-;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/select.js
-
-/* harmony default export */ function src_select(selector) {
-  return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
+function getPathValueFn($$, isSub) {
+  if (!isSub) {
+    return (d) => $$.getBaseValue(d);
+  }
+  return (d) => {
+    var _a;
+    const value = (_a = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _a.call($$, d, true);
+    return value === void 0 ? $$.getBaseValue(d) : value;
+  };
+}
+function getProjectedValues($$, values, isSub) {
+  if (!isSub) {
+    return values;
+  }
+  return values.map((d) => {
+    var _a;
+    const value = (_a = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _a.call($$, d, isSub);
+    return value === void 0 ? d : __spreadProps(path_spreadValues({}, d), { value });
+  });
+}
+function getLineValues($$, d, values) {
+  return $$.isStepType(d) ? $$.convertValuesToStep(values) : values;
+}
+function generateDrawLinePath($$, lineIndices, isSub, context) {
+  const { config, scale } = $$;
+  const lineConnectNull = config.line_connectNull;
+  const isRotated = config.axis_rotated;
+  const getPoints = $$.generateGetLinePoints(lineIndices, isSub);
+  const yScale = $$.getYScaleById.bind($$);
+  const pathValue = getPathValueFn($$, isSub);
+  const xValue = (d) => (isSub ? $$.subxx : $$.xx).call($$, d);
+  const yValue = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)(
+    pathValue(d)
+  );
+  let line = src_line();
+  line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
+  context && (line = line.context(context));
+  if (!lineConnectNull) {
+    line = line.defined((d) => pathValue(d) !== null);
+  }
+  const x = isSub ? scale.subX : scale.x;
+  return (d) => {
+    const y = yScale(d.id, isSub);
+    let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
+    let x0 = 0;
+    let y0 = 0;
+    let path;
+    if ($$.isLineType(d)) {
+      const regions = config.data_regions[d.id];
+      if (regions && !context && $$.lineWithRegions) {
+        values = getProjectedValues($$, values, isSub);
+        if ($$.isAreaRangeType(d)) {
+          values = values.map((dv) => __spreadProps(path_spreadValues({}, dv), { value: $$.getRangedData(dv, "mid") }));
+        }
+        if ($$.isStepType(d)) {
+          values = $$.convertValuesToStep(values);
+        }
+        path = $$.lineWithRegions(values, scale.zoom || x, y, regions);
+      } else {
+        path = line.curve($$.getCurve(d))(getLineValues($$, d, values));
+      }
+    } else {
+      if (values[0]) {
+        x0 = x(values[0].x);
+        y0 = y(pathValue(values[0]));
+      }
+      path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
+    }
+    return path || (context ? void 0 : "M 0 0");
+  };
+}
+function generateDrawAreaPath($$, areaIndices, isSub, context) {
+  const { config } = $$;
+  const lineConnectNull = config.line_connectNull;
+  const isRotated = config.axis_rotated;
+  const getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
+  const yScale = $$.getYScaleById.bind($$);
+  const pathValue = getPathValueFn($$, isSub);
+  const shapeYMin = /* @__PURE__ */ new Map();
+  const getShapeYMin = (id) => {
+    let min = shapeYMin.get(id);
+    if (min === void 0) {
+      min = $$.getShapeYMin(id, isSub);
+      shapeYMin.set(id, min);
+    }
+    return min;
+  };
+  const xValue = (d) => (isSub ? $$.subxx : $$.xx).call($$, d);
+  const value0 = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)(
+    $$.isAreaRangeType(d) ? $$.getRangedData(d, "high") : getShapeYMin(d.id)
+  );
+  const value1 = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[1][1] : yScale(d.id, isSub)(
+    $$.isAreaRangeType(d) ? $$.getRangedData(d, "low") : pathValue(d)
+  );
+  return (d) => {
+    let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
+    let x0 = 0;
+    let y0 = 0;
+    let path;
+    if ($$.isAreaType(d)) {
+      let area = src_area();
+      area = isRotated ? area.y(xValue).x0(value0).x1(value1) : area.x(xValue).y0(config.area_above ? 0 : config.area_below ? isSub ? $$.state.height2 : $$.state.height : value0).y1(value1);
+      context && (area = area.context(context));
+      if (!lineConnectNull) {
+        area = area.defined((d2) => pathValue(d2) !== null);
+      }
+      values = getProjectedValues($$, values, isSub);
+      if ($$.isStepType(d)) {
+        values = $$.convertValuesToStep(values);
+      }
+      path = area.curve($$.getCurve(d))(values);
+    } else {
+      if (values[0]) {
+        x0 = (isSub ? $$.scale.subX : $$.scale.x)(values[0].x);
+        y0 = $$.getYScaleById(d.id, isSub)(pathValue(values[0]));
+      }
+      path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
+    }
+    return path || (context ? void 0 : "M 0 0");
+  };
 }
 
 ;// ./src/config/const.ts
@@ -25290,26 +25805,27 @@ const SUBCHART_BRUSH_HANDLE_PATH = {
   }
 };
 const TYPE_METHOD_NEEDED = {
-  AREA: "initArea",
-  AREA_LINE_RANGE: "initArea",
-  AREA_SPLINE: "initArea",
-  AREA_SPLINE_RANGE: "initArea",
-  AREA_STEP: "initArea",
-  AREA_STEP_RANGE: "initArea",
-  BAR: "initBar",
-  BUBBLE: "initCircle",
-  CANDLESTICK: "initCandlestick",
-  DONUT: "initArc",
-  FUNNEL: "initFunnel",
-  GAUGE: "initArc",
-  LINE: "initLine",
-  PIE: "initArc",
-  POLAR: "initPolar",
-  RADAR: "initCircle",
-  SCATTER: "initCircle",
-  SPLINE: "initLine",
-  STEP: "initLine",
-  TREEMAP: "initTreemap"
+  area: "initArea",
+  "area-line-range": "initArea",
+  "area-spline": "initArea",
+  "area-spline-range": "initArea",
+  "area-step": "initArea",
+  "area-step-range": "initArea",
+  bar: "initBar",
+  bubble: "initCircle",
+  bullet: "getBulletData",
+  candlestick: "initCandlestick",
+  donut: "initArc",
+  funnel: "initFunnel",
+  gauge: "initArc",
+  line: "initLine",
+  pie: "initArc",
+  polar: "initPolar",
+  radar: "initCircle",
+  scatter: "initCircle",
+  spline: "initLine",
+  step: "initLine",
+  treemap: "initTreemap"
 };
 const TYPE_BY_CATEGORY = {
   Area: [
@@ -25354,6 +25870,3063 @@ const TYPE_BY_CATEGORY = {
     TYPE.AREA_SPLINE_RANGE
   ]
 };
+
+;// ./src/canvas/util.ts
+
+const DENSE_SCATTER_POINT_CULL_THRESHOLD = 1e5;
+function getFontSize(font) {
+  const match = /(\d+(?:\.\d+)?)px/.exec(font);
+  const size = match ? parseFloat(match[1]) : parseFloat(font);
+  return Number.isFinite(size) ? size : 12;
+}
+function getCanvasShapeIndices($$, shape, type, typeFilter) {
+  return shape.indices[type] || $$.getShapeIndices(typeFilter);
+}
+function isCanvasTargetSupported($$, target, groupedTypeFilters = []) {
+  var _a;
+  const id = typeof target === "string" ? target : target == null ? void 0 : target.id;
+  return !((_a = $$.isGrouped) == null ? void 0 : _a.call($$, id)) || groupedTypeFilters.some((filter) => filter($$, target));
+}
+function getCanvasTargetType(config, target) {
+  var _a;
+  const id = typeof target === "string" ? target : target == null ? void 0 : target.id;
+  return id && ((_a = config.data_types) == null ? void 0 : _a[id]) || config.data_type || TYPE.LINE;
+}
+function getCanvasComparableValue(value) {
+  const comparable = +value;
+  return Number.isFinite(comparable) ? comparable : null;
+}
+function getCanvasComparableXDomain($$) {
+  var _a, _b;
+  const domain = (_b = (_a = $$.scale.zoom || $$.scale.x) == null ? void 0 : _a.domain) == null ? void 0 : _b.call(_a);
+  const start = getCanvasComparableValue(domain == null ? void 0 : domain[0]);
+  const end = getCanvasComparableValue(domain == null ? void 0 : domain[1]);
+  return start === null || end === null ? null : [Math.min(start, end), Math.max(start, end)];
+}
+function getComparableRowX(row) {
+  return getCanvasComparableValue(row == null ? void 0 : row.x);
+}
+function lowerBoundCanvasRows(values, target, ascending) {
+  let low = 0;
+  let high = values.length;
+  while (low < high) {
+    const mid = low + high >> 1;
+    const value = getComparableRowX(values[mid]);
+    if (value === null) {
+      return 0;
+    }
+    if (ascending ? value < target : value > target) {
+      low = mid + 1;
+    } else {
+      high = mid;
+    }
+  }
+  return low;
+}
+function upperBoundCanvasRows(values, target, ascending) {
+  let low = 0;
+  let high = values.length;
+  while (low < high) {
+    const mid = low + high >> 1;
+    const value = getComparableRowX(values[mid]);
+    if (value === null) {
+      return values.length;
+    }
+    if (ascending ? value <= target : value >= target) {
+      low = mid + 1;
+    } else {
+      high = mid;
+    }
+  }
+  return low;
+}
+function getCanvasTargetVisibleRange($$, target, padding = 1) {
+  const values = (target == null ? void 0 : target.values) || [];
+  const fullRange = { start: 0, end: values.length };
+  const domain = getCanvasComparableXDomain($$);
+  if (!values.length || !domain) {
+    return fullRange;
+  }
+  const state = $$.state;
+  const cache = state._canvasVisibleRangeCache || (state._canvasVisibleRangeCache = /* @__PURE__ */ new Map());
+  const key = [
+    target.id,
+    values.length,
+    state.dataGeneration,
+    domain[0],
+    domain[1],
+    padding
+  ].join(":");
+  const cached = cache.get(target.id);
+  if ((cached == null ? void 0 : cached.key) === key) {
+    return cached.range;
+  }
+  const first = getComparableRowX(values[0]);
+  const last = getComparableRowX(values[values.length - 1]);
+  if (first === null || last === null) {
+    return fullRange;
+  }
+  const ascending = first <= last;
+  const start = lowerBoundCanvasRows(values, domain[0], ascending);
+  const end = upperBoundCanvasRows(values, domain[1], ascending);
+  const range = {
+    start: Math.max(0, Math.min(start, end) - padding),
+    end: Math.min(values.length, Math.max(start, end) + padding)
+  };
+  cache.set(target.id, { key, range });
+  return range;
+}
+function isCanvasBarType($$, target) {
+  return getCanvasTargetType($$.config, target) === TYPE.BAR;
+}
+function isCanvasAreaType($$, target) {
+  return TYPE_BY_CATEGORY.Area.indexOf(getCanvasTargetType($$.config, target)) > -1;
+}
+function isCanvasLineType($$, target) {
+  const type = getCanvasTargetType($$.config, target);
+  return TYPE_BY_CATEGORY.Line.indexOf(type) > -1;
+}
+function isCanvasScatterType($$, target) {
+  return getCanvasTargetType($$.config, target) === TYPE.SCATTER;
+}
+function isCanvasBubbleType($$, target) {
+  return getCanvasTargetType($$.config, target) === TYPE.BUBBLE;
+}
+function isCanvasPointType($$, target) {
+  return isCanvasLineType($$, target) || isCanvasScatterType($$, target) || isCanvasBubbleType($$, target);
+}
+function isCanvasCandlestickType($$, target) {
+  return getCanvasTargetType($$.config, target) === TYPE.CANDLESTICK;
+}
+function isCanvasTreemapType($$, target) {
+  return getCanvasTargetType($$.config, target) === TYPE.TREEMAP;
+}
+function isCanvasGroupedType(config, target) {
+  const type = getCanvasTargetType(config, target);
+  return type === TYPE.BAR || TYPE_BY_CATEGORY.Area.indexOf(type) > -1;
+}
+function hasCanvasDrawableValue($$, d) {
+  const value = $$.getBaseValue(d);
+  return value !== null && value !== void 0;
+}
+function isFiniteCanvasCoordinate(x, y) {
+  return Number.isFinite(x) && Number.isFinite(y);
+}
+function createCanvasPointOccupancyGrid(width, height, radius) {
+  const offset = Math.ceil(radius) + 1;
+  const gridWidth = Math.max(1, Math.ceil(width) + offset * 2 + 1);
+  const gridHeight = Math.max(1, Math.ceil(height) + offset * 2 + 1);
+  return {
+    data: new Uint8Array(gridWidth * gridHeight),
+    height: gridHeight,
+    offset,
+    width: gridWidth
+  };
+}
+function markCanvasPointOccupancy(grid, x, y) {
+  const px = Math.round(x) + grid.offset;
+  const py = Math.round(y) + grid.offset;
+  if (px < 0 || px >= grid.width || py < 0 || py >= grid.height) {
+    return false;
+  }
+  const index = py * grid.width + px;
+  if (grid.data[index]) {
+    return false;
+  }
+  grid.data[index] = 1;
+  return true;
+}
+
+;// ./src/canvas/CanvasPainter.ts
+var CanvasPainter_defProp = Object.defineProperty;
+var CanvasPainter_defNormalProp = (obj, key, value) => key in obj ? CanvasPainter_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => CanvasPainter_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
+class CanvasPainter {
+  /**
+   * Constructor.
+   * @param {CanvasRenderingContext2D} ctx Canvas drawing context
+   * @private
+   */
+  constructor(ctx) {
+    __publicField(this, "ctx", ctx);
+  }
+  /**
+   * Get current drawing context.
+   * @returns {CanvasRenderingContext2D} Canvas drawing context
+   * @private
+   */
+  get context() {
+    return this.ctx;
+  }
+  /**
+   * Run a draw operation on another canvas context.
+   * @param {CanvasRenderingContext2D} ctx Canvas drawing context
+   * @param {function} draw Draw callback
+   * @private
+   */
+  withContext(ctx, draw) {
+    const prev = this.ctx;
+    this.ctx = ctx;
+    try {
+      draw();
+    } finally {
+      this.ctx = prev;
+    }
+  }
+  /**
+   * Run a draw operation in an isolated canvas state.
+   * @param {DrawCallback} draw Draw callback
+   * @private
+   */
+  withState(draw) {
+    const { ctx } = this;
+    ctx.save();
+    try {
+      draw(ctx);
+    } finally {
+      ctx.restore();
+    }
+  }
+  /**
+   * Run a draw operation with a translated origin.
+   * @param {number} x Translation x
+   * @param {number} y Translation y
+   * @param {DrawCallback} draw Draw callback
+   * @private
+   */
+  withTranslation(x, y, draw) {
+    this.withState((ctx) => {
+      ctx.translate(x, y);
+      draw(ctx);
+    });
+  }
+  /**
+   * Run a draw operation clipped to a rectangle.
+   * @param {object} rect Clip rectangle
+   * @param {DrawCallback} draw Draw callback
+   * @private
+   */
+  clipRect(rect, draw) {
+    this.withState((ctx) => {
+      ctx.beginPath();
+      ctx.rect(rect.x, rect.y, rect.w, rect.h);
+      ctx.clip();
+      draw(ctx);
+    });
+  }
+  /**
+   * Measure text using the current canvas state.
+   * @param {string} text Text value
+   * @returns {TextMetrics} Text metrics
+   * @private
+   */
+  measureText(text) {
+    return this.ctx.measureText(text);
+  }
+  /**
+   * Add a line segment to the current path.
+   * @param {number} x1 Start x
+   * @param {number} y1 Start y
+   * @param {number} x2 End x
+   * @param {number} y2 End y
+   * @private
+   */
+  traceLine(x1, y1, x2, y2) {
+    const { ctx } = this;
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+  }
+  /**
+   * Add a crisp line segment to the current path.
+   * @param {number} x1 Start x
+   * @param {number} y1 Start y
+   * @param {number} x2 End x
+   * @param {number} y2 End y
+   * @param {number} lineWidth Stroke width
+   * @private
+   */
+  traceCrispLine(x1, y1, x2, y2, lineWidth) {
+    this.traceLine(
+      this.crisp(x1, lineWidth),
+      this.crisp(y1, lineWidth),
+      this.crisp(x2, lineWidth),
+      this.crisp(y2, lineWidth)
+    );
+  }
+  /**
+   * Add a circle to the current path.
+   * @param {number} x Center x
+   * @param {number} y Center y
+   * @param {number} r Radius
+   * @private
+   */
+  traceCircle(x, y, r) {
+    this.ctx.moveTo(x + r, y);
+    this.ctx.arc(x, y, r, 0, Math.PI * 2);
+  }
+  /**
+   * Stroke a path.
+   * @param {DrawCallback} draw Path callback
+   * @param {object} style Optional style
+   * @private
+   */
+  strokePath(draw, style) {
+    this.withStyle(style, (ctx) => {
+      ctx.beginPath();
+      draw(ctx);
+      ctx.stroke();
+    });
+  }
+  /**
+   * Fill a path.
+   * @param {DrawCallback} draw Path callback
+   * @param {object} style Optional style
+   * @private
+   */
+  fillPath(draw, style) {
+    this.withStyle(style, (ctx) => {
+      ctx.beginPath();
+      draw(ctx);
+      ctx.fill();
+    });
+  }
+  /**
+   * Fill a rectangle.
+   * @param {object} rect Rectangle
+   * @param {object} style Optional style
+   * @private
+   */
+  fillRect(rect, style) {
+    this.withStyle(style, (ctx) => {
+      ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+    });
+  }
+  /**
+   * Fill a rectangle with optional corner radii.
+   * @param {object} rect Rectangle
+   * @param {number|object} radius Corner radius
+   * @param {object} style Optional style
+   * @private
+   */
+  fillRoundRect(rect, radius = 0, style) {
+    const normalized = this.normalizeRect(rect);
+    const corners = this.getRectRadii(normalized, radius);
+    if (!corners.tl && !corners.tr && !corners.br && !corners.bl) {
+      this.fillRect(normalized, style);
+      return;
+    }
+    this.fillPath((ctx) => {
+      this.traceRoundRect(ctx, normalized, corners);
+    }, style);
+  }
+  /**
+   * Stroke a rectangle with optional corner radii.
+   * @param {object} rect Rectangle
+   * @param {number|object} radius Corner radius
+   * @param {object} style Optional style
+   * @private
+   */
+  strokeRoundRect(rect, radius = 0, style) {
+    const normalized = this.normalizeRect(rect);
+    const corners = this.getRectRadii(normalized, radius);
+    if (!corners.tl && !corners.tr && !corners.br && !corners.bl) {
+      this.strokeRect(normalized, style);
+      return;
+    }
+    this.strokePath((ctx) => {
+      this.traceRoundRect(ctx, normalized, corners);
+    }, style);
+  }
+  /**
+   * Stroke a rectangle.
+   * @param {object} rect Rectangle
+   * @param {object} style Optional style
+   * @private
+   */
+  strokeRect(rect, style) {
+    this.withStyle(style, (ctx) => {
+      ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+    });
+  }
+  /**
+   * Draw text.
+   * @param {string} text Text value
+   * @param {number} x X coordinate
+   * @param {number} y Y coordinate
+   * @param {object} style Optional style
+   * @private
+   */
+  text(text, x, y, style) {
+    const fillText = (ctx, textX, textY) => {
+      (style == null ? void 0 : style.maxWidth) === void 0 ? ctx.fillText(text, textX, textY) : ctx.fillText(text, textX, textY, style.maxWidth);
+    };
+    const draw = (ctx) => {
+      if (style == null ? void 0 : style.angle) {
+        ctx.translate(x, y);
+        ctx.rotate(style.angle * Math.PI / 180);
+        fillText(ctx, 0, 0);
+      } else {
+        fillText(ctx, x, y);
+      }
+    };
+    if (style == null ? void 0 : style.angle) {
+      this.withState((ctx) => {
+        this.applyStyle(style);
+        draw(ctx);
+      });
+    } else {
+      this.withStyle(style, draw);
+    }
+  }
+  /**
+   * Draw a possibly rotated multiline text block.
+   * @param {string} text Text value
+   * @param {number} x X coordinate
+   * @param {number} y Y coordinate
+   * @param {object} style Optional style
+   * @private
+   */
+  textLines(text, x, y, style) {
+    this.withState((ctx) => {
+      const lines = text.split("\n");
+      const lineHeight = getFontSize((style == null ? void 0 : style.font) || ctx.font);
+      const firstLineY = lines.length > 1 ? -((lines.length - 1) * lineHeight) : 0;
+      this.applyStyle(style);
+      ctx.translate(x, y);
+      (style == null ? void 0 : style.angle) && ctx.rotate(style.angle * Math.PI / 180);
+      lines.forEach((line, i) => {
+        const lineY = firstLineY + i * lineHeight;
+        (style == null ? void 0 : style.maxWidth) === void 0 ? ctx.fillText(line, 0, lineY) : ctx.fillText(line, 0, lineY, style.maxWidth);
+      });
+    });
+  }
+  /**
+   * Draw a point shape.
+   * @param {string} type Point shape
+   * @param {number} x X coordinate
+   * @param {number} y Y coordinate
+   * @param {number} r Radius
+   * @param {object} style Optional style
+   * @private
+   */
+  point(type, x, y, r, style) {
+    this.withStyle(style, (ctx) => {
+      const shouldFill = !(style == null ? void 0 : style.stroke) || style.fill !== void 0;
+      const shouldStroke = (style == null ? void 0 : style.stroke) !== void 0;
+      if (type === "rectangle") {
+        const size = r * 2;
+        const rect = { x: x - r, y: y - r, w: size, h: size };
+        shouldFill && ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+        shouldStroke && ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+      } else {
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        shouldFill && ctx.fill();
+        shouldStroke && ctx.stroke();
+      }
+    });
+  }
+  /**
+   * Normalize rounded rectangle corner radii.
+   * @param {object} rect Rectangle
+   * @param {number|object} radius Corner radius
+   * @returns {object} Corner radii
+   * @private
+   */
+  getRectRadii(rect, radius) {
+    const base = typeof radius === "number" ? { tl: radius, tr: radius, br: radius, bl: radius } : {
+      tl: radius.tl || 0,
+      tr: radius.tr || 0,
+      br: radius.br || 0,
+      bl: radius.bl || 0
+    };
+    const max = Math.max(0, Math.min(Math.abs(rect.w), Math.abs(rect.h)) / 2);
+    return {
+      tl: Math.max(0, Math.min(base.tl, max)),
+      tr: Math.max(0, Math.min(base.tr, max)),
+      br: Math.max(0, Math.min(base.br, max)),
+      bl: Math.max(0, Math.min(base.bl, max))
+    };
+  }
+  /**
+   * Add a rounded rectangle to the current path.
+   * @param {CanvasRenderingContext2D} ctx Canvas context
+   * @param {object} rect Rectangle
+   * @param {object} radius Corner radii
+   * @private
+   */
+  traceRoundRect(ctx, rect, radius) {
+    const { x, y, w, h } = rect;
+    const right = x + w;
+    const bottom = y + h;
+    ctx.moveTo(x + radius.tl, y);
+    ctx.lineTo(right - radius.tr, y);
+    radius.tr ? ctx.quadraticCurveTo(right, y, right, y + radius.tr) : ctx.lineTo(right, y);
+    ctx.lineTo(right, bottom - radius.br);
+    radius.br ? ctx.quadraticCurveTo(right, bottom, right - radius.br, bottom) : ctx.lineTo(right, bottom);
+    ctx.lineTo(x + radius.bl, bottom);
+    radius.bl ? ctx.quadraticCurveTo(x, bottom, x, bottom - radius.bl) : ctx.lineTo(x, bottom);
+    ctx.lineTo(x, y + radius.tl);
+    radius.tl ? ctx.quadraticCurveTo(x, y, x + radius.tl, y) : ctx.lineTo(x, y);
+    ctx.closePath();
+  }
+  /**
+   * Normalize rectangle coordinates for path drawing.
+   * @param {object} rect Rectangle
+   * @returns {object} Normalized rectangle
+   * @private
+   */
+  normalizeRect(rect) {
+    const x = rect.w < 0 ? rect.x + rect.w : rect.x;
+    const y = rect.h < 0 ? rect.y + rect.h : rect.y;
+    return {
+      x,
+      y,
+      w: Math.abs(rect.w),
+      h: Math.abs(rect.h)
+    };
+  }
+  /**
+   * Apply drawing style.
+   * @param {object} style Drawing style
+   * @private
+   */
+  applyStyle(style) {
+    if (!style) {
+      return;
+    }
+    const { ctx } = this;
+    style.fill !== void 0 && (ctx.fillStyle = style.fill);
+    style.stroke !== void 0 && (ctx.strokeStyle = style.stroke);
+    style.lineWidth !== void 0 && (ctx.lineWidth = style.lineWidth);
+    style.alpha !== void 0 && (ctx.globalAlpha = style.alpha);
+    style.font !== void 0 && (ctx.font = style.font);
+    style.textAlign !== void 0 && (ctx.textAlign = style.textAlign);
+    style.textBaseline !== void 0 && (ctx.textBaseline = style.textBaseline);
+    style.lineDash !== void 0 && ctx.setLineDash(style.lineDash);
+  }
+  /**
+   * Run with optional style state.
+   * @param {object} style Optional drawing style
+   * @param {DrawCallback} draw Draw callback
+   * @private
+   */
+  withStyle(style, draw) {
+    if (style) {
+      this.withState((ctx) => {
+        this.applyStyle(style);
+        draw(ctx);
+      });
+    } else {
+      draw(this.ctx);
+    }
+  }
+  /**
+   * Get crisp canvas coordinate for axis/grid strokes.
+   * @param {number} value Coordinate value
+   * @param {number} lineWidth Stroke width
+   * @returns {number} Crisp coordinate
+   * @private
+   */
+  crisp(value, lineWidth) {
+    return lineWidth % 2 ? Math.round(value) + 0.5 : Math.round(value);
+  }
+}
+
+;// ./src/canvas/color.ts
+
+
+let colorParserContext;
+function withOpacity(color, opacity) {
+  if (!isNumber(opacity) || opacity >= 1) {
+    return color;
+  }
+  const hex = color.match(/^#([\da-f]{3}|[\da-f]{6})$/i);
+  if (hex) {
+    const value = hex[1].length === 3 ? hex[1].split("").map((v) => v + v).join("") : hex[1];
+    const matches = value.match(/.{2}/g);
+    if (!matches) {
+      return color;
+    }
+    const rgb = matches.map((v) => parseInt(v, 16));
+    return `rgba(${rgb.join(",")},${opacity})`;
+  }
+  if (/^rgb\(/i.test(color)) {
+    return color.replace(/^rgb\((.*)\)$/i, `rgba($1,${opacity})`);
+  }
+  if (/^rgba\(/i.test(color)) {
+    return color.replace(
+      /^rgba\((.*),\s*([\d.]+)\)$/i,
+      (_, rgb, alpha) => `rgba(${rgb},${Number(alpha) * opacity})`
+    );
+  }
+  const parsed = parseCanvasColor(color);
+  if (parsed && parsed !== color) {
+    return withOpacity(parsed, opacity);
+  }
+  return color;
+}
+function parseCanvasColor(color) {
+  if (!win.document) {
+    return null;
+  }
+  if (colorParserContext === void 0) {
+    colorParserContext = win.document.createElement("canvas").getContext("2d");
+  }
+  if (!colorParserContext) {
+    return null;
+  }
+  colorParserContext.fillStyle = "#000";
+  colorParserContext.fillStyle = color;
+  const parsedOnBlack = colorParserContext.fillStyle;
+  colorParserContext.fillStyle = "#fff";
+  colorParserContext.fillStyle = color;
+  const parsedOnWhite = colorParserContext.fillStyle;
+  return parsedOnBlack === parsedOnWhite ? parsedOnBlack : null;
+}
+
+;// ./src/canvas/geometry.ts
+
+
+function getCanvasBarGeometry($$, getPoints, d, index) {
+  const points = getPoints(d, index);
+  const rect = getRenderRect($$, points);
+  return isFiniteCanvasCoordinate(rect.x, rect.y) && isFiniteCanvasCoordinate(rect.x + rect.w, rect.y + rect.h) ? { points, rect } : null;
+}
+function getCanvasCandlestickGeometry($$, getPoints, d, index) {
+  const points = getPoints(d, index);
+  const { body, wickStart, wickEnd } = getCandlestickGeometry($$, points);
+  return isFiniteCanvasCoordinate(body.x, body.y) && isFiniteCanvasCoordinate(body.x + body.w, body.y + body.h) && isFiniteCanvasCoordinate(wickStart[0], wickStart[1]) && isFiniteCanvasCoordinate(wickEnd[0], wickEnd[1]) ? { body, points, wickStart, wickEnd } : null;
+}
+
+;// ./src/canvas/labels.ts
+
+
+const LABEL_LINE_HEIGHT_RATIO = 1.2;
+function getLabelValue($$, d) {
+  var _a, _b, _c;
+  let { value } = d;
+  if ((_a = $$.isBubbleZType) == null ? void 0 : _a.call($$, d)) {
+    value = $$.getBubbleZData(value, "z");
+  } else if ((_b = $$.isCandlestickType) == null ? void 0 : _b.call($$, d)) {
+    const data = (_c = $$.getCandlestickData) == null ? void 0 : _c.call($$, d);
+    if (data) {
+      value = data.close;
+    }
+  }
+  return value;
+}
+function getLabelText($$, d) {
+  const value = $$.dataLabelFormat(d.id)(getLabelValue($$, d), d.id, d.index, []);
+  return value === null || value === void 0 ? null : String(value);
+}
+function getLabelRowKey(d) {
+  return `${d.id}:${d.index}`;
+}
+function getExpandedFocusMatcher($$, selectedData, typeFilter) {
+  var _a;
+  if (!(selectedData == null ? void 0 : selectedData.length)) {
+    return () => false;
+  }
+  if ($$.config.tooltip_grouped && selectedData.length > 1) {
+    const index = (_a = selectedData[0]) == null ? void 0 : _a.index;
+    return (d) => index !== void 0 && d.index === index && typeFilter($$, d);
+  }
+  const keys = new Set(
+    selectedData.filter((d) => d && typeFilter($$, d)).map(getLabelRowKey)
+  );
+  return (d) => keys.has(getLabelRowKey(d));
+}
+function getLabelPosition($$, d, type, texts) {
+  const position = $$.config.data_labels_position;
+  let value;
+  if (isFunction(position)) {
+    value = position.bind($$.api)(type, getLabelValue($$, d), d.id, d.index, texts);
+  } else if (position) {
+    const targetPosition = d.id in position ? position[d.id] : position;
+    value = targetPosition == null ? void 0 : targetPosition[type];
+  }
+  return isNumber(value) ? value : 0;
+}
+function getLabelImageOption($$, d) {
+  var _a, _b;
+  const option = (_a = $$.config.data_labels) == null ? void 0 : _a.image;
+  if (isFunction(option)) {
+    return (_b = option.call($$.api, getLabelValue($$, d), d.id, d.index)) != null ? _b : null;
+  } else if (option) {
+    const { url = "", width = 0, height = 0, pos } = option;
+    return { url, width, height, pos };
+  }
+  return null;
+}
+function getLabelImageUrl(option, d) {
+  return tplProcess(option.url, {
+    ID: d.id
+  });
+}
+function getLabelImagePosition($$, option, text, x, y, d) {
+  var _a, _b, _c;
+  const { width = 0, height = 0, pos } = option;
+  const w = width / 2;
+  const h = height / 2;
+  const textHeight = getLabelDecorationBox($$.canvasEngine.ctx, text, x, y).h;
+  const fontSize = getFontSize($$.canvasEngine.ctx.font);
+  const imageX = x - w;
+  const imageY = y - h - (((_a = $$.isTreemapType) == null ? void 0 : _a.call($$, d)) ? fontSize * 0.7 : textHeight / 2);
+  let textX = x;
+  let textY = y;
+  if ($$.config.axis_rotated) {
+    textX += w;
+  } else {
+    textY += h;
+  }
+  return {
+    x: imageX + ((_b = pos == null ? void 0 : pos.x) != null ? _b : 0),
+    y: imageY + ((_c = pos == null ? void 0 : pos.y) != null ? _c : 0),
+    textX,
+    textY
+  };
+}
+function getLabelColor($$, d, fallback) {
+  var _a, _b, _c, _d, _e;
+  const color = (_a = $$.updateTextColor) == null ? void 0 : _a.call($$, d);
+  return typeof color === "string" ? color : ((_c = (_b = $$.getCustomTypeHooks) == null ? void 0 : _b.call($$, d)) == null ? void 0 : _c.themeTextColor) || ((_d = $$.isTreemapType) == null ? void 0 : _d.call($$, d)) ? fallback : ((_e = $$.color) == null ? void 0 : _e.call($$, d)) || fallback;
+}
+function getLabelBackgroundColor($$, d) {
+  var _a;
+  const option = $$.config.data_labels_backgroundColors;
+  if (!option) {
+    return null;
+  }
+  if (isString(option)) {
+    return option;
+  }
+  if (isFunction(option)) {
+    const defaultColor = (_a = $$.color) == null ? void 0 : _a.call($$, d);
+    const color2 = option.bind($$.api)(defaultColor, d);
+    return color2 === null || color2 === void 0 ? null : String(color2);
+  }
+  const color = option[d.id];
+  return color === null || color === void 0 ? null : String(color);
+}
+function getLabelBorderOption(border) {
+  var _a, _b, _c;
+  if (!border) {
+    return null;
+  }
+  const option = isObject(border) ? border : {};
+  return {
+    padding: parseShorthand((_a = option.padding) != null ? _a : "3 5"),
+    radius: isNumber(option.radius) ? option.radius : 10,
+    stroke: (_b = option.stroke) != null ? _b : "#000",
+    strokeWidth: isNumber(option.strokeWidth) ? option.strokeWidth : 1,
+    fill: (_c = option.fill) != null ? _c : "none"
+  };
+}
+function getLabelDecorationBox(ctx, text, x, y, padding = { top: 0, right: 0, bottom: 0, left: 0 }) {
+  var _a, _b;
+  const lines = text.split("\n");
+  const metrics = lines.map((line) => ctx.measureText(line));
+  const width = Math.max(...metrics.map((metric) => metric.width), 0);
+  const fontSize = getFontSize(ctx.font);
+  const lineHeight = fontSize * LABEL_LINE_HEIGHT_RATIO;
+  const fontBoundingHeight = metrics[0] ? (metrics[0].fontBoundingBoxAscent || 0) + (metrics[0].fontBoundingBoxDescent || 0) : 0;
+  const baselineDescent = metrics[0] ? metrics[0].fontBoundingBoxDescent || metrics[0].actualBoundingBoxDescent || 0 : 0;
+  const height = lines.length > 1 ? lineHeight * lines.length : Math.max(
+    fontSize,
+    fontBoundingHeight,
+    ((_a = metrics[0]) == null ? void 0 : _a.actualBoundingBoxAscent) + ((_b = metrics[0]) == null ? void 0 : _b.actualBoundingBoxDescent) || 0
+  );
+  let textX = x;
+  let textY = y;
+  if (ctx.textAlign === "center") {
+    textX -= width / 2;
+  } else if (ctx.textAlign === "right" || ctx.textAlign === "end") {
+    textX -= width;
+  }
+  if (ctx.textBaseline === "middle") {
+    textY -= height / 2;
+  } else if (ctx.textBaseline === "alphabetic") {
+    textY -= height - baselineDescent;
+  } else if (ctx.textBaseline === "bottom" || ctx.textBaseline === "ideographic") {
+    textY -= height;
+  }
+  return {
+    x: textX - padding.left,
+    y: textY - padding.top,
+    w: width + padding.left + padding.right,
+    h: height + padding.top + padding.bottom
+  };
+}
+function drawLabelDecorations($$, painter, d, text, x, y) {
+  var _a, _b;
+  const ctx = painter.context;
+  const backgroundColor = getLabelBackgroundColor($$, d);
+  const border = getLabelBorderOption((_a = $$.config.data_labels) == null ? void 0 : _a.border);
+  const padding = (_b = border == null ? void 0 : border.padding) != null ? _b : { top: 0, right: 0, bottom: 0, left: 0 };
+  const box = getLabelDecorationBox(ctx, text, x, y, padding);
+  const angle = $$.config.data_labels.rotate;
+  painter.withState((canvas) => {
+    var _a2;
+    if (angle) {
+      canvas.translate(x, y);
+      canvas.rotate(angle * Math.PI / 180);
+      box.x -= x;
+      box.y -= y;
+    }
+    if (backgroundColor) {
+      painter.fillRoundRect(box, (_a2 = border == null ? void 0 : border.radius) != null ? _a2 : 0, { fill: backgroundColor });
+    }
+    if (border) {
+      if (border.fill !== "none") {
+        painter.fillRoundRect(box, border.radius, { fill: border.fill });
+      }
+      painter.strokeRoundRect(box, border.radius, {
+        stroke: border.stroke,
+        lineWidth: border.strokeWidth
+      });
+    }
+  });
+}
+function getLabelRotateAnchor(angle) {
+  let anchor = "middle";
+  if (angle > 0 && angle <= 170) {
+    anchor = "end";
+  } else if (angle > 190 && angle <= 360) {
+    anchor = "start";
+  }
+  return anchor;
+}
+function getCanvasTextAlign(anchor) {
+  return anchor === "start" ? "left" : anchor === "end" ? "right" : "center";
+}
+function getRotatedLabelPosition($$, d, x, y) {
+  var _a, _b, _c;
+  const anchor = getLabelRotateAnchor($$.config.data_labels.rotate);
+  const isRotated = $$.config.axis_rotated;
+  const isInverted = $$.config[`axis_${(_a = $$.axis) == null ? void 0 : _a.getId(d.id)}_inverted`];
+  const isCandlestickType = isCanvasCandlestickType($$, d);
+  const { value } = d;
+  const isNegative = isNumber(value) && value < 0 || isCandlestickType && !((_c = (_b = $$.getCandlestickData) == null ? void 0 : _b.call($$, d)) == null ? void 0 : _c._isUp);
+  const gap = 4;
+  const doubleGap = gap * 2;
+  if (isRotated) {
+    if (anchor === "start") {
+      x += isNegative ? 0 : doubleGap;
+      y += gap;
+    } else if (anchor === "middle") {
+      x += doubleGap;
+      y -= doubleGap;
+    } else if (anchor === "end") {
+      isNegative && (x -= doubleGap);
+      y += gap;
+    }
+  } else {
+    if (anchor === "start") {
+      x += gap;
+      isNegative && (y += doubleGap * 2);
+    } else if (anchor === "middle") {
+      y -= doubleGap;
+    } else if (anchor === "end") {
+      x -= gap;
+      isNegative && (y += doubleGap * 2);
+    }
+    if (isInverted) {
+      y += isNegative ? -17 : isCandlestickType ? 13 : 7;
+    }
+  }
+  return {
+    x,
+    y,
+    textAlign: getCanvasTextAlign(anchor)
+  };
+}
+function getPointLabelAnchor($$, ctx, d, x, y) {
+  var _a;
+  if ($$.config.axis_rotated) {
+    x += 6;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+  } else if (isCanvasBubbleType($$, d)) {
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+  } else {
+    const { config, state } = $$;
+    const isInverted = config[`axis_${(_a = $$.axis) == null ? void 0 : _a.getId(d.id)}_inverted`];
+    const isNegative = d.value < 0 || d.value === 0 && !state.hasPositiveValue && state.hasNegativeValue;
+    let baseY = 3;
+    if (isNumber(config.point_r) && config.point_r > 5 && (isCanvasLineType($$, d) || isCanvasScatterType($$, d))) {
+      baseY += config.point_r / 2.3;
+    }
+    ctx.textAlign = "center";
+    if (isInverted ? !isNegative : isNegative) {
+      y += baseY;
+      ctx.textBaseline = "top";
+    } else {
+      y -= baseY * 2;
+      ctx.textBaseline = "bottom";
+    }
+  }
+  return { x, y };
+}
+
+;// ./src/canvas/pointPattern.ts
+var pointPattern_defProp = Object.defineProperty;
+var pointPattern_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var pointPattern_hasOwnProp = Object.prototype.hasOwnProperty;
+var pointPattern_propIsEnum = Object.prototype.propertyIsEnumerable;
+var pointPattern_defNormalProp = (obj, key, value) => key in obj ? pointPattern_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var pointPattern_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (pointPattern_hasOwnProp.call(b, prop))
+      pointPattern_defNormalProp(a, prop, b[prop]);
+  if (pointPattern_getOwnPropSymbols)
+    for (var prop of pointPattern_getOwnPropSymbols(b)) {
+      if (pointPattern_propIsEnum.call(b, prop))
+        pointPattern_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+
+
+
+const DEFAULT_POINT_VIEWBOX = { x: 0, y: 0, w: 8, h: 8 };
+const customPointPatternCache = /* @__PURE__ */ new Map();
+const IDENTITY_POINT_MATRIX = [1, 0, 0, 1, 0, 0];
+function isBuiltinPointType(type) {
+  return type === "circle" || type === "rectangle";
+}
+function getSvgNumber(node, name, fallback = 0) {
+  const value = node.getAttribute(name);
+  const parsed = value === null ? NaN : parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+function parseSvgPoints(value) {
+  const nums = (value.match(/[-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/gi) || []).map(Number).filter(Number.isFinite);
+  const points = [];
+  for (let i = 0; i < nums.length - 1; i += 2) {
+    points.push([nums[i], nums[i + 1]]);
+  }
+  return points;
+}
+function parseViewBox(value) {
+  const values = (value == null ? void 0 : value.trim().split(/[\s,]+/).map(Number).filter(Number.isFinite)) || [];
+  return values.length === 4 ? {
+    x: values[0],
+    y: values[1],
+    w: values[2],
+    h: values[3]
+  } : null;
+}
+function getPointsBox(points) {
+  const xs = points.map(([x2]) => x2);
+  const ys = points.map(([, y2]) => y2);
+  const x = Math.min(...xs);
+  const y = Math.min(...ys);
+  return {
+    x,
+    y,
+    w: Math.max(...xs) - x,
+    h: Math.max(...ys) - y
+  };
+}
+function mergePointBoxes(boxes) {
+  const validBoxes = boxes.filter(
+    (box) => Number.isFinite(box.x) && Number.isFinite(box.y) && Number.isFinite(box.w) && Number.isFinite(box.h)
+  );
+  if (!validBoxes.length) {
+    return pointPattern_spreadValues({}, DEFAULT_POINT_VIEWBOX);
+  }
+  const x = Math.min(...validBoxes.map((box) => box.x));
+  const y = Math.min(...validBoxes.map((box) => box.y));
+  const right = Math.max(...validBoxes.map((box) => box.x + box.w));
+  const bottom = Math.max(...validBoxes.map((box) => box.y + box.h));
+  return {
+    x,
+    y,
+    w: right - x,
+    h: bottom - y
+  };
+}
+function multiplyPointMatrix(a, b) {
+  return [
+    a[0] * b[0] + a[2] * b[1],
+    a[1] * b[0] + a[3] * b[1],
+    a[0] * b[2] + a[2] * b[3],
+    a[1] * b[2] + a[3] * b[3],
+    a[0] * b[4] + a[2] * b[5] + a[4],
+    a[1] * b[4] + a[3] * b[5] + a[5]
+  ];
+}
+function parsePointTransform(value) {
+  let matrix = [...IDENTITY_POINT_MATRIX];
+  ((value == null ? void 0 : value.match(/[a-z]+\([^)]*\)/gi)) || []).forEach((token) => {
+    var _a;
+    const [, rawName, body] = token.match(/^([a-z]+)\(([^)]*)\)$/i) || [];
+    const name = rawName == null ? void 0 : rawName.toLowerCase();
+    const values = ((body == null ? void 0 : body.match(/[-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/gi)) || []).map(Number).filter(Number.isFinite);
+    let next = null;
+    if (name === "matrix" && values.length >= 6) {
+      next = values.slice(0, 6);
+    } else if (name === "translate" && values.length) {
+      next = [1, 0, 0, 1, values[0], values[1] || 0];
+    } else if (name === "scale" && values.length) {
+      next = [values[0], 0, 0, (_a = values[1]) != null ? _a : values[0], 0, 0];
+    } else if (name === "rotate" && values.length) {
+      const angle = values[0] * Math.PI / 180;
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const rotate = [cos, sin, -sin, cos, 0, 0];
+      next = values.length >= 3 ? multiplyPointMatrix(
+        multiplyPointMatrix([1, 0, 0, 1, values[1], values[2]], rotate),
+        [1, 0, 0, 1, -values[1], -values[2]]
+      ) : rotate;
+    } else if (name === "skewx" && values.length) {
+      next = [1, 0, Math.tan(values[0] * Math.PI / 180), 1, 0, 0];
+    } else if (name === "skewy" && values.length) {
+      next = [1, Math.tan(values[0] * Math.PI / 180), 0, 1, 0, 0];
+    }
+    next && (matrix = multiplyPointMatrix(matrix, next));
+  });
+  return matrix;
+}
+function getPointPresentationValue(node, name) {
+  const style = node.getAttribute("style");
+  const attr = node.getAttribute(name);
+  const match = style == null ? void 0 : style.match(new RegExp(`(?:^|;)\\s*${name}\\s*:\\s*([^;]+)`, "i"));
+  return ((match == null ? void 0 : match[1]) || attr || "").trim() || null;
+}
+function parsePointStyle(node, inherited) {
+  const style = pointPattern_spreadValues({}, inherited);
+  const fill = getPointPresentationValue(node, "fill");
+  const stroke = getPointPresentationValue(node, "stroke");
+  const strokeWidth = getPointPresentationValue(node, "stroke-width");
+  const opacity = getPointPresentationValue(node, "opacity");
+  const fillOpacity = getPointPresentationValue(node, "fill-opacity");
+  const strokeOpacity = getPointPresentationValue(node, "stroke-opacity");
+  if (fill) {
+    style.fill = fill === "none" ? null : fill;
+  }
+  if (stroke) {
+    style.stroke = stroke === "none" ? null : stroke;
+  }
+  if (strokeWidth) {
+    const lineWidth = parseFloat(strokeWidth);
+    Number.isFinite(lineWidth) && (style.lineWidth = lineWidth);
+  }
+  [opacity, fillOpacity, strokeOpacity].forEach((value) => {
+    var _a;
+    const alpha = value === null ? NaN : parseFloat(value);
+    Number.isFinite(alpha) && (style.alpha = ((_a = style.alpha) != null ? _a : 1) * alpha);
+  });
+  return style;
+}
+function collectPointDefs(root) {
+  const defs = /* @__PURE__ */ new Map();
+  Array.from(root.querySelectorAll("[id]")).forEach((node) => {
+    const id = node.getAttribute("id");
+    id && defs.set(id, node);
+  });
+  return defs;
+}
+function parsePointPaintLength(value, fallback) {
+  const text = value == null ? void 0 : value.trim();
+  if (!text) {
+    return fallback;
+  }
+  return /%$/.test(text) ? text : parseFloat(text);
+}
+function pointPaintCoord(value, origin, size, fallback) {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : fallback;
+  }
+  if (typeof value === "string" && /%$/.test(value)) {
+    const percent = parseFloat(value);
+    return Number.isFinite(percent) ? origin + size * percent / 100 : fallback;
+  }
+  const parsed = parseFloat(value != null ? value : "");
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+function parsePointPaintOffset(value) {
+  const text = (value == null ? void 0 : value.trim()) || "0";
+  const parsed = parseFloat(text);
+  const offset = /%$/.test(text) ? parsed / 100 : parsed;
+  return Math.max(0, Math.min(1, Number.isFinite(offset) ? offset : 0));
+}
+function parsePointPaintStops(node) {
+  return Array.from(node.children || []).filter((child) => child.tagName.toLowerCase() === "stop").map((stop) => {
+    const color = getPointPresentationValue(stop, "stop-color") || "#000";
+    const opacity = getPointPresentationValue(stop, "stop-opacity");
+    const parsedOpacity = opacity === null ? NaN : parseFloat(opacity);
+    return {
+      offset: parsePointPaintOffset(stop.getAttribute("offset")),
+      color,
+      opacity: Number.isFinite(parsedOpacity) ? parsedOpacity : void 0
+    };
+  });
+}
+function collectPointPaints(defs) {
+  const paints = /* @__PURE__ */ new Map();
+  defs.forEach((node, id) => {
+    const tagName = node.tagName.toLowerCase();
+    const stops = parsePointPaintStops(node);
+    if (!stops.length) {
+      return;
+    }
+    if (tagName === "lineargradient") {
+      paints.set(id, {
+        type: "linearGradient",
+        x1: parsePointPaintLength(node.getAttribute("x1"), "0%"),
+        y1: parsePointPaintLength(node.getAttribute("y1"), "0%"),
+        x2: parsePointPaintLength(node.getAttribute("x2"), "100%"),
+        y2: parsePointPaintLength(node.getAttribute("y2"), "0%"),
+        stops
+      });
+    } else if (tagName === "radialgradient") {
+      paints.set(id, {
+        type: "radialGradient",
+        cx: parsePointPaintLength(node.getAttribute("cx"), "50%"),
+        cy: parsePointPaintLength(node.getAttribute("cy"), "50%"),
+        r: parsePointPaintLength(node.getAttribute("r"), "50%"),
+        fx: parsePointPaintLength(node.getAttribute("fx"), "50%"),
+        fy: parsePointPaintLength(node.getAttribute("fy"), "50%"),
+        fr: parsePointPaintLength(node.getAttribute("fr"), 0),
+        stops
+      });
+    }
+  });
+  return paints;
+}
+function parseCustomPointNode(node, fallbackBox, defs, matrix = IDENTITY_POINT_MATRIX, inheritedStyle = {}, seen = /* @__PURE__ */ new Set()) {
+  const tagName = node.tagName.toLowerCase();
+  const children = Array.from(node.children || []);
+  const style = parsePointStyle(node, inheritedStyle);
+  const transform = multiplyPointMatrix(
+    matrix,
+    parsePointTransform(node.getAttribute("transform"))
+  );
+  const shapeBase = { matrix: transform, style };
+  if (tagName === "defs") {
+    return [];
+  }
+  if (tagName === "svg" || tagName === "g" || tagName === "symbol") {
+    return children.reduce(
+      (shapes, child) => shapes.concat(
+        parseCustomPointNode(child, fallbackBox, defs, transform, style, seen)
+      ),
+      []
+    );
+  }
+  if (tagName === "use") {
+    const href = node.getAttribute("href") || node.getAttribute("xlink:href") || "";
+    const id = href.charAt(0) === "#" ? href.slice(1) : "";
+    const target = id && defs.get(id);
+    if (!target || seen.has(id)) {
+      return [];
+    }
+    const x = getSvgNumber(node, "x", 0);
+    const y = getSvgNumber(node, "y", 0);
+    const useTransform = multiplyPointMatrix(transform, [1, 0, 0, 1, x, y]);
+    seen.add(id);
+    const shapes = parseCustomPointNode(target, fallbackBox, defs, useTransform, style, seen);
+    seen.delete(id);
+    return shapes;
+  }
+  if (tagName === "polygon" || tagName === "polyline") {
+    const points = parseSvgPoints(node.getAttribute("points") || "");
+    return points.length ? [pointPattern_spreadValues({
+      type: tagName,
+      points,
+      box: getPointsBox(points)
+    }, shapeBase)] : [];
+  }
+  if (tagName === "circle") {
+    const cx = getSvgNumber(node, "cx", 0);
+    const cy = getSvgNumber(node, "cy", 0);
+    const r = getSvgNumber(node, "r", 0);
+    return r > 0 ? [pointPattern_spreadValues({
+      type: "circle",
+      cx,
+      cy,
+      r,
+      box: { x: cx - r, y: cy - r, w: r * 2, h: r * 2 }
+    }, shapeBase)] : [];
+  }
+  if (tagName === "ellipse") {
+    const cx = getSvgNumber(node, "cx", 0);
+    const cy = getSvgNumber(node, "cy", 0);
+    const rx = getSvgNumber(node, "rx", 0);
+    const ry = getSvgNumber(node, "ry", 0);
+    return rx > 0 && ry > 0 ? [pointPattern_spreadValues({
+      type: "ellipse",
+      cx,
+      cy,
+      rx,
+      ry,
+      box: { x: cx - rx, y: cy - ry, w: rx * 2, h: ry * 2 }
+    }, shapeBase)] : [];
+  }
+  if (tagName === "rect") {
+    const x = getSvgNumber(node, "x", 0);
+    const y = getSvgNumber(node, "y", 0);
+    const w = getSvgNumber(node, "width", 0);
+    const h = getSvgNumber(node, "height", 0);
+    return w > 0 && h > 0 ? [pointPattern_spreadValues({
+      type: "rect",
+      x,
+      y,
+      w,
+      h,
+      box: { x, y, w, h }
+    }, shapeBase)] : [];
+  }
+  if (tagName === "line") {
+    const x1 = getSvgNumber(node, "x1", 0);
+    const y1 = getSvgNumber(node, "y1", 0);
+    const x2 = getSvgNumber(node, "x2", 0);
+    const y2 = getSvgNumber(node, "y2", 0);
+    return [pointPattern_spreadValues({
+      type: "line",
+      x1,
+      y1,
+      x2,
+      y2,
+      box: getPointsBox([[x1, y1], [x2, y2]])
+    }, shapeBase)];
+  }
+  if (tagName === "path") {
+    const d = node.getAttribute("d") || "";
+    return d ? [pointPattern_spreadValues({
+      type: "path",
+      d,
+      box: fallbackBox
+    }, shapeBase)] : [];
+  }
+  return [];
+}
+function parseCustomPointPattern(pattern) {
+  if (!/^</.test(pattern)) {
+    return null;
+  }
+  if (customPointPatternCache.has(pattern)) {
+    return customPointPatternCache.get(pattern) || null;
+  }
+  let parsed = null;
+  try {
+    const doc = new win.DOMParser().parseFromString(sanitize(pattern), "image/svg+xml");
+    const root = doc.documentElement;
+    const fallbackBox = parseViewBox(root.getAttribute("viewBox")) || DEFAULT_POINT_VIEWBOX;
+    const defs = collectPointDefs(root);
+    const shapes = parseCustomPointNode(root, fallbackBox, defs);
+    if (shapes.length) {
+      parsed = {
+        shapes,
+        box: root.tagName.toLowerCase() === "svg" ? fallbackBox : mergePointBoxes(shapes.map((shape) => shape.box)),
+        paints: collectPointPaints(defs)
+      };
+    }
+  } catch (e) {
+    parsed = null;
+  }
+  customPointPatternCache.set(pattern, parsed);
+  return parsed;
+}
+function traceCustomPointShape(ctx, shape) {
+  if (shape.type === "polygon" || shape.type === "polyline") {
+    const [start, ...rest] = shape.points;
+    ctx.moveTo(start[0], start[1]);
+    rest.forEach(([x, y]) => ctx.lineTo(x, y));
+    shape.type === "polygon" && ctx.closePath();
+  } else if (shape.type === "circle") {
+    ctx.moveTo(shape.cx + shape.r, shape.cy);
+    ctx.arc(shape.cx, shape.cy, shape.r, 0, Math.PI * 2);
+  } else if (shape.type === "ellipse") {
+    ctx.moveTo(shape.cx + shape.rx, shape.cy);
+    ctx.ellipse(shape.cx, shape.cy, shape.rx, shape.ry, 0, 0, Math.PI * 2);
+  } else if (shape.type === "rect") {
+    ctx.rect(shape.x, shape.y, shape.w, shape.h);
+  } else if (shape.type === "line") {
+    ctx.moveTo(shape.x1, shape.y1);
+    ctx.lineTo(shape.x2, shape.y2);
+  }
+}
+function getCustomPointPaintId(value) {
+  const match = value == null ? void 0 : value.match(/^url\(#([^)]+)\)$/);
+  return (match == null ? void 0 : match[1]) || null;
+}
+function createCustomPointPaint(ctx, paint, box) {
+  const { x, y, w, h } = box;
+  const gradient = paint.type === "linearGradient" ? ctx.createLinearGradient(
+    pointPaintCoord(paint.x1, x, w, x),
+    pointPaintCoord(paint.y1, y, h, y),
+    pointPaintCoord(paint.x2, x, w, x + w),
+    pointPaintCoord(paint.y2, y, h, y)
+  ) : ctx.createRadialGradient(
+    pointPaintCoord(paint.fx, x, w, x + w / 2),
+    pointPaintCoord(paint.fy, y, h, y + h / 2),
+    pointPaintCoord(paint.fr, x, Math.max(w, h), 0),
+    pointPaintCoord(paint.cx, x, w, x + w / 2),
+    pointPaintCoord(paint.cy, y, h, y + h / 2),
+    Math.max(0.01, pointPaintCoord(paint.r, 0, Math.max(w, h), Math.max(w, h) / 2))
+  );
+  paint.stops.forEach(({ offset, color, opacity }) => {
+    gradient.addColorStop(offset, opacity === void 0 ? color : withOpacity(color, opacity));
+  });
+  return gradient;
+}
+function getCustomPointDrawStyle(ctx, base, shapeStyle, paints, box) {
+  const style = pointPattern_spreadValues({}, base || {});
+  if (shapeStyle.fill !== void 0) {
+    if (shapeStyle.fill === null) {
+      delete style.fill;
+    } else if (getCustomPointPaintId(shapeStyle.fill)) {
+      const paint = paints.get(getCustomPointPaintId(shapeStyle.fill));
+      paint && (style.fill = createCustomPointPaint(ctx, paint, box));
+    } else if (!/^url\(/.test(shapeStyle.fill)) {
+      style.fill = shapeStyle.fill;
+    }
+  }
+  if (shapeStyle.stroke !== void 0) {
+    if (shapeStyle.stroke === null) {
+      delete style.stroke;
+    } else if (getCustomPointPaintId(shapeStyle.stroke)) {
+      const paint = paints.get(getCustomPointPaintId(shapeStyle.stroke));
+      paint && (style.stroke = createCustomPointPaint(ctx, paint, box));
+    } else if (!/^url\(/.test(shapeStyle.stroke)) {
+      style.stroke = shapeStyle.stroke;
+    }
+  }
+  shapeStyle.lineWidth !== void 0 && (style.lineWidth = shapeStyle.lineWidth);
+  return {
+    style,
+    shouldFill: shapeStyle.fill !== null && (!style.stroke || style.fill !== void 0),
+    shouldStroke: shapeStyle.stroke !== null && style.stroke !== void 0,
+    alpha: shapeStyle.alpha
+  };
+}
+function drawPointPattern(painter, pattern, x, y, r, style, baseR = r) {
+  if (isBuiltinPointType(pattern)) {
+    painter.point(pattern, x, y, r, style);
+    return;
+  }
+  const parsed = parseCustomPointPattern(pattern);
+  if (!parsed || r <= 0) {
+    painter.point("circle", x, y, r, style);
+    return;
+  }
+  painter.withState((ctx) => {
+    const { box, paints, shapes } = parsed;
+    const scale = baseR > 0 ? r / baseR : 1;
+    const drawShape = (shape) => {
+      const {
+        style: drawStyle,
+        shouldFill,
+        shouldStroke,
+        alpha
+      } = getCustomPointDrawStyle(ctx, style, shape.style, paints, box);
+      ctx.save();
+      painter.applyStyle(drawStyle);
+      alpha !== void 0 && (ctx.globalAlpha *= alpha);
+      ctx.transform(...shape.matrix);
+      ctx.beginPath();
+      if (shape.type === "path") {
+        if (win.Path2D) {
+          const path = shape.path2D || (shape.path2D = new win.Path2D(shape.d));
+          shouldFill && ctx.fill(path);
+          shouldStroke && ctx.stroke(path);
+        }
+      } else {
+        traceCustomPointShape(ctx, shape);
+        shouldFill && ctx.fill();
+        shouldStroke && ctx.stroke();
+      }
+      ctx.restore();
+    };
+    ctx.translate(
+      x - (box.x + box.w / 2) * scale,
+      y - (box.y + box.h / 2) * scale
+    );
+    ctx.scale(scale, scale);
+    shapes.forEach(drawShape);
+  });
+}
+
+;// ./src/canvas/CanvasRenderer.ts
+var CanvasRenderer_defProp = Object.defineProperty;
+var CanvasRenderer_defProps = Object.defineProperties;
+var CanvasRenderer_getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var CanvasRenderer_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var CanvasRenderer_hasOwnProp = Object.prototype.hasOwnProperty;
+var CanvasRenderer_propIsEnum = Object.prototype.propertyIsEnumerable;
+var CanvasRenderer_defNormalProp = (obj, key, value) => key in obj ? CanvasRenderer_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var CanvasRenderer_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (CanvasRenderer_hasOwnProp.call(b, prop))
+      CanvasRenderer_defNormalProp(a, prop, b[prop]);
+  if (CanvasRenderer_getOwnPropSymbols)
+    for (var prop of CanvasRenderer_getOwnPropSymbols(b)) {
+      if (CanvasRenderer_propIsEnum.call(b, prop))
+        CanvasRenderer_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var CanvasRenderer_spreadProps = (a, b) => CanvasRenderer_defProps(a, CanvasRenderer_getOwnPropDescs(b));
+var CanvasRenderer_publicField = (obj, key, value) => CanvasRenderer_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const RENDERER_GROUPED_TYPE_FILTERS = [
+  isCanvasAreaType,
+  isCanvasBarType,
+  isCanvasPointType,
+  isCanvasCandlestickType
+];
+const MAX_BATCHED_CIRCLE_POINTS = 1e3;
+const canvasFocusLookupCache = /* @__PURE__ */ new WeakMap();
+function applyCssMatrixTransform(ctx, transform) {
+  if (!transform || transform === "none") {
+    return;
+  }
+  const matrix = transform.match(/^matrix\(([^)]+)\)$/);
+  const matrix3d = transform.match(/^matrix3d\(([^)]+)\)$/);
+  if (matrix) {
+    const values = matrix[1].split(",").map((value) => Number(value.trim()));
+    values.length === 6 && values.every(Number.isFinite) && ctx.transform(values[0], values[1], values[2], values[3], values[4], values[5]);
+  } else if (matrix3d) {
+    const values = matrix3d[1].split(",").map((value) => Number(value.trim()));
+    values.length === 16 && values.every(Number.isFinite) && ctx.transform(values[0], values[1], values[4], values[5], values[12], values[13]);
+  }
+}
+function getPreservedAspectRatioRect(image, width, height) {
+  const imageWidth = image.naturalWidth || image.width;
+  const imageHeight = image.naturalHeight || image.height;
+  if (!imageWidth || !imageHeight || !width || !height) {
+    return { x: 0, y: 0, w: width, h: height };
+  }
+  const scale = Math.min(width / imageWidth, height / imageHeight);
+  const w = imageWidth * scale;
+  const h = imageHeight * scale;
+  return {
+    x: (width - w) / 2,
+    y: (height - h) / 2,
+    w,
+    h
+  };
+}
+function getBackgroundImageOffset($$) {
+  const { state } = $$;
+  return state.customType || state.hasTreemap ? { x: 0, y: 0 } : {
+    x: asHalfPixel(state.margin.left),
+    y: asHalfPixel(state.margin.top)
+  };
+}
+function drawCanvasLine($$, target, indices, painter, isSub = false) {
+  painter.strokePath((ctx) => {
+    generateDrawLinePath($$, indices, isSub, ctx)(target);
+  }, { lineDash: [] });
+}
+function drawCanvasArea($$, target, indices, painter, isSub = false) {
+  painter.fillPath((ctx) => {
+    generateDrawAreaPath($$, indices, isSub, ctx)(target);
+  });
+}
+function getVisibleCanvasTarget($$, target) {
+  const range = getCanvasTargetVisibleRange($$, target);
+  return range.start === 0 && range.end === target.values.length ? target : CanvasRenderer_spreadProps(CanvasRenderer_spreadValues({}, target), {
+    values: target.values.slice(range.start, range.end)
+  });
+}
+function getFocusedCanvasDatum(focusData, d) {
+  if (!(focusData == null ? void 0 : focusData.length) || !(d == null ? void 0 : d.id)) {
+    return null;
+  }
+  let lookup = canvasFocusLookupCache.get(focusData);
+  if (!lookup) {
+    lookup = /* @__PURE__ */ new Map();
+    for (const focus of focusData) {
+      if (!(focus == null ? void 0 : focus.id)) {
+        continue;
+      }
+      const targetKey = `${focus.id}:*`;
+      if (!lookup.has(targetKey)) {
+        lookup.set(targetKey, focus);
+      }
+      if ("index" in focus) {
+        lookup.set(`${focus.id}:${focus.index}`, focus);
+      }
+    }
+    canvasFocusLookupCache.set(focusData, lookup);
+  }
+  return "index" in d ? lookup.get(`${d.id}:${d.index}`) || null : lookup.get(`${d.id}:*`) || null;
+}
+function getCanvasOverColor($$, d) {
+  const onover = $$.config.color_onover;
+  if (!onover || !d) {
+    return null;
+  }
+  if (isObject(onover)) {
+    return d.id in onover ? onover[d.id] : null;
+  } else if (isString(onover)) {
+    return onover;
+  } else if (isFunction(onover)) {
+    return onover.call($$.api, d);
+  }
+  return null;
+}
+function getCanvasRenderColor($$, d, focusData) {
+  const focus = getFocusedCanvasDatum(focusData, d);
+  const overColor = getCanvasOverColor($$, focus);
+  return overColor || $$.color(d.id);
+}
+function getCanvasTargetId(d) {
+  var _a;
+  return (d == null ? void 0 : d.id) || ((_a = d == null ? void 0 : d.data) == null ? void 0 : _a.id);
+}
+function isCanvasTargetFocused($$, d) {
+  var _a;
+  const id = getCanvasTargetId(d);
+  return !!id && ((_a = $$.state.focusedTargetIds) == null ? void 0 : _a.has(id));
+}
+function getCanvasTargetFocusOpacity($$, d) {
+  var _a;
+  const id = getCanvasTargetId(d);
+  return id && ((_a = $$.state.defocusedTargetIds) == null ? void 0 : _a.has(id)) ? $$.canvasTheme.style.shape.targetDefocusedOpacity : 1;
+}
+function getCanvasAreaBounds($$, target, indices, isSub = false) {
+  var _a;
+  const getPoints = (_a = $$.generateGetAreaPoints) == null ? void 0 : _a.call($$, indices, isSub);
+  if (!getPoints) {
+    return null;
+  }
+  const range = getCanvasTargetVisibleRange($$, target);
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (let i = range.start; i < range.end; i++) {
+    const d = target.values[i];
+    if (!hasCanvasDrawableValue($$, d)) {
+      continue;
+    }
+    getPoints(d, i).forEach(([x, y]) => {
+      if (!isFiniteCanvasCoordinate(x, y)) {
+        return;
+      }
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    });
+  }
+  return Number.isFinite(minX) && Number.isFinite(minY) ? { x: minX, y: minY, w: maxX - minX, h: maxY - minY } : null;
+}
+function getLinearGradientCoord(value, origin, size) {
+  return origin + size * (isNumber(value) ? value : 0);
+}
+function getCanvasLinearGradientFill($$, ctx, target, shape, rect, baseColor) {
+  const option = $$.config[`${shape}_linearGradient`];
+  if (!option || !rect || !rect.w || !rect.h) {
+    return baseColor;
+  }
+  const isRotated = $$.config.axis_rotated;
+  const gradientOption = typeof option === "object" ? option : {};
+  const x = gradientOption.x || (isRotated ? [1, 0] : [0, 0]);
+  const y = gradientOption.y || (isRotated ? [0, 0] : [0, 1]);
+  const stops = Array.isArray(gradientOption.stops) ? gradientOption.stops : [[0, baseColor, 1], [1, baseColor, 0]];
+  const gradient = ctx.createLinearGradient(
+    getLinearGradientCoord(x[0], rect.x, rect.w),
+    getLinearGradientCoord(y[0], rect.y, rect.h),
+    getLinearGradientCoord(x[1], rect.x, rect.w),
+    getLinearGradientCoord(y[1], rect.y, rect.h)
+  );
+  stops.forEach(([offset, stopColor, stopOpacity]) => {
+    const colorValue = isFunction(stopColor) ? stopColor.call($$.api, target.id) : stopColor;
+    const color = String(colorValue || baseColor);
+    const numericOffset = Number(offset);
+    const parsedOffset = Number.isFinite(numericOffset) ? Math.max(0, Math.min(1, numericOffset)) : 0;
+    gradient.addColorStop(parsedOffset, withOpacity(color, stopOpacity));
+  });
+  return gradient;
+}
+function isCanvasRenderableTarget($$, target) {
+  return isCanvasTargetSupported($$, target, RENDERER_GROUPED_TYPE_FILTERS);
+}
+function getPointOpacity($$, target) {
+  const opacity = $$.config.point_opacity;
+  return Number.isFinite(opacity) ? opacity : isCanvasScatterType($$, target) || isCanvasBubbleType($$, target) ? 0.5 : 1;
+}
+function getTargetPointRadius($$, target, d) {
+  var _a, _b;
+  const pointR = $$.config.point_r;
+  return isCanvasBubbleType($$, target) || isFunction(pointR) ? (_b = (_a = $$.pointR) == null ? void 0 : _a.call($$, d)) != null ? _b : 2.5 : pointR;
+}
+function shouldCullDenseScatterPoints($$, target, pointType, hasGradient) {
+  return !hasGradient && pointType === "circle" && isCanvasScatterType($$, target) && !isFunction($$.config.point_r) && target.values.length > DENSE_SCATTER_POINT_CULL_THRESHOLD;
+}
+function getBarConnectLineType($$, id) {
+  const { bar_connectLine: connectLine } = $$.config;
+  const type = isObject(connectLine) ? connectLine[id] : connectLine;
+  return /^(start|end)-(start|end)$/.test(type) ? type : null;
+}
+function getBarConnectLineBox($$, points, radiusInfo) {
+  const { indexX, indexY, pos } = radiusInfo;
+  return $$.config.axis_rotated ? {
+    x: points[0][indexX],
+    y: points[0][indexY],
+    width: points[0][indexX] - pos,
+    height: points[2][indexY] - points[0][indexY]
+  } : {
+    x: points[0][indexX],
+    y: pos,
+    width: points[2][indexX] - points[0][indexX],
+    height: points[3][indexY] - pos
+  };
+}
+function drawBarConnectLine($$, painter, type, boxes, alpha = 1) {
+  if (boxes.length < 2) {
+    return;
+  }
+  const isRotated = $$.config.axis_rotated;
+  const isStart = /^start-(start|end)$/.test(type);
+  const isEnd = /^end-(start|end)$/.test(type);
+  const isToEnd = /\w+-end$/.test(type);
+  const isToStart = /\w+-start$/.test(type);
+  const getMovePoint = (box) => ({
+    x: isRotated ? isEnd ? box.x - box.width : box.x : box.x + box.width,
+    y: isRotated ? box.y + box.height : isStart ? box.y + box.height : box.y
+  });
+  const getLinePoint = (box) => ({
+    x: isRotated ? box.x - (isToEnd ? box.width : 0) : box.x,
+    y: isRotated ? box.y : box.y + (isToStart ? box.height : 0)
+  });
+  let movePoint = getMovePoint(boxes[0]);
+  painter.strokePath(() => {
+    for (let i = 1; i < boxes.length; i++) {
+      const linePoint = getLinePoint(boxes[i]);
+      painter.traceLine(movePoint.x, movePoint.y, linePoint.x, linePoint.y);
+      if (i < boxes.length - 1) {
+        movePoint = getMovePoint(boxes[i]);
+      }
+    }
+  }, {
+    alpha,
+    stroke: $$.canvasTheme.style.shape.barConnectLineColor,
+    lineWidth: $$.canvasTheme.style.shape.barConnectLineWidth,
+    lineDash: []
+  });
+}
+function getPointType($$, target) {
+  var _a;
+  const { config } = $$;
+  if (isCanvasBubbleType($$, target)) {
+    return "circle";
+  }
+  const targetIds = ((_a = $$.mapToIds) == null ? void 0 : _a.call($$, $$.data.targets)) || [];
+  const pattern = Array.isArray(config.point_pattern) && config.point_pattern.length ? config.point_pattern : [config.point_type];
+  const index = Math.max(0, targetIds.indexOf(target.id));
+  const type = pattern[index % pattern.length];
+  return /^rect(angle)?$/i.test(type) || type === "rectangle" ? "rectangle" : type || "circle";
+}
+function getPointFillStyle($$, ctx, d, x, y, r, fallback) {
+  const option = $$.config.point_radialGradient;
+  if (!option || !r) {
+    return fallback;
+  }
+  const gradientOption = isObject(option) ? option : {};
+  const cx = isNumber(gradientOption.cx) ? gradientOption.cx : 0.3;
+  const cy = isNumber(gradientOption.cy) ? gradientOption.cy : 0.3;
+  const radius = isNumber(gradientOption.r) ? gradientOption.r : 0.7;
+  const stops = Array.isArray(gradientOption.stops) ? gradientOption.stops : [[0.1, null, 1], [0.9, null, 0]];
+  const gradientX = x + (cx - 0.5) * r * 2;
+  const gradientY = y + (cy - 0.5) * r * 2;
+  const gradient = ctx.createRadialGradient(
+    gradientX,
+    gradientY,
+    0,
+    gradientX,
+    gradientY,
+    Math.max(1, r * radius * 2)
+  );
+  stops.forEach(([offset, stopColor, stopOpacity]) => {
+    let color = isFunction(stopColor) ? stopColor.bind($$.api)(d.id) : stopColor;
+    if (!color) {
+      color = fallback;
+    }
+    const numericOffset = Number(offset);
+    const parsedOffset = Number.isFinite(numericOffset) ? Math.max(0, Math.min(1, numericOffset)) : 0;
+    gradient.addColorStop(parsedOffset, withOpacity(color, stopOpacity));
+  });
+  return gradient;
+}
+function getCandlestickColor($$, d, value) {
+  const downColor = $$.config.candlestick_color_down;
+  const color = (value == null ? void 0 : value._isUp) ? $$.color(d) : downColor && typeof downColor === "object" ? downColor[d.id] : downColor;
+  return color || $$.color(d);
+}
+function shouldDrawPoints($$, target) {
+  return $$.shouldDrawPointsForLine ? $$.shouldDrawPointsForLine(target) : true;
+}
+function isSameDash(a, b) {
+  return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+function drawCanvasLineWithDataRegions($$, target, painter) {
+  const { config, scale } = $$;
+  const x = scale.zoom || scale.x;
+  const y = $$.getYScaleById(target.id);
+  const rawValues = config.line_connectNull ? $$.filterRemoveNull(target.values) : target.values;
+  let values = $$.isAreaRangeType(target) ? rawValues.map((d) => CanvasRenderer_spreadProps(CanvasRenderer_spreadValues({}, d), { value: $$.getRangedData(d, "mid") })) : rawValues;
+  if ($$.isStepType(target)) {
+    values = $$.convertValuesToStep(values);
+  }
+  const segments = getLineRegionSegments($$, values, x, y, config.data_regions[target.id]);
+  let currentDash = null;
+  let currentPoints = [];
+  const flush = () => {
+    if (currentPoints.length < 2 || !currentDash) {
+      currentPoints = [];
+      return;
+    }
+    painter.strokePath((ctx) => {
+      const [start, ...rest] = currentPoints;
+      ctx.moveTo(start[0], start[1]);
+      rest.forEach((point) => {
+        ctx.lineTo(point[0], point[1]);
+      });
+    }, { lineDash: currentDash });
+    currentPoints = [];
+  };
+  const appendSegment = (start, end, dash) => {
+    if (!currentDash || !isSameDash(currentDash, dash)) {
+      flush();
+      currentDash = dash;
+      currentPoints = [start, end];
+    } else {
+      currentPoints.push(end);
+    }
+  };
+  for (const { start, end, dash, isBreak } of segments) {
+    if (isBreak || !start || !end || !dash) {
+      flush();
+      currentDash = null;
+      continue;
+    }
+    if (!isFiniteCanvasCoordinate(start[0], start[1]) || !isFiniteCanvasCoordinate(end[0], end[1])) {
+      flush();
+      currentDash = null;
+      continue;
+    }
+    appendSegment(start, end, dash);
+  }
+  flush();
+}
+class CanvasRenderer {
+  /**
+   * Constructor.
+   * @param {CanvasEngine} engine Canvas drawing engine
+   * @param {CanvasTheme} theme Canvas theme resolver
+   * @private
+   */
+  constructor(engine, theme) {
+    CanvasRenderer_publicField(this, "engine", engine);
+    CanvasRenderer_publicField(this, "theme", theme);
+    CanvasRenderer_publicField(this, "painter");
+    CanvasRenderer_publicField(this, "labelImageCache", /* @__PURE__ */ new Map());
+    CanvasRenderer_publicField(this, "backgroundImageCache", /* @__PURE__ */ new Map());
+    CanvasRenderer_publicField(this, "backgroundClassStyleCache", /* @__PURE__ */ new Map());
+    this.painter = new CanvasPainter(engine.ctx);
+  }
+  /**
+   * Get the drawing context for the main canvas.
+   * @returns {CanvasRenderingContext2D} Canvas drawing context
+   * @private
+   */
+  get ctx() {
+    return this.painter.context;
+  }
+  /**
+   * Run renderer draw calls on another canvas context.
+   * @param {CanvasRenderingContext2D} ctx Canvas drawing context
+   * @param {function} draw Draw callback
+   * @private
+   */
+  withContext(ctx, draw) {
+    this.painter.withContext(ctx, draw);
+  }
+  /**
+   * Release renderer caches that can hold chart or DOM references.
+   * @private
+   */
+  destroy() {
+    const clearImageHandler = (entry) => {
+      entry.image.onload = null;
+      entry.image.onerror = null;
+    };
+    this.labelImageCache.forEach(clearImageHandler);
+    this.backgroundImageCache.forEach(clearImageHandler);
+    this.labelImageCache.clear();
+    this.backgroundImageCache.clear();
+    this.backgroundClassStyleCache.clear();
+  }
+  /**
+   * Get cached image for data label.
+   * @param {string} url Image URL
+   * @param {object} $$ ChartInternal instance
+   * @returns {object|null} Cached image entry
+   * @private
+   */
+  getLabelImage(url, $$) {
+    if (!url || !win.Image) {
+      return null;
+    }
+    let entry = this.labelImageCache.get(url);
+    if (!entry) {
+      const nextEntry = {
+        image: new win.Image(),
+        loaded: false,
+        loading: true
+      };
+      entry = nextEntry;
+      this.labelImageCache.set(url, entry);
+      nextEntry.image.onload = () => {
+        var _a;
+        nextEntry.loaded = true;
+        nextEntry.loading = false;
+        (_a = $$.redraw) == null ? void 0 : _a.call($$);
+      };
+      nextEntry.image.onerror = () => {
+        nextEntry.loaded = false;
+        nextEntry.loading = false;
+      };
+      nextEntry.image.src = url;
+    }
+    return entry;
+  }
+  /**
+   * Get cached chart background image.
+   * @param {string} url Image URL
+   * @param {object} $$ ChartInternal instance
+   * @returns {object|null} Cached image entry
+   * @private
+   */
+  getBackgroundImage(url, $$) {
+    if (!url || !win.Image) {
+      return null;
+    }
+    let entry = this.backgroundImageCache.get(url);
+    if (!entry) {
+      const nextEntry = {
+        image: new win.Image(),
+        loaded: false,
+        loading: true
+      };
+      entry = nextEntry;
+      this.backgroundImageCache.set(url, entry);
+      nextEntry.image.onload = () => {
+        var _a;
+        nextEntry.loaded = true;
+        nextEntry.loading = false;
+        (_a = $$.renderCanvasFrame) == null ? void 0 : _a.call($$, void 0, null, false);
+      };
+      nextEntry.image.onerror = () => {
+        nextEntry.loaded = false;
+        nextEntry.loading = false;
+      };
+      nextEntry.image.src = url;
+    }
+    return entry;
+  }
+  /**
+   * Resolve background.class CSS values that canvas can reasonably mirror.
+   * @param {object} $$ ChartInternal instance
+   * @param {string} className Background class name
+   * @returns {object} Class style
+   * @private
+   */
+  getBackgroundClassStyle($$, className) {
+    if (!className || !win.document) {
+      return {};
+    }
+    const cached = this.backgroundClassStyleCache.get(className);
+    if (cached) {
+      return cached;
+    }
+    const probe = win.document.createElement("div");
+    probe.className = className;
+    probe.style.cssText = "position:absolute;visibility:hidden;pointer-events:none;width:1px;height:1px;";
+    $$.$el.chart.node().appendChild(probe);
+    const style = win.getComputedStyle(probe);
+    const opacity = parseFloat(style.opacity);
+    const result = {
+      opacity: Number.isFinite(opacity) ? opacity : void 0,
+      transform: style.transform || void 0
+    };
+    probe.remove();
+    this.backgroundClassStyleCache.set(className, result);
+    return result;
+  }
+  /**
+   * Draw configured chart background behind all canvas layers.
+   * @param {object} $$ ChartInternal instance
+   * @private
+   */
+  drawBackground($$) {
+    const bg = $$.config.background;
+    if (!(bg == null ? void 0 : bg.imgUrl) && !(bg == null ? void 0 : bg.color)) {
+      return;
+    }
+    const { ctx, painter } = this;
+    const { current, margin, width, height } = $$.state;
+    const classStyle = this.getBackgroundClassStyle($$, bg.class);
+    painter.withState(() => {
+      if (classStyle.opacity !== void 0) {
+        ctx.globalAlpha *= classStyle.opacity;
+      }
+      if (bg.imgUrl) {
+        const entry = this.getBackgroundImage(bg.imgUrl, $$);
+        if (entry == null ? void 0 : entry.loaded) {
+          const offset = getBackgroundImageOffset($$);
+          const rect = getPreservedAspectRatioRect(
+            entry.image,
+            current.width,
+            current.height
+          );
+          ctx.translate(offset.x, offset.y);
+          applyCssMatrixTransform(ctx, classStyle.transform);
+          ctx.drawImage(entry.image, rect.x, rect.y, rect.w, rect.h);
+        }
+      } else if (bg.color) {
+        applyCssMatrixTransform(ctx, classStyle.transform);
+        painter.fillRect({
+          x: margin.left,
+          y: margin.top,
+          w: width,
+          h: height
+        }, { fill: bg.color });
+      }
+    });
+  }
+  /**
+   * Draw data label image when loaded, or queue it for loading.
+   * @param {object} $$ ChartInternal instance
+   * @param {object} d Data row
+   * @param {string} text Label text
+   * @param {number} x Label x coordinate
+   * @param {number} y Label y coordinate
+   * @returns {object} Adjusted text position
+   * @private
+   */
+  drawLabelImage($$, d, text, x, y) {
+    const option = getLabelImageOption($$, d);
+    if (!(option == null ? void 0 : option.url)) {
+      return { x, y };
+    }
+    const url = getLabelImageUrl(option, d);
+    const position = getLabelImagePosition($$, option, text, x, y, d);
+    const entry = this.getLabelImage(url, $$);
+    if (entry == null ? void 0 : entry.loaded) {
+      this.ctx.drawImage(
+        entry.image,
+        position.x,
+        position.y,
+        option.width,
+        option.height
+      );
+    }
+    return {
+      x: position.textX,
+      y: position.textY
+    };
+  }
+  /**
+   * Draw a data label at a resolved canvas position.
+   * @param {object} $$ ChartInternal instance
+   * @param {object} d Data row
+   * @param {string} text Label text
+   * @param {number} x Label x coordinate
+   * @param {number} y Label y coordinate
+   * @private
+   */
+  drawDataLabel($$, d, text, x, y) {
+    const { painter, theme: { style } } = this;
+    ({ x, y } = this.drawLabelImage($$, d, text, x, y));
+    if ($$.config.data_labels.rotate) {
+      const position = getRotatedLabelPosition($$, d, x, y);
+      x = position.x;
+      y = position.y;
+      this.ctx.textAlign = position.textAlign;
+    }
+    this.ctx.fillStyle = getLabelColor($$, d, style.label.color);
+    drawLabelDecorations($$, painter, d, text, x, y);
+    painter.textLines(text, x, y, {
+      angle: $$.config.data_labels.rotate
+    });
+  }
+  /**
+   * Redraw focused point data labels over the hover overlay.
+   * @param {object} $$ ChartInternal instance
+   * @param {Array} selectedData Focused data rows
+   * @private
+   */
+  drawFocusLabels($$, selectedData) {
+    var _a;
+    if (!((_a = $$.hasDataLabel) == null ? void 0 : _a.call($$))) {
+      return;
+    }
+    const { ctx, theme: { style } } = this;
+    const rows = selectedData.filter(
+      (d) => d && hasCanvasDrawableValue($$, d) && isCanvasPointType($$, d) && isCanvasRenderableTarget($$, { id: d.id })
+    );
+    const texts = {
+      size: () => rows.length
+    };
+    if (!rows.length) {
+      return;
+    }
+    ctx.font = style.label.font;
+    rows.forEach((d) => {
+      const text = getLabelText($$, d);
+      let { x, y } = getRenderDataPoint($$, d);
+      if (!text) {
+        return;
+      }
+      ({ x, y } = getPointLabelAnchor($$, ctx, d, x, y));
+      x += getLabelPosition($$, d, "x", texts);
+      y += getLabelPosition($$, d, "y", texts);
+      if (!isFiniteCanvasCoordinate(x, y)) {
+        return;
+      }
+      this.drawDataLabel($$, d, text, x, y);
+    });
+  }
+  /**
+   * Draw all supported canvas shape layers.
+   * @param {object} $$ ChartInternal instance
+   * @param {object} shape Cached draw shape object
+   * @param {Array} focusData Focused data rows
+   * @private
+   */
+  draw($$, shape, focusData) {
+    var _a, _b, _c, _d, _e;
+    const exclusive = (_a = $$.getCanvasTypeParts) == null ? void 0 : _a.call($$).find((part) => part.exclusive);
+    if (exclusive) {
+      (_b = exclusive.draw) == null ? void 0 : _b.call($$, this, shape, focusData);
+      return;
+    }
+    if ($$.state.customType) {
+      (_e = (_d = (_c = $$.getCustomTypeParts()) == null ? void 0 : _c.canvas) == null ? void 0 : _d.draw) == null ? void 0 : _e.call($$, this);
+      return;
+    }
+    const { margin, width, height } = $$.state;
+    const drawLineLayers = () => {
+      if (!$$.config.area_front) {
+        this.drawAreas($$, shape, focusData);
+      }
+      this.drawLines($$, shape);
+      if ($$.config.area_front) {
+        this.drawAreas($$, shape, focusData);
+      }
+      this.drawCircles($$, shape, focusData);
+    };
+    const drawContent = () => {
+      var _a2, _b2;
+      if (!$$.config.bar_front) {
+        this.drawBars($$, shape, focusData);
+      }
+      this.drawCandlesticks($$, shape, focusData);
+      drawLineLayers();
+      if ($$.config.bar_front) {
+        this.drawBars($$, shape, focusData);
+      }
+      (_b2 = (_a2 = $$.getCanvasFeature) == null ? void 0 : _a2.call($$, "selection")) == null ? void 0 : _b2.draw.call($$, this, shape);
+      this.drawLabels($$, shape);
+    };
+    $$.config.clipPath === false ? drawContent() : this.painter.clipRect(
+      { x: margin.left, y: margin.top, w: width, h: height },
+      drawContent
+    );
+  }
+  /**
+   * Draw bar shapes on canvas.
+   * @param {object} $$ ChartInternal instance
+   * @param {object} shape Cached draw shape object
+   * @param {Array} focusData Focused data rows
+   * @private
+   */
+  drawBars($$, shape, focusData) {
+    const { ctx, painter, theme: { style } } = this;
+    const isBar = isCanvasBarType.bind(null, $$);
+    const isExpanded = getExpandedFocusMatcher($$, focusData, isCanvasBarType);
+    const targets = $$.filterTargetsToShow().filter(isBar).filter(isCanvasRenderableTarget.bind(null, $$));
+    const getPoints = $$.generateGetBarPoints(
+      getCanvasShapeIndices($$, shape, TYPE.BAR, isBar),
+      false
+    );
+    const { margin } = $$.state;
+    const getRadius = getBarRadiusResolver($$);
+    const stackingRadiusSet = getRadius ? getStackingBarRadiusSet($$) : /* @__PURE__ */ new Set();
+    if (!getPoints) {
+      return;
+    }
+    painter.withTranslation(margin.left, margin.top, () => {
+      var _a;
+      for (const target of targets) {
+        const range = getCanvasTargetVisibleRange($$, target);
+        const connectLineType = getBarConnectLineType($$, target.id);
+        const targetOpacity = getCanvasTargetFocusOpacity($$, target);
+        const connectLineBoxes = [];
+        const bars = [];
+        for (let i = range.start; i < range.end; i++) {
+          const d = target.values[i];
+          if (!hasCanvasDrawableValue($$, d)) {
+            continue;
+          }
+          const geometry = getCanvasBarGeometry($$, getPoints, d, i);
+          if (!geometry) {
+            continue;
+          }
+          const { points, rect } = geometry;
+          const radiusInfo = getBarRadiusInfo(
+            $$,
+            d,
+            points,
+            getRadius,
+            stackingRadiusSet,
+            (_a = $$.isStackingRadiusData) == null ? void 0 : _a.bind($$)
+          );
+          bars.push({ d, points, rect, radiusInfo });
+          if (connectLineType) {
+            connectLineBoxes.push(getBarConnectLineBox($$, points, radiusInfo));
+          }
+        }
+        if (connectLineType && style.shape.barConnectLineWidth > 0) {
+          drawBarConnectLine(
+            $$,
+            painter,
+            connectLineType,
+            connectLineBoxes,
+            targetOpacity
+          );
+        }
+        for (const { d, rect, radiusInfo } of bars) {
+          const overColor = getCanvasOverColor($$, getFocusedCanvasDatum(focusData, d));
+          const color = overColor || $$.color(target.id);
+          const fillAlpha = isExpanded(d) ? style.shape.barExpandedOpacity : style.shape.barOpacity;
+          const alpha = fillAlpha * targetOpacity;
+          ctx.fillStyle = overColor ? color : getCanvasLinearGradientFill($$, ctx, target, "bar", rect, color);
+          getRadius ? painter.fillRoundRect(
+            rect,
+            radiusInfo.corners,
+            { alpha }
+          ) : painter.fillRect(rect, { alpha });
+          if (style.shape.barLineWidth > 0) {
+            ctx.strokeStyle = style.shape.barStrokeColor;
+            ctx.lineWidth = style.shape.barLineWidth;
+            getRadius ? painter.strokeRoundRect(
+              rect,
+              radiusInfo.corners,
+              { alpha: style.shape.barOpacity * targetOpacity }
+            ) : painter.strokeRect(rect, {
+              alpha: style.shape.barOpacity * targetOpacity
+            });
+          }
+        }
+      }
+    });
+  }
+  /**
+   * Draw candlestick shapes on canvas.
+   * @param {object} $$ ChartInternal instance
+   * @param {object} shape Cached draw shape object
+   * @param {Array} focusData Focused data rows
+   * @private
+   */
+  drawCandlesticks($$, shape, focusData) {
+    var _a;
+    const { ctx, painter, theme: { style } } = this;
+    const isCandlestick = isCanvasCandlestickType.bind(null, $$);
+    const isExpanded = getExpandedFocusMatcher($$, focusData, isCanvasCandlestickType);
+    const targets = $$.filterTargetsToShow().filter(isCandlestick).filter(isCanvasRenderableTarget.bind(null, $$));
+    const getPoints = (_a = $$.generateGetCandlestickPoints) == null ? void 0 : _a.call(
+      $$,
+      getCanvasShapeIndices($$, shape, TYPE.CANDLESTICK, isCandlestick),
+      false
+    );
+    const { margin } = $$.state;
+    if (!getPoints) {
+      return;
+    }
+    painter.withTranslation(margin.left, margin.top, () => {
+      var _a2;
+      ctx.lineWidth = style.shape.candlestickLineWidth;
+      for (const target of targets) {
+        const range = getCanvasTargetVisibleRange($$, target);
+        const targetOpacity = getCanvasTargetFocusOpacity($$, target);
+        const lineWidth = style.shape.candlestickLineWidth;
+        const strokeColor = style.shape.candlestickStrokeColor || "#000";
+        for (let i = range.start; i < range.end; i++) {
+          const d = target.values[i];
+          const value = (_a2 = $$.getCandlestickData) == null ? void 0 : _a2.call($$, d);
+          if (!value) {
+            continue;
+          }
+          const geometry = getCanvasCandlestickGeometry($$, getPoints, d, i);
+          if (!geometry) {
+            continue;
+          }
+          const { body: rect, wickStart, wickEnd } = geometry;
+          ctx.fillStyle = getCanvasOverColor($$, getFocusedCanvasDatum(focusData, d)) || getCandlestickColor($$, d, value);
+          ctx.strokeStyle = strokeColor;
+          ctx.globalAlpha = targetOpacity;
+          lineWidth > 0 && painter.strokePath(() => {
+            painter.traceLine(wickStart[0], wickStart[1], wickEnd[0], wickEnd[1]);
+          });
+          painter.fillRect(rect, {
+            alpha: (isExpanded(d) ? style.shape.candlestickExpandedOpacity : 1) * targetOpacity
+          });
+          lineWidth > 0 && painter.strokeRect(rect, {
+            alpha: targetOpacity,
+            lineWidth,
+            stroke: strokeColor
+          });
+        }
+      }
+      ctx.globalAlpha = 1;
+    });
+  }
+  /**
+   * Check whether focus data requires a full redraw to reflect _expanded_ shape styles.
+   * @param {object} $$ ChartInternal instance
+   * @param {Array} selectedData Focused data rows
+   * @returns {boolean} Whether focused shapes need a main redraw
+   * @private
+   */
+  hasExpandedShapeFocus($$, selectedData) {
+    return !!(selectedData == null ? void 0 : selectedData.some(
+      (d) => d && (isCanvasBarType($$, d) || isCanvasCandlestickType($$, d))
+    ));
+  }
+  /**
+   * Draw line strokes on canvas.
+   * @param {object} $$ ChartInternal instance
+   * @param {object} shape Cached draw shape object
+   * @private
+   */
+  drawLines($$, shape) {
+    const { ctx, painter, theme: { style } } = this;
+    const isLine = isCanvasLineType.bind(null, $$);
+    const targets = $$.filterTargetsToShow().filter(isLine).filter(isCanvasRenderableTarget.bind(null, $$));
+    const indices = getCanvasShapeIndices($$, shape, TYPE.LINE, isLine);
+    const { margin } = $$.state;
+    if (!$$.generateGetLinePoints) {
+      return;
+    }
+    painter.withTranslation(margin.left, margin.top, () => {
+      var _a;
+      for (const target of targets) {
+        const visibleTarget = getVisibleCanvasTarget($$, target);
+        if (!visibleTarget.values.some(hasCanvasDrawableValue.bind(null, $$))) {
+          continue;
+        }
+        ctx.globalAlpha = getCanvasTargetFocusOpacity($$, target);
+        ctx.lineWidth = isCanvasTargetFocused($$, target) ? style.shape.lineFocusedWidth : style.shape.lineWidth;
+        ctx.strokeStyle = $$.color(target.id);
+        ((_a = $$.config.data_regions) == null ? void 0 : _a[visibleTarget.id]) ? drawCanvasLineWithDataRegions($$, visibleTarget, painter) : drawCanvasLine($$, visibleTarget, indices, painter);
+      }
+      ctx.globalAlpha = 1;
+    });
+  }
+  /**
+   * Draw area fills on canvas.
+   * @param {object} $$ ChartInternal instance
+   * @param {object} shape Cached draw shape object
+   * @param {Array} focusData Focused data rows
+   * @private
+   */
+  drawAreas($$, shape, focusData) {
+    const { ctx, painter, theme: { style } } = this;
+    const isArea = isCanvasAreaType.bind(null, $$);
+    const targets = $$.filterTargetsToShow().filter(isArea).filter(isCanvasRenderableTarget.bind(null, $$));
+    const indices = getCanvasShapeIndices($$, shape, TYPE.AREA, isArea);
+    const { margin } = $$.state;
+    if (!$$.generateGetAreaPoints) {
+      return;
+    }
+    painter.withTranslation(margin.left, margin.top, () => {
+      for (const target of targets) {
+        const visibleTarget = getVisibleCanvasTarget($$, target);
+        if (!visibleTarget.values.some(hasCanvasDrawableValue.bind(null, $$))) {
+          continue;
+        }
+        const color = getCanvasRenderColor($$, visibleTarget, focusData);
+        ctx.globalAlpha = style.shape.areaOpacity * getCanvasTargetFocusOpacity($$, target);
+        ctx.fillStyle = getCanvasLinearGradientFill(
+          $$,
+          ctx,
+          visibleTarget,
+          "area",
+          // Bounds computation walks visible rows, so skip it when no gradient is set.
+          // Use the original target so the range cache stays aligned with unsliced values.
+          $$.config.area_linearGradient ? getCanvasAreaBounds($$, target, indices) : null,
+          color
+        );
+        drawCanvasArea($$, visibleTarget, indices, painter);
+      }
+      ctx.globalAlpha = 1;
+    });
+  }
+  /**
+   * Draw point circles on canvas.
+   * @param {object} $$ ChartInternal instance
+   * @param {object} shape Cached draw shape object
+   * @param {Array} focusData Focused data rows
+   * @private
+   */
+  drawCircles($$, shape, focusData) {
+    var _a;
+    if (!$$.config.point_show || ((_a = $$.isPointFocusOnly) == null ? void 0 : _a.call($$))) {
+      return;
+    }
+    const { ctx, painter, theme: { style } } = this;
+    const { cx, cy } = shape.pos;
+    const { margin } = $$.state;
+    const isExpanded = getExpandedFocusMatcher($$, focusData, isCanvasPointType);
+    const hasExpandedFocus = !!(focusData == null ? void 0 : focusData.some((d) => d && isCanvasPointType($$, d)));
+    if (!cx || !cy) {
+      return;
+    }
+    painter.withTranslation(margin.left, margin.top, () => {
+      var _a2, _b, _c;
+      for (const target of $$.filterTargetsToShow()) {
+        if (!isCanvasPointType($$, target) || !isCanvasRenderableTarget($$, target) || isCanvasLineType($$, target) && !shouldDrawPoints($$, target)) {
+          continue;
+        }
+        const color = $$.color(target.id);
+        const pointType = getPointType($$, target);
+        const targetOpacity = getCanvasTargetFocusOpacity($$, target);
+        const hasGradient = !!$$.config.point_radialGradient;
+        const cullDenseScatter = shouldCullDenseScatterPoints(
+          $$,
+          target,
+          pointType,
+          hasGradient
+        );
+        const range = getCanvasTargetVisibleRange($$, target);
+        const visibleCount = range.end - range.start;
+        const occupancy = cullDenseScatter ? createCanvasPointOccupancyGrid(
+          $$.state.width,
+          $$.state.height,
+          getTargetPointRadius(
+            $$,
+            target,
+            target.values[range.start] || target.values[0]
+          )
+        ) : null;
+        const pointAlpha = getPointOpacity($$, target) * targetOpacity;
+        ctx.fillStyle = color;
+        ctx.globalAlpha = pointAlpha;
+        const pointFill = style.shape.pointFillColor || color;
+        const pointStroke = style.shape.pointStrokeColor || color;
+        const pointLineWidth = pointStroke ? (_a2 = style.shape.pointLineWidth) != null ? _a2 : 1 : 0;
+        const hasPointStroke = !!pointStroke && pointLineWidth > 0;
+        const mergeSameColorStroke = hasPointStroke && pointType === "circle" && isNumber(pointAlpha) && pointAlpha < 1 && pointFill === pointStroke;
+        if (!hasExpandedFocus && !hasGradient && pointType === "circle") {
+          ctx.fillStyle = pointFill;
+          if (hasPointStroke && !mergeSameColorStroke) {
+            ctx.strokeStyle = pointStroke;
+            ctx.lineWidth = pointLineWidth;
+          }
+          if (visibleCount > MAX_BATCHED_CIRCLE_POINTS) {
+            for (let i = range.start; i < range.end; i++) {
+              const d = target.values[i];
+              if (!hasCanvasDrawableValue($$, d)) {
+                continue;
+              }
+              const baseR = getTargetPointRadius($$, target, d);
+              const r = mergeSameColorStroke ? baseR + pointLineWidth / 2 : baseR;
+              const x = cx(d, i);
+              const y = cy(d, i);
+              if (!isFiniteCanvasCoordinate(x, y)) {
+                continue;
+              }
+              if (occupancy && !markCanvasPointOccupancy(occupancy, x, y)) {
+                continue;
+              }
+              ctx.beginPath();
+              ctx.arc(x, y, r, 0, Math.PI * 2);
+              ctx.fill();
+              hasPointStroke && !mergeSameColorStroke && ctx.stroke();
+            }
+          } else {
+            ctx.beginPath();
+            for (let i = range.start; i < range.end; i++) {
+              const d = target.values[i];
+              if (!hasCanvasDrawableValue($$, d)) {
+                continue;
+              }
+              const baseR = getTargetPointRadius($$, target, d);
+              const r = mergeSameColorStroke ? baseR + pointLineWidth / 2 : baseR;
+              const x = cx(d, i);
+              const y = cy(d, i);
+              if (!isFiniteCanvasCoordinate(x, y)) {
+                continue;
+              }
+              painter.traceCircle(x, y, r);
+            }
+            ctx.fill();
+            hasPointStroke && !mergeSameColorStroke && ctx.stroke();
+          }
+        } else {
+          for (let i = range.start; i < range.end; i++) {
+            const d = target.values[i];
+            if (!hasCanvasDrawableValue($$, d)) {
+              continue;
+            }
+            const expanded = isExpanded(d);
+            const baseR = getTargetPointRadius($$, target, d);
+            const r = expanded ? (_c = (_b = $$.pointExpandedR) == null ? void 0 : _b.call($$, d)) != null ? _c : baseR * 1.75 : baseR;
+            const x = cx(d, i);
+            const y = cy(d, i);
+            const overColor = getCanvasOverColor($$, d);
+            const renderColor = overColor || color;
+            const renderPointFill = style.shape.pointFillColor || renderColor;
+            const renderPointStroke = style.shape.pointStrokeColor || renderColor;
+            const fill = expanded ? overColor || style.focusPoint.fill || renderPointFill : renderPointFill;
+            const stroke = expanded ? overColor || style.focusPoint.stroke || renderColor : renderPointStroke;
+            const lineWidth = expanded ? style.focusPoint.lineWidth : pointLineWidth;
+            const alpha = getPointOpacity($$, d) * targetOpacity;
+            const hasStroke = !!stroke && (lineWidth != null ? lineWidth : 0) > 0;
+            const mergeSameColorStroke2 = pointType === "circle" && hasStroke && isNumber(alpha) && alpha < 1 && fill === stroke;
+            const drawR = mergeSameColorStroke2 ? r + (lineWidth || 0) / 2 : r;
+            if (!isFiniteCanvasCoordinate(x, y)) {
+              continue;
+            }
+            ctx.fillStyle = hasGradient ? getPointFillStyle($$, ctx, d, x, y, r, renderColor) : fill;
+            ctx.globalAlpha = alpha;
+            drawPointPattern(
+              painter,
+              pointType,
+              x,
+              y,
+              drawR,
+              hasStroke && !mergeSameColorStroke2 ? {
+                fill: ctx.fillStyle,
+                stroke,
+                lineWidth
+              } : void 0,
+              baseR
+            );
+          }
+        }
+      }
+    });
+  }
+  /**
+   * Draw data labels on canvas.
+   * @param {object} $$ ChartInternal instance
+   * @param {object} shape Cached draw shape object
+   * @private
+   */
+  drawLabels($$, shape) {
+    var _a;
+    if (!((_a = $$.hasDataLabel) == null ? void 0 : _a.call($$))) {
+      return;
+    }
+    const { ctx, painter, theme: { style } } = this;
+    const { margin } = $$.state;
+    const { cx, cy } = shape.pos;
+    const barPoints = shape.indices[TYPE.BAR] ? $$.generateGetBarPoints(shape.indices[TYPE.BAR], false) : null;
+    const candlestickPoints = $$.generateGetCandlestickPoints ? $$.generateGetCandlestickPoints(
+      getCanvasShapeIndices(
+        $$,
+        shape,
+        TYPE.CANDLESTICK,
+        isCanvasCandlestickType.bind(null, $$)
+      ),
+      false
+    ) : null;
+    const targets = $$.filterTargetsToShow().filter(
+      (target) => (isCanvasBarType($$, target) || isCanvasPointType($$, target) || isCanvasAreaType($$, target) || isCanvasCandlestickType($$, target)) && isCanvasRenderableTarget($$, target)
+    );
+    const targetRows = [];
+    let labelCount = 0;
+    targets.forEach((target) => {
+      const range = getCanvasTargetVisibleRange($$, target);
+      const data = $$.labelishData(target);
+      const rows = [];
+      for (let i = 0; i < data.length; i++) {
+        const d = data[i];
+        const text = getLabelText($$, d);
+        if (text && d.index >= range.start && d.index < range.end && hasCanvasDrawableValue($$, d)) {
+          rows.push({ d, text });
+        }
+      }
+      labelCount += rows.length;
+      rows.length && targetRows.push(rows);
+    });
+    const texts = {
+      size: () => labelCount
+    };
+    painter.withTranslation(margin.left, margin.top, () => {
+      ctx.font = style.label.font;
+      ctx.textAlign = "center";
+      targetRows.forEach((rows) => {
+        var _a2, _b;
+        for (const { d, text } of rows) {
+          let x;
+          let y;
+          if (isCanvasBarType($$, d) && barPoints) {
+            const geometry = getCanvasBarGeometry($$, barPoints, d, d.index);
+            if (!geometry) {
+              continue;
+            }
+            const { points, rect } = geometry;
+            const value = $$.getBaseValue(d);
+            const end = getRenderPoint($$, points[2]);
+            const isNegative = value < 0;
+            const labelHeight = getLabelDecorationBox(ctx, text, 0, 0).h;
+            x = $$.config.axis_rotated && !$$.config.data_labels.centered ? end[0] + (isNegative ? -4 : 4) : rect.x + rect.w / 2;
+            y = $$.config.data_labels.centered ? rect.y + rect.h / 2 : $$.config.axis_rotated ? rect.y + rect.h / 2 : end[1] + (isNegative ? labelHeight - 3 : -3);
+            ctx.textAlign = $$.config.axis_rotated && !$$.config.data_labels.centered ? isNegative ? "right" : "left" : "center";
+            ctx.textBaseline = $$.config.data_labels.centered ? "middle" : $$.config.axis_rotated ? "middle" : "alphabetic";
+          } else if (isCanvasCandlestickType($$, d) && candlestickPoints) {
+            const value = (_a2 = $$.getCandlestickData) == null ? void 0 : _a2.call($$, d);
+            const geometry = getCanvasCandlestickGeometry(
+              $$,
+              candlestickPoints,
+              d,
+              d.index
+            );
+            const isUp = value == null ? void 0 : value._isUp;
+            if (!geometry) {
+              continue;
+            }
+            const { wickEnd, wickStart } = geometry;
+            const isInverted = $$.config[`axis_${(_b = $$.axis) == null ? void 0 : _b.getId(d.id)}_inverted`];
+            x = $$.config.axis_rotated ? isUp ? wickEnd[0] + 4 : wickStart[0] - 4 : wickStart[0];
+            y = $$.config.axis_rotated ? wickStart[1] + 3 : isUp ? wickEnd[1] - 3 : wickStart[1] + 12;
+            !$$.config.axis_rotated && isInverted && (y += 15 * (isUp ? 1 : -1));
+            ctx.textAlign = $$.config.axis_rotated ? isUp ? "left" : "right" : "center";
+            ctx.textBaseline = "alphabetic";
+          } else if (cx && cy) {
+            ({ x, y } = getShapePoint(shape.pos, d, d.index));
+            ({ x, y } = getPointLabelAnchor($$, ctx, d, x, y));
+          }
+          x += getLabelPosition($$, d, "x", texts);
+          y += getLabelPosition($$, d, "y", texts);
+          if (!isFiniteCanvasCoordinate(x, y)) {
+            continue;
+          }
+          this.drawDataLabel($$, d, text, x, y);
+        }
+      });
+    });
+  }
+  /**
+   * Draw empty-data label on canvas.
+   * @param {object} $$ ChartInternal instance
+   * @private
+   */
+  drawEmptyLabel($$) {
+    const text = $$.config.data_empty_label_text;
+    const targetsToShow = $$.filterTargetsToShow();
+    if (!text || targetsToShow.length) {
+      return;
+    }
+    const { margin, width, height } = $$.state;
+    const { style } = this.theme;
+    this.painter.text(String(text), margin.left + width / 2, margin.top + height / 2, {
+      fill: style.emptyLabel.color,
+      font: style.emptyLabel.font,
+      textAlign: "center",
+      textBaseline: "middle"
+    });
+  }
+  /**
+   * Draw drag-zoom brush overlay.
+   * @param {object} $$ ChartInternal instance
+   * @param {number} start Start coordinate
+   * @param {number} end End coordinate
+   * @private
+   */
+  drawZoomBrush($$, start, end) {
+    const { axis_rotated } = $$.config;
+    const { height, margin, width } = $$.state;
+    const brushStart = Math.min(start, end);
+    const brushSize = Math.abs(end - start);
+    const rect = axis_rotated ? { x: margin.left, y: margin.top + brushStart, w: width, h: brushSize } : { x: margin.left + brushStart, y: margin.top, w: brushSize, h: height };
+    if (brushSize <= 0) {
+      return;
+    }
+    this.painter.fillRect(rect, {
+      fill: this.theme.style.zoomBrush.fill,
+      alpha: this.theme.style.zoomBrush.opacity
+    });
+  }
+  /**
+   * Draw focus grid and focused points on canvas.
+   * @param {object} $$ ChartInternal instance
+   * @param {Array} selectedData Focused data rows
+   * @private
+   */
+  drawFocus($$, selectedData) {
+    var _a, _b;
+    if (!(selectedData == null ? void 0 : selectedData.length) || $$.state.customType) {
+      return;
+    }
+    const { painter } = this;
+    const { style } = this.theme;
+    const { margin } = $$.state;
+    const focus = selectedData.find(
+      (d) => d && hasCanvasDrawableValue($$, d)
+    );
+    $$.config.subchart_grid_focus !== false && !isContinuousGridFocusEnabled($$) && ((_b = (_a = $$.getCanvasFeature) == null ? void 0 : _a.call($$, "subchart")) == null ? void 0 : _b.drawFocus.call($$, this, selectedData));
+    painter.withTranslation(margin.left, margin.top, () => {
+      if ($$.config.tooltip_show && $$.config.grid_focus_show !== false && !$$.config.axis_tooltip && focus) {
+        const { x, y } = getRenderDataPoint($$, focus);
+        const axisLineWidth = style.axis.lineWidth;
+        const isRotated = $$.config.axis_rotated;
+        const hasIndexCoordinate = Number.isFinite(isRotated ? y : x);
+        const hasValueCoordinate = Number.isFinite(isRotated ? x : y);
+        const crispEdgeX = (value) => painter.crisp(margin.left + value, axisLineWidth) - margin.left;
+        const crispEdgeY = (value) => painter.crisp(margin.top + value, axisLineWidth) - margin.top;
+        const isEdge = $$.config.grid_focus_edge && !$$.config.tooltip_grouped;
+        const continuousFocus = isContinuousGridFocusEnabled($$);
+        const focusEndX = continuousFocus ? $$.state.margin2.left - margin.left + $$.state.width2 : $$.state.width;
+        const focusEndY = continuousFocus ? $$.state.margin2.top - margin.top + $$.state.height2 : $$.state.height;
+        if (hasIndexCoordinate) {
+          painter.strokePath(() => {
+            var _a2, _b2;
+            if (isRotated) {
+              painter.traceLine(
+                crispEdgeX(0),
+                y,
+                isEdge && hasValueCoordinate ? x : crispEdgeX(focusEndX),
+                y
+              );
+              if (hasValueCoordinate && $$.config.grid_focus_y && !$$.config.tooltip_grouped) {
+                const isY2 = ((_a2 = $$.axis) == null ? void 0 : _a2.getId(focus.id)) === "y2";
+                painter.traceLine(
+                  x,
+                  isEdge && !isY2 ? y : crispEdgeY(0),
+                  x,
+                  isEdge && isY2 ? y : crispEdgeY($$.state.height)
+                );
+              }
+            } else {
+              painter.traceLine(
+                x,
+                isEdge && hasValueCoordinate ? y : crispEdgeY(0),
+                x,
+                crispEdgeY(focusEndY)
+              );
+              if (hasValueCoordinate && $$.config.grid_focus_y && !$$.config.tooltip_grouped) {
+                const isY2 = ((_b2 = $$.axis) == null ? void 0 : _b2.getId(focus.id)) === "y2";
+                painter.traceLine(
+                  isEdge && isY2 ? x : crispEdgeX(0),
+                  y,
+                  isEdge && !isY2 ? x : crispEdgeX($$.state.width),
+                  y
+                );
+              }
+            }
+          }, {
+            lineDash: style.focusGrid.dashArray,
+            lineWidth: style.focusGrid.lineWidth,
+            stroke: style.focusGrid.lineColor
+          });
+        }
+      }
+      if ($$.config.point_show && !$$.state.canvasFocusMainRedraw) {
+        selectedData.filter(
+          (d) => d && hasCanvasDrawableValue($$, d) && isCanvasPointType($$, d) && isCanvasRenderableTarget($$, { id: d.id })
+        ).forEach((d) => {
+          var _a2, _b2, _c, _d;
+          const pointType = getPointType($$, { id: d.id });
+          const { x, y } = getRenderDataPoint($$, d);
+          const baseR = (_b2 = (_a2 = $$.pointR) == null ? void 0 : _a2.call($$, d)) != null ? _b2 : 2.5;
+          const r = (_d = (_c = $$.pointExpandedR) == null ? void 0 : _c.call($$, d)) != null ? _d : baseR * 1.75;
+          const overColor = getCanvasOverColor($$, d);
+          const color = overColor || $$.color(d.id);
+          const fill = overColor || style.focusPoint.fill || style.shape.pointFillColor || color;
+          const stroke = overColor || style.focusPoint.stroke || color;
+          const lineWidth = style.focusPoint.lineWidth;
+          const alpha = getPointOpacity($$, d);
+          const hasStroke = !!stroke && (lineWidth != null ? lineWidth : 0) > 0;
+          const mergeSameColorStroke = pointType === "circle" && hasStroke && isNumber(alpha) && alpha < 1 && fill === stroke;
+          if (!isFiniteCanvasCoordinate(x, y)) {
+            return;
+          }
+          drawPointPattern(
+            painter,
+            pointType,
+            x,
+            y,
+            mergeSameColorStroke ? r + (lineWidth || 0) / 2 : r,
+            hasStroke && !mergeSameColorStroke ? { fill, lineWidth, stroke, alpha } : { fill, alpha },
+            baseR
+          );
+        });
+      }
+      this.drawFocusLabels($$, selectedData);
+    });
+  }
+}
+
+;// ./src/canvas/bullet.ts
+
+
+
+function drawAxis(painter, axis, style) {
+  const { scale, ticks, format, rotated, x, y } = axis;
+  const [start, end] = scale.range();
+  const tickSize = 6;
+  const textStyle = {
+    fill: style.axisColor,
+    font: style.axisFont,
+    textAlign: rotated ? "right" : "center",
+    textBaseline: rotated ? "middle" : "top"
+  };
+  painter.withTranslation(x, y, () => {
+    painter.strokePath(() => {
+      rotated ? painter.traceLine(0, start, 0, end) : painter.traceLine(start, 0, end, 0);
+      ticks.forEach((value) => {
+        const pos = scale(value);
+        rotated ? painter.traceLine(0, pos, -tickSize, pos) : painter.traceLine(pos, 0, pos, tickSize);
+      });
+    }, { stroke: style.axisColor, lineWidth: 1 });
+    ticks.forEach((value) => {
+      const pos = scale(value);
+      rotated ? painter.text(format(value), -(tickSize + 3), pos, textStyle) : painter.text(format(value), pos, tickSize + 3, textStyle);
+    });
+  });
+}
+const bulletTheme = {
+  section: "bullet",
+  probe({ probeIn, probeInNested, axisFont, toColor, toNumber }) {
+    const target = probeIn("bb-chart-bullets", "line", "bb-bullet-target", [
+      "stroke",
+      "stroke-width"
+    ]);
+    const title = probeIn("bb-chart-bullets", "text", "bb-bullet-title", ["fill", "font"]);
+    const range = probeIn("bb-chart-bullets", "rect", "bb-bullet-range", [
+      "--bb-bullet-range-min",
+      "--bb-bullet-range-max"
+    ]);
+    const axis = probeInNested("bb-chart-bullets", "bb-bullet-axis", "text", "", [
+      "fill",
+      "font"
+    ]);
+    return {
+      targetStroke: toColor(target.stroke, "#000"),
+      targetLineWidth: toNumber(target["stroke-width"], 2),
+      // lightness (%) of the first and the last default range band
+      rangeMin: toNumber(range["--bb-bullet-range-min"], 55),
+      rangeMax: toNumber(range["--bb-bullet-range-max"], 90),
+      axisFont: axis.font || axisFont,
+      axisColor: toColor(axis.fill, "#000"),
+      titleFont: title.font || axis.font || axisFont,
+      titleColor: toColor(title.fill, "#000")
+    };
+  },
+  selectors: {
+    ".bb-chart-bullets .bb-bullet-target": (style, { readColorValue, readNumberValue }) => ({
+      targetStroke: readColorValue(style, "stroke"),
+      targetLineWidth: readNumberValue(style, "stroke-width")
+    }),
+    ".bb-bullet-target": (style, { readColorValue, readNumberValue }) => ({
+      targetStroke: readColorValue(style, "stroke"),
+      targetLineWidth: readNumberValue(style, "stroke-width")
+    }),
+    ".bb-chart-bullets .bb-bullet-axis text": (style, { readColorValue, readFontValue }) => ({
+      axisColor: readColorValue(style, "fill"),
+      axisFont: readFontValue(style)
+    }),
+    ".bb-bullet-axis text": (style, { readColorValue, readFontValue }) => ({
+      axisColor: readColorValue(style, "fill"),
+      axisFont: readFontValue(style)
+    }),
+    ".bb-chart-bullets .bb-bullet-title": (style, { readColorValue, readFontValue }) => ({
+      titleColor: readColorValue(style, "fill"),
+      titleFont: readFontValue(style)
+    }),
+    ".bb-bullet-title": (style, { readColorValue, readFontValue }) => ({
+      titleColor: readColorValue(style, "fill"),
+      titleFont: readFontValue(style)
+    })
+  },
+  normalize(section, { toNumber }) {
+    section.targetLineWidth = toNumber(section.targetLineWidth, 2);
+  }
+};
+/* harmony default export */ var bullet = ({
+  theme: bulletTheme,
+  /**
+   * Draw bullet rows on canvas.
+   * Layout comes from the shared bullet row geometry, same as SVG rendering.
+   * @param {CanvasRenderer} renderer Canvas renderer
+   * @private
+   */
+  draw(renderer) {
+    const $$ = this;
+    const { ctx, painter, theme: { style } } = renderer;
+    const { bullet } = style;
+    const { config } = $$;
+    const layout = $$.getBulletLayout();
+    const lastValues = $$.hasDataLabel() && config.bullet_label_show ? new Map(
+      $$.data.targets.filter($$.isBulletType, $$).map((t) => [t.id, t.values[t.values.length - 1]])
+    ) : null;
+    const texts = { size: () => layout.rows.length };
+    for (const d of layout.rows) {
+      if (!$$.isTargetToShow(d.id)) {
+        continue;
+      }
+      const { area, offset, ranges, isDot, measure, color, targets, axis, label, title } = $$.getBulletRowGeometry(d, layout);
+      painter.withState(() => {
+        ctx.globalAlpha = getCanvasTargetFocusOpacity($$, d);
+        ctx.translate(area.left + offset.x, area.top + offset.y);
+        ranges.forEach(({ x, y, width, height, fill, t }) => {
+          painter.fillRect({ x, y, w: width, h: height }, {
+            fill: fill != null ? fill : `hsl(0, 0%, ${bullet.rangeMin + t * (bullet.rangeMax - bullet.rangeMin)}%)`
+          });
+        });
+        if (isDot) {
+          painter.fillPath(() => painter.traceCircle(measure.cx, measure.cy, measure.r), {
+            fill: color
+          });
+        } else {
+          painter.fillRect(
+            { x: measure.x, y: measure.y, w: measure.width, h: measure.height },
+            { fill: color }
+          );
+        }
+        targets.forEach((target) => {
+          painter.strokePath(
+            () => painter.traceLine(target.x1, target.y1, target.x2, target.y2),
+            { stroke: bullet.targetStroke, lineWidth: bullet.targetLineWidth }
+          );
+        });
+        axis && drawAxis(painter, axis, bullet);
+        title && painter.text(title.text, title.x, title.y, {
+          fill: bullet.titleColor,
+          font: bullet.titleFont,
+          textAlign: title.anchor === "end" ? "right" : "center",
+          textBaseline: title.anchor === "end" ? "middle" : "alphabetic"
+        });
+        const datum = lastValues == null ? void 0 : lastValues.get(d.id);
+        const text = datum && (isNumber(datum.value) || datum.value) ? getLabelText($$, datum) : null;
+        if (text) {
+          const centered = config.data_labels.centered;
+          const anchor = centered ? label.center : label;
+          const isRotated = config.bullet_rotated;
+          ctx.font = style.label.font;
+          ctx.textAlign = centered || isRotated ? "center" : "left";
+          ctx.textBaseline = centered || !isRotated ? "middle" : "alphabetic";
+          renderer.drawDataLabel(
+            $$,
+            datum,
+            text,
+            anchor.x + getLabelPosition($$, datum, "x", texts),
+            anchor.y + getLabelPosition($$, datum, "y", texts)
+          );
+        }
+      });
+    }
+  },
+  /**
+   * Add hit items of each visible bullet row: the measure and the target marker.
+   * Range bands are intentionally not hit targets, same as SVG.
+   * @param {HitDetector} detector Hit detector
+   * @private
+   */
+  hits(detector) {
+    const $$ = this;
+    const layout = $$.getBulletLayout();
+    const margin = 4;
+    layout.rows.forEach((d) => {
+      if (!$$.isTargetToShow(d.id)) {
+        return;
+      }
+      const { area, offset, isDot, measure, targets } = $$.getBulletRowGeometry(d, layout);
+      const left = area.left + offset.x;
+      const top = area.top + offset.y;
+      const rect = isDot ? {
+        x: measure.cx - measure.r,
+        y: measure.cy - measure.r,
+        w: measure.r * 2,
+        h: measure.r * 2
+      } : { x: measure.x, y: measure.y, w: measure.width, h: measure.height };
+      detector.addBar({ x: left + rect.x, y: top + rect.y, w: rect.w, h: rect.h, data: d });
+      targets.forEach((target) => {
+        detector.addBar({
+          x: left + Math.min(target.x1, target.x2) - margin,
+          y: top + Math.min(target.y1, target.y2) - margin,
+          w: Math.abs(target.x2 - target.x1) + margin * 2,
+          h: Math.abs(target.y2 - target.y1) + margin * 2,
+          data: d
+        });
+      });
+    });
+  }
+});
+
+;// ./src/canvas/flow.ts
+
+const CANVAS_FLOW_ANIMATION_MAX_VALUES = 1e5;
+function getCanvasAnimationTime() {
+  var _a, _b, _c;
+  return (_c = (_b = (_a = win.performance) == null ? void 0 : _a.now) == null ? void 0 : _b.call(_a)) != null ? _c : Date.now();
+}
+function isCanvasFlowDomain(domain, isLog = false) {
+  return Array.isArray(domain) && domain.length >= 2 && domain.every((v) => Number.isFinite(+v) && (!isLog || +v > 0));
+}
+function interpolateCanvasFlowDomain(start, end, ratio, isLog = false) {
+  return start.slice(0, 2).map((value, index) => {
+    const next = isLog ? Math.exp(Math.log(+value) + (Math.log(+end[index]) - Math.log(+value)) * ratio) : +value + (+end[index] - +value) * ratio;
+    return value instanceof Date || end[index] instanceof Date ? new Date(next) : next;
+  });
+}
+function getCanvasFlowValueCount($$) {
+  return $$.data.targets.reduce((sum, target) => sum + target.values.length, 0);
+}
+function syncCanvasFlowYDomains($$) {
+  const { scale } = $$;
+  const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+  ["y", "y2"].forEach((key) => {
+    var _a;
+    (_a = scale[key]) == null ? void 0 : _a.domain($$.getYDomain(targetsToShow, key));
+  });
+  $$.withSubchartTypeContext(() => {
+    var _a, _b;
+    (_a = scale.subY) == null ? void 0 : _a.domain($$.getYDomain(targetsToShow, "y"));
+    (_b = scale.subY2) == null ? void 0 : _b.domain($$.getYDomain(targetsToShow, "y2"));
+  });
+}
+/* harmony default export */ var flow = ({
+  /**
+   * Finish a pending canvas flow animation before accepting another flow mutation.
+   * @private
+   */
+  flushCanvasFlow() {
+    var _a, _b;
+    const { state } = this;
+    if (!state.canvasFlowFinish) {
+      return;
+    }
+    state.canvasFlowFrame !== null && ((_b = (_a = win).cancelAnimationFrame) == null ? void 0 : _b.call(_a, state.canvasFlowFrame));
+    state.canvasFlowFrame = null;
+    state.canvasFlowFinish();
+  },
+  /**
+   * Animate canvas flow by interpolating the x domain, then commit the final data window.
+   * @param {object} flow Flow metadata
+   * @returns {boolean} Whether animation was started
+   * @private
+   */
+  animateCanvasFlow(flow) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
+    const $$ = this;
+    const { axis, data, org, scale, state } = $$;
+    const { done = () => {
+    }, duration, length, orgDataCount } = flow;
+    const requestFrame = (_a = win.requestAnimationFrame) == null ? void 0 : _a.bind(win);
+    const isLog = !!((_b = axis.isLog) == null ? void 0 : _b.call(axis, "x"));
+    if (!requestFrame || !duration || !length || !orgDataCount || getCanvasFlowValueCount($$) > CANVAS_FLOW_ANIMATION_MAX_VALUES) {
+      return false;
+    }
+    const startDomain = scale.x.domain().slice(0, 2);
+    const startOrgDomain = (_d = (_c = org.xDomain) == null ? void 0 : _c.slice) == null ? void 0 : _d.call(_c);
+    const startSubXDomain = (_h = (_f = (_e = scale.subX) == null ? void 0 : _e.domain) == null ? void 0 : (_g = _f.call(_e)).slice) == null ? void 0 : _h.call(_g);
+    if (!isCanvasFlowDomain(startDomain, isLog)) {
+      return false;
+    }
+    const removed = data.targets.map((target) => target.values.splice(0, length));
+    $$.updateXDomain($$.filterTargetsToShow(data.targets), true, true);
+    const endDomain = scale.x.domain().slice(0, 2);
+    const endOrgDomain = (_j = (_i = org.xDomain) == null ? void 0 : _i.slice) == null ? void 0 : _j.call(_i);
+    data.targets.forEach((target, index) => {
+      target.values.unshift(...removed[index]);
+    });
+    if (!isCanvasFlowDomain(endDomain, isLog)) {
+      startOrgDomain && (org.xDomain = startOrgDomain);
+      scale.x.domain(startDomain);
+      startSubXDomain && scale.subX.domain(startSubXDomain);
+      axis.x.scale(scale.x);
+      return false;
+    }
+    syncCanvasFlowYDomains($$);
+    let finished = false;
+    const started = getCanvasAnimationTime();
+    const finish = () => {
+      var _a2, _b2;
+      if (finished) {
+        return;
+      }
+      finished = true;
+      data.targets.forEach((target) => {
+        target.values.splice(0, length);
+      });
+      endOrgDomain && (org.xDomain = endOrgDomain);
+      scale.x.domain(endDomain);
+      (_b2 = (_a2 = scale.subX) == null ? void 0 : _a2.domain) == null ? void 0 : _b2.call(_a2, endOrgDomain != null ? endOrgDomain : endDomain);
+      axis.x.scale(scale.x);
+      state.dirty.data = true;
+      state._eventRectFingerprint = null;
+      state.canvasShape = null;
+      state._cachedDrawShape = null;
+      $$.redraw({
+        withLegend: true,
+        withTransition: false,
+        withTrimXDomain: false,
+        withUpdateOrgXDomain: true,
+        withUpdateXAxis: true,
+        withUpdateXDomain: true
+      });
+      $$.updateTypesElements();
+      state.canvasFlowFrame = null;
+      state.canvasFlowFinish = null;
+      state.flowing = false;
+      done.call($$.api);
+    };
+    const render = (timestamp) => {
+      const ratio = Math.min(1, Math.max(0, (timestamp - started) / duration));
+      const domain = interpolateCanvasFlowDomain(startDomain, endDomain, ratio, isLog);
+      scale.x.domain(domain);
+      axis.x.scale(scale.x);
+      state.canvasShape = null;
+      state._cachedDrawShape = null;
+      state._canvasVisibleRangeCache = null;
+      state._canvasXTickValuesCache = null;
+      $$.renderCanvasFrame(void 0, null, false);
+      if (ratio < 1) {
+        state.canvasFlowFrame = requestFrame(render);
+      } else {
+        finish();
+      }
+    };
+    startOrgDomain && (org.xDomain = startOrgDomain);
+    scale.x.domain(startDomain);
+    startSubXDomain && scale.subX.domain(startSubXDomain);
+    axis.x.scale(scale.x);
+    state.flowing = true;
+    state.cancelClick = true;
+    (_k = $$.hideTooltip) == null ? void 0 : _k.call($$);
+    state.canvasFlowFinish = finish;
+    state.canvasFlowFrame = requestFrame(render);
+    return true;
+  }
+});
 
 ;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/ticks.js
 const e10 = Math.sqrt(50), e5 = Math.sqrt(10), e2 = Math.sqrt(2);
@@ -25404,7 +28977,7 @@ function tickStep(start, stop, count) {
 }
 
 ;// ./node_modules/.pnpm/d3-array@3.2.4/node_modules/d3-array/src/ascending.js
-function ascending_ascending(a, b) {
+function ascending(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 
@@ -25419,11 +28992,11 @@ function descending(a, b) {
 function bisector(f) {
   let compare1, compare2, delta;
   if (f.length !== 2) {
-    compare1 = ascending_ascending;
-    compare2 = (d, x) => ascending_ascending(f(d), x);
+    compare1 = ascending;
+    compare2 = (d, x) => ascending(f(d), x);
     delta = (d, x) => f(d) - x;
   } else {
-    compare1 = f === ascending_ascending || f === descending ? f : zero;
+    compare1 = f === ascending || f === descending ? f : zero;
     compare2 = f;
     delta = f;
   }
@@ -25484,7 +29057,7 @@ function* numbers(values, valueof) {
 
 
 
-const ascendingBisect = bisector(ascending_ascending);
+const ascendingBisect = bisector(ascending);
 const bisectRight = ascendingBisect.right;
 const bisectLeft = ascendingBisect.left;
 const bisectCenter = bisector(number).center;
@@ -25495,7 +29068,7 @@ const bisectCenter = bisector(number).center;
   constructor.prototype = factory.prototype = prototype;
   prototype.constructor = constructor;
 }
-function extend(parent, definition) {
+function define_extend(parent, definition) {
   var prototype = Object.create(parent.prototype);
   for (var key in definition) prototype[key] = definition[key];
   return prototype;
@@ -25712,7 +29285,7 @@ function Rgb(r, g, b, opacity) {
   this.b = +b;
   this.opacity = +opacity;
 }
-src_define(Rgb, color_rgb, extend(Color, {
+src_define(Rgb, color_rgb, define_extend(Color, {
   brighter(k) {
     k = k == null ? brighter : Math.pow(brighter, k);
     return new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
@@ -25790,7 +29363,7 @@ function Hsl(h, s, l, opacity) {
   this.l = +l;
   this.opacity = +opacity;
 }
-src_define(Hsl, hsl, extend(Color, {
+src_define(Hsl, hsl, define_extend(Color, {
   brighter(k) {
     k = k == null ? brighter : Math.pow(brighter, k);
     return new Hsl(this.h, this.s, this.l * k, this.opacity);
@@ -25858,7 +29431,7 @@ function basis(t1, v0, v1, v2, v3) {
 
 ;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/color.js
 
-function linear(a, d) {
+function color_linear(a, d) {
   return function(t) {
     return a + t * d;
   };
@@ -25870,7 +29443,7 @@ function exponential(a, b, y) {
 }
 function hue(a, b) {
   var d = b - a;
-  return d ? linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : src_constant(isNaN(a) ? b : a);
+  return d ? color_linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : src_constant(isNaN(a) ? b : a);
 }
 function gamma(y) {
   return (y = +y) === 1 ? nogamma : function(a, b) {
@@ -25879,7 +29452,7 @@ function gamma(y) {
 }
 function nogamma(a, b) {
   var d = b - a;
-  return d ? linear(a, d) : src_constant(isNaN(a) ? b : a);
+  return d ? color_linear(a, d) : src_constant(isNaN(a) ? b : a);
 }
 
 ;// ./node_modules/.pnpm/d3-interpolate@3.0.1/node_modules/d3-interpolate/src/rgb.js
@@ -27669,615 +31242,6 @@ function utcTime() {
   return initRange.apply(calendar(utcTicks, utcTickInterval, utcYear, utcMonth, utcSunday, utcDay, utcHour, utcMinute, second, utcFormat).domain([Date.UTC(2e3, 0, 1), Date.UTC(2e3, 0, 2)]), arguments);
 }
 
-;// ./src/module/util/type-checks.ts
-const isValue = (v) => v || v === 0;
-const isFunction = (v) => typeof v === "function";
-const isString = (v) => typeof v === "string";
-const isNumber = (v) => typeof v === "number";
-const isUndefined = (v) => typeof v === "undefined";
-const isDefined = (v) => typeof v !== "undefined";
-const isBoolean = (v) => typeof v === "boolean";
-const ceil10 = (v) => Math.ceil(v / 10) * 10;
-const asHalfPixel = (n) => Math.ceil(n) + 0.5;
-const diffDomain = (d) => d[1] - d[0];
-const isObjectType = (v) => typeof v === "object";
-const isEmptyObject = (obj) => {
-  for (const x in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, x)) {
-      return false;
-    }
-  }
-  return true;
-};
-const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
-const notEmpty = (o) => !isEmpty(o);
-const isArray = (arr) => Array.isArray(arr);
-const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
-
-
-;// ./src/module/browser.ts
-function getGlobal() {
-  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
-}
-function getFallback(w) {
-  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function";
-  const hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function" && typeof (w == null ? void 0 : w.cancelIdleCallback) === "function";
-  const request = (cb) => setTimeout(cb, 1);
-  const cancel = (id) => clearTimeout(id);
-  return [
-    hasRAF ? w.requestAnimationFrame : request,
-    hasRAF ? w.cancelAnimationFrame : cancel,
-    hasRIC ? w.requestIdleCallback : request,
-    hasRIC ? w.cancelIdleCallback : cancel
-  ];
-}
-const win = getGlobal();
-const browser_doc = win == null ? void 0 : win.document;
-const [
-  requestAnimationFrame,
-  cancelAnimationFrame,
-  requestIdleCallback,
-  cancelIdleCallback
-] = getFallback(win);
-
-
-;// ./src/module/sanitize.ts
-const ALLOWED_TAGS = /* @__PURE__ */ new Set([
-  // HTML tags for tooltip/legend templates
-  "span",
-  "div",
-  "p",
-  "br",
-  "b",
-  "i",
-  "em",
-  "small",
-  "strong",
-  "mark",
-  "u",
-  "s",
-  "sub",
-  "sup",
-  "h1",
-  "h2",
-  "h3",
-  "h4",
-  "h5",
-  "h6",
-  "ul",
-  "ol",
-  "li",
-  "dl",
-  "dt",
-  "dd",
-  "table",
-  "thead",
-  "tbody",
-  "tfoot",
-  "tr",
-  "th",
-  "td",
-  "caption",
-  "colgroup",
-  "col",
-  "hr",
-  "pre",
-  "code",
-  "blockquote",
-  "abbr",
-  "ins",
-  "del",
-  "a",
-  "img",
-  "figure",
-  "figcaption",
-  // SVG tags for point patterns
-  "svg",
-  "g",
-  "path",
-  "circle",
-  "ellipse",
-  "rect",
-  "line",
-  "polyline",
-  "polygon",
-  "text",
-  "tspan",
-  "textPath",
-  "use",
-  "defs",
-  "symbol",
-  "clipPath",
-  "mask",
-  "linearGradient",
-  "radialGradient",
-  "stop",
-  "pattern",
-  "marker",
-  "title",
-  "desc"
-]);
-const ALLOWED_ATTRS = /* @__PURE__ */ new Set([
-  // Common attributes
-  "class",
-  "id",
-  "style",
-  "title",
-  "lang",
-  "dir",
-  // HTML specific
-  "href",
-  "src",
-  "alt",
-  "width",
-  "height",
-  "colspan",
-  "rowspan",
-  "scope",
-  "headers",
-  // SVG presentation attributes
-  "d",
-  "points",
-  "x",
-  "y",
-  "x1",
-  "x2",
-  "y1",
-  "y2",
-  "cx",
-  "cy",
-  "r",
-  "rx",
-  "ry",
-  "dx",
-  "dy",
-  "viewBox",
-  "preserveAspectRatio",
-  "transform",
-  "fill",
-  "fill-opacity",
-  "fill-rule",
-  "stroke",
-  "stroke-width",
-  "stroke-opacity",
-  "stroke-linecap",
-  "stroke-linejoin",
-  "stroke-dasharray",
-  "stroke-dashoffset",
-  "opacity",
-  "clip-path",
-  "clip-rule",
-  "mask",
-  "font-family",
-  "font-size",
-  "font-weight",
-  "font-style",
-  "text-anchor",
-  "dominant-baseline",
-  "offset",
-  "stop-color",
-  "stop-opacity",
-  "gradientUnits",
-  "gradientTransform",
-  "spreadMethod",
-  "patternUnits",
-  "patternTransform",
-  "marker-start",
-  "marker-mid",
-  "marker-end",
-  "markerWidth",
-  "markerHeight",
-  "refX",
-  "refY",
-  "xlink:href"
-]);
-const TAG_CASE_MAP = /* @__PURE__ */ new Map();
-ALLOWED_TAGS.forEach((tag) => TAG_CASE_MAP.set(tag.toLowerCase(), tag));
-const ATTR_CASE_MAP = /* @__PURE__ */ new Map();
-ALLOWED_ATTRS.forEach((attr) => ATTR_CASE_MAP.set(attr.toLowerCase(), attr));
-const ALLOWED_URI_PROTOCOLS = /* @__PURE__ */ new Set([
-  "http:",
-  "https:",
-  "mailto:"
-]);
-const URI_ATTRS = /* @__PURE__ */ new Set(["href", "src", "xlink:href"]);
-const TAG_NAME_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9]*)/;
-const CLOSING_TAG_REGEX = /^<\/([a-zA-Z][a-zA-Z0-9]*)\s*>$/;
-const OPENING_TAG_REGEX = /^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)(\/?)>$/;
-const ATTR_REGEX = /([a-zA-Z][\w:-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
-const URL_IN_STYLE_REGEX = /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi;
-const DANGEROUS_CSS_PATTERNS = [
-  "expression(",
-  "behavior:",
-  "binding:",
-  "@import",
-  "@charset",
-  "-moz-binding:"
-];
-function decodeHTMLEntities(str) {
-  return str.replace(/&colon;/gi, ":").replace(/&newline;/gi, "\n").replace(/&tab;/gi, "	").replace(/&nbsp;/gi, " ").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&apos;/gi, "'").replace(/&#(\d+);?/gi, (_, code) => String.fromCharCode(parseInt(code, 10))).replace(/&#x([0-9a-f]+);?/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
-}
-function isSafeURI(uri) {
-  const decoded = decodeHTMLEntities(uri).trim();
-  const normalized = decoded.replace(/[\s\u0000-\u001f]/g, "").toLowerCase();
-  if (!normalized || normalized.startsWith("#")) {
-    return true;
-  }
-  const schemeMatch = normalized.match(/^[^/?#]*:/);
-  if (schemeMatch) {
-    return ALLOWED_URI_PROTOCOLS.has(schemeMatch[0]);
-  }
-  return true;
-}
-function sanitizeStyleValue(style) {
-  const decoded = decodeHTMLEntities(style);
-  const cleaned = decoded.replace(/[\u0000-\u001f]/g, "");
-  URL_IN_STYLE_REGEX.lastIndex = 0;
-  let match;
-  while ((match = URL_IN_STYLE_REGEX.exec(cleaned)) !== null) {
-    if (!isSafeURI(match[1])) {
-      return null;
-    }
-  }
-  const normalizedLower = cleaned.toLowerCase().replace(/\s/g, "");
-  for (const pattern of DANGEROUS_CSS_PATTERNS) {
-    if (normalizedLower.includes(pattern)) {
-      return null;
-    }
-  }
-  return style;
-}
-const ATTR_ENCODE_MAP = {
-  '"': "&quot;",
-  "'": "&#39;",
-  "`": "&#96;"
-};
-const ATTR_ENCODE_REGEX = /["'`]/g;
-function encodeAttrValue(value) {
-  return value.replace(ATTR_ENCODE_REGEX, (char) => ATTR_ENCODE_MAP[char]);
-}
-function sanitizeAttrValue(name, value, wasUnquoted = false) {
-  if (URI_ATTRS.has(name)) {
-    if (!isSafeURI(value)) {
-      return null;
-    }
-    return wasUnquoted ? encodeAttrValue(value) : value;
-  }
-  if (name === "style") {
-    const sanitizedStyle = sanitizeStyleValue(value);
-    if (sanitizedStyle === null) {
-      return null;
-    }
-    return wasUnquoted ? encodeAttrValue(sanitizedStyle) : sanitizedStyle;
-  }
-  const decoded = decodeHTMLEntities(value).toLowerCase().replace(/\s/g, "");
-  if (/\bon\w+=/.test(decoded)) {
-    return null;
-  }
-  return wasUnquoted ? encodeAttrValue(value) : value;
-}
-function extractTagName(tag) {
-  const match = tag.match(TAG_NAME_REGEX);
-  return match ? match[1].toLowerCase() : null;
-}
-function isAllowedTag(tag) {
-  const tagName = extractTagName(tag);
-  return tagName !== null && TAG_CASE_MAP.has(tagName);
-}
-function sanitizeTag(fullTag) {
-  var _a, _b, _c;
-  const closingMatch = fullTag.match(CLOSING_TAG_REGEX);
-  if (closingMatch) {
-    const lowerName = closingMatch[1].toLowerCase();
-    return `</${(_a = TAG_CASE_MAP.get(lowerName)) != null ? _a : lowerName}>`;
-  }
-  const openingMatch = fullTag.match(OPENING_TAG_REGEX);
-  if (!openingMatch) {
-    return "";
-  }
-  const [, tagName, attrString, selfClose] = openingMatch;
-  const lowerTagName = tagName.toLowerCase();
-  const canonicalTagName = (_b = TAG_CASE_MAP.get(lowerTagName)) != null ? _b : lowerTagName;
-  const allowedAttrs = [];
-  ATTR_REGEX.lastIndex = 0;
-  let attrMatch;
-  while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
-    const lowerAttrName = attrMatch[1].toLowerCase();
-    const doubleQuotedValue = attrMatch[2];
-    const singleQuotedValue = attrMatch[3];
-    const unquotedValue = attrMatch[4];
-    if (lowerAttrName.startsWith("on")) {
-      continue;
-    }
-    const canonicalAttrName = (_c = ATTR_CASE_MAP.get(lowerAttrName)) != null ? _c : lowerAttrName;
-    let attrValue;
-    let quoteChar;
-    if (doubleQuotedValue !== void 0) {
-      attrValue = doubleQuotedValue;
-      quoteChar = '"';
-    } else if (singleQuotedValue !== void 0) {
-      attrValue = singleQuotedValue;
-      quoteChar = "'";
-    } else if (unquotedValue !== void 0) {
-      attrValue = unquotedValue;
-      quoteChar = '"';
-    } else {
-      if (ATTR_CASE_MAP.has(lowerAttrName)) {
-        allowedAttrs.push(canonicalAttrName);
-      }
-      continue;
-    }
-    if (ATTR_CASE_MAP.has(lowerAttrName)) {
-      const wasUnquoted = unquotedValue !== void 0;
-      const sanitizedValue = sanitizeAttrValue(lowerAttrName, attrValue, wasUnquoted);
-      if (sanitizedValue !== null) {
-        allowedAttrs.push(`${canonicalAttrName}=${quoteChar}${sanitizedValue}${quoteChar}`);
-      }
-    }
-  }
-  const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(" ")}` : "";
-  const selfCloseStr = selfClose ? "/>" : ">";
-  return `<${canonicalTagName}${attrsStr}${selfCloseStr}`;
-}
-function sanitize(str) {
-  if (typeof str !== "string" || !str || str.indexOf("<") === -1) {
-    return str;
-  }
-  return str.replace(
-    /<\/?[^>]*>|<[^>]*$|[^<>\s]+>/g,
-    (match) => {
-      if (match.startsWith("<") && !match.endsWith(">")) {
-        return match.replace(/</g, "&lt;");
-      }
-      if (match.startsWith("<!--")) {
-        return "";
-      }
-      if (!match.startsWith("<")) {
-        return match.slice(0, -1) + "&gt;";
-      }
-      if (isAllowedTag(match)) {
-        return sanitizeTag(match);
-      }
-      return match.replace(/</g, "&lt;");
-    }
-  );
-}
-
-;// ./src/module/util/object.ts
-var __defProp = Object.defineProperty;
-var __getOwnPropSymbols = Object.getOwnPropertySymbols;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp.call(b, prop))
-      __defNormalProp(a, prop, b[prop]);
-  if (__getOwnPropSymbols)
-    for (var prop of __getOwnPropSymbols(b)) {
-      if (__propIsEnum.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-
-
-
-function _forEachValidItem(items, callback) {
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (item !== null && isDefined(item)) {
-      callback(item, i);
-    }
-  }
-}
-function getOption(options, key, defaultValue) {
-  return isDefined(options[key]) ? options[key] : defaultValue;
-}
-function hasValue(dict, value) {
-  for (const key in dict) {
-    if (dict[key] === value) return true;
-  }
-  return false;
-}
-function callFn(fn, thisArg, ...args) {
-  const isFn = isFunction(fn);
-  isFn && fn.call(thisArg, ...args);
-  return isFn;
-}
-function endall(transition, cb) {
-  let n = 0;
-  const end = function(...args) {
-    !--n && cb.apply(this, args);
-  };
-  if ("duration" in transition) {
-    transition.each(() => ++n).on("end", end);
-  } else {
-    ++n;
-    transition.call(end);
-  }
-}
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-function camelize(str, separator = "-") {
-  return str.split(separator).map((v, i) => i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()).join("");
-}
-const toArray = (v) => [].slice.call(v);
-function deepClone(...objectN) {
-  const clone = (v) => {
-    if (isArray(v)) {
-      return v.map(clone);
-    } else if (isObject(v) && v.constructor) {
-      const r = new v.constructor();
-      for (const k in v) {
-        r[k] = clone(v[k]);
-      }
-      return r;
-    }
-    return v;
-  };
-  return objectN.map((v) => clone(v)).reduce((a, c) => __spreadValues(__spreadValues({}, a), c));
-}
-function object_extend(target = {}, source) {
-  if (isArray(source)) {
-    source.forEach((v) => object_extend(target, v));
-  }
-  for (const p in source) {
-    if (/^\d+$/.test(p) || p in target) {
-      continue;
-    }
-    target[p] = source[p];
-  }
-  return target;
-}
-function getUnique(data) {
-  const isDate = data[0] instanceof Date;
-  const d = Array.from(new Set(isDate ? data.map(Number) : data));
-  return isDate ? d.map((v) => new Date(v)) : d;
-}
-function mergeArray(arr) {
-  return arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : [];
-}
-function mergeObj(target, ...objectN) {
-  if (!objectN.length || objectN.length === 1 && !objectN[0]) {
-    return target;
-  }
-  const source = objectN.shift();
-  if (isObject(target) && isObject(source)) {
-    Object.keys(source).forEach((key) => {
-      if (!/^(__proto__|constructor|prototype)$/i.test(key)) {
-        const value = source[key];
-        if (value instanceof Date) {
-          target[key] = new Date(value.getTime());
-        } else if (isObject(value)) {
-          !target[key] && (target[key] = {});
-          target[key] = mergeObj(target[key], value);
-        } else {
-          target[key] = isArray(value) ? value.concat() : value;
-        }
-      }
-    });
-  }
-  return mergeObj(target, ...objectN);
-}
-function sortValue(data, isAsc = true) {
-  let fn;
-  if (data[0] instanceof Date) {
-    fn = isAsc ? (a, b) => a - b : (a, b) => b - a;
-  } else {
-    if (isAsc && !data.every(isNaN)) {
-      fn = (a, b) => a - b;
-    } else if (!isAsc) {
-      fn = (a, b) => a > b && -1 || a < b && 1 || a === b && 0;
-    }
-  }
-  return data.concat().sort(fn);
-}
-function getMinMax(type, data) {
-  let res = data.filter((v) => notEmpty(v));
-  if (res.length) {
-    if (isNumber(res[0])) {
-      let result = type === "min" ? Infinity : -Infinity;
-      for (const v of res) {
-        if (type === "min" ? v < result : v > result) {
-          result = v;
-        }
-      }
-      res = result;
-    } else if (res[0] instanceof Date) {
-      res = sortValue(res, type === "min")[0];
-    }
-  } else {
-    res = void 0;
-  }
-  return res;
-}
-const getRange = (start, end, step = 1) => {
-  const res = [];
-  const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
-  for (let i = 0; i < n; i++) {
-    res.push(start + i * step);
-  }
-  return res;
-};
-let _transitionCounter = 0;
-function getRandom(asStr = true) {
-  const id = ++_transitionCounter;
-  return asStr ? String(id) : id;
-}
-function findIndex(arr, v, start, end, isRotated) {
-  if (start > end) {
-    return -1;
-  }
-  const mid = Math.floor((start + end) / 2);
-  let { x, w = 0 } = arr[mid];
-  if (isRotated) {
-    x = arr[mid].y;
-    w = arr[mid].h;
-  }
-  if (v >= x && v <= x + w) {
-    return mid;
-  }
-  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
-}
-function tplProcess(tpl, data) {
-  return sanitize(tpl.replace(/\{=([^}]+)\}/g, (_, key) => {
-    var _a;
-    return (_a = data[key]) != null ? _a : "";
-  }));
-}
-function parseDate(date) {
-  var _a;
-  let parsedDate;
-  if (date instanceof Date) {
-    parsedDate = date;
-  } else if (isString(date)) {
-    const { config, format } = this;
-    parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) != null ? _a : new Date(date);
-  } else if (isNumber(date) && !isNaN(date)) {
-    parsedDate = /* @__PURE__ */ new Date(+date);
-  }
-  if (!parsedDate || isNaN(+parsedDate)) {
-    console && console.error && console.error(`Failed to parse x '${date}' to Date object`);
-  }
-  return parsedDate;
-}
-function parseShorthand(value) {
-  if (isObject(value) && !isString(value)) {
-    const obj = value;
-    return {
-      top: obj.top || 0,
-      right: obj.right || 0,
-      bottom: obj.bottom || 0,
-      left: obj.left || 0
-    };
-  }
-  const values = (isString(value) ? value.trim().split(/\s+/) : [value]).map((v) => +v || 0);
-  const [a, b = a, c = a, d = b] = values;
-  return { top: a, right: b, bottom: c, left: d };
-}
-function runUntil(fn, conditionFn) {
-  if (conditionFn() === false) {
-    requestAnimationFrame(() => runUntil(fn, conditionFn));
-  } else {
-    fn();
-  }
-}
-function toSet(items, keyFn = ((item) => item)) {
-  const set = /* @__PURE__ */ new Set();
-  _forEachValidItem(items, (item, i) => {
-    set.add(keyFn(item, i));
-  });
-  return set;
-}
-function toMap(items, keyFn, valueFn = ((item) => item)) {
-  const map = /* @__PURE__ */ new Map();
-  _forEachValidItem(items, (item, i) => {
-    map.set(keyFn(item, i), valueFn(item, i));
-  });
-  return map;
-}
-
-
 ;// ./src/ChartInternal/internals/scale.ts
 
 
@@ -28517,172 +31481,6 @@ function getScale(type = "linear", min, max) {
     return d ? this.scale.subX(d.x) : null;
   }
 });
-
-;// ./src/canvas/util.ts
-
-const DENSE_SCATTER_POINT_CULL_THRESHOLD = 1e5;
-function getFontSize(font) {
-  const match = /(\d+(?:\.\d+)?)px/.exec(font);
-  const size = match ? parseFloat(match[1]) : parseFloat(font);
-  return Number.isFinite(size) ? size : 12;
-}
-function getCanvasShapeIndices($$, shape, type, typeFilter) {
-  return shape.indices[type] || $$.getShapeIndices(typeFilter);
-}
-function isCanvasTargetSupported($$, target, groupedTypeFilters = []) {
-  var _a;
-  const id = typeof target === "string" ? target : target == null ? void 0 : target.id;
-  return !((_a = $$.isGrouped) == null ? void 0 : _a.call($$, id)) || groupedTypeFilters.some((filter) => filter($$, target));
-}
-function getCanvasTargetType(config, target) {
-  var _a;
-  const id = typeof target === "string" ? target : target == null ? void 0 : target.id;
-  return id && ((_a = config.data_types) == null ? void 0 : _a[id]) || config.data_type || TYPE.LINE;
-}
-function getCanvasComparableValue(value) {
-  const comparable = +value;
-  return Number.isFinite(comparable) ? comparable : null;
-}
-function getCanvasComparableXDomain($$) {
-  var _a, _b;
-  const domain = (_b = (_a = $$.scale.zoom || $$.scale.x) == null ? void 0 : _a.domain) == null ? void 0 : _b.call(_a);
-  const start = getCanvasComparableValue(domain == null ? void 0 : domain[0]);
-  const end = getCanvasComparableValue(domain == null ? void 0 : domain[1]);
-  return start === null || end === null ? null : [Math.min(start, end), Math.max(start, end)];
-}
-function getComparableRowX(row) {
-  return getCanvasComparableValue(row == null ? void 0 : row.x);
-}
-function lowerBoundCanvasRows(values, target, ascending) {
-  let low = 0;
-  let high = values.length;
-  while (low < high) {
-    const mid = low + high >> 1;
-    const value = getComparableRowX(values[mid]);
-    if (value === null) {
-      return 0;
-    }
-    if (ascending ? value < target : value > target) {
-      low = mid + 1;
-    } else {
-      high = mid;
-    }
-  }
-  return low;
-}
-function upperBoundCanvasRows(values, target, ascending) {
-  let low = 0;
-  let high = values.length;
-  while (low < high) {
-    const mid = low + high >> 1;
-    const value = getComparableRowX(values[mid]);
-    if (value === null) {
-      return values.length;
-    }
-    if (ascending ? value <= target : value >= target) {
-      low = mid + 1;
-    } else {
-      high = mid;
-    }
-  }
-  return low;
-}
-function getCanvasTargetVisibleRange($$, target, padding = 1) {
-  const values = (target == null ? void 0 : target.values) || [];
-  const fullRange = { start: 0, end: values.length };
-  const domain = getCanvasComparableXDomain($$);
-  if (!values.length || !domain) {
-    return fullRange;
-  }
-  const state = $$.state;
-  const cache = state._canvasVisibleRangeCache || (state._canvasVisibleRangeCache = /* @__PURE__ */ new Map());
-  const key = [
-    target.id,
-    values.length,
-    state.dataGeneration,
-    domain[0],
-    domain[1],
-    padding
-  ].join(":");
-  const cached = cache.get(target.id);
-  if ((cached == null ? void 0 : cached.key) === key) {
-    return cached.range;
-  }
-  const first = getComparableRowX(values[0]);
-  const last = getComparableRowX(values[values.length - 1]);
-  if (first === null || last === null) {
-    return fullRange;
-  }
-  const ascending = first <= last;
-  const start = lowerBoundCanvasRows(values, domain[0], ascending);
-  const end = upperBoundCanvasRows(values, domain[1], ascending);
-  const range = {
-    start: Math.max(0, Math.min(start, end) - padding),
-    end: Math.min(values.length, Math.max(start, end) + padding)
-  };
-  cache.set(target.id, { key, range });
-  return range;
-}
-function isCanvasBarType($$, target) {
-  return getCanvasTargetType($$.config, target) === TYPE.BAR;
-}
-function isCanvasAreaType($$, target) {
-  return TYPE_BY_CATEGORY.Area.indexOf(getCanvasTargetType($$.config, target)) > -1;
-}
-function isCanvasLineType($$, target) {
-  const type = getCanvasTargetType($$.config, target);
-  return TYPE_BY_CATEGORY.Line.indexOf(type) > -1;
-}
-function isCanvasScatterType($$, target) {
-  return getCanvasTargetType($$.config, target) === TYPE.SCATTER;
-}
-function isCanvasBubbleType($$, target) {
-  return getCanvasTargetType($$.config, target) === TYPE.BUBBLE;
-}
-function isCanvasPointType($$, target) {
-  return isCanvasLineType($$, target) || isCanvasScatterType($$, target) || isCanvasBubbleType($$, target);
-}
-function isCanvasCandlestickType($$, target) {
-  return getCanvasTargetType($$.config, target) === TYPE.CANDLESTICK;
-}
-function isCanvasTreemapType($$, target) {
-  return getCanvasTargetType($$.config, target) === TYPE.TREEMAP;
-}
-function isCanvasGroupedType(config, target) {
-  const type = getCanvasTargetType(config, target);
-  return type === TYPE.BAR || TYPE_BY_CATEGORY.Area.indexOf(type) > -1;
-}
-function hasCanvasDrawableValue($$, d) {
-  const value = $$.getBaseValue(d);
-  return value !== null && value !== void 0;
-}
-function isFiniteCanvasCoordinate(x, y) {
-  return Number.isFinite(x) && Number.isFinite(y);
-}
-function createCanvasPointOccupancyGrid(width, height, radius) {
-  const offset = Math.ceil(radius) + 1;
-  const gridWidth = Math.max(1, Math.ceil(width) + offset * 2 + 1);
-  const gridHeight = Math.max(1, Math.ceil(height) + offset * 2 + 1);
-  return {
-    data: new Uint8Array(gridWidth * gridHeight),
-    height: gridHeight,
-    offset,
-    width: gridWidth
-  };
-}
-function markCanvasPointOccupancy(grid, x, y) {
-  const px = Math.round(x) + grid.offset;
-  const py = Math.round(y) + grid.offset;
-  if (px < 0 || px >= grid.width || py < 0 || py >= grid.height) {
-    return false;
-  }
-  const index = py * grid.width + px;
-  if (grid.data[index]) {
-    return false;
-  }
-  grid.data[index] = 1;
-  return true;
-}
 
 ;// ./src/canvas/axisTicks.ts
 
@@ -29292,423 +32090,9 @@ function getYGridTickValues($$) {
   return config.grid_y_ticks ? cullTicks(getYTickValues($$, "y", void 0, false), config.grid_y_ticks) : getYTickValues($$, "y", void 0, false);
 }
 
-;// ./src/canvas/CanvasPainter.ts
-var CanvasPainter_defProp = Object.defineProperty;
-var CanvasPainter_defNormalProp = (obj, key, value) => key in obj ? CanvasPainter_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => CanvasPainter_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-
-class CanvasPainter {
-  /**
-   * Constructor.
-   * @param {CanvasRenderingContext2D} ctx Canvas drawing context
-   * @private
-   */
-  constructor(ctx) {
-    __publicField(this, "ctx", ctx);
-  }
-  /**
-   * Get current drawing context.
-   * @returns {CanvasRenderingContext2D} Canvas drawing context
-   * @private
-   */
-  get context() {
-    return this.ctx;
-  }
-  /**
-   * Run a draw operation on another canvas context.
-   * @param {CanvasRenderingContext2D} ctx Canvas drawing context
-   * @param {function} draw Draw callback
-   * @private
-   */
-  withContext(ctx, draw) {
-    const prev = this.ctx;
-    this.ctx = ctx;
-    try {
-      draw();
-    } finally {
-      this.ctx = prev;
-    }
-  }
-  /**
-   * Run a draw operation in an isolated canvas state.
-   * @param {DrawCallback} draw Draw callback
-   * @private
-   */
-  withState(draw) {
-    const { ctx } = this;
-    ctx.save();
-    try {
-      draw(ctx);
-    } finally {
-      ctx.restore();
-    }
-  }
-  /**
-   * Run a draw operation with a translated origin.
-   * @param {number} x Translation x
-   * @param {number} y Translation y
-   * @param {DrawCallback} draw Draw callback
-   * @private
-   */
-  withTranslation(x, y, draw) {
-    this.withState((ctx) => {
-      ctx.translate(x, y);
-      draw(ctx);
-    });
-  }
-  /**
-   * Run a draw operation clipped to a rectangle.
-   * @param {object} rect Clip rectangle
-   * @param {DrawCallback} draw Draw callback
-   * @private
-   */
-  clipRect(rect, draw) {
-    this.withState((ctx) => {
-      ctx.beginPath();
-      ctx.rect(rect.x, rect.y, rect.w, rect.h);
-      ctx.clip();
-      draw(ctx);
-    });
-  }
-  /**
-   * Measure text using the current canvas state.
-   * @param {string} text Text value
-   * @returns {TextMetrics} Text metrics
-   * @private
-   */
-  measureText(text) {
-    return this.ctx.measureText(text);
-  }
-  /**
-   * Add a line segment to the current path.
-   * @param {number} x1 Start x
-   * @param {number} y1 Start y
-   * @param {number} x2 End x
-   * @param {number} y2 End y
-   * @private
-   */
-  traceLine(x1, y1, x2, y2) {
-    const { ctx } = this;
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-  }
-  /**
-   * Add a crisp line segment to the current path.
-   * @param {number} x1 Start x
-   * @param {number} y1 Start y
-   * @param {number} x2 End x
-   * @param {number} y2 End y
-   * @param {number} lineWidth Stroke width
-   * @private
-   */
-  traceCrispLine(x1, y1, x2, y2, lineWidth) {
-    this.traceLine(
-      this.crisp(x1, lineWidth),
-      this.crisp(y1, lineWidth),
-      this.crisp(x2, lineWidth),
-      this.crisp(y2, lineWidth)
-    );
-  }
-  /**
-   * Add a circle to the current path.
-   * @param {number} x Center x
-   * @param {number} y Center y
-   * @param {number} r Radius
-   * @private
-   */
-  traceCircle(x, y, r) {
-    this.ctx.moveTo(x + r, y);
-    this.ctx.arc(x, y, r, 0, Math.PI * 2);
-  }
-  /**
-   * Stroke a path.
-   * @param {DrawCallback} draw Path callback
-   * @param {object} style Optional style
-   * @private
-   */
-  strokePath(draw, style) {
-    this.withStyle(style, (ctx) => {
-      ctx.beginPath();
-      draw(ctx);
-      ctx.stroke();
-    });
-  }
-  /**
-   * Fill a path.
-   * @param {DrawCallback} draw Path callback
-   * @param {object} style Optional style
-   * @private
-   */
-  fillPath(draw, style) {
-    this.withStyle(style, (ctx) => {
-      ctx.beginPath();
-      draw(ctx);
-      ctx.fill();
-    });
-  }
-  /**
-   * Fill a rectangle.
-   * @param {object} rect Rectangle
-   * @param {object} style Optional style
-   * @private
-   */
-  fillRect(rect, style) {
-    this.withStyle(style, (ctx) => {
-      ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
-    });
-  }
-  /**
-   * Fill a rectangle with optional corner radii.
-   * @param {object} rect Rectangle
-   * @param {number|object} radius Corner radius
-   * @param {object} style Optional style
-   * @private
-   */
-  fillRoundRect(rect, radius = 0, style) {
-    const normalized = this.normalizeRect(rect);
-    const corners = this.getRectRadii(normalized, radius);
-    if (!corners.tl && !corners.tr && !corners.br && !corners.bl) {
-      this.fillRect(normalized, style);
-      return;
-    }
-    this.fillPath((ctx) => {
-      this.traceRoundRect(ctx, normalized, corners);
-    }, style);
-  }
-  /**
-   * Stroke a rectangle with optional corner radii.
-   * @param {object} rect Rectangle
-   * @param {number|object} radius Corner radius
-   * @param {object} style Optional style
-   * @private
-   */
-  strokeRoundRect(rect, radius = 0, style) {
-    const normalized = this.normalizeRect(rect);
-    const corners = this.getRectRadii(normalized, radius);
-    if (!corners.tl && !corners.tr && !corners.br && !corners.bl) {
-      this.strokeRect(normalized, style);
-      return;
-    }
-    this.strokePath((ctx) => {
-      this.traceRoundRect(ctx, normalized, corners);
-    }, style);
-  }
-  /**
-   * Stroke a rectangle.
-   * @param {object} rect Rectangle
-   * @param {object} style Optional style
-   * @private
-   */
-  strokeRect(rect, style) {
-    this.withStyle(style, (ctx) => {
-      ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
-    });
-  }
-  /**
-   * Draw text.
-   * @param {string} text Text value
-   * @param {number} x X coordinate
-   * @param {number} y Y coordinate
-   * @param {object} style Optional style
-   * @private
-   */
-  text(text, x, y, style) {
-    const fillText = (ctx, textX, textY) => {
-      (style == null ? void 0 : style.maxWidth) === void 0 ? ctx.fillText(text, textX, textY) : ctx.fillText(text, textX, textY, style.maxWidth);
-    };
-    const draw = (ctx) => {
-      if (style == null ? void 0 : style.angle) {
-        ctx.translate(x, y);
-        ctx.rotate(style.angle * Math.PI / 180);
-        fillText(ctx, 0, 0);
-      } else {
-        fillText(ctx, x, y);
-      }
-    };
-    if (style == null ? void 0 : style.angle) {
-      this.withState((ctx) => {
-        this.applyStyle(style);
-        draw(ctx);
-      });
-    } else {
-      this.withStyle(style, draw);
-    }
-  }
-  /**
-   * Draw a possibly rotated multiline text block.
-   * @param {string} text Text value
-   * @param {number} x X coordinate
-   * @param {number} y Y coordinate
-   * @param {object} style Optional style
-   * @private
-   */
-  textLines(text, x, y, style) {
-    this.withState((ctx) => {
-      const lines = text.split("\n");
-      const lineHeight = getFontSize((style == null ? void 0 : style.font) || ctx.font);
-      const firstLineY = lines.length > 1 ? -((lines.length - 1) * lineHeight) : 0;
-      this.applyStyle(style);
-      ctx.translate(x, y);
-      (style == null ? void 0 : style.angle) && ctx.rotate(style.angle * Math.PI / 180);
-      lines.forEach((line, i) => {
-        const lineY = firstLineY + i * lineHeight;
-        (style == null ? void 0 : style.maxWidth) === void 0 ? ctx.fillText(line, 0, lineY) : ctx.fillText(line, 0, lineY, style.maxWidth);
-      });
-    });
-  }
-  /**
-   * Draw a point shape.
-   * @param {string} type Point shape
-   * @param {number} x X coordinate
-   * @param {number} y Y coordinate
-   * @param {number} r Radius
-   * @param {object} style Optional style
-   * @private
-   */
-  point(type, x, y, r, style) {
-    this.withStyle(style, (ctx) => {
-      const shouldFill = !(style == null ? void 0 : style.stroke) || style.fill !== void 0;
-      const shouldStroke = (style == null ? void 0 : style.stroke) !== void 0;
-      if (type === "rectangle") {
-        const size = r * 2;
-        const rect = { x: x - r, y: y - r, w: size, h: size };
-        shouldFill && ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
-        shouldStroke && ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
-      } else {
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        shouldFill && ctx.fill();
-        shouldStroke && ctx.stroke();
-      }
-    });
-  }
-  /**
-   * Normalize rounded rectangle corner radii.
-   * @param {object} rect Rectangle
-   * @param {number|object} radius Corner radius
-   * @returns {object} Corner radii
-   * @private
-   */
-  getRectRadii(rect, radius) {
-    const base = typeof radius === "number" ? { tl: radius, tr: radius, br: radius, bl: radius } : {
-      tl: radius.tl || 0,
-      tr: radius.tr || 0,
-      br: radius.br || 0,
-      bl: radius.bl || 0
-    };
-    const max = Math.max(0, Math.min(Math.abs(rect.w), Math.abs(rect.h)) / 2);
-    return {
-      tl: Math.max(0, Math.min(base.tl, max)),
-      tr: Math.max(0, Math.min(base.tr, max)),
-      br: Math.max(0, Math.min(base.br, max)),
-      bl: Math.max(0, Math.min(base.bl, max))
-    };
-  }
-  /**
-   * Add a rounded rectangle to the current path.
-   * @param {CanvasRenderingContext2D} ctx Canvas context
-   * @param {object} rect Rectangle
-   * @param {object} radius Corner radii
-   * @private
-   */
-  traceRoundRect(ctx, rect, radius) {
-    const { x, y, w, h } = rect;
-    const right = x + w;
-    const bottom = y + h;
-    ctx.moveTo(x + radius.tl, y);
-    ctx.lineTo(right - radius.tr, y);
-    radius.tr ? ctx.quadraticCurveTo(right, y, right, y + radius.tr) : ctx.lineTo(right, y);
-    ctx.lineTo(right, bottom - radius.br);
-    radius.br ? ctx.quadraticCurveTo(right, bottom, right - radius.br, bottom) : ctx.lineTo(right, bottom);
-    ctx.lineTo(x + radius.bl, bottom);
-    radius.bl ? ctx.quadraticCurveTo(x, bottom, x, bottom - radius.bl) : ctx.lineTo(x, bottom);
-    ctx.lineTo(x, y + radius.tl);
-    radius.tl ? ctx.quadraticCurveTo(x, y, x + radius.tl, y) : ctx.lineTo(x, y);
-    ctx.closePath();
-  }
-  /**
-   * Normalize rectangle coordinates for path drawing.
-   * @param {object} rect Rectangle
-   * @returns {object} Normalized rectangle
-   * @private
-   */
-  normalizeRect(rect) {
-    const x = rect.w < 0 ? rect.x + rect.w : rect.x;
-    const y = rect.h < 0 ? rect.y + rect.h : rect.y;
-    return {
-      x,
-      y,
-      w: Math.abs(rect.w),
-      h: Math.abs(rect.h)
-    };
-  }
-  /**
-   * Apply drawing style.
-   * @param {object} style Drawing style
-   * @private
-   */
-  applyStyle(style) {
-    if (!style) {
-      return;
-    }
-    const { ctx } = this;
-    style.fill !== void 0 && (ctx.fillStyle = style.fill);
-    style.stroke !== void 0 && (ctx.strokeStyle = style.stroke);
-    style.lineWidth !== void 0 && (ctx.lineWidth = style.lineWidth);
-    style.alpha !== void 0 && (ctx.globalAlpha = style.alpha);
-    style.font !== void 0 && (ctx.font = style.font);
-    style.textAlign !== void 0 && (ctx.textAlign = style.textAlign);
-    style.textBaseline !== void 0 && (ctx.textBaseline = style.textBaseline);
-    style.lineDash !== void 0 && ctx.setLineDash(style.lineDash);
-  }
-  /**
-   * Run with optional style state.
-   * @param {object} style Optional drawing style
-   * @param {DrawCallback} draw Draw callback
-   * @private
-   */
-  withStyle(style, draw) {
-    if (style) {
-      this.withState((ctx) => {
-        this.applyStyle(style);
-        draw(ctx);
-      });
-    } else {
-      draw(this.ctx);
-    }
-  }
-  /**
-   * Get crisp canvas coordinate for axis/grid strokes.
-   * @param {number} value Coordinate value
-   * @param {number} lineWidth Stroke width
-   * @returns {number} Crisp coordinate
-   * @private
-   */
-  crisp(value, lineWidth) {
-    return lineWidth % 2 ? Math.round(value) + 0.5 : Math.round(value);
-  }
-}
-
 ;// ./src/canvas/CanvasAxisRenderer.ts
 var CanvasAxisRenderer_defProp = Object.defineProperty;
-var __defProps = Object.defineProperties;
-var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
-var CanvasAxisRenderer_getOwnPropSymbols = Object.getOwnPropertySymbols;
-var CanvasAxisRenderer_hasOwnProp = Object.prototype.hasOwnProperty;
-var CanvasAxisRenderer_propIsEnum = Object.prototype.propertyIsEnumerable;
 var CanvasAxisRenderer_defNormalProp = (obj, key, value) => key in obj ? CanvasAxisRenderer_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var CanvasAxisRenderer_spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (CanvasAxisRenderer_hasOwnProp.call(b, prop))
-      CanvasAxisRenderer_defNormalProp(a, prop, b[prop]);
-  if (CanvasAxisRenderer_getOwnPropSymbols)
-    for (var prop of CanvasAxisRenderer_getOwnPropSymbols(b)) {
-      if (CanvasAxisRenderer_propIsEnum.call(b, prop))
-        CanvasAxisRenderer_defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 var CanvasAxisRenderer_publicField = (obj, key, value) => CanvasAxisRenderer_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
@@ -29721,29 +32105,6 @@ function getXTickTextDirection(isRotated) {
 }
 function getYTickTextDirection(isRotated, isY2) {
   return isRotated ? isY2 ? -1 : 1 : isY2 ? 1 : -1;
-}
-function getSubYTickFormat($$, id) {
-  var _a, _b, _c;
-  const subAxisId = id === "y2" ? "subY2" : "subY";
-  const axisFormat = (_c = (_b = (_a = $$.axis) == null ? void 0 : _a[subAxisId]) == null ? void 0 : _b.tickFormat) == null ? void 0 : _c.call(_b);
-  const configFormat = $$.config[`subchart_axis_${id}_tick_format`] || $$.config[`axis_${id}_tick_format`];
-  if (axisFormat) {
-    return axisFormat;
-  }
-  return typeof configFormat === "function" ? configFormat.bind($$.api) : ((v) => v);
-}
-function getGridLineCanvasStyle(style) {
-  return style ? {
-    stroke: style.lineColor,
-    lineWidth: style.lineWidth,
-    lineDash: style.dashArray
-  } : void 0;
-}
-function getGridTextCanvasStyle(style) {
-  return style ? {
-    fill: style.labelColor,
-    font: style.labelFont
-  } : void 0;
 }
 function getHorizontalXAxisClipRect(margin, width, height) {
   return {
@@ -29972,24 +32333,6 @@ function getXBoundary($$, value, fallback, key) {
 function getYPosition($$, value, axis = "y") {
   return $$.scale[axis || "y"](normalizeYValue($$, value, axis));
 }
-function getLineTextPosition(position, start, end) {
-  if (position === "start") {
-    return start + 4;
-  }
-  if (position === "middle") {
-    return (start + end) / 2;
-  }
-  return end - 4;
-}
-function getRotatedLineTextPosition(position, start, end) {
-  if (position === "start") {
-    return end - 4;
-  }
-  if (position === "middle") {
-    return (start + end) / 2;
-  }
-  return start + 4;
-}
 function getRegionRect($$, region) {
   const { config, scale, state: { width, height } } = $$;
   const axis = region.axis || "x";
@@ -30046,8 +32389,9 @@ class CanvasAxisRenderer {
    * @private
    */
   draw($$) {
+    var _a, _b, _c;
     this.drawRegions($$);
-    this.drawGrid($$);
+    (_c = (_b = (_a = $$.getCanvasFeature) == null ? void 0 : _a.call($$, "grid")) == null ? void 0 : _b.draw) == null ? void 0 : _c.call($$, this);
     this.drawAxis($$);
   }
   /**
@@ -30062,178 +32406,6 @@ class CanvasAxisRenderer {
     config.axis_y2_show && $$.scale.y2 && this.drawYAxis($$, "y2");
     this.drawAdditionalAxes($$);
     this.drawAxisLabels($$);
-  }
-  /**
-   * Draw the canvas subchart x axis.
-   * @param {object} $$ ChartInternal instance
-   * @private
-   */
-  drawSubXAxis($$) {
-    var _a, _b, _c, _d;
-    const { ctx, painter, theme: { style: { axis } } } = this;
-    const {
-      config,
-      format,
-      scale,
-      state: { current, margin2, width2, height2 }
-    } = $$;
-    if (!config.subchart_show || !config.subchart_axis_x_show || !scale.subX || width2 <= 0 || height2 <= 0) {
-      return;
-    }
-    const isRotated = config.axis_rotated;
-    const x = painter.crisp(margin2.left, axis.lineWidth);
-    const y = painter.crisp(margin2.top + height2, axis.lineWidth);
-    const x1 = margin2.left;
-    const x2 = margin2.left + width2;
-    const y1 = margin2.top;
-    const y2 = margin2.top + height2;
-    const rangeStart = isRotated ? y1 : x1;
-    const rangeEnd = isRotated ? y2 : x2;
-    const ticks = getSubXTickValues($$);
-    const lineTicks = getSubXTickLineValues($$, ticks, axis.tickWidth);
-    const outerTick = (_a = config.subchart_axis_x_tick_outer) != null ? _a : config.axis_x_tick_outer;
-    const tickDirection = isRotated ? config.axis_x_tick_inner ? 1 : -1 : config.axis_x_tick_inner ? -1 : 1;
-    const outerTickDirection = getXOuterTickDirection(isRotated);
-    const tickTextDirection = getXTickTextDirection(isRotated);
-    const tickTextPosition = config.axis_x_tick_text_position;
-    const tickRotate = !isRotated ? ((_b = $$.getAxisTickRotate) == null ? void 0 : _b.call($$, "x")) || 0 : 0;
-    const tickFormat = format.subXAxisTick || ((_d = (_c = $$.axis) == null ? void 0 : _c.getXAxisTickFormat) == null ? void 0 : _d.call(_c, true));
-    painter.clipRect(
-      isRotated ? getRotatedXAxisClipRect(margin2, current.width, height2) : __spreadProps(CanvasAxisRenderer_spreadValues({}, getHorizontalXAxisClipRect(
-        margin2,
-        width2,
-        current.height - margin2.top
-      )), {
-        y: margin2.top
-      }),
-      () => {
-        ctx.globalAlpha = 1;
-        ctx.strokeStyle = axis.lineColor;
-        ctx.lineWidth = axis.lineWidth;
-        ctx.setLineDash([]);
-        painter.strokePath(() => {
-          if (isRotated) {
-            painter.traceLine(x, y1, x, y2);
-          } else {
-            painter.traceLine(x1, y, x2, y);
-          }
-          if (outerTick) {
-            if (isRotated) {
-              painter.traceLine(x, y1, x + AXIS_TICK_SIZE * outerTickDirection, y1);
-              painter.traceLine(x, y2, x + AXIS_TICK_SIZE * outerTickDirection, y2);
-            } else {
-              painter.traceLine(x1, y, x1, y + AXIS_TICK_SIZE * outerTickDirection);
-              painter.traceLine(x2, y, x2, y + AXIS_TICK_SIZE * outerTickDirection);
-            }
-          }
-        });
-        const tickFont = getAxisTickFont(axis, "x");
-        ctx.font = tickFont;
-        ctx.fillStyle = axis.labelColor;
-        ctx.textAlign = isRotated ? tickTextDirection > 0 ? "left" : "right" : "center";
-        ctx.textBaseline = isRotated ? "middle" : tickTextDirection > 0 ? "top" : "bottom";
-        ctx.strokeStyle = axis.tickColor;
-        ctx.lineWidth = axis.tickWidth;
-        const lineHeight = getXTickTextLineHeight(painter, getFontSize(tickFont));
-        const tickTextWidth = getXTickTextWidth($$, ticks, isRotated, scale.subX);
-        if (config.subchart_axis_x_tick_show) {
-          for (const tick of lineTicks) {
-            const tickPos = scale.subX(normalizeXValue($$, tick));
-            const tx = margin2.left + tickPos;
-            const ty = margin2.top + tickPos;
-            const pos = isRotated ? ty : tx;
-            if (!isInAxisRange(pos, rangeStart, rangeEnd)) {
-              continue;
-            }
-            painter.strokePath(() => {
-              if (isRotated) {
-                painter.traceLine(x, ty, x + AXIS_TICK_SIZE * tickDirection, ty);
-              } else {
-                painter.traceLine(tx, y, tx, y + AXIS_TICK_SIZE * tickDirection);
-              }
-            });
-          }
-        }
-        for (const tick of ticks) {
-          const tickPos = scale.subX(normalizeXValue($$, tick));
-          const tx = margin2.left + tickPos;
-          const ty = margin2.top + tickPos;
-          const pos = isRotated ? ty : tx;
-          if (!isInAxisRange(pos, rangeStart, rangeEnd)) {
-            continue;
-          }
-          if (!config.subchart_axis_x_tick_text_show) {
-            continue;
-          }
-          const lines = getXTickTextLines(
-            $$,
-            painter,
-            tickFormat,
-            tick,
-            ticks,
-            isRotated,
-            scale.subX,
-            tickTextWidth
-          );
-          let textX;
-          let textY;
-          if (isRotated) {
-            textX = x + (AXIS_TICK_SIZE + AXIS_TICK_PADDING) * tickTextDirection + (tickTextPosition.x || 0);
-            textY = ty + (tickTextPosition.y || 0);
-            ctx.textAlign = tickTextDirection > 0 ? "left" : "right";
-            ctx.textBaseline = "middle";
-          } else {
-            textX = tx + (tickTextPosition.x || 0);
-            textY = y + (AXIS_TICK_SIZE + AXIS_TICK_PADDING) * tickTextDirection + (tickTextPosition.y || 0);
-            ctx.textAlign = tickRotate ? tickRotate > 0 ? "left" : "right" : "center";
-            ctx.textBaseline = tickTextDirection > 0 ? "top" : "bottom";
-          }
-          painter.withState((textCtx) => {
-            textCtx.translate(textX, textY);
-            tickRotate && textCtx.rotate(tickRotate * Math.PI / 180);
-            lines.forEach((line, i) => {
-              textCtx.fillText(line, 0, i * lineHeight);
-            });
-          });
-        }
-      }
-    );
-  }
-  /**
-   * Draw the canvas subchart y/y2 axes.
-   * @param {object} $$ ChartInternal instance
-   * @private
-   */
-  drawSubYAxes($$) {
-    const {
-      config,
-      scale,
-      state: { margin2, width2, height2 }
-    } = $$;
-    if (!config.subchart_show || width2 <= 0 || height2 <= 0) {
-      return;
-    }
-    ["y", "y2"].forEach((id) => {
-      var _a;
-      const subScale = id === "y2" ? scale.subY2 : scale.subY;
-      if (!config[`subchart_axis_${id}_show`] || !subScale) {
-        return;
-      }
-      this.drawYAxis($$, id, {
-        scale: subScale,
-        ticks: getYTickValues($$, id, void 0, true, subScale, `subchart_axis_${id}`),
-        format: getSubYTickFormat($$, id),
-        index: 0,
-        outerTick: (_a = config[`subchart_axis_${id}_tick_outer`]) != null ? _a : config[`axis_${id}_tick_outer`],
-        margin: margin2,
-        width: width2,
-        height: height2,
-        prefix: `subchart_axis_${id}`,
-        tickShow: config[`subchart_axis_${id}_tick_show`],
-        tickTextShow: config[`subchart_axis_${id}_tick_text_show`],
-        tickTextPosition: config[`axis_${id}_tick_text_position`]
-      });
-    });
   }
   /**
    * Draw chart title.
@@ -30314,84 +32486,6 @@ class CanvasAxisRenderer {
     });
   }
   /**
-   * Draw visible grid lines.
-   * @param {object} $$ ChartInternal instance
-   * @private
-   */
-  drawGrid($$) {
-    const { ctx, painter, theme: { style: { grid } } } = this;
-    const { config, scale, state: { height, margin, width } } = $$;
-    if (!grid.lineColor) {
-      return;
-    }
-    const isRotated = config.axis_rotated;
-    const x1 = margin.left;
-    const x2 = margin.left + width;
-    const y1 = margin.top;
-    const y2 = margin.top + height;
-    painter.withState(() => {
-      ctx.strokeStyle = grid.lineColor;
-      ctx.lineWidth = grid.lineWidth;
-      grid.dashArray.length && ctx.setLineDash(grid.dashArray);
-      if (config.grid_x_show && scale.x) {
-        painter.strokePath(() => {
-          for (const tick of getXTickValues($$)) {
-            const pos = getXPosition($$, tick);
-            if (!isDrawable(pos)) {
-              continue;
-            }
-            if (isRotated) {
-              painter.traceCrispLine(
-                x1,
-                margin.top + pos,
-                x2,
-                margin.top + pos,
-                grid.lineWidth
-              );
-            } else {
-              painter.traceCrispLine(
-                margin.left + pos,
-                y1,
-                margin.left + pos,
-                y2,
-                grid.lineWidth
-              );
-            }
-          }
-        });
-      }
-      if (config.grid_y_show && scale.y) {
-        painter.strokePath(() => {
-          for (const tick of getYGridTickValues($$)) {
-            const value = normalizeYValue($$, tick);
-            const pos = scale.y(value);
-            if (!isDrawable(pos)) {
-              continue;
-            }
-            if (isRotated) {
-              painter.traceCrispLine(
-                margin.left + pos,
-                y1,
-                margin.left + pos,
-                y2,
-                grid.lineWidth
-              );
-            } else {
-              painter.traceCrispLine(
-                x1,
-                margin.top + pos,
-                x2,
-                margin.top + pos,
-                grid.lineWidth
-              );
-            }
-          }
-        });
-      }
-      !config.grid_lines_front && this.drawGridLines($$);
-    });
-  }
-  /**
    * Draw configured global regions.
    * @param {object} $$ ChartInternal instance
    * @private
@@ -30440,123 +32534,6 @@ class CanvasAxisRenderer {
           });
         }
       }
-    });
-  }
-  /**
-   * Draw configured x/y grid lines and labels.
-   * @param {object} $$ ChartInternal instance
-   * @private
-   */
-  drawGridLines($$) {
-    const { ctx, painter, theme: { style: { axis, grid } } } = this;
-    const { config, scale, state: { height, margin, width } } = $$;
-    const isRotated = config.axis_rotated;
-    const x1 = margin.left;
-    const x2 = margin.left + width;
-    const y1 = margin.top;
-    const y2 = margin.top + height;
-    if (!grid.lineColor) {
-      return;
-    }
-    painter.withState(() => {
-      ctx.strokeStyle = grid.lineColor;
-      ctx.lineWidth = grid.lineWidth;
-      ctx.font = grid.labelFont || axis.labelFont;
-      ctx.fillStyle = grid.labelColor;
-      ctx.textBaseline = "middle";
-      ctx.setLineDash([]);
-      const drawLabel = (text, x, y, rotated = false, style) => {
-        if (!text) {
-          return;
-        }
-        painter.text(text, x, y, __spreadProps(CanvasAxisRenderer_spreadValues({}, style), {
-          angle: rotated ? -90 : 0
-        }));
-      };
-      const drawLine = (line, axisId, draw) => {
-        const style = getGridLineCanvasStyle(
-          this.theme.getGridLineStyle(axisId, line, "line")
-        );
-        painter.strokePath(draw, style);
-      };
-      const getTextStyle = (axisId, line) => getGridTextCanvasStyle(this.theme.getGridLineStyle(axisId, line, "text"));
-      const drawXLine = (line) => {
-        if (line.value === void 0 || !scale.x) {
-          return;
-        }
-        const pos = getXPosition($$, line.value);
-        if (!isDrawable(pos)) {
-          return;
-        }
-        if (isRotated) {
-          const y = margin.top + pos;
-          drawLine(line, "x", () => {
-            painter.traceLine(x1, y, x2, y);
-          });
-          ctx.textAlign = line.position === "start" ? "left" : line.position === "middle" ? "center" : "right";
-          drawLabel(
-            line.text,
-            getLineTextPosition(line.position, x1, x2),
-            y - 5,
-            false,
-            getTextStyle("x", line)
-          );
-        } else {
-          const x = margin.left + pos;
-          drawLine(line, "x", () => {
-            painter.traceLine(x, y1, x, y2);
-          });
-          ctx.textAlign = line.position === "start" ? "left" : line.position === "middle" ? "center" : "right";
-          drawLabel(
-            line.text,
-            x - 5,
-            getRotatedLineTextPosition(line.position, y1, y2),
-            true,
-            getTextStyle("x", line)
-          );
-        }
-      };
-      const drawYLine = (line) => {
-        const targetScale = line.axis === "y2" ? scale.y2 : scale.y;
-        const axisId = line.axis === "y2" ? "y2" : "y";
-        if (line.value === void 0 || !targetScale) {
-          return;
-        }
-        const value = normalizeYValue($$, line.value, axisId);
-        const pos = targetScale(value);
-        if (!isDrawable(pos)) {
-          return;
-        }
-        if (isRotated) {
-          const x = margin.left + pos;
-          drawLine(line, "y", () => {
-            painter.traceLine(x, y1, x, y2);
-          });
-          ctx.textAlign = line.position === "start" ? "left" : line.position === "middle" ? "center" : "right";
-          drawLabel(
-            line.text,
-            x - 5,
-            getRotatedLineTextPosition(line.position, y1, y2),
-            true,
-            getTextStyle("y", line)
-          );
-        } else {
-          const y = margin.top + pos;
-          drawLine(line, "y", () => {
-            painter.traceLine(x1, y, x2, y);
-          });
-          ctx.textAlign = line.position === "start" ? "left" : line.position === "middle" ? "center" : "right";
-          drawLabel(
-            line.text,
-            getLineTextPosition(line.position, x1, x2),
-            y - 5,
-            false,
-            getTextStyle("y", line)
-          );
-        }
-      };
-      (config.grid_x_lines || []).forEach(drawXLine);
-      (config.grid_y_lines || []).forEach(drawYLine);
     });
   }
   /**
@@ -31049,6 +33026,1113 @@ class CanvasAxisRenderer {
   }
 }
 
+;// ./src/canvas/grid.ts
+var grid_defProp = Object.defineProperty;
+var grid_defProps = Object.defineProperties;
+var grid_getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var grid_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var grid_hasOwnProp = Object.prototype.hasOwnProperty;
+var grid_propIsEnum = Object.prototype.propertyIsEnumerable;
+var grid_defNormalProp = (obj, key, value) => key in obj ? grid_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var grid_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (grid_hasOwnProp.call(b, prop))
+      grid_defNormalProp(a, prop, b[prop]);
+  if (grid_getOwnPropSymbols)
+    for (var prop of grid_getOwnPropSymbols(b)) {
+      if (grid_propIsEnum.call(b, prop))
+        grid_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var grid_spreadProps = (a, b) => grid_defProps(a, grid_getOwnPropDescs(b));
+
+
+function getGridLineCanvasStyle(style) {
+  return style ? {
+    stroke: style.lineColor,
+    lineWidth: style.lineWidth,
+    lineDash: style.dashArray
+  } : void 0;
+}
+function getGridTextCanvasStyle(style) {
+  return style ? {
+    fill: style.labelColor,
+    font: style.labelFont
+  } : void 0;
+}
+function getLineTextPosition(position, start, end) {
+  if (position === "start") {
+    return start + 4;
+  }
+  if (position === "middle") {
+    return (start + end) / 2;
+  }
+  return end - 4;
+}
+function getRotatedLineTextPosition(position, start, end) {
+  if (position === "start") {
+    return end - 4;
+  }
+  if (position === "middle") {
+    return (start + end) / 2;
+  }
+  return start + 4;
+}
+function drawGridLines(renderer, $$) {
+  const { ctx, painter, theme: { style: { axis, grid } } } = renderer;
+  const { config, scale, state: { height, margin, width } } = $$;
+  const isRotated = config.axis_rotated;
+  const x1 = margin.left;
+  const x2 = margin.left + width;
+  const y1 = margin.top;
+  const y2 = margin.top + height;
+  if (!grid.lineColor) {
+    return;
+  }
+  painter.withState(() => {
+    ctx.strokeStyle = grid.lineColor;
+    ctx.lineWidth = grid.lineWidth;
+    ctx.font = grid.labelFont || axis.labelFont;
+    ctx.fillStyle = grid.labelColor;
+    ctx.textBaseline = "middle";
+    ctx.setLineDash([]);
+    const drawLabel = (text, x, y, rotated = false, style) => {
+      if (!text) {
+        return;
+      }
+      painter.text(text, x, y, grid_spreadProps(grid_spreadValues({}, style), {
+        angle: rotated ? -90 : 0
+      }));
+    };
+    const drawLine = (line, axisId, draw) => {
+      const style = getGridLineCanvasStyle(
+        renderer.theme.getGridLineStyle(axisId, line, "line")
+      );
+      painter.strokePath(draw, style);
+    };
+    const getTextStyle = (axisId, line) => getGridTextCanvasStyle(renderer.theme.getGridLineStyle(axisId, line, "text"));
+    const drawXLine = (line) => {
+      if (line.value === void 0 || !scale.x) {
+        return;
+      }
+      const pos = getXPosition($$, line.value);
+      if (!isDrawable(pos)) {
+        return;
+      }
+      if (isRotated) {
+        const y = margin.top + pos;
+        drawLine(line, "x", () => {
+          painter.traceLine(x1, y, x2, y);
+        });
+        ctx.textAlign = line.position === "start" ? "left" : line.position === "middle" ? "center" : "right";
+        drawLabel(
+          line.text,
+          getLineTextPosition(line.position, x1, x2),
+          y - 5,
+          false,
+          getTextStyle("x", line)
+        );
+      } else {
+        const x = margin.left + pos;
+        drawLine(line, "x", () => {
+          painter.traceLine(x, y1, x, y2);
+        });
+        ctx.textAlign = line.position === "start" ? "left" : line.position === "middle" ? "center" : "right";
+        drawLabel(
+          line.text,
+          x - 5,
+          getRotatedLineTextPosition(line.position, y1, y2),
+          true,
+          getTextStyle("x", line)
+        );
+      }
+    };
+    const drawYLine = (line) => {
+      const targetScale = line.axis === "y2" ? scale.y2 : scale.y;
+      const axisId = line.axis === "y2" ? "y2" : "y";
+      if (line.value === void 0 || !targetScale) {
+        return;
+      }
+      const value = normalizeYValue($$, line.value, axisId);
+      const pos = targetScale(value);
+      if (!isDrawable(pos)) {
+        return;
+      }
+      if (isRotated) {
+        const x = margin.left + pos;
+        drawLine(line, "y", () => {
+          painter.traceLine(x, y1, x, y2);
+        });
+        ctx.textAlign = line.position === "start" ? "left" : line.position === "middle" ? "center" : "right";
+        drawLabel(
+          line.text,
+          x - 5,
+          getRotatedLineTextPosition(line.position, y1, y2),
+          true,
+          getTextStyle("y", line)
+        );
+      } else {
+        const y = margin.top + pos;
+        drawLine(line, "y", () => {
+          painter.traceLine(x1, y, x2, y);
+        });
+        ctx.textAlign = line.position === "start" ? "left" : line.position === "middle" ? "center" : "right";
+        drawLabel(
+          line.text,
+          getLineTextPosition(line.position, x1, x2),
+          y - 5,
+          false,
+          getTextStyle("y", line)
+        );
+      }
+    };
+    (config.grid_x_lines || []).forEach(drawXLine);
+    (config.grid_y_lines || []).forEach(drawYLine);
+  });
+}
+function drawGrid(renderer, $$) {
+  const { ctx, painter, theme: { style: { grid } } } = renderer;
+  const { config, scale, state: { height, margin, width } } = $$;
+  if (!grid.lineColor) {
+    return;
+  }
+  const isRotated = config.axis_rotated;
+  const x1 = margin.left;
+  const x2 = margin.left + width;
+  const y1 = margin.top;
+  const y2 = margin.top + height;
+  painter.withState(() => {
+    ctx.strokeStyle = grid.lineColor;
+    ctx.lineWidth = grid.lineWidth;
+    grid.dashArray.length && ctx.setLineDash(grid.dashArray);
+    if (config.grid_x_show && scale.x) {
+      painter.strokePath(() => {
+        for (const tick of getXTickValues($$)) {
+          const pos = getXPosition($$, tick);
+          if (!isDrawable(pos)) {
+            continue;
+          }
+          if (isRotated) {
+            painter.traceCrispLine(
+              x1,
+              margin.top + pos,
+              x2,
+              margin.top + pos,
+              grid.lineWidth
+            );
+          } else {
+            painter.traceCrispLine(
+              margin.left + pos,
+              y1,
+              margin.left + pos,
+              y2,
+              grid.lineWidth
+            );
+          }
+        }
+      });
+    }
+    if (config.grid_y_show && scale.y) {
+      painter.strokePath(() => {
+        for (const tick of getYGridTickValues($$)) {
+          const value = normalizeYValue($$, tick);
+          const pos = scale.y(value);
+          if (!isDrawable(pos)) {
+            continue;
+          }
+          if (isRotated) {
+            painter.traceCrispLine(
+              margin.left + pos,
+              y1,
+              margin.left + pos,
+              y2,
+              grid.lineWidth
+            );
+          } else {
+            painter.traceCrispLine(
+              x1,
+              margin.top + pos,
+              x2,
+              margin.top + pos,
+              grid.lineWidth
+            );
+          }
+        }
+      });
+    }
+    !config.grid_lines_front && drawGridLines(renderer, $$);
+  });
+}
+/* harmony default export */ var grid = ({
+  /**
+   * Draw visible grid lines.
+   * @param {CanvasAxisRenderer} renderer Canvas axis renderer
+   * @private
+   */
+  draw(renderer) {
+    drawGrid(renderer, this);
+  },
+  /**
+   * Draw configured x/y grid lines and labels.
+   * @param {CanvasAxisRenderer} renderer Canvas axis renderer
+   * @private
+   */
+  drawLines(renderer) {
+    drawGridLines(renderer, this);
+  }
+});
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selector.js
+function none() {
+}
+/* harmony default export */ function selector(selector) {
+  return selector == null ? none : function() {
+    return this.querySelector(selector);
+  };
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/select.js
+
+
+/* harmony default export */ function selection_select(select) {
+  if (typeof select !== "function") select = selector(select);
+  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
+    for (var group = groups[j], n = group.length, subgroup = subgroups[j] = new Array(n), node, subnode, i = 0; i < n; ++i) {
+      if ((node = group[i]) && (subnode = select.call(node, node.__data__, i, group))) {
+        if ("__data__" in node) subnode.__data__ = node.__data__;
+        subgroup[i] = subnode;
+      }
+    }
+  }
+  return new Selection(subgroups, this._parents);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/array.js
+function array_array(x) {
+  return x == null ? [] : Array.isArray(x) ? x : Array.from(x);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selectorAll.js
+function empty() {
+  return [];
+}
+/* harmony default export */ function selectorAll(selector) {
+  return selector == null ? empty : function() {
+    return this.querySelectorAll(selector);
+  };
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/selectAll.js
+
+
+
+function arrayAll(select) {
+  return function() {
+    return array_array(select.apply(this, arguments));
+  };
+}
+/* harmony default export */ function selectAll(select) {
+  if (typeof select === "function") select = arrayAll(select);
+  else select = selectorAll(select);
+  for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
+    for (var group = groups[j], n = group.length, node, i = 0; i < n; ++i) {
+      if (node = group[i]) {
+        subgroups.push(select.call(node, node.__data__, i, group));
+        parents.push(node);
+      }
+    }
+  }
+  return new Selection(subgroups, parents);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/matcher.js
+/* harmony default export */ function matcher(selector) {
+  return function() {
+    return this.matches(selector);
+  };
+}
+function childMatcher(selector) {
+  return function(node) {
+    return node.matches(selector);
+  };
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/selectChild.js
+
+var find = Array.prototype.find;
+function childFind(match) {
+  return function() {
+    return find.call(this.children, match);
+  };
+}
+function childFirst() {
+  return this.firstElementChild;
+}
+/* harmony default export */ function selectChild(match) {
+  return this.select(match == null ? childFirst : childFind(typeof match === "function" ? match : childMatcher(match)));
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/selectChildren.js
+
+var filter = Array.prototype.filter;
+function children() {
+  return Array.from(this.children);
+}
+function childrenFilter(match) {
+  return function() {
+    return filter.call(this.children, match);
+  };
+}
+/* harmony default export */ function selectChildren(match) {
+  return this.selectAll(match == null ? children : childrenFilter(typeof match === "function" ? match : childMatcher(match)));
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/filter.js
+
+
+/* harmony default export */ function selection_filter(match) {
+  if (typeof match !== "function") match = matcher(match);
+  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
+    for (var group = groups[j], n = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n; ++i) {
+      if ((node = group[i]) && match.call(node, node.__data__, i, group)) {
+        subgroup.push(node);
+      }
+    }
+  }
+  return new Selection(subgroups, this._parents);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/sparse.js
+/* harmony default export */ function sparse(update) {
+  return new Array(update.length);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/enter.js
+
+
+/* harmony default export */ function enter() {
+  return new Selection(this._enter || this._groups.map(sparse), this._parents);
+}
+function EnterNode(parent, datum) {
+  this.ownerDocument = parent.ownerDocument;
+  this.namespaceURI = parent.namespaceURI;
+  this._next = null;
+  this._parent = parent;
+  this.__data__ = datum;
+}
+EnterNode.prototype = {
+  constructor: EnterNode,
+  appendChild: function(child) {
+    return this._parent.insertBefore(child, this._next);
+  },
+  insertBefore: function(child, next) {
+    return this._parent.insertBefore(child, next);
+  },
+  querySelector: function(selector) {
+    return this._parent.querySelector(selector);
+  },
+  querySelectorAll: function(selector) {
+    return this._parent.querySelectorAll(selector);
+  }
+};
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/constant.js
+/* harmony default export */ function d3_selection_src_constant(x) {
+  return function() {
+    return x;
+  };
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/data.js
+
+
+
+function bindIndex(parent, group, enter, update, exit, data) {
+  var i = 0, node, groupLength = group.length, dataLength = data.length;
+  for (; i < dataLength; ++i) {
+    if (node = group[i]) {
+      node.__data__ = data[i];
+      update[i] = node;
+    } else {
+      enter[i] = new EnterNode(parent, data[i]);
+    }
+  }
+  for (; i < groupLength; ++i) {
+    if (node = group[i]) {
+      exit[i] = node;
+    }
+  }
+}
+function bindKey(parent, group, enter, update, exit, data, key) {
+  var i, node, nodeByKeyValue = /* @__PURE__ */ new Map(), groupLength = group.length, dataLength = data.length, keyValues = new Array(groupLength), keyValue;
+  for (i = 0; i < groupLength; ++i) {
+    if (node = group[i]) {
+      keyValues[i] = keyValue = key.call(node, node.__data__, i, group) + "";
+      if (nodeByKeyValue.has(keyValue)) {
+        exit[i] = node;
+      } else {
+        nodeByKeyValue.set(keyValue, node);
+      }
+    }
+  }
+  for (i = 0; i < dataLength; ++i) {
+    keyValue = key.call(parent, data[i], i, data) + "";
+    if (node = nodeByKeyValue.get(keyValue)) {
+      update[i] = node;
+      node.__data__ = data[i];
+      nodeByKeyValue.delete(keyValue);
+    } else {
+      enter[i] = new EnterNode(parent, data[i]);
+    }
+  }
+  for (i = 0; i < groupLength; ++i) {
+    if ((node = group[i]) && nodeByKeyValue.get(keyValues[i]) === node) {
+      exit[i] = node;
+    }
+  }
+}
+function datum(node) {
+  return node.__data__;
+}
+/* harmony default export */ function data(value, key) {
+  if (!arguments.length) return Array.from(this, datum);
+  var bind = key ? bindKey : bindIndex, parents = this._parents, groups = this._groups;
+  if (typeof value !== "function") value = d3_selection_src_constant(value);
+  for (var m = groups.length, update = new Array(m), enter = new Array(m), exit = new Array(m), j = 0; j < m; ++j) {
+    var parent = parents[j], group = groups[j], groupLength = group.length, data = arraylike(value.call(parent, parent && parent.__data__, j, parents)), dataLength = data.length, enterGroup = enter[j] = new Array(dataLength), updateGroup = update[j] = new Array(dataLength), exitGroup = exit[j] = new Array(groupLength);
+    bind(parent, group, enterGroup, updateGroup, exitGroup, data, key);
+    for (var i0 = 0, i1 = 0, previous, next; i0 < dataLength; ++i0) {
+      if (previous = enterGroup[i0]) {
+        if (i0 >= i1) i1 = i0 + 1;
+        while (!(next = updateGroup[i1]) && ++i1 < dataLength) ;
+        previous._next = next || null;
+      }
+    }
+  }
+  update = new Selection(update, parents);
+  update._enter = enter;
+  update._exit = exit;
+  return update;
+}
+function arraylike(data) {
+  return typeof data === "object" && "length" in data ? data : Array.from(data);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/exit.js
+
+
+/* harmony default export */ function exit() {
+  return new Selection(this._exit || this._groups.map(sparse), this._parents);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/join.js
+/* harmony default export */ function join(onenter, onupdate, onexit) {
+  var enter = this.enter(), update = this, exit = this.exit();
+  if (typeof onenter === "function") {
+    enter = onenter(enter);
+    if (enter) enter = enter.selection();
+  } else {
+    enter = enter.append(onenter + "");
+  }
+  if (onupdate != null) {
+    update = onupdate(update);
+    if (update) update = update.selection();
+  }
+  if (onexit == null) exit.remove();
+  else onexit(exit);
+  return enter && update ? enter.merge(update).order() : update;
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/merge.js
+
+/* harmony default export */ function merge(context) {
+  var selection = context.selection ? context.selection() : context;
+  for (var groups0 = this._groups, groups1 = selection._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
+    for (var group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = new Array(n), node, i = 0; i < n; ++i) {
+      if (node = group0[i] || group1[i]) {
+        merge[i] = node;
+      }
+    }
+  }
+  for (; j < m0; ++j) {
+    merges[j] = groups0[j];
+  }
+  return new Selection(merges, this._parents);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/order.js
+/* harmony default export */ function order() {
+  for (var groups = this._groups, j = -1, m = groups.length; ++j < m; ) {
+    for (var group = groups[j], i = group.length - 1, next = group[i], node; --i >= 0; ) {
+      if (node = group[i]) {
+        if (next && node.compareDocumentPosition(next) ^ 4) next.parentNode.insertBefore(node, next);
+        next = node;
+      }
+    }
+  }
+  return this;
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/sort.js
+
+/* harmony default export */ function sort(compare) {
+  if (!compare) compare = sort_ascending;
+  function compareNode(a, b) {
+    return a && b ? compare(a.__data__, b.__data__) : !a - !b;
+  }
+  for (var groups = this._groups, m = groups.length, sortgroups = new Array(m), j = 0; j < m; ++j) {
+    for (var group = groups[j], n = group.length, sortgroup = sortgroups[j] = new Array(n), node, i = 0; i < n; ++i) {
+      if (node = group[i]) {
+        sortgroup[i] = node;
+      }
+    }
+    sortgroup.sort(compareNode);
+  }
+  return new Selection(sortgroups, this._parents).order();
+}
+function sort_ascending(a, b) {
+  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/call.js
+/* harmony default export */ function call() {
+  var callback = arguments[0];
+  arguments[0] = this;
+  callback.apply(null, arguments);
+  return this;
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/nodes.js
+/* harmony default export */ function nodes() {
+  return Array.from(this);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/node.js
+/* harmony default export */ function node() {
+  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
+    for (var group = groups[j], i = 0, n = group.length; i < n; ++i) {
+      var node = group[i];
+      if (node) return node;
+    }
+  }
+  return null;
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/size.js
+/* harmony default export */ function size() {
+  let size = 0;
+  for (const node of this) ++size;
+  return size;
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/empty.js
+/* harmony default export */ function selection_empty() {
+  return !this.node();
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/each.js
+/* harmony default export */ function each(callback) {
+  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
+    for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
+      if (node = group[i]) callback.call(node, node.__data__, i, group);
+    }
+  }
+  return this;
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/namespaces.js
+var xhtml = "http://www.w3.org/1999/xhtml";
+/* harmony default export */ var namespaces = ({
+  svg: "http://www.w3.org/2000/svg",
+  xhtml,
+  xlink: "http://www.w3.org/1999/xlink",
+  xml: "http://www.w3.org/XML/1998/namespace",
+  xmlns: "http://www.w3.org/2000/xmlns/"
+});
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/namespace.js
+
+/* harmony default export */ function namespace(name) {
+  var prefix = name += "", i = prefix.indexOf(":");
+  if (i >= 0 && (prefix = name.slice(0, i)) !== "xmlns") name = name.slice(i + 1);
+  return namespaces.hasOwnProperty(prefix) ? { space: namespaces[prefix], local: name } : name;
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/attr.js
+
+function attrRemove(name) {
+  return function() {
+    this.removeAttribute(name);
+  };
+}
+function attrRemoveNS(fullname) {
+  return function() {
+    this.removeAttributeNS(fullname.space, fullname.local);
+  };
+}
+function attrConstant(name, value) {
+  return function() {
+    this.setAttribute(name, value);
+  };
+}
+function attrConstantNS(fullname, value) {
+  return function() {
+    this.setAttributeNS(fullname.space, fullname.local, value);
+  };
+}
+function attrFunction(name, value) {
+  return function() {
+    var v = value.apply(this, arguments);
+    if (v == null) this.removeAttribute(name);
+    else this.setAttribute(name, v);
+  };
+}
+function attrFunctionNS(fullname, value) {
+  return function() {
+    var v = value.apply(this, arguments);
+    if (v == null) this.removeAttributeNS(fullname.space, fullname.local);
+    else this.setAttributeNS(fullname.space, fullname.local, v);
+  };
+}
+/* harmony default export */ function attr(name, value) {
+  var fullname = namespace(name);
+  if (arguments.length < 2) {
+    var node = this.node();
+    return fullname.local ? node.getAttributeNS(fullname.space, fullname.local) : node.getAttribute(fullname);
+  }
+  return this.each((value == null ? fullname.local ? attrRemoveNS : attrRemove : typeof value === "function" ? fullname.local ? attrFunctionNS : attrFunction : fullname.local ? attrConstantNS : attrConstant)(fullname, value));
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/window.js
+/* harmony default export */ function src_window(node) {
+  return node.ownerDocument && node.ownerDocument.defaultView || node.document && node || node.defaultView;
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/style.js
+
+function styleRemove(name) {
+  return function() {
+    this.style.removeProperty(name);
+  };
+}
+function styleConstant(name, value, priority) {
+  return function() {
+    this.style.setProperty(name, value, priority);
+  };
+}
+function styleFunction(name, value, priority) {
+  return function() {
+    var v = value.apply(this, arguments);
+    if (v == null) this.style.removeProperty(name);
+    else this.style.setProperty(name, v, priority);
+  };
+}
+/* harmony default export */ function style(name, value, priority) {
+  return arguments.length > 1 ? this.each((value == null ? styleRemove : typeof value === "function" ? styleFunction : styleConstant)(name, value, priority == null ? "" : priority)) : styleValue(this.node(), name);
+}
+function styleValue(node, name) {
+  return node.style.getPropertyValue(name) || src_window(node).getComputedStyle(node, null).getPropertyValue(name);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/property.js
+function propertyRemove(name) {
+  return function() {
+    delete this[name];
+  };
+}
+function propertyConstant(name, value) {
+  return function() {
+    this[name] = value;
+  };
+}
+function propertyFunction(name, value) {
+  return function() {
+    var v = value.apply(this, arguments);
+    if (v == null) delete this[name];
+    else this[name] = v;
+  };
+}
+/* harmony default export */ function property(name, value) {
+  return arguments.length > 1 ? this.each((value == null ? propertyRemove : typeof value === "function" ? propertyFunction : propertyConstant)(name, value)) : this.node()[name];
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/classed.js
+function classArray(string) {
+  return string.trim().split(/^|\s+/);
+}
+function classList(node) {
+  return node.classList || new ClassList(node);
+}
+function ClassList(node) {
+  this._node = node;
+  this._names = classArray(node.getAttribute("class") || "");
+}
+ClassList.prototype = {
+  add: function(name) {
+    var i = this._names.indexOf(name);
+    if (i < 0) {
+      this._names.push(name);
+      this._node.setAttribute("class", this._names.join(" "));
+    }
+  },
+  remove: function(name) {
+    var i = this._names.indexOf(name);
+    if (i >= 0) {
+      this._names.splice(i, 1);
+      this._node.setAttribute("class", this._names.join(" "));
+    }
+  },
+  contains: function(name) {
+    return this._names.indexOf(name) >= 0;
+  }
+};
+function classedAdd(node, names) {
+  var list = classList(node), i = -1, n = names.length;
+  while (++i < n) list.add(names[i]);
+}
+function classedRemove(node, names) {
+  var list = classList(node), i = -1, n = names.length;
+  while (++i < n) list.remove(names[i]);
+}
+function classedTrue(names) {
+  return function() {
+    classedAdd(this, names);
+  };
+}
+function classedFalse(names) {
+  return function() {
+    classedRemove(this, names);
+  };
+}
+function classedFunction(names, value) {
+  return function() {
+    (value.apply(this, arguments) ? classedAdd : classedRemove)(this, names);
+  };
+}
+/* harmony default export */ function classed(name, value) {
+  var names = classArray(name + "");
+  if (arguments.length < 2) {
+    var list = classList(this.node()), i = -1, n = names.length;
+    while (++i < n) if (!list.contains(names[i])) return false;
+    return true;
+  }
+  return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/text.js
+function textRemove() {
+  this.textContent = "";
+}
+function textConstant(value) {
+  return function() {
+    this.textContent = value;
+  };
+}
+function textFunction(value) {
+  return function() {
+    var v = value.apply(this, arguments);
+    this.textContent = v == null ? "" : v;
+  };
+}
+/* harmony default export */ function selection_text(value) {
+  return arguments.length ? this.each(value == null ? textRemove : (typeof value === "function" ? textFunction : textConstant)(value)) : this.node().textContent;
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/html.js
+function htmlRemove() {
+  this.innerHTML = "";
+}
+function htmlConstant(value) {
+  return function() {
+    this.innerHTML = value;
+  };
+}
+function htmlFunction(value) {
+  return function() {
+    var v = value.apply(this, arguments);
+    this.innerHTML = v == null ? "" : v;
+  };
+}
+/* harmony default export */ function html(value) {
+  return arguments.length ? this.each(value == null ? htmlRemove : (typeof value === "function" ? htmlFunction : htmlConstant)(value)) : this.node().innerHTML;
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/raise.js
+function raise() {
+  if (this.nextSibling) this.parentNode.appendChild(this);
+}
+/* harmony default export */ function selection_raise() {
+  return this.each(raise);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/lower.js
+function lower() {
+  if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
+}
+/* harmony default export */ function selection_lower() {
+  return this.each(lower);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/creator.js
+
+
+function creatorInherit(name) {
+  return function() {
+    var document = this.ownerDocument, uri = this.namespaceURI;
+    return uri === xhtml && document.documentElement.namespaceURI === xhtml ? document.createElement(name) : document.createElementNS(uri, name);
+  };
+}
+function creatorFixed(fullname) {
+  return function() {
+    return this.ownerDocument.createElementNS(fullname.space, fullname.local);
+  };
+}
+/* harmony default export */ function creator(name) {
+  var fullname = namespace(name);
+  return (fullname.local ? creatorFixed : creatorInherit)(fullname);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/append.js
+
+/* harmony default export */ function selection_append(name) {
+  var create = typeof name === "function" ? name : creator(name);
+  return this.select(function() {
+    return this.appendChild(create.apply(this, arguments));
+  });
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/insert.js
+
+
+function constantNull() {
+  return null;
+}
+/* harmony default export */ function insert(name, before) {
+  var create = typeof name === "function" ? name : creator(name), select = before == null ? constantNull : typeof before === "function" ? before : selector(before);
+  return this.select(function() {
+    return this.insertBefore(create.apply(this, arguments), select.apply(this, arguments) || null);
+  });
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/remove.js
+function remove() {
+  var parent = this.parentNode;
+  if (parent) parent.removeChild(this);
+}
+/* harmony default export */ function selection_remove() {
+  return this.each(remove);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/clone.js
+function selection_cloneShallow() {
+  var clone = this.cloneNode(false), parent = this.parentNode;
+  return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
+}
+function selection_cloneDeep() {
+  var clone = this.cloneNode(true), parent = this.parentNode;
+  return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
+}
+/* harmony default export */ function clone(deep) {
+  return this.select(deep ? selection_cloneDeep : selection_cloneShallow);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/datum.js
+/* harmony default export */ function selection_datum(value) {
+  return arguments.length ? this.property("__data__", value) : this.node().__data__;
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/on.js
+function contextListener(listener) {
+  return function(event) {
+    listener.call(this, event, this.__data__);
+  };
+}
+function parseTypenames(typenames) {
+  return typenames.trim().split(/^|\s+/).map(function(t) {
+    var name = "", i = t.indexOf(".");
+    if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
+    return { type: t, name };
+  });
+}
+function onRemove(typename) {
+  return function() {
+    var on = this.__on;
+    if (!on) return;
+    for (var j = 0, i = -1, m = on.length, o; j < m; ++j) {
+      if (o = on[j], (!typename.type || o.type === typename.type) && o.name === typename.name) {
+        this.removeEventListener(o.type, o.listener, o.options);
+      } else {
+        on[++i] = o;
+      }
+    }
+    if (++i) on.length = i;
+    else delete this.__on;
+  };
+}
+function onAdd(typename, value, options) {
+  return function() {
+    var on = this.__on, o, listener = contextListener(value);
+    if (on) for (var j = 0, m = on.length; j < m; ++j) {
+      if ((o = on[j]).type === typename.type && o.name === typename.name) {
+        this.removeEventListener(o.type, o.listener, o.options);
+        this.addEventListener(o.type, o.listener = listener, o.options = options);
+        o.value = value;
+        return;
+      }
+    }
+    this.addEventListener(typename.type, listener, options);
+    o = { type: typename.type, name: typename.name, value, listener, options };
+    if (!on) this.__on = [o];
+    else on.push(o);
+  };
+}
+/* harmony default export */ function on(typename, value, options) {
+  var typenames = parseTypenames(typename + ""), i, n = typenames.length, t;
+  if (arguments.length < 2) {
+    var on = this.node().__on;
+    if (on) for (var j = 0, m = on.length, o; j < m; ++j) {
+      for (i = 0, o = on[j]; i < n; ++i) {
+        if ((t = typenames[i]).type === o.type && t.name === o.name) {
+          return o.value;
+        }
+      }
+    }
+    return;
+  }
+  on = value ? onAdd : onRemove;
+  for (i = 0; i < n; ++i) this.each(on(typenames[i], value, options));
+  return this;
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/dispatch.js
+
+function dispatchEvent(node, type, params) {
+  var window = src_window(node), event = window.CustomEvent;
+  if (typeof event === "function") {
+    event = new event(type, params);
+  } else {
+    event = window.document.createEvent("Event");
+    if (params) event.initEvent(type, params.bubbles, params.cancelable), event.detail = params.detail;
+    else event.initEvent(type, false, false);
+  }
+  node.dispatchEvent(event);
+}
+function dispatchConstant(type, params) {
+  return function() {
+    return dispatchEvent(this, type, params);
+  };
+}
+function dispatchFunction(type, params) {
+  return function() {
+    return dispatchEvent(this, type, params.apply(this, arguments));
+  };
+}
+/* harmony default export */ function dispatch(type, params) {
+  return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/iterator.js
+/* harmony default export */ function* iterator() {
+  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
+    for (var group = groups[j], i = 0, n = group.length, node; i < n; ++i) {
+      if (node = group[i]) yield node;
+    }
+  }
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/selection/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var root = [null];
+function Selection(groups, parents) {
+  this._groups = groups;
+  this._parents = parents;
+}
+function selection() {
+  return new Selection([[document.documentElement]], root);
+}
+function selection_selection() {
+  return this;
+}
+Selection.prototype = selection.prototype = {
+  constructor: Selection,
+  select: selection_select,
+  selectAll: selectAll,
+  selectChild: selectChild,
+  selectChildren: selectChildren,
+  filter: selection_filter,
+  data: data,
+  enter: enter,
+  exit: exit,
+  join: join,
+  merge: merge,
+  selection: selection_selection,
+  order: order,
+  sort: sort,
+  call: call,
+  nodes: nodes,
+  node: node,
+  size: size,
+  empty: selection_empty,
+  each: each,
+  attr: attr,
+  style: style,
+  property: property,
+  classed: classed,
+  text: selection_text,
+  html: html,
+  raise: selection_raise,
+  lower: selection_lower,
+  append: selection_append,
+  insert: insert,
+  remove: selection_remove,
+  clone: clone,
+  datum: selection_datum,
+  on: on,
+  dispatch: dispatch,
+  [Symbol.iterator]: iterator
+};
+/* harmony default export */ var src_selection = (selection);
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/select.js
+
+/* harmony default export */ function src_select(selector) {
+  return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
+}
+
 ;// ./src/canvas/classes.ts
 const $CANVAS = {
   canvas: "bb-canvas",
@@ -31220,3370 +34304,6 @@ class CanvasEngine {
   }
 }
 
-;// ./src/ChartInternal/internals/subchart.util.ts
-function isContinuousGridFocusEnabled($$) {
-  const { config, state } = $$;
-  return !!(config.subchart_grid_focus_continuous && config.subchart_grid_focus !== false && config.subchart_show && config.subchart_brush_enabled === false && state.width2 > 0 && state.height2 > 0);
-}
-function getMainCoordFromSubchartCoord($$, subCoord) {
-  var _a;
-  const { config, scale, state } = $$;
-  const mainX = scale.zoom || scale.x;
-  const subX = scale.subX;
-  if (!mainX || !subX) {
-    return null;
-  }
-  const subLength = config.axis_rotated ? state.height2 : state.width2;
-  const mainLength = config.axis_rotated ? state.height : state.width;
-  const domainValue = (_a = subX.invert) == null ? void 0 : _a.call(subX, subCoord);
-  let mainCoord = domainValue == null ? NaN : mainX(domainValue);
-  if (!Number.isFinite(mainCoord) && subLength > 0) {
-    mainCoord = Math.max(0, Math.min(1, subCoord / subLength)) * mainLength;
-  }
-  return Number.isFinite(mainCoord) ? Math.max(0, Math.min(mainLength, mainCoord)) : null;
-}
-
-;// ./src/ChartInternal/shape/core/barRadius.ts
-
-const RE_PATH_NUMBER = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g;
-const RE_PATH_TOKEN = /([aAcChHlLmMqQsStTvVzZ])|([-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?)/g;
-function getArcFlagTokenIndexes(path) {
-  const flags = /* @__PURE__ */ new Set();
-  let numIndex = -1;
-  let argIndex = 0;
-  let inArc = false;
-  let token;
-  RE_PATH_TOKEN.lastIndex = 0;
-  while (token = RE_PATH_TOKEN.exec(path)) {
-    if (token[1]) {
-      inArc = token[1] === "a" || token[1] === "A";
-      argIndex = 0;
-    } else {
-      numIndex++;
-      if (inArc) {
-        const pos = argIndex % 7;
-        if (pos === 2 || pos === 3 || pos === 4) {
-          flags.add(numIndex);
-        }
-        argIndex++;
-      }
-    }
-  }
-  return flags;
-}
-function getBarPathInterpolator(a, b) {
-  const flagSet = getArcFlagTokenIndexes(b);
-  const segments = [];
-  const interpolators = [];
-  let bIndex = 0;
-  let segIndex = -1;
-  let numIndex = -1;
-  let am;
-  let bm;
-  const append = (text) => {
-    if (segments[segIndex]) {
-      segments[segIndex] += text;
-    } else {
-      segments[++segIndex] = text;
-    }
-  };
-  RE_PATH_NUMBER.lastIndex = 0;
-  const reA = RE_PATH_NUMBER;
-  const reB = new RegExp(RE_PATH_NUMBER.source, "g");
-  a += "";
-  b += "";
-  while ((am = reA.exec(a)) && (bm = reB.exec(b))) {
-    numIndex++;
-    if (bm.index > bIndex) {
-      append(b.slice(bIndex, bm.index));
-    }
-    if (am[0] === bm[0]) {
-      append(bm[0]);
-    } else {
-      const from = +am[0];
-      const to = +bm[0];
-      const isFlag = flagSet.has(numIndex);
-      segments[++segIndex] = null;
-      interpolators.push({
-        index: segIndex,
-        fn: isFlag ? (t) => Math.round(from + (to - from) * t) : (t) => from + (to - from) * t
-      });
-    }
-    bIndex = reB.lastIndex;
-  }
-  if (bIndex < b.length) {
-    append(b.slice(bIndex));
-  }
-  if (!interpolators.length) {
-    const result = segments.join("");
-    return () => result;
-  }
-  return (t) => {
-    for (let i = 0, len = interpolators.length; i < len; i++) {
-      const { index, fn } = interpolators[i];
-      segments[index] = String(fn(t));
-    }
-    return segments.join("");
-  };
-}
-function getBarRadiusResolver($$) {
-  const { bar_radius: radius, bar_radius_ratio: ratio } = $$.config;
-  return isNumber(radius) && radius > 0 ? () => radius : isNumber(ratio) ? (width) => width * ratio : null;
-}
-function getStackingBarRadiusSet($$) {
-  const { config, data } = $$;
-  const set = /* @__PURE__ */ new Set();
-  if (!config.data_groups.length) {
-    return set;
-  }
-  const orderedTargets = $$.orderTargets(
-    $$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))
-  );
-  for (const group of config.data_groups) {
-    const ids = new Set(group);
-    const lastPosByIndex = /* @__PURE__ */ new Map();
-    const lastNegByIndex = /* @__PURE__ */ new Map();
-    for (const target of orderedTargets) {
-      if (!ids.has(target.id)) {
-        continue;
-      }
-      for (const d of target.values) {
-        if (d.value === null || d.value === 0) {
-          continue;
-        }
-        (d.value > 0 ? lastPosByIndex : lastNegByIndex).set(d.index, target.id);
-      }
-    }
-    for (const [index, id] of lastPosByIndex) {
-      set.add(`${id}:${index}`);
-    }
-    for (const [index, id] of lastNegByIndex) {
-      set.add(`${id}:${index}`);
-    }
-  }
-  return set;
-}
-function getBarRadiusCorners(isRotated, isNegative, radius) {
-  if (!radius) {
-    return 0;
-  }
-  return isRotated ? isNegative ? { tl: radius, bl: radius } : { tr: radius, br: radius } : isNegative ? { br: radius, bl: radius } : { tl: radius, tr: radius };
-}
-function getBarRadiusClipPath(init, pos, isRotated, isNegative) {
-  let clipPath = "";
-  if (isRotated) {
-    if (isNegative && init[0] < pos) {
-      clipPath = `0 ${pos - init[0]}px 0 0`;
-    } else if (!isNegative && init[0] > pos) {
-      clipPath = `0 0 0 ${init[0] - pos}px`;
-    }
-  } else {
-    if (isNegative && init[1] > pos) {
-      clipPath = `${init[1] - pos}px 0 0 0`;
-    } else if (!isNegative && init[1] < pos) {
-      clipPath = `0 0 ${pos - init[1]}px 0`;
-    }
-  }
-  return clipPath ? `inset(${clipPath})` : null;
-}
-function getBarRadiusInfo($$, d, points, getRadius, stackingRadiusSet, isStackingRadiusData) {
-  const { config, state } = $$;
-  const isRotated = config.axis_rotated;
-  const indexX = +isRotated;
-  const indexY = +!indexX;
-  const isUnderZero = d.value < 0;
-  const isInverted = config[`axis_${$$.axis.getId(d.id)}_inverted`];
-  const isNegative = !isInverted && isUnderZero || isInverted && !isUnderZero;
-  const isGrouped = $$.isGrouped(d.id);
-  const isRadiusData = getRadius && isGrouped && d.value !== 0 ? state.hiddenTargetIds.has(d.id) && isStackingRadiusData ? isStackingRadiusData(d) : stackingRadiusSet.has(`${d.id}:${d.index}`) : false;
-  const init = [
-    points[0][indexX],
-    points[0][indexY]
-  ];
-  let radius = 0;
-  if (getRadius) {
-    const index = isRotated ? indexY : indexX;
-    const barW = Math.abs(points[2][index] - points[0][index]);
-    radius = Math.max(0, !isGrouped || isRadiusData ? getRadius(barW) : 0);
-  }
-  const pos = isRotated ? points[1][indexX] + (isNegative ? radius : -radius) : points[1][indexY] + (isNegative ? -radius : radius);
-  return {
-    radius,
-    corners: getBarRadiusCorners(isRotated, isNegative, radius),
-    clipPath: radius ? getBarRadiusClipPath(init, pos, isRotated, isNegative) : null,
-    indexX,
-    indexY,
-    isNegative,
-    pos
-  };
-}
-
-;// ./src/ChartInternal/shape/core/dataRegion.ts
-
-const DEFAULT_DASHARRAY = "2 2";
-function normalizeDataRegions($$, values, regions) {
-  const isTimeSeries = $$.axis.isTimeSeries();
-  const getValue = (value, fallback) => isUndefined(value) ? fallback : isTimeSeries ? parseDate.call($$, value) : value;
-  return (regions || []).map((region) => {
-    var _a, _b;
-    return {
-      start: getValue(region.start, (_a = values[0]) == null ? void 0 : _a.x),
-      end: getValue(region.end, (_b = values[values.length - 1]) == null ? void 0 : _b.x),
-      style: region.style || { dasharray: DEFAULT_DASHARRAY }
-    };
-  });
-}
-function getDataRegionStyle(x, regions) {
-  for (let i = 0, region; region = regions[i]; i++) {
-    if (region.start < x && x <= region.end) {
-      return region.style;
-    }
-  }
-  return false;
-}
-function getDataRegionDash(style) {
-  const dash = String((style == null ? void 0 : style.dasharray) || DEFAULT_DASHARRAY).split(/[\s,]+/).map(Number).filter(Number.isFinite);
-  return dash.length ? dash : [2, 2];
-}
-function getLineRegionSegments($$, values, x, y, regions) {
-  const isRotated = $$.config.axis_rotated;
-  const normalizedRegions = normalizeDataRegions($$, values, regions);
-  const segments = [];
-  for (let i = 1; i < values.length; i++) {
-    const prev = values[i - 1];
-    const current = values[i];
-    if (!isValue(prev.value) || !isValue(current.value)) {
-      segments.push({ isBreak: true });
-      continue;
-    }
-    const style = getDataRegionStyle(current.x, normalizedRegions);
-    const x0 = x(prev.x);
-    const y0 = y(prev.value);
-    const x1 = x(current.x);
-    const y1 = y(current.value);
-    segments.push({
-      start: isRotated ? [y0, x0] : [x0, y0],
-      end: isRotated ? [y1, x1] : [x1, y1],
-      dash: style ? getDataRegionDash(style) : []
-    });
-  }
-  return segments;
-}
-
-;// ./src/ChartInternal/shape/core/geometry.ts
-function getRenderPoint($$, point) {
-  return $$.config.axis_rotated ? [point[1], point[0]] : [point[0], point[1]];
-}
-function getRenderRect($$, points, minSize = 1) {
-  const renderPoints = points.map((point) => getRenderPoint($$, point));
-  const xs = renderPoints.map(([x]) => x);
-  const ys = renderPoints.map(([, y]) => y);
-  const rawX = Math.min(...xs);
-  const rawY = Math.min(...ys);
-  const rawW = Math.max(...xs) - rawX;
-  const rawH = Math.max(...ys) - rawY;
-  const w = Math.max(minSize, rawW);
-  const h = Math.max(minSize, rawH);
-  return {
-    x: rawX - (w - rawW) / 2,
-    y: rawY - (h - rawH) / 2,
-    w,
-    h
-  };
-}
-function getRenderDataPoint($$, d) {
-  var _a, _b;
-  const value = ((_a = $$.isGrouped) == null ? void 0 : _a.call($$, d.id)) && $$.circleY ? $$.circleY(d, d.index) : $$.getYScaleById(d.id)($$.getBaseValue(d));
-  const index = (_b = $$.xx(d)) != null ? _b : NaN;
-  return $$.config.axis_rotated ? { x: value, y: index } : { x: index, y: value };
-}
-function getShapePoint(pos, d, i) {
-  return {
-    x: pos.cx(d, i),
-    y: pos.cy(d, i)
-  };
-}
-function getCandlestickGeometry($$, points) {
-  return {
-    body: getRenderRect($$, [points[0], points[1]]),
-    wickStart: getRenderPoint($$, [points[2][0], points[2][1]]),
-    wickEnd: getRenderPoint($$, [points[2][0], points[2][2]])
-  };
-}
-function getTreemapNodeRect($$, node, root, clamp = false) {
-  if (node === root) {
-    return {
-      x: 0,
-      y: 0,
-      w: $$.state.width,
-      h: 0
-    };
-  }
-  const { scale: { x, y } } = $$;
-  const left = x(node.x0);
-  const top = y(node.y0);
-  const w = x(node.x1) - left;
-  const h = y(node.y1) - top;
-  return {
-    x: left,
-    y: top,
-    w: clamp ? Math.max(0, w) : w,
-    h: clamp ? Math.max(0, h) : h
-  };
-}
-function getTreemapLabelText($$, data, width, height) {
-  const { config } = $$;
-  const { id, value, ratio = 0 } = data;
-  const format = config.treemap_label_format;
-  const text = typeof format === "function" ? format.bind($$.api)(value, ratio, id, { width, height }) : `${id}
-${(ratio * 100).toFixed(2)}%`;
-  return text === null || text === void 0 ? null : String(text);
-}
-
-;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/array.js
-var slice = Array.prototype.slice;
-/* harmony default export */ function d3_shape_src_array(x) {
-  return typeof x === "object" && "length" in x ? x : Array.from(x);
-}
-
-;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/constant.js
-/* harmony default export */ function d3_shape_src_constant(x) {
-  return function constant() {
-    return x;
-  };
-}
-
-;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/curve/linear.js
-function Linear(context) {
-  this._context = context;
-}
-Linear.prototype = {
-  areaStart: function() {
-    this._line = 0;
-  },
-  areaEnd: function() {
-    this._line = NaN;
-  },
-  lineStart: function() {
-    this._point = 0;
-  },
-  lineEnd: function() {
-    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
-    this._line = 1 - this._line;
-  },
-  point: function(x, y) {
-    x = +x, y = +y;
-    switch (this._point) {
-      case 0:
-        this._point = 1;
-        this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
-        break;
-      case 1:
-        this._point = 2;
-      // falls through
-      default:
-        this._context.lineTo(x, y);
-        break;
-    }
-  }
-};
-/* harmony default export */ function curve_linear(context) {
-  return new Linear(context);
-}
-
-;// ./node_modules/.pnpm/d3-path@3.1.0/node_modules/d3-path/src/path.js
-var __pow = Math.pow;
-const pi = Math.PI, tau = 2 * pi, epsilon = 1e-6, tauEpsilon = tau - epsilon;
-function path_append(strings) {
-  this._ += strings[0];
-  for (let i = 1, n = strings.length; i < n; ++i) {
-    this._ += arguments[i] + strings[i];
-  }
-}
-function appendRound(digits) {
-  let d = Math.floor(digits);
-  if (!(d >= 0)) throw new Error(`invalid digits: ${digits}`);
-  if (d > 15) return path_append;
-  const k = __pow(10, d);
-  return function(strings) {
-    this._ += strings[0];
-    for (let i = 1, n = strings.length; i < n; ++i) {
-      this._ += Math.round(arguments[i] * k) / k + strings[i];
-    }
-  };
-}
-class Path {
-  constructor(digits) {
-    this._x0 = this._y0 = // start of current subpath
-    this._x1 = this._y1 = null;
-    this._ = "";
-    this._append = digits == null ? path_append : appendRound(digits);
-  }
-  moveTo(x, y) {
-    this._append`M${this._x0 = this._x1 = +x},${this._y0 = this._y1 = +y}`;
-  }
-  closePath() {
-    if (this._x1 !== null) {
-      this._x1 = this._x0, this._y1 = this._y0;
-      this._append`Z`;
-    }
-  }
-  lineTo(x, y) {
-    this._append`L${this._x1 = +x},${this._y1 = +y}`;
-  }
-  quadraticCurveTo(x1, y1, x, y) {
-    this._append`Q${+x1},${+y1},${this._x1 = +x},${this._y1 = +y}`;
-  }
-  bezierCurveTo(x1, y1, x2, y2, x, y) {
-    this._append`C${+x1},${+y1},${+x2},${+y2},${this._x1 = +x},${this._y1 = +y}`;
-  }
-  arcTo(x1, y1, x2, y2, r) {
-    x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
-    if (r < 0) throw new Error(`negative radius: ${r}`);
-    let x0 = this._x1, y0 = this._y1, x21 = x2 - x1, y21 = y2 - y1, x01 = x0 - x1, y01 = y0 - y1, l01_2 = x01 * x01 + y01 * y01;
-    if (this._x1 === null) {
-      this._append`M${this._x1 = x1},${this._y1 = y1}`;
-    } else if (!(l01_2 > epsilon)) ;
-    else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon) || !r) {
-      this._append`L${this._x1 = x1},${this._y1 = y1}`;
-    } else {
-      let x20 = x2 - x0, y20 = y2 - y0, l21_2 = x21 * x21 + y21 * y21, l20_2 = x20 * x20 + y20 * y20, l21 = Math.sqrt(l21_2), l01 = Math.sqrt(l01_2), l = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2), t01 = l / l01, t21 = l / l21;
-      if (Math.abs(t01 - 1) > epsilon) {
-        this._append`L${x1 + t01 * x01},${y1 + t01 * y01}`;
-      }
-      this._append`A${r},${r},0,0,${+(y01 * x20 > x01 * y20)},${this._x1 = x1 + t21 * x21},${this._y1 = y1 + t21 * y21}`;
-    }
-  }
-  arc(x, y, r, a0, a1, ccw) {
-    x = +x, y = +y, r = +r, ccw = !!ccw;
-    if (r < 0) throw new Error(`negative radius: ${r}`);
-    let dx = r * Math.cos(a0), dy = r * Math.sin(a0), x0 = x + dx, y0 = y + dy, cw = 1 ^ ccw, da = ccw ? a0 - a1 : a1 - a0;
-    if (this._x1 === null) {
-      this._append`M${x0},${y0}`;
-    } else if (Math.abs(this._x1 - x0) > epsilon || Math.abs(this._y1 - y0) > epsilon) {
-      this._append`L${x0},${y0}`;
-    }
-    if (!r) return;
-    if (da < 0) da = da % tau + tau;
-    if (da > tauEpsilon) {
-      this._append`A${r},${r},0,1,${cw},${x - dx},${y - dy}A${r},${r},0,1,${cw},${this._x1 = x0},${this._y1 = y0}`;
-    } else if (da > epsilon) {
-      this._append`A${r},${r},0,${+(da >= pi)},${cw},${this._x1 = x + r * Math.cos(a1)},${this._y1 = y + r * Math.sin(a1)}`;
-    }
-  }
-  rect(x, y, w, h) {
-    this._append`M${this._x0 = this._x1 = +x},${this._y0 = this._y1 = +y}h${w = +w}v${+h}h${-w}Z`;
-  }
-  toString() {
-    return this._;
-  }
-}
-function path() {
-  return new Path();
-}
-path.prototype = Path.prototype;
-function pathRound(digits = 3) {
-  return new Path(+digits);
-}
-
-;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/path.js
-
-function withPath(shape) {
-  let digits = 3;
-  shape.digits = function(_) {
-    if (!arguments.length) return digits;
-    if (_ == null) {
-      digits = null;
-    } else {
-      const d = Math.floor(_);
-      if (!(d >= 0)) throw new RangeError(`invalid digits: ${_}`);
-      digits = d;
-    }
-    return shape;
-  };
-  return () => new Path(digits);
-}
-
-;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/point.js
-function point_x(p) {
-  return p[0];
-}
-function point_y(p) {
-  return p[1];
-}
-
-;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/line.js
-
-
-
-
-
-/* harmony default export */ function src_line(x, y) {
-  var defined = d3_shape_src_constant(true), context = null, curve = curve_linear, output = null, path = withPath(line);
-  x = typeof x === "function" ? x : x === void 0 ? point_x : d3_shape_src_constant(x);
-  y = typeof y === "function" ? y : y === void 0 ? point_y : d3_shape_src_constant(y);
-  function line(data) {
-    var i, n = (data = d3_shape_src_array(data)).length, d, defined0 = false, buffer;
-    if (context == null) output = curve(buffer = path());
-    for (i = 0; i <= n; ++i) {
-      if (!(i < n && defined(d = data[i], i, data)) === defined0) {
-        if (defined0 = !defined0) output.lineStart();
-        else output.lineEnd();
-      }
-      if (defined0) output.point(+x(d, i, data), +y(d, i, data));
-    }
-    if (buffer) return output = null, buffer + "" || null;
-  }
-  line.x = function(_) {
-    return arguments.length ? (x = typeof _ === "function" ? _ : d3_shape_src_constant(+_), line) : x;
-  };
-  line.y = function(_) {
-    return arguments.length ? (y = typeof _ === "function" ? _ : d3_shape_src_constant(+_), line) : y;
-  };
-  line.defined = function(_) {
-    return arguments.length ? (defined = typeof _ === "function" ? _ : d3_shape_src_constant(!!_), line) : defined;
-  };
-  line.curve = function(_) {
-    return arguments.length ? (curve = _, context != null && (output = curve(context)), line) : curve;
-  };
-  line.context = function(_) {
-    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), line) : context;
-  };
-  return line;
-}
-
-;// ./node_modules/.pnpm/d3-shape@3.2.0/node_modules/d3-shape/src/area.js
-
-
-
-
-
-
-/* harmony default export */ function src_area(x0, y0, y1) {
-  var x1 = null, defined = d3_shape_src_constant(true), context = null, curve = curve_linear, output = null, path = withPath(area);
-  x0 = typeof x0 === "function" ? x0 : x0 === void 0 ? point_x : d3_shape_src_constant(+x0);
-  y0 = typeof y0 === "function" ? y0 : y0 === void 0 ? d3_shape_src_constant(0) : d3_shape_src_constant(+y0);
-  y1 = typeof y1 === "function" ? y1 : y1 === void 0 ? point_y : d3_shape_src_constant(+y1);
-  function area(data) {
-    var i, j, k, n = (data = d3_shape_src_array(data)).length, d, defined0 = false, buffer, x0z = new Array(n), y0z = new Array(n);
-    if (context == null) output = curve(buffer = path());
-    for (i = 0; i <= n; ++i) {
-      if (!(i < n && defined(d = data[i], i, data)) === defined0) {
-        if (defined0 = !defined0) {
-          j = i;
-          output.areaStart();
-          output.lineStart();
-        } else {
-          output.lineEnd();
-          output.lineStart();
-          for (k = i - 1; k >= j; --k) {
-            output.point(x0z[k], y0z[k]);
-          }
-          output.lineEnd();
-          output.areaEnd();
-        }
-      }
-      if (defined0) {
-        x0z[i] = +x0(d, i, data), y0z[i] = +y0(d, i, data);
-        output.point(x1 ? +x1(d, i, data) : x0z[i], y1 ? +y1(d, i, data) : y0z[i]);
-      }
-    }
-    if (buffer) return output = null, buffer + "" || null;
-  }
-  function arealine() {
-    return src_line().defined(defined).curve(curve).context(context);
-  }
-  area.x = function(_) {
-    return arguments.length ? (x0 = typeof _ === "function" ? _ : d3_shape_src_constant(+_), x1 = null, area) : x0;
-  };
-  area.x0 = function(_) {
-    return arguments.length ? (x0 = typeof _ === "function" ? _ : d3_shape_src_constant(+_), area) : x0;
-  };
-  area.x1 = function(_) {
-    return arguments.length ? (x1 = _ == null ? null : typeof _ === "function" ? _ : d3_shape_src_constant(+_), area) : x1;
-  };
-  area.y = function(_) {
-    return arguments.length ? (y0 = typeof _ === "function" ? _ : d3_shape_src_constant(+_), y1 = null, area) : y0;
-  };
-  area.y0 = function(_) {
-    return arguments.length ? (y0 = typeof _ === "function" ? _ : d3_shape_src_constant(+_), area) : y0;
-  };
-  area.y1 = function(_) {
-    return arguments.length ? (y1 = _ == null ? null : typeof _ === "function" ? _ : d3_shape_src_constant(+_), area) : y1;
-  };
-  area.lineX0 = area.lineY0 = function() {
-    return arealine().x(x0).y(y0);
-  };
-  area.lineY1 = function() {
-    return arealine().x(x0).y(y1);
-  };
-  area.lineX1 = function() {
-    return arealine().x(x1).y(y0);
-  };
-  area.defined = function(_) {
-    return arguments.length ? (defined = typeof _ === "function" ? _ : d3_shape_src_constant(!!_), area) : defined;
-  };
-  area.curve = function(_) {
-    return arguments.length ? (curve = _, context != null && (output = curve(context)), area) : curve;
-  };
-  area.context = function(_) {
-    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), area) : context;
-  };
-  return area;
-}
-
-;// ./src/ChartInternal/shape/core/path.ts
-var path_defProp = Object.defineProperty;
-var path_defProps = Object.defineProperties;
-var path_getOwnPropDescs = Object.getOwnPropertyDescriptors;
-var path_getOwnPropSymbols = Object.getOwnPropertySymbols;
-var path_hasOwnProp = Object.prototype.hasOwnProperty;
-var path_propIsEnum = Object.prototype.propertyIsEnumerable;
-var path_defNormalProp = (obj, key, value) => key in obj ? path_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var path_spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (path_hasOwnProp.call(b, prop))
-      path_defNormalProp(a, prop, b[prop]);
-  if (path_getOwnPropSymbols)
-    for (var prop of path_getOwnPropSymbols(b)) {
-      if (path_propIsEnum.call(b, prop))
-        path_defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-var path_spreadProps = (a, b) => path_defProps(a, path_getOwnPropDescs(b));
-
-function getPathValueFn($$, isSub) {
-  if (!isSub) {
-    return (d) => $$.getBaseValue(d);
-  }
-  return (d) => {
-    var _a;
-    const value = (_a = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _a.call($$, d, true);
-    return value === void 0 ? $$.getBaseValue(d) : value;
-  };
-}
-function getProjectedValues($$, values, isSub) {
-  if (!isSub) {
-    return values;
-  }
-  return values.map((d) => {
-    var _a;
-    const value = (_a = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _a.call($$, d, isSub);
-    return value === void 0 ? d : path_spreadProps(path_spreadValues({}, d), { value });
-  });
-}
-function getLineValues($$, d, values) {
-  return $$.isStepType(d) ? $$.convertValuesToStep(values) : values;
-}
-function generateDrawLinePath($$, lineIndices, isSub, context) {
-  const { config, scale } = $$;
-  const lineConnectNull = config.line_connectNull;
-  const isRotated = config.axis_rotated;
-  const getPoints = $$.generateGetLinePoints(lineIndices, isSub);
-  const yScale = $$.getYScaleById.bind($$);
-  const pathValue = getPathValueFn($$, isSub);
-  const xValue = (d) => (isSub ? $$.subxx : $$.xx).call($$, d);
-  const yValue = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)(
-    pathValue(d)
-  );
-  let line = src_line();
-  line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
-  context && (line = line.context(context));
-  if (!lineConnectNull) {
-    line = line.defined((d) => pathValue(d) !== null);
-  }
-  const x = isSub ? scale.subX : scale.x;
-  return (d) => {
-    const y = yScale(d.id, isSub);
-    let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
-    let x0 = 0;
-    let y0 = 0;
-    let path;
-    if ($$.isLineType(d)) {
-      const regions = config.data_regions[d.id];
-      if (regions && !context && $$.lineWithRegions) {
-        values = getProjectedValues($$, values, isSub);
-        if ($$.isAreaRangeType(d)) {
-          values = values.map((dv) => path_spreadProps(path_spreadValues({}, dv), { value: $$.getRangedData(dv, "mid") }));
-        }
-        if ($$.isStepType(d)) {
-          values = $$.convertValuesToStep(values);
-        }
-        path = $$.lineWithRegions(values, scale.zoom || x, y, regions);
-      } else {
-        path = line.curve($$.getCurve(d))(getLineValues($$, d, values));
-      }
-    } else {
-      if (values[0]) {
-        x0 = x(values[0].x);
-        y0 = y(pathValue(values[0]));
-      }
-      path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
-    }
-    return path || (context ? void 0 : "M 0 0");
-  };
-}
-function generateDrawAreaPath($$, areaIndices, isSub, context) {
-  const { config } = $$;
-  const lineConnectNull = config.line_connectNull;
-  const isRotated = config.axis_rotated;
-  const getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
-  const yScale = $$.getYScaleById.bind($$);
-  const pathValue = getPathValueFn($$, isSub);
-  const shapeYMin = /* @__PURE__ */ new Map();
-  const getShapeYMin = (id) => {
-    let min = shapeYMin.get(id);
-    if (min === void 0) {
-      min = $$.getShapeYMin(id, isSub);
-      shapeYMin.set(id, min);
-    }
-    return min;
-  };
-  const xValue = (d) => (isSub ? $$.subxx : $$.xx).call($$, d);
-  const value0 = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)(
-    $$.isAreaRangeType(d) ? $$.getRangedData(d, "high") : getShapeYMin(d.id)
-  );
-  const value1 = (d, i) => $$.isGrouped(d.id) ? getPoints(d, i)[1][1] : yScale(d.id, isSub)(
-    $$.isAreaRangeType(d) ? $$.getRangedData(d, "low") : pathValue(d)
-  );
-  return (d) => {
-    let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
-    let x0 = 0;
-    let y0 = 0;
-    let path;
-    if ($$.isAreaType(d)) {
-      let area = src_area();
-      area = isRotated ? area.y(xValue).x0(value0).x1(value1) : area.x(xValue).y0(config.area_above ? 0 : config.area_below ? isSub ? $$.state.height2 : $$.state.height : value0).y1(value1);
-      context && (area = area.context(context));
-      if (!lineConnectNull) {
-        area = area.defined((d2) => pathValue(d2) !== null);
-      }
-      values = getProjectedValues($$, values, isSub);
-      if ($$.isStepType(d)) {
-        values = $$.convertValuesToStep(values);
-      }
-      path = area.curve($$.getCurve(d))(values);
-    } else {
-      if (values[0]) {
-        x0 = (isSub ? $$.scale.subX : $$.scale.x)(values[0].x);
-        y0 = $$.getYScaleById(d.id, isSub)(pathValue(values[0]));
-      }
-      path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
-    }
-    return path || (context ? void 0 : "M 0 0");
-  };
-}
-
-;// ./src/canvas/color.ts
-
-
-let colorParserContext;
-function withOpacity(color, opacity) {
-  if (!isNumber(opacity) || opacity >= 1) {
-    return color;
-  }
-  const hex = color.match(/^#([\da-f]{3}|[\da-f]{6})$/i);
-  if (hex) {
-    const value = hex[1].length === 3 ? hex[1].split("").map((v) => v + v).join("") : hex[1];
-    const matches = value.match(/.{2}/g);
-    if (!matches) {
-      return color;
-    }
-    const rgb = matches.map((v) => parseInt(v, 16));
-    return `rgba(${rgb.join(",")},${opacity})`;
-  }
-  if (/^rgb\(/i.test(color)) {
-    return color.replace(/^rgb\((.*)\)$/i, `rgba($1,${opacity})`);
-  }
-  if (/^rgba\(/i.test(color)) {
-    return color.replace(
-      /^rgba\((.*),\s*([\d.]+)\)$/i,
-      (_, rgb, alpha) => `rgba(${rgb},${Number(alpha) * opacity})`
-    );
-  }
-  const parsed = parseCanvasColor(color);
-  if (parsed && parsed !== color) {
-    return withOpacity(parsed, opacity);
-  }
-  return color;
-}
-function parseCanvasColor(color) {
-  if (!win.document) {
-    return null;
-  }
-  if (colorParserContext === void 0) {
-    colorParserContext = win.document.createElement("canvas").getContext("2d");
-  }
-  if (!colorParserContext) {
-    return null;
-  }
-  colorParserContext.fillStyle = "#000";
-  colorParserContext.fillStyle = color;
-  const parsedOnBlack = colorParserContext.fillStyle;
-  colorParserContext.fillStyle = "#fff";
-  colorParserContext.fillStyle = color;
-  const parsedOnWhite = colorParserContext.fillStyle;
-  return parsedOnBlack === parsedOnWhite ? parsedOnBlack : null;
-}
-
-;// ./src/canvas/geometry.ts
-
-
-function getCanvasBarGeometry($$, getPoints, d, index) {
-  const points = getPoints(d, index);
-  const rect = getRenderRect($$, points);
-  return isFiniteCanvasCoordinate(rect.x, rect.y) && isFiniteCanvasCoordinate(rect.x + rect.w, rect.y + rect.h) ? { points, rect } : null;
-}
-function getCanvasCandlestickGeometry($$, getPoints, d, index) {
-  const points = getPoints(d, index);
-  const { body, wickStart, wickEnd } = getCandlestickGeometry($$, points);
-  return isFiniteCanvasCoordinate(body.x, body.y) && isFiniteCanvasCoordinate(body.x + body.w, body.y + body.h) && isFiniteCanvasCoordinate(wickStart[0], wickStart[1]) && isFiniteCanvasCoordinate(wickEnd[0], wickEnd[1]) ? { body, points, wickStart, wickEnd } : null;
-}
-
-;// ./src/canvas/labels.ts
-
-
-const LABEL_LINE_HEIGHT_RATIO = 1.2;
-function getLabelValue($$, d) {
-  var _a, _b, _c;
-  let { value } = d;
-  if ((_a = $$.isBubbleZType) == null ? void 0 : _a.call($$, d)) {
-    value = $$.getBubbleZData(value, "z");
-  } else if ((_b = $$.isCandlestickType) == null ? void 0 : _b.call($$, d)) {
-    const data = (_c = $$.getCandlestickData) == null ? void 0 : _c.call($$, d);
-    if (data) {
-      value = data.close;
-    }
-  }
-  return value;
-}
-function getLabelText($$, d) {
-  const value = $$.dataLabelFormat(d.id)(getLabelValue($$, d), d.id, d.index, []);
-  return value === null || value === void 0 ? null : String(value);
-}
-function getLabelRowKey(d) {
-  return `${d.id}:${d.index}`;
-}
-function getExpandedFocusMatcher($$, selectedData, typeFilter) {
-  var _a;
-  if (!(selectedData == null ? void 0 : selectedData.length)) {
-    return () => false;
-  }
-  if ($$.config.tooltip_grouped && selectedData.length > 1) {
-    const index = (_a = selectedData[0]) == null ? void 0 : _a.index;
-    return (d) => index !== void 0 && d.index === index && typeFilter($$, d);
-  }
-  const keys = new Set(
-    selectedData.filter((d) => d && typeFilter($$, d)).map(getLabelRowKey)
-  );
-  return (d) => keys.has(getLabelRowKey(d));
-}
-function getLabelPosition($$, d, type, texts) {
-  const position = $$.config.data_labels_position;
-  let value;
-  if (isFunction(position)) {
-    value = position.bind($$.api)(type, getLabelValue($$, d), d.id, d.index, texts);
-  } else if (position) {
-    const targetPosition = d.id in position ? position[d.id] : position;
-    value = targetPosition == null ? void 0 : targetPosition[type];
-  }
-  return isNumber(value) ? value : 0;
-}
-function getLabelImageOption($$, d) {
-  var _a, _b;
-  const option = (_a = $$.config.data_labels) == null ? void 0 : _a.image;
-  if (isFunction(option)) {
-    return (_b = option.call($$.api, getLabelValue($$, d), d.id, d.index)) != null ? _b : null;
-  } else if (option) {
-    const { url = "", width = 0, height = 0, pos } = option;
-    return { url, width, height, pos };
-  }
-  return null;
-}
-function getLabelImageUrl(option, d) {
-  return tplProcess(option.url, {
-    ID: d.id
-  });
-}
-function getLabelImagePosition($$, option, text, x, y, d) {
-  var _a, _b, _c;
-  const { width = 0, height = 0, pos } = option;
-  const w = width / 2;
-  const h = height / 2;
-  const textHeight = getLabelDecorationBox($$.canvasEngine.ctx, text, x, y).h;
-  const fontSize = getFontSize($$.canvasEngine.ctx.font);
-  const imageX = x - w;
-  const imageY = y - h - (((_a = $$.isTreemapType) == null ? void 0 : _a.call($$, d)) ? fontSize * 0.7 : textHeight / 2);
-  let textX = x;
-  let textY = y;
-  if ($$.config.axis_rotated) {
-    textX += w;
-  } else {
-    textY += h;
-  }
-  return {
-    x: imageX + ((_b = pos == null ? void 0 : pos.x) != null ? _b : 0),
-    y: imageY + ((_c = pos == null ? void 0 : pos.y) != null ? _c : 0),
-    textX,
-    textY
-  };
-}
-function getLabelColor($$, d, fallback) {
-  var _a, _b, _c;
-  const color = (_a = $$.updateTextColor) == null ? void 0 : _a.call($$, d);
-  return typeof color === "string" ? color : ((_b = $$.isTreemapType) == null ? void 0 : _b.call($$, d)) ? fallback : ((_c = $$.color) == null ? void 0 : _c.call($$, d)) || fallback;
-}
-function getLabelBackgroundColor($$, d) {
-  var _a;
-  const option = $$.config.data_labels_backgroundColors;
-  if (!option) {
-    return null;
-  }
-  if (isString(option)) {
-    return option;
-  }
-  if (isFunction(option)) {
-    const defaultColor = (_a = $$.color) == null ? void 0 : _a.call($$, d);
-    const color2 = option.bind($$.api)(defaultColor, d);
-    return color2 === null || color2 === void 0 ? null : String(color2);
-  }
-  const color = option[d.id];
-  return color === null || color === void 0 ? null : String(color);
-}
-function getLabelBorderOption(border) {
-  var _a, _b, _c;
-  if (!border) {
-    return null;
-  }
-  const option = isObject(border) ? border : {};
-  return {
-    padding: parseShorthand((_a = option.padding) != null ? _a : "3 5"),
-    radius: isNumber(option.radius) ? option.radius : 10,
-    stroke: (_b = option.stroke) != null ? _b : "#000",
-    strokeWidth: isNumber(option.strokeWidth) ? option.strokeWidth : 1,
-    fill: (_c = option.fill) != null ? _c : "none"
-  };
-}
-function getLabelDecorationBox(ctx, text, x, y, padding = { top: 0, right: 0, bottom: 0, left: 0 }) {
-  var _a, _b;
-  const lines = text.split("\n");
-  const metrics = lines.map((line) => ctx.measureText(line));
-  const width = Math.max(...metrics.map((metric) => metric.width), 0);
-  const fontSize = getFontSize(ctx.font);
-  const lineHeight = fontSize * LABEL_LINE_HEIGHT_RATIO;
-  const fontBoundingHeight = metrics[0] ? (metrics[0].fontBoundingBoxAscent || 0) + (metrics[0].fontBoundingBoxDescent || 0) : 0;
-  const baselineDescent = metrics[0] ? metrics[0].fontBoundingBoxDescent || metrics[0].actualBoundingBoxDescent || 0 : 0;
-  const height = lines.length > 1 ? lineHeight * lines.length : Math.max(
-    fontSize,
-    fontBoundingHeight,
-    ((_a = metrics[0]) == null ? void 0 : _a.actualBoundingBoxAscent) + ((_b = metrics[0]) == null ? void 0 : _b.actualBoundingBoxDescent) || 0
-  );
-  let textX = x;
-  let textY = y;
-  if (ctx.textAlign === "center") {
-    textX -= width / 2;
-  } else if (ctx.textAlign === "right" || ctx.textAlign === "end") {
-    textX -= width;
-  }
-  if (ctx.textBaseline === "middle") {
-    textY -= height / 2;
-  } else if (ctx.textBaseline === "alphabetic") {
-    textY -= height - baselineDescent;
-  } else if (ctx.textBaseline === "bottom" || ctx.textBaseline === "ideographic") {
-    textY -= height;
-  }
-  return {
-    x: textX - padding.left,
-    y: textY - padding.top,
-    w: width + padding.left + padding.right,
-    h: height + padding.top + padding.bottom
-  };
-}
-function drawLabelDecorations($$, painter, d, text, x, y) {
-  var _a, _b;
-  const ctx = painter.context;
-  const backgroundColor = getLabelBackgroundColor($$, d);
-  const border = getLabelBorderOption((_a = $$.config.data_labels) == null ? void 0 : _a.border);
-  const padding = (_b = border == null ? void 0 : border.padding) != null ? _b : { top: 0, right: 0, bottom: 0, left: 0 };
-  const box = getLabelDecorationBox(ctx, text, x, y, padding);
-  const angle = $$.config.data_labels.rotate;
-  painter.withState((canvas) => {
-    var _a2;
-    if (angle) {
-      canvas.translate(x, y);
-      canvas.rotate(angle * Math.PI / 180);
-      box.x -= x;
-      box.y -= y;
-    }
-    if (backgroundColor) {
-      painter.fillRoundRect(box, (_a2 = border == null ? void 0 : border.radius) != null ? _a2 : 0, { fill: backgroundColor });
-    }
-    if (border) {
-      if (border.fill !== "none") {
-        painter.fillRoundRect(box, border.radius, { fill: border.fill });
-      }
-      painter.strokeRoundRect(box, border.radius, {
-        stroke: border.stroke,
-        lineWidth: border.strokeWidth
-      });
-    }
-  });
-}
-function getLabelRotateAnchor(angle) {
-  let anchor = "middle";
-  if (angle > 0 && angle <= 170) {
-    anchor = "end";
-  } else if (angle > 190 && angle <= 360) {
-    anchor = "start";
-  }
-  return anchor;
-}
-function getCanvasTextAlign(anchor) {
-  return anchor === "start" ? "left" : anchor === "end" ? "right" : "center";
-}
-function getRotatedLabelPosition($$, d, x, y) {
-  var _a, _b, _c;
-  const anchor = getLabelRotateAnchor($$.config.data_labels.rotate);
-  const isRotated = $$.config.axis_rotated;
-  const isInverted = $$.config[`axis_${(_a = $$.axis) == null ? void 0 : _a.getId(d.id)}_inverted`];
-  const isCandlestickType = isCanvasCandlestickType($$, d);
-  const { value } = d;
-  const isNegative = isNumber(value) && value < 0 || isCandlestickType && !((_c = (_b = $$.getCandlestickData) == null ? void 0 : _b.call($$, d)) == null ? void 0 : _c._isUp);
-  const gap = 4;
-  const doubleGap = gap * 2;
-  if (isRotated) {
-    if (anchor === "start") {
-      x += isNegative ? 0 : doubleGap;
-      y += gap;
-    } else if (anchor === "middle") {
-      x += doubleGap;
-      y -= doubleGap;
-    } else if (anchor === "end") {
-      isNegative && (x -= doubleGap);
-      y += gap;
-    }
-  } else {
-    if (anchor === "start") {
-      x += gap;
-      isNegative && (y += doubleGap * 2);
-    } else if (anchor === "middle") {
-      y -= doubleGap;
-    } else if (anchor === "end") {
-      x -= gap;
-      isNegative && (y += doubleGap * 2);
-    }
-    if (isInverted) {
-      y += isNegative ? -17 : isCandlestickType ? 13 : 7;
-    }
-  }
-  return {
-    x,
-    y,
-    textAlign: getCanvasTextAlign(anchor)
-  };
-}
-function getPointLabelAnchor($$, ctx, d, x, y) {
-  var _a;
-  if ($$.config.axis_rotated) {
-    x += 6;
-    ctx.textAlign = "left";
-    ctx.textBaseline = "middle";
-  } else if (isCanvasBubbleType($$, d)) {
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-  } else {
-    const { config, state } = $$;
-    const isInverted = config[`axis_${(_a = $$.axis) == null ? void 0 : _a.getId(d.id)}_inverted`];
-    const isNegative = d.value < 0 || d.value === 0 && !state.hasPositiveValue && state.hasNegativeValue;
-    let baseY = 3;
-    if (isNumber(config.point_r) && config.point_r > 5 && (isCanvasLineType($$, d) || isCanvasScatterType($$, d))) {
-      baseY += config.point_r / 2.3;
-    }
-    ctx.textAlign = "center";
-    if (isInverted ? !isNegative : isNegative) {
-      y += baseY;
-      ctx.textBaseline = "top";
-    } else {
-      y -= baseY * 2;
-      ctx.textBaseline = "bottom";
-    }
-  }
-  return { x, y };
-}
-
-;// ./src/canvas/pointPattern.ts
-var pointPattern_defProp = Object.defineProperty;
-var pointPattern_getOwnPropSymbols = Object.getOwnPropertySymbols;
-var pointPattern_hasOwnProp = Object.prototype.hasOwnProperty;
-var pointPattern_propIsEnum = Object.prototype.propertyIsEnumerable;
-var pointPattern_defNormalProp = (obj, key, value) => key in obj ? pointPattern_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var pointPattern_spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (pointPattern_hasOwnProp.call(b, prop))
-      pointPattern_defNormalProp(a, prop, b[prop]);
-  if (pointPattern_getOwnPropSymbols)
-    for (var prop of pointPattern_getOwnPropSymbols(b)) {
-      if (pointPattern_propIsEnum.call(b, prop))
-        pointPattern_defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-
-
-
-const DEFAULT_POINT_VIEWBOX = { x: 0, y: 0, w: 8, h: 8 };
-const customPointPatternCache = /* @__PURE__ */ new Map();
-const IDENTITY_POINT_MATRIX = [1, 0, 0, 1, 0, 0];
-function isBuiltinPointType(type) {
-  return type === "circle" || type === "rectangle";
-}
-function getSvgNumber(node, name, fallback = 0) {
-  const value = node.getAttribute(name);
-  const parsed = value === null ? NaN : parseFloat(value);
-  return Number.isFinite(parsed) ? parsed : fallback;
-}
-function parseSvgPoints(value) {
-  const nums = (value.match(/[-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/gi) || []).map(Number).filter(Number.isFinite);
-  const points = [];
-  for (let i = 0; i < nums.length - 1; i += 2) {
-    points.push([nums[i], nums[i + 1]]);
-  }
-  return points;
-}
-function parseViewBox(value) {
-  const values = (value == null ? void 0 : value.trim().split(/[\s,]+/).map(Number).filter(Number.isFinite)) || [];
-  return values.length === 4 ? {
-    x: values[0],
-    y: values[1],
-    w: values[2],
-    h: values[3]
-  } : null;
-}
-function getPointsBox(points) {
-  const xs = points.map(([x2]) => x2);
-  const ys = points.map(([, y2]) => y2);
-  const x = Math.min(...xs);
-  const y = Math.min(...ys);
-  return {
-    x,
-    y,
-    w: Math.max(...xs) - x,
-    h: Math.max(...ys) - y
-  };
-}
-function mergePointBoxes(boxes) {
-  const validBoxes = boxes.filter(
-    (box) => Number.isFinite(box.x) && Number.isFinite(box.y) && Number.isFinite(box.w) && Number.isFinite(box.h)
-  );
-  if (!validBoxes.length) {
-    return pointPattern_spreadValues({}, DEFAULT_POINT_VIEWBOX);
-  }
-  const x = Math.min(...validBoxes.map((box) => box.x));
-  const y = Math.min(...validBoxes.map((box) => box.y));
-  const right = Math.max(...validBoxes.map((box) => box.x + box.w));
-  const bottom = Math.max(...validBoxes.map((box) => box.y + box.h));
-  return {
-    x,
-    y,
-    w: right - x,
-    h: bottom - y
-  };
-}
-function multiplyPointMatrix(a, b) {
-  return [
-    a[0] * b[0] + a[2] * b[1],
-    a[1] * b[0] + a[3] * b[1],
-    a[0] * b[2] + a[2] * b[3],
-    a[1] * b[2] + a[3] * b[3],
-    a[0] * b[4] + a[2] * b[5] + a[4],
-    a[1] * b[4] + a[3] * b[5] + a[5]
-  ];
-}
-function parsePointTransform(value) {
-  let matrix = [...IDENTITY_POINT_MATRIX];
-  ((value == null ? void 0 : value.match(/[a-z]+\([^)]*\)/gi)) || []).forEach((token) => {
-    var _a;
-    const [, rawName, body] = token.match(/^([a-z]+)\(([^)]*)\)$/i) || [];
-    const name = rawName == null ? void 0 : rawName.toLowerCase();
-    const values = ((body == null ? void 0 : body.match(/[-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/gi)) || []).map(Number).filter(Number.isFinite);
-    let next = null;
-    if (name === "matrix" && values.length >= 6) {
-      next = values.slice(0, 6);
-    } else if (name === "translate" && values.length) {
-      next = [1, 0, 0, 1, values[0], values[1] || 0];
-    } else if (name === "scale" && values.length) {
-      next = [values[0], 0, 0, (_a = values[1]) != null ? _a : values[0], 0, 0];
-    } else if (name === "rotate" && values.length) {
-      const angle = values[0] * Math.PI / 180;
-      const cos = Math.cos(angle);
-      const sin = Math.sin(angle);
-      const rotate = [cos, sin, -sin, cos, 0, 0];
-      next = values.length >= 3 ? multiplyPointMatrix(
-        multiplyPointMatrix([1, 0, 0, 1, values[1], values[2]], rotate),
-        [1, 0, 0, 1, -values[1], -values[2]]
-      ) : rotate;
-    } else if (name === "skewx" && values.length) {
-      next = [1, 0, Math.tan(values[0] * Math.PI / 180), 1, 0, 0];
-    } else if (name === "skewy" && values.length) {
-      next = [1, Math.tan(values[0] * Math.PI / 180), 0, 1, 0, 0];
-    }
-    next && (matrix = multiplyPointMatrix(matrix, next));
-  });
-  return matrix;
-}
-function getPointPresentationValue(node, name) {
-  const style = node.getAttribute("style");
-  const attr = node.getAttribute(name);
-  const match = style == null ? void 0 : style.match(new RegExp(`(?:^|;)\\s*${name}\\s*:\\s*([^;]+)`, "i"));
-  return ((match == null ? void 0 : match[1]) || attr || "").trim() || null;
-}
-function parsePointStyle(node, inherited) {
-  const style = pointPattern_spreadValues({}, inherited);
-  const fill = getPointPresentationValue(node, "fill");
-  const stroke = getPointPresentationValue(node, "stroke");
-  const strokeWidth = getPointPresentationValue(node, "stroke-width");
-  const opacity = getPointPresentationValue(node, "opacity");
-  const fillOpacity = getPointPresentationValue(node, "fill-opacity");
-  const strokeOpacity = getPointPresentationValue(node, "stroke-opacity");
-  if (fill) {
-    style.fill = fill === "none" ? null : fill;
-  }
-  if (stroke) {
-    style.stroke = stroke === "none" ? null : stroke;
-  }
-  if (strokeWidth) {
-    const lineWidth = parseFloat(strokeWidth);
-    Number.isFinite(lineWidth) && (style.lineWidth = lineWidth);
-  }
-  [opacity, fillOpacity, strokeOpacity].forEach((value) => {
-    var _a;
-    const alpha = value === null ? NaN : parseFloat(value);
-    Number.isFinite(alpha) && (style.alpha = ((_a = style.alpha) != null ? _a : 1) * alpha);
-  });
-  return style;
-}
-function collectPointDefs(root) {
-  const defs = /* @__PURE__ */ new Map();
-  Array.from(root.querySelectorAll("[id]")).forEach((node) => {
-    const id = node.getAttribute("id");
-    id && defs.set(id, node);
-  });
-  return defs;
-}
-function parsePointPaintLength(value, fallback) {
-  const text = value == null ? void 0 : value.trim();
-  if (!text) {
-    return fallback;
-  }
-  return /%$/.test(text) ? text : parseFloat(text);
-}
-function pointPaintCoord(value, origin, size, fallback) {
-  if (typeof value === "number") {
-    return Number.isFinite(value) ? value : fallback;
-  }
-  if (typeof value === "string" && /%$/.test(value)) {
-    const percent = parseFloat(value);
-    return Number.isFinite(percent) ? origin + size * percent / 100 : fallback;
-  }
-  const parsed = parseFloat(value != null ? value : "");
-  return Number.isFinite(parsed) ? parsed : fallback;
-}
-function parsePointPaintOffset(value) {
-  const text = (value == null ? void 0 : value.trim()) || "0";
-  const parsed = parseFloat(text);
-  const offset = /%$/.test(text) ? parsed / 100 : parsed;
-  return Math.max(0, Math.min(1, Number.isFinite(offset) ? offset : 0));
-}
-function parsePointPaintStops(node) {
-  return Array.from(node.children || []).filter((child) => child.tagName.toLowerCase() === "stop").map((stop) => {
-    const color = getPointPresentationValue(stop, "stop-color") || "#000";
-    const opacity = getPointPresentationValue(stop, "stop-opacity");
-    const parsedOpacity = opacity === null ? NaN : parseFloat(opacity);
-    return {
-      offset: parsePointPaintOffset(stop.getAttribute("offset")),
-      color,
-      opacity: Number.isFinite(parsedOpacity) ? parsedOpacity : void 0
-    };
-  });
-}
-function collectPointPaints(defs) {
-  const paints = /* @__PURE__ */ new Map();
-  defs.forEach((node, id) => {
-    const tagName = node.tagName.toLowerCase();
-    const stops = parsePointPaintStops(node);
-    if (!stops.length) {
-      return;
-    }
-    if (tagName === "lineargradient") {
-      paints.set(id, {
-        type: "linearGradient",
-        x1: parsePointPaintLength(node.getAttribute("x1"), "0%"),
-        y1: parsePointPaintLength(node.getAttribute("y1"), "0%"),
-        x2: parsePointPaintLength(node.getAttribute("x2"), "100%"),
-        y2: parsePointPaintLength(node.getAttribute("y2"), "0%"),
-        stops
-      });
-    } else if (tagName === "radialgradient") {
-      paints.set(id, {
-        type: "radialGradient",
-        cx: parsePointPaintLength(node.getAttribute("cx"), "50%"),
-        cy: parsePointPaintLength(node.getAttribute("cy"), "50%"),
-        r: parsePointPaintLength(node.getAttribute("r"), "50%"),
-        fx: parsePointPaintLength(node.getAttribute("fx"), "50%"),
-        fy: parsePointPaintLength(node.getAttribute("fy"), "50%"),
-        fr: parsePointPaintLength(node.getAttribute("fr"), 0),
-        stops
-      });
-    }
-  });
-  return paints;
-}
-function parseCustomPointNode(node, fallbackBox, defs, matrix = IDENTITY_POINT_MATRIX, inheritedStyle = {}, seen = /* @__PURE__ */ new Set()) {
-  const tagName = node.tagName.toLowerCase();
-  const children = Array.from(node.children || []);
-  const style = parsePointStyle(node, inheritedStyle);
-  const transform = multiplyPointMatrix(
-    matrix,
-    parsePointTransform(node.getAttribute("transform"))
-  );
-  const shapeBase = { matrix: transform, style };
-  if (tagName === "defs") {
-    return [];
-  }
-  if (tagName === "svg" || tagName === "g" || tagName === "symbol") {
-    return children.reduce(
-      (shapes, child) => shapes.concat(
-        parseCustomPointNode(child, fallbackBox, defs, transform, style, seen)
-      ),
-      []
-    );
-  }
-  if (tagName === "use") {
-    const href = node.getAttribute("href") || node.getAttribute("xlink:href") || "";
-    const id = href.charAt(0) === "#" ? href.slice(1) : "";
-    const target = id && defs.get(id);
-    if (!target || seen.has(id)) {
-      return [];
-    }
-    const x = getSvgNumber(node, "x", 0);
-    const y = getSvgNumber(node, "y", 0);
-    const useTransform = multiplyPointMatrix(transform, [1, 0, 0, 1, x, y]);
-    seen.add(id);
-    const shapes = parseCustomPointNode(target, fallbackBox, defs, useTransform, style, seen);
-    seen.delete(id);
-    return shapes;
-  }
-  if (tagName === "polygon" || tagName === "polyline") {
-    const points = parseSvgPoints(node.getAttribute("points") || "");
-    return points.length ? [pointPattern_spreadValues({
-      type: tagName,
-      points,
-      box: getPointsBox(points)
-    }, shapeBase)] : [];
-  }
-  if (tagName === "circle") {
-    const cx = getSvgNumber(node, "cx", 0);
-    const cy = getSvgNumber(node, "cy", 0);
-    const r = getSvgNumber(node, "r", 0);
-    return r > 0 ? [pointPattern_spreadValues({
-      type: "circle",
-      cx,
-      cy,
-      r,
-      box: { x: cx - r, y: cy - r, w: r * 2, h: r * 2 }
-    }, shapeBase)] : [];
-  }
-  if (tagName === "ellipse") {
-    const cx = getSvgNumber(node, "cx", 0);
-    const cy = getSvgNumber(node, "cy", 0);
-    const rx = getSvgNumber(node, "rx", 0);
-    const ry = getSvgNumber(node, "ry", 0);
-    return rx > 0 && ry > 0 ? [pointPattern_spreadValues({
-      type: "ellipse",
-      cx,
-      cy,
-      rx,
-      ry,
-      box: { x: cx - rx, y: cy - ry, w: rx * 2, h: ry * 2 }
-    }, shapeBase)] : [];
-  }
-  if (tagName === "rect") {
-    const x = getSvgNumber(node, "x", 0);
-    const y = getSvgNumber(node, "y", 0);
-    const w = getSvgNumber(node, "width", 0);
-    const h = getSvgNumber(node, "height", 0);
-    return w > 0 && h > 0 ? [pointPattern_spreadValues({
-      type: "rect",
-      x,
-      y,
-      w,
-      h,
-      box: { x, y, w, h }
-    }, shapeBase)] : [];
-  }
-  if (tagName === "line") {
-    const x1 = getSvgNumber(node, "x1", 0);
-    const y1 = getSvgNumber(node, "y1", 0);
-    const x2 = getSvgNumber(node, "x2", 0);
-    const y2 = getSvgNumber(node, "y2", 0);
-    return [pointPattern_spreadValues({
-      type: "line",
-      x1,
-      y1,
-      x2,
-      y2,
-      box: getPointsBox([[x1, y1], [x2, y2]])
-    }, shapeBase)];
-  }
-  if (tagName === "path") {
-    const d = node.getAttribute("d") || "";
-    return d ? [pointPattern_spreadValues({
-      type: "path",
-      d,
-      box: fallbackBox
-    }, shapeBase)] : [];
-  }
-  return [];
-}
-function parseCustomPointPattern(pattern) {
-  if (!/^</.test(pattern)) {
-    return null;
-  }
-  if (customPointPatternCache.has(pattern)) {
-    return customPointPatternCache.get(pattern) || null;
-  }
-  let parsed = null;
-  try {
-    const doc = new win.DOMParser().parseFromString(sanitize(pattern), "image/svg+xml");
-    const root = doc.documentElement;
-    const fallbackBox = parseViewBox(root.getAttribute("viewBox")) || DEFAULT_POINT_VIEWBOX;
-    const defs = collectPointDefs(root);
-    const shapes = parseCustomPointNode(root, fallbackBox, defs);
-    if (shapes.length) {
-      parsed = {
-        shapes,
-        box: root.tagName.toLowerCase() === "svg" ? fallbackBox : mergePointBoxes(shapes.map((shape) => shape.box)),
-        paints: collectPointPaints(defs)
-      };
-    }
-  } catch (e) {
-    parsed = null;
-  }
-  customPointPatternCache.set(pattern, parsed);
-  return parsed;
-}
-function traceCustomPointShape(ctx, shape) {
-  if (shape.type === "polygon" || shape.type === "polyline") {
-    const [start, ...rest] = shape.points;
-    ctx.moveTo(start[0], start[1]);
-    rest.forEach(([x, y]) => ctx.lineTo(x, y));
-    shape.type === "polygon" && ctx.closePath();
-  } else if (shape.type === "circle") {
-    ctx.moveTo(shape.cx + shape.r, shape.cy);
-    ctx.arc(shape.cx, shape.cy, shape.r, 0, Math.PI * 2);
-  } else if (shape.type === "ellipse") {
-    ctx.moveTo(shape.cx + shape.rx, shape.cy);
-    ctx.ellipse(shape.cx, shape.cy, shape.rx, shape.ry, 0, 0, Math.PI * 2);
-  } else if (shape.type === "rect") {
-    ctx.rect(shape.x, shape.y, shape.w, shape.h);
-  } else if (shape.type === "line") {
-    ctx.moveTo(shape.x1, shape.y1);
-    ctx.lineTo(shape.x2, shape.y2);
-  }
-}
-function getCustomPointPaintId(value) {
-  const match = value == null ? void 0 : value.match(/^url\(#([^)]+)\)$/);
-  return (match == null ? void 0 : match[1]) || null;
-}
-function createCustomPointPaint(ctx, paint, box) {
-  const { x, y, w, h } = box;
-  const gradient = paint.type === "linearGradient" ? ctx.createLinearGradient(
-    pointPaintCoord(paint.x1, x, w, x),
-    pointPaintCoord(paint.y1, y, h, y),
-    pointPaintCoord(paint.x2, x, w, x + w),
-    pointPaintCoord(paint.y2, y, h, y)
-  ) : ctx.createRadialGradient(
-    pointPaintCoord(paint.fx, x, w, x + w / 2),
-    pointPaintCoord(paint.fy, y, h, y + h / 2),
-    pointPaintCoord(paint.fr, x, Math.max(w, h), 0),
-    pointPaintCoord(paint.cx, x, w, x + w / 2),
-    pointPaintCoord(paint.cy, y, h, y + h / 2),
-    Math.max(0.01, pointPaintCoord(paint.r, 0, Math.max(w, h), Math.max(w, h) / 2))
-  );
-  paint.stops.forEach(({ offset, color, opacity }) => {
-    gradient.addColorStop(offset, opacity === void 0 ? color : withOpacity(color, opacity));
-  });
-  return gradient;
-}
-function getCustomPointDrawStyle(ctx, base, shapeStyle, paints, box) {
-  const style = pointPattern_spreadValues({}, base || {});
-  if (shapeStyle.fill !== void 0) {
-    if (shapeStyle.fill === null) {
-      delete style.fill;
-    } else if (getCustomPointPaintId(shapeStyle.fill)) {
-      const paint = paints.get(getCustomPointPaintId(shapeStyle.fill));
-      paint && (style.fill = createCustomPointPaint(ctx, paint, box));
-    } else if (!/^url\(/.test(shapeStyle.fill)) {
-      style.fill = shapeStyle.fill;
-    }
-  }
-  if (shapeStyle.stroke !== void 0) {
-    if (shapeStyle.stroke === null) {
-      delete style.stroke;
-    } else if (getCustomPointPaintId(shapeStyle.stroke)) {
-      const paint = paints.get(getCustomPointPaintId(shapeStyle.stroke));
-      paint && (style.stroke = createCustomPointPaint(ctx, paint, box));
-    } else if (!/^url\(/.test(shapeStyle.stroke)) {
-      style.stroke = shapeStyle.stroke;
-    }
-  }
-  shapeStyle.lineWidth !== void 0 && (style.lineWidth = shapeStyle.lineWidth);
-  return {
-    style,
-    shouldFill: shapeStyle.fill !== null && (!style.stroke || style.fill !== void 0),
-    shouldStroke: shapeStyle.stroke !== null && style.stroke !== void 0,
-    alpha: shapeStyle.alpha
-  };
-}
-function drawPointPattern(painter, pattern, x, y, r, style, baseR = r) {
-  if (isBuiltinPointType(pattern)) {
-    painter.point(pattern, x, y, r, style);
-    return;
-  }
-  const parsed = parseCustomPointPattern(pattern);
-  if (!parsed || r <= 0) {
-    painter.point("circle", x, y, r, style);
-    return;
-  }
-  painter.withState((ctx) => {
-    const { box, paints, shapes } = parsed;
-    const scale = baseR > 0 ? r / baseR : 1;
-    const drawShape = (shape) => {
-      const {
-        style: drawStyle,
-        shouldFill,
-        shouldStroke,
-        alpha
-      } = getCustomPointDrawStyle(ctx, style, shape.style, paints, box);
-      ctx.save();
-      painter.applyStyle(drawStyle);
-      alpha !== void 0 && (ctx.globalAlpha *= alpha);
-      ctx.transform(...shape.matrix);
-      ctx.beginPath();
-      if (shape.type === "path") {
-        if (win.Path2D) {
-          const path = shape.path2D || (shape.path2D = new win.Path2D(shape.d));
-          shouldFill && ctx.fill(path);
-          shouldStroke && ctx.stroke(path);
-        }
-      } else {
-        traceCustomPointShape(ctx, shape);
-        shouldFill && ctx.fill();
-        shouldStroke && ctx.stroke();
-      }
-      ctx.restore();
-    };
-    ctx.translate(
-      x - (box.x + box.w / 2) * scale,
-      y - (box.y + box.h / 2) * scale
-    );
-    ctx.scale(scale, scale);
-    shapes.forEach(drawShape);
-  });
-}
-
-;// ./src/canvas/CanvasRenderer.ts
-var CanvasRenderer_defProp = Object.defineProperty;
-var CanvasRenderer_defProps = Object.defineProperties;
-var CanvasRenderer_getOwnPropDescs = Object.getOwnPropertyDescriptors;
-var CanvasRenderer_getOwnPropSymbols = Object.getOwnPropertySymbols;
-var CanvasRenderer_hasOwnProp = Object.prototype.hasOwnProperty;
-var CanvasRenderer_propIsEnum = Object.prototype.propertyIsEnumerable;
-var CanvasRenderer_defNormalProp = (obj, key, value) => key in obj ? CanvasRenderer_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var CanvasRenderer_spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (CanvasRenderer_hasOwnProp.call(b, prop))
-      CanvasRenderer_defNormalProp(a, prop, b[prop]);
-  if (CanvasRenderer_getOwnPropSymbols)
-    for (var prop of CanvasRenderer_getOwnPropSymbols(b)) {
-      if (CanvasRenderer_propIsEnum.call(b, prop))
-        CanvasRenderer_defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-var CanvasRenderer_spreadProps = (a, b) => CanvasRenderer_defProps(a, CanvasRenderer_getOwnPropDescs(b));
-var CanvasRenderer_publicField = (obj, key, value) => CanvasRenderer_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const RENDERER_GROUPED_TYPE_FILTERS = [
-  isCanvasAreaType,
-  isCanvasBarType,
-  isCanvasPointType,
-  isCanvasCandlestickType
-];
-const MAX_BATCHED_CIRCLE_POINTS = 1e3;
-const canvasFocusLookupCache = /* @__PURE__ */ new WeakMap();
-const subchartBrushHandlePathCache = /* @__PURE__ */ new Map();
-function applyCssMatrixTransform(ctx, transform) {
-  if (!transform || transform === "none") {
-    return;
-  }
-  const matrix = transform.match(/^matrix\(([^)]+)\)$/);
-  const matrix3d = transform.match(/^matrix3d\(([^)]+)\)$/);
-  if (matrix) {
-    const values = matrix[1].split(",").map((value) => Number(value.trim()));
-    values.length === 6 && values.every(Number.isFinite) && ctx.transform(values[0], values[1], values[2], values[3], values[4], values[5]);
-  } else if (matrix3d) {
-    const values = matrix3d[1].split(",").map((value) => Number(value.trim()));
-    values.length === 16 && values.every(Number.isFinite) && ctx.transform(values[0], values[1], values[4], values[5], values[12], values[13]);
-  }
-}
-function getPreservedAspectRatioRect(image, width, height) {
-  const imageWidth = image.naturalWidth || image.width;
-  const imageHeight = image.naturalHeight || image.height;
-  if (!imageWidth || !imageHeight || !width || !height) {
-    return { x: 0, y: 0, w: width, h: height };
-  }
-  const scale = Math.min(width / imageWidth, height / imageHeight);
-  const w = imageWidth * scale;
-  const h = imageHeight * scale;
-  return {
-    x: (width - w) / 2,
-    y: (height - h) / 2,
-    w,
-    h
-  };
-}
-function getBackgroundImageOffset($$) {
-  const { state } = $$;
-  return state.hasFunnel || state.hasTreemap ? { x: 0, y: 0 } : {
-    x: asHalfPixel(state.margin.left),
-    y: asHalfPixel(state.margin.top)
-  };
-}
-function drawCanvasLine($$, target, indices, painter, isSub = false) {
-  painter.strokePath((ctx) => {
-    generateDrawLinePath($$, indices, isSub, ctx)(target);
-  }, { lineDash: [] });
-}
-function drawCanvasArea($$, target, indices, painter, isSub = false) {
-  painter.fillPath((ctx) => {
-    generateDrawAreaPath($$, indices, isSub, ctx)(target);
-  });
-}
-function getVisibleCanvasTarget($$, target) {
-  const range = getCanvasTargetVisibleRange($$, target);
-  return range.start === 0 && range.end === target.values.length ? target : CanvasRenderer_spreadProps(CanvasRenderer_spreadValues({}, target), {
-    values: target.values.slice(range.start, range.end)
-  });
-}
-function getFocusedCanvasDatum(focusData, d) {
-  if (!(focusData == null ? void 0 : focusData.length) || !(d == null ? void 0 : d.id)) {
-    return null;
-  }
-  let lookup = canvasFocusLookupCache.get(focusData);
-  if (!lookup) {
-    lookup = /* @__PURE__ */ new Map();
-    for (const focus of focusData) {
-      if (!(focus == null ? void 0 : focus.id)) {
-        continue;
-      }
-      const targetKey = `${focus.id}:*`;
-      if (!lookup.has(targetKey)) {
-        lookup.set(targetKey, focus);
-      }
-      if ("index" in focus) {
-        lookup.set(`${focus.id}:${focus.index}`, focus);
-      }
-    }
-    canvasFocusLookupCache.set(focusData, lookup);
-  }
-  return "index" in d ? lookup.get(`${d.id}:${d.index}`) || null : lookup.get(`${d.id}:*`) || null;
-}
-function getSubchartBrushHandlePath(axis, type) {
-  const Path2DCtor = win.Path2D;
-  if (!Path2DCtor) {
-    return null;
-  }
-  const key = `${axis}:${type}`;
-  const cached = subchartBrushHandlePathCache.get(key);
-  if (cached) {
-    return cached;
-  }
-  const path = new Path2DCtor(SUBCHART_BRUSH_HANDLE_PATH[axis][type]);
-  subchartBrushHandlePathCache.set(key, path);
-  return path;
-}
-function getCanvasOverColor($$, d) {
-  const onover = $$.config.color_onover;
-  if (!onover || !d) {
-    return null;
-  }
-  if (isObject(onover)) {
-    return d.id in onover ? onover[d.id] : null;
-  } else if (isString(onover)) {
-    return onover;
-  } else if (isFunction(onover)) {
-    return onover.call($$.api, d);
-  }
-  return null;
-}
-function getCanvasRenderColor($$, d, focusData) {
-  const focus = getFocusedCanvasDatum(focusData, d);
-  const overColor = getCanvasOverColor($$, focus);
-  return overColor || $$.color(d.id);
-}
-function getCanvasTargetId(d) {
-  var _a;
-  return (d == null ? void 0 : d.id) || ((_a = d == null ? void 0 : d.data) == null ? void 0 : _a.id);
-}
-function isCanvasTargetFocused($$, d) {
-  var _a;
-  const id = getCanvasTargetId(d);
-  return !!id && ((_a = $$.state.focusedTargetIds) == null ? void 0 : _a.has(id));
-}
-function getCanvasTargetFocusOpacity($$, d) {
-  var _a;
-  const id = getCanvasTargetId(d);
-  return id && ((_a = $$.state.defocusedTargetIds) == null ? void 0 : _a.has(id)) ? $$.canvasTheme.style.shape.targetDefocusedOpacity : 1;
-}
-function getCanvasAreaBounds($$, target, indices, isSub = false) {
-  var _a;
-  const getPoints = (_a = $$.generateGetAreaPoints) == null ? void 0 : _a.call($$, indices, isSub);
-  if (!getPoints) {
-    return null;
-  }
-  const range = getCanvasTargetVisibleRange($$, target);
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  for (let i = range.start; i < range.end; i++) {
-    const d = target.values[i];
-    if (!hasCanvasDrawableValue($$, d)) {
-      continue;
-    }
-    getPoints(d, i).forEach(([x, y]) => {
-      if (!isFiniteCanvasCoordinate(x, y)) {
-        return;
-      }
-      minX = Math.min(minX, x);
-      minY = Math.min(minY, y);
-      maxX = Math.max(maxX, x);
-      maxY = Math.max(maxY, y);
-    });
-  }
-  return Number.isFinite(minX) && Number.isFinite(minY) ? { x: minX, y: minY, w: maxX - minX, h: maxY - minY } : null;
-}
-function getLinearGradientCoord(value, origin, size) {
-  return origin + size * (isNumber(value) ? value : 0);
-}
-function getCanvasLinearGradientFill($$, ctx, target, shape, rect, baseColor) {
-  const option = $$.config[`${shape}_linearGradient`];
-  if (!option || !rect || !rect.w || !rect.h) {
-    return baseColor;
-  }
-  const isRotated = $$.config.axis_rotated;
-  const gradientOption = typeof option === "object" ? option : {};
-  const x = gradientOption.x || (isRotated ? [1, 0] : [0, 0]);
-  const y = gradientOption.y || (isRotated ? [0, 0] : [0, 1]);
-  const stops = Array.isArray(gradientOption.stops) ? gradientOption.stops : [[0, baseColor, 1], [1, baseColor, 0]];
-  const gradient = ctx.createLinearGradient(
-    getLinearGradientCoord(x[0], rect.x, rect.w),
-    getLinearGradientCoord(y[0], rect.y, rect.h),
-    getLinearGradientCoord(x[1], rect.x, rect.w),
-    getLinearGradientCoord(y[1], rect.y, rect.h)
-  );
-  stops.forEach(([offset, stopColor, stopOpacity]) => {
-    const colorValue = isFunction(stopColor) ? stopColor.call($$.api, target.id) : stopColor;
-    const color = String(colorValue || baseColor);
-    const numericOffset = Number(offset);
-    const parsedOffset = Number.isFinite(numericOffset) ? Math.max(0, Math.min(1, numericOffset)) : 0;
-    gradient.addColorStop(parsedOffset, withOpacity(color, stopOpacity));
-  });
-  return gradient;
-}
-function isCanvasRenderableTarget($$, target) {
-  return isCanvasTargetSupported($$, target, RENDERER_GROUPED_TYPE_FILTERS);
-}
-function getPointOpacity($$, target) {
-  const opacity = $$.config.point_opacity;
-  return Number.isFinite(opacity) ? opacity : isCanvasScatterType($$, target) || isCanvasBubbleType($$, target) ? 0.5 : 1;
-}
-function getTargetPointRadius($$, target, d) {
-  var _a, _b;
-  const pointR = $$.config.point_r;
-  return isCanvasBubbleType($$, target) || isFunction(pointR) ? (_b = (_a = $$.pointR) == null ? void 0 : _a.call($$, d)) != null ? _b : 2.5 : pointR;
-}
-function shouldCullDenseScatterPoints($$, target, pointType, hasGradient) {
-  return !hasGradient && pointType === "circle" && isCanvasScatterType($$, target) && !isFunction($$.config.point_r) && target.values.length > DENSE_SCATTER_POINT_CULL_THRESHOLD;
-}
-function getBarConnectLineType($$, id) {
-  const { bar_connectLine: connectLine } = $$.config;
-  const type = isObject(connectLine) ? connectLine[id] : connectLine;
-  return /^(start|end)-(start|end)$/.test(type) ? type : null;
-}
-function getBarConnectLineBox($$, points, radiusInfo) {
-  const { indexX, indexY, pos } = radiusInfo;
-  return $$.config.axis_rotated ? {
-    x: points[0][indexX],
-    y: points[0][indexY],
-    width: points[0][indexX] - pos,
-    height: points[2][indexY] - points[0][indexY]
-  } : {
-    x: points[0][indexX],
-    y: pos,
-    width: points[2][indexX] - points[0][indexX],
-    height: points[3][indexY] - pos
-  };
-}
-function drawBarConnectLine($$, painter, type, boxes, alpha = 1) {
-  if (boxes.length < 2) {
-    return;
-  }
-  const isRotated = $$.config.axis_rotated;
-  const isStart = /^start-(start|end)$/.test(type);
-  const isEnd = /^end-(start|end)$/.test(type);
-  const isToEnd = /\w+-end$/.test(type);
-  const isToStart = /\w+-start$/.test(type);
-  const getMovePoint = (box) => ({
-    x: isRotated ? isEnd ? box.x - box.width : box.x : box.x + box.width,
-    y: isRotated ? box.y + box.height : isStart ? box.y + box.height : box.y
-  });
-  const getLinePoint = (box) => ({
-    x: isRotated ? box.x - (isToEnd ? box.width : 0) : box.x,
-    y: isRotated ? box.y : box.y + (isToStart ? box.height : 0)
-  });
-  let movePoint = getMovePoint(boxes[0]);
-  painter.strokePath(() => {
-    for (let i = 1; i < boxes.length; i++) {
-      const linePoint = getLinePoint(boxes[i]);
-      painter.traceLine(movePoint.x, movePoint.y, linePoint.x, linePoint.y);
-      if (i < boxes.length - 1) {
-        movePoint = getMovePoint(boxes[i]);
-      }
-    }
-  }, {
-    alpha,
-    stroke: $$.canvasTheme.style.shape.barConnectLineColor,
-    lineWidth: $$.canvasTheme.style.shape.barConnectLineWidth,
-    lineDash: []
-  });
-}
-function getPointType($$, target) {
-  var _a;
-  const { config } = $$;
-  if (isCanvasBubbleType($$, target)) {
-    return "circle";
-  }
-  const targetIds = ((_a = $$.mapToIds) == null ? void 0 : _a.call($$, $$.data.targets)) || [];
-  const pattern = Array.isArray(config.point_pattern) && config.point_pattern.length ? config.point_pattern : [config.point_type];
-  const index = Math.max(0, targetIds.indexOf(target.id));
-  const type = pattern[index % pattern.length];
-  return /^rect(angle)?$/i.test(type) || type === "rectangle" ? "rectangle" : type || "circle";
-}
-function getPointFillStyle($$, ctx, d, x, y, r, fallback) {
-  const option = $$.config.point_radialGradient;
-  if (!option || !r) {
-    return fallback;
-  }
-  const gradientOption = isObject(option) ? option : {};
-  const cx = isNumber(gradientOption.cx) ? gradientOption.cx : 0.3;
-  const cy = isNumber(gradientOption.cy) ? gradientOption.cy : 0.3;
-  const radius = isNumber(gradientOption.r) ? gradientOption.r : 0.7;
-  const stops = Array.isArray(gradientOption.stops) ? gradientOption.stops : [[0.1, null, 1], [0.9, null, 0]];
-  const gradientX = x + (cx - 0.5) * r * 2;
-  const gradientY = y + (cy - 0.5) * r * 2;
-  const gradient = ctx.createRadialGradient(
-    gradientX,
-    gradientY,
-    0,
-    gradientX,
-    gradientY,
-    Math.max(1, r * radius * 2)
-  );
-  stops.forEach(([offset, stopColor, stopOpacity]) => {
-    let color = isFunction(stopColor) ? stopColor.bind($$.api)(d.id) : stopColor;
-    if (!color) {
-      color = fallback;
-    }
-    const numericOffset = Number(offset);
-    const parsedOffset = Number.isFinite(numericOffset) ? Math.max(0, Math.min(1, numericOffset)) : 0;
-    gradient.addColorStop(parsedOffset, withOpacity(color, stopOpacity));
-  });
-  return gradient;
-}
-function getCandlestickColor($$, d, value) {
-  const downColor = $$.config.candlestick_color_down;
-  const color = (value == null ? void 0 : value._isUp) ? $$.color(d) : downColor && typeof downColor === "object" ? downColor[d.id] : downColor;
-  return color || $$.color(d);
-}
-function shouldDrawPoints($$, target) {
-  return $$.shouldDrawPointsForLine ? $$.shouldDrawPointsForLine(target) : true;
-}
-function isSameDash(a, b) {
-  return a.length === b.length && a.every((value, index) => value === b[index]);
-}
-function drawCanvasLineWithDataRegions($$, target, painter) {
-  const { config, scale } = $$;
-  const x = scale.zoom || scale.x;
-  const y = $$.getYScaleById(target.id);
-  const rawValues = config.line_connectNull ? $$.filterRemoveNull(target.values) : target.values;
-  let values = $$.isAreaRangeType(target) ? rawValues.map((d) => CanvasRenderer_spreadProps(CanvasRenderer_spreadValues({}, d), { value: $$.getRangedData(d, "mid") })) : rawValues;
-  if ($$.isStepType(target)) {
-    values = $$.convertValuesToStep(values);
-  }
-  const segments = getLineRegionSegments($$, values, x, y, config.data_regions[target.id]);
-  let currentDash = null;
-  let currentPoints = [];
-  const flush = () => {
-    if (currentPoints.length < 2 || !currentDash) {
-      currentPoints = [];
-      return;
-    }
-    painter.strokePath((ctx) => {
-      const [start, ...rest] = currentPoints;
-      ctx.moveTo(start[0], start[1]);
-      rest.forEach((point) => {
-        ctx.lineTo(point[0], point[1]);
-      });
-    }, { lineDash: currentDash });
-    currentPoints = [];
-  };
-  const appendSegment = (start, end, dash) => {
-    if (!currentDash || !isSameDash(currentDash, dash)) {
-      flush();
-      currentDash = dash;
-      currentPoints = [start, end];
-    } else {
-      currentPoints.push(end);
-    }
-  };
-  for (const { start, end, dash, isBreak } of segments) {
-    if (isBreak || !start || !end || !dash) {
-      flush();
-      currentDash = null;
-      continue;
-    }
-    if (!isFiniteCanvasCoordinate(start[0], start[1]) || !isFiniteCanvasCoordinate(end[0], end[1])) {
-      flush();
-      currentDash = null;
-      continue;
-    }
-    appendSegment(start, end, dash);
-  }
-  flush();
-}
-class CanvasRenderer {
-  /**
-   * Constructor.
-   * @param {CanvasEngine} engine Canvas drawing engine
-   * @param {CanvasTheme} theme Canvas theme resolver
-   * @private
-   */
-  constructor(engine, theme) {
-    CanvasRenderer_publicField(this, "engine", engine);
-    CanvasRenderer_publicField(this, "theme", theme);
-    CanvasRenderer_publicField(this, "painter");
-    CanvasRenderer_publicField(this, "labelImageCache", /* @__PURE__ */ new Map());
-    CanvasRenderer_publicField(this, "backgroundImageCache", /* @__PURE__ */ new Map());
-    CanvasRenderer_publicField(this, "backgroundClassStyleCache", /* @__PURE__ */ new Map());
-    this.painter = new CanvasPainter(engine.ctx);
-  }
-  /**
-   * Get the drawing context for the main canvas.
-   * @returns {CanvasRenderingContext2D} Canvas drawing context
-   * @private
-   */
-  get ctx() {
-    return this.painter.context;
-  }
-  /**
-   * Run renderer draw calls on another canvas context.
-   * @param {CanvasRenderingContext2D} ctx Canvas drawing context
-   * @param {function} draw Draw callback
-   * @private
-   */
-  withContext(ctx, draw) {
-    this.painter.withContext(ctx, draw);
-  }
-  /**
-   * Release renderer caches that can hold chart or DOM references.
-   * @private
-   */
-  destroy() {
-    const clearImageHandler = (entry) => {
-      entry.image.onload = null;
-      entry.image.onerror = null;
-    };
-    this.labelImageCache.forEach(clearImageHandler);
-    this.backgroundImageCache.forEach(clearImageHandler);
-    this.labelImageCache.clear();
-    this.backgroundImageCache.clear();
-    this.backgroundClassStyleCache.clear();
-  }
-  /**
-   * Get cached image for data label.
-   * @param {string} url Image URL
-   * @param {object} $$ ChartInternal instance
-   * @returns {object|null} Cached image entry
-   * @private
-   */
-  getLabelImage(url, $$) {
-    if (!url || !win.Image) {
-      return null;
-    }
-    let entry = this.labelImageCache.get(url);
-    if (!entry) {
-      const nextEntry = {
-        image: new win.Image(),
-        loaded: false,
-        loading: true
-      };
-      entry = nextEntry;
-      this.labelImageCache.set(url, entry);
-      nextEntry.image.onload = () => {
-        var _a;
-        nextEntry.loaded = true;
-        nextEntry.loading = false;
-        (_a = $$.redraw) == null ? void 0 : _a.call($$);
-      };
-      nextEntry.image.onerror = () => {
-        nextEntry.loaded = false;
-        nextEntry.loading = false;
-      };
-      nextEntry.image.src = url;
-    }
-    return entry;
-  }
-  /**
-   * Get cached chart background image.
-   * @param {string} url Image URL
-   * @param {object} $$ ChartInternal instance
-   * @returns {object|null} Cached image entry
-   * @private
-   */
-  getBackgroundImage(url, $$) {
-    if (!url || !win.Image) {
-      return null;
-    }
-    let entry = this.backgroundImageCache.get(url);
-    if (!entry) {
-      const nextEntry = {
-        image: new win.Image(),
-        loaded: false,
-        loading: true
-      };
-      entry = nextEntry;
-      this.backgroundImageCache.set(url, entry);
-      nextEntry.image.onload = () => {
-        var _a;
-        nextEntry.loaded = true;
-        nextEntry.loading = false;
-        (_a = $$.renderCanvasFrame) == null ? void 0 : _a.call($$, void 0, null, false);
-      };
-      nextEntry.image.onerror = () => {
-        nextEntry.loaded = false;
-        nextEntry.loading = false;
-      };
-      nextEntry.image.src = url;
-    }
-    return entry;
-  }
-  /**
-   * Resolve background.class CSS values that canvas can reasonably mirror.
-   * @param {object} $$ ChartInternal instance
-   * @param {string} className Background class name
-   * @returns {object} Class style
-   * @private
-   */
-  getBackgroundClassStyle($$, className) {
-    if (!className || !win.document) {
-      return {};
-    }
-    const cached = this.backgroundClassStyleCache.get(className);
-    if (cached) {
-      return cached;
-    }
-    const probe = win.document.createElement("div");
-    probe.className = className;
-    probe.style.cssText = "position:absolute;visibility:hidden;pointer-events:none;width:1px;height:1px;";
-    $$.$el.chart.node().appendChild(probe);
-    const style = win.getComputedStyle(probe);
-    const opacity = parseFloat(style.opacity);
-    const result = {
-      opacity: Number.isFinite(opacity) ? opacity : void 0,
-      transform: style.transform || void 0
-    };
-    probe.remove();
-    this.backgroundClassStyleCache.set(className, result);
-    return result;
-  }
-  /**
-   * Draw configured chart background behind all canvas layers.
-   * @param {object} $$ ChartInternal instance
-   * @private
-   */
-  drawBackground($$) {
-    const bg = $$.config.background;
-    if (!(bg == null ? void 0 : bg.imgUrl) && !(bg == null ? void 0 : bg.color)) {
-      return;
-    }
-    const { ctx, painter } = this;
-    const { current, margin, width, height } = $$.state;
-    const classStyle = this.getBackgroundClassStyle($$, bg.class);
-    painter.withState(() => {
-      if (classStyle.opacity !== void 0) {
-        ctx.globalAlpha *= classStyle.opacity;
-      }
-      if (bg.imgUrl) {
-        const entry = this.getBackgroundImage(bg.imgUrl, $$);
-        if (entry == null ? void 0 : entry.loaded) {
-          const offset = getBackgroundImageOffset($$);
-          const rect = getPreservedAspectRatioRect(
-            entry.image,
-            current.width,
-            current.height
-          );
-          ctx.translate(offset.x, offset.y);
-          applyCssMatrixTransform(ctx, classStyle.transform);
-          ctx.drawImage(entry.image, rect.x, rect.y, rect.w, rect.h);
-        }
-      } else if (bg.color) {
-        applyCssMatrixTransform(ctx, classStyle.transform);
-        painter.fillRect({
-          x: margin.left,
-          y: margin.top,
-          w: width,
-          h: height
-        }, { fill: bg.color });
-      }
-    });
-  }
-  /**
-   * Draw data label image when loaded, or queue it for loading.
-   * @param {object} $$ ChartInternal instance
-   * @param {object} d Data row
-   * @param {string} text Label text
-   * @param {number} x Label x coordinate
-   * @param {number} y Label y coordinate
-   * @returns {object} Adjusted text position
-   * @private
-   */
-  drawLabelImage($$, d, text, x, y) {
-    const option = getLabelImageOption($$, d);
-    if (!(option == null ? void 0 : option.url)) {
-      return { x, y };
-    }
-    const url = getLabelImageUrl(option, d);
-    const position = getLabelImagePosition($$, option, text, x, y, d);
-    const entry = this.getLabelImage(url, $$);
-    if (entry == null ? void 0 : entry.loaded) {
-      this.ctx.drawImage(
-        entry.image,
-        position.x,
-        position.y,
-        option.width,
-        option.height
-      );
-    }
-    return {
-      x: position.textX,
-      y: position.textY
-    };
-  }
-  /**
-   * Draw a data label at a resolved canvas position.
-   * @param {object} $$ ChartInternal instance
-   * @param {object} d Data row
-   * @param {string} text Label text
-   * @param {number} x Label x coordinate
-   * @param {number} y Label y coordinate
-   * @private
-   */
-  drawDataLabel($$, d, text, x, y) {
-    const { painter, theme: { style } } = this;
-    ({ x, y } = this.drawLabelImage($$, d, text, x, y));
-    if ($$.config.data_labels.rotate) {
-      const position = getRotatedLabelPosition($$, d, x, y);
-      x = position.x;
-      y = position.y;
-      this.ctx.textAlign = position.textAlign;
-    }
-    this.ctx.fillStyle = getLabelColor($$, d, style.label.color);
-    drawLabelDecorations($$, painter, d, text, x, y);
-    painter.textLines(text, x, y, {
-      angle: $$.config.data_labels.rotate
-    });
-  }
-  /**
-   * Redraw focused point data labels over the hover overlay.
-   * @param {object} $$ ChartInternal instance
-   * @param {Array} selectedData Focused data rows
-   * @private
-   */
-  drawFocusLabels($$, selectedData) {
-    var _a;
-    if (!((_a = $$.hasDataLabel) == null ? void 0 : _a.call($$))) {
-      return;
-    }
-    const { ctx, theme: { style } } = this;
-    const rows = selectedData.filter(
-      (d) => d && hasCanvasDrawableValue($$, d) && isCanvasPointType($$, d) && isCanvasRenderableTarget($$, { id: d.id })
-    );
-    const texts = {
-      size: () => rows.length
-    };
-    if (!rows.length) {
-      return;
-    }
-    ctx.font = style.label.font;
-    rows.forEach((d) => {
-      const text = getLabelText($$, d);
-      let { x, y } = getRenderDataPoint($$, d);
-      if (!text) {
-        return;
-      }
-      ({ x, y } = getPointLabelAnchor($$, ctx, d, x, y));
-      x += getLabelPosition($$, d, "x", texts);
-      y += getLabelPosition($$, d, "y", texts);
-      if (!isFiniteCanvasCoordinate(x, y)) {
-        return;
-      }
-      this.drawDataLabel($$, d, text, x, y);
-    });
-  }
-  /**
-   * Draw all supported canvas shape layers.
-   * @param {object} $$ ChartInternal instance
-   * @param {object} shape Cached draw shape object
-   * @param {Array} focusData Focused data rows
-   * @private
-   */
-  draw($$, shape, focusData) {
-    if ($$.state.hasTreemap) {
-      this.drawTreemaps($$);
-      return;
-    }
-    const { margin, width, height } = $$.state;
-    const drawLineLayers = () => {
-      if (!$$.config.area_front) {
-        this.drawAreas($$, shape, focusData);
-      }
-      this.drawLines($$, shape);
-      if ($$.config.area_front) {
-        this.drawAreas($$, shape, focusData);
-      }
-      this.drawCircles($$, shape, focusData);
-    };
-    const drawContent = () => {
-      if (!$$.config.bar_front) {
-        this.drawBars($$, shape, focusData);
-      }
-      this.drawCandlesticks($$, shape, focusData);
-      drawLineLayers();
-      if ($$.config.bar_front) {
-        this.drawBars($$, shape, focusData);
-      }
-      this.drawSelections($$, shape);
-      this.drawLabels($$, shape);
-    };
-    $$.config.clipPath === false ? drawContent() : this.painter.clipRect(
-      { x: margin.left, y: margin.top, w: width, h: height },
-      drawContent
-    );
-  }
-  /**
-   * Draw the canvas subchart overview and brush selection.
-   * @param {object} $$ ChartInternal instance
-   * @param {object} _shape Cached main shape object
-   * @private
-   */
-  drawSubchart($$, _shape) {
-    const { config, state } = $$;
-    void _shape;
-    if (!config.subchart_show || !state.hasAxis || state.width2 <= 0 || state.height2 <= 0) {
-      return;
-    }
-    const { ctx, painter, theme: { style } } = this;
-    const { margin2, width2, height2 } = state;
-    const rect = { x: margin2.left, y: margin2.top, w: width2, h: height2 };
-    $$.withSubchartTypeContext(() => {
-      var _a;
-      const targets = $$.filterTargetsToShow().filter(isCanvasRenderableTarget.bind(null, $$));
-      const shape = $$.getDrawShape();
-      (_a = $$.updateSubchartYDomain) == null ? void 0 : _a.call($$, targets);
-      painter.withState(() => {
-        painter.clipRect(rect, () => {
-          painter.withTranslation(rect.x, rect.y, () => {
-            var _a2, _b, _c, _d, _e, _f;
-            const areaTargets = targets.filter(isCanvasAreaType.bind(null, $$));
-            const areaIndices = getCanvasShapeIndices(
-              $$,
-              shape,
-              TYPE.AREA,
-              isCanvasAreaType.bind(null, $$)
-            );
-            for (const target of areaTargets) {
-              if (!target.values.some(hasCanvasDrawableValue.bind(null, $$))) {
-                continue;
-              }
-              ctx.globalAlpha = style.shape.areaOpacity * getCanvasTargetFocusOpacity($$, target);
-              ctx.fillStyle = $$.color(target.id);
-              drawCanvasArea($$, target, areaIndices, painter, true);
-            }
-            ctx.globalAlpha = 1;
-            const barTargets = targets.filter(isCanvasBarType.bind(null, $$));
-            const barIndices = getCanvasShapeIndices(
-              $$,
-              shape,
-              TYPE.BAR,
-              isCanvasBarType.bind(null, $$)
-            );
-            const getBarPoints = (_a2 = $$.generateGetBarPoints) == null ? void 0 : _a2.call($$, barIndices, true);
-            if (getBarPoints) {
-              for (const target of barTargets) {
-                ctx.globalAlpha = style.shape.barOpacity * getCanvasTargetFocusOpacity($$, target);
-                ctx.fillStyle = $$.color(target.id);
-                target.values.forEach((d, i) => {
-                  var _a3;
-                  if (!hasCanvasDrawableValue($$, d)) {
-                    return;
-                  }
-                  const geometry = getCanvasBarGeometry($$, getBarPoints, d, i);
-                  const fill = ((_a3 = $$.getSubchartCandlestickBarColor) == null ? void 0 : _a3.call($$, d, true)) || ctx.fillStyle;
-                  geometry && painter.fillRect(geometry.rect, { fill });
-                });
-              }
-              ctx.globalAlpha = 1;
-            }
-            const candlestickTargets = targets.filter(
-              isCanvasCandlestickType.bind(null, $$)
-            );
-            const candlestickIndices = getCanvasShapeIndices(
-              $$,
-              shape,
-              TYPE.CANDLESTICK,
-              isCanvasCandlestickType.bind(null, $$)
-            );
-            const getCandlestickPoints = (_b = $$.generateGetCandlestickPoints) == null ? void 0 : _b.call(
-              $$,
-              candlestickIndices,
-              true
-            );
-            if (getCandlestickPoints) {
-              ctx.lineWidth = style.shape.candlestickLineWidth;
-              for (const target of candlestickTargets) {
-                const targetOpacity = getCanvasTargetFocusOpacity($$, target);
-                ctx.globalAlpha = targetOpacity;
-                target.values.forEach((d, i) => {
-                  var _a3;
-                  const value = (_a3 = $$.getCandlestickData) == null ? void 0 : _a3.call($$, d);
-                  const geometry = value && getCanvasCandlestickGeometry(
-                    $$,
-                    getCandlestickPoints,
-                    d,
-                    i
-                  );
-                  if (!geometry) {
-                    return;
-                  }
-                  const color = getCandlestickColor($$, { id: target.id }, value);
-                  ctx.strokeStyle = color;
-                  ctx.fillStyle = color;
-                  painter.strokePath(() => {
-                    painter.traceLine(
-                      geometry.wickStart[0],
-                      geometry.wickStart[1],
-                      geometry.wickEnd[0],
-                      geometry.wickEnd[1]
-                    );
-                  });
-                  painter.fillRect(geometry.body, { fill: ctx.fillStyle });
-                });
-              }
-            }
-            const lineTargets = targets.filter(isCanvasLineType.bind(null, $$));
-            const lineIndices = getCanvasShapeIndices(
-              $$,
-              shape,
-              TYPE.LINE,
-              isCanvasLineType.bind(null, $$)
-            );
-            ctx.globalAlpha = 1;
-            for (const target of lineTargets) {
-              if (!target.values.some(hasCanvasDrawableValue.bind(null, $$))) {
-                continue;
-              }
-              ctx.globalAlpha = getCanvasTargetFocusOpacity($$, target);
-              ctx.lineWidth = isCanvasTargetFocused($$, target) ? style.shape.lineFocusedWidth : style.shape.lineWidth;
-              ctx.strokeStyle = $$.color(target.id);
-              drawCanvasLine($$, target, lineIndices, painter, true);
-            }
-            ctx.globalAlpha = 1;
-            if (config.point_show && !((_c = $$.isPointFocusOnly) == null ? void 0 : _c.call($$))) {
-              const cy = (_d = $$.updateCircleY) == null ? void 0 : _d.call($$, true);
-              const cx = (_e = $$.subxx) == null ? void 0 : _e.bind($$);
-              if (cx && cy) {
-                for (const target of targets) {
-                  if (!isCanvasScatterType($$, target) && !isCanvasBubbleType($$, target)) {
-                    continue;
-                  }
-                  const color = $$.color(target.id);
-                  const pointFill = style.shape.pointFillColor || color;
-                  const pointStroke = style.shape.pointStrokeColor || color;
-                  const pointLineWidth = pointStroke ? (_f = style.shape.pointLineWidth) != null ? _f : 1 : 0;
-                  const pointStyle = pointStroke && pointLineWidth > 0 ? {
-                    fill: pointFill,
-                    stroke: pointStroke,
-                    lineWidth: pointLineWidth
-                  } : { fill: pointFill };
-                  ctx.globalAlpha = getPointOpacity($$, target) * getCanvasTargetFocusOpacity($$, target);
-                  target.values.forEach((d, i) => {
-                    if (!hasCanvasDrawableValue($$, d)) {
-                      return;
-                    }
-                    const x = config.axis_rotated ? cy(d, i) : cx(d);
-                    const y = config.axis_rotated ? cx(d) : cy(d, i);
-                    const r = Math.min(getTargetPointRadius($$, target, d), 3);
-                    if (isFiniteCanvasCoordinate(x, y)) {
-                      drawPointPattern(
-                        painter,
-                        "circle",
-                        x,
-                        y,
-                        r,
-                        pointStyle
-                      );
-                    }
-                  });
-                }
-                ctx.globalAlpha = 1;
-              }
-            }
-          });
-        });
-        this.drawSubchartBrush($$);
-      });
-    });
-  }
-  /**
-   * Draw current subchart brush selection.
-   * @param {object} $$ ChartInternal instance
-   * @private
-   */
-  drawSubchartBrush($$) {
-    var _a, _b;
-    const { config, scale, state } = $$;
-    const domain = state.domain;
-    if (!config.subchart_show || config.subchart_brush_enabled === false || !(domain == null ? void 0 : domain.length) || !scale.subX) {
-      return;
-    }
-    const { margin2, width2, height2 } = state;
-    const p0 = scale.subX(domain[0]);
-    const p1 = scale.subX(domain[1]);
-    const axisLength = config.axis_rotated ? height2 : width2;
-    const extent = (_b = (_a = $$.axis) == null ? void 0 : _a.getExtent) == null ? void 0 : _b.call(_a);
-    const extentValues = Array.isArray(extent) && extent.length >= 2 && extent.every(Number.isFinite) ? extent.slice(0, 2) : [0, axisLength];
-    const extentStart = Math.max(0, Math.min(axisLength, Math.min(...extentValues)));
-    const extentEnd = Math.max(0, Math.min(axisLength, Math.max(...extentValues)));
-    const start = Math.max(extentStart, Math.min(extentEnd, Math.min(p0, p1)));
-    const end = Math.max(extentStart, Math.min(extentEnd, Math.max(p0, p1)));
-    const size = end - start;
-    if (size <= 0) {
-      return;
-    }
-    const rect = config.axis_rotated ? { x: margin2.left, y: margin2.top + start, w: width2, h: size } : { x: margin2.left + start, y: margin2.top, w: size, h: height2 };
-    this.painter.fillRect(rect, {
-      fill: this.theme.style.subchartBrush.fill,
-      alpha: this.theme.style.subchartBrush.opacity
-    });
-    if (config.subchart_showHandle) {
-      this.drawSubchartBrushHandle($$, start, "start");
-      this.drawSubchartBrushHandle($$, end, "end");
-    }
-  }
-  /**
-   * Draw a visible subchart brush resize handle.
-   * @param {object} $$ ChartInternal instance
-   * @param {number} coord Brush handle coordinate
-   * @param {string} type Brush handle side
-   * @private
-   */
-  drawSubchartBrushHandle($$, coord, type) {
-    const { config, state: { margin2, width2, height2 } } = $$;
-    const { ctx, painter, theme: { style } } = this;
-    const isRotated = config.axis_rotated;
-    const fill = style.subchartBrush.handleFill;
-    const stroke = style.subchartBrush.handleStroke;
-    const x = isRotated ? margin2.left + width2 / 2 : margin2.left + coord;
-    const y = isRotated ? margin2.top + coord : margin2.top + height2 / 2;
-    const path = getSubchartBrushHandlePath(isRotated ? "y" : "x", type);
-    if (!path) {
-      return;
-    }
-    painter.withState(() => {
-      ctx.translate(x, y);
-      ctx.fillStyle = fill;
-      ctx.strokeStyle = stroke;
-      ctx.lineWidth = style.subchartBrush.handleLineWidth;
-      ctx.globalAlpha = style.subchartBrush.handleOpacity;
-      ctx.fill(path);
-      ctx.globalAlpha = 1;
-      ctx.stroke(path);
-    });
-  }
-  /**
-   * Draw bar shapes on canvas.
-   * @param {object} $$ ChartInternal instance
-   * @param {object} shape Cached draw shape object
-   * @param {Array} focusData Focused data rows
-   * @private
-   */
-  drawBars($$, shape, focusData) {
-    const { ctx, painter, theme: { style } } = this;
-    const isBar = isCanvasBarType.bind(null, $$);
-    const isExpanded = getExpandedFocusMatcher($$, focusData, isCanvasBarType);
-    const targets = $$.filterTargetsToShow().filter(isBar).filter(isCanvasRenderableTarget.bind(null, $$));
-    const getPoints = $$.generateGetBarPoints(
-      getCanvasShapeIndices($$, shape, TYPE.BAR, isBar),
-      false
-    );
-    const { margin } = $$.state;
-    const getRadius = getBarRadiusResolver($$);
-    const stackingRadiusSet = getRadius ? getStackingBarRadiusSet($$) : /* @__PURE__ */ new Set();
-    if (!getPoints) {
-      return;
-    }
-    painter.withTranslation(margin.left, margin.top, () => {
-      var _a;
-      for (const target of targets) {
-        const range = getCanvasTargetVisibleRange($$, target);
-        const connectLineType = getBarConnectLineType($$, target.id);
-        const targetOpacity = getCanvasTargetFocusOpacity($$, target);
-        const connectLineBoxes = [];
-        const bars = [];
-        for (let i = range.start; i < range.end; i++) {
-          const d = target.values[i];
-          if (!hasCanvasDrawableValue($$, d)) {
-            continue;
-          }
-          const geometry = getCanvasBarGeometry($$, getPoints, d, i);
-          if (!geometry) {
-            continue;
-          }
-          const { points, rect } = geometry;
-          const radiusInfo = getBarRadiusInfo(
-            $$,
-            d,
-            points,
-            getRadius,
-            stackingRadiusSet,
-            (_a = $$.isStackingRadiusData) == null ? void 0 : _a.bind($$)
-          );
-          bars.push({ d, points, rect, radiusInfo });
-          if (connectLineType) {
-            connectLineBoxes.push(getBarConnectLineBox($$, points, radiusInfo));
-          }
-        }
-        if (connectLineType && style.shape.barConnectLineWidth > 0) {
-          drawBarConnectLine(
-            $$,
-            painter,
-            connectLineType,
-            connectLineBoxes,
-            targetOpacity
-          );
-        }
-        for (const { d, rect, radiusInfo } of bars) {
-          const overColor = getCanvasOverColor($$, getFocusedCanvasDatum(focusData, d));
-          const color = overColor || $$.color(target.id);
-          const fillAlpha = isExpanded(d) ? style.shape.barExpandedOpacity : style.shape.barOpacity;
-          const alpha = fillAlpha * targetOpacity;
-          ctx.fillStyle = overColor ? color : getCanvasLinearGradientFill($$, ctx, target, "bar", rect, color);
-          getRadius ? painter.fillRoundRect(
-            rect,
-            radiusInfo.corners,
-            { alpha }
-          ) : painter.fillRect(rect, { alpha });
-          if (style.shape.barLineWidth > 0) {
-            ctx.strokeStyle = style.shape.barStrokeColor;
-            ctx.lineWidth = style.shape.barLineWidth;
-            getRadius ? painter.strokeRoundRect(
-              rect,
-              radiusInfo.corners,
-              { alpha: style.shape.barOpacity * targetOpacity }
-            ) : painter.strokeRect(rect, {
-              alpha: style.shape.barOpacity * targetOpacity
-            });
-          }
-        }
-      }
-    });
-  }
-  /**
-   * Draw candlestick shapes on canvas.
-   * @param {object} $$ ChartInternal instance
-   * @param {object} shape Cached draw shape object
-   * @param {Array} focusData Focused data rows
-   * @private
-   */
-  drawCandlesticks($$, shape, focusData) {
-    var _a;
-    const { ctx, painter, theme: { style } } = this;
-    const isCandlestick = isCanvasCandlestickType.bind(null, $$);
-    const isExpanded = getExpandedFocusMatcher($$, focusData, isCanvasCandlestickType);
-    const targets = $$.filterTargetsToShow().filter(isCandlestick).filter(isCanvasRenderableTarget.bind(null, $$));
-    const getPoints = (_a = $$.generateGetCandlestickPoints) == null ? void 0 : _a.call(
-      $$,
-      getCanvasShapeIndices($$, shape, TYPE.CANDLESTICK, isCandlestick),
-      false
-    );
-    const { margin } = $$.state;
-    if (!getPoints) {
-      return;
-    }
-    painter.withTranslation(margin.left, margin.top, () => {
-      var _a2;
-      ctx.lineWidth = style.shape.candlestickLineWidth;
-      for (const target of targets) {
-        const range = getCanvasTargetVisibleRange($$, target);
-        const targetOpacity = getCanvasTargetFocusOpacity($$, target);
-        const lineWidth = style.shape.candlestickLineWidth;
-        const strokeColor = style.shape.candlestickStrokeColor || "#000";
-        for (let i = range.start; i < range.end; i++) {
-          const d = target.values[i];
-          const value = (_a2 = $$.getCandlestickData) == null ? void 0 : _a2.call($$, d);
-          if (!value) {
-            continue;
-          }
-          const geometry = getCanvasCandlestickGeometry($$, getPoints, d, i);
-          if (!geometry) {
-            continue;
-          }
-          const { body: rect, wickStart, wickEnd } = geometry;
-          ctx.fillStyle = getCanvasOverColor($$, getFocusedCanvasDatum(focusData, d)) || getCandlestickColor($$, d, value);
-          ctx.strokeStyle = strokeColor;
-          ctx.globalAlpha = targetOpacity;
-          lineWidth > 0 && painter.strokePath(() => {
-            painter.traceLine(wickStart[0], wickStart[1], wickEnd[0], wickEnd[1]);
-          });
-          painter.fillRect(rect, {
-            alpha: (isExpanded(d) ? style.shape.candlestickExpandedOpacity : 1) * targetOpacity
-          });
-          lineWidth > 0 && painter.strokeRect(rect, {
-            alpha: targetOpacity,
-            lineWidth,
-            stroke: strokeColor
-          });
-        }
-      }
-      ctx.globalAlpha = 1;
-    });
-  }
-  /**
-   * Check whether focus data requires a full redraw to reflect _expanded_ shape styles.
-   * @param {object} $$ ChartInternal instance
-   * @param {Array} selectedData Focused data rows
-   * @returns {boolean} Whether focused shapes need a main redraw
-   * @private
-   */
-  hasExpandedShapeFocus($$, selectedData) {
-    return !!(selectedData == null ? void 0 : selectedData.some(
-      (d) => d && (isCanvasBarType($$, d) || isCanvasCandlestickType($$, d))
-    ));
-  }
-  /**
-   * Draw line strokes on canvas.
-   * @param {object} $$ ChartInternal instance
-   * @param {object} shape Cached draw shape object
-   * @private
-   */
-  drawLines($$, shape) {
-    const { ctx, painter, theme: { style } } = this;
-    const isLine = isCanvasLineType.bind(null, $$);
-    const targets = $$.filterTargetsToShow().filter(isLine).filter(isCanvasRenderableTarget.bind(null, $$));
-    const indices = getCanvasShapeIndices($$, shape, TYPE.LINE, isLine);
-    const { margin } = $$.state;
-    if (!$$.generateGetLinePoints) {
-      return;
-    }
-    painter.withTranslation(margin.left, margin.top, () => {
-      var _a;
-      for (const target of targets) {
-        const visibleTarget = getVisibleCanvasTarget($$, target);
-        if (!visibleTarget.values.some(hasCanvasDrawableValue.bind(null, $$))) {
-          continue;
-        }
-        ctx.globalAlpha = getCanvasTargetFocusOpacity($$, target);
-        ctx.lineWidth = isCanvasTargetFocused($$, target) ? style.shape.lineFocusedWidth : style.shape.lineWidth;
-        ctx.strokeStyle = $$.color(target.id);
-        ((_a = $$.config.data_regions) == null ? void 0 : _a[visibleTarget.id]) ? drawCanvasLineWithDataRegions($$, visibleTarget, painter) : drawCanvasLine($$, visibleTarget, indices, painter);
-      }
-      ctx.globalAlpha = 1;
-    });
-  }
-  /**
-   * Draw area fills on canvas.
-   * @param {object} $$ ChartInternal instance
-   * @param {object} shape Cached draw shape object
-   * @param {Array} focusData Focused data rows
-   * @private
-   */
-  drawAreas($$, shape, focusData) {
-    const { ctx, painter, theme: { style } } = this;
-    const isArea = isCanvasAreaType.bind(null, $$);
-    const targets = $$.filterTargetsToShow().filter(isArea).filter(isCanvasRenderableTarget.bind(null, $$));
-    const indices = getCanvasShapeIndices($$, shape, TYPE.AREA, isArea);
-    const { margin } = $$.state;
-    if (!$$.generateGetAreaPoints) {
-      return;
-    }
-    painter.withTranslation(margin.left, margin.top, () => {
-      for (const target of targets) {
-        const visibleTarget = getVisibleCanvasTarget($$, target);
-        if (!visibleTarget.values.some(hasCanvasDrawableValue.bind(null, $$))) {
-          continue;
-        }
-        const color = getCanvasRenderColor($$, visibleTarget, focusData);
-        ctx.globalAlpha = style.shape.areaOpacity * getCanvasTargetFocusOpacity($$, target);
-        ctx.fillStyle = getCanvasLinearGradientFill(
-          $$,
-          ctx,
-          visibleTarget,
-          "area",
-          // Bounds computation walks visible rows, so skip it when no gradient is set.
-          // Use the original target so the range cache stays aligned with unsliced values.
-          $$.config.area_linearGradient ? getCanvasAreaBounds($$, target, indices) : null,
-          color
-        );
-        drawCanvasArea($$, visibleTarget, indices, painter);
-      }
-      ctx.globalAlpha = 1;
-    });
-  }
-  /**
-   * Draw point circles on canvas.
-   * @param {object} $$ ChartInternal instance
-   * @param {object} shape Cached draw shape object
-   * @param {Array} focusData Focused data rows
-   * @private
-   */
-  drawCircles($$, shape, focusData) {
-    var _a;
-    if (!$$.config.point_show || ((_a = $$.isPointFocusOnly) == null ? void 0 : _a.call($$))) {
-      return;
-    }
-    const { ctx, painter, theme: { style } } = this;
-    const { cx, cy } = shape.pos;
-    const { margin } = $$.state;
-    const isExpanded = getExpandedFocusMatcher($$, focusData, isCanvasPointType);
-    const hasExpandedFocus = !!(focusData == null ? void 0 : focusData.some((d) => d && isCanvasPointType($$, d)));
-    if (!cx || !cy) {
-      return;
-    }
-    painter.withTranslation(margin.left, margin.top, () => {
-      var _a2, _b, _c;
-      for (const target of $$.filterTargetsToShow()) {
-        if (!isCanvasPointType($$, target) || !isCanvasRenderableTarget($$, target) || isCanvasLineType($$, target) && !shouldDrawPoints($$, target)) {
-          continue;
-        }
-        const color = $$.color(target.id);
-        const pointType = getPointType($$, target);
-        const targetOpacity = getCanvasTargetFocusOpacity($$, target);
-        const hasGradient = !!$$.config.point_radialGradient;
-        const cullDenseScatter = shouldCullDenseScatterPoints(
-          $$,
-          target,
-          pointType,
-          hasGradient
-        );
-        const range = getCanvasTargetVisibleRange($$, target);
-        const visibleCount = range.end - range.start;
-        const occupancy = cullDenseScatter ? createCanvasPointOccupancyGrid(
-          $$.state.width,
-          $$.state.height,
-          getTargetPointRadius(
-            $$,
-            target,
-            target.values[range.start] || target.values[0]
-          )
-        ) : null;
-        const pointAlpha = getPointOpacity($$, target) * targetOpacity;
-        ctx.fillStyle = color;
-        ctx.globalAlpha = pointAlpha;
-        const pointFill = style.shape.pointFillColor || color;
-        const pointStroke = style.shape.pointStrokeColor || color;
-        const pointLineWidth = pointStroke ? (_a2 = style.shape.pointLineWidth) != null ? _a2 : 1 : 0;
-        const hasPointStroke = !!pointStroke && pointLineWidth > 0;
-        const mergeSameColorStroke = hasPointStroke && pointType === "circle" && isNumber(pointAlpha) && pointAlpha < 1 && pointFill === pointStroke;
-        if (!hasExpandedFocus && !hasGradient && pointType === "circle") {
-          ctx.fillStyle = pointFill;
-          if (hasPointStroke && !mergeSameColorStroke) {
-            ctx.strokeStyle = pointStroke;
-            ctx.lineWidth = pointLineWidth;
-          }
-          if (visibleCount > MAX_BATCHED_CIRCLE_POINTS) {
-            for (let i = range.start; i < range.end; i++) {
-              const d = target.values[i];
-              if (!hasCanvasDrawableValue($$, d)) {
-                continue;
-              }
-              const baseR = getTargetPointRadius($$, target, d);
-              const r = mergeSameColorStroke ? baseR + pointLineWidth / 2 : baseR;
-              const x = cx(d, i);
-              const y = cy(d, i);
-              if (!isFiniteCanvasCoordinate(x, y)) {
-                continue;
-              }
-              if (occupancy && !markCanvasPointOccupancy(occupancy, x, y)) {
-                continue;
-              }
-              ctx.beginPath();
-              ctx.arc(x, y, r, 0, Math.PI * 2);
-              ctx.fill();
-              hasPointStroke && !mergeSameColorStroke && ctx.stroke();
-            }
-          } else {
-            ctx.beginPath();
-            for (let i = range.start; i < range.end; i++) {
-              const d = target.values[i];
-              if (!hasCanvasDrawableValue($$, d)) {
-                continue;
-              }
-              const baseR = getTargetPointRadius($$, target, d);
-              const r = mergeSameColorStroke ? baseR + pointLineWidth / 2 : baseR;
-              const x = cx(d, i);
-              const y = cy(d, i);
-              if (!isFiniteCanvasCoordinate(x, y)) {
-                continue;
-              }
-              painter.traceCircle(x, y, r);
-            }
-            ctx.fill();
-            hasPointStroke && !mergeSameColorStroke && ctx.stroke();
-          }
-        } else {
-          for (let i = range.start; i < range.end; i++) {
-            const d = target.values[i];
-            if (!hasCanvasDrawableValue($$, d)) {
-              continue;
-            }
-            const expanded = isExpanded(d);
-            const baseR = getTargetPointRadius($$, target, d);
-            const r = expanded ? (_c = (_b = $$.pointExpandedR) == null ? void 0 : _b.call($$, d)) != null ? _c : baseR * 1.75 : baseR;
-            const x = cx(d, i);
-            const y = cy(d, i);
-            const overColor = getCanvasOverColor($$, d);
-            const renderColor = overColor || color;
-            const renderPointFill = style.shape.pointFillColor || renderColor;
-            const renderPointStroke = style.shape.pointStrokeColor || renderColor;
-            const fill = expanded ? overColor || style.focusPoint.fill || renderPointFill : renderPointFill;
-            const stroke = expanded ? overColor || style.focusPoint.stroke || renderColor : renderPointStroke;
-            const lineWidth = expanded ? style.focusPoint.lineWidth : pointLineWidth;
-            const alpha = getPointOpacity($$, d) * targetOpacity;
-            const hasStroke = !!stroke && (lineWidth != null ? lineWidth : 0) > 0;
-            const mergeSameColorStroke2 = pointType === "circle" && hasStroke && isNumber(alpha) && alpha < 1 && fill === stroke;
-            const drawR = mergeSameColorStroke2 ? r + (lineWidth || 0) / 2 : r;
-            if (!isFiniteCanvasCoordinate(x, y)) {
-              continue;
-            }
-            ctx.fillStyle = hasGradient ? getPointFillStyle($$, ctx, d, x, y, r, renderColor) : fill;
-            ctx.globalAlpha = alpha;
-            drawPointPattern(
-              painter,
-              pointType,
-              x,
-              y,
-              drawR,
-              hasStroke && !mergeSameColorStroke2 ? {
-                fill: ctx.fillStyle,
-                stroke,
-                lineWidth
-              } : void 0,
-              baseR
-            );
-          }
-        }
-      }
-    });
-  }
-  /**
-   * Draw selected canvas shapes.
-   * @param {object} $$ ChartInternal instance
-   * @param {object} shape Cached draw shape object
-   * @private
-   */
-  drawSelections($$, shape) {
-    var _a, _b;
-    const selectedData = (_a = $$.getCanvasSelectedData) == null ? void 0 : _a.call($$);
-    if (!$$.config.data_selection_enabled || !(selectedData == null ? void 0 : selectedData.length) || $$.state.hasTreemap) {
-      return;
-    }
-    const { ctx, painter, theme: { style } } = this;
-    const { margin } = $$.state;
-    const isBar = isCanvasBarType.bind(null, $$);
-    const isCandlestick = isCanvasCandlestickType.bind(null, $$);
-    const barPoints = selectedData.some(isBar) ? $$.generateGetBarPoints(
-      getCanvasShapeIndices($$, shape, TYPE.BAR, isBar),
-      false
-    ) : null;
-    const candlestickPoints = selectedData.some(isCandlestick) ? (_b = $$.generateGetCandlestickPoints) == null ? void 0 : _b.call(
-      $$,
-      getCanvasShapeIndices($$, shape, TYPE.CANDLESTICK, isCandlestick),
-      false
-    ) : null;
-    const getRadius = barPoints ? getBarRadiusResolver($$) : null;
-    const stackingRadiusSet = getRadius ? getStackingBarRadiusSet($$) : /* @__PURE__ */ new Set();
-    painter.withTranslation(margin.left, margin.top, () => {
-      selectedData.forEach((d) => {
-        var _a2, _b2, _c, _d, _e, _f, _g;
-        const color = $$.color(d.id);
-        if (isBar(d) && barPoints) {
-          const geometry = getCanvasBarGeometry($$, barPoints, d, d.index);
-          if (!geometry) {
-            return;
-          }
-          const { points, rect } = geometry;
-          const corners = getRadius ? getBarRadiusInfo($$, d, points, getRadius, stackingRadiusSet).corners : 0;
-          getRadius ? painter.fillRoundRect(rect, corners, { fill: "#fff", alpha: 0.3 }) : painter.fillRect(rect, { fill: "#fff", alpha: 0.3 });
-          getRadius ? painter.strokeRoundRect(rect, corners, { stroke: color, lineWidth: 2 }) : painter.strokeRect(rect, { stroke: color, lineWidth: 2 });
-        } else if (isCandlestick(d) && candlestickPoints) {
-          const value = (_a2 = $$.getCandlestickData) == null ? void 0 : _a2.call($$, d);
-          if (!value) {
-            return;
-          }
-          const geometry = getCanvasCandlestickGeometry(
-            $$,
-            candlestickPoints,
-            d,
-            d.index
-          );
-          if (!geometry) {
-            return;
-          }
-          const { body, wickStart, wickEnd } = geometry;
-          painter.strokePath(() => {
-            painter.traceLine(wickStart[0], wickStart[1], wickEnd[0], wickEnd[1]);
-          }, { stroke: color, lineWidth: 3 });
-          painter.fillRect(body, { fill: "#fff", alpha: 0.3 });
-          painter.strokeRect(body, { stroke: color, lineWidth: 2 });
-        } else if (isCanvasPointType($$, d)) {
-          const pointType = getPointType($$, { id: d.id });
-          const { x, y } = getRenderDataPoint($$, d);
-          const r = (_c = (_b2 = $$.pointR) == null ? void 0 : _b2.call($$, d)) != null ? _c : 2.5;
-          const selectR = (_e = (_d = $$.pointSelectR) == null ? void 0 : _d.call($$, d)) != null ? _e : r * 2;
-          if (!isFiniteCanvasCoordinate(x, y)) {
-            return;
-          }
-          drawPointPattern(painter, "circle", x, y, selectR, {
-            fill: style.selectedPoint.fill,
-            lineWidth: style.selectedPoint.lineWidth,
-            stroke: style.selectedPoint.stroke || color
-          });
-          if (!((_f = $$.isPointFocusOnly) == null ? void 0 : _f.call($$))) {
-            drawPointPattern(painter, pointType, x, y, r, {
-              fill: style.shape.pointFillColor || color,
-              stroke: style.shape.pointStrokeColor || color,
-              lineWidth: (_g = style.shape.pointLineWidth) != null ? _g : 1
-            });
-          }
-        }
-      });
-      ctx.globalAlpha = 1;
-    });
-  }
-  /**
-   * Draw data labels on canvas.
-   * @param {object} $$ ChartInternal instance
-   * @param {object} shape Cached draw shape object
-   * @private
-   */
-  drawLabels($$, shape) {
-    var _a;
-    if (!((_a = $$.hasDataLabel) == null ? void 0 : _a.call($$))) {
-      return;
-    }
-    const { ctx, painter, theme: { style } } = this;
-    const { margin } = $$.state;
-    const { cx, cy } = shape.pos;
-    const barPoints = shape.indices[TYPE.BAR] ? $$.generateGetBarPoints(shape.indices[TYPE.BAR], false) : null;
-    const candlestickPoints = $$.generateGetCandlestickPoints ? $$.generateGetCandlestickPoints(
-      getCanvasShapeIndices(
-        $$,
-        shape,
-        TYPE.CANDLESTICK,
-        isCanvasCandlestickType.bind(null, $$)
-      ),
-      false
-    ) : null;
-    const targets = $$.filterTargetsToShow().filter(
-      (target) => (isCanvasBarType($$, target) || isCanvasPointType($$, target) || isCanvasAreaType($$, target) || isCanvasCandlestickType($$, target)) && isCanvasRenderableTarget($$, target)
-    );
-    const targetRows = [];
-    let labelCount = 0;
-    targets.forEach((target) => {
-      const range = getCanvasTargetVisibleRange($$, target);
-      const data = $$.labelishData(target);
-      const rows = [];
-      for (let i = 0; i < data.length; i++) {
-        const d = data[i];
-        const text = getLabelText($$, d);
-        if (text && d.index >= range.start && d.index < range.end && hasCanvasDrawableValue($$, d)) {
-          rows.push({ d, text });
-        }
-      }
-      labelCount += rows.length;
-      rows.length && targetRows.push(rows);
-    });
-    const texts = {
-      size: () => labelCount
-    };
-    painter.withTranslation(margin.left, margin.top, () => {
-      ctx.font = style.label.font;
-      ctx.textAlign = "center";
-      targetRows.forEach((rows) => {
-        var _a2, _b;
-        for (const { d, text } of rows) {
-          let x;
-          let y;
-          if (isCanvasBarType($$, d) && barPoints) {
-            const geometry = getCanvasBarGeometry($$, barPoints, d, d.index);
-            if (!geometry) {
-              continue;
-            }
-            const { points, rect } = geometry;
-            const value = $$.getBaseValue(d);
-            const end = getRenderPoint($$, points[2]);
-            const isNegative = value < 0;
-            const labelHeight = getLabelDecorationBox(ctx, text, 0, 0).h;
-            x = $$.config.axis_rotated && !$$.config.data_labels.centered ? end[0] + (isNegative ? -4 : 4) : rect.x + rect.w / 2;
-            y = $$.config.data_labels.centered ? rect.y + rect.h / 2 : $$.config.axis_rotated ? rect.y + rect.h / 2 : end[1] + (isNegative ? labelHeight - 3 : -3);
-            ctx.textAlign = $$.config.axis_rotated && !$$.config.data_labels.centered ? isNegative ? "right" : "left" : "center";
-            ctx.textBaseline = $$.config.data_labels.centered ? "middle" : $$.config.axis_rotated ? "middle" : "alphabetic";
-          } else if (isCanvasCandlestickType($$, d) && candlestickPoints) {
-            const value = (_a2 = $$.getCandlestickData) == null ? void 0 : _a2.call($$, d);
-            const geometry = getCanvasCandlestickGeometry(
-              $$,
-              candlestickPoints,
-              d,
-              d.index
-            );
-            const isUp = value == null ? void 0 : value._isUp;
-            if (!geometry) {
-              continue;
-            }
-            const { wickEnd, wickStart } = geometry;
-            const isInverted = $$.config[`axis_${(_b = $$.axis) == null ? void 0 : _b.getId(d.id)}_inverted`];
-            x = $$.config.axis_rotated ? isUp ? wickEnd[0] + 4 : wickStart[0] - 4 : wickStart[0];
-            y = $$.config.axis_rotated ? wickStart[1] + 3 : isUp ? wickEnd[1] - 3 : wickStart[1] + 12;
-            !$$.config.axis_rotated && isInverted && (y += 15 * (isUp ? 1 : -1));
-            ctx.textAlign = $$.config.axis_rotated ? isUp ? "left" : "right" : "center";
-            ctx.textBaseline = "alphabetic";
-          } else if (cx && cy) {
-            ({ x, y } = getShapePoint(shape.pos, d, d.index));
-            ({ x, y } = getPointLabelAnchor($$, ctx, d, x, y));
-          }
-          x += getLabelPosition($$, d, "x", texts);
-          y += getLabelPosition($$, d, "y", texts);
-          if (!isFiniteCanvasCoordinate(x, y)) {
-            continue;
-          }
-          this.drawDataLabel($$, d, text, x, y);
-        }
-      });
-    });
-  }
-  /**
-   * Draw empty-data label on canvas.
-   * @param {object} $$ ChartInternal instance
-   * @private
-   */
-  drawEmptyLabel($$) {
-    const text = $$.config.data_empty_label_text;
-    const targetsToShow = $$.filterTargetsToShow();
-    if (!text || targetsToShow.length) {
-      return;
-    }
-    const { margin, width, height } = $$.state;
-    const { style } = this.theme;
-    this.painter.text(String(text), margin.left + width / 2, margin.top + height / 2, {
-      fill: style.emptyLabel.color,
-      font: style.emptyLabel.font,
-      textAlign: "center",
-      textBaseline: "middle"
-    });
-  }
-  /**
-   * Draw drag-zoom brush overlay.
-   * @param {object} $$ ChartInternal instance
-   * @param {number} start Start coordinate
-   * @param {number} end End coordinate
-   * @private
-   */
-  drawZoomBrush($$, start, end) {
-    const { axis_rotated } = $$.config;
-    const { height, margin, width } = $$.state;
-    const brushStart = Math.min(start, end);
-    const brushSize = Math.abs(end - start);
-    const rect = axis_rotated ? { x: margin.left, y: margin.top + brushStart, w: width, h: brushSize } : { x: margin.left + brushStart, y: margin.top, w: brushSize, h: height };
-    if (brushSize <= 0) {
-      return;
-    }
-    this.painter.fillRect(rect, {
-      fill: this.theme.style.zoomBrush.fill,
-      alpha: this.theme.style.zoomBrush.opacity
-    });
-  }
-  /**
-   * Draw data selection drag area.
-   * @param {object} $$ ChartInternal instance
-   * @param {object} rect Selection rectangle
-   * @private
-   */
-  drawSelectionDragArea($$, rect) {
-    const { margin, width, height } = $$.state;
-    const plot = {
-      x: margin.left,
-      y: margin.top,
-      w: width,
-      h: height
-    };
-    const x = Math.max(plot.x, rect.x);
-    const y = Math.max(plot.y, rect.y);
-    const right = Math.min(plot.x + plot.w, rect.x + rect.w);
-    const bottom = Math.min(plot.y + plot.h, rect.y + rect.h);
-    if (right <= x || bottom <= y) {
-      return;
-    }
-    this.painter.fillRect({
-      x,
-      y,
-      w: right - x,
-      h: bottom - y
-    }, {
-      fill: this.theme.style.zoomBrush.fill,
-      alpha: this.theme.style.zoomBrush.opacity
-    });
-  }
-  /**
-   * Draw treemap tiles and labels on canvas.
-   * @param {object} $$ ChartInternal instance
-   * @private
-   */
-  drawTreemaps($$) {
-    var _a;
-    const { ctx, painter, theme: { style } } = this;
-    const { config } = $$;
-    const root = (_a = $$.getTreemapRoot) == null ? void 0 : _a.call($$, $$.data.targets);
-    const nodes = (root == null ? void 0 : root.children) || [];
-    painter.withState(() => {
-      var _a2;
-      ctx.lineWidth = style.treemap.lineWidth;
-      ctx.strokeStyle = style.treemap.stroke;
-      for (const node of nodes) {
-        const { data } = node;
-        if (!isCanvasTreemapType($$, data)) {
-          continue;
-        }
-        const { x, y, w, h } = getTreemapNodeRect($$, node, root, true);
-        if (!isFiniteCanvasCoordinate(x, y) || !isFiniteCanvasCoordinate(x + w, y + h) || w <= 0 || h <= 0) {
-          continue;
-        }
-        const rect = { x, y, w, h };
-        ctx.fillStyle = $$.color(data.name);
-        painter.fillRect(rect);
-        painter.strokeRect(rect);
-        if (!config.treemap_label_show || (data.ratio || 0) < (config.treemap_label_threshold || 0)) {
-          continue;
-        }
-        const label = getTreemapLabelText($$, data, w, h);
-        if (!label) {
-          continue;
-        }
-        const lines = label.split("\n");
-        const isCentered = !!config.data_labels.centered;
-        ctx.font = style.label.font;
-        const lineHeight = getFontSize(ctx.font);
-        const metrics = ctx.measureText((_a2 = lines[0]) != null ? _a2 : "");
-        const fontBoundingHeight = (metrics.fontBoundingBoxAscent || 0) + (metrics.fontBoundingBoxDescent || 0) || (metrics.actualBoundingBoxAscent || 0) + (metrics.actualBoundingBoxDescent || 0);
-        const textHeight = Math.max(lineHeight, fontBoundingHeight) + (lines.length - 1) * lineHeight;
-        const blockY = isCentered ? y + h / 2 : y + textHeight + 5;
-        let textX = isCentered ? x + w / 2 : x + 5;
-        let textY = blockY - (lines.length - 1) * lineHeight / (isCentered ? 2 : 1);
-        ctx.textAlign = isCentered ? "center" : "left";
-        ctx.textBaseline = isCentered ? "middle" : "alphabetic";
-        ({ x: textX, y: textY } = this.drawLabelImage($$, data, label, textX, textY));
-        ctx.fillStyle = getLabelColor($$, data, style.label.color);
-        drawLabelDecorations(
-          $$,
-          painter,
-          data,
-          label,
-          textX,
-          isCentered ? textY + (lines.length - 1) * lineHeight / 2 : blockY
-        );
-        lines.forEach((line, i) => {
-          painter.text(line, textX, textY + i * lineHeight, {
-            maxWidth: Math.max(0, w - 8)
-          });
-        });
-      }
-    });
-  }
-  /**
-   * Draw synchronized focus grid on the canvas subchart.
-   * @param {object} $$ ChartInternal instance
-   * @param {Array} selectedData Focused data rows
-   * @private
-   */
-  drawSubchartFocus($$, selectedData) {
-    const { config, scale, state } = $$;
-    const focus = selectedData == null ? void 0 : selectedData.find(
-      (d) => d && hasCanvasDrawableValue($$, d)
-    );
-    if (!focus || !config.subchart_show || config.subchart_grid_focus_continuous || config.subchart_brush_enabled !== false || config.grid_focus_show === false || config.subchart_grid_focus === false || !config.tooltip_show || config.axis_tooltip || !scale.subX || state.width2 <= 0 || state.height2 <= 0) {
-      return;
-    }
-    const { margin2, width2, height2 } = state;
-    const pos = scale.subX(focus.x);
-    if (!Number.isFinite(pos)) {
-      return;
-    }
-    const { painter, theme: { style } } = this;
-    const lineWidth = style.axis.lineWidth;
-    const x = painter.crisp(margin2.left + pos, lineWidth);
-    const y = painter.crisp(margin2.top + pos, lineWidth);
-    painter.strokePath(() => {
-      config.axis_rotated ? painter.traceLine(margin2.left, y, margin2.left + width2, y) : painter.traceLine(x, margin2.top, x, margin2.top + height2);
-    }, {
-      lineDash: style.focusGrid.dashArray,
-      lineWidth: style.focusGrid.lineWidth,
-      stroke: style.focusGrid.lineColor
-    });
-  }
-  /**
-   * Draw focus grid and focused points on canvas.
-   * @param {object} $$ ChartInternal instance
-   * @param {Array} selectedData Focused data rows
-   * @private
-   */
-  drawFocus($$, selectedData) {
-    if (!(selectedData == null ? void 0 : selectedData.length)) {
-      return;
-    }
-    const { painter } = this;
-    const { style } = this.theme;
-    const { margin } = $$.state;
-    const focus = selectedData.find(
-      (d) => d && hasCanvasDrawableValue($$, d)
-    );
-    $$.config.subchart_grid_focus !== false && !isContinuousGridFocusEnabled($$) && this.drawSubchartFocus($$, selectedData);
-    painter.withTranslation(margin.left, margin.top, () => {
-      if ($$.config.tooltip_show && $$.config.grid_focus_show !== false && !$$.config.axis_tooltip && focus) {
-        const { x, y } = getRenderDataPoint($$, focus);
-        const axisLineWidth = style.axis.lineWidth;
-        const isRotated = $$.config.axis_rotated;
-        const hasIndexCoordinate = Number.isFinite(isRotated ? y : x);
-        const hasValueCoordinate = Number.isFinite(isRotated ? x : y);
-        const crispEdgeX = (value) => painter.crisp(margin.left + value, axisLineWidth) - margin.left;
-        const crispEdgeY = (value) => painter.crisp(margin.top + value, axisLineWidth) - margin.top;
-        const isEdge = $$.config.grid_focus_edge && !$$.config.tooltip_grouped;
-        const continuousFocus = isContinuousGridFocusEnabled($$);
-        const focusEndX = continuousFocus ? $$.state.margin2.left - margin.left + $$.state.width2 : $$.state.width;
-        const focusEndY = continuousFocus ? $$.state.margin2.top - margin.top + $$.state.height2 : $$.state.height;
-        if (hasIndexCoordinate) {
-          painter.strokePath(() => {
-            var _a, _b;
-            if (isRotated) {
-              painter.traceLine(
-                crispEdgeX(0),
-                y,
-                isEdge && hasValueCoordinate ? x : crispEdgeX(focusEndX),
-                y
-              );
-              if (hasValueCoordinate && $$.config.grid_focus_y && !$$.config.tooltip_grouped) {
-                const isY2 = ((_a = $$.axis) == null ? void 0 : _a.getId(focus.id)) === "y2";
-                painter.traceLine(
-                  x,
-                  isEdge && !isY2 ? y : crispEdgeY(0),
-                  x,
-                  isEdge && isY2 ? y : crispEdgeY($$.state.height)
-                );
-              }
-            } else {
-              painter.traceLine(
-                x,
-                isEdge && hasValueCoordinate ? y : crispEdgeY(0),
-                x,
-                crispEdgeY(focusEndY)
-              );
-              if (hasValueCoordinate && $$.config.grid_focus_y && !$$.config.tooltip_grouped) {
-                const isY2 = ((_b = $$.axis) == null ? void 0 : _b.getId(focus.id)) === "y2";
-                painter.traceLine(
-                  isEdge && isY2 ? x : crispEdgeX(0),
-                  y,
-                  isEdge && !isY2 ? x : crispEdgeX($$.state.width),
-                  y
-                );
-              }
-            }
-          }, {
-            lineDash: style.focusGrid.dashArray,
-            lineWidth: style.focusGrid.lineWidth,
-            stroke: style.focusGrid.lineColor
-          });
-        }
-      }
-      if ($$.config.point_show && !$$.state.canvasFocusMainRedraw) {
-        selectedData.filter(
-          (d) => d && hasCanvasDrawableValue($$, d) && isCanvasPointType($$, d) && isCanvasRenderableTarget($$, { id: d.id })
-        ).forEach((d) => {
-          var _a, _b, _c, _d;
-          const pointType = getPointType($$, { id: d.id });
-          const { x, y } = getRenderDataPoint($$, d);
-          const baseR = (_b = (_a = $$.pointR) == null ? void 0 : _a.call($$, d)) != null ? _b : 2.5;
-          const r = (_d = (_c = $$.pointExpandedR) == null ? void 0 : _c.call($$, d)) != null ? _d : baseR * 1.75;
-          const overColor = getCanvasOverColor($$, d);
-          const color = overColor || $$.color(d.id);
-          const fill = overColor || style.focusPoint.fill || style.shape.pointFillColor || color;
-          const stroke = overColor || style.focusPoint.stroke || color;
-          const lineWidth = style.focusPoint.lineWidth;
-          const alpha = getPointOpacity($$, d);
-          const hasStroke = !!stroke && (lineWidth != null ? lineWidth : 0) > 0;
-          const mergeSameColorStroke = pointType === "circle" && hasStroke && isNumber(alpha) && alpha < 1 && fill === stroke;
-          if (!isFiniteCanvasCoordinate(x, y)) {
-            return;
-          }
-          drawPointPattern(
-            painter,
-            pointType,
-            x,
-            y,
-            mergeSameColorStroke ? r + (lineWidth || 0) / 2 : r,
-            hasStroke && !mergeSameColorStroke ? { fill, lineWidth, stroke, alpha } : { fill, alpha },
-            baseR
-          );
-        });
-      }
-      this.drawFocusLabels($$, selectedData);
-    });
-  }
-}
-
 ;// ./src/canvas/CanvasTheme.ts
 var CanvasTheme_defProp = Object.defineProperty;
 var CanvasTheme_getOwnPropSymbols = Object.getOwnPropertySymbols;
@@ -34722,6 +34442,11 @@ function mergeThemeSection(target, section, values) {
     target[section] = mergeObj((_a = target[section]) != null ? _a : {}, override);
   }
 }
+const themeSelectorReader = {
+  readColorValue,
+  readNumberValue,
+  readFontValue
+};
 function normalizeThemeSelectors(selector) {
   return selector.split(",").map(
     (value) => value.trim().replace(/\s*>\s*/g, " ").replace(/\s+/g, " ").replace(/^(?:svg)?\.bb\s+/, "").replace(/(^|\s)(?:g|path|rect|line|text|circle)\./g, "$1.")
@@ -35042,21 +34767,28 @@ function applySelectorStyle(target, selector, style) {
       break;
   }
 }
-function getSelectorThemeOverride(selectors) {
+function getSelectorThemeOverride(selectors, extension) {
   const override = {};
   Object.keys(selectors != null ? selectors : {}).forEach((selector) => {
     normalizeThemeSelectors(selector).forEach((normalizedSelector) => {
+      var _a;
       applySelectorStyle(override, normalizedSelector, selectors[selector]);
+      const handler = (_a = extension == null ? void 0 : extension.selectors) == null ? void 0 : _a[normalizedSelector];
+      handler && mergeThemeSection(
+        override,
+        extension.section,
+        handler(selectors[selector], themeSelectorReader)
+      );
     });
   });
   return override;
 }
-function getThemeOverride(userOverride) {
+function getThemeOverride(userOverride, extension) {
   if (!userOverride) {
     return {};
   }
   const _a = userOverride, { selectors } = _a, styleOverride = __objRest(_a, ["selectors"]);
-  return mergeObj({}, getSelectorThemeOverride(selectors), styleOverride);
+  return mergeObj({}, getSelectorThemeOverride(selectors, extension), styleOverride);
 }
 function getThemeCacheKey(container, userOverride) {
   try {
@@ -35076,16 +34808,19 @@ class CanvasTheme {
     CanvasTheme_publicField(this, "cacheKey", null);
     CanvasTheme_publicField(this, "gridLineSelectorOverrides", []);
     CanvasTheme_publicField(this, "directGridOverrideKeys", /* @__PURE__ */ new Set());
+    CanvasTheme_publicField(this, "extension");
   }
   /**
    * Read theme values from temporary SVG probes.
    * @param {HTMLElement} container Chart container
    * @param {object} userOverride Canvas theme override
+   * @param {object} extension Theme section of a type added by a module
    * @private
    */
-  load(container, userOverride) {
-    var _a, _b, _c, _d, _e;
+  load(container, userOverride, extension) {
+    var _a, _b, _c, _d, _e, _f;
     const svg = browser_doc.createElementNS(SVG_NS, "svg");
+    extension && (this.extension = extension);
     this.gridLineSelectorOverrides = getGridLineSelectorOverrides(userOverride == null ? void 0 : userOverride.selectors);
     this.directGridOverrideKeys = new Set(
       Object.keys((_a = userOverride == null ? void 0 : userOverride.grid) != null ? _a : {})
@@ -35367,7 +35102,15 @@ class CanvasTheme {
         color: toColor(title.fill, "#000")
       }
     };
-    const themeOverride = getThemeOverride(userOverride);
+    const ext = this.extension;
+    ext && (defaultStyle[ext.section] = ext.probe({
+      probeIn,
+      probeInNested,
+      axisFont: axisText.font || "10px sans-serif",
+      toColor,
+      toNumber
+    }));
+    const themeOverride = getThemeOverride(userOverride, ext);
     const style = mergeObj(defaultStyle, themeOverride);
     const userAxisOverride = userOverride == null ? void 0 : userOverride.axis;
     const hasUserAxisLabelColor = !!userAxisOverride && Object.prototype.hasOwnProperty.call(userAxisOverride, "labelColor");
@@ -35462,6 +35205,7 @@ class CanvasTheme {
       defaultStyle.subchartBrush.handleLineWidth
     );
     style.treemap.lineWidth = toNumber(style.treemap.lineWidth, defaultStyle.treemap.lineWidth);
+    (_f = ext == null ? void 0 : ext.normalize) == null ? void 0 : _f.call(ext, style[ext.section], { toNumber });
     this.style = style;
     this.cacheContainer = container;
     this.cacheKey = getThemeCacheKey(container, userOverride);
@@ -35505,7 +35249,6 @@ class CanvasTheme {
 var HitDetector_defProp = Object.defineProperty;
 var HitDetector_defNormalProp = (obj, key, value) => key in obj ? HitDetector_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var HitDetector_publicField = (obj, key, value) => HitDetector_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-
 
 
 
@@ -35583,7 +35326,7 @@ class HitDetector {
    * @private
    */
   rebuild($$, shape) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d, _e, _f, _g;
     const { current, margin, width, height } = $$.state;
     const targets = $$.filterTargetsToShow();
     this.bars = [];
@@ -35593,8 +35336,8 @@ class HitDetector {
     this.pointGrid = /* @__PURE__ */ new Map();
     this.maxPointSensitivity = HIT_DISTANCE;
     this.indexAxis = $$.config.axis_rotated ? "y" : "x";
-    this.plot = $$.state.hasTreemap ? { x: 0, y: 0, w: current.width, h: current.height } : { x: margin.left, y: margin.top, w: width, h: height };
-    this.grouped = !!$$.config.tooltip_grouped && !$$.state.hasTreemap;
+    this.plot = $$.state.customType || $$.state.hasTreemap ? { x: 0, y: 0, w: current.width, h: current.height } : { x: margin.left, y: margin.top, w: width, h: height };
+    this.grouped = !!$$.config.tooltip_grouped && !$$.state.customType && !$$.state.hasTreemap;
     this.pointBased = !($$.config.axis_x_forceAsSingle && this.grouped) && (!!((_a = $$.isMultipleX) == null ? void 0 : _a.call($$)) || targets.some(
       (target) => isCanvasScatterType($$, target) || isCanvasBubbleType($$, target)
     ));
@@ -35610,20 +35353,14 @@ class HitDetector {
         indexMap.set(key, { x, y, data });
       }
     };
-    if ($$.state.hasTreemap) {
-      const root = (_b = $$.getTreemapRoot) == null ? void 0 : _b.call($$, $$.data.targets);
-      const nodes = (root == null ? void 0 : root.children) || [];
-      for (const node of nodes) {
-        const { data } = node;
-        if (!isCanvasTreemapType($$, data)) {
-          continue;
-        }
-        const { x, y, w, h } = getTreemapNodeRect($$, node, root, true);
-        if (!isFiniteCanvasCoordinate(x, y) || !isFiniteCanvasCoordinate(x + w, y + h)) {
-          continue;
-        }
-        this.addBar({ x, y, w, h, data });
-      }
+    if ($$.state.customType) {
+      (_d = (_c = (_b = $$.getCustomTypeParts()) == null ? void 0 : _b.canvas) == null ? void 0 : _c.hits) == null ? void 0 : _d.call($$, this);
+      this.indices = [];
+      return;
+    }
+    const exclusive = (_e = $$.getCanvasTypeParts) == null ? void 0 : _e.call($$).find((part) => part.exclusive);
+    if (exclusive) {
+      (_f = exclusive.hits) == null ? void 0 : _f.call($$, this);
       this.indices = [];
       return;
     }
@@ -35654,7 +35391,7 @@ class HitDetector {
     if (shape.indices[TYPE.CANDLESTICK] || targets.some(isCanvasCandlestickType.bind(null, $$))) {
       const isCandlestick = isCanvasCandlestickType.bind(null, $$);
       const indices = getCanvasShapeIndices($$, shape, TYPE.CANDLESTICK, isCandlestick);
-      const getPoints = (_c = $$.generateGetCandlestickPoints) == null ? void 0 : _c.call($$, indices, false);
+      const getPoints = (_g = $$.generateGetCandlestickPoints) == null ? void 0 : _g.call($$, indices, false);
       if (getPoints) {
         targets.filter(isCandlestick).filter((target) => isCanvasTargetSupported($$, target, HIT_GROUPED_TYPE_FILTERS)).forEach((target) => {
           var _a2;
@@ -36098,7 +35835,7 @@ const $ZOOM = {
   buttonZoomReset: "bb-zoom-reset",
   zoomBrush: "bb-zoom-brush"
 };
-/* harmony default export */ var config_classes = (classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $LEVEL), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
+/* harmony default export */ var config_classes = (classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues(classes_spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $LEVEL), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
 ;// ./src/config/Options/common/boost.ts
 /* harmony default export */ var boost = ({
@@ -37328,6 +37065,7 @@ const $ZOOM = {
    * - area-step-range
    * - bar
    * - bubble
+   * - bullet
    * - candlestick
    * - donut
    * - funnel
@@ -37360,6 +37098,7 @@ const $ZOOM = {
    *   areaStepRange,
    *   bar,
    *   bubble,
+   *   bullet,
    *   candlestick,
    *   donut,
    *   funnel,
@@ -37409,6 +37148,7 @@ const $ZOOM = {
    *   areaStepRange,
    *   bar,
    *   bubble,
+   *   bullet,
    *   candlestick,
    *   donut,
    *   funnel,
@@ -38399,7 +38139,7 @@ class State {
       arcHeight: 0,
       xAxisHeight: 0,
       hasAxis: false,
-      hasFunnel: false,
+      customType: null,
       hasRadar: false,
       hasTreemap: false,
       isCanvasMode: false,
@@ -38739,23 +38479,23 @@ const MODULE_IMPORT_DOC = "https://github.com/naver/billboard.js/blob/master/MOD
 function checkModuleImport(ctx) {
   const $$ = ctx;
   const { config } = $$;
-  let type = "";
-  if (isEmpty(config.data_type || config.data_types) && !$$[TYPE_METHOD_NEEDED.LINE]) {
-    type = "line";
-  } else {
-    for (const x in TYPE_METHOD_NEEDED) {
-      const t = TYPE[x];
-      if ($$.hasType(t) && !$$[TYPE_METHOD_NEEDED[x]]) {
-        type = t;
-        break;
-      }
-    }
-  }
+  const given = (isEmpty(config.data_types) ? [config.data_type] : Object.values(config.data_types)).filter((type2) => !isEmpty(type2));
+  const type = (given.length ? given : ["line"]).find((name) => TYPE_METHOD_NEEDED[name] && !$$[TYPE_METHOD_NEEDED[name]]);
   type && logError(
     `Please, make sure if %c${camelize(type)}`,
     "module has been imported and specified correctly.",
     MODULE_IMPORT_DOC
   );
+}
+function getTypeMethod(ctx, name) {
+  if (!ctx[name]) {
+    logError(
+      `Please, make sure if the module of %c${name}`,
+      `is imported for render.mode='${ctx.config.render_mode}'. The modules of "billboard.js/canvas" draw only with render.mode='canvas'.`,
+      MODULE_IMPORT_DOC
+    );
+  }
+  return ctx[name];
 }
 function checkApiModuleImport(apiName) {
   const moduleName = API_MODULE_NEEDED[apiName];
@@ -38778,7 +38518,7 @@ function logError(head, tail, info) {
     );
     info && console.info("%c\u2139\uFE0F", "font-size:15px", info);
   }
-  throw Error(`${prefix} ${head.replace(/\%c([a-z-]+)/i, "'$1' ")} ${tail != null ? tail : ""}`);
+  throw Error(`${prefix} ${head.replace(/\%c([a-z-]+)/i, "'$1'")}${tail ? ` ${tail}` : ""}`);
 }
 
 ;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/sourceEvent.js
@@ -41013,7 +40753,7 @@ function callDone(fn, resizeAfter = false) {
     });
   },
   unload(rawTargetIds, customDoneCb) {
-    var _a;
+    var _a, _b, _c;
     const $$ = this;
     const { state, $el, $T } = $$;
     const hasLegendDefsPoint = !!((_a = $$.hasLegendDefsPoint) == null ? void 0 : _a.call($$));
@@ -41056,7 +40796,7 @@ function callDone(fn, resizeAfter = false) {
       hasLegendDefsPoint && ((_a2 = $el.defs) == null ? void 0 : _a2.select(`#${$$.getDefsPointId(suffixId)}`).remove());
     });
     $$.data.targets = $$.data.targets.filter((t) => !unloadIds.has(t.id));
-    state.hasFunnel && $$.updateFunnel($$.data.targets);
+    (_c = (_b = $$.customTypeHooks) == null ? void 0 : _b.afterUnload) == null ? void 0 : _c.call(_b, $$);
     state.hasTreemap && $$.updateTargetsForTreemap($$.data.targets);
     $$.updateTypesElements();
     const targets = $el.svg.selectAll(targetIds.map((id) => $$.selectorTarget(id)));
@@ -41402,14 +41142,14 @@ function defaultTouchable() {
    */
   setOverOut(isOver, d) {
     const $$ = this;
-    const { config, state: { hasFunnel, hasRadar, hasTreemap }, $el: { main } } = $$;
+    const { config, state: { customType, hasRadar, hasTreemap }, $el: { main } } = $$;
     const isArcishData = isObject(d);
     if (isArcishData || d !== -1) {
       const callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
       config.color_onover && $$.setOverColor(isOver, d, isArcishData);
       if (isArcishData) {
         const suffix = $$.getTargetSelectorSuffix(d.id);
-        const selector = hasFunnel || hasTreemap ? `${$COMMON.target + suffix} .${$SHAPE.shape}` : $ARC.arc + suffix;
+        const selector = customType || hasTreemap ? `${$COMMON.target + suffix} .${$SHAPE.shape}` : $ARC.arc + suffix;
         callback(d, main.select(`.${selector}`).node());
       } else if (!config.tooltip_grouped) {
         const last = $$.cache.get(KEY.setOverOut) || [];
@@ -41484,20 +41224,20 @@ function defaultTouchable() {
    * @param {Array} mouse x and y coordinate value
    */
   dispatchEvent(type, index, mouse) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     const $$ = this;
     const {
       config,
       state: {
         eventReceiver,
         hasAxis,
-        hasFunnel,
+        customType,
         hasRadar,
         hasTreemap
       },
-      $el: { eventRect, funnel, radar, svg, treemap }
+      $el: { eventRect, radar, svg, treemap }
     } = $$;
-    let element = (_c = (_b = (hasFunnel || hasTreemap) && eventReceiver.rect || hasRadar && radar.axes.select(`.${$AXIS.axis}-${index} text`) || (eventRect || ((_a = $$.getArcElementByIdOrIndex) == null ? void 0 : _a.call($$, index)))) == null ? void 0 : _b.node) == null ? void 0 : _c.call(_b);
+    let element = (_c = (_b = (customType || hasTreemap) && eventReceiver.rect || hasRadar && radar.axes.select(`.${$AXIS.axis}-${index} text`) || (eventRect || ((_a = $$.getArcElementByIdOrIndex) == null ? void 0 : _a.call($$, index)))) == null ? void 0 : _b.node) == null ? void 0 : _c.call(_b);
     if (element) {
       const isMultipleX = $$.isMultipleX();
       const isRotated = config.axis_rotated;
@@ -41529,8 +41269,8 @@ function defaultTouchable() {
         bubbles: hasRadar
         // radar type needs to bubble up event
       };
-      if (hasFunnel || hasTreemap) {
-        element = (funnel != null ? funnel : treemap).node();
+      if (customType || hasTreemap) {
+        element = ((_d = $$.$el[customType]) != null ? _d : treemap).node();
       }
       emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](
         element,
@@ -41561,7 +41301,7 @@ function defaultTouchable() {
   unbindAllEvents() {
     var _a;
     const $$ = this;
-    const { $el: { arcs, eventRect, legend, region, svg, treemap }, brush } = $$;
+    const { $el: { arcs, eventRect, legend, region, svg, treemap }, brush, state: { customType } } = $$;
     const list = [
       "wheel",
       "click",
@@ -41587,6 +41327,7 @@ function defaultTouchable() {
       brush == null ? void 0 : brush.getSelection(),
       arcs == null ? void 0 : arcs.selectAll("path"),
       legend == null ? void 0 : legend.selectAll("g"),
+      $$.$el[customType],
       treemap
     ].forEach((v) => v == null ? void 0 : v.on(list, null));
     (_a = $$.unbindZoomEvent) == null ? void 0 : _a.call($$);
@@ -41626,12 +41367,13 @@ const RE_SELECTOR_SUFFIX = /[\x00-\x20\x7F-\xA0\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`
    * Get class string
    * @param {string} type Shape type
    * @param {boolean} withShape Get with shape prefix
+   * @param {boolean} useId Use the id of the data as the key of the class, as the types of the group
    * @returns {string} Class string
    * @private
    */
-  getClass(type, withShape) {
+  getClass(type, withShape, useId) {
     const isPlural = /s$/.test(type);
-    const useIdKey = /^(area|arc|line|funnel|treemap)s?$/.test(type);
+    const useIdKey = useId != null ? useId : /^(area|arc|line|treemap)s?$/.test(type);
     const key = isPlural ? "id" : "index";
     return (d) => {
       const data = d.data || d;
@@ -43996,6 +43738,7 @@ function _getFormat($$, typeValue, v) {
     return `${v}`;
   },
   dataLabelFormat(targetId) {
+    var _a, _b;
     const $$ = this;
     const dataLabels = $$.config.data_labels;
     const defaultFormat = (v) => {
@@ -44018,7 +43761,7 @@ function _getFormat($$, typeValue, v) {
         format = () => "";
       }
     }
-    return format.bind($$.api);
+    return $$.state.customType && ((_b = (_a = $$.customTypeHooks) == null ? void 0 : _a.labelFormat) == null ? void 0 : _b.call(_a, $$, targetId)) || format.bind($$.api);
   }
 });
 
@@ -44894,7 +44637,7 @@ function _getLegendTouchOption($$) {
       $el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
       $el.radar && $$.redrawRadar();
       $el.polar && $$.redrawPolar();
-      $el.funnel && $$.redrawFunnel();
+      state.customType && $$[`redraw${capitalize(state.customType)}`](wth.Transition);
       treemap && $$.updateTreemap(durationForExit);
     }
     if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
@@ -45300,11 +45043,11 @@ function _getLegendTouchOption($$) {
    * @private
    */
   updateSizes(isInit) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
     const $$ = this;
     const { config, state, $el: { legend } } = $$;
     const isRotated = config.axis_rotated;
-    const isNonAxis = $$.hasArcType() || state.hasFunnel || state.hasTreemap;
+    const isNonAxis = $$.hasArcType() || state.customType || state.hasTreemap;
     const isFitPadding = ((_a = config.padding) == null ? void 0 : _a.mode) === "fit";
     !isInit && $$.setContainerSize();
     const legendWidth = legend ? $$.getLegendWidth() : 0;
@@ -45393,7 +45136,7 @@ function _getLegendTouchOption($$) {
       }
       (_e = $$.updateRadius) == null ? void 0 : _e.call($$);
     }
-    if (state.isLegendRight && isNonAxis) {
+    if (state.isLegendRight && isNonAxis && !((_f = $$.customTypeHooks) == null ? void 0 : _f.ownLegendLayout)) {
       state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
     }
   }
@@ -45445,7 +45188,7 @@ function _getLegendTouchOption($$) {
 
 
 /* harmony default export */ function src_selectAll(selector) {
-  return typeof selector === "string" ? new Selection([document.querySelectorAll(selector)], [document.documentElement]) : new Selection([array(selector)], root);
+  return typeof selector === "string" ? new Selection([document.querySelectorAll(selector)], [document.documentElement]) : new Selection([array_array(selector)], root);
 }
 
 ;// ./src/ChartInternal/internals/text.util.ts
@@ -45653,8 +45396,8 @@ function batchGetBBox(elements) {
    * @private
    */
   initText() {
-    const { $el } = this;
-    $el.main.select(`.${$COMMON.chart}`).append("g").attr("class", $TEXT.chartTexts).style("pointer-events", $el.funnel || $el.treemap ? "none" : null);
+    const { $el, state } = this;
+    $el.main.select(`.${$COMMON.chart}`).append("g").attr("class", $TEXT.chartTexts).style("pointer-events", state.customType || $el.treemap ? "none" : null);
   },
   /**
    * Update chartText
@@ -45689,6 +45432,7 @@ function batchGetBBox(elements) {
     const text = $el.main.selectAll(`.${$TEXT.texts}`).selectAll(`.${$TEXT.text}`).data($$.labelishData.bind($$));
     $T(text.exit()).style("fill-opacity", "0").remove();
     $el.text = text.enter().append("text").merge(text).attr("class", classText).attr("text-anchor", (d) => {
+      var _a, _b;
       const isInverted = config[`axis_${axis == null ? void 0 : axis.getId(d.id)}_inverted`];
       let isEndAnchor = isInverted ? d.value > 0 : d.value < 0;
       if ($$.isCandlestickType(d)) {
@@ -45696,6 +45440,11 @@ function batchGetBBox(elements) {
         isEndAnchor = !(data == null ? void 0 : data._isUp);
       } else if ($$.isTreemapType(d)) {
         return labelsCentered ? "middle" : "start";
+      } else if ($$.state.customType) {
+        const anchor = (_b = (_a = $$.getCustomTypeHooks(d)) == null ? void 0 : _a.textAnchor) == null ? void 0 : _b.call(_a, $$, d);
+        if (anchor) {
+          return anchor;
+        }
       }
       return config.axis_rotated ? isEndAnchor ? "end" : "start" : "middle";
     }).style("fill", $$.getStylePropValue($$.updateTextColor)).style("fill-opacity", "0").each(function(d, i, texts) {
@@ -45719,10 +45468,11 @@ function batchGetBBox(elements) {
     updateTextImage.call($$);
   },
   updateTextColor(d) {
+    var _a;
     const $$ = this;
     const { config } = $$;
     const labelColors = config.data_labels_colors;
-    const defaultColor = $$.isArcType(d) && !$$.isRadarType(d) || $$.isFunnelType(d) || $$.isTreemapType(d) ? null : $$.color(d);
+    const defaultColor = $$.isArcType(d) && !$$.isRadarType(d) || ((_a = $$.getCustomTypeHooks(d)) == null ? void 0 : _a.themeTextColor) || $$.isTreemapType(d) ? null : $$.color(d);
     let color;
     if (isString(labelColors)) {
       color = labelColors;
@@ -45808,6 +45558,7 @@ function batchGetBBox(elements) {
       });
     }
     text.each(function(d, i) {
+      var _a;
       const labelDimension = dimensions.get(this);
       const node = $T(
         hasTreemap && this.childElementCount ? this.parentNode : this,
@@ -45828,6 +45579,7 @@ function batchGetBBox(elements) {
         node.attr("transform", `translate(${pos.x} ${pos.y}) ${rotateString}`);
       } else {
         node.attr("x", pos.x).attr("y", pos.y);
+        hasTreemap && ((_a = this.parentNode) == null ? void 0 : _a.removeAttribute("transform"));
       }
       config.data_labels.border && updateTextBorder.call($$, node.node(), pos, `${$TEXT.textBorderRect}-${i}`);
     });
@@ -45874,18 +45626,18 @@ function batchGetBBox(elements) {
    */
   generateXYForText(indices, forX) {
     const $$ = this;
-    const { state: { hasRadar, hasFunnel, hasTreemap } } = $$;
+    const { state: { customType, hasRadar, hasTreemap } } = $$;
     const types = Object.keys(indices);
     const points = {};
     const getter = forX ? $$.getXForText : $$.getYForText;
-    hasFunnel && types.push("funnel");
+    customType && types.push(customType);
     hasRadar && types.push("radar");
     hasTreemap && types.push("treemap");
     types.forEach((v) => {
       points[v] = $$[`generateGet${capitalize(v)}Points`](indices[v], false);
     });
     return function(d, i, labelDimension) {
-      const type = $$.isAreaType(d) && "area" || $$.isBarType(d) && "bar" || $$.isCandlestickType(d) && "candlestick" || $$.isFunnelType(d) && "funnel" || $$.isRadarType(d) && "radar" || $$.isTreemapType(d) && "treemap" || "line";
+      const type = $$.isAreaType(d) && "area" || $$.isBarType(d) && "bar" || customType && $$.isTypeOf(d, customType) && customType || $$.isCandlestickType(d) && "candlestick" || $$.isRadarType(d) && "radar" || $$.isTreemapType(d) && "treemap" || "line";
       return getter.call($$, points[type](d, i), d, this, labelDimension);
     };
   },
@@ -45936,24 +45688,20 @@ function batchGetBBox(elements) {
    * @private
    */
   getXForText(points, d, textElement, labelDimension) {
-    var _a, _b, _c;
+    var _a;
     const $$ = this;
     const { config } = $$;
     const isRotated = config.axis_rotated;
-    const isFunnelType = $$.isFunnelType(d);
     const isTreemapType = $$.isTreemapType(d);
     let xPos = points ? points[0][0] : 0;
-    if ($$.isCandlestickType(d)) {
+    const custom = $$.getCustomTypeHooks(d);
+    if (custom) {
+      return custom.textX($$, points, d, textElement, labelDimension);
+    } else if ($$.isCandlestickType(d)) {
       if (isRotated) {
         xPos = ((_a = $$.getCandlestickData(d)) == null ? void 0 : _a._isUp) ? points[2][2] + 4 : points[2][1] - 4;
       } else {
         xPos += (points[1][0] - xPos) / 2;
-      }
-    } else if (isFunnelType) {
-      if (points) {
-        xPos = (_c = (_b = points[2]) == null ? void 0 : _b[0]) != null ? _c : xPos;
-      } else {
-        return getElementPos(textElement, "x");
       }
     } else if (isTreemapType) {
       xPos += config.data_labels.centered ? 0 : 5;
@@ -45968,7 +45716,7 @@ function batchGetBBox(elements) {
         xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
       }
     }
-    if (isRotated || isTreemapType || isFunnelType) {
+    if (isRotated || isTreemapType) {
       xPos += $$.getCenteredTextPos(d, points, textElement, "x", labelDimension);
     }
     return xPos + getTextPos.call(this, d, "x");
@@ -45983,20 +45731,21 @@ function batchGetBBox(elements) {
    * @private
    */
   getYForText(points, d, textElement, labelDimension) {
-    var _a, _b;
     const $$ = this;
     const { axis, config, state } = $$;
     const isRotated = config.axis_rotated;
     const isInverted = config[`axis_${axis == null ? void 0 : axis.getId(d.id)}_inverted`];
     const isBarType = $$.isBarType(d);
-    const isFunnelType = $$.isFunnelType(d);
     const isTreemapType = $$.isTreemapType(d);
     const r = config.point_r;
     const rect = (labelDimension == null ? void 0 : labelDimension.rect) || getBoundingRect(textElement);
     let { value } = d;
     let baseY = 3;
     let yPos;
-    if ($$.isCandlestickType(d)) {
+    const custom = $$.getCustomTypeHooks(d);
+    if (custom) {
+      return custom.textY($$, points, d, textElement, rect, labelDimension);
+    } else if ($$.isCandlestickType(d)) {
       value = $$.getCandlestickData(d);
       if (isRotated) {
         yPos = points[0][0];
@@ -46006,12 +45755,6 @@ function batchGetBBox(elements) {
         if (isInverted) {
           yPos += 15 * (value._isUp ? 1 : -1);
         }
-      }
-    } else if (isFunnelType) {
-      if (points) {
-        yPos = ((_b = (_a = points[2]) == null ? void 0 : _a[1]) != null ? _b : points[0][1]) + rect.height / 2 - 3;
-      } else {
-        return getElementPos(textElement, "y");
       }
     } else if (isTreemapType) {
       yPos = points[0][1] + (config.data_labels.centered ? 0 : rect.height + 5);
@@ -46449,7 +46192,7 @@ const RE_TOOLTIP_TPL = /{{(.*)}}/;
     const $$ = this;
     const { $el: { eventRect, svg }, config, state } = $$;
     const isRotated = config.axis_rotated;
-    const hasArcType = $$.hasArcType() || state.hasFunnel || state.hasTreemap;
+    const hasArcType = $$.hasArcType() || state.customType || state.hasTreemap;
     const target = (_b = (_a = hasArcType ? svg : eventRect) == null ? void 0 : _a.node()) != null ? _b : state.event.target;
     let { x, y } = currPos;
     if (state.hasAxis) {
@@ -46462,7 +46205,7 @@ const RE_TOOLTIP_TPL = /{{(.*)}}/;
     let top = ctm.y;
     let left = ctm.x + tWidth / 2 + size;
     if (hasArcType) {
-      if (state.hasFunnel || state.hasTreemap || state.hasRadar) {
+      if (state.customType || state.hasTreemap || state.hasRadar) {
         left -= tWidth / 2 + size;
         top += tHeight;
       } else {
@@ -46493,7 +46236,16 @@ const RE_TOOLTIP_TPL = /{{(.*)}}/;
     var _a, _b, _c;
     const $$ = this;
     const { config, scale, state } = $$;
-    const { width, height, current, hasFunnel, hasRadar, hasTreemap, isLegendRight, inputType } = state;
+    const {
+      width,
+      height,
+      current,
+      customType,
+      hasRadar,
+      hasTreemap,
+      isLegendRight,
+      inputType
+    } = state;
     const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
     const isRotated = config.axis_rotated;
     const hasArcType = $$.hasArcType();
@@ -46514,7 +46266,7 @@ const RE_TOOLTIP_TPL = /{{(.*)}}/;
         x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
         y += (hasGauge ? height : height / 2 + tHeight) + titlePadding;
       }
-    } else if (hasFunnel || hasTreemap) {
+    } else if (customType || hasTreemap) {
       y += tHeight;
     } else {
       const padding = {
@@ -46531,7 +46283,7 @@ const RE_TOOLTIP_TPL = /{{(.*)}}/;
       }
     }
     if (x + tWidth + 15 > chartRight) {
-      x -= tWidth + (hasFunnel || hasTreemap || hasArcType ? 0 : isRotated ? size * 2 : 38);
+      x -= tWidth + (customType || hasTreemap || hasArcType ? 0 : isRotated ? size * 2 : 38);
     }
     if (y + tHeight > current.height) {
       const gap = hasTreemap ? tHeight + 10 : 30;
@@ -46794,11 +46546,11 @@ const RE_TOOLTIP_TPL = /{{(.*)}}/;
   },
   transformAll(withTransition, transitions) {
     const $$ = this;
-    const { config, state: { hasAxis, hasFunnel, hasTreemap, isCanvasMode }, $el } = $$;
+    const { config, state: { customType, hasAxis, hasTreemap, isCanvasMode }, $el } = $$;
     if (isCanvasMode) {
       return;
     }
-    !hasFunnel && !hasTreemap && $$.transformMain(withTransition, transitions);
+    !customType && !hasTreemap && $$.transformMain(withTransition, transitions);
     hasAxis && config.subchart_show && $$.transformContext(withTransition, transitions);
     $el.legend && $$.transformLegend(withTransition);
   }
@@ -46832,7 +46584,7 @@ const INTERPOLATION_TYPES = /* @__PURE__ */ new Set([
    * @private
    */
   isValidChartType(type) {
-    return !!(type && Object.values(TYPE).indexOf(type) > -1);
+    return !!(type && (Object.values(TYPE).indexOf(type) > -1 || type === this.state.customType));
   },
   /**
    * Get the chart type to use for the subchart target.
@@ -46941,9 +46693,10 @@ const INTERPOLATION_TYPES = /* @__PURE__ */ new Set([
    */
   updateTypesElements() {
     const $$ = this;
-    const { state: { current } } = $$;
-    Object.keys(TYPE).forEach((v) => {
-      const t = TYPE[v];
+    const { state: { current, customType } } = $$;
+    const types = Object.values(TYPE);
+    customType && types.push(customType);
+    types.forEach((t) => {
       const has = $$.hasType(t, null, true);
       const idx = current.types.indexOf(t);
       if (idx === -1 && has) {
@@ -47045,6 +46798,38 @@ const INTERPOLATION_TYPES = /* @__PURE__ */ new Set([
   isBubbleType(d) {
     return this.isTypeOf(d, "bubble");
   },
+  /**
+   * Get the name of the chart type of its own module that the chart has.
+   * The modules register their types by name (registerCustomType()): a bundle can have more than
+   * one of them, and a chart has one at most.
+   * @returns {string|null} Type name
+   * @private
+   */
+  getCustomType() {
+    const types = this.customTypes;
+    return types && Object.keys(types).find((name) => this.hasType(name)) || null;
+  },
+  /**
+   * Get what the module of the custom type of the chart has registered: hooks and canvas parts.
+   * @returns {object|undefined} Parts of the type
+   * @private
+   */
+  getCustomTypeParts() {
+    var _a;
+    const { customType } = this.state;
+    return customType ? (_a = this.customTypes) == null ? void 0 : _a[customType] : void 0;
+  },
+  /**
+   * Get the hooks of the module of a custom type, when the data belongs to that type.
+   * @param {object} d Data object
+   * @returns {object|null} Hooks
+   * @private
+   */
+  getCustomTypeHooks(d) {
+    var _a, _b;
+    const { customType } = this.state;
+    return customType && this.isTypeOf(d, customType) ? (_b = (_a = this.getCustomTypeParts()) == null ? void 0 : _a.hooks) != null ? _b : null : null;
+  },
   isCandlestickType(d) {
     return this.isTypeOf(d, "candlestick");
   },
@@ -47056,9 +46841,6 @@ const INTERPOLATION_TYPES = /* @__PURE__ */ new Set([
   },
   isPieType(d) {
     return this.isTypeOf(d, "pie");
-  },
-  isFunnelType(d) {
-    return this.isTypeOf(d, "funnel");
   },
   isGaugeType(d) {
     return this.isTypeOf(d, "gauge");
@@ -47095,7 +46877,12 @@ const INTERPOLATION_TYPES = /* @__PURE__ */ new Set([
    * @private
    */
   labelishData(d) {
-    return this.isBarType(d) || this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) || this.isCandlestickType(d) || this.isFunnelType(d) || this.isRadarType(d) || this.isTreemapType(d) ? d.values.filter((v) => isNumber(v.value) || Boolean(v.value)) : [];
+    var _a, _b;
+    const custom = this.getCustomTypeHooks(d);
+    if (custom) {
+      return (_b = (_a = custom.labelData) == null ? void 0 : _a.call(custom, this, d)) != null ? _b : [];
+    }
+    return this.isBarType(d) || this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) || this.isCandlestickType(d) || this.isRadarType(d) || this.isTreemapType(d) ? d.values.filter((v) => isNumber(v.value) || Boolean(v.value)) : [];
   },
   barLineBubbleData(d) {
     return this.isBarType(d) || this.isLineType(d) || this.isBubbleType(d) ? d.values : [];
@@ -48005,7 +47792,7 @@ const CURVE_MAP = {
   "monotone-y": monotoneY,
   natural: natural,
   "linear-closed": linearClosed,
-  linear: curve_linear,
+  linear: linear,
   step: step,
   "step-after": stepAfter,
   "step-before": stepBefore
@@ -48865,13 +48652,20 @@ function getTime() {
   return (_c = (_b = (_a = win.performance) == null ? void 0 : _a.now) == null ? void 0 : _b.call(_a)) != null ? _c : Date.now();
 }
 function getUnsupportedCanvasRenderType($$) {
+  var _a, _b, _c, _d;
   if ($$.hasArcType()) {
     return "arc charts";
   }
-  if ($$.hasType("funnel")) {
-    return "funnel chart";
+  if ($$.state.customType) {
+    const unsupported = (_a = $$.customTypeHooks) == null ? void 0 : _a.canvasUnsupported;
+    if (unsupported) {
+      return unsupported;
+    }
+    if (!((_b = $$.getCustomTypeParts()) == null ? void 0 : _b.canvas)) {
+      return `${$$.state.customType} chart without its canvas module`;
+    }
   }
-  return null;
+  return (_d = (_c = $$.getUnsupportedCanvasPart) == null ? void 0 : _c.call($$)) != null ? _d : null;
 }
 function fallbackUnsupportedCanvasRenderMode($$) {
   var _a, _b;
@@ -48981,17 +48775,26 @@ class ChartInternal {
     $$.callPluginHook("$afterInit");
     callFn($$.config.onafterinit, $$.api);
   }
+  /**
+   * The hooks of the module of the custom type of the chart (see registerCustomType()).
+   * @private
+   */
+  get customTypeHooks() {
+    var _a;
+    const $$ = this;
+    return $$.state && ((_a = $$.getCustomTypeParts()) == null ? void 0 : _a.hooks);
+  }
   init() {
     const $$ = this;
     const { config, state, $el } = $$;
     const { boost_useCssRule, bindto } = config;
+    state.customType = $$.getCustomType();
     checkModuleImport($$);
     fallbackUnsupportedCanvasRenderMode($$);
     const hasArcType = $$.hasArcType();
     state.hasRadar = !state.hasAxis && $$.hasType("radar");
-    state.hasFunnel = !state.hasAxis && $$.hasType("funnel");
     state.hasTreemap = !state.hasAxis && $$.hasType("treemap");
-    state.hasAxis = !hasArcType && !state.hasFunnel && !state.hasTreemap;
+    state.hasAxis = !hasArcType && !state.customType && !state.hasTreemap;
     state.datetimeId = `bb-${+/* @__PURE__ */ new Date() * getRandom()}`;
     if (boost_useCssRule) {
       const styleEl = browser_doc.createElement("style");
@@ -49064,7 +48867,7 @@ class ChartInternal {
       config.subchart_show = false;
     }
     if (config.render_mode !== "canvas" && ($$.hasPointType() || ((_b = $$.hasLegendDefsPoint) == null ? void 0 : _b.call($$)))) {
-      $$.point = $$.generatePoint();
+      $$.point = getTypeMethod($$, "generatePoint").call($$);
     }
     if (state.hasAxis) {
       $$.initClip();
@@ -49095,7 +48898,7 @@ class ChartInternal {
     var _a, _b, _c, _d, _e, _f;
     const $$ = this;
     const { config, scale: scale2, state, $el, org } = $$;
-    const { hasAxis, hasFunnel, hasTreemap } = state;
+    const { customType, hasAxis, hasTreemap } = state;
     const hasInteraction = config.interaction_enabled;
     const hasPolar = $$.hasType("polar");
     const labelsBGColor = config.data_labels_backgroundColors;
@@ -49195,7 +48998,7 @@ class ChartInternal {
     }
     $$.updateSvgSize();
     $$.bindResize();
-    const main = $el.svg.append("g").classed($COMMON.main, true).attr("transform", hasFunnel || hasTreemap ? null : $$.getTranslate("main"));
+    const main = $el.svg.append("g").classed($COMMON.main, true).attr("transform", customType || hasTreemap ? null : $$.getTranslate("main"));
     $el.main = main;
     config.subchart_show && $$.initSubchart();
     config.tooltip_show && $$.initTooltip();
@@ -49257,8 +49060,8 @@ class ChartInternal {
       }
     } else if (hasTreemap) {
       types.push("Treemap");
-    } else if ($$.hasType("funnel")) {
-      types.push("Funnel");
+    } else if ($$.state.customType) {
+      types.push(capitalize($$.state.customType));
     } else {
       const hasPolar = $$.hasType("polar");
       const hasGauge = $$.hasType("gauge");
@@ -49274,7 +49077,7 @@ class ChartInternal {
       }
     }
     for (const type of types) {
-      $$[`init${type}`]();
+      getTypeMethod($$, `init${type}`).call($$);
     }
     if (notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"])) {
       $$.initText();
@@ -49353,8 +49156,9 @@ class ChartInternal {
   updateTargets(targets) {
     var _a, _b;
     const $$ = this;
-    const { hasAxis, hasFunnel, hasRadar, hasTreemap } = $$.state;
-    const helper = (type) => $$[`updateTargetsFor${type}`](
+    const { customType, hasAxis, hasRadar, hasTreemap } = $$.state;
+    const helper = (type) => getTypeMethod($$, `updateTargetsFor${type}`).call(
+      $$,
       targets.filter($$[`is${type}Type`].bind($$))
     );
     $$.updateTargetsForText(targets);
@@ -49375,8 +49179,8 @@ class ChartInternal {
         type = "Polar";
       }
       helper(type);
-    } else if (hasFunnel) {
-      helper("Funnel");
+    } else if (customType) {
+      helper(capitalize(customType));
     } else if (hasTreemap) {
       helper("Treemap");
     }
@@ -49508,7 +49312,7 @@ class ChartInternal {
     });
   }
 }
-object_extend(ChartInternal.prototype, [
+extend(ChartInternal.prototype, [
   // common
   convert,
   ChartInternal_data_data,
@@ -49547,18 +49351,8 @@ object_extend(ChartInternal.prototype, [
 
 
 
-
-const CANVAS_SELECTABLE_TYPE_FILTERS = [
-  isCanvasPointType,
-  isCanvasBarType,
-  isCanvasCandlestickType,
-  isCanvasTreemapType
-];
 const CANVAS_LEGEND_TOUCH_TAP_THRESHOLD = 10;
 const CANVAS_LEGEND_TOUCH_CLICK_TIMEOUT = 750;
-const CANVAS_SUBCHART_HANDLE_SIZE = 6;
-const CANVAS_SUBCHART_CLICK_TOLERANCE = 2;
-const CANVAS_FLOW_ANIMATION_MAX_VALUES = 1e5;
 const CANVAS_HTML_ATTR_ESCAPE = {
   "&": "&amp;",
   "<": "&lt;",
@@ -49566,7 +49360,6 @@ const CANVAS_HTML_ATTR_ESCAPE = {
   '"': "&quot;",
   "'": "&#39;"
 };
-const canvasSelectionDragRows = /* @__PURE__ */ new WeakMap();
 function warn(message) {
   var _a, _b;
   (_b = (_a = win.console) == null ? void 0 : _a.warn) == null ? void 0 : _b.call(_a, `[billboard.js] ${message}`);
@@ -49764,8 +49557,9 @@ function measureSvgLegendText($$, text) {
   svg.appendChild(group);
   chart.appendChild(svg);
   const rect = getBoundingRect(textElement);
+  const ascent = svg.getBoundingClientRect().top - rect.top;
   svg.remove();
-  return rect;
+  return { width: rect.width, height: rect.height, ascent };
 }
 function isSupportedCanvasXType(type) {
   return /^(indexed|category|log|timeseries)$/.test(type);
@@ -49794,7 +49588,7 @@ function isCanvasXIndexHoverArea($$, point) {
   const top = margin.top;
   const bottom = margin.top + height;
   const axisBand = config.axis_x_show ? Math.max(xAxisHeight || 0, 24) : 0;
-  if (((_a = $$.isMultipleX) == null ? void 0 : _a.call($$)) || state.hasTreemap) {
+  if (((_a = $$.isMultipleX) == null ? void 0 : _a.call($$)) || state.customType || state.hasTreemap) {
     return false;
   }
   return config.axis_rotated ? y >= top && y <= bottom && x >= left - axisBand && x <= right : x >= left && x <= right && y >= top && y <= bottom + axisBand;
@@ -49813,8 +49607,8 @@ function getCanvasTooltipData($$, d) {
   const { config, state } = $$;
   const targetsToShow = $$.filterTargetsToShow($$.data.targets);
   const pointBased = isCanvasPointBasedInteraction($$, d);
-  const sameXData = config.tooltip_grouped && !state.hasTreemap && !pointBased ? (_a = $$.filterByX) == null ? void 0 : _a.call($$, targetsToShow, d.x) : null;
-  return (state.hasTreemap ? [d] : pointBased ? [d] : config.tooltip_grouped ? (sameXData == null ? void 0 : sameXData.length) ? sameXData : targetsToShow.map((target) => target.values[d.index]).filter(Boolean) : [d]).map((v) => {
+  const sameXData = config.tooltip_grouped && !state.customType && !state.hasTreemap && !pointBased ? (_a = $$.filterByX) == null ? void 0 : _a.call($$, targetsToShow, d.x) : null;
+  return (state.customType || state.hasTreemap ? [d] : pointBased ? [d] : config.tooltip_grouped ? (sameXData == null ? void 0 : sameXData.length) ? sameXData : targetsToShow.map((target) => target.values[d.index]).filter(Boolean) : [d]).map((v) => {
     var _a2;
     return ((_a2 = $$.addName) == null ? void 0 : _a2.call($$, v)) || v;
   });
@@ -49832,161 +49626,8 @@ function getCanvasEventPoint($$, event) {
   const rect = getBoundingRect(canvas2, true);
   return [point.clientX - rect.left, point.clientY - rect.top];
 }
-function normalizeCanvasSubchartDomain($$, domain) {
-  var _a, _b;
-  if (!Array.isArray(domain) || domain.length < 2) {
-    return null;
-  }
-  const values = domain.slice(0, 2);
-  return ((_b = (_a = $$.axis) == null ? void 0 : _a.isTimeSeries) == null ? void 0 : _b.call(_a)) ? values.map((value) => parseDate.call($$, value)) : values;
-}
-function getCanvasSubchartRect($$) {
-  const { config, state } = $$;
-  if (!config.subchart_show || !state.hasAxis || state.width2 <= 0 || state.height2 <= 0) {
-    return null;
-  }
-  return {
-    x: state.margin2.left,
-    y: state.margin2.top,
-    w: state.width2,
-    h: state.height2
-  };
-}
-function isCanvasSubchartPoint($$, point) {
-  const rect = getCanvasSubchartRect($$);
-  return !!rect && point[0] >= rect.x && point[0] <= rect.x + rect.w && point[1] >= rect.y && point[1] <= rect.y + rect.h;
-}
-function getCanvasMainPointFromSubchart($$, point) {
-  const { config, state } = $$;
-  const rect = getCanvasSubchartRect($$);
-  if (config.subchart_brush_enabled !== false || !rect || !isCanvasSubchartPoint($$, point)) {
-    return null;
-  }
-  const mainCoord = getMainCoordFromSubchartCoord(
-    $$,
-    config.axis_rotated ? point[1] - rect.y : point[0] - rect.x
-  );
-  if (mainCoord === null) {
-    return null;
-  }
-  return config.axis_rotated ? [state.margin.left + state.width / 2, state.margin.top + mainCoord] : [state.margin.left + mainCoord, state.margin.top + state.height / 2];
-}
-function getCanvasSubchartBrushExtent($$) {
-  var _a, _b;
-  const rect = getCanvasSubchartRect($$);
-  const axisLength = rect ? $$.config.axis_rotated ? rect.h : rect.w : 0;
-  const extent = (_b = (_a = $$.axis) == null ? void 0 : _a.getExtent) == null ? void 0 : _b.call(_a);
-  const values = Array.isArray(extent) ? extent.slice(0, 2) : [];
-  if (values.length === 2 && values.every(Number.isFinite)) {
-    const start = Math.max(0, Math.min(axisLength, values[0]));
-    const end = Math.max(0, Math.min(axisLength, values[1]));
-    return [Math.min(start, end), Math.max(start, end)];
-  }
-  return [0, axisLength];
-}
-function getCanvasSubchartBrushCoord($$, event, clampToExtent = false) {
-  const point = getCanvasEventPoint($$, event);
-  const rect = point && getCanvasSubchartRect($$);
-  if (!point || !rect || !isCanvasSubchartPoint($$, point)) {
-    return null;
-  }
-  const raw = $$.config.axis_rotated ? point[1] - rect.y : point[0] - rect.x;
-  const [min, max] = getCanvasSubchartBrushExtent($$);
-  if (!clampToExtent && (raw < min || raw > max)) {
-    return null;
-  }
-  return Math.max(min, Math.min(max, raw));
-}
-function getCanvasSubchartDomainFromCoords($$, start, end) {
-  const coordStart = Math.min(start, end);
-  const coordEnd = Math.max(start, end);
-  return [
-    $$.scale.subX.invert(coordStart),
-    $$.scale.subX.invert(coordEnd)
-  ];
-}
-function getCanvasSubchartBrushSelection($$) {
-  const { scale, state } = $$;
-  const domain = state.domain;
-  if (!(domain == null ? void 0 : domain.length) || !scale.subX) {
-    return null;
-  }
-  const rect = getCanvasSubchartRect($$);
-  const p0 = scale.subX(domain[0]);
-  const p1 = scale.subX(domain[1]);
-  if (!rect || !Number.isFinite(p0) || !Number.isFinite(p1)) {
-    return null;
-  }
-  const [min, max] = getCanvasSubchartBrushExtent($$);
-  return [
-    Math.max(min, Math.min(max, Math.min(p0, p1))),
-    Math.max(min, Math.min(max, Math.max(p0, p1)))
-  ];
-}
-function getCanvasSubchartBrushMode($$, coord) {
-  const selection = getCanvasSubchartBrushSelection($$);
-  if (!selection) {
-    return "select";
-  }
-  const [start, end] = selection;
-  if (Math.abs(coord - start) <= CANVAS_SUBCHART_HANDLE_SIZE) {
-    return "resize-start";
-  }
-  if (Math.abs(coord - end) <= CANVAS_SUBCHART_HANDLE_SIZE) {
-    return "resize-end";
-  }
-  return coord > start && coord < end ? "move" : "select";
-}
-function clampCanvasSubchartSelection($$, start, end) {
-  const [min, max] = getCanvasSubchartBrushExtent($$);
-  return [
-    Math.max(min, Math.min(max, start)),
-    Math.max(min, Math.min(max, end))
-  ];
-}
-function getCanvasSubchartCursor($$, mode) {
-  if (/^resize/.test(mode)) {
-    return $$.config.axis_rotated ? "ns-resize" : "ew-resize";
-  }
-  return mode === "move" ? "move" : "crosshair";
-}
 function getCanvasDataKey(d) {
   return d ? `${d.id}:${d.index}` : null;
-}
-function getCanvasSelectionDragDelta($$, dataRows) {
-  const previousKeys = $$.state.canvasSelectionDragIncluded;
-  const previousRows = canvasSelectionDragRows.get($$) || /* @__PURE__ */ new Map();
-  const currentRows = /* @__PURE__ */ new Map();
-  const included = /* @__PURE__ */ new Set();
-  const rows = [];
-  dataRows.filter((d) => isCanvasSelectableData($$, d)).forEach((d) => {
-    const key = getCanvasDataKey(d);
-    if (key) {
-      included.add(key);
-      !currentRows.has(key) && currentRows.set(key, d);
-    }
-  });
-  currentRows.forEach((d, key) => {
-    !previousKeys.has(key) && rows.push(d);
-  });
-  previousRows.forEach((d, key) => {
-    !included.has(key) && rows.push(d);
-  });
-  canvasSelectionDragRows.set($$, currentRows);
-  return { included, rows };
-}
-function getCanvasSelectionIds(ids) {
-  return ids ? Array.isArray(ids) ? ids : [ids] : null;
-}
-function isCanvasSelectableData($$, d) {
-  return d && hasCanvasDrawableValue($$, d) && isCanvasTargetSupported($$, d, CANVAS_SELECTABLE_TYPE_FILTERS) && CANVAS_SELECTABLE_TYPE_FILTERS.some((filter) => filter($$, d)) && $$.config.data_selection_isselectable.bind($$.api)(d);
-}
-function eachCanvasSelectableData($$, callback) {
-  $$.filterTargetsToShow($$.data.targets).filter((target) => isCanvasTargetSupported($$, target, CANVAS_SELECTABLE_TYPE_FILTERS)).forEach((target) => {
-    target.values.forEach((d) => {
-      isCanvasSelectableData($$, d) && callback(d);
-    });
-  });
 }
 function isCanvasPointBasedInteraction($$, d) {
   return !($$.config.axis_x_forceAsSingle && $$.config.tooltip_grouped) && (isCanvasScatterType($$, d) || isCanvasBubbleType($$, d));
@@ -50045,36 +49686,66 @@ function markCanvasInputClick($$, d) {
   $$.state.canvasLastInputClickKey = getCanvasDataKey(d);
   $$.state.canvasLastInputClickTime = Date.now();
 }
-function getCanvasAnimationTime() {
-  var _a, _b, _c;
-  return (_c = (_b = (_a = win.performance) == null ? void 0 : _a.now) == null ? void 0 : _b.call(_a)) != null ? _c : Date.now();
-}
-function isCanvasFlowDomain(domain, isLog = false) {
-  return Array.isArray(domain) && domain.length >= 2 && domain.every((v) => Number.isFinite(+v) && (!isLog || +v > 0));
-}
-function interpolateCanvasFlowDomain(start, end, ratio, isLog = false) {
-  return start.slice(0, 2).map((value, index) => {
-    const next = isLog ? Math.exp(Math.log(+value) + (Math.log(+end[index]) - Math.log(+value)) * ratio) : +value + (+end[index] - +value) * ratio;
-    return value instanceof Date || end[index] instanceof Date ? new Date(next) : next;
-  });
-}
-function getCanvasFlowValueCount($$) {
-  return $$.data.targets.reduce((sum, target) => sum + target.values.length, 0);
-}
-function syncCanvasFlowYDomains($$) {
-  const { scale } = $$;
-  const targetsToShow = $$.filterTargetsToShow($$.data.targets);
-  ["y", "y2"].forEach((key) => {
-    var _a;
-    (_a = scale[key]) == null ? void 0 : _a.domain($$.getYDomain(targetsToShow, key));
-  });
-  $$.withSubchartTypeContext(() => {
-    var _a, _b;
-    (_a = scale.subY) == null ? void 0 : _a.domain($$.getYDomain(targetsToShow, "y"));
-    (_b = scale.subY2) == null ? void 0 : _b.domain($$.getYDomain(targetsToShow, "y2"));
-  });
-}
+const CANVAS_PART_NEEDED = ["treemap"];
 const canvasInternal = {
+  /**
+   * Get the reason of the svg fallback for a type whose canvas part is not imported.
+   * @returns {string|null} Unsupported chart type reason
+   * @private
+   */
+  getUnsupportedCanvasPart() {
+    const missing = CANVAS_PART_NEEDED.find(
+      (name) => {
+        var _a;
+        return this.hasType(name) && !((_a = this.canvasTypes) == null ? void 0 : _a[name]);
+      }
+    );
+    return missing ? `${missing} chart without its canvas module` : null;
+  },
+  /**
+   * Get the canvas drawing of an optional feature (registerCanvasFeature()).
+   * @param {string} name Feature name
+   * @returns {object|undefined} Functions of the feature, undefined if its module is not imported
+   * @private
+   */
+  getCanvasFeature(name) {
+    var _a;
+    return (_a = this.canvasFeatures) == null ? void 0 : _a[name];
+  },
+  /**
+   * Get the canvas parts of the chart types the chart has (registerCanvasType()).
+   * @returns {Array} Parts of the types, in the order they were registered
+   * @private
+   */
+  getCanvasTypeParts() {
+    const types = this.canvasTypes;
+    return types ? Object.keys(types).filter((name) => this.hasType(name)).map((name) => types[name]) : [];
+  },
+  /**
+   * Warn when a feature module of the svg entry is imported, but its canvas drawing is not.
+   * The canvas drawing comes with the module of the canvas entry ("billboard.js/canvas").
+   * @private
+   */
+  warnMissingCanvasFeatures() {
+    var _a, _b;
+    const { config } = this;
+    const features = [
+      // [feature, installed by the svg module, used by the chart]
+      [
+        "grid",
+        this.initGrid,
+        config.grid_x_show || config.grid_y_show || ((_a = config.grid_x_lines) == null ? void 0 : _a.length) || ((_b = config.grid_y_lines) == null ? void 0 : _b.length)
+      ],
+      ["subchart", this.initSubchart, config.subchart_show],
+      ["selection", this.selectPoint, config.data_selection_enabled]
+    ];
+    features.forEach(([name, installed, used]) => {
+      var _a2;
+      installed && used && !((_a2 = this.canvasFeatures) == null ? void 0 : _a2[name]) && warn(
+        `canvas mode: ${name} is not drawn, because it is not imported from "billboard.js/canvas".`
+      );
+    });
+  },
   /**
    * Normalize unsupported options before initializing canvas mode.
    * @private
@@ -50083,6 +49754,7 @@ const canvasInternal = {
     var _a, _b;
     const { config, state } = this;
     this.warnUnsupportedCanvasOptions();
+    this.warnMissingCanvasFeatures();
     if (((_a = state.orgConfig) == null ? void 0 : _a.transition) && Object.prototype.hasOwnProperty.call(state.orgConfig.transition, "duration") && state.orgConfig.transition.duration) {
       warn("canvas mode: transition.duration is ignored; canvas redraws synchronously.");
     }
@@ -50102,205 +49774,11 @@ const canvasInternal = {
     }
   },
   /**
-   * Apply the current canvas subchart selection to the main x domain.
-   * @private
-   */
-  applyCanvasSubchartDomain() {
-    const $$ = this;
-    const { axis, config, scale, state } = $$;
-    if (!config.subchart_show || !state.hasAxis || !scale.subX) {
-      return;
-    }
-    if (!state.rendered && !state.domain && config.subchart_init_range) {
-      state.domain = normalizeCanvasSubchartDomain($$, config.subchart_init_range);
-    }
-    const domain = normalizeCanvasSubchartDomain($$, state.domain);
-    if (!domain || !$$.withinRange(domain, $$.getZoomDomain("subX", true), $$.getZoomDomain("subX"))) {
-      return;
-    }
-    state.domain = domain;
-    scale.x.domain(domain);
-    axis.x.scale(scale.x);
-  },
-  /**
-   * Set the canvas subchart selection domain and redraw the main chart.
-   * @param {Array} domain Domain range
-   * @param {boolean} redraw Whether to redraw immediately
-   * @param {boolean} callCallback Whether to call subchart.onbrush
-   * @returns {Array|undefined} Applied domain range
-   * @private
-   */
-  setCanvasSubchartDomain(domain, redraw = true, callCallback = false) {
-    const $$ = this;
-    const { config, scale, state } = $$;
-    const nextDomain = normalizeCanvasSubchartDomain($$, domain);
-    if (!config.subchart_show || !nextDomain || !$$.withinRange(nextDomain, $$.getZoomDomain("subX", true), $$.getZoomDomain("subX"))) {
-      return void 0;
-    }
-    state.domain = nextDomain;
-    scale.zoom = null;
-    if (redraw) {
-      $$.redraw({
-        withTransition: false,
-        withY: config.zoom_rescale,
-        withSubchart: false,
-        withEventRect: false,
-        withDimension: false
-      });
-    }
-    callCallback && config.subchart_onbrush.bind($$.api)(state.domain);
-    return state.domain;
-  },
-  /**
-   * Clear the canvas subchart brush selection and restore the full x domain.
-   * @param {boolean} redraw Whether to redraw immediately
-   * @param {boolean} callCallback Whether to call subchart.onbrush
-   * @private
-   */
-  clearCanvasSubchartDomain(redraw = true, callCallback = false) {
-    var _a;
-    const $$ = this;
-    const { axis, config, org, scale, state } = $$;
-    if (!config.subchart_show) {
-      return;
-    }
-    state.domain = void 0;
-    scale.zoom = null;
-    if ((_a = org.xDomain) == null ? void 0 : _a.length) {
-      scale.x.domain(org.xDomain);
-      axis.x.scale(scale.x);
-    }
-    if (redraw) {
-      $$.redraw({
-        withTransition: false,
-        withUpdateXDomain: true,
-        withUpdateOrgXDomain: false,
-        withY: config.zoom_rescale,
-        withSubchart: false,
-        withEventRect: false,
-        withDimension: false
-      });
-    }
-    callCallback && config.subchart_onbrush.bind($$.api)(scale.x.orgDomain());
-  },
-  /**
-   * Finish a pending canvas flow animation before accepting another flow mutation.
-   * @private
-   */
-  flushCanvasFlow() {
-    var _a, _b;
-    const { state } = this;
-    if (!state.canvasFlowFinish) {
-      return;
-    }
-    state.canvasFlowFrame !== null && ((_b = (_a = win).cancelAnimationFrame) == null ? void 0 : _b.call(_a, state.canvasFlowFrame));
-    state.canvasFlowFrame = null;
-    state.canvasFlowFinish();
-  },
-  /**
-   * Animate canvas flow by interpolating the x domain, then commit the final data window.
-   * @param {object} flow Flow metadata
-   * @returns {boolean} Whether animation was started
-   * @private
-   */
-  animateCanvasFlow(flow) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
-    const $$ = this;
-    const { axis, data, org, scale, state } = $$;
-    const { done = () => {
-    }, duration, length, orgDataCount } = flow;
-    const requestFrame = (_a = win.requestAnimationFrame) == null ? void 0 : _a.bind(win);
-    const isLog = !!((_b = axis.isLog) == null ? void 0 : _b.call(axis, "x"));
-    if (!requestFrame || !duration || !length || !orgDataCount || getCanvasFlowValueCount($$) > CANVAS_FLOW_ANIMATION_MAX_VALUES) {
-      return false;
-    }
-    const startDomain = scale.x.domain().slice(0, 2);
-    const startOrgDomain = (_d = (_c = org.xDomain) == null ? void 0 : _c.slice) == null ? void 0 : _d.call(_c);
-    const startSubXDomain = (_h = (_f = (_e = scale.subX) == null ? void 0 : _e.domain) == null ? void 0 : (_g = _f.call(_e)).slice) == null ? void 0 : _h.call(_g);
-    if (!isCanvasFlowDomain(startDomain, isLog)) {
-      return false;
-    }
-    const removed = data.targets.map((target) => target.values.splice(0, length));
-    $$.updateXDomain($$.filterTargetsToShow(data.targets), true, true);
-    const endDomain = scale.x.domain().slice(0, 2);
-    const endOrgDomain = (_j = (_i = org.xDomain) == null ? void 0 : _i.slice) == null ? void 0 : _j.call(_i);
-    data.targets.forEach((target, index) => {
-      target.values.unshift(...removed[index]);
-    });
-    if (!isCanvasFlowDomain(endDomain, isLog)) {
-      startOrgDomain && (org.xDomain = startOrgDomain);
-      scale.x.domain(startDomain);
-      startSubXDomain && scale.subX.domain(startSubXDomain);
-      axis.x.scale(scale.x);
-      return false;
-    }
-    syncCanvasFlowYDomains($$);
-    let finished = false;
-    const started = getCanvasAnimationTime();
-    const finish = () => {
-      var _a2, _b2;
-      if (finished) {
-        return;
-      }
-      finished = true;
-      data.targets.forEach((target) => {
-        target.values.splice(0, length);
-      });
-      endOrgDomain && (org.xDomain = endOrgDomain);
-      scale.x.domain(endDomain);
-      (_b2 = (_a2 = scale.subX) == null ? void 0 : _a2.domain) == null ? void 0 : _b2.call(_a2, endOrgDomain != null ? endOrgDomain : endDomain);
-      axis.x.scale(scale.x);
-      state.dirty.data = true;
-      state._eventRectFingerprint = null;
-      state.canvasShape = null;
-      state._cachedDrawShape = null;
-      $$.redraw({
-        withLegend: true,
-        withTransition: false,
-        withTrimXDomain: false,
-        withUpdateOrgXDomain: true,
-        withUpdateXAxis: true,
-        withUpdateXDomain: true
-      });
-      $$.updateTypesElements();
-      state.canvasFlowFrame = null;
-      state.canvasFlowFinish = null;
-      state.flowing = false;
-      done.call($$.api);
-    };
-    const render = (timestamp) => {
-      const ratio = Math.min(1, Math.max(0, (timestamp - started) / duration));
-      const domain = interpolateCanvasFlowDomain(startDomain, endDomain, ratio, isLog);
-      scale.x.domain(domain);
-      axis.x.scale(scale.x);
-      state.canvasShape = null;
-      state._cachedDrawShape = null;
-      state._canvasVisibleRangeCache = null;
-      state._canvasXTickValuesCache = null;
-      $$.renderCanvasFrame(void 0, null, false);
-      if (ratio < 1) {
-        state.canvasFlowFrame = requestFrame(render);
-      } else {
-        finish();
-      }
-    };
-    startOrgDomain && (org.xDomain = startOrgDomain);
-    scale.x.domain(startDomain);
-    startSubXDomain && scale.subX.domain(startSubXDomain);
-    axis.x.scale(scale.x);
-    state.flowing = true;
-    state.cancelClick = true;
-    (_k = $$.hideTooltip) == null ? void 0 : _k.call($$);
-    state.canvasFlowFinish = finish;
-    state.canvasFlowFrame = requestFrame(render);
-    return true;
-  },
-  /**
    * Initialize canvas renderers, theme, hit detector and event bindings.
    * @private
    */
   initCanvas() {
-    var _a;
+    var _a, _b, _c, _d;
     const $$ = this;
     const { config, state, $el } = $$;
     const container = $el.chart.node();
@@ -50314,19 +49792,23 @@ const canvasInternal = {
     $$.canvasEngine.init(container, state.current.width, $$.getCanvasSurfaceHeight());
     $el.canvas = src_select($$.canvasEngine.canvas);
     $$.canvasTheme = new CanvasTheme();
-    $$.canvasTheme.load(container, config.canvas_theme);
+    $$.canvasTheme.load(
+      container,
+      config.canvas_theme,
+      (_c = (_b = (_a = $$.getCustomTypeParts) == null ? void 0 : _a.call($$)) == null ? void 0 : _b.canvas) == null ? void 0 : _c.theme
+    );
     $$.canvasAxisRenderer = new CanvasAxisRenderer($$.canvasEngine, $$.canvasTheme);
     $$.canvasRenderer = new CanvasRenderer($$.canvasEngine, $$.canvasTheme);
     $$.hitDetector = new HitDetector();
     $$.bindCanvasEvents();
-    config.zoom_enabled && ((_a = $$.bindZoomEvent) == null ? void 0 : _a.call($$));
+    config.zoom_enabled && ((_d = $$.bindZoomEvent) == null ? void 0 : _d.call($$));
   },
   /**
    * Warn about options that canvas mode does not support yet.
    * @private
    */
   warnUnsupportedCanvasOptions() {
-    var _a, _b, _c, _d;
+    var _a, _b, _c;
     const { config } = this;
     const unsupported = [
       [
@@ -50344,8 +49826,7 @@ const canvasInternal = {
       [config.boost_useCssRule, "boost.useCssRule"],
       [(_a = this.hasArcType) == null ? void 0 : _a.call(this), "arc charts"],
       [(_b = this.hasType) == null ? void 0 : _b.call(this, "radar"), "radar chart"],
-      [(_c = this.hasType) == null ? void 0 : _c.call(this, "polar"), "polar chart"],
-      [(_d = this.hasType) == null ? void 0 : _d.call(this, "funnel"), "funnel chart"]
+      [(_c = this.hasType) == null ? void 0 : _c.call(this, "polar"), "polar chart"]
     ];
     unsupported.forEach(([condition, name]) => {
       condition && warn(`canvas mode: ${name} is not yet supported.`);
@@ -50374,11 +49855,11 @@ const canvasInternal = {
       (_a = config.onout) == null ? void 0 : _a.bind($$.api)(event);
     });
     canvas2.addEventListener("mousedown", (event) => {
-      var _a;
+      var _a, _b;
       if ((_a = $$.onCanvasSubchartBrushStart) == null ? void 0 : _a.call($$, event)) {
         return;
       }
-      $$.onCanvasSelectionDragStart(event);
+      (_b = $$.onCanvasSelectionDragStart) == null ? void 0 : _b.call($$, event);
     });
     canvas2.addEventListener("click", $$.onCanvasClick.bind($$));
     canvas2.addEventListener("pointerdown", $$.onCanvasPointerDown.bind($$));
@@ -50562,7 +50043,8 @@ const canvasInternal = {
           id,
           hidden,
           width,
-          height
+          height,
+          text: rect
         };
       });
       const areaLength = isRightOrInset ? $$.getLegendHeight() : $$.getLegendWidth();
@@ -50605,7 +50087,8 @@ const canvasInternal = {
       const yForLegend = state.isLegendRight || state.isLegendInset ? (id) => sizes.margins[sizes.steps[id]] + sizes.offsets[id] : (id) => dimension.max.height * sizes.steps[id];
       const titleX = 4 + itemTileSize.width;
       const tileCenterY = 9;
-      measured.forEach(({ id, hidden }) => {
+      const getTitleY = (id, text) => text ? 14 - text.ascent - (sizes.heights[id] - text.height) / 2 : 0;
+      measured.forEach(({ id, hidden, text }) => {
         const x = hidden ? 0 : xForLegend(id);
         const y = hidden ? 0 : yForLegend(id);
         itemLayouts[id] = {
@@ -50617,7 +50100,7 @@ const canvasInternal = {
           },
           title: {
             x: titleX,
-            y: 0,
+            y: hidden ? 0 : getTitleY(id, text),
             height: sizes.heights[id]
           },
           tile: {
@@ -50717,6 +50200,688 @@ const canvasInternal = {
       );
     }
   },
+  /**
+   * Dispatch canvas data.onout callback for the current hovered row.
+   * @param {HTMLCanvasElement} canvas Canvas element
+   * @private
+   */
+  dispatchCanvasDataOut(canvas2) {
+    const $$ = this;
+    const { config, state } = $$;
+    const d = state.canvasDataHover;
+    if (!d) {
+      return;
+    }
+    state.canvasDataHover = null;
+    state.canvasDataHoverKey = null;
+    config.interaction_enabled && callFn(config.data_onout, $$.api, d, canvas2);
+  },
+  /**
+   * Dispatch canvas data.onover callback when the hovered row changes.
+   * @param {object} d Data row
+   * @param {HTMLCanvasElement} canvas Canvas element
+   * @private
+   */
+  dispatchCanvasDataOver(d, canvas2) {
+    const $$ = this;
+    const { config, state } = $$;
+    const key = getCanvasDataKey(d);
+    if (state.canvasDataHoverKey === key) {
+      return;
+    }
+    $$.dispatchCanvasDataOut(canvas2);
+    state.canvasDataHover = d;
+    state.canvasDataHoverKey = key;
+    config.interaction_enabled && d && callFn(config.data_onover, $$.api, d, canvas2);
+  },
+  /**
+   * Dispatch canvas data.onclick callback for a pointer position.
+   * @param {Event} event Input event
+   * @param {boolean} markInputClick Whether to suppress following compatibility click
+   * @returns {object|null} Clicked data row
+   * @private
+   */
+  dispatchCanvasDataClick(event, markInputClick = false) {
+    var _a;
+    const $$ = this;
+    const { config, $el } = $$;
+    const canvas2 = $el.canvas.node();
+    const d = getCanvasEventDatum($$, event, true);
+    if (!d || isDuplicateCanvasInputClick($$, d)) {
+      return d;
+    }
+    if (config.interaction_enabled) {
+      const dataRows = config.data_selection_grouped ? $$.filterTargetsToShow($$.data.targets).map((target) => target.values[d.index]).filter(Boolean) : [d];
+      (_a = $$.toggleCanvasSelection) == null ? void 0 : _a.call($$, dataRows);
+      dataRows.forEach((row) => callFn(config.data_onclick, $$.api, row, canvas2));
+      markInputClick && markCanvasInputClick($$, d);
+    }
+    return d;
+  },
+  /**
+   * Handle canvas click and dispatch shape-level data onclick.
+   * @param {MouseEvent} event Mouse click event
+   * @private
+   */
+  onCanvasClick(event) {
+    var _a;
+    const $$ = this;
+    const { config, state } = $$;
+    state.event = event;
+    if (state.flowing || state.cancelClick) {
+      state.cancelClick = false;
+      return;
+    }
+    $$.dispatchCanvasDataClick(event);
+    (_a = config.onclick) == null ? void 0 : _a.bind($$.api)(event);
+  },
+  /**
+   * Start non-mouse pointer-driven canvas subchart brushing.
+   * @param {PointerEvent} event Pointer event
+   * @private
+   */
+  onCanvasPointerDown(event) {
+    var _a, _b;
+    if (!shouldHandleCanvasPointerEvent(this, event)) {
+      return;
+    }
+    const $$ = this;
+    const canvas2 = $$.$el.canvas.node();
+    if (!((_a = $$.startCanvasSubchartBrush) == null ? void 0 : _a.call($$, event))) {
+      return;
+    }
+    const pointerId = event.pointerId;
+    const matchesPointer = (event2) => event2.pointerId === pointerId;
+    const move = (event2) => {
+      var _a2;
+      matchesPointer(event2) && ((_a2 = $$.updateCanvasSubchartBrush) == null ? void 0 : _a2.call($$, event2));
+    };
+    const end = (event2) => {
+      var _a2;
+      if (matchesPointer(event2)) {
+        (_a2 = $$.endCanvasSubchartBrush) == null ? void 0 : _a2.call($$, event2);
+        cleanup();
+      }
+    };
+    const cancel = (event2) => {
+      var _a2;
+      if (matchesPointer(event2)) {
+        (_a2 = $$.cancelCanvasSubchartBrush) == null ? void 0 : _a2.call($$, event2);
+        cleanup();
+      }
+    };
+    function cleanup() {
+      var _a2;
+      win.removeEventListener("pointermove", move);
+      win.removeEventListener("pointerup", end);
+      win.removeEventListener("pointercancel", cancel);
+      try {
+        (_a2 = canvas2.releasePointerCapture) == null ? void 0 : _a2.call(canvas2, pointerId);
+      } catch (e) {
+      }
+    }
+    try {
+      (_b = canvas2.setPointerCapture) == null ? void 0 : _b.call(canvas2, pointerId);
+    } catch (e) {
+    }
+    win.addEventListener("pointermove", move);
+    win.addEventListener("pointerup", end);
+    win.addEventListener("pointercancel", cancel);
+  },
+  /**
+   * Handle non-mouse pointer entering the canvas.
+   * @param {PointerEvent} event Pointer event
+   * @private
+   */
+  onCanvasPointerEnter(event) {
+    var _a;
+    if (!shouldHandleCanvasPointerEvent(this, event)) {
+      return;
+    }
+    this.state.event = event;
+    (_a = this.config.onover) == null ? void 0 : _a.bind(this.api)(event);
+  },
+  /**
+   * Handle non-mouse pointer movement over the canvas.
+   * @param {PointerEvent} event Pointer event
+   * @private
+   */
+  onCanvasPointerMove(event) {
+    var _a;
+    if (!shouldHandleCanvasPointerEvent(this, event)) {
+      return;
+    }
+    if ((_a = this.updateCanvasSubchartBrush) == null ? void 0 : _a.call(this, event)) {
+      return;
+    }
+    this.onCanvasMouseMove(event);
+  },
+  /**
+   * Handle non-mouse pointer click.
+   * @param {PointerEvent} event Pointer event
+   * @private
+   */
+  onCanvasPointerUp(event) {
+    var _a, _b;
+    if (!shouldHandleCanvasPointerEvent(this, event)) {
+      return;
+    }
+    this.state.event = event;
+    if ((_a = this.endCanvasSubchartBrush) == null ? void 0 : _a.call(this, event)) {
+      (_b = this.config.onout) == null ? void 0 : _b.bind(this.api)(event);
+      return;
+    }
+    this.dispatchCanvasDataClick(event, true);
+    this.dispatchCanvasDataOut(this.$el.canvas.node());
+  },
+  /**
+   * Handle non-mouse pointer leaving the canvas.
+   * @param {PointerEvent} event Pointer event
+   * @private
+   */
+  onCanvasPointerOut(event) {
+    var _a;
+    if (!shouldHandleCanvasPointerEvent(this, event)) {
+      return;
+    }
+    if (this.state.canvasSubchartBrushDragging) {
+      return;
+    }
+    this.state.event = event;
+    this.onCanvasMouseOut();
+    (_a = this.config.onout) == null ? void 0 : _a.bind(this.api)(event);
+  },
+  /**
+   * Handle non-mouse pointer cancellation.
+   * @param {PointerEvent} event Pointer event
+   * @private
+   */
+  onCanvasPointerCancel(event) {
+    var _a, _b;
+    if (!shouldHandleCanvasPointerEvent(this, event)) {
+      return;
+    }
+    this.state.event = event;
+    if ((_a = this.cancelCanvasSubchartBrush) == null ? void 0 : _a.call(this, event)) {
+      (_b = this.config.onout) == null ? void 0 : _b.bind(this.api)(event);
+      return;
+    }
+    this.onCanvasPointerOut(event);
+  },
+  /**
+   * Handle touch start over the canvas.
+   * @param {TouchEvent} event Touch event
+   * @private
+   */
+  onCanvasTouchStart(event) {
+    var _a, _b, _c;
+    if (event.touches.length > 1) {
+      return;
+    }
+    this.state.event = event;
+    if ((_a = this.startCanvasSubchartBrush) == null ? void 0 : _a.call(this, event)) {
+      return;
+    }
+    if ((_b = this.startCanvasSelectionDrag) == null ? void 0 : _b.call(this, event)) {
+      return;
+    }
+    (_c = this.config.onover) == null ? void 0 : _c.bind(this.api)(event);
+    this.onCanvasMouseMove(event);
+  },
+  /**
+   * Handle touch move over the canvas.
+   * @param {TouchEvent} event Touch event
+   * @private
+   */
+  onCanvasTouchMove(event) {
+    var _a, _b;
+    if (event.touches.length > 1) {
+      return;
+    }
+    if ((_a = this.updateCanvasSubchartBrush) == null ? void 0 : _a.call(this, event)) {
+      return;
+    }
+    if ((_b = this.updateCanvasSelectionDrag) == null ? void 0 : _b.call(this, event)) {
+      return;
+    }
+    this.onCanvasMouseMove(event);
+  },
+  /**
+   * Handle touch end over the canvas.
+   * @param {TouchEvent} event Touch event
+   * @private
+   */
+  onCanvasTouchEnd(event) {
+    var _a, _b, _c, _d, _e;
+    this.state.event = event;
+    if ((_a = this.endCanvasSubchartBrush) == null ? void 0 : _a.call(this, event)) {
+      (_b = this.config.onout) == null ? void 0 : _b.bind(this.api)(event);
+      return;
+    }
+    if ((_c = this.endCanvasSelectionDrag) == null ? void 0 : _c.call(this, event)) {
+      (_d = this.config.onout) == null ? void 0 : _d.bind(this.api)(event);
+      return;
+    }
+    this.dispatchCanvasDataClick(event, true);
+    this.dispatchCanvasDataOut(this.$el.canvas.node());
+    (_e = this.config.onout) == null ? void 0 : _e.bind(this.api)(event);
+  },
+  /**
+   * Handle touch cancellation.
+   * @param {TouchEvent} event Touch event
+   * @private
+   */
+  onCanvasTouchCancel(event) {
+    var _a, _b, _c;
+    this.state.event = event;
+    (_a = this.cancelCanvasSubchartBrush) == null ? void 0 : _a.call(this, event);
+    (_b = this.endCanvasSelectionDrag) == null ? void 0 : _b.call(this, event);
+    this.onCanvasMouseOut();
+    (_c = this.config.onout) == null ? void 0 : _c.bind(this.api)(event);
+  },
+  /**
+   * Update canvas focus state and tooltip on pointer movement.
+   * @param {Event} event Mouse, pointer or touch move event
+   * @private
+   */
+  onCanvasMouseMove(event) {
+    var _a, _b, _c, _d, _e, _f;
+    const $$ = this;
+    const { config, state, $el } = $$;
+    const canvas2 = $el.canvas.node();
+    state.event = event;
+    if (state.flowing) {
+      return;
+    }
+    if (state.canvasSelectionDragging) {
+      return;
+    }
+    if ((_a = $$.updateCanvasSubchartCursor) == null ? void 0 : _a.call($$, event)) {
+      $$.dispatchCanvasDataOut(canvas2);
+      if (state.canvasFocusKey) {
+        state.canvasFocusKey = null;
+        $$.clearCanvasFocus();
+      }
+      (_b = $$.hideTooltip) == null ? void 0 : _b.call($$);
+      return;
+    }
+    const rawPoint = getCanvasEventPoint($$, event);
+    const point = rawPoint && (((_c = $$.getCanvasMainPointFromSubchart) == null ? void 0 : _c.call($$, rawPoint)) || rawPoint);
+    const d = point ? getCanvasHoverDatumFromPoint($$, point) : null;
+    if (!d) {
+      $$.dispatchCanvasDataOut(canvas2);
+      if (state.canvasFocusKey) {
+        state.canvasFocusKey = null;
+        $$.clearCanvasFocus();
+      }
+      if (rawPoint && config.axis_tooltip && isCanvasAxisTooltipArea($$, rawPoint)) {
+        $$.renderCanvasAxisTooltip(rawPoint);
+        (_d = $$.hideTooltip) == null ? void 0 : _d.call($$);
+        return;
+      }
+      (_e = $$.hideTooltip) == null ? void 0 : _e.call($$);
+      return;
+    }
+    $$.dispatchCanvasDataOver(d, canvas2);
+    const selectedData = getCanvasTooltipData($$, d);
+    const focusData = getCanvasFocusData($$, d, selectedData);
+    const focusKey = focusData.map((v) => `${v.id}:${v.index}`).join("|");
+    if (state.canvasFocusKey !== focusKey || config.axis_tooltip) {
+      state.canvasFocusKey = focusKey;
+      $$.renderCanvasFocus(focusData, point);
+    }
+    (_f = $$.showTooltip) == null ? void 0 : _f.call($$, selectedData, canvas2);
+  },
+  /**
+   * Clear focus and tooltip state when the pointer leaves the canvas.
+   * @private
+   */
+  onCanvasMouseOut() {
+    var _a;
+    const canvas2 = this.$el.canvas.node();
+    canvas2.style.cursor = "";
+    this.dispatchCanvasDataOut(canvas2);
+    if (this.state.canvasFocusKey) {
+      this.state.canvasFocusKey = null;
+      this.clearCanvasFocus();
+    } else if (this.config.axis_tooltip) {
+      this.clearCanvasFocus();
+    }
+    (_a = this.hideTooltip) == null ? void 0 : _a.call(this);
+  },
+  /**
+   * Show canvas tooltip from linked tooltip propagation.
+   * @param {number} index Data index
+   * @returns {boolean} Whether linked tooltip was shown
+   * @private
+   */
+  showCanvasLinkedTooltip(index) {
+    var _a, _b, _c, _d;
+    const $$ = this;
+    const { $el, state } = $$;
+    const canvas2 = (_a = $el.canvas) == null ? void 0 : _a.node();
+    const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+    const d = targetsToShow.map((target) => target.values[index]).find(Boolean);
+    if (!canvas2 || !d) {
+      (_b = $$.hideTooltip) == null ? void 0 : _b.call($$);
+      return false;
+    }
+    const selectedData = getCanvasTooltipData($$, d);
+    const focus = selectedData.find((v) => v && hasCanvasDrawableValue($$, v)) || selectedData[0];
+    if (!selectedData.length || !focus) {
+      (_c = $$.hideTooltip) == null ? void 0 : _c.call($$);
+      return false;
+    }
+    const { left, top } = getBoundingRect(canvas2, true);
+    const point = getRenderDataPoint($$, focus);
+    const eventPoint = [
+      state.margin.left + point.x,
+      state.margin.top + point.y
+    ];
+    state.event = {
+      clientX: left + eventPoint[0],
+      clientY: top + eventPoint[1],
+      currentTarget: canvas2,
+      target: canvas2
+    };
+    state.canvasFocusKey = selectedData.map((v) => `${v.id}:${v.index}`).join("|");
+    $$.renderCanvasFocus(selectedData, eventPoint);
+    (_d = $$.showTooltip) == null ? void 0 : _d.call($$, selectedData, canvas2);
+    return true;
+  },
+  /**
+   * Draw drag-zoom brush overlay on the cached canvas frame.
+   * @param {number} start Start coordinate
+   * @param {number} end End coordinate
+   * @private
+   */
+  renderCanvasZoomBrush(start, end) {
+    const $$ = this;
+    $$.canvasEngine.withOverlay((ctx) => {
+      $$.canvasRenderer.withContext(ctx, () => {
+        $$.canvasRenderer.drawZoomBrush($$, start, end);
+      });
+    });
+  },
+  /**
+   * Clear drag-zoom brush overlay.
+   * @private
+   */
+  clearCanvasZoomBrush() {
+    this.canvasEngine.clearOverlay();
+  },
+  /**
+   * Draw a complete canvas frame and optionally rebuild hit indexes.
+   * @param {object} shape Cached draw shape object
+   * @param {Array} focusData Focused data rows
+   * @param {boolean} rebuildHit Whether to rebuild hit indexes
+   * @private
+   */
+  renderCanvasFrame(shape, focusData, rebuildHit = false) {
+    var _a, _b, _c, _d, _e, _f, _g, _h;
+    const $$ = this;
+    const { state } = $$;
+    const drawShape = shape || state.canvasShape || $$.getDrawShape();
+    state.canvasShape = drawShape;
+    state._canvasVisibleRangeCache = null;
+    state._canvasXTickValuesCache = null;
+    $$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());
+    try {
+      $$.canvasRenderer.drawBackground($$);
+      $$.canvasAxisRenderer.drawTitle($$);
+      state.hasAxis && $$.canvasAxisRenderer.draw($$);
+      $$.canvasRenderer.draw($$, drawShape);
+      state.hasAxis && $$.config.grid_lines_front && ((_b = (_a = $$.getCanvasFeature) == null ? void 0 : _a.call($$, "grid")) == null ? void 0 : _b.drawLines.call($$, $$.canvasAxisRenderer));
+      (_d = (_c = $$.getCanvasFeature) == null ? void 0 : _c.call($$, "subchart")) == null ? void 0 : _d.draw.call($$, $$.canvasRenderer, drawShape);
+      state.hasAxis && ((_f = (_e = $$.getCanvasFeature) == null ? void 0 : _e.call($$, "subchart")) == null ? void 0 : _f.drawXAxis.call($$, $$.canvasAxisRenderer));
+      state.hasAxis && ((_h = (_g = $$.getCanvasFeature) == null ? void 0 : _g.call($$, "subchart")) == null ? void 0 : _h.drawYAxes.call($$, $$.canvasAxisRenderer));
+      $$.canvasRenderer.drawEmptyLabel($$);
+      rebuildHit && $$.hitDetector.rebuild($$, drawShape);
+    } finally {
+      $$.canvasEngine.endFrame();
+    }
+    $$.canvasEngine.clearOverlay();
+    state.canvasFocusMainRedraw = false;
+    focusData && $$.renderCanvasFocus(focusData);
+  },
+  /**
+   * Restore the cached frame and draw focus overlays.
+   * @param {Array} focusData Focused data rows
+   * @param {Array} point Canvas-local pointer coordinate
+   * @private
+   */
+  renderCanvasFocus(focusData, point) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
+    const $$ = this;
+    const { state } = $$;
+    const withMainRedraw = (_b = (_a = $$.canvasRenderer).hasExpandedShapeFocus) == null ? void 0 : _b.call(_a, $$, focusData);
+    if (withMainRedraw) {
+      const drawShape = state.canvasShape || $$.getDrawShape();
+      $$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());
+      try {
+        $$.canvasRenderer.drawBackground($$);
+        $$.canvasAxisRenderer.drawTitle($$);
+        state.hasAxis && $$.canvasAxisRenderer.draw($$);
+        $$.canvasRenderer.draw($$, drawShape, focusData);
+        state.hasAxis && $$.config.grid_lines_front && ((_d = (_c = $$.getCanvasFeature) == null ? void 0 : _c.call($$, "grid")) == null ? void 0 : _d.drawLines.call($$, $$.canvasAxisRenderer));
+        (_f = (_e = $$.getCanvasFeature) == null ? void 0 : _e.call($$, "subchart")) == null ? void 0 : _f.draw.call($$, $$.canvasRenderer, drawShape);
+        state.hasAxis && ((_h = (_g = $$.getCanvasFeature) == null ? void 0 : _g.call($$, "subchart")) == null ? void 0 : _h.drawXAxis.call($$, $$.canvasAxisRenderer));
+        state.hasAxis && ((_j = (_i = $$.getCanvasFeature) == null ? void 0 : _i.call($$, "subchart")) == null ? void 0 : _j.drawYAxes.call($$, $$.canvasAxisRenderer));
+        $$.canvasRenderer.drawEmptyLabel($$);
+      } finally {
+        $$.canvasEngine.endFrame();
+      }
+    }
+    state.canvasFocusMainRedraw = !!withMainRedraw;
+    $$.canvasEngine.withOverlay((ctx) => {
+      $$.canvasRenderer.withContext(ctx, () => {
+        $$.canvasRenderer.drawFocus($$, focusData);
+      });
+      $$.canvasAxisRenderer.withContext(ctx, () => {
+        $$.canvasAxisRenderer.drawFocusedXAxisTick($$, focusData);
+        point && $$.canvasAxisRenderer.drawAxisTooltip($$, point);
+      });
+    });
+  },
+  /**
+   * Draw only the canvas axis tooltip overlay.
+   * @param {Array} point Canvas-local pointer coordinate
+   * @private
+   */
+  renderCanvasAxisTooltip(point) {
+    const $$ = this;
+    $$.canvasEngine.withOverlay((ctx) => {
+      $$.canvasAxisRenderer.withContext(ctx, () => {
+        $$.canvasAxisRenderer.drawAxisTooltip($$, point);
+      });
+    });
+  },
+  /**
+   * Restore the cached canvas frame without focus overlays.
+   * @private
+   */
+  clearCanvasFocus() {
+    var _a;
+    const $$ = this;
+    if ($$.state.canvasFocusMainRedraw) {
+      $$.state.canvasFocusMainRedraw = false;
+      $$.renderCanvasFrame(void 0, null, false);
+    } else {
+      (_a = $$.canvasEngine) == null ? void 0 : _a.clearOverlay();
+    }
+  },
+  /**
+   * Resize canvas surfaces and reload canvas theme values.
+   * @private
+   */
+  resizeCanvas() {
+    var _a, _b;
+    const $$ = this;
+    const { config, state, $el } = $$;
+    const container = $el.chart.node();
+    $$.clearResizePreview();
+    $el.chart.style("min-height", `${state.current.height}px`);
+    (_a = $$.canvasEngine) == null ? void 0 : _a.resize(state.current.width, $$.getCanvasSurfaceHeight());
+    (_b = $$.canvasTheme) == null ? void 0 : _b.reload(container, config.canvas_theme);
+  }
+};
+let canvas = () => {
+  extend(ChartInternal.prototype, canvasInternal);
+  return (canvas = () => "canvas")();
+};
+
+;// ./src/canvas/selection.ts
+
+
+
+
+
+
+
+
+
+const CANVAS_SELECTABLE_TYPE_FILTERS = [
+  isCanvasPointType,
+  isCanvasBarType,
+  isCanvasCandlestickType,
+  isCanvasTreemapType
+];
+const canvasSelectionDragRows = /* @__PURE__ */ new WeakMap();
+function getCanvasSelectionDragDelta($$, dataRows) {
+  const previousKeys = $$.state.canvasSelectionDragIncluded;
+  const previousRows = canvasSelectionDragRows.get($$) || /* @__PURE__ */ new Map();
+  const currentRows = /* @__PURE__ */ new Map();
+  const included = /* @__PURE__ */ new Set();
+  const rows = [];
+  dataRows.filter((d) => isCanvasSelectableData($$, d)).forEach((d) => {
+    const key = getCanvasDataKey(d);
+    if (key) {
+      included.add(key);
+      !currentRows.has(key) && currentRows.set(key, d);
+    }
+  });
+  currentRows.forEach((d, key) => {
+    !previousKeys.has(key) && rows.push(d);
+  });
+  previousRows.forEach((d, key) => {
+    !included.has(key) && rows.push(d);
+  });
+  canvasSelectionDragRows.set($$, currentRows);
+  return { included, rows };
+}
+function getCanvasSelectionIds(ids) {
+  return ids ? Array.isArray(ids) ? ids : [ids] : null;
+}
+function isCanvasSelectableData($$, d) {
+  return d && hasCanvasDrawableValue($$, d) && isCanvasTargetSupported($$, d, CANVAS_SELECTABLE_TYPE_FILTERS) && CANVAS_SELECTABLE_TYPE_FILTERS.some((filter) => filter($$, d)) && $$.config.data_selection_isselectable.bind($$.api)(d);
+}
+function eachCanvasSelectableData($$, callback) {
+  $$.filterTargetsToShow($$.data.targets).filter((target) => isCanvasTargetSupported($$, target, CANVAS_SELECTABLE_TYPE_FILTERS)).forEach((target) => {
+    target.values.forEach((d) => {
+      isCanvasSelectableData($$, d) && callback(d);
+    });
+  });
+}
+function drawSelections(renderer, $$, shape) {
+  var _a, _b;
+  const selectedData = (_a = $$.getCanvasSelectedData) == null ? void 0 : _a.call($$);
+  if (!$$.config.data_selection_enabled || !(selectedData == null ? void 0 : selectedData.length) || $$.state.customType || $$.state.hasTreemap) {
+    return;
+  }
+  const { ctx, painter, theme: { style } } = renderer;
+  const { margin } = $$.state;
+  const isBar = isCanvasBarType.bind(null, $$);
+  const isCandlestick = isCanvasCandlestickType.bind(null, $$);
+  const barPoints = selectedData.some(isBar) ? $$.generateGetBarPoints(
+    getCanvasShapeIndices($$, shape, TYPE.BAR, isBar),
+    false
+  ) : null;
+  const candlestickPoints = selectedData.some(isCandlestick) ? (_b = $$.generateGetCandlestickPoints) == null ? void 0 : _b.call(
+    $$,
+    getCanvasShapeIndices($$, shape, TYPE.CANDLESTICK, isCandlestick),
+    false
+  ) : null;
+  const getRadius = barPoints ? getBarRadiusResolver($$) : null;
+  const stackingRadiusSet = getRadius ? getStackingBarRadiusSet($$) : /* @__PURE__ */ new Set();
+  painter.withTranslation(margin.left, margin.top, () => {
+    selectedData.forEach((d) => {
+      var _a2, _b2, _c, _d, _e, _f, _g;
+      const color = $$.color(d.id);
+      if (isBar(d) && barPoints) {
+        const geometry = getCanvasBarGeometry($$, barPoints, d, d.index);
+        if (!geometry) {
+          return;
+        }
+        const { points, rect } = geometry;
+        const corners = getRadius ? getBarRadiusInfo($$, d, points, getRadius, stackingRadiusSet).corners : 0;
+        getRadius ? painter.fillRoundRect(rect, corners, { fill: "#fff", alpha: 0.3 }) : painter.fillRect(rect, { fill: "#fff", alpha: 0.3 });
+        getRadius ? painter.strokeRoundRect(rect, corners, { stroke: color, lineWidth: 2 }) : painter.strokeRect(rect, { stroke: color, lineWidth: 2 });
+      } else if (isCandlestick(d) && candlestickPoints) {
+        const value = (_a2 = $$.getCandlestickData) == null ? void 0 : _a2.call($$, d);
+        if (!value) {
+          return;
+        }
+        const geometry = getCanvasCandlestickGeometry($$, candlestickPoints, d, d.index);
+        if (!geometry) {
+          return;
+        }
+        const { body, wickStart, wickEnd } = geometry;
+        painter.strokePath(() => {
+          painter.traceLine(wickStart[0], wickStart[1], wickEnd[0], wickEnd[1]);
+        }, { stroke: color, lineWidth: 3 });
+        painter.fillRect(body, { fill: "#fff", alpha: 0.3 });
+        painter.strokeRect(body, { stroke: color, lineWidth: 2 });
+      } else if (isCanvasPointType($$, d)) {
+        const pointType = getPointType($$, { id: d.id });
+        const { x, y } = getRenderDataPoint($$, d);
+        const r = (_c = (_b2 = $$.pointR) == null ? void 0 : _b2.call($$, d)) != null ? _c : 2.5;
+        const selectR = (_e = (_d = $$.pointSelectR) == null ? void 0 : _d.call($$, d)) != null ? _e : r * 2;
+        if (!isFiniteCanvasCoordinate(x, y)) {
+          return;
+        }
+        drawPointPattern(painter, "circle", x, y, selectR, {
+          fill: style.selectedPoint.fill,
+          lineWidth: style.selectedPoint.lineWidth,
+          stroke: style.selectedPoint.stroke || color
+        });
+        if (!((_f = $$.isPointFocusOnly) == null ? void 0 : _f.call($$))) {
+          drawPointPattern(painter, pointType, x, y, r, {
+            fill: style.shape.pointFillColor || color,
+            stroke: style.shape.pointStrokeColor || color,
+            lineWidth: (_g = style.shape.pointLineWidth) != null ? _g : 1
+          });
+        }
+      }
+    });
+    ctx.globalAlpha = 1;
+  });
+}
+function drawSelectionDragArea(renderer, $$, rect) {
+  const { margin, width, height } = $$.state;
+  const plot = {
+    x: margin.left,
+    y: margin.top,
+    w: width,
+    h: height
+  };
+  const x = Math.max(plot.x, rect.x);
+  const y = Math.max(plot.y, rect.y);
+  const right = Math.min(plot.x + plot.w, rect.x + rect.w);
+  const bottom = Math.min(plot.y + plot.h, rect.y + rect.h);
+  if (right <= x || bottom <= y) {
+    return;
+  }
+  renderer.painter.fillRect({
+    x,
+    y,
+    w: right - x,
+    h: bottom - y
+  }, {
+    fill: renderer.theme.style.zoomBrush.fill,
+    alpha: renderer.theme.style.zoomBrush.opacity
+  });
+}
+/* harmony default export */ var canvas_selection = ({
   /**
    * Get selected canvas data rows.
    * @param {string} targetId Target id
@@ -50965,62 +51130,723 @@ const canvasInternal = {
     return true;
   },
   /**
-   * Dispatch canvas data.onout callback for the current hovered row.
-   * @param {HTMLCanvasElement} canvas Canvas element
+   * Start mouse-driven canvas draggable selection.
+   * @param {MouseEvent} event Mouse event
    * @private
    */
-  dispatchCanvasDataOut(canvas2) {
+  onCanvasSelectionDragStart(event) {
     const $$ = this;
-    const { config, state } = $$;
-    const d = state.canvasDataHover;
-    if (!d) {
+    const { state } = $$;
+    if (!$$.startCanvasSelectionDrag(event)) {
       return;
     }
-    state.canvasDataHover = null;
-    state.canvasDataHoverKey = null;
-    config.interaction_enabled && callFn(config.data_onout, $$.api, d, canvas2);
+    const move = (event2) => {
+      $$.updateCanvasSelectionDrag(event2);
+    };
+    const end = (event2) => {
+      $$.endCanvasSelectionDrag(event2);
+      window.removeEventListener("mousemove", move);
+      window.removeEventListener("mouseup", end);
+      state.canvasSelectionDragMoveHandler = null;
+      state.canvasSelectionDragEndHandler = null;
+    };
+    state.canvasSelectionDragMoveHandler = move;
+    state.canvasSelectionDragEndHandler = end;
+    window.addEventListener("mousemove", move);
+    window.addEventListener("mouseup", end);
   },
   /**
-   * Dispatch canvas data.onover callback when the hovered row changes.
-   * @param {object} d Data row
-   * @param {HTMLCanvasElement} canvas Canvas element
+   * Draw selection drag overlay on the cached canvas frame.
+   * @param {object} rect Selection rectangle
    * @private
    */
-  dispatchCanvasDataOver(d, canvas2) {
+  renderCanvasSelectionDrag(rect) {
     const $$ = this;
-    const { config, state } = $$;
-    const key = getCanvasDataKey(d);
-    if (state.canvasDataHoverKey === key) {
+    $$.canvasEngine.withOverlay((ctx) => {
+      $$.canvasRenderer.withContext(ctx, () => {
+        drawSelectionDragArea($$.canvasRenderer, $$, rect);
+      });
+    });
+  }
+});
+const selectionDraw = {
+  draw(renderer, shape) {
+    drawSelections(renderer, this, shape);
+  },
+  drawDragArea(renderer, rect) {
+    drawSelectionDragArea(renderer, this, rect);
+  }
+};
+
+;// ./src/canvas/subchart.ts
+var subchart_defProp = Object.defineProperty;
+var subchart_defProps = Object.defineProperties;
+var subchart_getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var subchart_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var subchart_hasOwnProp = Object.prototype.hasOwnProperty;
+var subchart_propIsEnum = Object.prototype.propertyIsEnumerable;
+var subchart_defNormalProp = (obj, key, value) => key in obj ? subchart_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var subchart_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (subchart_hasOwnProp.call(b, prop))
+      subchart_defNormalProp(a, prop, b[prop]);
+  if (subchart_getOwnPropSymbols)
+    for (var prop of subchart_getOwnPropSymbols(b)) {
+      if (subchart_propIsEnum.call(b, prop))
+        subchart_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var subchart_spreadProps = (a, b) => subchart_defProps(a, subchart_getOwnPropDescs(b));
+
+
+
+
+
+
+
+
+
+
+
+const CANVAS_SUBCHART_HANDLE_SIZE = 6;
+const CANVAS_SUBCHART_CLICK_TOLERANCE = 2;
+const subchartBrushHandlePathCache = /* @__PURE__ */ new Map();
+function normalizeCanvasSubchartDomain($$, domain) {
+  var _a, _b;
+  if (!Array.isArray(domain) || domain.length < 2) {
+    return null;
+  }
+  const values = domain.slice(0, 2);
+  return ((_b = (_a = $$.axis) == null ? void 0 : _a.isTimeSeries) == null ? void 0 : _b.call(_a)) ? values.map((value) => parseDate.call($$, value)) : values;
+}
+function getCanvasSubchartRect($$) {
+  const { config, state } = $$;
+  if (!config.subchart_show || !state.hasAxis || state.width2 <= 0 || state.height2 <= 0) {
+    return null;
+  }
+  return {
+    x: state.margin2.left,
+    y: state.margin2.top,
+    w: state.width2,
+    h: state.height2
+  };
+}
+function isCanvasSubchartPoint($$, point) {
+  const rect = getCanvasSubchartRect($$);
+  return !!rect && point[0] >= rect.x && point[0] <= rect.x + rect.w && point[1] >= rect.y && point[1] <= rect.y + rect.h;
+}
+function getCanvasMainPointFromSubchart($$, point) {
+  const { config, state } = $$;
+  const rect = getCanvasSubchartRect($$);
+  if (config.subchart_brush_enabled !== false || !rect || !isCanvasSubchartPoint($$, point)) {
+    return null;
+  }
+  const mainCoord = getMainCoordFromSubchartCoord(
+    $$,
+    config.axis_rotated ? point[1] - rect.y : point[0] - rect.x
+  );
+  if (mainCoord === null) {
+    return null;
+  }
+  return config.axis_rotated ? [state.margin.left + state.width / 2, state.margin.top + mainCoord] : [state.margin.left + mainCoord, state.margin.top + state.height / 2];
+}
+function getCanvasSubchartBrushExtent($$) {
+  var _a, _b;
+  const rect = getCanvasSubchartRect($$);
+  const axisLength = rect ? $$.config.axis_rotated ? rect.h : rect.w : 0;
+  const extent = (_b = (_a = $$.axis) == null ? void 0 : _a.getExtent) == null ? void 0 : _b.call(_a);
+  const values = Array.isArray(extent) ? extent.slice(0, 2) : [];
+  if (values.length === 2 && values.every(Number.isFinite)) {
+    const start = Math.max(0, Math.min(axisLength, values[0]));
+    const end = Math.max(0, Math.min(axisLength, values[1]));
+    return [Math.min(start, end), Math.max(start, end)];
+  }
+  return [0, axisLength];
+}
+function getCanvasSubchartBrushCoord($$, event, clampToExtent = false) {
+  const point = getCanvasEventPoint($$, event);
+  const rect = point && getCanvasSubchartRect($$);
+  if (!point || !rect || !isCanvasSubchartPoint($$, point)) {
+    return null;
+  }
+  const raw = $$.config.axis_rotated ? point[1] - rect.y : point[0] - rect.x;
+  const [min, max] = getCanvasSubchartBrushExtent($$);
+  if (!clampToExtent && (raw < min || raw > max)) {
+    return null;
+  }
+  return Math.max(min, Math.min(max, raw));
+}
+function getCanvasSubchartDomainFromCoords($$, start, end) {
+  const coordStart = Math.min(start, end);
+  const coordEnd = Math.max(start, end);
+  return [
+    $$.scale.subX.invert(coordStart),
+    $$.scale.subX.invert(coordEnd)
+  ];
+}
+function getCanvasSubchartBrushSelection($$) {
+  const { scale, state } = $$;
+  const domain = state.domain;
+  if (!(domain == null ? void 0 : domain.length) || !scale.subX) {
+    return null;
+  }
+  const rect = getCanvasSubchartRect($$);
+  const p0 = scale.subX(domain[0]);
+  const p1 = scale.subX(domain[1]);
+  if (!rect || !Number.isFinite(p0) || !Number.isFinite(p1)) {
+    return null;
+  }
+  const [min, max] = getCanvasSubchartBrushExtent($$);
+  return [
+    Math.max(min, Math.min(max, Math.min(p0, p1))),
+    Math.max(min, Math.min(max, Math.max(p0, p1)))
+  ];
+}
+function getCanvasSubchartBrushMode($$, coord) {
+  const selection = getCanvasSubchartBrushSelection($$);
+  if (!selection) {
+    return "select";
+  }
+  const [start, end] = selection;
+  if (Math.abs(coord - start) <= CANVAS_SUBCHART_HANDLE_SIZE) {
+    return "resize-start";
+  }
+  if (Math.abs(coord - end) <= CANVAS_SUBCHART_HANDLE_SIZE) {
+    return "resize-end";
+  }
+  return coord > start && coord < end ? "move" : "select";
+}
+function clampCanvasSubchartSelection($$, start, end) {
+  const [min, max] = getCanvasSubchartBrushExtent($$);
+  return [
+    Math.max(min, Math.min(max, start)),
+    Math.max(min, Math.min(max, end))
+  ];
+}
+function getCanvasSubchartCursor($$, mode) {
+  if (/^resize/.test(mode)) {
+    return $$.config.axis_rotated ? "ns-resize" : "ew-resize";
+  }
+  return mode === "move" ? "move" : "crosshair";
+}
+function getSubchartBrushHandlePath(axis, type) {
+  const Path2DCtor = win.Path2D;
+  if (!Path2DCtor) {
+    return null;
+  }
+  const key = `${axis}:${type}`;
+  const cached = subchartBrushHandlePathCache.get(key);
+  if (cached) {
+    return cached;
+  }
+  const path = new Path2DCtor(SUBCHART_BRUSH_HANDLE_PATH[axis][type]);
+  subchartBrushHandlePathCache.set(key, path);
+  return path;
+}
+function getSubYTickFormat($$, id) {
+  var _a, _b, _c;
+  const subAxisId = id === "y2" ? "subY2" : "subY";
+  const axisFormat = (_c = (_b = (_a = $$.axis) == null ? void 0 : _a[subAxisId]) == null ? void 0 : _b.tickFormat) == null ? void 0 : _c.call(_b);
+  const configFormat = $$.config[`subchart_axis_${id}_tick_format`] || $$.config[`axis_${id}_tick_format`];
+  if (axisFormat) {
+    return axisFormat;
+  }
+  return typeof configFormat === "function" ? configFormat.bind($$.api) : ((v) => v);
+}
+function drawSubchart(renderer, $$, _shape) {
+  const { config, state } = $$;
+  void _shape;
+  if (!config.subchart_show || !state.hasAxis || state.width2 <= 0 || state.height2 <= 0) {
+    return;
+  }
+  const { ctx, painter, theme: { style } } = renderer;
+  const { margin2, width2, height2 } = state;
+  const rect = { x: margin2.left, y: margin2.top, w: width2, h: height2 };
+  $$.withSubchartTypeContext(() => {
+    var _a;
+    const targets = $$.filterTargetsToShow().filter(isCanvasRenderableTarget.bind(null, $$));
+    const shape = $$.getDrawShape();
+    (_a = $$.updateSubchartYDomain) == null ? void 0 : _a.call($$, targets);
+    painter.withState(() => {
+      painter.clipRect(rect, () => {
+        painter.withTranslation(rect.x, rect.y, () => {
+          var _a2, _b, _c, _d, _e, _f;
+          const areaTargets = targets.filter(isCanvasAreaType.bind(null, $$));
+          const areaIndices = getCanvasShapeIndices(
+            $$,
+            shape,
+            TYPE.AREA,
+            isCanvasAreaType.bind(null, $$)
+          );
+          for (const target of areaTargets) {
+            if (!target.values.some(hasCanvasDrawableValue.bind(null, $$))) {
+              continue;
+            }
+            ctx.globalAlpha = style.shape.areaOpacity * getCanvasTargetFocusOpacity($$, target);
+            ctx.fillStyle = $$.color(target.id);
+            drawCanvasArea($$, target, areaIndices, painter, true);
+          }
+          ctx.globalAlpha = 1;
+          const barTargets = targets.filter(isCanvasBarType.bind(null, $$));
+          const barIndices = getCanvasShapeIndices(
+            $$,
+            shape,
+            TYPE.BAR,
+            isCanvasBarType.bind(null, $$)
+          );
+          const getBarPoints = (_a2 = $$.generateGetBarPoints) == null ? void 0 : _a2.call($$, barIndices, true);
+          if (getBarPoints) {
+            for (const target of barTargets) {
+              ctx.globalAlpha = style.shape.barOpacity * getCanvasTargetFocusOpacity($$, target);
+              ctx.fillStyle = $$.color(target.id);
+              target.values.forEach((d, i) => {
+                var _a3;
+                if (!hasCanvasDrawableValue($$, d)) {
+                  return;
+                }
+                const geometry = getCanvasBarGeometry($$, getBarPoints, d, i);
+                const fill = ((_a3 = $$.getSubchartCandlestickBarColor) == null ? void 0 : _a3.call($$, d, true)) || ctx.fillStyle;
+                geometry && painter.fillRect(geometry.rect, { fill });
+              });
+            }
+            ctx.globalAlpha = 1;
+          }
+          const candlestickTargets = targets.filter(
+            isCanvasCandlestickType.bind(null, $$)
+          );
+          const candlestickIndices = getCanvasShapeIndices(
+            $$,
+            shape,
+            TYPE.CANDLESTICK,
+            isCanvasCandlestickType.bind(null, $$)
+          );
+          const getCandlestickPoints = (_b = $$.generateGetCandlestickPoints) == null ? void 0 : _b.call(
+            $$,
+            candlestickIndices,
+            true
+          );
+          if (getCandlestickPoints) {
+            ctx.lineWidth = style.shape.candlestickLineWidth;
+            for (const target of candlestickTargets) {
+              const targetOpacity = getCanvasTargetFocusOpacity($$, target);
+              ctx.globalAlpha = targetOpacity;
+              target.values.forEach((d, i) => {
+                var _a3;
+                const value = (_a3 = $$.getCandlestickData) == null ? void 0 : _a3.call($$, d);
+                const geometry = value && getCanvasCandlestickGeometry(
+                  $$,
+                  getCandlestickPoints,
+                  d,
+                  i
+                );
+                if (!geometry) {
+                  return;
+                }
+                const color = getCandlestickColor($$, { id: target.id }, value);
+                ctx.strokeStyle = color;
+                ctx.fillStyle = color;
+                painter.strokePath(() => {
+                  painter.traceLine(
+                    geometry.wickStart[0],
+                    geometry.wickStart[1],
+                    geometry.wickEnd[0],
+                    geometry.wickEnd[1]
+                  );
+                });
+                painter.fillRect(geometry.body, { fill: ctx.fillStyle });
+              });
+            }
+          }
+          const lineTargets = targets.filter(isCanvasLineType.bind(null, $$));
+          const lineIndices = getCanvasShapeIndices(
+            $$,
+            shape,
+            TYPE.LINE,
+            isCanvasLineType.bind(null, $$)
+          );
+          ctx.globalAlpha = 1;
+          for (const target of lineTargets) {
+            if (!target.values.some(hasCanvasDrawableValue.bind(null, $$))) {
+              continue;
+            }
+            ctx.globalAlpha = getCanvasTargetFocusOpacity($$, target);
+            ctx.lineWidth = isCanvasTargetFocused($$, target) ? style.shape.lineFocusedWidth : style.shape.lineWidth;
+            ctx.strokeStyle = $$.color(target.id);
+            drawCanvasLine($$, target, lineIndices, painter, true);
+          }
+          ctx.globalAlpha = 1;
+          if (config.point_show && !((_c = $$.isPointFocusOnly) == null ? void 0 : _c.call($$))) {
+            const cy = (_d = $$.updateCircleY) == null ? void 0 : _d.call($$, true);
+            const cx = (_e = $$.subxx) == null ? void 0 : _e.bind($$);
+            if (cx && cy) {
+              for (const target of targets) {
+                if (!isCanvasScatterType($$, target) && !isCanvasBubbleType($$, target)) {
+                  continue;
+                }
+                const color = $$.color(target.id);
+                const pointFill = style.shape.pointFillColor || color;
+                const pointStroke = style.shape.pointStrokeColor || color;
+                const pointLineWidth = pointStroke ? (_f = style.shape.pointLineWidth) != null ? _f : 1 : 0;
+                const pointStyle = pointStroke && pointLineWidth > 0 ? {
+                  fill: pointFill,
+                  stroke: pointStroke,
+                  lineWidth: pointLineWidth
+                } : { fill: pointFill };
+                ctx.globalAlpha = getPointOpacity($$, target) * getCanvasTargetFocusOpacity($$, target);
+                target.values.forEach((d, i) => {
+                  if (!hasCanvasDrawableValue($$, d)) {
+                    return;
+                  }
+                  const x = config.axis_rotated ? cy(d, i) : cx(d);
+                  const y = config.axis_rotated ? cx(d) : cy(d, i);
+                  const r = Math.min(getTargetPointRadius($$, target, d), 3);
+                  if (isFiniteCanvasCoordinate(x, y)) {
+                    drawPointPattern(painter, "circle", x, y, r, pointStyle);
+                  }
+                });
+              }
+              ctx.globalAlpha = 1;
+            }
+          }
+        });
+      });
+      drawSubchartBrush(renderer, $$);
+    });
+  });
+}
+function drawSubchartBrush(renderer, $$) {
+  var _a, _b;
+  const { config, scale, state } = $$;
+  const domain = state.domain;
+  if (!config.subchart_show || config.subchart_brush_enabled === false || !(domain == null ? void 0 : domain.length) || !scale.subX) {
+    return;
+  }
+  const { margin2, width2, height2 } = state;
+  const p0 = scale.subX(domain[0]);
+  const p1 = scale.subX(domain[1]);
+  const axisLength = config.axis_rotated ? height2 : width2;
+  const extent = (_b = (_a = $$.axis) == null ? void 0 : _a.getExtent) == null ? void 0 : _b.call(_a);
+  const extentValues = Array.isArray(extent) && extent.length >= 2 && extent.every(Number.isFinite) ? extent.slice(0, 2) : [0, axisLength];
+  const extentStart = Math.max(0, Math.min(axisLength, Math.min(...extentValues)));
+  const extentEnd = Math.max(0, Math.min(axisLength, Math.max(...extentValues)));
+  const start = Math.max(extentStart, Math.min(extentEnd, Math.min(p0, p1)));
+  const end = Math.max(extentStart, Math.min(extentEnd, Math.max(p0, p1)));
+  const size = end - start;
+  if (size <= 0) {
+    return;
+  }
+  const rect = config.axis_rotated ? { x: margin2.left, y: margin2.top + start, w: width2, h: size } : { x: margin2.left + start, y: margin2.top, w: size, h: height2 };
+  renderer.painter.fillRect(rect, {
+    fill: renderer.theme.style.subchartBrush.fill,
+    alpha: renderer.theme.style.subchartBrush.opacity
+  });
+  if (config.subchart_showHandle) {
+    drawSubchartBrushHandle(renderer, $$, start, "start");
+    drawSubchartBrushHandle(renderer, $$, end, "end");
+  }
+}
+function drawSubchartBrushHandle(renderer, $$, coord, type) {
+  const { config, state: { margin2, width2, height2 } } = $$;
+  const { ctx, painter, theme: { style } } = renderer;
+  const isRotated = config.axis_rotated;
+  const fill = style.subchartBrush.handleFill;
+  const stroke = style.subchartBrush.handleStroke;
+  const x = isRotated ? margin2.left + width2 / 2 : margin2.left + coord;
+  const y = isRotated ? margin2.top + coord : margin2.top + height2 / 2;
+  const path = getSubchartBrushHandlePath(isRotated ? "y" : "x", type);
+  if (!path) {
+    return;
+  }
+  painter.withState(() => {
+    ctx.translate(x, y);
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = style.subchartBrush.handleLineWidth;
+    ctx.globalAlpha = style.subchartBrush.handleOpacity;
+    ctx.fill(path);
+    ctx.globalAlpha = 1;
+    ctx.stroke(path);
+  });
+}
+function drawSubchartFocus(renderer, $$, selectedData) {
+  const { config, scale, state } = $$;
+  const focus = selectedData == null ? void 0 : selectedData.find(
+    (d) => d && hasCanvasDrawableValue($$, d)
+  );
+  if (!focus || !config.subchart_show || config.subchart_grid_focus_continuous || config.subchart_brush_enabled !== false || config.grid_focus_show === false || config.subchart_grid_focus === false || !config.tooltip_show || config.axis_tooltip || !scale.subX || state.width2 <= 0 || state.height2 <= 0) {
+    return;
+  }
+  const { margin2, width2, height2 } = state;
+  const pos = scale.subX(focus.x);
+  if (!Number.isFinite(pos)) {
+    return;
+  }
+  const { painter, theme: { style } } = renderer;
+  const lineWidth = style.axis.lineWidth;
+  const x = painter.crisp(margin2.left + pos, lineWidth);
+  const y = painter.crisp(margin2.top + pos, lineWidth);
+  painter.strokePath(() => {
+    config.axis_rotated ? painter.traceLine(margin2.left, y, margin2.left + width2, y) : painter.traceLine(x, margin2.top, x, margin2.top + height2);
+  }, {
+    lineDash: style.focusGrid.dashArray,
+    lineWidth: style.focusGrid.lineWidth,
+    stroke: style.focusGrid.lineColor
+  });
+}
+function drawSubXAxis(renderer, $$) {
+  var _a, _b, _c, _d;
+  const { ctx, painter, theme: { style: { axis } } } = renderer;
+  const {
+    config,
+    format,
+    scale,
+    state: { current, margin2, width2, height2 }
+  } = $$;
+  if (!config.subchart_show || !config.subchart_axis_x_show || !scale.subX || width2 <= 0 || height2 <= 0) {
+    return;
+  }
+  const isRotated = config.axis_rotated;
+  const x = painter.crisp(margin2.left, axis.lineWidth);
+  const y = painter.crisp(margin2.top + height2, axis.lineWidth);
+  const x1 = margin2.left;
+  const x2 = margin2.left + width2;
+  const y1 = margin2.top;
+  const y2 = margin2.top + height2;
+  const rangeStart = isRotated ? y1 : x1;
+  const rangeEnd = isRotated ? y2 : x2;
+  const ticks = getSubXTickValues($$);
+  const lineTicks = getSubXTickLineValues($$, ticks, axis.tickWidth);
+  const outerTick = (_a = config.subchart_axis_x_tick_outer) != null ? _a : config.axis_x_tick_outer;
+  const tickDirection = isRotated ? config.axis_x_tick_inner ? 1 : -1 : config.axis_x_tick_inner ? -1 : 1;
+  const outerTickDirection = getXOuterTickDirection(isRotated);
+  const tickTextDirection = getXTickTextDirection(isRotated);
+  const tickTextPosition = config.axis_x_tick_text_position;
+  const tickRotate = !isRotated ? ((_b = $$.getAxisTickRotate) == null ? void 0 : _b.call($$, "x")) || 0 : 0;
+  const tickFormat = format.subXAxisTick || ((_d = (_c = $$.axis) == null ? void 0 : _c.getXAxisTickFormat) == null ? void 0 : _d.call(_c, true));
+  painter.clipRect(
+    isRotated ? getRotatedXAxisClipRect(margin2, current.width, height2) : subchart_spreadProps(subchart_spreadValues({}, getHorizontalXAxisClipRect(
+      margin2,
+      width2,
+      current.height - margin2.top
+    )), {
+      y: margin2.top
+    }),
+    () => {
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = axis.lineColor;
+      ctx.lineWidth = axis.lineWidth;
+      ctx.setLineDash([]);
+      painter.strokePath(() => {
+        if (isRotated) {
+          painter.traceLine(x, y1, x, y2);
+        } else {
+          painter.traceLine(x1, y, x2, y);
+        }
+        if (outerTick) {
+          if (isRotated) {
+            painter.traceLine(x, y1, x + AXIS_TICK_SIZE * outerTickDirection, y1);
+            painter.traceLine(x, y2, x + AXIS_TICK_SIZE * outerTickDirection, y2);
+          } else {
+            painter.traceLine(x1, y, x1, y + AXIS_TICK_SIZE * outerTickDirection);
+            painter.traceLine(x2, y, x2, y + AXIS_TICK_SIZE * outerTickDirection);
+          }
+        }
+      });
+      const tickFont = getAxisTickFont(axis, "x");
+      ctx.font = tickFont;
+      ctx.fillStyle = axis.labelColor;
+      ctx.textAlign = isRotated ? tickTextDirection > 0 ? "left" : "right" : "center";
+      ctx.textBaseline = isRotated ? "middle" : tickTextDirection > 0 ? "top" : "bottom";
+      ctx.strokeStyle = axis.tickColor;
+      ctx.lineWidth = axis.tickWidth;
+      const lineHeight = getXTickTextLineHeight(painter, getFontSize(tickFont));
+      const tickTextWidth = getXTickTextWidth($$, ticks, isRotated, scale.subX);
+      if (config.subchart_axis_x_tick_show) {
+        for (const tick of lineTicks) {
+          const tickPos = scale.subX(normalizeXValue($$, tick));
+          const tx = margin2.left + tickPos;
+          const ty = margin2.top + tickPos;
+          const pos = isRotated ? ty : tx;
+          if (!isInAxisRange(pos, rangeStart, rangeEnd)) {
+            continue;
+          }
+          painter.strokePath(() => {
+            if (isRotated) {
+              painter.traceLine(x, ty, x + AXIS_TICK_SIZE * tickDirection, ty);
+            } else {
+              painter.traceLine(tx, y, tx, y + AXIS_TICK_SIZE * tickDirection);
+            }
+          });
+        }
+      }
+      for (const tick of ticks) {
+        const tickPos = scale.subX(normalizeXValue($$, tick));
+        const tx = margin2.left + tickPos;
+        const ty = margin2.top + tickPos;
+        const pos = isRotated ? ty : tx;
+        if (!isInAxisRange(pos, rangeStart, rangeEnd)) {
+          continue;
+        }
+        if (!config.subchart_axis_x_tick_text_show) {
+          continue;
+        }
+        const lines = getXTickTextLines(
+          $$,
+          painter,
+          tickFormat,
+          tick,
+          ticks,
+          isRotated,
+          scale.subX,
+          tickTextWidth
+        );
+        let textX;
+        let textY;
+        if (isRotated) {
+          textX = x + (AXIS_TICK_SIZE + AXIS_TICK_PADDING) * tickTextDirection + (tickTextPosition.x || 0);
+          textY = ty + (tickTextPosition.y || 0);
+          ctx.textAlign = tickTextDirection > 0 ? "left" : "right";
+          ctx.textBaseline = "middle";
+        } else {
+          textX = tx + (tickTextPosition.x || 0);
+          textY = y + (AXIS_TICK_SIZE + AXIS_TICK_PADDING) * tickTextDirection + (tickTextPosition.y || 0);
+          ctx.textAlign = tickRotate ? tickRotate > 0 ? "left" : "right" : "center";
+          ctx.textBaseline = tickTextDirection > 0 ? "top" : "bottom";
+        }
+        painter.withState((textCtx) => {
+          textCtx.translate(textX, textY);
+          tickRotate && textCtx.rotate(tickRotate * Math.PI / 180);
+          lines.forEach((line, i) => {
+            textCtx.fillText(line, 0, i * lineHeight);
+          });
+        });
+      }
+    }
+  );
+}
+function drawSubYAxes(renderer, $$) {
+  const {
+    config,
+    scale,
+    state: { margin2, width2, height2 }
+  } = $$;
+  if (!config.subchart_show || width2 <= 0 || height2 <= 0) {
+    return;
+  }
+  ["y", "y2"].forEach((id) => {
+    var _a;
+    const subScale = id === "y2" ? scale.subY2 : scale.subY;
+    if (!config[`subchart_axis_${id}_show`] || !subScale) {
       return;
     }
-    $$.dispatchCanvasDataOut(canvas2);
-    state.canvasDataHover = d;
-    state.canvasDataHoverKey = key;
-    config.interaction_enabled && d && callFn(config.data_onover, $$.api, d, canvas2);
-  },
+    renderer.drawYAxis($$, id, {
+      scale: subScale,
+      ticks: getYTickValues($$, id, void 0, true, subScale, `subchart_axis_${id}`),
+      format: getSubYTickFormat($$, id),
+      index: 0,
+      outerTick: (_a = config[`subchart_axis_${id}_tick_outer`]) != null ? _a : config[`axis_${id}_tick_outer`],
+      margin: margin2,
+      width: width2,
+      height: height2,
+      prefix: `subchart_axis_${id}`,
+      tickShow: config[`subchart_axis_${id}_tick_show`],
+      tickTextShow: config[`subchart_axis_${id}_tick_text_show`],
+      tickTextPosition: config[`axis_${id}_tick_text_position`]
+    });
+  });
+}
+/* harmony default export */ var subchart = ({
   /**
-   * Dispatch canvas data.onclick callback for a pointer position.
-   * @param {Event} event Input event
-   * @param {boolean} markInputClick Whether to suppress following compatibility click
-   * @returns {object|null} Clicked data row
+   * Convert a canvas subchart point to the equivalent main plot point.
+   * @param {Array} point Canvas-local point
+   * @returns {Array|null} Main plot point or null when not applicable
    * @private
    */
-  dispatchCanvasDataClick(event, markInputClick = false) {
+  getCanvasMainPointFromSubchart(point) {
+    return getCanvasMainPointFromSubchart(this, point);
+  },
+  /**
+   * Apply the current canvas subchart selection to the main x domain.
+   * @private
+   */
+  applyCanvasSubchartDomain() {
+    const $$ = this;
+    const { axis, config, scale, state } = $$;
+    if (!config.subchart_show || !state.hasAxis || !scale.subX) {
+      return;
+    }
+    if (!state.rendered && !state.domain && config.subchart_init_range) {
+      state.domain = normalizeCanvasSubchartDomain($$, config.subchart_init_range);
+    }
+    const domain = normalizeCanvasSubchartDomain($$, state.domain);
+    if (!domain || !$$.withinRange(domain, $$.getZoomDomain("subX", true), $$.getZoomDomain("subX"))) {
+      return;
+    }
+    state.domain = domain;
+    scale.x.domain(domain);
+    axis.x.scale(scale.x);
+  },
+  /**
+   * Set the canvas subchart selection domain and redraw the main chart.
+   * @param {Array} domain Domain range
+   * @param {boolean} redraw Whether to redraw immediately
+   * @param {boolean} callCallback Whether to call subchart.onbrush
+   * @returns {Array|undefined} Applied domain range
+   * @private
+   */
+  setCanvasSubchartDomain(domain, redraw = true, callCallback = false) {
+    const $$ = this;
+    const { config, scale, state } = $$;
+    const nextDomain = normalizeCanvasSubchartDomain($$, domain);
+    if (!config.subchart_show || !nextDomain || !$$.withinRange(nextDomain, $$.getZoomDomain("subX", true), $$.getZoomDomain("subX"))) {
+      return void 0;
+    }
+    state.domain = nextDomain;
+    scale.zoom = null;
+    if (redraw) {
+      $$.redraw({
+        withTransition: false,
+        withY: config.zoom_rescale,
+        withSubchart: false,
+        withEventRect: false,
+        withDimension: false
+      });
+    }
+    callCallback && config.subchart_onbrush.bind($$.api)(state.domain);
+    return state.domain;
+  },
+  /**
+   * Clear the canvas subchart brush selection and restore the full x domain.
+   * @param {boolean} redraw Whether to redraw immediately
+   * @param {boolean} callCallback Whether to call subchart.onbrush
+   * @private
+   */
+  clearCanvasSubchartDomain(redraw = true, callCallback = false) {
     var _a;
     const $$ = this;
-    const { config, $el } = $$;
-    const canvas2 = $el.canvas.node();
-    const d = getCanvasEventDatum($$, event, true);
-    if (!d || isDuplicateCanvasInputClick($$, d)) {
-      return d;
+    const { axis, config, org, scale, state } = $$;
+    if (!config.subchart_show) {
+      return;
     }
-    if (config.interaction_enabled) {
-      const dataRows = config.data_selection_grouped ? $$.filterTargetsToShow($$.data.targets).map((target) => target.values[d.index]).filter(Boolean) : [d];
-      (_a = $$.toggleCanvasSelection) == null ? void 0 : _a.call($$, dataRows);
-      dataRows.forEach((row) => callFn(config.data_onclick, $$.api, row, canvas2));
-      markInputClick && markCanvasInputClick($$, d);
+    state.domain = void 0;
+    scale.zoom = null;
+    if ((_a = org.xDomain) == null ? void 0 : _a.length) {
+      scale.x.domain(org.xDomain);
+      axis.x.scale(scale.x);
     }
-    return d;
+    if (redraw) {
+      $$.redraw({
+        withTransition: false,
+        withUpdateXDomain: true,
+        withUpdateOrgXDomain: false,
+        withY: config.zoom_rescale,
+        withSubchart: false,
+        withEventRect: false,
+        withDimension: false
+      });
+    }
+    callCallback && config.subchart_onbrush.bind($$.api)(scale.x.orgDomain());
   },
   /**
    * Update canvas subchart brush domain from an input event.
@@ -51086,18 +51912,18 @@ const canvasInternal = {
    */
   updateCanvasSubchartCursor(event) {
     const $$ = this;
-    const canvas2 = $$.$el.canvas.node();
+    const canvas = $$.$el.canvas.node();
     if ($$.config.subchart_brush_enabled === false) {
-      canvas2.style.cursor = "";
+      canvas.style.cursor = "";
       return false;
     }
     const coord = getCanvasSubchartBrushCoord($$, event);
     if (coord === null) {
-      canvas2.style.cursor = "";
+      canvas.style.cursor = "";
       return false;
     }
     const mode = getCanvasSubchartBrushMode($$, coord);
-    canvas2.style.cursor = getCanvasSubchartCursor($$, mode);
+    canvas.style.cursor = getCanvasSubchartCursor($$, mode);
     return true;
   },
   /**
@@ -51203,511 +52029,154 @@ const canvasInternal = {
     win.addEventListener("mousemove", move);
     win.addEventListener("mouseup", end);
     return true;
+  }
+});
+const subchartDraw = {
+  draw(renderer, shape) {
+    drawSubchart(renderer, this, shape);
   },
-  /**
-   * Handle canvas click and dispatch shape-level data onclick.
-   * @param {MouseEvent} event Mouse click event
-   * @private
-   */
-  onCanvasClick(event) {
-    var _a;
-    const $$ = this;
-    const { config, state } = $$;
-    state.event = event;
-    if (state.flowing || state.cancelClick) {
-      state.cancelClick = false;
-      return;
-    }
-    $$.dispatchCanvasDataClick(event);
-    (_a = config.onclick) == null ? void 0 : _a.bind($$.api)(event);
+  drawXAxis(axisRenderer) {
+    drawSubXAxis(axisRenderer, this);
   },
-  /**
-   * Start mouse-driven canvas draggable selection.
-   * @param {MouseEvent} event Mouse event
-   * @private
-   */
-  onCanvasSelectionDragStart(event) {
-    const $$ = this;
-    const { state } = $$;
-    if (!$$.startCanvasSelectionDrag(event)) {
-      return;
-    }
-    const move = (event2) => {
-      $$.updateCanvasSelectionDrag(event2);
-    };
-    const end = (event2) => {
-      $$.endCanvasSelectionDrag(event2);
-      win.removeEventListener("mousemove", move);
-      win.removeEventListener("mouseup", end);
-      state.canvasSelectionDragMoveHandler = null;
-      state.canvasSelectionDragEndHandler = null;
-    };
-    state.canvasSelectionDragMoveHandler = move;
-    state.canvasSelectionDragEndHandler = end;
-    win.addEventListener("mousemove", move);
-    win.addEventListener("mouseup", end);
+  drawYAxes(axisRenderer) {
+    drawSubYAxes(axisRenderer, this);
   },
-  /**
-   * Start non-mouse pointer-driven canvas subchart brushing.
-   * @param {PointerEvent} event Pointer event
-   * @private
-   */
-  onCanvasPointerDown(event) {
-    var _a;
-    if (!shouldHandleCanvasPointerEvent(this, event)) {
-      return;
-    }
-    const $$ = this;
-    const canvas2 = $$.$el.canvas.node();
-    if (!$$.startCanvasSubchartBrush(event)) {
-      return;
-    }
-    const pointerId = event.pointerId;
-    const matchesPointer = (event2) => event2.pointerId === pointerId;
-    const move = (event2) => {
-      matchesPointer(event2) && $$.updateCanvasSubchartBrush(event2);
-    };
-    const end = (event2) => {
-      if (matchesPointer(event2)) {
-        $$.endCanvasSubchartBrush(event2);
-        cleanup();
-      }
-    };
-    const cancel = (event2) => {
-      if (matchesPointer(event2)) {
-        $$.cancelCanvasSubchartBrush(event2);
-        cleanup();
-      }
-    };
-    function cleanup() {
-      var _a2;
-      win.removeEventListener("pointermove", move);
-      win.removeEventListener("pointerup", end);
-      win.removeEventListener("pointercancel", cancel);
-      try {
-        (_a2 = canvas2.releasePointerCapture) == null ? void 0 : _a2.call(canvas2, pointerId);
-      } catch (e) {
-      }
-    }
-    try {
-      (_a = canvas2.setPointerCapture) == null ? void 0 : _a.call(canvas2, pointerId);
-    } catch (e) {
-    }
-    win.addEventListener("pointermove", move);
-    win.addEventListener("pointerup", end);
-    win.addEventListener("pointercancel", cancel);
+  drawBrush(renderer) {
+    drawSubchartBrush(renderer, this);
   },
-  /**
-   * Handle non-mouse pointer entering the canvas.
-   * @param {PointerEvent} event Pointer event
-   * @private
-   */
-  onCanvasPointerEnter(event) {
-    var _a;
-    if (!shouldHandleCanvasPointerEvent(this, event)) {
-      return;
-    }
-    this.state.event = event;
-    (_a = this.config.onover) == null ? void 0 : _a.bind(this.api)(event);
+  drawBrushHandle(renderer, coord, type) {
+    drawSubchartBrushHandle(renderer, this, coord, type);
   },
-  /**
-   * Handle non-mouse pointer movement over the canvas.
-   * @param {PointerEvent} event Pointer event
-   * @private
-   */
-  onCanvasPointerMove(event) {
-    if (!shouldHandleCanvasPointerEvent(this, event)) {
-      return;
-    }
-    if (this.updateCanvasSubchartBrush(event)) {
-      return;
-    }
-    this.onCanvasMouseMove(event);
-  },
-  /**
-   * Handle non-mouse pointer click.
-   * @param {PointerEvent} event Pointer event
-   * @private
-   */
-  onCanvasPointerUp(event) {
-    var _a;
-    if (!shouldHandleCanvasPointerEvent(this, event)) {
-      return;
-    }
-    this.state.event = event;
-    if (this.endCanvasSubchartBrush(event)) {
-      (_a = this.config.onout) == null ? void 0 : _a.bind(this.api)(event);
-      return;
-    }
-    this.dispatchCanvasDataClick(event, true);
-    this.dispatchCanvasDataOut(this.$el.canvas.node());
-  },
-  /**
-   * Handle non-mouse pointer leaving the canvas.
-   * @param {PointerEvent} event Pointer event
-   * @private
-   */
-  onCanvasPointerOut(event) {
-    var _a;
-    if (!shouldHandleCanvasPointerEvent(this, event)) {
-      return;
-    }
-    if (this.state.canvasSubchartBrushDragging) {
-      return;
-    }
-    this.state.event = event;
-    this.onCanvasMouseOut();
-    (_a = this.config.onout) == null ? void 0 : _a.bind(this.api)(event);
-  },
-  /**
-   * Handle non-mouse pointer cancellation.
-   * @param {PointerEvent} event Pointer event
-   * @private
-   */
-  onCanvasPointerCancel(event) {
-    var _a;
-    if (!shouldHandleCanvasPointerEvent(this, event)) {
-      return;
-    }
-    this.state.event = event;
-    if (this.cancelCanvasSubchartBrush(event)) {
-      (_a = this.config.onout) == null ? void 0 : _a.bind(this.api)(event);
-      return;
-    }
-    this.onCanvasPointerOut(event);
-  },
-  /**
-   * Handle touch start over the canvas.
-   * @param {TouchEvent} event Touch event
-   * @private
-   */
-  onCanvasTouchStart(event) {
-    var _a;
-    if (event.touches.length > 1) {
-      return;
-    }
-    this.state.event = event;
-    if (this.startCanvasSubchartBrush(event)) {
-      return;
-    }
-    if (this.startCanvasSelectionDrag(event)) {
-      return;
-    }
-    (_a = this.config.onover) == null ? void 0 : _a.bind(this.api)(event);
-    this.onCanvasMouseMove(event);
-  },
-  /**
-   * Handle touch move over the canvas.
-   * @param {TouchEvent} event Touch event
-   * @private
-   */
-  onCanvasTouchMove(event) {
-    if (event.touches.length > 1) {
-      return;
-    }
-    if (this.updateCanvasSubchartBrush(event)) {
-      return;
-    }
-    if (this.updateCanvasSelectionDrag(event)) {
-      return;
-    }
-    this.onCanvasMouseMove(event);
-  },
-  /**
-   * Handle touch end over the canvas.
-   * @param {TouchEvent} event Touch event
-   * @private
-   */
-  onCanvasTouchEnd(event) {
-    var _a, _b, _c;
-    this.state.event = event;
-    if (this.endCanvasSubchartBrush(event)) {
-      (_a = this.config.onout) == null ? void 0 : _a.bind(this.api)(event);
-      return;
-    }
-    if (this.endCanvasSelectionDrag(event)) {
-      (_b = this.config.onout) == null ? void 0 : _b.bind(this.api)(event);
-      return;
-    }
-    this.dispatchCanvasDataClick(event, true);
-    this.dispatchCanvasDataOut(this.$el.canvas.node());
-    (_c = this.config.onout) == null ? void 0 : _c.bind(this.api)(event);
-  },
-  /**
-   * Handle touch cancellation.
-   * @param {TouchEvent} event Touch event
-   * @private
-   */
-  onCanvasTouchCancel(event) {
-    var _a;
-    this.state.event = event;
-    this.cancelCanvasSubchartBrush(event);
-    this.endCanvasSelectionDrag(event);
-    this.onCanvasMouseOut();
-    (_a = this.config.onout) == null ? void 0 : _a.bind(this.api)(event);
-  },
-  /**
-   * Update canvas focus state and tooltip on pointer movement.
-   * @param {Event} event Mouse, pointer or touch move event
-   * @private
-   */
-  onCanvasMouseMove(event) {
-    var _a, _b, _c, _d, _e;
-    const $$ = this;
-    const { config, state, $el } = $$;
-    const canvas2 = $el.canvas.node();
-    state.event = event;
-    if (state.flowing) {
-      return;
-    }
-    if (state.canvasSelectionDragging) {
-      return;
-    }
-    if ((_a = $$.updateCanvasSubchartCursor) == null ? void 0 : _a.call($$, event)) {
-      $$.dispatchCanvasDataOut(canvas2);
-      if (state.canvasFocusKey) {
-        state.canvasFocusKey = null;
-        $$.clearCanvasFocus();
-      }
-      (_b = $$.hideTooltip) == null ? void 0 : _b.call($$);
-      return;
-    }
-    const rawPoint = getCanvasEventPoint($$, event);
-    const point = rawPoint && (getCanvasMainPointFromSubchart($$, rawPoint) || rawPoint);
-    const d = point ? getCanvasHoverDatumFromPoint($$, point) : null;
-    if (!d) {
-      $$.dispatchCanvasDataOut(canvas2);
-      if (state.canvasFocusKey) {
-        state.canvasFocusKey = null;
-        $$.clearCanvasFocus();
-      }
-      if (rawPoint && config.axis_tooltip && isCanvasAxisTooltipArea($$, rawPoint)) {
-        $$.renderCanvasAxisTooltip(rawPoint);
-        (_c = $$.hideTooltip) == null ? void 0 : _c.call($$);
-        return;
-      }
-      (_d = $$.hideTooltip) == null ? void 0 : _d.call($$);
-      return;
-    }
-    $$.dispatchCanvasDataOver(d, canvas2);
-    const selectedData = getCanvasTooltipData($$, d);
-    const focusData = getCanvasFocusData($$, d, selectedData);
-    const focusKey = focusData.map((v) => `${v.id}:${v.index}`).join("|");
-    if (state.canvasFocusKey !== focusKey || config.axis_tooltip) {
-      state.canvasFocusKey = focusKey;
-      $$.renderCanvasFocus(focusData, point);
-    }
-    (_e = $$.showTooltip) == null ? void 0 : _e.call($$, selectedData, canvas2);
-  },
-  /**
-   * Clear focus and tooltip state when the pointer leaves the canvas.
-   * @private
-   */
-  onCanvasMouseOut() {
-    var _a;
-    const canvas2 = this.$el.canvas.node();
-    canvas2.style.cursor = "";
-    this.dispatchCanvasDataOut(canvas2);
-    if (this.state.canvasFocusKey) {
-      this.state.canvasFocusKey = null;
-      this.clearCanvasFocus();
-    } else if (this.config.axis_tooltip) {
-      this.clearCanvasFocus();
-    }
-    (_a = this.hideTooltip) == null ? void 0 : _a.call(this);
-  },
-  /**
-   * Show canvas tooltip from linked tooltip propagation.
-   * @param {number} index Data index
-   * @returns {boolean} Whether linked tooltip was shown
-   * @private
-   */
-  showCanvasLinkedTooltip(index) {
-    var _a, _b, _c, _d;
-    const $$ = this;
-    const { $el, state } = $$;
-    const canvas2 = (_a = $el.canvas) == null ? void 0 : _a.node();
-    const targetsToShow = $$.filterTargetsToShow($$.data.targets);
-    const d = targetsToShow.map((target) => target.values[index]).find(Boolean);
-    if (!canvas2 || !d) {
-      (_b = $$.hideTooltip) == null ? void 0 : _b.call($$);
-      return false;
-    }
-    const selectedData = getCanvasTooltipData($$, d);
-    const focus = selectedData.find((v) => v && hasCanvasDrawableValue($$, v)) || selectedData[0];
-    if (!selectedData.length || !focus) {
-      (_c = $$.hideTooltip) == null ? void 0 : _c.call($$);
-      return false;
-    }
-    const { left, top } = getBoundingRect(canvas2, true);
-    const point = getRenderDataPoint($$, focus);
-    const eventPoint = [
-      state.margin.left + point.x,
-      state.margin.top + point.y
-    ];
-    state.event = {
-      clientX: left + eventPoint[0],
-      clientY: top + eventPoint[1],
-      currentTarget: canvas2,
-      target: canvas2
-    };
-    state.canvasFocusKey = selectedData.map((v) => `${v.id}:${v.index}`).join("|");
-    $$.renderCanvasFocus(selectedData, eventPoint);
-    (_d = $$.showTooltip) == null ? void 0 : _d.call($$, selectedData, canvas2);
-    return true;
-  },
-  /**
-   * Draw drag-zoom brush overlay on the cached canvas frame.
-   * @param {number} start Start coordinate
-   * @param {number} end End coordinate
-   * @private
-   */
-  renderCanvasZoomBrush(start, end) {
-    const $$ = this;
-    $$.canvasEngine.withOverlay((ctx) => {
-      $$.canvasRenderer.withContext(ctx, () => {
-        $$.canvasRenderer.drawZoomBrush($$, start, end);
-      });
-    });
-  },
-  /**
-   * Clear drag-zoom brush overlay.
-   * @private
-   */
-  clearCanvasZoomBrush() {
-    this.canvasEngine.clearOverlay();
-  },
-  /**
-   * Draw selection drag overlay on the cached canvas frame.
-   * @param {object} rect Selection rectangle
-   * @private
-   */
-  renderCanvasSelectionDrag(rect) {
-    const $$ = this;
-    $$.canvasEngine.withOverlay((ctx) => {
-      $$.canvasRenderer.withContext(ctx, () => {
-        $$.canvasRenderer.drawSelectionDragArea($$, rect);
-      });
-    });
-  },
-  /**
-   * Draw a complete canvas frame and optionally rebuild hit indexes.
-   * @param {object} shape Cached draw shape object
-   * @param {Array} focusData Focused data rows
-   * @param {boolean} rebuildHit Whether to rebuild hit indexes
-   * @private
-   */
-  renderCanvasFrame(shape, focusData, rebuildHit = false) {
-    const $$ = this;
-    const { state } = $$;
-    const drawShape = shape || state.canvasShape || $$.getDrawShape();
-    state.canvasShape = drawShape;
-    state._canvasVisibleRangeCache = null;
-    state._canvasXTickValuesCache = null;
-    $$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());
-    try {
-      $$.canvasRenderer.drawBackground($$);
-      $$.canvasAxisRenderer.drawTitle($$);
-      state.hasAxis && $$.canvasAxisRenderer.draw($$);
-      $$.canvasRenderer.draw($$, drawShape);
-      state.hasAxis && $$.config.grid_lines_front && $$.canvasAxisRenderer.drawGridLines($$);
-      $$.canvasRenderer.drawSubchart($$, drawShape);
-      state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
-      state.hasAxis && $$.canvasAxisRenderer.drawSubYAxes($$);
-      $$.canvasRenderer.drawEmptyLabel($$);
-      rebuildHit && $$.hitDetector.rebuild($$, drawShape);
-    } finally {
-      $$.canvasEngine.endFrame();
-    }
-    $$.canvasEngine.clearOverlay();
-    state.canvasFocusMainRedraw = false;
-    focusData && $$.renderCanvasFocus(focusData);
-  },
-  /**
-   * Restore the cached frame and draw focus overlays.
-   * @param {Array} focusData Focused data rows
-   * @param {Array} point Canvas-local pointer coordinate
-   * @private
-   */
-  renderCanvasFocus(focusData, point) {
-    var _a, _b;
-    const $$ = this;
-    const { state } = $$;
-    const withMainRedraw = (_b = (_a = $$.canvasRenderer).hasExpandedShapeFocus) == null ? void 0 : _b.call(_a, $$, focusData);
-    if (withMainRedraw) {
-      const drawShape = state.canvasShape || $$.getDrawShape();
-      $$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());
-      try {
-        $$.canvasRenderer.drawBackground($$);
-        $$.canvasAxisRenderer.drawTitle($$);
-        state.hasAxis && $$.canvasAxisRenderer.draw($$);
-        $$.canvasRenderer.draw($$, drawShape, focusData);
-        state.hasAxis && $$.config.grid_lines_front && $$.canvasAxisRenderer.drawGridLines($$);
-        $$.canvasRenderer.drawSubchart($$, drawShape);
-        state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
-        state.hasAxis && $$.canvasAxisRenderer.drawSubYAxes($$);
-        $$.canvasRenderer.drawEmptyLabel($$);
-      } finally {
-        $$.canvasEngine.endFrame();
-      }
-    }
-    state.canvasFocusMainRedraw = !!withMainRedraw;
-    $$.canvasEngine.withOverlay((ctx) => {
-      $$.canvasRenderer.withContext(ctx, () => {
-        $$.canvasRenderer.drawFocus($$, focusData);
-      });
-      $$.canvasAxisRenderer.withContext(ctx, () => {
-        $$.canvasAxisRenderer.drawFocusedXAxisTick($$, focusData);
-        point && $$.canvasAxisRenderer.drawAxisTooltip($$, point);
-      });
-    });
-  },
-  /**
-   * Draw only the canvas axis tooltip overlay.
-   * @param {Array} point Canvas-local pointer coordinate
-   * @private
-   */
-  renderCanvasAxisTooltip(point) {
-    const $$ = this;
-    $$.canvasEngine.withOverlay((ctx) => {
-      $$.canvasAxisRenderer.withContext(ctx, () => {
-        $$.canvasAxisRenderer.drawAxisTooltip($$, point);
-      });
-    });
-  },
-  /**
-   * Restore the cached canvas frame without focus overlays.
-   * @private
-   */
-  clearCanvasFocus() {
-    var _a;
-    const $$ = this;
-    if ($$.state.canvasFocusMainRedraw) {
-      $$.state.canvasFocusMainRedraw = false;
-      $$.renderCanvasFrame(void 0, null, false);
-    } else {
-      (_a = $$.canvasEngine) == null ? void 0 : _a.clearOverlay();
-    }
-  },
-  /**
-   * Resize canvas surfaces and reload canvas theme values.
-   * @private
-   */
-  resizeCanvas() {
-    var _a, _b;
-    const $$ = this;
-    const { config, state, $el } = $$;
-    const container = $el.chart.node();
-    $$.clearResizePreview();
-    $el.chart.style("min-height", `${state.current.height}px`);
-    (_a = $$.canvasEngine) == null ? void 0 : _a.resize(state.current.width, $$.getCanvasSurfaceHeight());
-    (_b = $$.canvasTheme) == null ? void 0 : _b.reload(container, config.canvas_theme);
+  drawFocus(renderer, selectedData) {
+    drawSubchartFocus(renderer, this, selectedData);
   }
 };
-let canvas = () => {
-  object_extend(ChartInternal.prototype, canvasInternal);
-  return (canvas = () => "canvas")();
+
+;// ./src/canvas/treemap.ts
+
+
+
+/* harmony default export */ var treemap = ({
+  // treemap is laid out over the whole chart: nothing of the axis types is drawn with it
+  exclusive: true,
+  /**
+   * Draw treemap tiles and labels on canvas.
+   * @param {CanvasRenderer} renderer Canvas renderer
+   * @private
+   */
+  draw(renderer) {
+    var _a;
+    const $$ = this;
+    const { ctx, painter, theme: { style } } = renderer;
+    const { config } = $$;
+    const root = (_a = $$.getTreemapRoot) == null ? void 0 : _a.call($$, $$.data.targets);
+    const nodes = (root == null ? void 0 : root.children) || [];
+    painter.withState(() => {
+      var _a2;
+      ctx.lineWidth = style.treemap.lineWidth;
+      ctx.strokeStyle = style.treemap.stroke;
+      for (const node of nodes) {
+        const { data } = node;
+        if (!isCanvasTreemapType($$, data)) {
+          continue;
+        }
+        const { x, y, w, h } = getTreemapNodeRect($$, node, root, true);
+        if (!isFiniteCanvasCoordinate(x, y) || !isFiniteCanvasCoordinate(x + w, y + h) || w <= 0 || h <= 0) {
+          continue;
+        }
+        const rect = { x, y, w, h };
+        ctx.fillStyle = $$.color(data.name);
+        painter.fillRect(rect);
+        painter.strokeRect(rect);
+        if (!config.treemap_label_show || (data.ratio || 0) < (config.treemap_label_threshold || 0)) {
+          continue;
+        }
+        const label = getTreemapLabelText($$, data, w, h);
+        if (!label) {
+          continue;
+        }
+        const lines = label.split("\n");
+        const isCentered = !!config.data_labels.centered;
+        ctx.font = style.label.font;
+        const lineHeight = getFontSize(ctx.font);
+        const metrics = ctx.measureText((_a2 = lines[0]) != null ? _a2 : "");
+        const fontBoundingHeight = (metrics.fontBoundingBoxAscent || 0) + (metrics.fontBoundingBoxDescent || 0) || (metrics.actualBoundingBoxAscent || 0) + (metrics.actualBoundingBoxDescent || 0);
+        const textHeight = Math.max(lineHeight, fontBoundingHeight) + (lines.length - 1) * lineHeight;
+        const blockY = isCentered ? y + h / 2 : y + textHeight + 5;
+        let textX = isCentered ? x + w / 2 : x + 5;
+        let textY = blockY - (lines.length - 1) * lineHeight / (isCentered ? 2 : 1);
+        ctx.textAlign = isCentered ? "center" : "left";
+        ctx.textBaseline = isCentered ? "middle" : "alphabetic";
+        ({ x: textX, y: textY } = renderer.drawLabelImage($$, data, label, textX, textY));
+        ctx.fillStyle = getLabelColor($$, data, style.label.color);
+        drawLabelDecorations(
+          $$,
+          painter,
+          data,
+          label,
+          textX,
+          isCentered ? textY + (lines.length - 1) * lineHeight / 2 : blockY
+        );
+        lines.forEach((line, i) => {
+          painter.text(line, textX, textY + i * lineHeight, {
+            maxWidth: Math.max(0, w - 8)
+          });
+        });
+      }
+    });
+  },
+  /**
+   * Add hit items of each treemap tile.
+   * @param {HitDetector} detector Hit detector
+   * @private
+   */
+  hits(detector) {
+    var _a;
+    const $$ = this;
+    const root = (_a = $$.getTreemapRoot) == null ? void 0 : _a.call($$, $$.data.targets);
+    const nodes = (root == null ? void 0 : root.children) || [];
+    for (const node of nodes) {
+      const { data } = node;
+      if (!isCanvasTreemapType($$, data)) {
+        continue;
+      }
+      const { x, y, w, h } = getTreemapNodeRect($$, node, root, true);
+      if (!isFiniteCanvasCoordinate(x, y) || !isFiniteCanvasCoordinate(x + w, y + h)) {
+        continue;
+      }
+      detector.addBar({ x, y, w, h, data });
+    }
+  }
+});
+
+;// ./src/config/resolver/canvasType.ts
+var canvasType_defProp = Object.defineProperty;
+var canvasType_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var canvasType_hasOwnProp = Object.prototype.hasOwnProperty;
+var canvasType_propIsEnum = Object.prototype.propertyIsEnumerable;
+var canvasType_defNormalProp = (obj, key, value) => key in obj ? canvasType_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var canvasType_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (canvasType_hasOwnProp.call(b, prop))
+      canvasType_defNormalProp(a, prop, b[prop]);
+  if (canvasType_getOwnPropSymbols)
+    for (var prop of canvasType_getOwnPropSymbols(b)) {
+      if (canvasType_propIsEnum.call(b, prop))
+        canvasType_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
 };
+
+function registerCanvasType(name, parts) {
+  const proto = ChartInternal.prototype;
+  const types = proto.canvasTypes || (proto.canvasTypes = {});
+  types[name] = canvasType_spreadValues(canvasType_spreadValues({}, types[name]), parts);
+}
+function registerCanvasFeature(name, parts) {
+  const proto = ChartInternal.prototype;
+  const features = proto.canvasFeatures || (proto.canvasFeatures = {});
+  features[name] = canvasType_spreadValues(canvasType_spreadValues({}, features[name]), parts);
+}
 
 ;// ./src/Chart/api/category.ts
 
@@ -52007,7 +52476,7 @@ const api_data_data = function(targetIds) {
   }
   return targets;
 };
-object_extend(api_data_data, {
+extend(api_data_data, {
   /**
    * Get data shown in the chart.
    * @function data․shown
@@ -52719,6 +53188,25 @@ function showHide(show, targetIdsValue, options, skipRedraw = false) {
 });
 
 ;// ./src/Chart/api/tooltip.ts
+var tooltip_defProp = Object.defineProperty;
+var tooltip_defProps = Object.defineProperties;
+var tooltip_getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var tooltip_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var tooltip_hasOwnProp = Object.prototype.hasOwnProperty;
+var tooltip_propIsEnum = Object.prototype.propertyIsEnumerable;
+var tooltip_defNormalProp = (obj, key, value) => key in obj ? tooltip_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var tooltip_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (tooltip_hasOwnProp.call(b, prop))
+      tooltip_defNormalProp(a, prop, b[prop]);
+  if (tooltip_getOwnPropSymbols)
+    for (var prop of tooltip_getOwnPropSymbols(b)) {
+      if (tooltip_propIsEnum.call(b, prop))
+        tooltip_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var tooltip_spreadProps = (a, b) => tooltip_defProps(a, tooltip_getOwnPropDescs(b));
 
 
 const tooltip_tooltip = {
@@ -52784,27 +53272,38 @@ const tooltip_tooltip = {
    *  });
    */
   show: function(args) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q;
     const $$ = this.internal;
-    const { $el, config, state: { eventReceiver, hasFunnel, hasTreemap, inputType } } = $$;
+    const {
+      $el,
+      config,
+      state: { customType, eventReceiver, hasTreemap, inputType, isCanvasMode }
+    } = $$;
     let index;
     let mouse;
+    if (customType && !isCanvasMode && !args.data) {
+      const id = (_c = (_b = (_a = $$.customTypeHooks) == null ? void 0 : _a.tooltipTarget) == null ? void 0 : _b.call(_a, $$, args).data[0]) == null ? void 0 : _c.id;
+      id && (args = tooltip_spreadProps(tooltip_spreadValues({}, args), { data: { id } }));
+    }
     if (args.mouse) {
       mouse = args.mouse;
     }
     if (args.data) {
       const { data } = args;
-      const y = (_a = $$.getYScaleById(data.id)) == null ? void 0 : _a(data.value);
-      if ((hasFunnel || hasTreemap) && data.id) {
-        const selector = $$.selectorTarget(data.id, void 0, `.${$SHAPE.shape}`);
-        eventReceiver.rect = $el.main.select(selector);
+      const y = (_d = $$.getYScaleById(data.id)) == null ? void 0 : _d(data.value);
+      if ((customType || hasTreemap) && data.id) {
+        if (!isCanvasMode) {
+          eventReceiver.rect = $el.main.select(
+            $$.selectorTarget(data.id, void 0, `.${$SHAPE.shape}`)
+          );
+        }
       } else if ($$.isMultipleX()) {
         mouse = [$$.xx(data), y];
       } else {
         if (!config.tooltip_grouped) {
           mouse = [0, y];
         }
-        index = (_c = data.index) != null ? _c : $$.hasArcType() && data.id ? (_b = $$.getArcElementByIdOrIndex(data.id)) == null ? void 0 : _b.datum().index : $$.getIndexByX(data.x);
+        index = (_f = data.index) != null ? _f : $$.hasArcType() && data.id ? (_e = $$.getArcElementByIdOrIndex(data.id)) == null ? void 0 : _e.datum().index : $$.getIndexByX(data.x);
       }
     } else if (isDefined(args.x)) {
       index = $$.getIndexByX(args.x);
@@ -52812,21 +53311,26 @@ const tooltip_tooltip = {
       index = args.index;
     }
     if ($$.state.isCanvasMode) {
-      const targets = ((_d = $$.filterTargetsToShow) == null ? void 0 : _d.call($$)) || $$.data.targets;
-      const selectedData = ((_e = args.data) == null ? void 0 : _e.id) && !config.tooltip_grouped ? targets.filter((target) => target.id === args.data.id).map((target) => target.values[index != null ? index : args.data.index]).filter(Boolean) : targets.map((target) => target.values[index]).filter(Boolean);
-      const canvas = (_g = (_f = $el.canvas) == null ? void 0 : _f.node) == null ? void 0 : _g.call(_f);
-      const shape = $$.state.canvasShape || ((_h = $$.getDrawShape) == null ? void 0 : _h.call($$));
+      const targets = ((_g = $$.filterTargetsToShow) == null ? void 0 : _g.call($$)) || $$.data.targets;
+      const custom = customType ? (_i = (_h = $$.customTypeHooks) == null ? void 0 : _h.tooltipTarget) == null ? void 0 : _i.call(_h, $$, args) : null;
+      const selectedData = custom ? custom.data : ((_j = args.data) == null ? void 0 : _j.id) && !config.tooltip_grouped ? targets.filter((target) => target.id === args.data.id).map((target) => target.values[index != null ? index : args.data.index]).filter(Boolean) : targets.map((target) => target.values[index]).filter(Boolean);
+      const canvas = (_l = (_k = $el.canvas) == null ? void 0 : _k.node) == null ? void 0 : _l.call(_k);
+      const shape = $$.state.canvasShape || ((_m = $$.getDrawShape) == null ? void 0 : _m.call($$));
       const first = selectedData[0];
-      const point = mouse || (first && ((_i = shape == null ? void 0 : shape.pos) == null ? void 0 : _i.cx) && ((_j = shape == null ? void 0 : shape.pos) == null ? void 0 : _j.cy) ? [
+      const point = mouse || (custom ? custom.point : first && ((_n = shape == null ? void 0 : shape.pos) == null ? void 0 : _n.cx) && ((_o = shape == null ? void 0 : shape.pos) == null ? void 0 : _o.cy) ? [
         $$.state.margin.left + shape.pos.cx(first),
         $$.state.margin.top + shape.pos.cy(first)
       ] : void 0);
       if (!selectedData.length || !canvas) {
         return;
       }
+      if (custom && point) {
+        const rect = canvas.getBoundingClientRect();
+        $$.state.event = { clientX: rect.left + point[0], clientY: rect.top + point[1] };
+      }
       $$.state.canvasFocusKey = selectedData.map((v) => `${v.id}:${v.index}`).join("|");
-      (_k = $$.renderCanvasFocus) == null ? void 0 : _k.call($$, selectedData, point);
-      (_l = $$.showTooltip) == null ? void 0 : _l.call($$, selectedData, canvas);
+      (_p = $$.renderCanvasFocus) == null ? void 0 : _p.call($$, selectedData, point);
+      (_q = $$.showTooltip) == null ? void 0 : _q.call($$, selectedData, canvas);
       return;
     }
     (inputType === "mouse" ? ["mouseover", "mousemove"] : ["touchstart"]).forEach((eventName) => {
@@ -52907,7 +53411,7 @@ class Chart {
     $$.init();
   }
 }
-object_extend(Chart.prototype, [
+extend(Chart.prototype, [
   chart,
   api_color,
   api_data,
@@ -52926,6 +53430,30 @@ let category_category = () => {
   Chart.prototype.categories = api_category.categories;
   return (category_category = () => ({}))();
 };
+
+;// ./src/config/resolver/customType.ts
+var customType_defProp = Object.defineProperty;
+var customType_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var customType_hasOwnProp = Object.prototype.hasOwnProperty;
+var customType_propIsEnum = Object.prototype.propertyIsEnumerable;
+var customType_defNormalProp = (obj, key, value) => key in obj ? customType_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var customType_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (customType_hasOwnProp.call(b, prop))
+      customType_defNormalProp(a, prop, b[prop]);
+  if (customType_getOwnPropSymbols)
+    for (var prop of customType_getOwnPropSymbols(b)) {
+      if (customType_propIsEnum.call(b, prop))
+        customType_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+
+function registerCustomType(name, parts) {
+  const proto = ChartInternal.prototype;
+  const types = proto.customTypes || (proto.customTypes = {});
+  types[name] = customType_spreadValues(customType_spreadValues({}, types[name]), parts);
+}
 
 ;// ./src/Chart/api/export.ts
 
@@ -53163,7 +53691,7 @@ let exportApi = () => {
 
 ;// ./src/Chart/api/flow.ts
 
-/* harmony default export */ var flow = ({
+/* harmony default export */ var api_flow = ({
   /**
    * Flow data to the chart.<br><br>
    * By this API, you can append new data points to the chart.
@@ -53573,8 +54101,8 @@ let exportApi = () => {
 
 
 let flow_flow = () => {
-  object_extend(ChartInternal.prototype, interactions_flow);
-  Chart.prototype.flow = flow.flow;
+  extend(ChartInternal.prototype, interactions_flow);
+  Chart.prototype.flow = api_flow.flow;
   return (flow_flow = () => ({}))();
 };
 
@@ -53588,7 +54116,7 @@ function redrawCanvasGrid($$) {
   $$.state.canvasShape = null;
   (_a = $$.renderCanvasFrame) == null ? void 0 : _a.call($$, void 0, null, false);
 }
-function grid(grids, axisId) {
+function grid_grid(grids, axisId) {
   const $$ = this.internal;
   const { config } = $$;
   const withTransition = config.transition_duration && isTabVisible();
@@ -53607,7 +54135,7 @@ function grid(grids, axisId) {
 }
 function add(grids, axisId) {
   const gridPropLines = `grid_${axisId}_lines`;
-  return grid.bind(this)(
+  return grid_grid.bind(this)(
     this.internal.config[gridPropLines].concat(grids ? toGrids(grids) : []),
     axisId
   );
@@ -53625,9 +54153,9 @@ function grid_remove(grids, isXAxis) {
   $$.removeGridLines(grids, isXAxis);
 }
 const xgrids = function(grids) {
-  return grid.bind(this)(grids, "x");
+  return grid_grid.bind(this)(grids, "x");
 };
-object_extend(xgrids, {
+extend(xgrids, {
   /**
    * Add x grid lines.<br>
    * This API adds new x grid lines instead of replacing like xgrids.
@@ -53678,9 +54206,9 @@ object_extend(xgrids, {
   }
 });
 const ygrids = function(grids) {
-  return grid.bind(this)(grids, "y");
+  return grid_grid.bind(this)(grids, "y");
 };
-object_extend(ygrids, {
+extend(ygrids, {
   /**
    * Add y grid lines.<br>
    * This API adds new y grid lines instead of replacing like ygrids.
@@ -54176,12 +54704,12 @@ function _smoothLines(el, type) {
 
 
 
-let grid_grid = () => {
-  object_extend(ChartInternal.prototype, internals_grid);
+let resolver_grid_grid = () => {
+  extend(ChartInternal.prototype, internals_grid);
   Chart.prototype.xgrids = api_grid.xgrids;
   Chart.prototype.ygrids = api_grid.ygrids;
   Options.setOptions([common_grid]);
-  return (grid_grid = () => ({}))();
+  return (resolver_grid_grid = () => ({}))();
 };
 
 ;// ./src/Chart/api/selection.ts
@@ -54757,8 +55285,8 @@ var selection_spreadProps = (a, b) => selection_defProps(a, selection_getOwnProp
 
 
 let selectionModule = () => {
-  object_extend(ChartInternal.prototype, internals_selection);
-  object_extend(Chart.prototype, api_selection);
+  extend(ChartInternal.prototype, internals_selection);
+  extend(Chart.prototype, api_selection);
   Options.setOptions([data_selection]);
   return (selectionModule = () => true)();
 };
@@ -54766,8 +55294,8 @@ let selectionModule = () => {
 ;// ./src/Chart/api/subchart.ts
 
 
-const subchart = function(domainValue) {
-  var _a, _b;
+const subchart_subchart = function(domainValue) {
+  var _a, _b, _c;
   const $$ = this.internal;
   const { axis, brush, config, scale: { x, subX }, state } = $$;
   let domain;
@@ -54776,9 +55304,9 @@ const subchart = function(domainValue) {
       domain = domainValue;
       if (Array.isArray(domain)) {
         domain = axis.isTimeSeries() ? domain.map((x2) => parseDate.bind($$)(x2)) : domain;
-        domain = $$.setCanvasSubchartDomain(domain) || state.domain;
+        domain = ((_a = $$.setCanvasSubchartDomain) == null ? void 0 : _a.call($$, domain)) || state.domain;
       } else {
-        domain = (_a = state.domain) != null ? _a : x.orgDomain();
+        domain = (_b = state.domain) != null ? _b : x.orgDomain();
       }
     }
     return domain;
@@ -54802,12 +55330,12 @@ const subchart = function(domainValue) {
         );
       }
     } else {
-      domain = (_b = state.domain) != null ? _b : x.orgDomain();
+      domain = (_c = state.domain) != null ? _c : x.orgDomain();
     }
   }
   return domain;
 };
-object_extend(subchart, {
+extend(subchart_subchart, {
   /**
    * Show subchart
    * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
@@ -54921,7 +55449,7 @@ object_extend(subchart, {
   }
 });
 /* harmony default export */ var api_subchart = ({
-  subchart
+  subchart: subchart_subchart
 });
 
 ;// ./src/ChartInternal/interactions/subchart.ts
@@ -55541,8 +56069,8 @@ function dispatchSubchartEvent($$, type, event, context) {
 
 
 let subchartModule = () => {
-  object_extend(ChartInternal.prototype, interactions_subchart);
-  object_extend(Chart.prototype, api_subchart);
+  extend(ChartInternal.prototype, interactions_subchart);
+  extend(Chart.prototype, api_subchart);
   Options.setOptions([interaction_subchart]);
   return (subchartModule = () => true)();
 };
@@ -56043,7 +56571,7 @@ const zoom = function(domainValue) {
   }
   return (_b = state.domain) != null ? _b : domain;
 };
-object_extend(zoom, {
+extend(zoom, {
   /**
    * Enable and disable zooming.
    * @function zoom․enable
@@ -56626,8 +57154,8 @@ function getZoomDragPointer($$, event, element) {
 
 
 let zoomModule = () => {
-  object_extend(ChartInternal.prototype, interactions_zoom);
-  object_extend(Chart.prototype, api_zoom);
+  extend(ChartInternal.prototype, interactions_zoom);
+  extend(Chart.prototype, api_zoom);
   Options.setOptions([interaction_zoom]);
   return (zoomModule = () => true)();
 };
@@ -56664,7 +57192,7 @@ function regionsFn(regions2, isAdd = false) {
 const regions = function(regions2) {
   return regionsFn.bind(this)(regions2);
 };
-object_extend(regions, {
+extend(regions, {
   /**
    * Add new region.<br><br>
    * This API adds new region instead of replacing like regions.
@@ -56905,7 +57433,7 @@ object_extend(regions, {
 
 
 let regions_regions = () => {
-  object_extend(ChartInternal.prototype, region);
+  extend(ChartInternal.prototype, region);
   Chart.prototype.regions = api_regions.regions;
   return (regions_regions = () => ({}))();
 };
@@ -62925,8 +63453,8 @@ function getValues(obj) {
   return Object.keys(obj).map((key) => obj[key]);
 }
 function extendAxisModules(module = [], option = []) {
-  object_extend(ChartInternal.prototype, getValues(internal).concat(module));
-  object_extend(Chart.prototype, api);
+  extend(ChartInternal.prototype, getValues(internal).concat(module));
+  extend(Chart.prototype, api);
   Options.setOptions(getValues(options).concat(option));
 }
 
@@ -63505,6 +64033,967 @@ let bubble_bubble = () => (extendAxis(
   [core_point, shape_point, shape_bubble],
   [Options_shape_bubble, common_point]
 ), (bubble_bubble = () => TYPE.BUBBLE)());
+
+;// ./node_modules/.pnpm/d3-axis@3.0.0/node_modules/d3-axis/src/identity.js
+/* harmony default export */ function d3_axis_src_identity(x) {
+  return x;
+}
+
+;// ./node_modules/.pnpm/d3-axis@3.0.0/node_modules/d3-axis/src/axis.js
+
+var axis_top = 1, right = 2, bottom = 3, left = 4, axis_epsilon = 1e-6;
+function translateX(x) {
+  return "translate(" + x + ",0)";
+}
+function translateY(y) {
+  return "translate(0," + y + ")";
+}
+function axis_number(scale) {
+  return (d) => +scale(d);
+}
+function center(scale, offset) {
+  offset = Math.max(0, scale.bandwidth() - offset * 2) / 2;
+  if (scale.round()) offset = Math.round(offset);
+  return (d) => +scale(d) + offset;
+}
+function entering() {
+  return !this.__axis;
+}
+function src_axis_axis(orient, scale) {
+  var tickArguments = [], tickValues = null, tickFormat = null, tickSizeInner = 6, tickSizeOuter = 6, tickPadding = 3, offset = typeof window !== "undefined" && window.devicePixelRatio > 1 ? 0 : 0.5, k = orient === axis_top || orient === left ? -1 : 1, x = orient === left || orient === right ? "x" : "y", transform = orient === axis_top || orient === bottom ? translateX : translateY;
+  function axis2(context) {
+    var values = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues, format = tickFormat == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : d3_axis_src_identity : tickFormat, spacing = Math.max(tickSizeInner, 0) + tickPadding, range = scale.range(), range0 = +range[0] + offset, range1 = +range[range.length - 1] + offset, position = (scale.bandwidth ? center : axis_number)(scale.copy(), offset), selection = context.selection ? context.selection() : context, path = selection.selectAll(".domain").data([null]), tick = selection.selectAll(".tick").data(values, scale).order(), tickExit = tick.exit(), tickEnter = tick.enter().append("g").attr("class", "tick"), line = tick.select("line"), text = tick.select("text");
+    path = path.merge(path.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor"));
+    tick = tick.merge(tickEnter);
+    line = line.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x + "2", k * tickSizeInner));
+    text = text.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x, k * spacing).attr("dy", orient === axis_top ? "0em" : orient === bottom ? "0.71em" : "0.32em"));
+    if (context !== selection) {
+      path = path.transition(context);
+      tick = tick.transition(context);
+      line = line.transition(context);
+      text = text.transition(context);
+      tickExit = tickExit.transition(context).attr("opacity", axis_epsilon).attr("transform", function(d) {
+        return isFinite(d = position(d)) ? transform(d + offset) : this.getAttribute("transform");
+      });
+      tickEnter.attr("opacity", axis_epsilon).attr("transform", function(d) {
+        var p = this.parentNode.__axis;
+        return transform((p && isFinite(p = p(d)) ? p : position(d)) + offset);
+      });
+    }
+    tickExit.remove();
+    path.attr("d", orient === left || orient === right ? tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H" + offset + "V" + range1 + "H" + k * tickSizeOuter : "M" + offset + "," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V" + offset + "H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + "," + offset + "H" + range1);
+    tick.attr("opacity", 1).attr("transform", function(d) {
+      return transform(position(d) + offset);
+    });
+    line.attr(x + "2", k * tickSizeInner);
+    text.attr(x, k * spacing).text(format);
+    selection.filter(entering).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === right ? "start" : orient === left ? "end" : "middle");
+    selection.each(function() {
+      this.__axis = position;
+    });
+  }
+  axis2.scale = function(_) {
+    return arguments.length ? (scale = _, axis2) : scale;
+  };
+  axis2.ticks = function() {
+    return tickArguments = Array.from(arguments), axis2;
+  };
+  axis2.tickArguments = function(_) {
+    return arguments.length ? (tickArguments = _ == null ? [] : Array.from(_), axis2) : tickArguments.slice();
+  };
+  axis2.tickValues = function(_) {
+    return arguments.length ? (tickValues = _ == null ? null : Array.from(_), axis2) : tickValues && tickValues.slice();
+  };
+  axis2.tickFormat = function(_) {
+    return arguments.length ? (tickFormat = _, axis2) : tickFormat;
+  };
+  axis2.tickSize = function(_) {
+    return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis2) : tickSizeInner;
+  };
+  axis2.tickSizeInner = function(_) {
+    return arguments.length ? (tickSizeInner = +_, axis2) : tickSizeInner;
+  };
+  axis2.tickSizeOuter = function(_) {
+    return arguments.length ? (tickSizeOuter = +_, axis2) : tickSizeOuter;
+  };
+  axis2.tickPadding = function(_) {
+    return arguments.length ? (tickPadding = +_, axis2) : tickPadding;
+  };
+  axis2.offset = function(_) {
+    return arguments.length ? (offset = +_, axis2) : offset;
+  };
+  return axis2;
+}
+function axisTop(scale) {
+  return src_axis_axis(axis_top, scale);
+}
+function axisRight(scale) {
+  return src_axis_axis(right, scale);
+}
+function axisBottom(scale) {
+  return src_axis_axis(bottom, scale);
+}
+function axisLeft(scale) {
+  return src_axis_axis(left, scale);
+}
+
+;// ./node_modules/.pnpm/d3-selection@3.0.0/node_modules/d3-selection/src/local.js
+var nextId = 0;
+function local_local() {
+  return new Local();
+}
+function Local() {
+  this._ = "@" + (++nextId).toString(36);
+}
+Local.prototype = local_local.prototype = {
+  constructor: Local,
+  get: function(node) {
+    var id = this._;
+    while (!(id in node)) if (!(node = node.parentNode)) return;
+    return node[id];
+  },
+  set: function(node, value) {
+    return node[this._] = value;
+  },
+  remove: function(node) {
+    return this._ in node && delete node[this._];
+  },
+  toString: function() {
+    return this._;
+  }
+};
+
+;// ./src/ChartInternal/shape/core/bullet.ts
+var bullet_defProp = Object.defineProperty;
+var bullet_defProps = Object.defineProperties;
+var bullet_getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var bullet_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var bullet_hasOwnProp = Object.prototype.hasOwnProperty;
+var bullet_propIsEnum = Object.prototype.propertyIsEnumerable;
+var bullet_defNormalProp = (obj, key, value) => key in obj ? bullet_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var bullet_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (bullet_hasOwnProp.call(b, prop))
+      bullet_defNormalProp(a, prop, b[prop]);
+  if (bullet_getOwnPropSymbols)
+    for (var prop of bullet_getOwnPropSymbols(b)) {
+      if (bullet_propIsEnum.call(b, prop))
+        bullet_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var bullet_spreadProps = (a, b) => bullet_defProps(a, bullet_getOwnPropDescs(b));
+
+
+
+const $BULLET = {
+  bullet: "bb-bullet",
+  chartBullet: "bb-chart-bullet",
+  chartBullets: "bb-chart-bullets",
+  bulletRange: "bb-bullet-range",
+  bulletMeasure: "bb-bullet-measure",
+  bulletTarget: "bb-bullet-target",
+  bulletAxis: "bb-bullet-axis",
+  bulletTitle: "bb-bullet-title"
+};
+const AXIS_EDGE = 16;
+const isValid = (v) => Number.isFinite(v);
+const own = (obj, key) => obj && Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : void 0;
+function _getExtent(values) {
+  let min = 0;
+  let max = 0;
+  values.forEach((v) => {
+    min = Math.min(min, v);
+    max = Math.max(max, v);
+  });
+  return [min, max];
+}
+function _getTitleText(id, value) {
+  var _a;
+  const { config, api } = this;
+  const text = config.bullet_title_text;
+  let resolved;
+  if (isFunction(text)) {
+    resolved = text.call(api, id, value);
+  } else if (isObject(text)) {
+    resolved = own(text, id);
+  }
+  return String((_a = resolved != null ? resolved : own(config.data_names, id)) != null ? _a : id);
+}
+function _getTitleSize(rows) {
+  const $$ = this;
+  const { config, cache, state: { isCanvasMode }, $el } = $$;
+  if (config.bullet_rotated) {
+    return 18;
+  }
+  const titles = rows.map((d) => d.title);
+  const key = `bullet-title-${isCanvasMode}-${titles.join("\0")}`;
+  let width = cache.get(key) || 0;
+  if (!width && isCanvasMode && $$.canvasRenderer) {
+    const { ctx } = $$.canvasRenderer;
+    ctx.save();
+    ctx.font = $$.canvasTheme.style.bullet.titleFont;
+    width = titles.reduce((w, v) => Math.max(w, ctx.measureText(v).width), 0);
+    ctx.restore();
+  } else if (!width && !isCanvasMode && $el.bullet) {
+    const text = $el.bullet.append("text").attr("class", $BULLET.bulletTitle).style("visibility", "hidden");
+    titles.forEach((v) => {
+      var _a, _b;
+      width = Math.max(width, ((_b = (_a = text.text(v).node()).getComputedTextLength) == null ? void 0 : _b.call(_a)) || 0);
+    });
+    text.remove();
+  }
+  if (width) {
+    cache.add(key, width);
+  } else {
+    width = titles.reduce((n, v) => Math.max(n, v.length), 0) * 6.5;
+  }
+  return Math.ceil(width) + 8;
+}
+function _getArea(rows) {
+  var _a, _b;
+  const $$ = this;
+  const { config, state: { current: { width, height }, isCanvasMode, isLegendRight } } = $$;
+  const padding = $$.getCurrentPadding();
+  const legendHeight = config.legend_show && config.legend_position === "bottom" ? (isCanvasMode ? 0 : $$.getLegendHeight()) + 10 : 0;
+  const surfaceHeight = isCanvasMode ? $$.getCanvasSurfaceHeight() : height;
+  const edge = config.bullet_axis_show && !config.bullet_rotated ? AXIS_EDGE : 0;
+  const legendRight = config.legend_show && isLegendRight ? $$.getLegendWidth() + (((_a = config.padding) == null ? void 0 : _a.mode) === "fit" ? 0 : 20) : 0;
+  const hasLabel = !config.bullet_rotated && config.bullet_label_show && $$.hasDataLabel();
+  const list = hasLabel || config.bullet_title_show ? rows != null ? rows : $$.getBulletData() : [];
+  const labelRoom = hasLabel && list.some((d) => d.domainMax <= 0 || d.value >= d.domainMax) ? 14 : 0;
+  const titleSize = config.bullet_title_show ? _getTitleSize.call($$, list) : 0;
+  const titleWidth = config.bullet_rotated ? 0 : titleSize;
+  const titleHeight = config.bullet_rotated ? titleSize : 0;
+  const top = padding.top + (isCanvasMode ? ((_b = $$.getCanvasTitleDescent) == null ? void 0 : _b.call($$)) || 0 : 0);
+  return {
+    width: Math.max(
+      0,
+      width - padding.left - padding.right - edge * 2 - labelRoom - titleWidth - legendRight
+    ),
+    height: Math.max(0, surfaceHeight - legendHeight - top - padding.bottom - titleHeight),
+    left: padding.left + edge + titleWidth,
+    top
+  };
+}
+function _getAxisSize() {
+  const { config } = this;
+  return config.bullet_axis_show ? config.bullet_rotated ? 34 : 20 : 0;
+}
+function _getRanges(id, value) {
+  const ranges = this.config.bullet_ranges;
+  let resolved = [];
+  if (isFunction(ranges)) {
+    resolved = ranges.call(this.api, id, value) || [];
+  } else if (isArray(ranges)) {
+    resolved = ranges;
+  } else if (isObject(ranges) && isArray(ranges[id])) {
+    resolved = ranges[id];
+  }
+  return resolved.filter(isValid).sort((a, b) => a - b);
+}
+function _getTargets(id, value) {
+  const target = this.config.bullet_target;
+  let resolved;
+  if (isFunction(target)) {
+    resolved = target.call(this.api, id, value);
+  } else if (isArray(target) || isValid(target)) {
+    resolved = target;
+  } else if (isObject(target)) {
+    resolved = own(target, id);
+  }
+  return (isArray(resolved) ? resolved : [resolved]).filter(isValid);
+}
+function _getRangeColor(index, length) {
+  const colors = this.config.bullet_range_colors;
+  if (isFunction(colors)) {
+    return colors.call(this.api, index, length);
+  } else if (isArray(colors) && colors[index]) {
+    return colors[index];
+  }
+  return null;
+}
+function _getAxis(layout, domainMin, domainMax) {
+  const { config, api } = this;
+  const { axes, axisLen, isRotated } = layout;
+  const key = `${domainMin}|${domainMax}`;
+  let axis = axes.get(key);
+  if (!axis) {
+    const scale = linear_linear().domain([domainMin, domainMax]).range(isRotated ? [axisLen, 0] : [0, axisLen]);
+    const {
+      bullet_axis_tick_count: tickCount,
+      bullet_axis_tick_values: tickValues,
+      bullet_axis_tick_format: tickFormat
+    } = config;
+    const count = isValid(tickCount) && tickCount > 0 ? Math.min(tickCount, Math.max(2, axisLen)) : Math.max(2, Math.floor(axisLen / (isRotated ? 40 : 60)));
+    const [min, max] = [domainMin, domainMax];
+    const ticks = isArray(tickValues) ? tickValues.filter((v) => isValid(v) && v >= min && v <= max) : scale.ticks(count);
+    const format = isFunction(tickFormat) ? (value) => String(tickFormat.call(api, value)) : scale.tickFormat(count);
+    axis = {
+      scale,
+      count,
+      ticks,
+      format,
+      // the rows of the same domain share the axis: its labels are made once
+      key: `${scale.domain()}|${scale.range()}|${ticks}|${ticks.map(format)}`
+    };
+    axes.set(key, axis);
+  }
+  return axis;
+}
+function _getLayout() {
+  const $$ = this;
+  const { config } = $$;
+  const rows = $$.getBulletData();
+  const area = _getArea.call($$, rows);
+  const isRotated = config.bullet_rotated;
+  const axisSize = _getAxisSize.call($$);
+  const band = (isRotated ? area.width : area.height) / (rows.length || 1);
+  return {
+    rows,
+    area,
+    isRotated,
+    axisSize,
+    band,
+    bandInner: Math.max(0, band - config.bullet_padding - axisSize),
+    axisLen: isRotated ? area.height : area.width,
+    axes: /* @__PURE__ */ new Map()
+  };
+}
+function _getRowGeometry(d, layout) {
+  const $$ = this;
+  const { config } = $$;
+  const { area, isRotated, axisSize, band, bandInner, axisLen } = layout;
+  const { height, left, top } = area;
+  const { domainMin, domainMax } = d;
+  const measureThickness = bandInner * config.bullet_width_ratio;
+  const targetLen = bandInner * config.bullet_width_target_ratio;
+  const scale = (v) => (v - domainMin) / (domainMax - domainMin) * axisLen;
+  const pos = (v) => Math.min(Math.max(scale(v), 0), axisLen);
+  const zero = pos(0);
+  const ranges = d.ranges.map((value, index) => ({ value, index })).sort((a, b) => b.value - a.value).map(({ value, index }) => {
+    const len2 = pos(value);
+    return bullet_spreadProps(bullet_spreadValues({}, isRotated ? { x: 0, y: height - len2, width: bandInner, height: len2 } : { x: 0, y: 0, width: len2, height: bandInner }), {
+      fill: _getRangeColor.call($$, index, d.ranges.length),
+      // the default grayscale: smaller range (index 0) is the darkest
+      t: index / Math.max(d.ranges.length - 1, 1)
+    });
+  });
+  const isDot = config.bullet_type === "dot";
+  const markerSize = config.bullet_marker_size || measureThickness / 2;
+  const len = pos(d.value);
+  const isNegative = d.value < 0;
+  let measure;
+  if (isDot) {
+    measure = {
+      cx: isRotated ? bandInner / 2 : len,
+      cy: isRotated ? height - len : bandInner / 2,
+      r: markerSize
+    };
+  } else {
+    const size = Math.abs(len - zero);
+    measure = isRotated ? {
+      x: (bandInner - measureThickness) / 2,
+      y: height - Math.max(zero, len),
+      width: measureThickness,
+      height: size
+    } : {
+      x: Math.min(zero, len),
+      y: (bandInner - measureThickness) / 2,
+      width: size,
+      height: measureThickness
+    };
+  }
+  const targets = d.targets.filter((value) => value >= domainMin && value <= domainMax).map((value) => {
+    const at = scale(value);
+    return isRotated ? {
+      x1: (bandInner - targetLen) / 2,
+      x2: (bandInner + targetLen) / 2,
+      y1: height - at,
+      y2: height - at
+    } : {
+      x1: at,
+      x2: at,
+      y1: (bandInner - targetLen) / 2,
+      y2: (bandInner + targetLen) / 2
+    };
+  });
+  const gap = isDot ? markerSize : 0;
+  const labelPos = isNegative ? zero : len;
+  const label = bullet_spreadProps(bullet_spreadValues({}, isRotated ? { x: bandInner / 2, y: height - labelPos - gap - 6 } : { x: labelPos + gap + 5, y: bandInner / 2 }), {
+    center: isDot ? { x: measure.cx, y: measure.cy } : { x: measure.x + measure.width / 2, y: measure.y + measure.height / 2 }
+  });
+  const title = config.bullet_title_show ? isRotated ? { text: d.title, x: bandInner / 2, y: height + 13, anchor: "middle" } : { text: d.title, x: -(axisSize ? AXIS_EDGE : 0) - 6, y: bandInner / 2, anchor: "end" } : null;
+  return {
+    area: { left, top },
+    offset: isRotated ? { x: d.index * band + axisSize, y: 0 } : { x: 0, y: d.index * band },
+    ranges,
+    isDot,
+    measure,
+    color: $$.color(d),
+    targets,
+    title,
+    // quantitative scale axis
+    axis: axisSize ? bullet_spreadProps(bullet_spreadValues({}, _getAxis.call($$, layout, domainMin, domainMax)), {
+      rotated: isRotated,
+      x: 0,
+      y: isRotated ? 0 : bandInner
+    }) : null,
+    label
+  };
+}
+const customTypeHooks = {
+  // the legend is placed beside its own plot, not by the size of an arc
+  ownLegendLayout: true,
+  // the label is not drawn with the color of the series
+  themeTextColor: true,
+  // beside the measure, or above it when rotated
+  textAnchor($$) {
+    return $$.config.bullet_rotated || $$.config.data_labels.centered ? "middle" : "start";
+  },
+  // a bullet has one label, for its measure: the last value
+  labelData($$, d) {
+    const last = d.values[d.values.length - 1];
+    return $$.config.bullet_label_show && last && (isNumber(last.value) || Boolean(last.value)) ? [last] : [];
+  },
+  // bullet.label.format takes precedence over data.labels.format
+  labelFormat($$) {
+    const format = $$.config.bullet_label_format;
+    return isFunction(format) ? (value, id) => format.call($$.api, value, id) : void 0;
+  },
+  // a bullet is one row per data id, not a value per index: tooltip.show() addresses it so,
+  // and the tooltip is placed at its measure
+  tooltipTarget($$, args) {
+    var _a;
+    const rows = $$.getBulletData().filter((d) => $$.isTargetToShow(d.id));
+    const data = ((_a = args.data) == null ? void 0 : _a.id) ? rows.filter((d) => d.id === args.data.id) : [rows[args.index]].filter(Boolean);
+    return { data, point: data[0] && $$.getBulletMeasureCenter(data[0]) };
+  },
+  // points[0]: label anchor, points[1]: center of the measure
+  // Preserve current position when points unavailable (during hide transition)
+  textX($$, points, d, textElement) {
+    return points ? points[$$.config.data_labels.centered ? 1 : 0][0] + getTextPos.call($$, d, "x") : getElementPos(textElement, "x");
+  },
+  // beside the measure the label is centered on the row, above it (rotated) it sits on y
+  textY($$, points, d, textElement, rect) {
+    if (!points) {
+      return getElementPos(textElement, "y");
+    }
+    const centered = $$.config.data_labels.centered;
+    const y = points[centered ? 1 : 0][1];
+    return (centered || !$$.config.bullet_rotated ? y + rect.height / 2 - 3 : y) + getTextPos.call($$, d, "y");
+  }
+};
+/* harmony default export */ var core_bullet = ({
+  /**
+   * Whether the data belongs to the bullet type.
+   * @param {object} d Data object
+   * @returns {boolean}
+   * @private
+   */
+  isBulletType(d) {
+    return this.isTypeOf(d, "bullet");
+  },
+  /**
+   * Get the plot area of the bullets
+   * @returns {object} Plot size and offset
+   * @private
+   */
+  getBulletSize() {
+    return _getArea.call(this);
+  },
+  /**
+   * Get the space the canvas title text takes below its baseline.
+   * SVG title padding includes it, but canvas title padding stops at the baseline.
+   * @returns {number} Title descent
+   * @private
+   */
+  getCanvasTitleDescent() {
+    const { config, canvasRenderer, canvasTheme } = this;
+    if (!config.title_text || !canvasRenderer) {
+      return 0;
+    }
+    const { ctx } = canvasRenderer;
+    ctx.save();
+    ctx.font = canvasTheme.style.title.font;
+    const descent = ctx.measureText(String(config.title_text)).fontBoundingBoxDescent || 0;
+    ctx.restore();
+    return descent;
+  },
+  /**
+   * Get bullet rows data
+   * @returns {Array} Bullet rows
+   * @private
+   */
+  getBulletData() {
+    const $$ = this;
+    const targets = $$.data.targets.filter($$.isBulletType.bind($$));
+    return targets.map((t, index) => {
+      var _a;
+      const latest = Number((_a = t.values[t.values.length - 1]) == null ? void 0 : _a.value);
+      const value = isValid(latest) ? latest : 0;
+      const ranges = _getRanges.call($$, t.id, value);
+      const targets2 = _getTargets.call($$, t.id, value);
+      const [autoMin, autoMax] = _getExtent([value].concat(targets2, ranges));
+      const { bullet_axis_min: min, bullet_axis_max: max } = $$.config;
+      let domainMin = isValid(min) ? min : autoMin;
+      let domainMax = isValid(max) ? max : autoMax;
+      if (domainMin >= domainMax) {
+        domainMin = autoMin;
+        domainMax = autoMax;
+      }
+      if (domainMax === domainMin) {
+        domainMax = domainMin + 1;
+      }
+      const span = domainMax - domainMin;
+      const resolvedRanges = ranges.length ? ranges : [0.5, 0.75, 1].map((v) => domainMin + span * v);
+      return {
+        id: t.id,
+        index,
+        x: index,
+        name: t.id,
+        value,
+        title: $$.config.bullet_title_show ? _getTitleText.call($$, t.id, value) : "",
+        ranges: resolvedRanges,
+        targets: targets2,
+        domainMin,
+        domainMax
+      };
+    });
+  },
+  /**
+   * Get the layout shared by all rows. Compute it once per draw and pass it to each row.
+   * @returns {object} Bullet layout
+   * @private
+   */
+  getBulletLayout() {
+    return _getLayout.call(this);
+  },
+  /**
+   * Get the center of the measure of a bullet row, in chart coordinates.
+   * @param {object} d Bullet row data
+   * @returns {Array} x, y coordinate
+   * @private
+   */
+  getBulletMeasureCenter(d) {
+    const { area, offset, measure } = _getRowGeometry.call(this, d, _getLayout.call(this));
+    const [x, y] = "cx" in measure ? [measure.cx, measure.cy] : [measure.x + measure.width / 2, measure.y + measure.height / 2];
+    return [area.left + offset.x + x, area.top + offset.y + y];
+  },
+  /**
+   * Get the positions of the data label of each row, for the data label pipeline.
+   * @returns {function(IDataRow): Array.<Array.<number>>} Point getter: [anchor, measure center]
+   * @private
+   */
+  generateGetBulletPoints() {
+    const $$ = this;
+    let points;
+    return (d) => {
+      if (!points) {
+        const layout = _getLayout.call($$);
+        points = {};
+        layout.rows.forEach((row) => {
+          const { area, offset, label } = _getRowGeometry.call($$, row, layout);
+          const x = area.left + offset.x;
+          const y = area.top + offset.y;
+          points[row.id] = [
+            [x + label.x, y + label.y],
+            [x + label.center.x, y + label.center.y]
+          ];
+        });
+      }
+      return points[d.id];
+    };
+  },
+  /**
+   * Get the geometry of a bullet row. Shared by the SVG and the canvas renderer.
+   * @param {object} d Bullet row data
+   * @param {object} layout Bullet layout from getBulletLayout()
+   * @returns {object} Row geometry, relative to the row origin
+   * @private
+   */
+  getBulletRowGeometry(d, layout) {
+    return _getRowGeometry.call(this, d, layout);
+  }
+});
+
+;// ./src/ChartInternal/shape/bullet.ts
+var shape_bullet_defProp = Object.defineProperty;
+var shape_bullet_defProps = Object.defineProperties;
+var shape_bullet_getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var shape_bullet_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var shape_bullet_hasOwnProp = Object.prototype.hasOwnProperty;
+var shape_bullet_propIsEnum = Object.prototype.propertyIsEnumerable;
+var shape_bullet_defNormalProp = (obj, key, value) => key in obj ? shape_bullet_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var shape_bullet_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (shape_bullet_hasOwnProp.call(b, prop))
+      shape_bullet_defNormalProp(a, prop, b[prop]);
+  if (shape_bullet_getOwnPropSymbols)
+    for (var prop of shape_bullet_getOwnPropSymbols(b)) {
+      if (shape_bullet_propIsEnum.call(b, prop))
+        shape_bullet_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var shape_bullet_spreadProps = (a, b) => shape_bullet_defProps(a, shape_bullet_getOwnPropDescs(b));
+
+
+
+
+
+const axisState = local_local();
+function _upsert(g, tag, cls, before) {
+  const el = g.select(`${tag}.${cls}`);
+  const isNew = el.empty();
+  return [isNew ? g.insert(tag, before).classed(cls, true) : el, isNew];
+}
+function _move($$, el, isNew, withTransition, attrs, fill) {
+  const target = isNew ? el : $$.$T(el, withTransition);
+  Object.keys(attrs).forEach((key) => target.attr(key, attrs[key]));
+  fill !== void 0 && target.style("fill", fill);
+}
+function _drawRow(g, d, layout, withTransition) {
+  var _a, _b;
+  const $$ = this;
+  const { offset, ranges, isDot, measure, color, targets, axis, title } = $$.getBulletRowGeometry(
+    d,
+    layout
+  );
+  const sel = {
+    target: `.${$BULLET.bulletTarget}`,
+    axis: `.${$BULLET.bulletAxis}`
+  };
+  _move($$, g, g.attr("transform") === null, withTransition, {
+    transform: `translate(${offset.x}, ${offset.y})`
+  });
+  const rangeSel = g.selectAll(`.${$BULLET.bulletRange}`).data(ranges);
+  const rangeAttrs = ({ x, y, width, height }) => ({ x, y, width, height });
+  const rangeTheme = (el, { fill, t }) => el.style("--bb-t", fill ? null : t);
+  rangeSel.exit().remove();
+  rangeSel.each(function(range) {
+    const el = src_select(this);
+    _move($$, el, false, withTransition, rangeAttrs(range), range.fill);
+    rangeTheme(el, range);
+  });
+  rangeSel.enter().insert("rect", `.${$BULLET.bulletMeasure}`).attr("class", $BULLET.bulletRange).each(function(range) {
+    const el = src_select(this);
+    _move($$, el, true, withTransition, rangeAttrs(range), range.fill);
+    rangeTheme(el, range);
+  });
+  const measureTag = isDot ? "circle" : "rect";
+  g.selectAll(`.${$BULLET.bulletMeasure}`).filter(function() {
+    return this.tagName.toLowerCase() !== measureTag;
+  }).remove();
+  const [measureEl, isNewMeasure] = _upsert(
+    g,
+    measureTag,
+    $BULLET.bulletMeasure,
+    `${sel.target}, ${sel.axis}`
+  );
+  measureEl.attr("class", [
+    $BULLET.bulletMeasure,
+    $$.generateClass($SHAPE.shape, d.index),
+    $$.generateClass($BULLET.bullet, d.id)
+  ].join("").replace(/\s+/g, " ").trim()).datum(d);
+  _move($$, measureEl, isNewMeasure, withTransition, measure, color);
+  const targetEls = g.selectAll(`line${sel.target}`).nodes();
+  targetEls.slice(targets.length).forEach((el) => el.remove());
+  targets.forEach((target, i) => {
+    const isNewTarget = !targetEls[i];
+    const targetEl = isNewTarget ? g.insert("line", sel.axis).classed($BULLET.bulletTarget, true) : src_select(targetEls[i]);
+    targetEl.datum(d);
+    _move($$, targetEl, isNewTarget, withTransition, target);
+  });
+  let axisEl = g.select(sel.axis);
+  if (axis && !axisEl.empty() && ((_a = axisState.get(axisEl.node())) == null ? void 0 : _a.rotated) !== axis.rotated) {
+    axisEl.remove();
+    axisEl = g.select(sel.axis);
+  }
+  if (axis) {
+    const isNewAxis = axisEl.empty();
+    if (isNewAxis) {
+      axisEl = g.append("g").attr("class", $BULLET.bulletAxis);
+    }
+    if (axis.rotated) {
+      axisEl.attr("transform", null);
+    } else {
+      _move($$, axisEl, isNewAxis, withTransition, {
+        transform: `translate(${axis.x}, ${axis.y})`
+      });
+    }
+    const { key } = axis;
+    if (((_b = axisState.get(axisEl.node())) == null ? void 0 : _b.key) !== key) {
+      (isNewAxis ? axisEl : $$.$T(axisEl, withTransition)).call(
+        (axis.rotated ? axisLeft : axisBottom)(axis.scale).tickValues(axis.ticks).tickFormat(axis.format).tickSizeOuter(0)
+      );
+      axisEl.attr("font-family", null).attr("font-size", null);
+      axisState.set(axisEl.node(), { rotated: axis.rotated, key });
+    }
+  } else {
+    axisEl.remove();
+  }
+  if (title) {
+    const [titleEl, isNewTitle] = _upsert(g, "text", $BULLET.bulletTitle, null);
+    titleEl.text(title.text).style("text-anchor", title.anchor).attr("dy", title.anchor === "end" ? ".35em" : null);
+    _move($$, titleEl, isNewTitle, withTransition, { x: title.x, y: title.y });
+  } else {
+    g.select(`.${$BULLET.bulletTitle}`).remove();
+  }
+}
+/* harmony default export */ var shape_bullet = (shape_bullet_spreadProps(shape_bullet_spreadValues({}, core_bullet), {
+  /**
+   * Initialize bullet
+   * @private
+   */
+  initBullet() {
+    const $$ = this;
+    const { $el } = $$;
+    $el.bullet = $el.main.select(`.${$COMMON.chart}`).append("g").classed($BULLET.chartBullets, true);
+    $$.bindBulletEvent();
+  },
+  /**
+   * Bind events
+   * @private
+   */
+  bindBulletEvent() {
+    const $$ = this;
+    const { $el: { bullet }, config, state } = $$;
+    if (!config.interaction_enabled) {
+      return;
+    }
+    const getTarget = (event) => {
+      var _a, _b;
+      const target = event.target === bullet.node() ? (_b = (_a = state.eventReceiver.rect) == null ? void 0 : _a.node) == null ? void 0 : _b.call(_a) : event.target;
+      if (target && /^(rect|circle|line)$/i.test(target.tagName)) {
+        const datum = src_select(target).datum();
+        if (datum && isObject(datum) && "id" in datum) {
+          state.event = event;
+          return datum;
+        }
+      }
+    };
+    const isTouch = state.inputType === "touch";
+    bullet.on(isTouch ? "touchstart" : "mouseover mousemove", (event) => {
+      const data = getTarget(event);
+      if (data) {
+        $$.showTooltip([$$.addName(data)], $$.$el.svg.node());
+        /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
+      }
+    }, isTouch ? { passive: true } : void 0).on(isTouch ? "touchend" : "mouseout", (event) => {
+      const data = getTarget(event);
+      if (config.interaction_onout) {
+        $$.hideTooltip();
+        $$.setOverOut(false, data);
+      }
+    }).on("click", (event) => {
+      const data = getTarget(event);
+      data && config.data_onclick.bind($$.api)(data, event.target);
+    });
+  },
+  /**
+   * Update targets for bullet
+   * @private
+   */
+  updateTargetsForBullet() {
+    const $$ = this;
+    const { $el } = $$;
+    if (!$el.bullet) {
+      $$.initBullet();
+    }
+    const bulletData = $$.getBulletData();
+    const classChartBullet = (d) => $BULLET.chartBullet + $$.classTarget(d.id);
+    const groups = $el.bullet.selectAll(`.${$BULLET.chartBullet}`).data(bulletData, (d) => d.id);
+    groups.exit().remove();
+    groups.enter().append("g").merge(groups).attr("class", classChartBullet);
+  },
+  /**
+   * Render bullet
+   * @param {boolean} withTransition Whether to transit
+   * @private
+   */
+  redrawBullet(withTransition) {
+    const $$ = this;
+    const { $el: { bullet } } = $$;
+    const layout = $$.getBulletLayout();
+    const { left, top } = layout.area;
+    bullet.attr("transform", `translate(${left}, ${top})`);
+    bullet.selectAll(`.${$BULLET.chartBullet}`).data(layout.rows, (d) => d.id).each(function(d) {
+      _drawRow.call($$, src_select(this), d, layout, withTransition);
+    });
+  }
+}));
+
+;// ./src/config/Options/shape/bullet.ts
+/* harmony default export */ var Options_shape_bullet = ({
+  /**
+   * Set bullet options.<br><br>
+   * The bullet chart (a.k.a. bullet graph) compares a single quantitative measure
+   * against qualitative ranges and an optional comparative target marker.<br>
+   * Each data series renders as one bullet, using the last data value of the series as the measure.<br>
+   * By default the scale of a bullet includes everything drawn and 0, and the measure is drawn from the 0 position to its value: a negative value extends the scale below 0, and its label is placed at the 0 position. Use `bullet.axis.min` and `bullet.axis.max` to set the scale, and to share it between the bullets.<br>
+   * [data.onover](#.data․onover), [data.onout](#.data․onout) and [data.onclick](#.data․onclick) are called with the row of the bullet when its measure or its target markers are hovered or clicked. The range bands are not the data of the row. Use `bullet.rotated` to switch between
+   * horizontal (default) and vertical layouts, and `bullet.type` to render the
+   * measure as a solid bar or as a dot marker.
+   * @name bullet
+   * @memberof Options
+   * @type {object}
+   * @property {object} bullet Bullet object
+   * @property {boolean} [bullet.rotated=false] Set bullet orientation.<br>When `false`, bullets are rendered horizontally (measure grows to the right). When `true`, bullets are rendered vertically (measure grows upward).
+   * @property {string} [bullet.type="bar"] Set how the measure value is rendered.<br>
+   * - **Available type values:**
+   *   - `bar`: render the measure as a solid bar growing from the baseline.
+   *   - `dot`: render the measure as a dot marker positioned at the measure value.
+   * @property {number} [bullet.marker.size=0] Set the dot radius (in px) used when `bullet.type="dot"`. When `0`, the radius is derived from the bullet thickness.
+   * @property {Array|function|object} [bullet.ranges] Set the qualitative range band thresholds.<br>
+   *  - Can be given as:
+   *    - `Array`: shared ascending thresholds applied to every bullet (e.g. `[50, 75, 90]`).
+   *    - `object`: per-data-id thresholds (e.g. `{data1: [50, 75, 90]}`).
+   *    - `Function`: callback `function(id, value) { return [...] }` returning thresholds per bullet.
+   *  - When omitted, three bands are generated automatically from the measure/target domain.
+   * @property {number|Array|function|object} [bullet.target] Set the comparative target marker value.<br>
+   *  - Can be given as a `number` or an `Array` of numbers (shared), an `object` keyed by data id (a number or an Array of numbers), or a `Function` `function(id, value) { return number | number[] }`.
+   *  - Give an `Array` to draw more than one marker for a bullet (e.g. a warning and an error line). All the markers share the same style: `.bb-bullet-target`.
+   * @property {object} [bullet.width] Set the thickness of the measure and the length of the target marker.
+   * @property {number} [bullet.width.ratio=0.35] Set the measure thickness as a ratio (0~1) of the bullet band.
+   * @property {object} [bullet.width.target] Set the target marker length.
+   * @property {number} [bullet.width.target.ratio=0.6] Set the target marker length as a ratio (0~1) of the bullet band.
+   * @property {Array|function} [bullet.range.colors] Set the qualitative range band colors.<br>
+   *  - Can be given as an `Array` of color strings (ordered from the smallest to the largest band) or a `Function` `function(index, length) { return color }`. When omitted, the grayscale of the theme is used: the lightness of the first (smallest) and the last band are the CSS variables `--bb-bullet-range-min` and `--bb-bullet-range-max` of `.bb-chart-bullets` (default `55%` and `90%`, the dark themes use darker ones), and the bands in between are interpolated.
+   * @property {number} [bullet.padding=4] Set the padding (in px) between each bullet band.
+   * @property {boolean} [bullet.axis.show=true] Show or hide the quantitative scale axis drawn under (beside, when rotated) each bullet.
+   * @property {number} [bullet.axis.min] Set the min value of the scale of every bullet. When not given, the scale of each bullet is calculated from its values and ranges, so bullets do not share the scale.<br>
+   *  - Set both `min` and `max` to make the bullets share the same scale.
+   *  - A value out of the scale is drawn up to the end of the axis, and a target out of the scale is not drawn.
+   *  - When the scale does not include 0, the measure is drawn from the end of the axis nearest to 0.
+   *  - When `min` is not less than `max`, both are ignored.
+   * @property {number} [bullet.axis.max] Set the max value of the scale of every bullet. See `bullet.axis.min`.
+   * @property {number} [bullet.axis.tick.count] Set the approximate number of the ticks of the axis. D3 picks round values, so the actual number can differ. When not given, it follows the length of the axis.
+   * @property {Array} [bullet.axis.tick.values] Set the values of the ticks. The values out of the scale are not drawn. It takes precedence over `bullet.axis.tick.count`.
+   * @property {function} [bullet.axis.tick.format] Set the format of the tick labels.<br>
+   *  - **Arguments:**
+   *    - `value {number}`: Tick value
+   * @property {boolean} [bullet.title.show=false] Show or hide the title of each bullet.<br>
+   * The title is drawn on the left of the bullet (under the column, when rotated), so the bullets can be told apart without the legend. A long title takes the room of the bullet.
+   * @property {object|function} [bullet.title.text] Set the text of the title. By default it is the data name (`data.names`), or the data id.<br>
+   *  - Can be given as an `object` keyed by data id, or a `Function` `function(id, value) { return string }`.
+   * @property {boolean} [bullet.label.show=true] Show or hide the measure value label.<br>
+   * The label is the data label of the measure: it is drawn when [data.labels](#.data․labels) is set, and customized by its options (`format`, `colors`, `position`, `centered`, `rotate`, `border`, `image`).
+   * @property {function} [bullet.label.format] Set a formatter for the measure value label.<br>
+   * Takes precedence over `data.labels.format`.<br>
+   * - **Arguments:**
+   *   - `value {number}`: Measure value
+   *   - `id {string}`: Data id
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.BulletChart)
+   * @see [Demo: Bullet axis and negative value](https://naver.github.io/billboard.js/demo/#BulletChartOptions.BulletAxis)
+   * @see [Demo: Bullet target and color by value](https://naver.github.io/billboard.js/demo/#BulletChartOptions.BulletTarget)
+   * @see [Demo: Bullet title](https://naver.github.io/billboard.js/demo/#BulletChartOptions.BulletTitle)
+   * @example
+   *  bullet: {
+   *      // render vertically
+   *      rotated: true,
+   *
+   *      // render the measure as a dot marker
+   *      type: "dot",
+   *      marker: {
+   *          size: 6
+   *      },
+   *
+   *      // qualitative range bands (ascending)
+   *      ranges: [50, 75, 90],
+   *
+   *      // or per data id
+   *      // ranges: {data1: [50, 75, 90]},
+   *
+   *      // or as a callback
+   *      // ranges: function(id, value) { return [50, 75, 90]; },
+   *
+   *      // comparative target marker
+   *      target: 85,
+   *
+   *      // or more than one: [70, 85]
+   *      // target: [70, 85],
+   *
+   *      // measure thickness & target marker length, as a ratio of the bullet band
+   *      width: {
+   *          ratio: 0.35,
+   *          target: {
+   *              ratio: 0.6
+   *          }
+   *      },
+   *
+   *      // range band colors
+   *      range: {
+   *          colors: ["#b3b3b3", "#cccccc", "#e6e6e6"]
+   *      },
+   *
+   *      padding: 4,
+   *
+   *      // quantitative scale axis
+   *      axis: {
+   *          show: true,
+   *
+   *          // the scale of every bullet: the bullets share it
+   *          min: 0,
+   *          max: 100,
+   *
+   *          tick: {
+   *              count: 5,
+   *              // values: [0, 50, 100],
+   *              format: function(value) {
+   *                  return value + "%";
+   *              }
+   *          }
+   *      },
+   *
+   *      // title of each bullet
+   *      title: {
+   *          show: true,
+   *          text: function(id, value) {
+   *              return id.toUpperCase();
+   *          }
+   *      },
+   *
+   *      // the value label is a data label: set data.labels to show it
+   *      // data: {labels: true},
+   *      label: {
+   *          show: true,
+   *          format: function(value, id) {
+   *              return value;
+   *          }
+   *      }
+   *  }
+   */
+  bullet_rotated: false,
+  bullet_type: "bar",
+  bullet_marker_size: 0,
+  bullet_ranges: null,
+  bullet_target: null,
+  bullet_width_ratio: 0.35,
+  bullet_width_target_ratio: 0.6,
+  bullet_range_colors: null,
+  bullet_padding: 4,
+  bullet_axis_show: true,
+  bullet_axis_min: void 0,
+  bullet_axis_max: void 0,
+  bullet_axis_tick_count: void 0,
+  bullet_axis_tick_values: void 0,
+  bullet_axis_tick_format: void 0,
+  bullet_title_show: false,
+  bullet_title_text: void 0,
+  bullet_label_show: true,
+  bullet_label_format: void 0
+});
+
+;// ./src/config/resolver/shape/bullet.ts
+
+
+
+
+
+
+
+let bullet_bullet = () => (extend(ChartInternal.prototype, [shape_bullet]), Options.setOptions([Options_shape_bullet]), registerCustomType("bullet", { hooks: customTypeHooks }), (bullet_bullet = () => "bullet")());
 
 ;// ./src/ChartInternal/shape/core/candlestick.ts
 var candlestick_defProp = Object.defineProperty;
@@ -64138,9 +65627,9 @@ let candlestick_candlestick = () => (extendAxis(
 
 
 /* harmony default export */ function pie() {
-  var value = d3_shape_src_identity, sortValues = src_descending, sort = null, startAngle = d3_shape_src_constant(0), endAngle = d3_shape_src_constant(math_tau), padAngle = d3_shape_src_constant(0);
+  var value = d3_shape_src_identity, sortValues = src_descending, sort = null, startAngle = constant(0), endAngle = constant(math_tau), padAngle = constant(0);
   function pie(data) {
-    var i, n = (data = d3_shape_src_array(data)).length, j, k, sum = 0, index = new Array(n), arcs = new Array(n), a0 = +startAngle.apply(this, arguments), da = Math.min(math_tau, Math.max(-math_tau, endAngle.apply(this, arguments) - a0)), a1, p = Math.min(Math.abs(da) / n, padAngle.apply(this, arguments)), pa = p * (da < 0 ? -1 : 1), v;
+    var i, n = (data = array(data)).length, j, k, sum = 0, index = new Array(n), arcs = new Array(n), a0 = +startAngle.apply(this, arguments), da = Math.min(math_tau, Math.max(-math_tau, endAngle.apply(this, arguments) - a0)), a1, p = Math.min(Math.abs(da) / n, padAngle.apply(this, arguments)), pa = p * (da < 0 ? -1 : 1), v;
     for (i = 0; i < n; ++i) {
       if ((v = arcs[index[i] = i] = +value(data[i], i, data)) > 0) {
         sum += v;
@@ -64165,7 +65654,7 @@ let candlestick_candlestick = () => (extendAxis(
     return arcs;
   }
   pie.value = function(_) {
-    return arguments.length ? (value = typeof _ === "function" ? _ : d3_shape_src_constant(+_), pie) : value;
+    return arguments.length ? (value = typeof _ === "function" ? _ : constant(+_), pie) : value;
   };
   pie.sortValues = function(_) {
     return arguments.length ? (sortValues = _, sort = null, pie) : sortValues;
@@ -64174,13 +65663,13 @@ let candlestick_candlestick = () => (extendAxis(
     return arguments.length ? (sort = _, sortValues = null, pie) : sort;
   };
   pie.startAngle = function(_) {
-    return arguments.length ? (startAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), pie) : startAngle;
+    return arguments.length ? (startAngle = typeof _ === "function" ? _ : constant(+_), pie) : startAngle;
   };
   pie.endAngle = function(_) {
-    return arguments.length ? (endAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), pie) : endAngle;
+    return arguments.length ? (endAngle = typeof _ === "function" ? _ : constant(+_), pie) : endAngle;
   };
   pie.padAngle = function(_) {
-    return arguments.length ? (padAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), pie) : padAngle;
+    return arguments.length ? (padAngle = typeof _ === "function" ? _ : constant(+_), pie) : padAngle;
   };
   return pie;
 }
@@ -64223,7 +65712,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
   };
 }
 /* harmony default export */ function src_arc() {
-  var innerRadius = arcInnerRadius, outerRadius = arcOuterRadius, cornerRadius = d3_shape_src_constant(0), padRadius = null, startAngle = arcStartAngle, endAngle = arcEndAngle, padAngle = arcPadAngle, context = null, path = withPath(arc);
+  var innerRadius = arcInnerRadius, outerRadius = arcOuterRadius, cornerRadius = constant(0), padRadius = null, startAngle = arcStartAngle, endAngle = arcEndAngle, padAngle = arcPadAngle, context = null, path = withPath(arc);
   function arc() {
     var buffer, r, r0 = +innerRadius.apply(this, arguments), r1 = +outerRadius.apply(this, arguments), a0 = startAngle.apply(this, arguments) - halfPi, a1 = endAngle.apply(this, arguments) - halfPi, da = math_abs(a1 - a0), cw = a1 > a0;
     if (!context) context = buffer = path();
@@ -64291,25 +65780,25 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     return [cos(a) * r, sin(a) * r];
   };
   arc.innerRadius = function(_) {
-    return arguments.length ? (innerRadius = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : innerRadius;
+    return arguments.length ? (innerRadius = typeof _ === "function" ? _ : constant(+_), arc) : innerRadius;
   };
   arc.outerRadius = function(_) {
-    return arguments.length ? (outerRadius = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : outerRadius;
+    return arguments.length ? (outerRadius = typeof _ === "function" ? _ : constant(+_), arc) : outerRadius;
   };
   arc.cornerRadius = function(_) {
-    return arguments.length ? (cornerRadius = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : cornerRadius;
+    return arguments.length ? (cornerRadius = typeof _ === "function" ? _ : constant(+_), arc) : cornerRadius;
   };
   arc.padRadius = function(_) {
-    return arguments.length ? (padRadius = _ == null ? null : typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : padRadius;
+    return arguments.length ? (padRadius = _ == null ? null : typeof _ === "function" ? _ : constant(+_), arc) : padRadius;
   };
   arc.startAngle = function(_) {
-    return arguments.length ? (startAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : startAngle;
+    return arguments.length ? (startAngle = typeof _ === "function" ? _ : constant(+_), arc) : startAngle;
   };
   arc.endAngle = function(_) {
-    return arguments.length ? (endAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : endAngle;
+    return arguments.length ? (endAngle = typeof _ === "function" ? _ : constant(+_), arc) : endAngle;
   };
   arc.padAngle = function(_) {
-    return arguments.length ? (padAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : padAngle;
+    return arguments.length ? (padAngle = typeof _ === "function" ? _ : constant(+_), arc) : padAngle;
   };
   arc.context = function(_) {
     return arguments.length ? (context = _ == null ? null : _, arc) : context;
@@ -65392,7 +66881,7 @@ function _getAttrTweenFn(fn) {
 
 
 function extendArc(module, option) {
-  object_extend(ChartInternal.prototype, [shape_arc, core_point].concat(module || []));
+  extend(ChartInternal.prototype, [shape_arc, core_point].concat(module || []));
   Options.setOptions([common_point].concat(option || []));
 }
 
@@ -65420,6 +66909,7 @@ var funnel_spreadValues = (a, b) => {
     }
   return a;
 };
+
 
 
 
@@ -65543,7 +67033,7 @@ function _getSplineClipPath() {
   const isRotated = $$.config.funnel_rotated;
   const { width, height } = _getSize.call($$, true);
   const neck = _getNeckSize.call($$, { width, height });
-  const lineGen = src_line().x((d) => d[0]).y((d) => d[1]).curve(curve_linear);
+  const lineGen = src_line().x((d) => d[0]).y((d) => d[1]).curve(linear);
   const neckHalf = (isRotated ? height - neck.width : width - neck.width) / 2;
   const bodySize = isRotated ? width - neck.height : height - neck.height;
   const edge1 = _generateSmoothEdgePoints(
@@ -65577,7 +67067,51 @@ function _getSplineClipPath() {
   const path2 = ((_a = lineGen(edge2)) == null ? void 0 : _a.replace(/^M/, "L")) || "";
   return isRotated ? `${path1}${path2}z` : `M0,0${path1.replace(/^M/, "L")}${path2}z`;
 }
+const funnel_customTypeHooks = {
+  // the label is not drawn with the color of the series
+  themeTextColor: true,
+  // funnel is drawn by svg only: canvas mode falls back to it, and warns with this
+  canvasUnsupported: "funnel chart",
+  // the data of the types that are left is transformed again after the unload
+  afterUnload($$) {
+    $$.updateFunnel($$.data.targets);
+  },
+  // the data labels are of the values, as for the type of the axis
+  labelData($$, d) {
+    return d.values.filter((v) => isNumber(v.value) || Boolean(v.value));
+  },
+  // the pre-calculated center x is in points[2]
+  // the current position is kept when there are no points (during the hide transition)
+  textX($$, points, d, textElement, labelDimension) {
+    var _a, _b;
+    if (!points) {
+      return getElementPos(textElement, "x");
+    }
+    return ((_b = (_a = points[2]) == null ? void 0 : _a[0]) != null ? _b : points[0][0]) + $$.getCenteredTextPos(d, points, textElement, "x", labelDimension) + getTextPos.call($$, d, "x");
+  },
+  // the pre-calculated center y is in points[2], and it is kept as well without points
+  textY($$, points, d, textElement, rect, labelDimension) {
+    var _a, _b;
+    if (!points) {
+      return getElementPos(textElement, "y");
+    }
+    let yPos = ((_b = (_a = points[2]) == null ? void 0 : _a[1]) != null ? _b : points[0][1]) + rect.height / 2 - 3;
+    if (!$$.config.axis_rotated) {
+      yPos += $$.getCenteredTextPos(d, points, textElement, "y", labelDimension);
+    }
+    return yPos + getTextPos.call($$, d, "y");
+  }
+};
 /* harmony default export */ var funnel = ({
+  /**
+   * Whether the data belongs to the funnel type.
+   * @param {object} d Data object
+   * @returns {boolean}
+   * @private
+   */
+  isFunnelType(d) {
+    return this.isTypeOf(d, "funnel");
+  },
   /**
    * Initialize funnel
    * @private
@@ -65634,7 +67168,7 @@ function _getSplineClipPath() {
       $$.initFunnel();
     }
     const classChartFunnel = $$.getChartClass("Funnel");
-    const classFunnel = $$.getClass("funnel", true);
+    const classFunnel = $$.getClass("funnel", true, true);
     const targets = _getFunnelData.call($$, t.filter($$.isFunnelType.bind($$)));
     const mainFunnelUpdate = $$.filterNullish(targets);
     const mainFunnel = funnel.selectAll(`.${$FUNNEL.chartFunnel}`).data(mainFunnelUpdate);
@@ -65746,7 +67280,10 @@ function _getSplineClipPath() {
 
 
 
-let funnel_funnel = () => (extendArc([funnel], [shape_funnel]), (funnel_funnel = () => TYPE.FUNNEL)());
+
+
+let funnel_funnel = () => (extendArc([funnel], [shape_funnel]), // the classes of the type are in the map of the classes only when its module is there
+Object.assign(config_classes, $FUNNEL), registerCustomType("funnel", { hooks: funnel_customTypeHooks }), (funnel_funnel = () => TYPE.FUNNEL)());
 
 ;// ./src/ChartInternal/shape/gauge.ts
 
@@ -66995,7 +68532,7 @@ function constantZero() {
 
 
 
-/* harmony default export */ function treemap() {
+/* harmony default export */ function src_treemap() {
   var tile = squarify, round = false, dx = 1, dy = 1, paddingStack = [0], paddingInner = constantZero, paddingTop = constantZero, paddingRight = constantZero, paddingBottom = constantZero, paddingLeft = constantZero;
   function treemap(root) {
     root.x0 = root.y0 = 0;
@@ -67381,7 +68918,7 @@ function convertDataToTreemapData(data) {
    * @private
    */
   initTreemapLayout() {
-    this.treemap = treemap().tile(this.getTreemapTile());
+    this.treemap = src_treemap().tile(this.getTreemapTile());
   },
   /**
    * Get tiling function
@@ -67714,6 +69251,7 @@ let treemap_treemap = () => (extendAxis([shape_treemap], [Options_shape_treemap]
 
 
 
+
 ;// ./src/core.ts
 
 
@@ -67726,7 +69264,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.1.3-nightly-20261026010805",
+  version: "4.1.4-nightly-20261112004457",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
@@ -67930,14 +69468,32 @@ const bb = {
 
 
 
+
+
+
+
+
+
+
+
+
+
 Object.keys(shape_namespaceObject).forEach((v) => shape_namespaceObject[v]());
 Object.keys(interaction_namespaceObject).forEach((v) => interaction_namespaceObject[v]());
 exportApi();
 flow_flow();
-grid_grid();
+extend(ChartInternal.prototype, flow);
+resolver_grid_grid();
+registerCanvasFeature("grid", grid);
+extend(ChartInternal.prototype, subchart);
+registerCanvasFeature("subchart", subchartDraw);
+extend(ChartInternal.prototype, canvas_selection);
+registerCanvasFeature("selection", selectionDraw);
 regions_regions();
 category_category();
 canvas();
+registerCustomType("bullet", { canvas: bullet });
+registerCanvasType("treemap", treemap);
 
 
 
