@@ -94,6 +94,8 @@ describe("ESM build", function() {
                     
                     } else if (v === "treemap") {
                         path = chart.$.main.selectAll("rect").size();
+                    } else if (v === "bullet") {
+                        path = chart.internal.$el.bullet.selectAll("rect").size();
                     } else {
                         // donut, gauge, pie
                         path = chart.$.arc.selectAll("path").attr("d");

@@ -58,6 +58,45 @@ $font-family: Helvetica, Arial, sans-serif, "nanumgothic", "Dotum";
 	}
 }
 
+/*-- Bullet --*/
+.bb-chart-bullets {
+	// darker bands, so that the data labels and the axis (light on dark) stay readable
+	--bb-bullet-range-min: 16%;
+	--bb-bullet-range-max: 34%;
+
+	.bb-bullet-range {
+		stroke: none;
+		fill: hsl(0, 0%, calc(var(--bb-bullet-range-min) + var(--bb-t, 0) * (var(--bb-bullet-range-max) - var(--bb-bullet-range-min))));
+	}
+
+	.bb-bullet-target {
+		stroke: #fff;
+		stroke-width: 2px;
+	}
+
+	.bb-bullet-title {
+		font-size: 11px;
+		fill: #fff;
+	}
+
+	.bb-bullet-axis {
+		shape-rendering: crispEdges;
+		font-size: 10px;
+
+		text {
+			fill: #fff;
+		}
+
+		path, line {
+			stroke: #fff;
+		}
+	}
+
+	+ .bb-chart-texts text {
+		fill: #fff;
+	}
+}
+
 /*-- Axis --*/
 .bb-axis {
     shape-rendering: crispEdges;

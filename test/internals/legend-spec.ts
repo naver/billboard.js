@@ -1243,4 +1243,70 @@ describe("LEGEND", () => {
 			});
 		});
 	});
+
+	describe("legend text position of the canvas mode", () => {
+		// distance of the text from the top of each legend item
+		const offsets = (id: string, isCanvas: boolean) =>
+			Array.from(document.querySelectorAll(`${id} .bb-legend-item`)).map((item: Element) => {
+				const textEl = item.querySelector(isCanvas ? ".bb-legend-item-title" : "text") as Element;
+				const range = document.createRange();
+
+				range.selectNodeContents(textEl);
+
+				const text = (isCanvas ? range : textEl).getBoundingClientRect();
+				// the box of the svg item grows with its text: its event rect is the item itself
+				const top = (isCanvas ? item : item.querySelector(".bb-legend-item-event") as Element)
+					.getBoundingClientRect().top;
+
+				return {top: text.top - top, bottom: text.bottom - top};
+			});
+		const layouts = {
+			bottom: {position: "bottom"},
+			right: {position: "right"},
+			inset: {position: "inset", inset: {anchor: "top-left", x: 10, y: 10}},
+			"bottom, equally": {position: "bottom", equally: true}
+		};
+
+		["bar", "bullet"].forEach(type => {
+			Object.keys(layouts).forEach(name => {
+				[12, 16].forEach(fontSize => {
+					it(`should place the text where the SVG legend has it (${type}, ${name}, ${fontSize}px)`, () => {
+						// the test stylesheet sets the size of the svg texts: give both modes the same size
+						const style = document.createElement("style");
+
+						// (the canvas legend measures its items with svg texts)
+						style.textContent = `
+							#legend-svg .bb-legend-item text,
+							#legend-canvas .bb-legend-item text,
+							#legend-canvas .bb-legend-item { font-size: ${fontSize}px; }
+						`;
+						document.head.appendChild(style);
+
+						const generate = (bindto, mode) => util.generate({
+							bindto,
+							render: {mode},
+							data: {columns: [["data1", 30], ["data2", 20], ["data3", 10]], type},
+							legend: layouts[name],
+							size: {width: 320, height: 240}
+						});
+						const svgChart = generate("#legend-svg", "svg");
+						const canvasChart = generate("#legend-canvas", "canvas");
+						const svg = offsets("#legend-svg", false);
+						const canvas = offsets("#legend-canvas", true);
+
+						svgChart.destroy();
+						canvasChart.destroy();
+						style.remove();
+
+						expect(canvas.length).to.be.equal(3);
+						expect(canvas.length).to.be.equal(svg.length);
+						canvas.forEach((v, i) => {
+							expect(v.top).to.be.closeTo(svg[i].top, 0.5);
+							expect(v.bottom).to.be.closeTo(svg[i].bottom, 0.5);
+						});
+					});
+				});
+			});
+		});
+	});
 });

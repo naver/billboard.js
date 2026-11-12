@@ -3,20 +3,17 @@
  * billboard.js project is licensed under the MIT license
  */
 import type {AxisTickFormat, AxisTickValue} from "../../types/axis";
-import type {GridLineOptions, RegionOptions} from "../../types/options";
+import type {RegionOptions} from "../../types/options";
 import type {AxisType} from "../../types/types";
 import {AXIS_TICK_PADDING, AXIS_TICK_SIZE} from "../config/const";
 import {
 	getAdditionalAxisScale,
 	getAdditionalAxisTickFormat,
 	getAdditionalAxisTickValues,
-	getSubXTickLineValues,
-	getSubXTickValues,
 	getXScale,
 	getXTickLinePosition,
 	getXTickLineValues,
 	getXTickValues,
-	getYGridTickValues,
 	getYTickValues,
 	isSameTickValue,
 	normalizeXValue,
@@ -24,12 +21,10 @@ import {
 	type YAxisId
 } from "./axisTicks";
 import CanvasEngine from "./CanvasEngine";
-import CanvasPainter, {CanvasRect, type CanvasStyle} from "./CanvasPainter";
-import CanvasTheme, {type CanvasGridLineThemeStyle} from "./CanvasTheme";
+import CanvasPainter, {CanvasRect} from "./CanvasPainter";
+import CanvasTheme from "./CanvasTheme";
 import {getFontSize} from "./util";
 
-type GridLine = Partial<GridLineOptions>;
-type GridAxis = "x" | "y";
 type AdditionalAxisOptions = {
 	scale: any,
 	ticks: AxisTickValue[],
@@ -54,7 +49,7 @@ const X_AXIS_TICK_TEXT_VERTICAL_CLIP_PADDING = 15;
  * @returns {number} Text direction multiplier
  * @private
  */
-function getXTickTextDirection(isRotated: boolean): number {
+export function getXTickTextDirection(isRotated: boolean): number {
 	return isRotated ? -1 : 1;
 }
 
@@ -70,57 +65,6 @@ function getYTickTextDirection(isRotated: boolean, isY2: boolean): number {
 }
 
 /**
- * Get tick formatter for the canvas subchart y/y2 axis.
- * @param {object} $$ ChartInternal context
- * @param {string} id Axis id
- * @returns {function} Tick formatter
- * @private
- */
-function getSubYTickFormat($$, id: YAxisId): AxisTickFormat {
-	const subAxisId = id === "y2" ? "subY2" : "subY";
-	const axisFormat = $$.axis?.[subAxisId]?.tickFormat?.();
-	const configFormat = $$.config[`subchart_axis_${id}_tick_format`] ||
-		$$.config[`axis_${id}_tick_format`];
-
-	if (axisFormat) {
-		return axisFormat;
-	}
-
-	return typeof configFormat === "function" ? configFormat.bind($$.api) : (v => v);
-}
-
-/**
- * Convert resolved grid line style to painter line style.
- * @param {object} style Grid line style
- * @returns {object|undefined} Canvas line style
- * @private
- */
-function getGridLineCanvasStyle(style?: CanvasGridLineThemeStyle): CanvasStyle | undefined {
-	return style ?
-		{
-			stroke: style.lineColor,
-			lineWidth: style.lineWidth,
-			lineDash: style.dashArray
-		} :
-		undefined;
-}
-
-/**
- * Convert resolved grid text style to painter text style.
- * @param {object} style Grid text style
- * @returns {object|undefined} Canvas text style
- * @private
- */
-function getGridTextCanvasStyle(style?: CanvasGridLineThemeStyle): CanvasStyle | undefined {
-	return style ?
-		{
-			fill: style.labelColor,
-			font: style.labelFont
-		} :
-		undefined;
-}
-
-/**
  * Get horizontal x-axis clip rect with small text overflow tolerance.
  * @param {object} margin Chart margin
  * @param {number} width Plot width
@@ -128,7 +72,7 @@ function getGridTextCanvasStyle(style?: CanvasGridLineThemeStyle): CanvasStyle |
  * @returns {object} Clip rectangle
  * @private
  */
-function getHorizontalXAxisClipRect(margin, width: number, height: number): CanvasRect {
+export function getHorizontalXAxisClipRect(margin, width: number, height: number): CanvasRect {
 	return {
 		x: margin.left - X_AXIS_TICK_TEXT_HORIZONTAL_CLIP_PADDING,
 		y: 0,
@@ -145,7 +89,7 @@ function getHorizontalXAxisClipRect(margin, width: number, height: number): Canv
  * @returns {object} Clip rectangle
  * @private
  */
-function getRotatedXAxisClipRect(margin, width: number, height: number): CanvasRect {
+export function getRotatedXAxisClipRect(margin, width: number, height: number): CanvasRect {
 	return {
 		x: 0,
 		y: margin.top - X_AXIS_TICK_TEXT_VERTICAL_CLIP_PADDING,
@@ -273,7 +217,7 @@ function formatTick(format: AxisTickFormat, tick: AxisTickValue): string {
  * @returns {string} Canvas font shorthand
  * @private
  */
-function getAxisTickFont(axisStyle, id: AxisType): string {
+export function getAxisTickFont(axisStyle, id: AxisType): string {
 	return axisStyle[`${id}TickFont`] || axisStyle.labelFont;
 }
 
@@ -284,7 +228,7 @@ function getAxisTickFont(axisStyle, id: AxisType): string {
  * @returns {number} Line height
  * @private
  */
-function getXTickTextLineHeight(painter: CanvasPainter, fontSize: number): number {
+export function getXTickTextLineHeight(painter: CanvasPainter, fontSize: number): number {
 	const metrics = painter.measureText("0");
 	const fontBoxHeight = (metrics.fontBoundingBoxAscent || 0) +
 		(metrics.fontBoundingBoxDescent || 0);
@@ -397,7 +341,8 @@ function splitTickTextByWidth(text: string, width: number, painter: CanvasPainte
  * @returns {number} Max tick text width
  * @private
  */
-function getXTickTextWidth($$, ticks: AxisTickValue[], isRotated: boolean, targetScale): number {
+export function getXTickTextWidth($$, ticks: AxisTickValue[], isRotated: boolean,
+	targetScale): number {
 	const configured = $$.config.axis_x_tick_width;
 
 	if (configured && configured > 0) {
@@ -431,9 +376,9 @@ function getXTickTextWidth($$, ticks: AxisTickValue[], isRotated: boolean, targe
  * @returns {Array} Tick text lines
  * @private
  */
-function getXTickTextLines($$, painter: CanvasPainter, format: AxisTickFormat, tick: AxisTickValue,
-	ticks: AxisTickValue[] = [], isRotated = false, targetScale = getXScale($$),
-	maxWidth?: number): string[] {
+export function getXTickTextLines($$, painter: CanvasPainter, format: AxisTickFormat,
+	tick: AxisTickValue, ticks: AxisTickValue[] = [], isRotated = false,
+	targetScale = getXScale($$), maxWidth?: number): string[] {
 	const value = format ? format(tick) : tick;
 
 	if (value == null) {
@@ -518,7 +463,7 @@ function getTitleTextPosition(position: string | undefined,
  * @returns {boolean} Whether coordinate is finite
  * @private
  */
-function isDrawable(value: number): boolean {
+export function isDrawable(value: number): boolean {
 	return Number.isFinite(value);
 }
 
@@ -530,7 +475,7 @@ function isDrawable(value: number): boolean {
  * @returns {boolean} Whether coordinate is finite and in range
  * @private
  */
-function isInAxisRange(value: number, start: number, end: number): boolean {
+export function isInAxisRange(value: number, start: number, end: number): boolean {
 	return isDrawable(value) &&
 		value >= Math.min(start, end) &&
 		value <= Math.max(start, end);
@@ -542,7 +487,7 @@ function isInAxisRange(value: number, start: number, end: number): boolean {
  * @returns {number} Outer tick direction
  * @private
  */
-function getXOuterTickDirection(isRotated: boolean): number {
+export function getXOuterTickDirection(isRotated: boolean): number {
 	return isRotated ? -1 : 1;
 }
 
@@ -570,7 +515,7 @@ function getYOuterTickDirection(config, isRotated: boolean, isY2: boolean): numb
  * @returns {number} Pixel coordinate relative to plot area
  * @private
  */
-function getXPosition($$, value: AxisTickValue, targetScale = getXScale($$)): number {
+export function getXPosition($$, value: AxisTickValue, targetScale = getXScale($$)): number {
 	return targetScale(normalizeXValue($$, value));
 }
 
@@ -640,47 +585,6 @@ function getYPosition($$, value: AxisTickValue, axis: YAxisId = "y"): number {
 }
 
 /**
- * Get a text position along a grid line.
- * @param {string} position Grid label position
- * @param {number} start Start coordinate
- * @param {number} end End coordinate
- * @returns {number} Label coordinate
- * @private
- */
-function getLineTextPosition(position: string | undefined, start: number, end: number): number {
-	if (position === "start") {
-		return start + 4;
-	}
-
-	if (position === "middle") {
-		return (start + end) / 2;
-	}
-
-	return end - 4;
-}
-
-/**
- * Get a text position for labels drawn with SVG-compatible rotate(-90).
- * @param {string} position Grid label position
- * @param {number} start Start coordinate
- * @param {number} end End coordinate
- * @returns {number} Label coordinate
- * @private
- */
-function getRotatedLineTextPosition(position: string | undefined, start: number,
-	end: number): number {
-	if (position === "start") {
-		return end - 4;
-	}
-
-	if (position === "middle") {
-		return (start + end) / 2;
-	}
-
-	return start + 4;
-}
-
-/**
  * Get global region rectangle.
  * @param {object} $$ ChartInternal context
  * @param {object} region Region option
@@ -722,7 +626,7 @@ function getRegionRect($$, region: RegionOptions): CanvasRect | null {
  * @private
  */
 export default class CanvasAxisRenderer {
-	private painter: CanvasPainter;
+	painter: CanvasPainter;
 
 	/**
 	 * Constructor.
@@ -732,7 +636,7 @@ export default class CanvasAxisRenderer {
 	 */
 	constructor(
 		private engine: CanvasEngine,
-		private theme: CanvasTheme
+		public theme: CanvasTheme
 	) {
 		this.painter = new CanvasPainter(engine.ctx);
 	}
@@ -763,7 +667,8 @@ export default class CanvasAxisRenderer {
 	 */
 	draw($$): void {
 		this.drawRegions($$);
-		this.drawGrid($$);
+		// the grid lines are drawn by the canvas part of grid(): without the module there are none
+		$$.getCanvasFeature?.("grid")?.draw?.call($$, this);
 		this.drawAxis($$);
 	}
 
@@ -780,215 +685,6 @@ export default class CanvasAxisRenderer {
 		config.axis_y2_show && $$.scale.y2 && this.drawYAxis($$, "y2");
 		this.drawAdditionalAxes($$);
 		this.drawAxisLabels($$);
-	}
-
-	/**
-	 * Draw the canvas subchart x axis.
-	 * @param {object} $$ ChartInternal instance
-	 * @private
-	 */
-	drawSubXAxis($$): void {
-		const {ctx, painter, theme: {style: {axis}}} = this;
-		const {
-			config,
-			format,
-			scale,
-			state: {current, margin2, width2, height2}
-		} = $$;
-
-		if (
-			!config.subchart_show ||
-			!config.subchart_axis_x_show ||
-			!scale.subX ||
-			width2 <= 0 ||
-			height2 <= 0
-		) {
-			return;
-		}
-
-		const isRotated = config.axis_rotated;
-		const x = painter.crisp(margin2.left, axis.lineWidth);
-		const y = painter.crisp(margin2.top + height2, axis.lineWidth);
-		const x1 = margin2.left;
-		const x2 = margin2.left + width2;
-		const y1 = margin2.top;
-		const y2 = margin2.top + height2;
-		const rangeStart = isRotated ? y1 : x1;
-		const rangeEnd = isRotated ? y2 : x2;
-		const ticks = getSubXTickValues($$);
-		const lineTicks = getSubXTickLineValues($$, ticks, axis.tickWidth);
-		const outerTick = config.subchart_axis_x_tick_outer ?? config.axis_x_tick_outer;
-		const tickDirection = isRotated ?
-			(config.axis_x_tick_inner ? 1 : -1) :
-			(config.axis_x_tick_inner ? -1 : 1);
-		const outerTickDirection = getXOuterTickDirection(isRotated);
-		const tickTextDirection = getXTickTextDirection(isRotated);
-		const tickTextPosition = config.axis_x_tick_text_position;
-		const tickRotate = !isRotated ? ($$.getAxisTickRotate?.("x") || 0) : 0;
-		const tickFormat = format.subXAxisTick || $$.axis?.getXAxisTickFormat?.(true);
-
-		painter.clipRect(
-			isRotated ? getRotatedXAxisClipRect(margin2, current.width, height2) : {
-				...getHorizontalXAxisClipRect(
-					margin2,
-					width2,
-					current.height - margin2.top
-				),
-				y: margin2.top
-			},
-			() => {
-				ctx.globalAlpha = 1;
-				ctx.strokeStyle = axis.lineColor;
-				ctx.lineWidth = axis.lineWidth;
-				ctx.setLineDash([]);
-
-				painter.strokePath(() => {
-					if (isRotated) {
-						painter.traceLine(x, y1, x, y2);
-					} else {
-						painter.traceLine(x1, y, x2, y);
-					}
-
-					if (outerTick) {
-						if (isRotated) {
-							painter.traceLine(x, y1, x + (AXIS_TICK_SIZE * outerTickDirection), y1);
-							painter.traceLine(x, y2, x + (AXIS_TICK_SIZE * outerTickDirection), y2);
-						} else {
-							painter.traceLine(x1, y, x1, y + (AXIS_TICK_SIZE * outerTickDirection));
-							painter.traceLine(x2, y, x2, y + (AXIS_TICK_SIZE * outerTickDirection));
-						}
-					}
-				});
-
-				const tickFont = getAxisTickFont(axis, "x");
-
-				ctx.font = tickFont;
-				ctx.fillStyle = axis.labelColor;
-				ctx.textAlign = isRotated ? (tickTextDirection > 0 ? "left" : "right") : "center";
-				ctx.textBaseline = isRotated ?
-					"middle" :
-					(tickTextDirection > 0 ? "top" : "bottom");
-				ctx.strokeStyle = axis.tickColor;
-				ctx.lineWidth = axis.tickWidth;
-
-				// invariant across ticks: measure/resolve once per draw pass
-				const lineHeight = getXTickTextLineHeight(painter, getFontSize(tickFont));
-				const tickTextWidth = getXTickTextWidth($$, ticks, isRotated, scale.subX);
-
-				if (config.subchart_axis_x_tick_show) {
-					for (const tick of lineTicks) {
-						const tickPos = scale.subX(normalizeXValue($$, tick));
-						const tx = margin2.left + tickPos;
-						const ty = margin2.top + tickPos;
-						const pos = isRotated ? ty : tx;
-
-						if (!isInAxisRange(pos, rangeStart, rangeEnd)) {
-							continue;
-						}
-
-						painter.strokePath(() => {
-							if (isRotated) {
-								painter.traceLine(x, ty, x + (AXIS_TICK_SIZE * tickDirection), ty);
-							} else {
-								painter.traceLine(tx, y, tx, y + (AXIS_TICK_SIZE * tickDirection));
-							}
-						});
-					}
-				}
-
-				for (const tick of ticks) {
-					const tickPos = scale.subX(normalizeXValue($$, tick));
-					const tx = margin2.left + tickPos;
-					const ty = margin2.top + tickPos;
-					const pos = isRotated ? ty : tx;
-
-					if (!isInAxisRange(pos, rangeStart, rangeEnd)) {
-						continue;
-					}
-
-					if (!config.subchart_axis_x_tick_text_show) {
-						continue;
-					}
-
-					const lines = getXTickTextLines(
-						$$,
-						painter,
-						tickFormat,
-						tick,
-						ticks,
-						isRotated,
-						scale.subX,
-						tickTextWidth
-					);
-					let textX;
-					let textY;
-
-					if (isRotated) {
-						textX = x + ((AXIS_TICK_SIZE + AXIS_TICK_PADDING) * tickTextDirection) +
-							(tickTextPosition.x || 0);
-						textY = ty + (tickTextPosition.y || 0);
-						ctx.textAlign = tickTextDirection > 0 ? "left" : "right";
-						ctx.textBaseline = "middle";
-					} else {
-						textX = tx + (tickTextPosition.x || 0);
-						textY = y + ((AXIS_TICK_SIZE + AXIS_TICK_PADDING) * tickTextDirection) +
-							(tickTextPosition.y || 0);
-						ctx.textAlign = tickRotate ? (tickRotate > 0 ? "left" : "right") : "center";
-						ctx.textBaseline = tickTextDirection > 0 ? "top" : "bottom";
-					}
-
-					painter.withState(textCtx => {
-						textCtx.translate(textX, textY);
-						tickRotate && textCtx.rotate(tickRotate * Math.PI / 180);
-
-						lines.forEach((line, i) => {
-							textCtx.fillText(line, 0, i * lineHeight);
-						});
-					});
-				}
-			}
-		);
-	}
-
-	/**
-	 * Draw the canvas subchart y/y2 axes.
-	 * @param {object} $$ ChartInternal instance
-	 * @private
-	 */
-	drawSubYAxes($$): void {
-		const {
-			config,
-			scale,
-			state: {margin2, width2, height2}
-		} = $$;
-
-		if (!config.subchart_show || width2 <= 0 || height2 <= 0) {
-			return;
-		}
-
-		(["y", "y2"] as YAxisId[]).forEach(id => {
-			const subScale = id === "y2" ? scale.subY2 : scale.subY;
-
-			if (!config[`subchart_axis_${id}_show`] || !subScale) {
-				return;
-			}
-
-			this.drawYAxis($$, id, {
-				scale: subScale,
-				ticks: getYTickValues($$, id, undefined, true, subScale, `subchart_axis_${id}`),
-				format: getSubYTickFormat($$, id),
-				index: 0,
-				outerTick: config[`subchart_axis_${id}_tick_outer`] ??
-					config[`axis_${id}_tick_outer`],
-				margin: margin2,
-				width: width2,
-				height: height2,
-				prefix: `subchart_axis_${id}`,
-				tickShow: config[`subchart_axis_${id}_tick_show`],
-				tickTextShow: config[`subchart_axis_${id}_tick_text_show`],
-				tickTextPosition: config[`axis_${id}_tick_text_position`]
-			});
-		});
 	}
 
 	/**
@@ -1087,95 +783,6 @@ export default class CanvasAxisRenderer {
 	}
 
 	/**
-	 * Draw visible grid lines.
-	 * @param {object} $$ ChartInternal instance
-	 * @private
-	 */
-	drawGrid($$): void {
-		const {ctx, painter, theme: {style: {grid}}} = this;
-		const {config, scale, state: {height, margin, width}} = $$;
-
-		if (!grid.lineColor) {
-			return;
-		}
-
-		const isRotated = config.axis_rotated;
-		const x1 = margin.left;
-		const x2 = margin.left + width;
-		const y1 = margin.top;
-		const y2 = margin.top + height;
-
-		painter.withState(() => {
-			ctx.strokeStyle = grid.lineColor;
-			ctx.lineWidth = grid.lineWidth;
-			grid.dashArray.length && ctx.setLineDash(grid.dashArray);
-
-			if (config.grid_x_show && scale.x) {
-				painter.strokePath(() => {
-					for (const tick of getXTickValues($$)) {
-						const pos = getXPosition($$, tick);
-
-						if (!isDrawable(pos)) {
-							continue;
-						}
-
-						if (isRotated) {
-							painter.traceCrispLine(
-								x1,
-								margin.top + pos,
-								x2,
-								margin.top + pos,
-								grid.lineWidth
-							);
-						} else {
-							painter.traceCrispLine(
-								margin.left + pos,
-								y1,
-								margin.left + pos,
-								y2,
-								grid.lineWidth
-							);
-						}
-					}
-				});
-			}
-
-			if (config.grid_y_show && scale.y) {
-				painter.strokePath(() => {
-					for (const tick of getYGridTickValues($$)) {
-						const value = normalizeYValue($$, tick);
-						const pos = scale.y(value);
-
-						if (!isDrawable(pos)) {
-							continue;
-						}
-
-						if (isRotated) {
-							painter.traceCrispLine(
-								margin.left + pos,
-								y1,
-								margin.left + pos,
-								y2,
-								grid.lineWidth
-							);
-						} else {
-							painter.traceCrispLine(
-								x1,
-								margin.top + pos,
-								x2,
-								margin.top + pos,
-								grid.lineWidth
-							);
-						}
-					}
-				});
-			}
-
-			!config.grid_lines_front && this.drawGridLines($$);
-		});
-	}
-
-	/**
 	 * Draw configured global regions.
 	 * @param {object} $$ ChartInternal instance
 	 * @private
@@ -1233,164 +840,6 @@ export default class CanvasAxisRenderer {
 					});
 				}
 			}
-		});
-	}
-
-	/**
-	 * Draw configured x/y grid lines and labels.
-	 * @param {object} $$ ChartInternal instance
-	 * @private
-	 */
-	drawGridLines($$): void {
-		const {ctx, painter, theme: {style: {axis, grid}}} = this;
-		const {config, scale, state: {height, margin, width}} = $$;
-		const isRotated = config.axis_rotated;
-		const x1 = margin.left;
-		const x2 = margin.left + width;
-		const y1 = margin.top;
-		const y2 = margin.top + height;
-
-		if (!grid.lineColor) {
-			return;
-		}
-
-		painter.withState(() => {
-			ctx.strokeStyle = grid.lineColor;
-			ctx.lineWidth = grid.lineWidth;
-			ctx.font = grid.labelFont || axis.labelFont;
-			ctx.fillStyle = grid.labelColor;
-			ctx.textBaseline = "middle";
-			ctx.setLineDash([]);
-
-			const drawLabel = (
-				text: string | undefined,
-				x: number,
-				y: number,
-				rotated = false,
-				style?: CanvasStyle
-			): void => {
-				if (!text) {
-					return;
-				}
-
-				painter.text(text, x, y, {
-					...style,
-					angle: rotated ? -90 : 0
-				});
-			};
-
-			const drawLine = (
-				line: GridLine,
-				axisId: GridAxis,
-				draw: () => void
-			): void => {
-				const style = getGridLineCanvasStyle(
-					this.theme.getGridLineStyle(axisId, line, "line")
-				);
-
-				painter.strokePath(draw, style);
-			};
-			const getTextStyle = (axisId: GridAxis, line: GridLine): CanvasStyle | undefined =>
-				getGridTextCanvasStyle(this.theme.getGridLineStyle(axisId, line, "text"));
-
-			const drawXLine = (line: GridLine): void => {
-				if (line.value === undefined || !scale.x) {
-					return;
-				}
-
-				const pos = getXPosition($$, line.value);
-
-				if (!isDrawable(pos)) {
-					return;
-				}
-
-				if (isRotated) {
-					const y = margin.top + pos;
-
-					drawLine(line, "x", () => {
-						painter.traceLine(x1, y, x2, y);
-					});
-					ctx.textAlign = line.position === "start" ?
-						"left" :
-						(line.position === "middle" ? "center" : "right");
-					drawLabel(
-						line.text,
-						getLineTextPosition(line.position, x1, x2),
-						y - 5,
-						false,
-						getTextStyle("x", line)
-					);
-				} else {
-					const x = margin.left + pos;
-
-					drawLine(line, "x", () => {
-						painter.traceLine(x, y1, x, y2);
-					});
-					ctx.textAlign = line.position === "start" ?
-						"left" :
-						(line.position === "middle" ? "center" : "right");
-					drawLabel(
-						line.text,
-						x - 5,
-						getRotatedLineTextPosition(line.position, y1, y2),
-						true,
-						getTextStyle("x", line)
-					);
-				}
-			};
-
-			const drawYLine = (line: GridLine): void => {
-				const targetScale = line.axis === "y2" ? scale.y2 : scale.y;
-				const axisId = line.axis === "y2" ? "y2" : "y";
-
-				if (line.value === undefined || !targetScale) {
-					return;
-				}
-
-				const value = normalizeYValue($$, line.value, axisId);
-				const pos = targetScale(value);
-
-				if (!isDrawable(pos)) {
-					return;
-				}
-
-				if (isRotated) {
-					const x = margin.left + pos;
-
-					drawLine(line, "y", () => {
-						painter.traceLine(x, y1, x, y2);
-					});
-					ctx.textAlign = line.position === "start" ?
-						"left" :
-						(line.position === "middle" ? "center" : "right");
-					drawLabel(
-						line.text,
-						x - 5,
-						getRotatedLineTextPosition(line.position, y1, y2),
-						true,
-						getTextStyle("y", line)
-					);
-				} else {
-					const y = margin.top + pos;
-
-					drawLine(line, "y", () => {
-						painter.traceLine(x1, y, x2, y);
-					});
-					ctx.textAlign = line.position === "start" ?
-						"left" :
-						(line.position === "middle" ? "center" : "right");
-					drawLabel(
-						line.text,
-						getLineTextPosition(line.position, x1, x2),
-						y - 5,
-						false,
-						getTextStyle("y", line)
-					);
-				}
-			};
-
-			(config.grid_x_lines || []).forEach(drawXLine);
-			(config.grid_y_lines || []).forEach(drawYLine);
 		});
 	}
 
@@ -1861,7 +1310,7 @@ export default class CanvasAxisRenderer {
 	 * @param {object} axisOptions Additional axis options
 	 * @private
 	 */
-	private drawYAxis($$, id: YAxisId = "y", axisOptions?: AdditionalAxisOptions): void {
+	drawYAxis($$, id: YAxisId = "y", axisOptions?: AdditionalAxisOptions): void {
 		const {ctx, painter, theme: {style: {axis}}} = this;
 		const {config, scale, state} = $$;
 		const {margin, width, height} = state;

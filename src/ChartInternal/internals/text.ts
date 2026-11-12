@@ -10,7 +10,6 @@ import {
 	capitalize,
 	getBBox,
 	getBoundingRect,
-	getElementPos,
 	getRandom,
 	getTranslation,
 	isFunction,
@@ -48,11 +47,11 @@ export default {
 	 * @private
 	 */
 	initText(): void {
-		const {$el} = this;
+		const {$el, state} = this;
 
 		$el.main.select(`.${$COMMON.chart}`).append("g")
 			.attr("class", $TEXT.chartTexts)
-			.style("pointer-events", $el.funnel || $el.treemap ? "none" : null);
+			.style("pointer-events", state.customType || $el.treemap ? "none" : null);
 	},
 
 	/**
@@ -117,6 +116,12 @@ export default {
 					isEndAnchor = !data?._isUp;
 				} else if ($$.isTreemapType(d)) {
 					return labelsCentered ? "middle" : "start";
+				} else if ($$.state.customType) {
+					const anchor = $$.getCustomTypeHooks(d)?.textAnchor?.($$, d);
+
+					if (anchor) {
+						return anchor;
+					}
 				}
 
 				return (config.axis_rotated ? (isEndAnchor ? "end" : "start") : "middle");
@@ -157,7 +162,8 @@ export default {
 		const {config} = $$;
 		const labelColors = config.data_labels_colors;
 		const defaultColor =
-			($$.isArcType(d) && !$$.isRadarType(d)) || $$.isFunnelType(d) || $$.isTreemapType(d) ?
+			($$.isArcType(d) && !$$.isRadarType(d)) || $$.getCustomTypeHooks(d)?.themeTextColor ||
+				$$.isTreemapType(d) ?
 				null :
 				$$.color(d);
 		let color;
@@ -296,6 +302,10 @@ export default {
 				node.attr("transform", `translate(${pos.x} ${pos.y}) ${rotateString}`);
 			} else {
 				node.attr("x", pos.x).attr("y", pos.y);
+
+				// the position is on the text itself: drop the transform that the parent
+				// got when the label was multiline, or both would be applied
+				hasTreemap && (this.parentNode as SVGGElement)?.removeAttribute("transform");
 			}
 
 			config.data_labels.border &&
@@ -366,12 +376,12 @@ export default {
 	generateXYForText(indices,
 		forX?: boolean): (d, i, labelDimension?: TTextLabelDimension) => number {
 		const $$ = this;
-		const {state: {hasRadar, hasFunnel, hasTreemap}} = $$;
+		const {state: {customType, hasRadar, hasTreemap}} = $$;
 		const types = Object.keys(indices);
 		const points = {};
 		const getter = forX ? $$.getXForText : $$.getYForText;
 
-		hasFunnel && types.push("funnel");
+		customType && types.push(customType);
 		hasRadar && types.push("radar");
 		hasTreemap && types.push("treemap");
 
@@ -382,8 +392,8 @@ export default {
 		return function(d, i, labelDimension?: TTextLabelDimension) {
 			const type = ($$.isAreaType(d) && "area") ||
 				($$.isBarType(d) && "bar") ||
+				(customType && $$.isTypeOf(d, customType) && customType) ||
 				($$.isCandlestickType(d) && "candlestick") ||
-				($$.isFunnelType(d) && "funnel") ||
 				($$.isRadarType(d) && "radar") ||
 				($$.isTreemapType(d) && "treemap") || "line";
 
@@ -460,24 +470,19 @@ export default {
 		const $$ = this;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
-		const isFunnelType = $$.isFunnelType(d);
 		const isTreemapType = $$.isTreemapType(d);
 
 		let xPos = points ? points[0][0] : 0;
 
-		if ($$.isCandlestickType(d)) {
+		const custom = $$.getCustomTypeHooks(d);
+
+		if (custom) {
+			return custom.textX($$, points, d, textElement, labelDimension);
+		} else if ($$.isCandlestickType(d)) {
 			if (isRotated) {
 				xPos = $$.getCandlestickData(d)?._isUp ? points[2][2] + 4 : points[2][1] - 4;
 			} else {
 				xPos += (points[1][0] - xPos) / 2;
-			}
-		} else if (isFunnelType) {
-			// Use pre-calculated center x from points[2]
-			// Preserve current position when points unavailable (during hide transition)
-			if (points) {
-				xPos = points[2]?.[0] ?? xPos;
-			} else {
-				return getElementPos(textElement, "x");
 			}
 		} else if (isTreemapType) {
 			xPos += config.data_labels.centered ? 0 : 5;
@@ -494,7 +499,7 @@ export default {
 			}
 		}
 
-		if (isRotated || isTreemapType || isFunnelType) {
+		if (isRotated || isTreemapType) {
 			xPos += $$.getCenteredTextPos(d, points, textElement, "x", labelDimension);
 		}
 
@@ -516,7 +521,6 @@ export default {
 		const isRotated = config.axis_rotated;
 		const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
 		const isBarType = $$.isBarType(d);
-		const isFunnelType = $$.isFunnelType(d);
 		const isTreemapType = $$.isTreemapType(d);
 		const r = config.point_r;
 		const rect = labelDimension?.rect || getBoundingRect(textElement);
@@ -524,7 +528,11 @@ export default {
 		let baseY = 3;
 		let yPos;
 
-		if ($$.isCandlestickType(d)) {
+		const custom = $$.getCustomTypeHooks(d);
+
+		if (custom) {
+			return custom.textY($$, points, d, textElement, rect, labelDimension);
+		} else if ($$.isCandlestickType(d)) {
 			value = $$.getCandlestickData(d);
 
 			if (isRotated) {
@@ -536,14 +544,6 @@ export default {
 				if (isInverted) {
 					yPos += 15 * (value._isUp ? 1 : -1);
 				}
-			}
-		} else if (isFunnelType) {
-			// Use pre-calculated center y from points[2]
-			// Preserve current position when points unavailable (during hide transition)
-			if (points) {
-				yPos = (points[2]?.[1] ?? points[0][1]) + rect.height / 2 - 3;
-			} else {
-				return getElementPos(textElement, "y");
 			}
 		} else if (isTreemapType) {
 			yPos = points[0][1] + (config.data_labels.centered ? 0 : rect.height + 5);

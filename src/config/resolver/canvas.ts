@@ -9,18 +9,8 @@ import CanvasRenderer from "../../canvas/CanvasRenderer";
 import CanvasTheme from "../../canvas/CanvasTheme";
 import {$CANVAS} from "../../canvas/classes";
 import HitDetector from "../../canvas/HitDetector";
-import {
-	hasCanvasDrawableValue,
-	isCanvasBarType,
-	isCanvasBubbleType,
-	isCanvasCandlestickType,
-	isCanvasPointType,
-	isCanvasScatterType,
-	isCanvasTargetSupported,
-	isCanvasTreemapType
-} from "../../canvas/util";
+import {hasCanvasDrawableValue, isCanvasBubbleType, isCanvasScatterType} from "../../canvas/util";
 import ChartInternal from "../../ChartInternal/ChartInternal";
-import {getMainCoordFromSubchartCoord} from "../../ChartInternal/internals/subchart.util";
 import {getRenderDataPoint} from "../../ChartInternal/shape/core/geometry";
 import {$FOCUS, $LEGEND} from "../../config/classes";
 import {window} from "../../module/browser";
@@ -31,22 +21,13 @@ import {
 	getBoundingRect,
 	isBoolean,
 	isFunction,
-	parseDate,
 	sanitize,
 	tplProcess
 } from "../../module/util";
+import type {ICanvasTypeParts} from "./canvasType";
 
-const CANVAS_SELECTABLE_TYPE_FILTERS = [
-	isCanvasPointType,
-	isCanvasBarType,
-	isCanvasCandlestickType,
-	isCanvasTreemapType
-];
 const CANVAS_LEGEND_TOUCH_TAP_THRESHOLD = 10;
 const CANVAS_LEGEND_TOUCH_CLICK_TIMEOUT = 750;
-const CANVAS_SUBCHART_HANDLE_SIZE = 6;
-const CANVAS_SUBCHART_CLICK_TOLERANCE = 2;
-const CANVAS_FLOW_ANIMATION_MAX_VALUES = 100000;
 const CANVAS_HTML_ATTR_ESCAPE: Record<string, string> = {
 	"&": "&amp;",
 	"<": "&lt;",
@@ -54,7 +35,6 @@ const CANVAS_HTML_ATTR_ESCAPE: Record<string, string> = {
 	"\"": "&quot;",
 	"'": "&#39;"
 };
-const canvasSelectionDragRows = new WeakMap<object, Map<string, any>>();
 
 /**
  * Emit canvas v1 unsupported option warning.
@@ -446,7 +426,10 @@ function bindCanvasHtmlLegendInteractions($$, item): void {
  * @returns {object|null} Text bounding rect
  * @private
  */
-function measureSvgLegendText($$, text: string): DOMRect | null {
+function measureSvgLegendText(
+	$$,
+	text: string
+): {width: number, height: number, ascent: number} | null {
 	const chart = $$.$el.chart?.node?.();
 	const doc = chart?.ownerDocument;
 
@@ -466,10 +449,12 @@ function measureSvgLegendText($$, text: string): DOMRect | null {
 	chart.appendChild(svg);
 
 	const rect = getBoundingRect(textElement);
+	// the text is drawn at y=0 of the svg: its top is the ascent above it
+	const ascent = svg.getBoundingClientRect().top - rect.top;
 
 	svg.remove();
 
-	return rect;
+	return {width: rect.width, height: rect.height, ascent};
 }
 
 /**
@@ -540,7 +525,7 @@ function isCanvasXIndexHoverArea($$, point: number[]): boolean {
 	const bottom = margin.top + height;
 	const axisBand = config.axis_x_show ? Math.max(xAxisHeight || 0, 24) : 0;
 
-	if ($$.isMultipleX?.() || state.hasTreemap) {
+	if ($$.isMultipleX?.() || state.customType || state.hasTreemap) {
 		return false;
 	}
 
@@ -592,12 +577,13 @@ function getCanvasTooltipData($$, d): any[] {
 	const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 	const pointBased = isCanvasPointBasedInteraction($$, d);
 	const sameXData = config.tooltip_grouped &&
+			!state.customType &&
 			!state.hasTreemap &&
 			!pointBased ?
 		$$.filterByX?.(targetsToShow, d.x) :
 		null;
 
-	return (state.hasTreemap ?
+	return (state.customType || state.hasTreemap ?
 		[d] :
 		(pointBased ?
 			[d] :
@@ -630,7 +616,9 @@ function getCanvasFocusData($$, d, selectedData): any[] {
  * @returns {Array|null} Canvas-local coordinates
  * @private
  */
-function getCanvasEventPoint($$, event: MouseEvent | PointerEvent | TouchEvent): number[] | null {
+export function getCanvasEventPoint($$, event: MouseEvent | PointerEvent | TouchEvent):
+	| number[]
+	| null {
 	const point = getCanvasEventClientPoint(event);
 
 	if (!point) {
@@ -644,339 +632,13 @@ function getCanvasEventPoint($$, event: MouseEvent | PointerEvent | TouchEvent):
 }
 
 /**
- * Normalize a subchart domain range for the current x axis type.
- * @param {object} $$ ChartInternal instance
- * @param {Array} domain Domain range
- * @returns {Array} Normalized domain range
- * @private
- */
-function normalizeCanvasSubchartDomain($$, domain): any[] | null {
-	if (!Array.isArray(domain) || domain.length < 2) {
-		return null;
-	}
-
-	const values = domain.slice(0, 2);
-
-	return $$.axis?.isTimeSeries?.() ? values.map(value => parseDate.call($$, value)) : values;
-}
-
-/**
- * Get the canvas-space rectangle occupied by the subchart plot.
- * @param {object} $$ ChartInternal instance
- * @returns {object|null} Subchart rectangle
- * @private
- */
-function getCanvasSubchartRect($$): {x: number, y: number, w: number, h: number} | null {
-	const {config, state} = $$;
-
-	if (!config.subchart_show || !state.hasAxis || state.width2 <= 0 || state.height2 <= 0) {
-		return null;
-	}
-
-	return {
-		x: state.margin2.left,
-		y: state.margin2.top,
-		w: state.width2,
-		h: state.height2
-	};
-}
-
-/**
- * Check whether a canvas point is inside the subchart plot area.
- * @param {object} $$ ChartInternal instance
- * @param {Array} point Canvas-local point
- * @returns {boolean} Whether point is in the subchart
- * @private
- */
-function isCanvasSubchartPoint($$, point: number[]): boolean {
-	const rect = getCanvasSubchartRect($$);
-
-	return !!rect &&
-		point[0] >= rect.x &&
-		point[0] <= rect.x + rect.w &&
-		point[1] >= rect.y &&
-		point[1] <= rect.y + rect.h;
-}
-
-/**
- * Convert a canvas subchart point to the equivalent main plot point.
- * @param {object} $$ ChartInternal instance
- * @param {Array} point Canvas-local point
- * @returns {Array|null} Main plot point or null when not applicable
- * @private
- */
-function getCanvasMainPointFromSubchart($$, point: number[]): number[] | null {
-	const {config, state} = $$;
-	const rect = getCanvasSubchartRect($$);
-
-	if (config.subchart_brush_enabled !== false || !rect || !isCanvasSubchartPoint($$, point)) {
-		return null;
-	}
-
-	const mainCoord = getMainCoordFromSubchartCoord(
-		$$,
-		config.axis_rotated ? point[1] - rect.y : point[0] - rect.x
-	);
-
-	if (mainCoord === null) {
-		return null;
-	}
-
-	return config.axis_rotated ?
-		[state.margin.left + (state.width / 2), state.margin.top + mainCoord] :
-		[state.margin.left + mainCoord, state.margin.top + (state.height / 2)];
-}
-
-/**
- * Get the allowed local brush coordinate extent for canvas subchart interactions.
- * @param {object} $$ ChartInternal instance
- * @returns {Array} Brush extent in subchart-local pixels
- * @private
- */
-function getCanvasSubchartBrushExtent($$): [number, number] {
-	const rect = getCanvasSubchartRect($$);
-	const axisLength = rect ? ($$.config.axis_rotated ? rect.h : rect.w) : 0;
-	const extent = $$.axis?.getExtent?.();
-	const values = Array.isArray(extent) ? extent.slice(0, 2) : [];
-
-	if (values.length === 2 && values.every(Number.isFinite)) {
-		const start = Math.max(0, Math.min(axisLength, values[0]));
-		const end = Math.max(0, Math.min(axisLength, values[1]));
-
-		return [Math.min(start, end), Math.max(start, end)];
-	}
-
-	return [0, axisLength];
-}
-
-/**
- * Get the local brush coordinate from a canvas subchart pointer event.
- * @param {object} $$ ChartInternal instance
- * @param {Event} event Input event
- * @param {boolean} clampToExtent Whether to clamp pointer outside brush extent
- * @returns {number|null} Brush coordinate
- * @private
- */
-function getCanvasSubchartBrushCoord(
-	$$,
-	event: MouseEvent | PointerEvent | TouchEvent,
-	clampToExtent = false
-):
-	| number
-	| null {
-	const point = getCanvasEventPoint($$, event);
-	const rect = point && getCanvasSubchartRect($$);
-
-	if (!point || !rect || !isCanvasSubchartPoint($$, point)) {
-		return null;
-	}
-
-	const raw = $$.config.axis_rotated ? point[1] - rect.y : point[0] - rect.x;
-	const [min, max] = getCanvasSubchartBrushExtent($$);
-
-	if (!clampToExtent && (raw < min || raw > max)) {
-		return null;
-	}
-
-	return Math.max(min, Math.min(max, raw));
-}
-
-/**
- * Build a scale domain from two subchart brush coordinates.
- * @param {object} $$ ChartInternal instance
- * @param {number} start Brush start coordinate
- * @param {number} end Brush end coordinate
- * @returns {Array} Domain range
- * @private
- */
-function getCanvasSubchartDomainFromCoords($$, start: number, end: number): any[] {
-	const coordStart = Math.min(start, end);
-	const coordEnd = Math.max(start, end);
-
-	return [
-		$$.scale.subX.invert(coordStart),
-		$$.scale.subX.invert(coordEnd)
-	];
-}
-
-/**
- * Get current canvas subchart brush selection in local subchart pixels.
- * @param {object} $$ ChartInternal instance
- * @returns {Array|null} Brush selection pixels
- * @private
- */
-function getCanvasSubchartBrushSelection($$): [number, number] | null {
-	const {scale, state} = $$;
-	const domain = state.domain;
-
-	if (!domain?.length || !scale.subX) {
-		return null;
-	}
-
-	const rect = getCanvasSubchartRect($$);
-	const p0 = scale.subX(domain[0]);
-	const p1 = scale.subX(domain[1]);
-
-	if (!rect || !Number.isFinite(p0) || !Number.isFinite(p1)) {
-		return null;
-	}
-
-	const [min, max] = getCanvasSubchartBrushExtent($$);
-
-	return [
-		Math.max(min, Math.min(max, Math.min(p0, p1))),
-		Math.max(min, Math.min(max, Math.max(p0, p1)))
-	];
-}
-
-/**
- * Get the subchart brush mode at a local brush coordinate.
- * @param {object} $$ ChartInternal instance
- * @param {number} coord Brush coordinate
- * @returns {string} Brush mode
- * @private
- */
-function getCanvasSubchartBrushMode($$, coord: number):
-	| "select"
-	| "move"
-	| "resize-start"
-	| "resize-end" {
-	const selection = getCanvasSubchartBrushSelection($$);
-
-	if (!selection) {
-		return "select";
-	}
-
-	const [start, end] = selection;
-
-	if (Math.abs(coord - start) <= CANVAS_SUBCHART_HANDLE_SIZE) {
-		return "resize-start";
-	}
-
-	if (Math.abs(coord - end) <= CANVAS_SUBCHART_HANDLE_SIZE) {
-		return "resize-end";
-	}
-
-	return coord > start && coord < end ? "move" : "select";
-}
-
-/**
- * Clamp a subchart brush selection to the subchart extent.
- * @param {object} $$ ChartInternal instance
- * @param {number} start Selection start pixel
- * @param {number} end Selection end pixel
- * @returns {Array} Clamped selection pixels
- * @private
- */
-function clampCanvasSubchartSelection($$, start: number, end: number): [number, number] {
-	const [min, max] = getCanvasSubchartBrushExtent($$);
-
-	return [
-		Math.max(min, Math.min(max, start)),
-		Math.max(min, Math.min(max, end))
-	];
-}
-
-/**
- * Get cursor for a canvas subchart brush mode.
- * @param {object} $$ ChartInternal instance
- * @param {string} mode Brush mode
- * @returns {string} CSS cursor
- * @private
- */
-function getCanvasSubchartCursor($$, mode: string): string {
-	if (/^resize/.test(mode)) {
-		return $$.config.axis_rotated ? "ns-resize" : "ew-resize";
-	}
-
-	return mode === "move" ? "move" : "crosshair";
-}
-
-/**
  * Get stable key for canvas data callbacks.
  * @param {object} d Data row
  * @returns {string|null} Data key
  * @private
  */
-function getCanvasDataKey(d): string | null {
+export function getCanvasDataKey(d): string | null {
 	return d ? `${d.id}:${d.index}` : null;
-}
-
-/**
- * Get canvas drag selection delta rows from current and previous hit rows.
- * @param {object} $$ ChartInternal instance
- * @param {Array} dataRows Current drag hit rows
- * @returns {object} Current included keys and rows to toggle
- * @private
- */
-function getCanvasSelectionDragDelta($$, dataRows): {included: Set<string>, rows: any[]} {
-	const previousKeys = $$.state.canvasSelectionDragIncluded as Set<string>;
-	const previousRows = canvasSelectionDragRows.get($$) || new Map<string, any>();
-	const currentRows = new Map<string, any>();
-	const included = new Set<string>();
-	const rows: any[] = [];
-
-	dataRows
-		.filter(d => isCanvasSelectableData($$, d))
-		.forEach(d => {
-			const key = getCanvasDataKey(d);
-
-			if (key) {
-				included.add(key);
-				!currentRows.has(key) && currentRows.set(key, d);
-			}
-		});
-
-	currentRows.forEach((d, key) => {
-		!previousKeys.has(key) && rows.push(d);
-	});
-	previousRows.forEach((d, key) => {
-		!included.has(key) && rows.push(d);
-	});
-	canvasSelectionDragRows.set($$, currentRows);
-
-	return {included, rows};
-}
-
-/**
- * Normalize a data id or id list.
- * @param {string|Array} ids Data ids
- * @returns {Array|null} Normalized ids
- * @private
- */
-function getCanvasSelectionIds(ids?: string | string[]): string[] | null {
-	return ids ? (Array.isArray(ids) ? ids : [ids]) : null;
-}
-
-/**
- * Check whether a canvas data row participates in selection.
- * @param {object} $$ ChartInternal instance
- * @param {object} d Data row
- * @returns {boolean} Whether the row can be selected
- * @private
- */
-function isCanvasSelectableData($$, d): boolean {
-	return d &&
-		hasCanvasDrawableValue($$, d) &&
-		isCanvasTargetSupported($$, d, CANVAS_SELECTABLE_TYPE_FILTERS) &&
-		CANVAS_SELECTABLE_TYPE_FILTERS.some(filter => filter($$, d)) &&
-		$$.config.data_selection_isselectable.bind($$.api)(d);
-}
-
-/**
- * Iterate selectable canvas rows.
- * @param {object} $$ ChartInternal instance
- * @param {function} callback Row callback
- * @private
- */
-function eachCanvasSelectableData($$, callback: (d) => void): void {
-	$$.filterTargetsToShow($$.data.targets)
-		.filter(target => isCanvasTargetSupported($$, target, CANVAS_SELECTABLE_TYPE_FILTERS))
-		.forEach(target => {
-			target.values.forEach(d => {
-				isCanvasSelectableData($$, d) && callback(d);
-			});
-		});
 }
 
 /**
@@ -1106,76 +768,76 @@ function markCanvasInputClick($$, d): void {
 }
 
 /**
- * Get current animation timestamp.
- * @returns {number} Timestamp
+ * Chart types that are drawn on canvas by the canvas part of their module (registerCanvasType()).
+ * With the svg part only, nothing draws them: the canvas mode falls back to svg.
+ * Only the names: a type is not judged by this list when its canvas part is there.
  * @private
  */
-function getCanvasAnimationTime(): number {
-	return window.performance?.now?.() ?? Date.now();
-}
-
-/**
- * Check whether a domain can be interpolated for canvas flow.
- * @param {Array} domain Domain values
- * @param {boolean} isLog Whether the domain is in log scale
- * @returns {boolean} Whether domain is numeric/date-like
- * @private
- */
-function isCanvasFlowDomain(domain, isLog = false): boolean {
-	return Array.isArray(domain) &&
-		domain.length >= 2 &&
-		domain.every(v => Number.isFinite(+v) && (!isLog || +v > 0));
-}
-
-/**
- * Interpolate numeric/date domain values.
- * @param {Array} start Start domain
- * @param {Array} end End domain
- * @param {number} ratio Interpolation ratio
- * @param {boolean} isLog Whether to interpolate in log space
- * @returns {Array} Interpolated domain
- * @private
- */
-function interpolateCanvasFlowDomain(start, end, ratio: number, isLog = false): any[] {
-	return start.slice(0, 2).map((value, index) => {
-		const next = isLog ?
-			Math.exp(Math.log(+value) + ((Math.log(+end[index]) - Math.log(+value)) * ratio)) :
-			+value + ((+end[index] - +value) * ratio);
-
-		return value instanceof Date || end[index] instanceof Date ? new Date(next) : next;
-	});
-}
-
-/**
- * Count current canvas flow values.
- * @param {object} $$ ChartInternal instance
- * @returns {number} Total values
- * @private
- */
-function getCanvasFlowValueCount($$): number {
-	return $$.data.targets.reduce((sum, target) => sum + target.values.length, 0);
-}
-
-/**
- * Sync y/y2 domains for canvas flow frames after data has been appended.
- * @param {object} $$ ChartInternal instance
- * @private
- */
-function syncCanvasFlowYDomains($$): void {
-	const {scale} = $$;
-	const targetsToShow = $$.filterTargetsToShow($$.data.targets);
-
-	(["y", "y2"] as const).forEach(key => {
-		scale[key]?.domain($$.getYDomain(targetsToShow, key));
-	});
-
-	$$.withSubchartTypeContext(() => {
-		scale.subY?.domain($$.getYDomain(targetsToShow, "y"));
-		scale.subY2?.domain($$.getYDomain(targetsToShow, "y2"));
-	});
-}
+const CANVAS_PART_NEEDED = ["treemap"];
 
 const canvasInternal = {
+	/**
+	 * Get the reason of the svg fallback for a type whose canvas part is not imported.
+	 * @returns {string|null} Unsupported chart type reason
+	 * @private
+	 */
+	getUnsupportedCanvasPart(): string | null {
+		const missing = CANVAS_PART_NEEDED.find(name =>
+			this.hasType(name) && !this.canvasTypes?.[name]
+		);
+
+		return missing ? `${missing} chart without its canvas module` : null;
+	},
+
+	/**
+	 * Get the canvas drawing of an optional feature (registerCanvasFeature()).
+	 * @param {string} name Feature name
+	 * @returns {object|undefined} Functions of the feature, undefined if its module is not imported
+	 * @private
+	 */
+	getCanvasFeature(name: string): any {
+		return this.canvasFeatures?.[name];
+	},
+
+	/**
+	 * Get the canvas parts of the chart types the chart has (registerCanvasType()).
+	 * @returns {Array} Parts of the types, in the order they were registered
+	 * @private
+	 */
+	getCanvasTypeParts(): ICanvasTypeParts[] {
+		const types = this.canvasTypes;
+
+		return types ?
+			Object.keys(types).filter(name => this.hasType(name)).map(name => types[name]) :
+			[];
+	},
+
+	/**
+	 * Warn when a feature module of the svg entry is imported, but its canvas drawing is not.
+	 * The canvas drawing comes with the module of the canvas entry ("billboard.js/canvas").
+	 * @private
+	 */
+	warnMissingCanvasFeatures(): void {
+		const {config} = this;
+		const features = [
+			// [feature, installed by the svg module, used by the chart]
+			[
+				"grid",
+				this.initGrid,
+				config.grid_x_show || config.grid_y_show ||
+				config.grid_x_lines?.length || config.grid_y_lines?.length
+			],
+			["subchart", this.initSubchart, config.subchart_show],
+			["selection", this.selectPoint, config.data_selection_enabled]
+		];
+
+		features.forEach(([name, installed, used]) => {
+			installed && used && !this.canvasFeatures?.[name as string] && warn(
+				`canvas mode: ${name} is not drawn, because it is not imported from "billboard.js/canvas".`
+			);
+		});
+	},
+
 	/**
 	 * Normalize unsupported options before initializing canvas mode.
 	 * @private
@@ -1184,6 +846,7 @@ const canvasInternal = {
 		const {config, state} = this;
 
 		this.warnUnsupportedCanvasOptions();
+		this.warnMissingCanvasFeatures();
 
 		if (
 			state.orgConfig?.transition &&
@@ -1214,249 +877,6 @@ const canvasInternal = {
 	},
 
 	/**
-	 * Apply the current canvas subchart selection to the main x domain.
-	 * @private
-	 */
-	applyCanvasSubchartDomain(): void {
-		const $$ = this;
-		const {axis, config, scale, state} = $$;
-
-		if (!config.subchart_show || !state.hasAxis || !scale.subX) {
-			return;
-		}
-
-		if (!state.rendered && !state.domain && config.subchart_init_range) {
-			state.domain = normalizeCanvasSubchartDomain($$, config.subchart_init_range);
-		}
-
-		const domain = normalizeCanvasSubchartDomain($$, state.domain);
-
-		if (
-			!domain ||
-			!$$.withinRange(domain, $$.getZoomDomain("subX", true), $$.getZoomDomain("subX"))
-		) {
-			return;
-		}
-
-		state.domain = domain;
-		scale.x.domain(domain);
-		axis.x.scale(scale.x);
-	},
-
-	/**
-	 * Set the canvas subchart selection domain and redraw the main chart.
-	 * @param {Array} domain Domain range
-	 * @param {boolean} redraw Whether to redraw immediately
-	 * @param {boolean} callCallback Whether to call subchart.onbrush
-	 * @returns {Array|undefined} Applied domain range
-	 * @private
-	 */
-	setCanvasSubchartDomain(domain, redraw = true, callCallback = false): any[] | undefined {
-		const $$ = this;
-		const {config, scale, state} = $$;
-		const nextDomain = normalizeCanvasSubchartDomain($$, domain);
-
-		if (
-			!config.subchart_show ||
-			!nextDomain ||
-			!$$.withinRange(nextDomain, $$.getZoomDomain("subX", true), $$.getZoomDomain("subX"))
-		) {
-			return undefined;
-		}
-
-		state.domain = nextDomain;
-		scale.zoom = null;
-
-		if (redraw) {
-			$$.redraw({
-				withTransition: false,
-				withY: config.zoom_rescale,
-				withSubchart: false,
-				withEventRect: false,
-				withDimension: false
-			});
-		}
-
-		callCallback && config.subchart_onbrush.bind($$.api)(state.domain);
-
-		return state.domain;
-	},
-
-	/**
-	 * Clear the canvas subchart brush selection and restore the full x domain.
-	 * @param {boolean} redraw Whether to redraw immediately
-	 * @param {boolean} callCallback Whether to call subchart.onbrush
-	 * @private
-	 */
-	clearCanvasSubchartDomain(redraw = true, callCallback = false): void {
-		const $$ = this;
-		const {axis, config, org, scale, state} = $$;
-
-		if (!config.subchart_show) {
-			return;
-		}
-
-		state.domain = undefined;
-		scale.zoom = null;
-
-		if (org.xDomain?.length) {
-			scale.x.domain(org.xDomain);
-			axis.x.scale(scale.x);
-		}
-
-		if (redraw) {
-			$$.redraw({
-				withTransition: false,
-				withUpdateXDomain: true,
-				withUpdateOrgXDomain: false,
-				withY: config.zoom_rescale,
-				withSubchart: false,
-				withEventRect: false,
-				withDimension: false
-			});
-		}
-
-		callCallback && config.subchart_onbrush.bind($$.api)(scale.x.orgDomain());
-	},
-
-	/**
-	 * Finish a pending canvas flow animation before accepting another flow mutation.
-	 * @private
-	 */
-	flushCanvasFlow(): void {
-		const {state} = this;
-
-		if (!state.canvasFlowFinish) {
-			return;
-		}
-
-		state.canvasFlowFrame !== null &&
-			window.cancelAnimationFrame?.(state.canvasFlowFrame);
-		state.canvasFlowFrame = null;
-		state.canvasFlowFinish();
-	},
-
-	/**
-	 * Animate canvas flow by interpolating the x domain, then commit the final data window.
-	 * @param {object} flow Flow metadata
-	 * @returns {boolean} Whether animation was started
-	 * @private
-	 */
-	animateCanvasFlow(flow): boolean {
-		const $$ = this;
-		const {axis, data, org, scale, state} = $$;
-		const {done = () => {}, duration, length, orgDataCount} = flow;
-		const requestFrame = window.requestAnimationFrame?.bind(window);
-		const isLog = !!axis.isLog?.("x");
-
-		if (
-			!requestFrame ||
-			!duration ||
-			!length ||
-			!orgDataCount ||
-			getCanvasFlowValueCount($$) > CANVAS_FLOW_ANIMATION_MAX_VALUES
-		) {
-			return false;
-		}
-
-		const startDomain = scale.x.domain().slice(0, 2);
-		const startOrgDomain = org.xDomain?.slice?.();
-		const startSubXDomain = scale.subX?.domain?.().slice?.();
-
-		if (!isCanvasFlowDomain(startDomain, isLog)) {
-			return false;
-		}
-
-		const removed = data.targets.map(target => target.values.splice(0, length));
-
-		$$.updateXDomain($$.filterTargetsToShow(data.targets), true, true);
-
-		const endDomain = scale.x.domain().slice(0, 2);
-		const endOrgDomain = org.xDomain?.slice?.();
-
-		data.targets.forEach((target, index) => {
-			target.values.unshift(...removed[index]);
-		});
-
-		if (!isCanvasFlowDomain(endDomain, isLog)) {
-			startOrgDomain && (org.xDomain = startOrgDomain);
-			scale.x.domain(startDomain);
-			startSubXDomain && scale.subX.domain(startSubXDomain);
-			axis.x.scale(scale.x);
-
-			return false;
-		}
-
-		syncCanvasFlowYDomains($$);
-
-		let finished = false;
-		const started = getCanvasAnimationTime();
-		const finish = () => {
-			if (finished) {
-				return;
-			}
-
-			finished = true;
-			data.targets.forEach(target => {
-				target.values.splice(0, length);
-			});
-
-			endOrgDomain && (org.xDomain = endOrgDomain);
-			scale.x.domain(endDomain);
-			scale.subX?.domain?.(endOrgDomain ?? endDomain);
-			axis.x.scale(scale.x);
-			state.dirty.data = true;
-			state._eventRectFingerprint = null;
-			state.canvasShape = null;
-			state._cachedDrawShape = null;
-
-			$$.redraw({
-				withLegend: true,
-				withTransition: false,
-				withTrimXDomain: false,
-				withUpdateOrgXDomain: true,
-				withUpdateXAxis: true,
-				withUpdateXDomain: true
-			});
-			$$.updateTypesElements();
-			state.canvasFlowFrame = null;
-			state.canvasFlowFinish = null;
-			state.flowing = false;
-			done.call($$.api);
-		};
-		const render = (timestamp: number) => {
-			const ratio = Math.min(1, Math.max(0, (timestamp - started) / duration));
-			const domain = interpolateCanvasFlowDomain(startDomain, endDomain, ratio, isLog);
-
-			scale.x.domain(domain);
-			axis.x.scale(scale.x);
-			state.canvasShape = null;
-			state._cachedDrawShape = null;
-			state._canvasVisibleRangeCache = null;
-			state._canvasXTickValuesCache = null;
-			$$.renderCanvasFrame(undefined, null, false);
-
-			if (ratio < 1) {
-				state.canvasFlowFrame = requestFrame(render);
-			} else {
-				finish();
-			}
-		};
-
-		startOrgDomain && (org.xDomain = startOrgDomain);
-		scale.x.domain(startDomain);
-		startSubXDomain && scale.subX.domain(startSubXDomain);
-		axis.x.scale(scale.x);
-		state.flowing = true;
-		state.cancelClick = true;
-		$$.hideTooltip?.();
-		state.canvasFlowFinish = finish;
-		state.canvasFlowFrame = requestFrame(render);
-
-		return true;
-	},
-
-	/**
 	 * Initialize canvas renderers, theme, hit detector and event bindings.
 	 * @private
 	 */
@@ -1479,7 +899,8 @@ const canvasInternal = {
 		$el.canvas = d3Select($$.canvasEngine.canvas);
 
 		$$.canvasTheme = new CanvasTheme();
-		$$.canvasTheme.load(container, config.canvas_theme);
+		$$.canvasTheme.load(container, config.canvas_theme,
+			$$.getCustomTypeParts?.()?.canvas?.theme);
 
 		$$.canvasAxisRenderer = new CanvasAxisRenderer($$.canvasEngine, $$.canvasTheme);
 		$$.canvasRenderer = new CanvasRenderer($$.canvasEngine, $$.canvasTheme);
@@ -1511,8 +932,7 @@ const canvasInternal = {
 			[config.boost_useCssRule, "boost.useCssRule"],
 			[this.hasArcType?.(), "arc charts"],
 			[this.hasType?.("radar"), "radar chart"],
-			[this.hasType?.("polar"), "polar chart"],
-			[this.hasType?.("funnel"), "funnel chart"]
+			[this.hasType?.("polar"), "polar chart"]
 		];
 
 		unsupported.forEach(([condition, name]) => {
@@ -1546,7 +966,7 @@ const canvasInternal = {
 				return;
 			}
 
-			$$.onCanvasSelectionDragStart(event);
+			$$.onCanvasSelectionDragStart?.(event);
 		});
 		canvas.addEventListener("click", $$.onCanvasClick.bind($$));
 
@@ -1794,7 +1214,8 @@ const canvasInternal = {
 					id,
 					hidden,
 					width,
-					height
+					height,
+					text: rect
 				};
 			});
 			const areaLength = isRightOrInset ? $$.getLegendHeight() : $$.getLegendWidth();
@@ -1854,8 +1275,12 @@ const canvasInternal = {
 				(id: string) => dimension.max.height * sizes.steps[id];
 			const titleX = 4 + itemTileSize.width;
 			const tileCenterY = 9;
+			// SVG draws the text with its baseline 14px below the top of the item (yText - yRect).
+			// The HTML text is centered in the line box of the item: place it where SVG has it.
+			const getTitleY = (id: string, text) =>
+				text ? 14 - text.ascent - (sizes.heights[id] - text.height) / 2 : 0;
 
-			measured.forEach(({id, hidden}) => {
+			measured.forEach(({id, hidden, text}) => {
 				const x = hidden ? 0 : xForLegend(id);
 				const y = hidden ? 0 : yForLegend(id);
 
@@ -1868,7 +1293,7 @@ const canvasInternal = {
 					},
 					title: {
 						x: titleX,
-						y: 0,
+						y: hidden ? 0 : getTitleY(id, text),
 						height: sizes.heights[id]
 					},
 					tile: {
@@ -2028,316 +1453,6 @@ const canvasInternal = {
 	},
 
 	/**
-	 * Get selected canvas data rows.
-	 * @param {string} targetId Target id
-	 * @returns {Array} Selected rows
-	 * @private
-	 */
-	getCanvasSelectedData(targetId?: string): any[] {
-		const $$ = this;
-		const selected = $$.state.canvasSelection;
-		const data: any[] = [];
-
-		if (!$$.config.data_selection_enabled || !selected?.size) {
-			return data;
-		}
-
-		eachCanvasSelectableData($$, d => {
-			(!targetId || d.id === targetId) &&
-				selected.has(getCanvasDataKey(d)) &&
-				data.push(d);
-		});
-
-		return data;
-	},
-
-	/**
-	 * Select or unselect canvas data rows.
-	 * @param {boolean} isSelection Whether to select
-	 * @param {string|Array} ids Target ids
-	 * @param {Array} indices Target indices
-	 * @param {boolean} resetOther Whether to reset unrelated selections
-	 * @private
-	 */
-	setCanvasSelection(
-		isSelection = false,
-		ids?: string | string[],
-		indices?: number[],
-		resetOther?: boolean
-	): void {
-		const $$ = this;
-		const {config, state} = $$;
-		const selected = state.canvasSelection;
-		const selectionGrouped = config.data_selection_grouped;
-		let targetIds = getCanvasSelectionIds(ids);
-		let changed = false;
-		const singleSelection = isSelection && !config.data_selection_multiple;
-		let resetDone = !singleSelection;
-
-		if (!config.data_selection_enabled) {
-			return;
-		}
-
-		// When multiple selection is disabled, only one data point (or one x-index
-		// group when 'grouped' is enabled) can hold the selected state at a time.
-		// Clear any current selection only when the narrowed request can select a point.
-		if (singleSelection) {
-			indices = indices?.length ? [indices[0]] : [0];
-
-			// non-grouped single selection targets exactly one point, so narrow to a
-			// single id (the first requested, or the first shown when none given).
-			if (!selectionGrouped) {
-				if (targetIds) {
-					targetIds = targetIds.slice(0, 1);
-				} else {
-					const [firstTarget] = $$.filterTargetsToShow($$.data.targets);
-
-					targetIds = firstTarget ? [firstTarget.id] : [];
-				}
-			}
-		}
-
-		eachCanvasSelectableData($$, d => {
-			const key = getCanvasDataKey(d);
-			const isTargetId = selectionGrouped || !targetIds || targetIds.indexOf(d.id) >= 0;
-			const isTargetIndex = !indices || indices.indexOf(d.index) >= 0;
-			const isSelected = selected.has(key);
-
-			if (isSelection) {
-				if (isTargetId && isTargetIndex && (!isSelected || singleSelection)) {
-					if (!resetDone) {
-						$$.setCanvasSelection(false);
-						resetDone = true;
-					}
-
-					if (selected.has(key)) {
-						return;
-					}
-
-					selected.add(key);
-					callFn(config.data_onselected, $$.api, d, $$.canvasEngine.canvas);
-					changed = true;
-				} else if ((!singleSelection || resetDone) && resetOther && isSelected) {
-					selected.delete(key);
-					callFn(config.data_onunselected, $$.api, d, $$.canvasEngine.canvas);
-					changed = true;
-				}
-			} else if (isTargetId && isTargetIndex && isSelected) {
-				selected.delete(key);
-				callFn(config.data_onunselected, $$.api, d, $$.canvasEngine.canvas);
-				changed = true;
-			}
-		});
-
-		changed && $$.renderCanvasFrame?.(undefined, null, false);
-	},
-
-	/**
-	 * Toggle canvas data selection from a click.
-	 * @param {Array} dataRows Data rows to toggle
-	 * @private
-	 */
-	toggleCanvasSelection(dataRows): void {
-		const $$ = this;
-		const {config, state} = $$;
-		const selected = state.canvasSelection;
-		let changed = false;
-
-		if (!config.data_selection_enabled) {
-			return;
-		}
-
-		dataRows
-			.filter(d => isCanvasSelectableData($$, d))
-			.forEach(d => {
-				const key = getCanvasDataKey(d);
-				const isSelected = selected.has(key);
-
-				if (!config.data_selection_multiple) {
-					eachCanvasSelectableData($$, selectedData => {
-						const selectedKey = getCanvasDataKey(selectedData);
-						const shouldReset = config.data_selection_grouped ?
-							selectedData.id === d.id :
-							selectedKey !== key;
-
-						if (shouldReset && selected.has(selectedKey)) {
-							selected.delete(selectedKey);
-							callFn(
-								config.data_onunselected,
-								$$.api,
-								selectedData,
-								$$.canvasEngine.canvas
-							);
-							changed = true;
-						}
-					});
-				}
-
-				if (isSelected && selected.has(key)) {
-					selected.delete(key);
-					callFn(config.data_onunselected, $$.api, d, $$.canvasEngine.canvas);
-				} else {
-					selected.add(key);
-					callFn(config.data_onselected, $$.api, d, $$.canvasEngine.canvas);
-				}
-
-				changed = true;
-			});
-
-		changed && $$.renderCanvasFrame?.(undefined, null, false);
-	},
-
-	/**
-	 * Check whether canvas draggable selection can start.
-	 * @param {MouseEvent|TouchEvent} event Input event
-	 * @returns {boolean} Whether drag selection can start
-	 * @private
-	 */
-	canStartCanvasSelectionDrag(event: MouseEvent | TouchEvent): boolean {
-		const $$ = this;
-		const {config} = $$;
-		const mouse = event as MouseEvent;
-
-		return Boolean(
-			config.interaction_enabled &&
-				config.data_selection_enabled &&
-				config.data_selection_draggable &&
-				config.data_selection_multiple &&
-				!config.zoom_enabled &&
-				(mouse.button === undefined || mouse.button === 0)
-		);
-	},
-
-	/**
-	 * Get the selected data rows inside the current canvas drag rectangle.
-	 * @param {object} rect Canvas rectangle
-	 * @returns {Array} Included rows
-	 * @private
-	 */
-	getCanvasSelectionDragData(rect): any[] {
-		const $$ = this;
-		const {config} = $$;
-		const data = $$.hitDetector.findInRect(rect, config.data_selection_grouped);
-
-		if (!config.data_selection_grouped) {
-			return data;
-		}
-
-		const indices = new Set(data.map(d => d.index));
-
-		return $$.filterTargetsToShow($$.data.targets)
-			.flatMap(target => target.values.filter(d => indices.has(d.index)));
-	},
-
-	/**
-	 * Start canvas draggable selection.
-	 * @param {MouseEvent|TouchEvent} event Input event
-	 * @returns {boolean} Whether drag started
-	 * @private
-	 */
-	startCanvasSelectionDrag(event: MouseEvent | TouchEvent): boolean {
-		const $$ = this;
-		const {state} = $$;
-		const point = getCanvasEventPoint($$, event);
-
-		if (!point || !$$.canStartCanvasSelectionDrag(event)) {
-			return false;
-		}
-
-		state.dragStart = point;
-		state.canvasSelectionDragStart = point;
-		state.canvasSelectionDragIncluded = new Set<string>();
-		state.canvasSelectionDragging = true;
-		state.canvasSelectionDragMoved = false;
-		canvasSelectionDragRows.set($$, new Map<string, any>());
-		$$.setDragStatus(true);
-		$$.hideTooltip?.();
-		event.preventDefault?.();
-
-		return true;
-	},
-
-	/**
-	 * Update canvas draggable selection.
-	 * @param {MouseEvent|TouchEvent} event Input event
-	 * @returns {boolean} Whether drag was handled
-	 * @private
-	 */
-	updateCanvasSelectionDrag(event: MouseEvent | TouchEvent): boolean {
-		const $$ = this;
-		const {config, state} = $$;
-		const start = state.canvasSelectionDragStart;
-		const point = getCanvasEventPoint($$, event);
-
-		if (!state.canvasSelectionDragging || !start || !point) {
-			return false;
-		}
-
-		const [sx, sy] = start;
-		const [mx, my] = point;
-		const minX = Math.min(sx, mx);
-		const maxX = Math.max(sx, mx);
-		const minY = config.data_selection_grouped ? state.margin.top : Math.min(sy, my);
-		const maxY = config.data_selection_grouped ?
-			state.margin.top + state.height :
-			Math.max(sy, my);
-		const rect = {
-			x: minX,
-			y: minY,
-			w: maxX - minX,
-			h: maxY - minY
-		};
-		const moved = Math.abs(mx - sx) > 4 || Math.abs(my - sy) > 4;
-
-		state.canvasSelectionDragMoved = state.canvasSelectionDragMoved || moved;
-
-		if (moved) {
-			const {included, rows} = getCanvasSelectionDragDelta(
-				$$,
-				$$.getCanvasSelectionDragData(rect)
-			);
-
-			rows.length && $$.toggleCanvasSelection(rows);
-			state.canvasSelectionDragIncluded = included;
-			state.cancelClick = true;
-		}
-
-		$$.renderCanvasSelectionDrag(rect);
-		event.preventDefault?.();
-
-		return true;
-	},
-
-	/**
-	 * End canvas draggable selection.
-	 * @param {MouseEvent|TouchEvent} event Input event
-	 * @returns {boolean} Whether drag ended
-	 * @private
-	 */
-	endCanvasSelectionDrag(event: MouseEvent | TouchEvent): boolean {
-		const $$ = this;
-		const {state} = $$;
-
-		if (!state.canvasSelectionDragging) {
-			return false;
-		}
-
-		$$.updateCanvasSelectionDrag(event);
-		state.cancelClick = state.cancelClick || state.canvasSelectionDragMoved;
-		state.dragStart = null;
-		state.canvasSelectionDragStart = null;
-		state.canvasSelectionDragIncluded = new Set<string>();
-		state.canvasSelectionDragging = false;
-		state.canvasSelectionDragMoved = false;
-		canvasSelectionDragRows.delete($$);
-		$$.setDragStatus(false);
-		$$.clearCanvasFocus();
-		event.preventDefault?.();
-
-		return true;
-	},
-
-	/**
 	 * Dispatch canvas data.onout callback for the current hovered row.
 	 * @param {HTMLCanvasElement} canvas Canvas element
 	 * @private
@@ -2410,234 +1525,6 @@ const canvasInternal = {
 	},
 
 	/**
-	 * Update canvas subchart brush domain from an input event.
-	 * @param {Event} event Input event
-	 * @returns {boolean} Whether the brush was updated
-	 * @private
-	 */
-	updateCanvasSubchartBrush(event: MouseEvent | PointerEvent | TouchEvent): boolean {
-		const $$ = this;
-		const {config, state} = $$;
-		const start = state.canvasSubchartBrushStart;
-		const origin = state.canvasSubchartBrushOrigin;
-		const mode = state.canvasSubchartBrushMode;
-		const coord = getCanvasSubchartBrushCoord($$, event, true);
-
-		if (
-			config.subchart_brush_enabled === false ||
-			!state.canvasSubchartBrushDragging ||
-			start === null ||
-			coord === null ||
-			!mode
-		) {
-			return false;
-		}
-
-		const delta = coord - start;
-
-		if (Math.abs(delta) > CANVAS_SUBCHART_CLICK_TOLERANCE) {
-			state.canvasSubchartBrushMoved = true;
-		}
-
-		if (!state.canvasSubchartBrushMoved) {
-			event.preventDefault?.();
-			return true;
-		}
-
-		let selection: [number, number];
-
-		if (mode === "move" && origin) {
-			const [extentStart, extentEnd] = getCanvasSubchartBrushExtent($$);
-			const size = origin[1] - origin[0];
-			let nextStart = origin[0] + delta;
-			let nextEnd = origin[1] + delta;
-
-			if (nextStart < extentStart) {
-				nextEnd += extentStart - nextStart;
-				nextStart = extentStart;
-			}
-
-			if (nextEnd > extentEnd) {
-				nextStart -= nextEnd - extentEnd;
-				nextEnd = extentEnd;
-			}
-
-			selection = [
-				Math.max(extentStart, Math.min(extentEnd - size, nextStart)),
-				Math.min(extentEnd, Math.max(extentStart + size, nextEnd))
-			];
-		} else if (mode === "resize-start" && origin) {
-			selection = clampCanvasSubchartSelection($$, coord, origin[1]);
-		} else if (mode === "resize-end" && origin) {
-			selection = clampCanvasSubchartSelection($$, origin[0], coord);
-		} else {
-			selection = clampCanvasSubchartSelection($$, start, coord);
-		}
-
-		const domain = getCanvasSubchartDomainFromCoords($$, selection[0], selection[1]);
-
-		$$.setCanvasSubchartDomain(domain, true);
-		state.cancelClick = true;
-		event.preventDefault?.();
-
-		return true;
-	},
-
-	/**
-	 * Update cursor while hovering over the canvas subchart brush area.
-	 * @param {Event} event Input event
-	 * @returns {boolean} Whether the pointer is over the subchart
-	 * @private
-	 */
-	updateCanvasSubchartCursor(event: MouseEvent | PointerEvent | TouchEvent): boolean {
-		const $$ = this;
-		const canvas = $$.$el.canvas.node();
-
-		if ($$.config.subchart_brush_enabled === false) {
-			canvas.style.cursor = "";
-			return false;
-		}
-
-		const coord = getCanvasSubchartBrushCoord($$, event);
-
-		if (coord === null) {
-			canvas.style.cursor = "";
-			return false;
-		}
-
-		const mode = getCanvasSubchartBrushMode($$, coord);
-
-		canvas.style.cursor = getCanvasSubchartCursor($$, mode);
-
-		return true;
-	},
-
-	/**
-	 * Start a canvas subchart brush gesture.
-	 * @param {Event} event Mouse, pointer or touch event
-	 * @returns {boolean} Whether brushing started
-	 * @private
-	 */
-	startCanvasSubchartBrush(event: MouseEvent | PointerEvent | TouchEvent): boolean {
-		const $$ = this;
-		const {state} = $$;
-
-		if ($$.config.subchart_brush_enabled === false) {
-			return false;
-		}
-
-		const coord = getCanvasSubchartBrushCoord($$, event);
-
-		if (coord === null) {
-			return false;
-		}
-
-		const mode = getCanvasSubchartBrushMode($$, coord);
-
-		state.event = event;
-		state.canvasSubchartBrushDragging = true;
-		state.canvasSubchartBrushMode = mode;
-		state.canvasSubchartBrushStart = coord;
-		state.canvasSubchartBrushOrigin = getCanvasSubchartBrushSelection($$);
-		state.canvasSubchartBrushMoved = false;
-		state.cancelClick = true;
-		$$.setDragStatus(true);
-		event.preventDefault?.();
-
-		return true;
-	},
-
-	/**
-	 * End a canvas subchart brush gesture.
-	 * @param {Event} event Mouse, pointer or touch event
-	 * @returns {boolean} Whether brushing ended
-	 * @private
-	 */
-	endCanvasSubchartBrush(event: MouseEvent | PointerEvent | TouchEvent): boolean {
-		const $$ = this;
-		const {state} = $$;
-
-		if (!state.canvasSubchartBrushDragging) {
-			return false;
-		}
-
-		$$.updateCanvasSubchartBrush(event);
-
-		const shouldClear = state.canvasSubchartBrushMode === "select" &&
-			!state.canvasSubchartBrushMoved;
-		const shouldCallback = state.canvasSubchartBrushMoved || shouldClear;
-
-		if (shouldClear) {
-			$$.clearCanvasSubchartDomain?.(true, true);
-		} else if (shouldCallback) {
-			$$.config.subchart_onbrush.bind($$.api)(state.domain ?? $$.scale.x.orgDomain());
-		}
-
-		state.canvasSubchartBrushDragging = false;
-		state.canvasSubchartBrushMode = null;
-		state.canvasSubchartBrushStart = null;
-		state.canvasSubchartBrushOrigin = null;
-		state.canvasSubchartBrushMoved = false;
-		$$.setDragStatus(false);
-		event.preventDefault?.();
-
-		return true;
-	},
-
-	/**
-	 * Cancel a canvas subchart brush gesture without applying callbacks.
-	 * @param {Event} event Mouse, pointer or touch event
-	 * @returns {boolean} Whether brushing was cancelled
-	 * @private
-	 */
-	cancelCanvasSubchartBrush(event: MouseEvent | PointerEvent | TouchEvent): boolean {
-		const $$ = this;
-		const {state} = $$;
-
-		if (!state.canvasSubchartBrushDragging) {
-			return false;
-		}
-
-		state.canvasSubchartBrushDragging = false;
-		state.canvasSubchartBrushMode = null;
-		state.canvasSubchartBrushStart = null;
-		state.canvasSubchartBrushOrigin = null;
-		state.canvasSubchartBrushMoved = false;
-		$$.setDragStatus(false);
-		event.preventDefault?.();
-
-		return true;
-	},
-
-	/**
-	 * Start mouse-driven canvas subchart brushing.
-	 * @param {MouseEvent} event Mouse event
-	 * @returns {boolean} Whether brushing started
-	 * @private
-	 */
-	onCanvasSubchartBrushStart(event: MouseEvent): boolean {
-		const $$ = this;
-
-		if (!$$.startCanvasSubchartBrush(event)) {
-			return false;
-		}
-
-		const move = (event: MouseEvent) => {
-			$$.updateCanvasSubchartBrush(event);
-		};
-		const end = (event: MouseEvent) => {
-			$$.endCanvasSubchartBrush(event);
-			window.removeEventListener("mousemove", move);
-			window.removeEventListener("mouseup", end);
-		};
-
-		window.addEventListener("mousemove", move);
-		window.addEventListener("mouseup", end);
-
-		return true;
-	},
-
-	/**
 	 * Handle canvas click and dispatch shape-level data onclick.
 	 * @param {MouseEvent} event Mouse click event
 	 * @private
@@ -2658,36 +1545,6 @@ const canvasInternal = {
 	},
 
 	/**
-	 * Start mouse-driven canvas draggable selection.
-	 * @param {MouseEvent} event Mouse event
-	 * @private
-	 */
-	onCanvasSelectionDragStart(event: MouseEvent): void {
-		const $$ = this;
-		const {state} = $$;
-
-		if (!$$.startCanvasSelectionDrag(event)) {
-			return;
-		}
-
-		const move = (event: MouseEvent) => {
-			$$.updateCanvasSelectionDrag(event);
-		};
-		const end = (event: MouseEvent) => {
-			$$.endCanvasSelectionDrag(event);
-			window.removeEventListener("mousemove", move);
-			window.removeEventListener("mouseup", end);
-			state.canvasSelectionDragMoveHandler = null;
-			state.canvasSelectionDragEndHandler = null;
-		};
-
-		state.canvasSelectionDragMoveHandler = move;
-		state.canvasSelectionDragEndHandler = end;
-		window.addEventListener("mousemove", move);
-		window.addEventListener("mouseup", end);
-	},
-
-	/**
 	 * Start non-mouse pointer-driven canvas subchart brushing.
 	 * @param {PointerEvent} event Pointer event
 	 * @private
@@ -2700,24 +1557,24 @@ const canvasInternal = {
 		const $$ = this;
 		const canvas = $$.$el.canvas.node();
 
-		if (!$$.startCanvasSubchartBrush(event)) {
+		if (!$$.startCanvasSubchartBrush?.(event)) {
 			return;
 		}
 
 		const pointerId = event.pointerId;
 		const matchesPointer = (event: PointerEvent) => event.pointerId === pointerId;
 		const move = (event: PointerEvent) => {
-			matchesPointer(event) && $$.updateCanvasSubchartBrush(event);
+			matchesPointer(event) && $$.updateCanvasSubchartBrush?.(event);
 		};
 		const end = (event: PointerEvent) => {
 			if (matchesPointer(event)) {
-				$$.endCanvasSubchartBrush(event);
+				$$.endCanvasSubchartBrush?.(event);
 				cleanup();
 			}
 		};
 		const cancel = (event: PointerEvent) => {
 			if (matchesPointer(event)) {
-				$$.cancelCanvasSubchartBrush(event);
+				$$.cancelCanvasSubchartBrush?.(event);
 				cleanup();
 			}
 		};
@@ -2771,7 +1628,7 @@ const canvasInternal = {
 			return;
 		}
 
-		if (this.updateCanvasSubchartBrush(event)) {
+		if (this.updateCanvasSubchartBrush?.(event)) {
 			return;
 		}
 
@@ -2790,7 +1647,7 @@ const canvasInternal = {
 
 		this.state.event = event;
 
-		if (this.endCanvasSubchartBrush(event)) {
+		if (this.endCanvasSubchartBrush?.(event)) {
 			this.config.onout?.bind(this.api)(event);
 			return;
 		}
@@ -2829,7 +1686,7 @@ const canvasInternal = {
 		}
 
 		this.state.event = event;
-		if (this.cancelCanvasSubchartBrush(event)) {
+		if (this.cancelCanvasSubchartBrush?.(event)) {
 			this.config.onout?.bind(this.api)(event);
 			return;
 		}
@@ -2848,11 +1705,11 @@ const canvasInternal = {
 		}
 
 		this.state.event = event;
-		if (this.startCanvasSubchartBrush(event)) {
+		if (this.startCanvasSubchartBrush?.(event)) {
 			return;
 		}
 
-		if (this.startCanvasSelectionDrag(event)) {
+		if (this.startCanvasSelectionDrag?.(event)) {
 			return;
 		}
 
@@ -2870,11 +1727,11 @@ const canvasInternal = {
 			return;
 		}
 
-		if (this.updateCanvasSubchartBrush(event)) {
+		if (this.updateCanvasSubchartBrush?.(event)) {
 			return;
 		}
 
-		if (this.updateCanvasSelectionDrag(event)) {
+		if (this.updateCanvasSelectionDrag?.(event)) {
 			return;
 		}
 
@@ -2889,12 +1746,12 @@ const canvasInternal = {
 	onCanvasTouchEnd(event: TouchEvent): void {
 		this.state.event = event;
 
-		if (this.endCanvasSubchartBrush(event)) {
+		if (this.endCanvasSubchartBrush?.(event)) {
 			this.config.onout?.bind(this.api)(event);
 			return;
 		}
 
-		if (this.endCanvasSelectionDrag(event)) {
+		if (this.endCanvasSelectionDrag?.(event)) {
 			this.config.onout?.bind(this.api)(event);
 			return;
 		}
@@ -2911,8 +1768,8 @@ const canvasInternal = {
 	 */
 	onCanvasTouchCancel(event: TouchEvent): void {
 		this.state.event = event;
-		this.cancelCanvasSubchartBrush(event);
-		this.endCanvasSelectionDrag(event);
+		this.cancelCanvasSubchartBrush?.(event);
+		this.endCanvasSelectionDrag?.(event);
 		this.onCanvasMouseOut();
 		this.config.onout?.bind(this.api)(event);
 	},
@@ -2948,7 +1805,7 @@ const canvasInternal = {
 		}
 
 		const rawPoint = getCanvasEventPoint($$, event);
-		const point = rawPoint && (getCanvasMainPointFromSubchart($$, rawPoint) || rawPoint);
+		const point = rawPoint && ($$.getCanvasMainPointFromSubchart?.(rawPoint) || rawPoint);
 		const d = point ? getCanvasHoverDatumFromPoint($$, point) : null;
 
 		if (!d) {
@@ -3071,21 +1928,6 @@ const canvasInternal = {
 	},
 
 	/**
-	 * Draw selection drag overlay on the cached canvas frame.
-	 * @param {object} rect Selection rectangle
-	 * @private
-	 */
-	renderCanvasSelectionDrag(rect): void {
-		const $$ = this;
-
-		$$.canvasEngine.withOverlay(ctx => {
-			$$.canvasRenderer.withContext(ctx, () => {
-				$$.canvasRenderer.drawSelectionDragArea($$, rect);
-			});
-		});
-	},
-
-	/**
 	 * Draw a complete canvas frame and optionally rebuild hit indexes.
 	 * @param {object} shape Cached draw shape object
 	 * @param {Array} focusData Focused data rows
@@ -3111,10 +1953,12 @@ const canvasInternal = {
 			state.hasAxis && $$.canvasAxisRenderer.draw($$);
 			$$.canvasRenderer.draw($$, drawShape);
 			state.hasAxis && $$.config.grid_lines_front &&
-				$$.canvasAxisRenderer.drawGridLines($$);
-			$$.canvasRenderer.drawSubchart($$, drawShape);
-			state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
-			state.hasAxis && $$.canvasAxisRenderer.drawSubYAxes($$);
+				$$.getCanvasFeature?.("grid")?.drawLines.call($$, $$.canvasAxisRenderer);
+			$$.getCanvasFeature?.("subchart")?.draw.call($$, $$.canvasRenderer, drawShape);
+			state.hasAxis &&
+				$$.getCanvasFeature?.("subchart")?.drawXAxis.call($$, $$.canvasAxisRenderer);
+			state.hasAxis &&
+				$$.getCanvasFeature?.("subchart")?.drawYAxes.call($$, $$.canvasAxisRenderer);
 			$$.canvasRenderer.drawEmptyLabel($$);
 			rebuildHit && $$.hitDetector.rebuild($$, drawShape);
 		} finally {
@@ -3148,10 +1992,12 @@ const canvasInternal = {
 				state.hasAxis && $$.canvasAxisRenderer.draw($$);
 				$$.canvasRenderer.draw($$, drawShape, focusData);
 				state.hasAxis && $$.config.grid_lines_front &&
-					$$.canvasAxisRenderer.drawGridLines($$);
-				$$.canvasRenderer.drawSubchart($$, drawShape);
-				state.hasAxis && $$.canvasAxisRenderer.drawSubXAxis($$);
-				state.hasAxis && $$.canvasAxisRenderer.drawSubYAxes($$);
+					$$.getCanvasFeature?.("grid")?.drawLines.call($$, $$.canvasAxisRenderer);
+				$$.getCanvasFeature?.("subchart")?.draw.call($$, $$.canvasRenderer, drawShape);
+				state.hasAxis &&
+					$$.getCanvasFeature?.("subchart")?.drawXAxis.call($$, $$.canvasAxisRenderer);
+				state.hasAxis &&
+					$$.getCanvasFeature?.("subchart")?.drawYAxes.call($$, $$.canvasAxisRenderer);
 				$$.canvasRenderer.drawEmptyLabel($$);
 			} finally {
 				$$.canvasEngine.endFrame();

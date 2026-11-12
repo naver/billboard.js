@@ -5,8 +5,9 @@
 import {select as d3Select} from "d3-selection";
 import {curveLinear as d3CurveLinear, line as d3Line} from "d3-shape";
 import {$COMMON, $FUNNEL} from "../../config/classes";
-import {isObject} from "../../module/util";
+import {getElementPos, isNumber, isObject} from "../../module/util";
 import type {IData, IDataRow, IFunnelData} from "../data/IData";
+import {getTextPos} from "../internals/text.util";
 
 type TSize = { [key in "width" | "height" | "top" | "left"]: number };
 type TSizeCurrent = Pick<TSize, "width" | "height">;
@@ -285,7 +286,67 @@ function _getSplineClipPath(): string {
 	return isRotated ? `${path1}${path2}z` : `M0,0${path1.replace(/^M/, "L")}${path2}z`;
 }
 
+/**
+ * How the funnel differs from the other types for the shared code.
+ * It asks these through `getCustomTypeHooks()` (they are registered with the type name).
+ * @private
+ */
+export const customTypeHooks = {
+	// the label is not drawn with the color of the series
+	themeTextColor: true,
+
+	// funnel is drawn by svg only: canvas mode falls back to it, and warns with this
+	canvasUnsupported: "funnel chart",
+
+	// the data of the types that are left is transformed again after the unload
+	afterUnload($$): void {
+		$$.updateFunnel($$.data.targets);
+	},
+
+	// the data labels are of the values, as for the type of the axis
+	labelData($$, d): IDataRow[] {
+		return d.values.filter(v => isNumber(v.value) || Boolean(v.value));
+	},
+
+	// the pre-calculated center x is in points[2]
+	// the current position is kept when there are no points (during the hide transition)
+	textX($$, points, d, textElement, labelDimension?): number {
+		if (!points) {
+			return getElementPos(textElement, "x");
+		}
+
+		return (points[2]?.[0] ?? points[0][0]) +
+			$$.getCenteredTextPos(d, points, textElement, "x", labelDimension) +
+			getTextPos.call($$, d, "x");
+	},
+
+	// the pre-calculated center y is in points[2], and it is kept as well without points
+	textY($$, points, d, textElement, rect, labelDimension?): number {
+		if (!points) {
+			return getElementPos(textElement, "y");
+		}
+
+		let yPos = (points[2]?.[1] ?? points[0][1]) + rect.height / 2 - 3;
+
+		if (!$$.config.axis_rotated) {
+			yPos += $$.getCenteredTextPos(d, points, textElement, "y", labelDimension);
+		}
+
+		return yPos + getTextPos.call($$, d, "y");
+	}
+};
+
 export default {
+	/**
+	 * Whether the data belongs to the funnel type.
+	 * @param {object} d Data object
+	 * @returns {boolean}
+	 * @private
+	 */
+	isFunnelType(d): boolean {
+		return this.isTypeOf(d, "funnel");
+	},
+
 	/**
 	 * Initialize funnel
 	 * @private
@@ -360,7 +421,7 @@ export default {
 		}
 
 		const classChartFunnel = $$.getChartClass("Funnel");
-		const classFunnel = $$.getClass("funnel", true);
+		const classFunnel = $$.getClass("funnel", true, true);
 		const targets = _getFunnelData.call($$, t.filter($$.isFunnelType.bind($$)));
 
 		const mainFunnelUpdate = $$.filterNullish(targets);

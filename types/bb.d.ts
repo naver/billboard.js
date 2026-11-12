@@ -41,6 +41,7 @@ export function areaStep(): "area-step";
 export function areaStepRange(): "area-step-range";
 export function bar(): "bar";
 export function bubble(): "bubble";
+export function bullet(): "bullet";
 export function candlestick(): "candlestick";
 export function donut(): "donut";
 export function funnel(): "funnel";

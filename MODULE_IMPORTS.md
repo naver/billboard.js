@@ -219,6 +219,7 @@ Import the type(s) you use and pass the return value as `data.type` /
 | `areaStepRange` | `"area-step-range"` |
 | `bar` | `"bar"` |
 | `bubble` | `"bubble"` |
+| `bullet` | `"bullet"` |
 | `candlestick` | `"candlestick"` |
 | `donut` | `"donut"` |
 | `funnel` | `"funnel"` |

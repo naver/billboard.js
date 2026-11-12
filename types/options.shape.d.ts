@@ -473,6 +473,162 @@ export interface DonutOptions {
 	title?: string;
 }
 
+export interface BulletOptions {
+	/**
+	 * Set bullet orientation.
+	 * When `false` (default), bullets are rendered horizontally (measure grows to the right).
+	 * When `true`, bullets are rendered vertically (measure grows upward).
+	 */
+	rotated?: boolean;
+
+	/**
+	 * Set how the measure value is rendered.
+	 * - `bar`: render the measure as a solid bar growing from the baseline.
+	 * - `dot`: render the measure as a dot marker positioned at the measure value.
+	 */
+	type?: "bar" | "dot";
+
+	/**
+	 * Set the dot radius (in px) used when `type="dot"`.
+	 * When `0`, the radius is derived from the bullet thickness.
+	 */
+	marker?: {
+		size?: number;
+	};
+
+	/**
+	 * Set the qualitative range band thresholds.
+	 * - `Array`: shared ascending thresholds applied to every bullet.
+	 * - `object`: per-data-id thresholds.
+	 * - `Function`: callback returning thresholds per bullet.
+	 * When omitted, three bands are generated automatically from the measure/target domain.
+	 */
+	ranges?: number[] | {[key: string]: number[]} | ((id: string, value: number) => number[]);
+
+	/**
+	 * Set the comparative target marker value.
+	 * Can be given as a `number` or an `Array` of numbers, an `object` keyed by data id, or a `Function`.
+	 * An `Array` draws more than one marker for a bullet. All the markers share the same style.
+	 */
+	target?:
+		| number
+		| number[]
+		| {[key: string]: number | number[]}
+		| ((id: string, value: number) => number | number[]);
+
+	/**
+	 * Set the thickness of the measure and the length of the target marker.
+	 */
+	width?: {
+		/**
+		 * Set the measure thickness as a ratio (0~1) of the bullet band.
+		 */
+		ratio?: number;
+
+		/**
+		 * Set the target marker length.
+		 */
+		target?: {
+			/**
+			 * Set the target marker length as a ratio (0~1) of the bullet band.
+			 * @default 0.6
+			 */
+			ratio?: number;
+		};
+	};
+
+	/**
+	 * Set the qualitative range band colors.
+	 * - `Array`: color strings ordered from the smallest to the largest band.
+	 * - `Function`: callback returning a color per band.
+	 * When omitted, the grayscale of the theme is used. Its lightness is set by the CSS variables
+	 * `--bb-bullet-range-min` and `--bb-bullet-range-max` of `.bb-chart-bullets`.
+	 */
+	range?: {
+		colors?: string[] | ((index: number, length: number) => string);
+	};
+
+	/**
+	 * Set the padding (in px) between each bullet band.
+	 */
+	padding?: number;
+
+	/**
+	 * Set the quantitative scale axis drawn under (beside, when rotated) each bullet.
+	 */
+	axis?: {
+		/**
+		 * Show or hide the axis.
+		 * @default true
+		 */
+		show?: boolean;
+
+		/**
+		 * Set the min value of the scale of every bullet.
+		 * When not given, the scale of each bullet is calculated from its values and ranges.
+		 * Set both `min` and `max` to make the bullets share the same scale.
+		 */
+		min?: number;
+
+		/**
+		 * Set the max value of the scale of every bullet. See `min`.
+		 */
+		max?: number;
+
+		tick?: {
+			/**
+			 * Set the approximate number of the ticks.
+			 */
+			count?: number;
+
+			/**
+			 * Set the values of the ticks. It takes precedence over `count`.
+			 */
+			values?: number[];
+
+			/**
+			 * Set the format of the tick labels.
+			 */
+			format?: (value: number) => string | number;
+		};
+	};
+
+	/**
+	 * Set the title of each bullet. It is drawn on the left of the bullet (under the column, when rotated).
+	 */
+	title?: {
+		/**
+		 * Show or hide the title.
+		 * @default false
+		 */
+		show?: boolean;
+
+		/**
+		 * Set the text of the title. By default it is the data name, or the data id.
+		 * Can be given as an `object` keyed by data id, or a `Function`.
+		 */
+		text?: {[key: string]: string} | ((id: string, value: number) => string);
+	};
+
+	/**
+	 * Set the measure value label.
+	 * The label is a data label: it is drawn when `data.labels` is set.
+	 */
+	label?: {
+		/**
+		 * Show or hide the measure value label.
+		 * @default true
+		 */
+		show?: boolean;
+
+		/**
+		 * Set a formatter for the measure value label.
+		 * Takes precedence over `data.labels.format`.
+		 */
+		format?: (value: number, id: string) => string | number;
+	};
+}
+
 export interface FunnelOptions {
 	neck?: {
 		/**

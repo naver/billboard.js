@@ -34,7 +34,9 @@ export default {
 	 * @private
 	 */
 	isValidChartType(type: string): boolean {
-		return !!(type && Object.values(TYPE).indexOf(type) > -1);
+		// the type of a custom type module is valid too
+		return !!(type &&
+			(Object.values(TYPE).indexOf(type) > -1 || type === this.state.customType));
 	},
 
 	/**
@@ -161,10 +163,12 @@ export default {
 	 */
 	updateTypesElements(): void {
 		const $$ = this;
-		const {state: {current}} = $$;
+		const {state: {current, customType}} = $$;
+		const types = Object.values(TYPE);
 
-		Object.keys(TYPE).forEach(v => {
-			const t = TYPE[v];
+		customType && types.push(customType);
+
+		types.forEach(t => {
 			const has = $$.hasType(t, null, true);
 			const idx = current.types.indexOf(t);
 
@@ -292,6 +296,44 @@ export default {
 		return this.isTypeOf(d, "bubble");
 	},
 
+	/**
+	 * Get the name of the chart type of its own module that the chart has.
+	 * The modules register their types by name (registerCustomType()): a bundle can have more than
+	 * one of them, and a chart has one at most.
+	 * @returns {string|null} Type name
+	 * @private
+	 */
+	getCustomType(): string | null {
+		const types = this.customTypes;
+
+		return types && Object.keys(types).find(name => this.hasType(name)) || null;
+	},
+
+	/**
+	 * Get what the module of the custom type of the chart has registered: hooks and canvas parts.
+	 * @returns {object|undefined} Parts of the type
+	 * @private
+	 */
+	getCustomTypeParts() {
+		const {customType} = this.state;
+
+		return customType ? this.customTypes?.[customType] : undefined;
+	},
+
+	/**
+	 * Get the hooks of the module of a custom type, when the data belongs to that type.
+	 * @param {object} d Data object
+	 * @returns {object|null} Hooks
+	 * @private
+	 */
+	getCustomTypeHooks(d) {
+		const {customType} = this.state;
+
+		return customType && this.isTypeOf(d, customType) ?
+			this.getCustomTypeParts()?.hooks ?? null :
+			null;
+	},
+
 	isCandlestickType(d): boolean {
 		return this.isTypeOf(d, "candlestick");
 	},
@@ -306,10 +348,6 @@ export default {
 
 	isPieType(d): boolean {
 		return this.isTypeOf(d, "pie");
-	},
-
-	isFunnelType(d): boolean {
-		return this.isTypeOf(d, "funnel");
 	},
 
 	isGaugeType(d): boolean {
@@ -365,12 +403,17 @@ export default {
 	 * @private
 	 */
 	labelishData(d) {
+		const custom = this.getCustomTypeHooks(d);
+
+		if (custom) {
+			return custom.labelData?.(this, d) ?? [];
+		}
+
 		return this.isBarType(d) ||
 				this.isLineType(d) ||
 				this.isScatterType(d) ||
 				this.isBubbleType(d) ||
 				this.isCandlestickType(d) ||
-				this.isFunnelType(d) ||
 				this.isRadarType(d) ||
 				this.isTreemapType(d) ?
 			d.values.filter(v => isNumber(v.value) || Boolean(v.value)) :

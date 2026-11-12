@@ -2,7 +2,6 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {getTreemapNodeRect} from "../ChartInternal/shape/core/geometry";
 import {TYPE} from "../config/const";
 import {getCanvasBarGeometry, getCanvasCandlestickGeometry} from "./geometry";
 import {
@@ -17,7 +16,6 @@ import {
 	isCanvasPointType,
 	isCanvasScatterType,
 	isCanvasTargetSupported,
-	isCanvasTreemapType,
 	isFiniteCanvasCoordinate,
 	markCanvasPointOccupancy
 } from "./util";
@@ -179,10 +177,11 @@ export default class HitDetector {
 		this.pointGrid = new Map();
 		this.maxPointSensitivity = HIT_DISTANCE;
 		this.indexAxis = $$.config.axis_rotated ? "y" : "x";
-		this.plot = $$.state.hasTreemap ?
+		// a custom type and treemap are laid out over the whole chart area
+		this.plot = $$.state.customType || $$.state.hasTreemap ?
 			{x: 0, y: 0, w: current.width, h: current.height} :
 			{x: margin.left, y: margin.top, w: width, h: height};
-		this.grouped = !!$$.config.tooltip_grouped && !$$.state.hasTreemap;
+		this.grouped = !!$$.config.tooltip_grouped && !$$.state.customType && !$$.state.hasTreemap;
 		this.pointBased = !($$.config.axis_x_forceAsSingle && this.grouped) && (
 			!!$$.isMultipleX?.() ||
 			targets.some(target =>
@@ -209,29 +208,17 @@ export default class HitDetector {
 			}
 		};
 
-		if ($$.state.hasTreemap) {
-			const root = $$.getTreemapRoot?.($$.data.targets);
-			const nodes = root?.children || [];
+		if ($$.state.customType) {
+			$$.getCustomTypeParts()?.canvas?.hits?.call($$, this);
+			this.indices = [];
+			return;
+		}
 
-			for (const node of nodes) {
-				const {data} = node;
+		// the type that is the whole chart is hit by its module, alone
+		const exclusive = $$.getCanvasTypeParts?.().find(part => part.exclusive);
 
-				if (!isCanvasTreemapType($$, data)) {
-					continue;
-				}
-
-				const {x, y, w, h} = getTreemapNodeRect($$, node, root, true);
-
-				if (
-					!isFiniteCanvasCoordinate(x, y) ||
-					!isFiniteCanvasCoordinate(x + w, y + h)
-				) {
-					continue;
-				}
-
-				this.addBar({x, y, w, h, data});
-			}
-
+		if (exclusive) {
+			exclusive.hits?.call($$, this);
 			this.indices = [];
 			return;
 		}
@@ -529,7 +516,7 @@ export default class HitDetector {
 	 * @param {object} item Hit item
 	 * @private
 	 */
-	private addBar(item: HitItem): void {
+	addBar(item: HitItem): void {
 		this.bars.push(item);
 		addGridItem(this.barGrid, item, BAR_CELL_SIZE);
 	}

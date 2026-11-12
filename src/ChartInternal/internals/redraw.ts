@@ -180,8 +180,8 @@ export default {
 			// polar
 			$el.polar && $$.redrawPolar();
 
-			// funnel
-			$el.funnel && $$.redrawFunnel();
+			// custom type
+			state.customType && $$[`redraw${capitalize(state.customType)}`](wth.Transition);
 
 			// treemap
 			treemap && $$.updateTreemap(durationForExit);

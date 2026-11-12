@@ -8,6 +8,7 @@
 import "./Chart/api/stubs";
 
 // canvas shape modules
+export {bullet} from "./config/resolver/canvasBullet";
 export {
 	area,
 	areaLineRange,
@@ -29,13 +30,15 @@ export {
 export {canvas} from "./config/resolver/canvas";
 
 // optional API modules (tree-shakable)
+export {flow} from "./config/resolver/canvasFlow";
+export {grid} from "./config/resolver/canvasGrid";
 export {category} from "./config/resolver/category";
 export {exportApi} from "./config/resolver/export";
-export {flow} from "./config/resolver/flow";
-export {grid} from "./config/resolver/grid";
 export {regions} from "./config/resolver/regions";
 
 // interaction modules (tree-shakable)
-export {selection, subchart, zoom} from "./config/resolver/interaction";
+export {selection} from "./config/resolver/canvasSelection";
+export {subchart} from "./config/resolver/canvasSubchart";
+export {zoom} from "./config/resolver/interaction";
 
 export {bb, default} from "./core";

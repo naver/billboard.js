@@ -578,7 +578,7 @@ describe("API canvas", () => {
 		expect($$.getSubchartTargetType("data1")).to.be.equal("bar");
 		expect($$.getSubchartTargetType("data2")).to.be.equal("line");
 		expect(chart.config("data.type")).to.be.equal("line");
-		expect(() => $$.canvasRenderer.drawSubchart($$, $$.getDrawShape())).to.not.throw();
+		expect(() => $$.getCanvasFeature("subchart").draw.call($$, $$.canvasRenderer, $$.getDrawShape())).to.not.throw();
 		expect(chart.config("data.type")).to.be.equal("line");
 	});
 
@@ -603,7 +603,11 @@ describe("API canvas", () => {
 				lineTos.push([x, y]);
 			});
 
-		chart.internal.canvasRenderer.drawSubchart(chart.internal, chart.internal.getDrawShape());
+		chart.internal.getCanvasFeature("subchart").draw.call(
+			chart.internal,
+			chart.internal.canvasRenderer,
+			chart.internal.getDrawShape()
+		);
 
 		const yValues = lineTos.map(([, y]) => y).filter(Number.isFinite);
 
@@ -644,7 +648,7 @@ describe("API canvas", () => {
 		});
 
 		const $$ = chart.internal;
-		const drawSubYAxes = vi.spyOn($$.canvasAxisRenderer, "drawSubYAxes");
+		const drawSubYAxes = vi.spyOn($$.getCanvasFeature("subchart"), "drawYAxes");
 		const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText");
 
 		expect($$.scale.subY).to.not.be.undefined;
@@ -653,7 +657,7 @@ describe("API canvas", () => {
 		expect(drawSubYAxes).toHaveBeenCalled();
 
 		fillText.mockClear();
-		$$.canvasAxisRenderer.drawSubYAxes($$);
+		$$.getCanvasFeature("subchart").drawYAxes.call($$, $$.canvasAxisRenderer);
 
 		expect(fillText).toHaveBeenCalledTimes(7);
 	});
@@ -754,17 +758,17 @@ describe("API canvas", () => {
 
 		const $$ = chart.internal;
 		const focusData = [$$.data.targets[0].values[1]];
-		const drawSubchartFocus = vi.spyOn($$.canvasRenderer, "drawSubchartFocus");
+		const drawSubchartFocus = vi.spyOn($$.getCanvasFeature("subchart"), "drawFocus");
 		const canvas = chart.$.canvas.node();
 		const rect = canvas.getBoundingClientRect();
 
 		expect($$.startCanvasSubchartBrush(new MouseEvent("mousedown"))).to.be.false;
 		expect($$.updateCanvasSubchartCursor(new MouseEvent("mousemove"))).to.be.false;
-		expect(() => $$.canvasRenderer.drawSubchartBrush($$)).to.not.throw();
+		expect(() => $$.getCanvasFeature("subchart").drawBrush.call($$, $$.canvasRenderer)).to.not.throw();
 
 		$$.renderCanvasFocus(focusData);
 
-		expect(drawSubchartFocus).toHaveBeenCalledWith($$, focusData);
+		expect(drawSubchartFocus).toHaveBeenCalledWith($$.canvasRenderer, focusData);
 
 		canvas.dispatchEvent(new MouseEvent("mousemove", {
 			clientX: rect.left + $$.state.margin2.left + $$.scale.subX(1),
