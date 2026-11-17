@@ -244,7 +244,10 @@ export default {
 			shape,
 			xv: $$.xv.bind($$)
 		});
-		const withTransition = (duration || flowFn) && isTabVisible();
+		// A flow slides the shapes itself, so they take their new data at once: a chart
+		// transition interpolated the paths between different point counts first, which
+		// bent them and held back the slide until it ended.
+		const withTransition = !flowFn && duration && isTabVisible();
 
 		// redraw list
 		const redrawList = $$.getRedrawList(shape, flow, flowFn, withTransition);
