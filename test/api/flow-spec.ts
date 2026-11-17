@@ -610,4 +610,46 @@ describe("API flow", () => {
 			});
 		}));
 	});
+
+	describe("destroy while flowing", () => {
+		// destroy() at the given time after flow() and collect the errors thrown after it
+		function destroyDuringFlow(destroyAfter: number): Promise<string[]> {
+			const errors: string[] = [];
+			const onError = (e: ErrorEvent) => {
+				errors.push(e.message);
+				e.preventDefault();
+			};
+			const chart = util.generate({
+				data: {
+					columns: [["data1", 30, 200, 100, 400, 150, 250]],
+					type: "area"
+				},
+				transition: {duration: 200}
+			});
+
+			window.addEventListener("error", onError);
+
+			chart.flow({
+				columns: [["data1", 120]],
+				duration: 200
+			});
+
+			setTimeout(() => chart.destroy(), destroyAfter);
+
+			return new Promise(resolve => {
+				setTimeout(() => {
+					window.removeEventListener("error", onError);
+					resolve(errors);
+				}, 800);
+			});
+		}
+
+		it("should not throw when destroyed before the slide starts", async () => {
+			expect(await destroyDuringFlow(50)).to.deep.equal([]);
+		});
+
+		it("should not throw when destroyed while sliding", async () => {
+			expect(await destroyDuringFlow(300)).to.deep.equal([]);
+		});
+	});
 });
