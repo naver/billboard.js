@@ -1981,7 +1981,8 @@ const canvasInternal = {
 		const {state} = $$;
 		const withMainRedraw = $$.canvasRenderer.hasExpandedShapeFocus?.($$, focusData);
 
-		if (withMainRedraw) {
+		// the cached frame still holds the previous expanded shape, so redraw it clean once
+		if (withMainRedraw || state.canvasFocusMainRedraw) {
 			const drawShape = state.canvasShape || $$.getDrawShape();
 
 			$$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());
@@ -1990,7 +1991,7 @@ const canvasInternal = {
 				$$.canvasRenderer.drawBackground($$);
 				$$.canvasAxisRenderer.drawTitle($$);
 				state.hasAxis && $$.canvasAxisRenderer.draw($$);
-				$$.canvasRenderer.draw($$, drawShape, focusData);
+				$$.canvasRenderer.draw($$, drawShape, withMainRedraw ? focusData : undefined);
 				state.hasAxis && $$.config.grid_lines_front &&
 					$$.getCanvasFeature?.("grid")?.drawLines.call($$, $$.canvasAxisRenderer);
 				$$.getCanvasFeature?.("subchart")?.draw.call($$, $$.canvasRenderer, drawShape);

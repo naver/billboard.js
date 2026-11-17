@@ -994,6 +994,25 @@ describe("ESM canvas internal coverage", () => {
 		call("clearCanvasFocus", ctx);
 		expect(ctx.callbacks.render.at(-1).rebuildHit).to.be.false;
 
+		// moving from an expanded focus to a cheap one redraws a clean frame once
+		const {beginFrame} = ctx.canvasEngine;
+		const {draw} = ctx.canvasRenderer;
+
+		call("renderCanvasFocus", ctx, [ctx.data.targets[0].values[0]], [20, 30]);
+		ctx.canvasRenderer.hasExpandedShapeFocus = () => false;
+		beginFrame.mockClear();
+		draw.mockClear();
+		call("renderCanvasFocus", ctx, [ctx.data.targets[0].values[1]], [30, 30]);
+		expect(beginFrame).toHaveBeenCalledTimes(1);
+		expect(draw.mock.calls[0][2]).to.be.undefined;
+		expect(ctx.state.canvasFocusMainRedraw).to.be.false;
+
+		beginFrame.mockClear();
+		call("renderCanvasFocus", ctx, [ctx.data.targets[0].values[0]], [20, 30]);
+		expect(beginFrame).not.toHaveBeenCalled();
+		ctx.canvasRenderer.hasExpandedShapeFocus = () => true;
+		call("clearCanvasFocus", ctx);
+
 		call("renderCanvasZoomBrush", ctx, 10, 20);
 		call("clearCanvasZoomBrush", ctx);
 		call("renderCanvasSelectionDrag", ctx, {x: 1, y: 2, w: 3, h: 4});

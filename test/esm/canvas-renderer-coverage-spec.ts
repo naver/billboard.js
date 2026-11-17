@@ -447,7 +447,28 @@ describe("ESM canvas renderer coverage", () => {
 		expect(renderer.hasExpandedShapeFocus(ctx, [ctx.data.targets[0].values[0]])).to.be.true;
 		expect(renderer.hasExpandedShapeFocus(ctx, [ctx.data.targets[1].values[0]])).to.be.true;
 
+		// a bar thinner than a pixel skips the full redraw
+		const getBarPoints = ctx.generateGetBarPoints;
+
+		ctx.generateGetBarPoints = () => (d, i) => [
+			[i * 20, 0],
+			[i * 20, 20],
+			[i * 20 + 0.4, 20],
+			[i * 20 + 0.4, 0]
+		];
+		expect(renderer.hasExpandedShapeFocus(ctx, [ctx.data.targets[0].values[0]])).to.be.false;
+		ctx.generateGetBarPoints = getBarPoints;
+
 		ctx.config.axis_rotated = true;
+		// rotated, the bar thickness is its render height: a bar 0.4px long and 20px thick still redraws
+		ctx.generateGetBarPoints = () => (d, i) => [
+			[0, i * 20],
+			[20, i * 20],
+			[20, i * 20 + 0.4],
+			[0, i * 20 + 0.4]
+		];
+		expect(renderer.hasExpandedShapeFocus(ctx, [ctx.data.targets[0].values[0]])).to.be.true;
+		ctx.generateGetBarPoints = getBarPoints;
 		ctx.config.point_show = false;
 		renderer.drawCircles(ctx, shape);
 		renderer.drawFocus(ctx, [ctx.data.targets[2].values[1]]);
