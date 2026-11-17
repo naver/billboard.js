@@ -166,7 +166,9 @@ export default class AxisRendererHelper {
 		const {config} = this;
 		let transitionSelection = selection;
 
-		if (config.withoutTransition) {
+		// a flow passes its own transition (setTransition), which applies even when the
+		// chart transition is off, so the ticks slide with the shapes
+		if (config.withoutTransition && !config.transition) {
 			transitionSelection = selection.interrupt();
 		} else if (config.transition || !this.owner.params.noTransition) {
 			// prevent for 'transition not found' case
