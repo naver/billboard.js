@@ -300,36 +300,33 @@ function splitTickTextByWidth(text: string, width: number, painter: CanvasPainte
 	}
 
 	const charWidth = painter.measureText("0").width || 5.5;
+	const lines: string[] = [];
+	let start = 0;
 
-	/**
-	 * Split a text fragment recursively.
-	 * @param {Array} lines Accumulated text lines
-	 * @param {string} value Remaining text fragment
-	 * @returns {Array} Text lines
-	 * @private
-	 */
-	function split(lines: string[], value: string): string[] {
+	// iterate rather than recurse per line, so a very long label cannot overflow the stack
+	while (true) {
 		let spaceIndex: number | undefined;
+		let splitAt = -1;
 
-		for (let i = 1; i < value.length; i++) {
-			if (value.charAt(i) === " ") {
+		for (let i = 1; start + i < text.length; i++) {
+			if (text.charAt(start + i) === " ") {
 				spaceIndex = i;
 			}
 
 			if (width < charWidth * (i + 1)) {
-				const splitIndex = spaceIndex || i;
-
-				return split(
-					lines.concat(value.slice(0, splitIndex)),
-					value.slice(spaceIndex ? spaceIndex + 1 : i)
-				);
+				splitAt = i;
+				break;
 			}
 		}
 
-		return lines.concat(value);
-	}
+		if (splitAt === -1) {
+			lines.push(text.slice(start));
+			return lines;
+		}
 
-	return split([], text);
+		lines.push(text.slice(start, start + (spaceIndex || splitAt)));
+		start += spaceIndex ? spaceIndex + 1 : splitAt;
+	}
 }
 
 /**
