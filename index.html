@@ -4,132 +4,227 @@
     <meta charset="utf-8">
     <title>billboard.js | JavaScript chart library with SVG &amp; Canvas rendering</title>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-    <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+, with SVG and Canvas rendering support." />
+    <meta name="description" content="JavaScript chart library based on D3. One API renders to SVG or Canvas, and stays responsive with hundreds of thousands of data points." />
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
     <meta property="og:title" content="billboard.js" />
-    <meta property="og:description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+, with SVG and Canvas rendering support." />
+    <meta property="og:description" content="JavaScript chart library based on D3. One API renders to SVG or Canvas, and stays responsive with hundreds of thousands of data points." />
     <meta property="og:type" content="website" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 
     <!-- d3 & billboard.js -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="./release/latest/dist/billboard.min.js"></script>
     <link rel="stylesheet" href="./release/latest/dist/billboard.min.css" />
 
-    <!-- highlight.js (dark) -->
+    <!-- highlight.js -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
     <link rel="stylesheet" href="./css/home.css" />
 </head>
 <body>
-<div class="bg-mesh"></div>
-
-<nav>
+<nav id="nav">
     <div class="wrap">
-        <a class="brand" href="#top"><img src="./img/logo/billboard.js-white.svg" alt="billboard.js"></a>
-        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
+        <a class="brand" href="#top" aria-label="billboard.js home">
+            <img class="logo-light" src="./img/logo/billboard.js.svg" alt="billboard.js">
+            <img class="logo-dark" src="./img/logo/billboard.js-white.svg" alt="" aria-hidden="true">
+        </a>
+        <button type="button" class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navlinks">
+            <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
         <div class="navlinks" id="navlinks">
-            <a href="#features">Features</a>
-            <a href="#render">Rendering</a>
-            <a href="#start">Get Started</a>
+            <a href="#bench">Benchmark</a>
+            <a href="#renderers">Renderers</a>
+            <a href="#interact">Interactions</a>
+            <a href="#types">Chart types</a>
+            <a href="#start">Get started</a>
             <a href="#download">Download</a>
             <a href="./release/latest/doc/" target="bb">API</a>
             <a href="./demo/" target="bb">Examples</a>
-            <a href="https://github.com/naver/billboard.js" target="bb" class="pill" id="ghStar" aria-label="Star naver/billboard.js on GitHub">★ GitHub</a>
+            <a href="https://github.com/naver/billboard.js" target="bb" class="gh" id="ghStar">GitHub</a>
+            <button type="button" class="copy" data-copy-page title="Copy page address" aria-label="Copy page address"></button>
         </div>
     </div>
 </nav>
 
-<div class="wrap" id="top">
-<header>
-    <div class="badge" id="badgeVersion">Latest version: v4.0.3</div>
-    <h1>Beautiful charts,<br><span class="grad">effortlessly.</span></h1>
-    <p class="lead">Re-usable, easy-interface JavaScript chart library built on D3 v4+.
-        Render to <b>SVG</b> or <b>Canvas</b> from the same API — generate a chart in three lines.</p>
-    <div class="cta">
-        <a href="#start" class="btn primary">Get Started →</a>
-        <a href="#render" class="btn ghost">SVG &amp; Canvas ↓</a>
-    </div>
-
-    <div class="chartcard">
-        <div class="topbar">
-            <i></i><i></i><i></i>
-            <div class="seg" id="heroSeg">
-                <button data-t="bar" class="on">bar</button>
-                <button data-t="line">line</button>
-                <button data-t="spline">spline</button>
-                <button data-t="step">step</button>
-                <button data-t="area">area</button>
-                <button data-t="area-spline">area-spline</button>
-                <button data-t="area-step">area-step</button>
-                <button data-t="combination">combination</button>
-            </div>
-        </div>
-        <div id="chart"></div>
+<main id="top">
+<header class="hero">
+    <div class="wrap">
+        <p class="version" id="badgeVersion">v4</p>
+        <h1>Draw a million points.<br>Keep the page moving.</h1>
+        <p class="lead">billboard.js is a JavaScript chart library built on D3. The same options render to
+            SVG or to Canvas, so a chart can grow from a dozen values to a million without a rewrite.
+            The bench below runs on your machine.</p>
     </div>
 </header>
 
-<section id="features">
-    <h2 class="stitle">Everything you need</h2>
-    <p class="ssub">Powerful defaults, endless customization.</p>
-    <div class="features">
-        <div class="feat"><div class="ic">⚡</div><h3>Simple</h3><p>Create a chart instantly with sensible defaults and extensive options.</p></div>
-        <div class="feat hl"><div class="ic">🖇️</div><h3>SVG &amp; Canvas</h3><p>One API, two renderers. Switch to canvas for high-density, large-data charts.</p></div>
-        <div class="feat"><div class="ic">🧩</div><h3>Modular ESM</h3><p>Written as ES Modules with ES6+ syntax. Import only what you need.</p></div>
-        <div class="feat"><div class="ic">🎨</div><h3>Rich options</h3><p>Combine hundreds of options and themes to match any design.</p></div>
-    </div>
-</section>
+<section id="bench" class="bench-sec" aria-labelledby="benchTitle">
+    <div class="wrap">
+        <h2 class="sr-only" id="benchTitle">Benchmark</h2>
+        <div class="bench">
+            <div class="stage">
+                <div id="benchChart"></div>
+                <p class="stage-note" id="benchNote" role="status"></p>
+            </div>
 
-<section id="render">
-    <div class="render">
-        <div>
-            <span class="badge">NEW in v4</span>
-            <h2 class="rtitle">One API,<br><span class="grad">two renderers.</span></h2>
-            <p class="rlead">The same chart config renders to SVG or Canvas. Canvas mode draws high-density
-                scatter, line and area charts to a single <code>&lt;canvas&gt;</code> — smooth even with
-                tens of thousands of points.</p>
-            <div class="ctl">
-                <div>
-                    <span class="lbl">Renderer</span>
+            <dl class="readout">
+                <div><dt>Points drawn</dt><dd id="rPts">0</dd></div>
+                <div><dt>Time to first frame</dt><dd><span id="rTime">0</span><small>ms</small></dd></div>
+                <div><dt>DOM nodes in the chart</dt><dd id="rNodes">0</dd></div>
+                <div><dt>Frame rate right now</dt><dd><span id="rFps">0</span><small>fps</small></dd></div>
+            </dl>
+
+            <form class="controls" id="benchForm" onsubmit="return false">
+                <fieldset>
+                    <legend>Renderer</legend>
                     <div class="seg" id="modeSeg">
-                        <button data-m="svg">SVG</button>
-                        <button data-m="canvas" class="on">Canvas</button>
+                        <button type="button" data-v="svg" aria-pressed="false">SVG</button>
+                        <button type="button" data-v="canvas" aria-pressed="true">Canvas</button>
                     </div>
-                </div>
-                <div>
-                    <span class="lbl">Data points</span>
-                    <div class="seg" id="ptSeg">
-                        <button data-n="1000">1,000</button>
-                        <button data-n="2500">2,500</button>
-                        <button data-n="5000" class="on">5,000</button>
-                        <button data-n="50000">50,000</button>
+                </fieldset>
+                <fieldset>
+                    <legend>Chart</legend>
+                    <div class="seg" id="typeSeg">
+                        <button type="button" data-v="scatter" aria-pressed="true">scatter</button>
+                        <button type="button" data-v="line" aria-pressed="false">line</button>
+                        <button type="button" data-v="area" aria-pressed="false">area</button>
+                        <button type="button" data-v="bar" aria-pressed="false">bar</button>
                     </div>
-                    <p class="rhint" id="rhint"></p>
+                </fieldset>
+                <fieldset class="points">
+                    <legend><label for="ptRange">Points</label> <output id="ptOut" for="ptRange">100,000</output></legend>
+                    <input type="range" id="ptRange" min="0" max="9" step="1" value="6">
+                    <div class="ticks" aria-hidden="true"><span>1K</span><span>10K</span><span>100K</span><span>1M</span></div>
+                </fieldset>
+                <button type="button" class="btn" id="redraw">Draw again</button>
+            </form>
+
+            <div class="runs">
+                <div class="runs-head">
+                    <h3>Your runs</h3>
+                    <button type="button" class="link" id="clearRuns">Clear</button>
                 </div>
-                <div class="metric">
-                    <div><b id="mPts">5,000</b><span>points</span></div>
-                    <div><b id="mTime">–</b><span>render time</span></div>
-                    <div><b id="mMode">Canvas</b><span>backend</span></div>
-                </div>
+                <table id="runTable">
+                    <thead><tr><th>Renderer</th><th>Chart</th><th class="num">Points</th><th class="num">First frame</th><th class="barcol"><span class="sr-only">Relative time</span></th></tr></thead>
+                    <tbody id="runRows"></tbody>
+                </table>
+                <p class="runs-empty" id="runsEmpty" hidden>No runs yet. Change a control above to draw a chart.</p>
             </div>
         </div>
-        <div class="rpanel">
-            <div class="topbar">
-                <i></i><i></i><i></i>
-                <span class="mode" id="modeTag">render.mode: "canvas"</span>
+        <p class="fine">Time to first frame covers <code>bb.generate()</code> and the browser paint that follows.
+            Move the pointer over the chart and watch the frame rate while the tooltip tracks the data.</p>
+    </div>
+</section>
+
+<section id="renderers" aria-labelledby="renderersTitle">
+    <div class="wrap">
+        <div class="shead">
+            <h2 id="renderersTitle">Two renderers, one set of options</h2>
+            <button type="button" class="copy" data-copy-anchor="renderers" title="Copy section address" aria-label="Copy address of Two renderers"></button>
+        </div>
+        <p class="ssub">SVG is the default. Add one option and the same chart draws to a single
+            <code>&lt;canvas&gt;</code> element.</p>
+
+        <div class="pair">
+            <figure>
+                <div id="pairSvg"></div>
+                <figcaption><b>SVG</b> <span id="pairSvgNodes"></span></figcaption>
+            </figure>
+            <figure>
+                <div id="pairCanvas"></div>
+                <figcaption><b>Canvas</b> <span id="pairCanvasNodes"></span></figcaption>
+            </figure>
+        </div>
+
+        <div class="compare">
+            <div class="code">
+<pre><code class="language-javascript">bb.generate({
+  bindto: "#chart",
+  // remove the next line to draw SVG
+  render: { mode: "canvas" },
+  data: {
+    type: "scatter",
+    columns: [ /* ... */ ]
+  }
+});</code></pre>
             </div>
-            <div id="chart2"></div>
+            <table class="when">
+                <thead><tr><th></th><th>SVG</th><th>Canvas</th></tr></thead>
+                <tbody>
+                    <tr><th>Output</th><td>One DOM node per shape</td><td>One <code>&lt;canvas&gt;</code> element</td></tr>
+                    <tr><th>Styling</th><td>CSS selectors and themes</td><td>Chart options and <code>canvas.theme</code></td></tr>
+                    <tr><th>Chart types</th><td>All</td><td>Axis-based types and treemap. Pie, donut, gauge, polar, radar and funnel always draw as SVG.</td></tr>
+                    <tr><th>Use it for</th><td>Charts you style or inspect per element</td><td>Thousands of points and more</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </section>
 
-<section id="start">
-    <h2 class="stitle">Get Started</h2>
-    <p class="ssub">Two steps to your first chart.</p>
-    <div class="startgrid">
-        <div class="code">
-            <div class="codehead">1. Setup: load &amp; set holder</div>
+<section id="interact" aria-labelledby="interactTitle">
+    <div class="wrap">
+        <div class="shead">
+            <h2 id="interactTitle">Interactions</h2>
+            <button type="button" class="copy" data-copy-anchor="interact" title="Copy section address" aria-label="Copy address of Interactions"></button>
+        </div>
+        <p class="ssub">A range selector, streaming data and zoom come with the library.
+            Each one is a few options away.</p>
+
+        <div class="lab">
+            <div class="lab-stage">
+                <div class="lab-head">
+                    <div class="seg" id="labSeg" role="group" aria-label="Interaction demo">
+                        <button type="button" data-v="subchart" aria-pressed="true">Subchart</button>
+                        <button type="button" data-v="flow" aria-pressed="false">Live data</button>
+                        <button type="button" data-v="zoom" aria-pressed="false">Zoom</button>
+                    </div>
+                    <div class="lab-tools">
+                        <div class="seg radio" role="radiogroup" aria-label="Renderer">
+                            <label><input type="radio" name="labRender" value="svg" checked><span>SVG</span></label>
+                            <label><input type="radio" name="labRender" value="canvas"><span>Canvas</span></label>
+                        </div>
+                        <button type="button" class="btn ghost icon" id="flowToggle" aria-label="Pause" title="Pause" hidden></button>
+                    </div>
+                </div>
+                <p class="lab-hint" id="labHint"></p>
+                <div id="labChart"></div>
+            </div>
+            <div class="code lab-code">
+                <div class="codehead">Options for this chart</div>
+<pre><code class="language-javascript" id="labCode"></code></pre>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="types" aria-labelledby="typesTitle">
+    <div class="wrap">
+        <div class="shead">
+            <h2 id="typesTitle">Chart types</h2>
+            <button type="button" class="copy" data-copy-anchor="types" title="Copy section address" aria-label="Copy address of Chart types"></button>
+        </div>
+        <p class="ssub">Every chart here is live. Open one to try it at full size and read its options.
+            Types combine in one chart, and each one is a separate ES module, so a bundle carries only
+            the types it imports.</p>
+        <div class="gallery" id="gallery"></div>
+        <p class="more"><a href="./demo/" target="bb">Browse all examples</a></p>
+    </div>
+</section>
+
+<section id="start" aria-labelledby="startTitle">
+    <div class="wrap">
+        <div class="shead">
+            <h2 id="startTitle">Get started</h2>
+            <button type="button" class="copy" data-copy-anchor="start" title="Copy section address" aria-label="Copy address of Get started"></button>
+        </div>
+        <p class="ssub">Load the library, then generate a chart.</p>
+        <div class="startgrid">
+            <div class="code">
+                <div class="codehead">1. Load the files and add a holder</div>
 <pre><code class="language-html">&lt;!-- D3 (peer dependency) --&gt;
 &lt;script src="https://d3js.org/d3.v7.min.js"&gt;&lt;/script&gt;
 
@@ -139,17 +234,17 @@
 
 &lt;!-- chart holder --&gt;
 &lt;div id="chart"&gt;&lt;/div&gt;</code></pre>
-        </div>
-        <div class="code">
-            <div class="codehead codehead-tabs">
-                <span>2. Generate a chart</span>
-                <div class="seg" id="startTabs">
-                    <button data-tab="vanilla" class="on">vanilla</button>
-                    <button data-tab="esm-svg">ESM: svg</button>
-                    <button data-tab="esm-canvas">ESM: canvas</button>
-                </div>
             </div>
-            <div id="startPanels">
+            <div class="code">
+                <div class="codehead codehead-tabs">
+                    <span>2. Generate a chart</span>
+                    <div class="seg small" id="startTabs">
+                        <button type="button" data-tab="vanilla" aria-pressed="true">script tag</button>
+                        <button type="button" data-tab="esm-svg" aria-pressed="false">ESM, SVG</button>
+                        <button type="button" data-tab="esm-canvas" aria-pressed="false">ESM, Canvas</button>
+                    </div>
+                </div>
+                <div id="startPanels">
 <pre data-panel="vanilla"><code class="language-html">&lt;script&gt;
   // bb is available as a global
   const chart = bb.generate({
@@ -181,97 +276,115 @@ import "billboard.js/dist/billboard.css";
 
 bb.generate({
   bindto: "#chart",
-  render: { mode: canvas() },   // high-density backend
+  render: { mode: canvas() },
   data: {
     type: scatter(),
-    /* thousands of points, still smooth */
+    columns: [ /* thousands of points */ ]
   }
 });</code></pre>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<aside id="download">
-    <h2 class="stitle">Download</h2>
-    <p class="ssub">Current latest version is <span id="version">4.0.3</span>. <code>pkgd</code> files are packaged with D3.js.</p>
+<section id="download" aria-labelledby="downloadTitle">
+    <div class="wrap">
+        <div class="shead">
+            <h2 id="downloadTitle">Download</h2>
+            <button type="button" class="copy" data-copy-anchor="download" title="Copy section address" aria-label="Copy address of Download"></button>
+        </div>
+        <p class="ssub">The latest version is <span id="version">4</span>. Files named <code>pkgd</code> include D3.</p>
 
-    <p class="npm-line"><span>install from npm</span></p>
-    <div class="npmbox">
-<pre><code class="language-bash">$ npm install billboard.js        # latest
-$ npm install billboard.js@next   # release candidate</code></pre>
-    </div>
-    <p class="npm-line"><span>or download files</span></p>
+        <div class="code npm">
+<pre><code class="language-bash">npm install billboard.js        # latest
+npm install billboard.js@next   # release candidate</code></pre>
+        </div>
 
-    <div class="dlgrid">
-        <div class="dlgroup">
-            <h4>Development</h4>
-            <div class="dllinks">
-                <a href="./release/latest/dist/billboard.js" download>billboard.js</a>
-                <a href="./release/latest/dist/billboard.pkgd.js" download>billboard.pkgd.js</a>
-                <a href="./release/latest/dist/billboard.css" download>billboard.css</a>
+        <dl class="dl">
+            <div>
+                <dt>Development</dt>
+                <dd>
+                    <a href="./release/latest/dist/billboard.js" download>billboard.js</a>
+                    <a href="./release/latest/dist/billboard.pkgd.js" download>billboard.pkgd.js</a>
+                    <a href="./release/latest/dist/billboard.css" download>billboard.css</a>
+                </dd>
             </div>
-        </div>
-        <div class="dlgroup">
-            <h4>Production</h4>
-            <div class="dllinks">
-                <a href="./release/latest/dist/billboard.min.js" download>billboard.min.js</a>
-                <a href="./release/latest/dist/billboard.pkgd.min.js" download>billboard.pkgd.min.js</a>
-                <a href="./release/latest/dist/billboard.min.css" download>billboard.min.css</a>
+            <div>
+                <dt>Production</dt>
+                <dd>
+                    <a href="./release/latest/dist/billboard.min.js" download>billboard.min.js</a>
+                    <a href="./release/latest/dist/billboard.pkgd.min.js" download>billboard.pkgd.min.js</a>
+                    <a href="./release/latest/dist/billboard.min.css" download>billboard.min.css</a>
+                </dd>
             </div>
-        </div>
-        <div class="dlgroup">
-            <h4>CSS Themes</h4>
-            <div class="dllinks">
-                <a href="./release/latest/dist/billboard.min.css" download>default</a>
-                <a href="./release/latest/dist/theme/dark.min.css" download>dark</a>
-                <a href="./release/latest/dist/theme/modern.min.css" download>modern</a>
-                <a href="./release/latest/dist/theme/datalab.min.css" download>datalab</a>
-                <a href="./release/latest/dist/theme/insight.min.css" download>insight</a>
-                <a href="./release/latest/dist/theme/graph.min.css" download>graph</a>
+            <div>
+                <dt>CSS themes</dt>
+                <dd>
+                    <a href="./release/latest/dist/billboard.min.css" download>default</a>
+                    <a href="./release/latest/dist/theme/dark.min.css" download>dark</a>
+                    <a href="./release/latest/dist/theme/modern.min.css" download>modern</a>
+                    <a href="./release/latest/dist/theme/datalab.min.css" download>datalab</a>
+                    <a href="./release/latest/dist/theme/insight.min.css" download>insight</a>
+                    <a href="./release/latest/dist/theme/graph.min.css" download>graph</a>
+                </dd>
             </div>
-        </div>
-        <div class="dlgroup">
-            <h4>Plugins</h4>
-            <div class="dllinks">
-                <a href="./release/latest/dist/plugin/billboardjs-plugin-bubblecompare.min.js" download>Bubble Compare</a>
-                <a href="./release/latest/dist/plugin/billboardjs-plugin-sparkline.min.js" download>Sparkline</a>
-                <a href="./release/latest/dist/plugin/billboardjs-plugin-stanford.min.js" download>Stanford</a>
-                <a href="./release/latest/dist/plugin/billboardjs-plugin-tableview.min.js" download>TableView</a>
-                <a href="./release/latest/dist/plugin/billboardjs-plugin-textoverlap.min.js" download>TextOverlap</a>
+            <div>
+                <dt>Plugins</dt>
+                <dd>
+                    <a href="./release/latest/dist/plugin/billboardjs-plugin-bubblecompare.min.js" download>Bubble Compare</a>
+                    <a href="./release/latest/dist/plugin/billboardjs-plugin-sparkline.min.js" download>Sparkline</a>
+                    <a href="./release/latest/dist/plugin/billboardjs-plugin-stanford.min.js" download>Stanford</a>
+                    <a href="./release/latest/dist/plugin/billboardjs-plugin-tableview.min.js" download>TableView</a>
+                    <a href="./release/latest/dist/plugin/billboardjs-plugin-textoverlap.min.js" download>TextOverlap</a>
+                </dd>
             </div>
-        </div>
-    </div>
-</aside>
-
-<section class="stats-wrap">
-    <div class="stats">
-        <div class="stat"><b>20</b><span>chart types</span></div>
-        <div class="stat"><b>SVG + Canvas</b><span>rendering</span></div>
-        <div class="stat"><b>MIT</b><span>licensed</span></div>
-        <div class="stat"><b id="statVer">v4.0.3</b><span>latest</span></div>
+        </dl>
     </div>
 </section>
-</div>
+</main>
 
 <footer>
-    <div class="wrap footer-inner">
-        <img src="./img/logo/billboard.js-white.svg" alt="billboard.js" class="flogo">
-        <p>Re-usable, easy interface JavaScript chart library, based on D3 v4+.</p>
-        <p class="muted">This project is licensed under the MIT license.
-            <a href="http://www.navercorp.com/" target="_new">© NAVER Corp.</a></p>
+    <div class="wrap">
+        <p><strong>billboard.js</strong> by <a href="https://www.navercorp.com/" target="_blank" rel="noopener">NAVER</a></p>
+        <p class="muted">Released under the MIT license.</p>
     </div>
 </footer>
 
+<button type="button" class="totop" id="toTop" aria-label="Back to top" title="Back to top">
+    <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M10 16V5M5 9.5 10 4.5l5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+<dialog class="viewer" id="viewer" aria-labelledby="viewerTitle">
+    <div class="viewer-head">
+        <h3 id="viewerTitle"></h3>
+        <a id="viewerDemo" href="./demo/" target="bb">Open in examples</a>
+        <button type="button" class="close" id="viewerClose" aria-label="Close" title="Close">
+            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+    </div>
+    <div class="viewer-body">
+        <div id="viewerChart"></div>
+        <div class="code">
+<pre><code class="language-javascript" id="viewerCode"></code></pre>
+        </div>
+    </div>
+</dialog>
+<div class="sr-only" id="live" aria-live="polite"></div>
+
 <script src="./js/index.js"></script>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DL3B3PRHQM"></script>
+<!-- Google tag (gtag.js): not sent from local hosts -->
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-DL3B3PRHQM');
+    if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
+        var s = document.createElement("script");
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-DL3B3PRHQM";
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-DL3B3PRHQM');
+    }
 </script>
 </body>
 </html>
