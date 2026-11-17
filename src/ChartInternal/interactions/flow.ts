@@ -79,12 +79,10 @@ export default {
 		const {flow, targets} = args;
 		const {
 			duration = args.duration,
-			index: flowIndex,
-			length: flowLength,
 			orgDataCount
 		} = flow;
 
-		const transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength);
+		const transform = $$.getFlowTransform(targets, orgDataCount);
 		const wait = generateWait();
 		let n;
 
@@ -200,18 +198,14 @@ export default {
 	 * Get flow transform value
 	 * @param {object} targets target
 	 * @param {number} orgDataCount original data count
-	 * @param {number} flowIndex flow index
-	 * @param {number} flowLength flow length
 	 * @returns {string}
 	 * @private
 	 */
-	getFlowTransform(targets, orgDataCount, flowIndex, flowLength): string {
+	getFlowTransform(targets, orgDataCount): string {
 		const $$ = this;
 		const {data, scale: {x}} = $$;
 		const dataValues = data.targets[0].values;
 
-		let flowStart = $$.getValueOnIndex(dataValues, flowIndex);
-		let flowEnd = $$.getValueOnIndex(dataValues, flowIndex + flowLength);
 		let translateX;
 
 		// update x domain to generate axis elements for flow
@@ -224,19 +218,18 @@ export default {
 				translateX = x(orgDomain[0]) - x(domain[0]);
 			} else {
 				if ($$.axis.isTimeSeries()) {
-					flowStart = $$.getValueOnIndex(dataValues, 0);
-					flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
+					const flowStart = $$.getValueOnIndex(dataValues, 0);
+					const flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
+
 					translateX = x(flowStart.x) - x(flowEnd.x);
 				} else {
 					translateX = diffDomain(domain) / 2;
 				}
 			}
-		} else if (orgDataCount === 1 || flowStart?.x === flowEnd?.x) {
-			translateX = x(orgDomain[0]) - x(domain[0]);
 		} else {
-			translateX = $$.axis.isTimeSeries() ?
-				x(orgDomain[0]) - x(domain[0]) :
-				x(flowStart?.x || 0) - x(flowEnd.x);
+			// The flowed-out head is already spliced from the data, so the slide is
+			// measured by how far the domain start moved.
+			translateX = x(orgDomain[0]) - x(domain[0]);
 		}
 
 		const scaleX = diffDomain(orgDomain) / diffDomain(domain);

@@ -86,6 +86,18 @@ export default {
 			const orgDataCount = $$.getMaxDataCount();
 			const targets = $$.convertDataToTargets(data, true);
 			const isTimeSeries = $$.axis.isTimeSeries();
+			// timeseries and custom x take x from the data; otherwise x follows the index
+			const isCustomX = !isTimeSeries && $$.axis.isCustomX() && !$$.axis.isCategorized();
+			const hasDataX = isTimeSeries || isCustomX;
+			const firstValue = $$.data.targets.find(t => t.values.length)?.values[0];
+			// updateDataIndexByX() renumbers the index from 0 after each flow while x keeps
+			// moving on, so the gap between them carries x forward
+			const xOffset = firstValue ? firstValue.x - firstValue.index : 0;
+			const getX = (
+				index: number
+			) => (isTimeSeries ? $$.getOtherTargetX(index) : index + xOffset);
+			// x of the values added by this flow, for series missing from the flow data
+			const flowedXs: number[] = [];
 
 			// Update/Add data
 			$$.data.targets.forEach(t => {
@@ -106,10 +118,11 @@ export default {
 						for (let j = 0; j < length; j++) {
 							values[j].index = tail + j;
 
-							if (!isTimeSeries) {
-								values[j].x = tail + j;
+							if (!hasDataX) {
+								values[j].x = getX(tail + j);
 							}
 
+							flowedXs[j] = values[j].x;
 							t.values.push(values[j]);
 						}
 
@@ -136,7 +149,7 @@ export default {
 							t.values.push({
 								id: t.id,
 								index: tail + j,
-								x: isTimeSeries ? $$.getOtherTargetX(tail + j) : tail + j,
+								x: isCustomX ? flowedXs[j] : getX(tail + j),
 								value: null
 							});
 						}
@@ -165,7 +178,7 @@ export default {
 							values[i] = {
 								id: t.id,
 								index,
-								x: isTimeSeries ? $$.getOtherTargetX(index) : index,
+								x: isCustomX ? $$.data.targets[0].values[i]?.x : getX(index),
 								value: null
 							};
 						}
@@ -176,8 +189,8 @@ export default {
 
 						v.index += tail;
 
-						if (!isTimeSeries) {
-							v.x += tail;
+						if (!hasDataX) {
+							v.x = getX(v.index);
 						}
 					}
 				});
@@ -269,7 +282,6 @@ export default {
 			// Redraw with new targets
 			$$.redraw({
 				flow: {
-					index: baseValue.index,
 					length: length,
 					duration: isValue(args.duration) ?
 						args.duration :
