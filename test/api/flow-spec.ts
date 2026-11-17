@@ -652,4 +652,87 @@ describe("API flow", () => {
 			expect(await destroyDuringFlow(300)).to.deep.equal([]);
 		});
 	});
+
+	describe("flow animation", () => {
+		// the translate of an element's transform attribute, or null
+		const getTranslateX = node => {
+			const m = (node.getAttribute("transform") || "").match(/translate\(\s*([-\d.e]+)/);
+
+			return m ? +m[1] : null;
+		};
+
+		it("should start sliding at once when the chart has a transition duration", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [["data1", 30, 200, 100, 400, 150, 250]],
+					type: "area"
+				},
+				transition: {duration: 300}
+			});
+			const path = chart.$.main.select(`.${$LINE.line}-data1`).node();
+			let points;
+			let translateX;
+
+			chart.flow({
+				columns: [["data1", 120]],
+				duration: 300,
+				done() {
+					// the shapes get their new path at once: the chart transition used to
+					// interpolate them first, which bent the area, and delayed the slide
+					expect(points).to.be.equal(7);
+					expect(translateX).to.be.below(0);
+
+					this.destroy();
+					done(1);
+				}
+			});
+
+			setTimeout(() => {
+				points = path.getAttribute("d").match(/[-\d.]+,[-\d.]+/g).length;
+				translateX = getTranslateX(path);
+			}, 100);
+		}));
+
+		it("should slide the x axis ticks when the chart transition is off", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [["data1", 30, 200, 100, 400, 150, 250, 300, 200, 100, 50]]
+				},
+				transition: {duration: 0}
+			});
+			const getTickX = value => {
+				let x = null;
+
+				chart.$.main.selectAll(`.${$AXIS.axisX} .tick`).each(function() {
+					if (this.textContent === String(value)) {
+						x = getTranslateX(this);
+					}
+				});
+
+				return x;
+			};
+			const start = getTickX(5);
+			let middle;
+
+			chart.flow({
+				columns: [["data1", 120]],
+				duration: 300,
+				done() {
+					const end = getTickX(5);
+
+					// the flow passes its own transition, so the ticks move with the shapes
+					// instead of jumping to the end position when the flow finishes
+					expect(middle).to.be.below(start - 1);
+					expect(middle).to.be.above(end + 1);
+
+					this.destroy();
+					done(1);
+				}
+			});
+
+			setTimeout(() => {
+				middle = getTickX(5);
+			}, 150);
+		}));
+	});
 });
