@@ -1030,4 +1030,26 @@ describe("TREEMAP", () => {
 			});
 		});
 	});
+
+	describe("data.onclick", () => {
+		const calls: any[] = [];
+
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [["data1", 130], ["data2", 200], ["data3", 500]],
+					type: "treemap",
+					onclick: (d, el) => calls.push([d.id, d.value, el.tagName])
+				}
+			};
+		});
+
+		it("should call data.onclick with the row and the clicked tile", () => {
+			chart.internal.$el.treemap.selectAll("rect")
+				.filter(d => d.data.id === "data2").node()
+				.dispatchEvent(new MouseEvent("click", {bubbles: true}));
+
+			expect(calls).to.deep.equal([["data2", 200, "rect"]]);
+		});
+	});
 });

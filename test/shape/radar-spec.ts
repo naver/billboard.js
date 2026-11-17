@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import {beforeEach, beforeAll, describe, expect, it} from "vitest";
 import util from "../assets/util";
-import {$AXIS, $COMMON, $LEVEL, $RADAR} from "../../src/config/classes";
+import {$AXIS, $COMMON, $LEVEL, $RADAR, $SHAPE} from "../../src/config/classes";
 
 describe("SHAPE RADAR", () => {
 	let chart;
@@ -420,5 +420,54 @@ describe("SHAPE RADAR", () => {
 				done(1);
 			}, 350);
 		}));
+	});
+
+	describe("data.onclick", () => {
+		const calls: any[] = [];
+		const click = el => el.dispatchEvent(new MouseEvent("click", {bubbles: true}));
+
+		beforeAll(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "A", "B", "C"],
+						["data1", 330, 350, 200],
+						["data2", 130, 100, 300]
+					],
+					type: "radar",
+					onclick: (d, el) => calls.push([d.id, d.index, d.value, el.tagName])
+				}
+			};
+		});
+
+		beforeEach(() => {
+			calls.length = 0;
+		});
+
+		it("should call data.onclick with the row of a clicked point", () => {
+			click(chart.$.main.select(`.${$COMMON.target}-data2 circle.${$SHAPE.shape}-1`).node());
+
+			expect(calls).to.deep.equal([["data2", 1, 100, "circle"]]);
+		});
+
+		it("should call data.onclick with every row of a clicked axis text", () => {
+			click(chart.$.main.selectAll(`.${$RADAR.chartRadars} .${$AXIS.axis} text`).nodes()[2]);
+
+			expect(calls).to.deep.equal([
+				["data1", 2, 200, "text"],
+				["data2", 2, 300, "text"]
+			]);
+		});
+
+		it("set options: radar.axis.text.show=false", () => {
+			args.radar = {axis: {text: {show: false}}};
+		});
+
+		it("should call data.onclick from a point when the axis text is hidden", () => {
+			click(chart.$.main.select(`.${$COMMON.target}-data1 circle.${$SHAPE.shape}-0`).node());
+
+			expect(calls).to.deep.equal([["data1", 0, 330, "circle"]]);
+		});
 	});
 });
