@@ -18,6 +18,11 @@ export default {
 		const {data, state, $el} = $$;
 
 		return function() {
+			// destroy() empties the instance while the redraw transition is waited on
+			if (!$$.$el) {
+				return;
+			}
+
 			const flowLength = args.flow.length;
 
 			// set flag
@@ -119,6 +124,13 @@ export default {
 	 */
 	cleanUpFlow(elements, args): void {
 		const $$ = this;
+
+		// destroy() interrupts the flow transition, which the wait counts as ended,
+		// and empties the instance before this runs
+		if (!$$.$el) {
+			return;
+		}
+
 		const {config, state, $el: {svg}} = $$;
 		const isRotated = config.axis_rotated;
 
