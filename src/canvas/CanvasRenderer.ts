@@ -12,6 +12,7 @@ import {getLineRegionSegments} from "../ChartInternal/shape/core/dataRegion";
 import {
 	getRenderDataPoint,
 	getRenderPoint,
+	getRenderRect,
 	getShapePoint
 } from "../ChartInternal/shape/core/geometry";
 import {generateDrawAreaPath, generateDrawLinePath} from "../ChartInternal/shape/core/path";
@@ -1371,13 +1372,39 @@ export default class CanvasRenderer {
 	 * @private
 	 */
 	hasExpandedShapeFocus($$, selectedData): boolean {
-		return !!selectedData?.some(d =>
-			d &&
-			(
-				isCanvasBarType($$, d) ||
-				isCanvasCandlestickType($$, d)
-			)
-		);
+		const isBar = isCanvasBarType.bind(null, $$);
+		let getPoints;
+
+		return !!selectedData?.some(d => {
+			if (!d) {
+				return false;
+			}
+
+			if (isCanvasCandlestickType($$, d)) {
+				return true;
+			}
+
+			if (!isBar(d)) {
+				return false;
+			}
+
+			// A bar thinner than a pixel shows no visible _expanded_ change, while redrawing
+			// every bar on each focus move makes hovering a dense bar chart slow.
+			getPoints = getPoints || $$.generateGetBarPoints(
+				getCanvasShapeIndices($$, $$.state.canvasShape || {indices: {}}, TYPE.BAR, isBar),
+				false
+			);
+
+			const points = getPoints?.(d, d.index);
+
+			if (!points) {
+				return true;
+			}
+
+			const rect = getRenderRect($$, points, 0);
+
+			return ($$.config.axis_rotated ? rect.h : rect.w) >= 1;
+		});
 	}
 
 	/**
