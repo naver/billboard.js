@@ -706,7 +706,8 @@ export default {
 			state: {event, hasAxis, hasRadar, hasTreemap}
 		} = $$;
 
-		if ($$.state.isCanvasMode) {
+		// the focus slides with a flow and its end updates the tooltip for the data moved in
+		if ($$.state.isCanvasMode || $$.state.flowing) {
 			return;
 		}
 

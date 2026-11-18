@@ -83,6 +83,20 @@ function syncCanvasFlowYDomains($$): void {
  */
 export default {
 	/**
+	 * Show the focus and tooltip of the data the flow moved under the pointer.
+	 * @private
+	 */
+	updateCanvasFlowFocus(): void {
+		const $$ = this;
+		const {state} = $$;
+
+		// the redraw cleared the focus overlay, so the same index has to be drawn again
+		state.canvasFocusKey = null;
+		$$.$el.tooltip?.style("display") === "block" && state.event &&
+			$$.onCanvasMouseMove(state.event);
+	},
+
+	/**
 	 * Finish a pending canvas flow animation before accepting another flow mutation.
 	 * @private
 	 */
@@ -125,6 +139,8 @@ export default {
 		const startDomain = scale.x.domain().slice(0, 2);
 		const startOrgDomain = org.xDomain?.slice?.();
 		const startSubXDomain = scale.subX?.domain?.().slice?.();
+		// the focus slides with its data and the flow end moves it to the data under the pointer
+		const focusData = state.canvasFocusKey ? state.canvasFocusData : null;
 
 		if (!isCanvasFlowDomain(startDomain, isLog)) {
 			return false;
@@ -185,6 +201,7 @@ export default {
 			state.canvasFlowFrame = null;
 			state.canvasFlowFinish = null;
 			state.flowing = false;
+			$$.updateCanvasFlowFocus();
 			done.call($$.api);
 		};
 		const render = (timestamp: number) => {
@@ -197,7 +214,7 @@ export default {
 			state._cachedDrawShape = null;
 			state._canvasVisibleRangeCache = null;
 			state._canvasXTickValuesCache = null;
-			$$.renderCanvasFrame(undefined, null, false);
+			$$.renderCanvasFrame(undefined, focusData, false);
 
 			if (ratio < 1) {
 				state.canvasFlowFrame = requestFrame(render);
@@ -212,7 +229,6 @@ export default {
 		axis.x.scale(scale.x);
 		state.flowing = true;
 		state.cancelClick = true;
-		$$.hideTooltip?.();
 		state.canvasFlowFinish = finish;
 		state.canvasFlowFrame = requestFrame(render);
 
