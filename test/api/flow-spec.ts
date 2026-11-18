@@ -6,7 +6,7 @@
 import {beforeEach, beforeAll, afterEach, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import util from "../assets/util";
-import {$AXIS, $GRID, $LINE, $TEXT} from "../../src/config/classes";
+import {$AXIS, $CIRCLE, $FOCUS, $GRID, $LINE, $TEXT} from "../../src/config/classes";
 import {window} from "../../src/module/browser";
 
 describe("API flow", () => {
@@ -733,6 +733,65 @@ describe("API flow", () => {
 			setTimeout(() => {
 				middle = getTickX(5);
 			}, 150);
+		}));
+
+		it("should show the focus and tooltip of the data under the pointer after the flow", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [["data1", 30, 200, 100, 400, 150, 250]]
+				},
+				point: {
+					focus: {
+						only: true
+					}
+				},
+				transition: {duration: 0}
+			});
+			const {$el, scale} = chart.internal;
+			const rect = $el.eventRect.node().getBoundingClientRect();
+			const getFocused = () => chart.$.main.selectAll(`.${$CIRCLE.circle}`)
+				.filter(function() {
+					return this.style.visibility !== "hidden" && this.style.opacity !== "0";
+				});
+			const getTooltipValue = () => chart.$.tooltip.select(".value").text();
+			const focusLine = chart.$.main.select(`line.${$FOCUS.xgridFocus}`).node();
+			let whileFlowing;
+
+			util.hoverChart(chart, "mousemove", {clientX: rect.left + scale.x(3), clientY: rect.top + 50});
+			expect(getTooltipValue()).to.be.equal("400");
+
+			chart.flow({
+				columns: [["data1", 120]],
+				duration: 100,
+				done() {
+					const focused = getFocused();
+					const d = focused.datum();
+
+					// the focus stays on its data and slides with the shapes
+					expect(whileFlowing.focused).to.be.equal(1);
+					expect(whileFlowing.circleX).to.be.below(0);
+					expect(whileFlowing.lineX).to.be.closeTo(whileFlowing.circleX, 0.1);
+
+					// the next value slid under the pointer: its point is on the line and in the tooltip
+					expect(focused.size()).to.be.equal(1);
+					expect(d.value).to.be.equal(150);
+					expect(+focused.attr("cx")).to.be.closeTo(scale.x(d.x), 1);
+					expect(getTooltipValue()).to.be.equal("150");
+
+					this.destroy();
+					done(1);
+				}
+			});
+
+			setTimeout(() => {
+				const focused = getFocused();
+
+				whileFlowing = {
+					focused: focused.size(),
+					circleX: getTranslateX(focused.node()),
+					lineX: getTranslateX(focusLine)
+				};
+			}, 50);
 		}));
 	});
 });

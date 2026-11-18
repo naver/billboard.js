@@ -270,6 +270,7 @@ export default {
 					withUpdateXDomain: true
 				});
 				$$.updateTypesElements();
+				$$.updateCanvasFlowFocus?.();
 				args.done?.call($$.api);
 				return;
 			}

@@ -45,6 +45,7 @@ export default class State {
 			isCanvasMode: false,
 			canvasShape: null,
 			canvasFocusKey: <string | null>null,
+			canvasFocusData: <any[] | null>null,
 			canvasSubchartBrushDragging: false,
 			canvasSubchartBrushMode: <"select" | "move" | "resize-start" | "resize-end" | null>null,
 			canvasSubchartBrushStart: <number | null>null,

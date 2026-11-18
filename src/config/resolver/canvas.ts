@@ -1981,6 +1981,8 @@ const canvasInternal = {
 		const {state} = $$;
 		const withMainRedraw = $$.canvasRenderer.hasExpandedShapeFocus?.($$, focusData);
 
+		state.canvasFocusData = focusData;
+
 		// the cached frame still holds the previous expanded shape, so redraw it clean once
 		if (withMainRedraw || state.canvasFocusMainRedraw) {
 			const drawShape = state.canvasShape || $$.getDrawShape();
