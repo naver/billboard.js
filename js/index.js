@@ -286,11 +286,11 @@
     /* ---------- interactions ---------- */
     // live data: a new value every FLOW_STEP ms, sliding in over FLOW_ANIM ms
     var FLOW_STEP = 500, FLOW_ANIM = 350;
-    var lab = null, labMode = "subchart", labRender = "svg", labVisible = false, flowTimer = 0, flowUntil = 0, flowPaused = reduced.matches;
+    var lab = null, labMode = "subchart", labRender = "svg", labZoom = "drag", labVisible = false, flowTimer = 0, flowUntil = 0, flowPaused = reduced.matches;
     var labHolder = $("labChart"), flowToggle = $("flowToggle");
     var LAB = {
         subchart: {
-            hint: "Drag across the strip below to pick a range, then drag the range to move it.",
+            hint: "Drag across the strip below to pick a range, then drag the range to move it or its handles to resize it.",
             code: [
                 "bb.generate({",
                 "  bindto: \"#chart\",",
@@ -303,7 +303,11 @@
                 "    ]",
                 "  },",
                 "  axis: {x: {type: \"timeseries\"}},",
-                "  subchart: {show: true}",
+                "  subchart: {",
+                "    show: true,",
+                "    // handles on both ends of the selected range",
+                "    showHandle: true",
+                "  }",
                 "});"
             ],
             options: function () {
@@ -317,7 +321,7 @@
                     data: {x: "x", type: "area-spline", columns: [x, v], colors: {visits: C1}},
                     axis: {x: {type: "timeseries", tick: {format: "%b %d", count: 6, fit: false}}},
                     point: {focus: {only: true}},
-                    subchart: {show: true, size: {height: 44}},
+                    subchart: {show: true, showHandle: true, size: {height: 44}},
                     legend: {show: false}
                 };
             }
@@ -383,8 +387,13 @@
             }
         },
         zoom: {
-            hint: "Drag across the chart to zoom in on a range. Reset zoom brings back the whole chart.",
-            code: [
+            // the hint and the code follow the zoom type picked next to the renderer
+            get hint() {
+                return labZoom === "wheel" ?
+                    "Scroll the mouse wheel over the chart to zoom in and out, then drag to move the range." :
+                    "Drag across the chart to zoom in on a range. Reset zoom brings back the whole chart.";
+            },
+            get code() { return [
                 "bb.generate({",
                 "  bindto: \"#chart\",",
                 "  data: {",
@@ -395,11 +404,13 @@
                 "  },",
                 "  zoom: {",
                 "    enabled: true,",
-                "    // pick the range by dragging instead of the mouse wheel",
-                "    type: \"drag\"",
+                labZoom === "wheel" ?
+                    "    // zoom with the mouse wheel (the default)" :
+                    "    // pick the range by dragging instead of the mouse wheel",
+                "    type: \"" + labZoom + "\"",
                 "  }",
                 "});"
-            ],
+            ]; },
             options: function () {
                 var a = ["sensor a"], b = ["sensor b"];
                 for (var i = 0; i < 300; i++) {
@@ -410,7 +421,7 @@
                     data: {columns: [a, b], colors: {"sensor a": C1, "sensor b": C2}},
                     axis: {x: {tick: {count: 7, fit: false, format: function (x) { return Math.round(x); }}}},
                     point: {focus: {only: true}},
-                    zoom: {enabled: true, type: "drag"}
+                    zoom: {enabled: true, type: labZoom}
                 };
             }
         }
@@ -439,6 +450,7 @@
         // the controls answer at once even when the redraw has to wait for a flow
         document.querySelectorAll("#labSeg button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.v === labMode); });
         syncFlowToggle();
+        $("zoomType").hidden = labMode !== "zoom";
         // destroying an SVG chart mid-flow lets the flow end callback run on the destroyed chart.
         // flow() skips done when it does not run, so the wait also ends on time
         if (Date.now() < flowUntil) { setTimeout(drawLab, 50); return; }
@@ -484,6 +496,12 @@
     document.querySelectorAll("input[name=labRender]").forEach(function (r) {
         r.addEventListener("change", function () {
             labRender = r.value;
+            drawLab();
+        });
+    });
+    document.querySelectorAll("input[name=labZoom]").forEach(function (r) {
+        r.addEventListener("change", function () {
+            labZoom = r.value;
             drawLab();
         });
     });

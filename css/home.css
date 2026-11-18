@@ -158,9 +158,9 @@ figcaption b{color:var(--ink);margin-right:6px}
 .lab-hint{font-size:14px;color:var(--mut);margin:12px 0 6px 20px;min-height:1.55em}
 #labChart{height:340px}
 .btn.ghost{background:var(--surface);color:var(--ink);border-color:var(--rule);font-weight:500}
-.lab-tools{display:flex;gap:10px;align-items:center}
+.lab-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .btn.icon{width:38px;padding:0;display:grid;place-items:center}
-.btn.icon[hidden]{display:none}
+.btn.icon[hidden],.seg[hidden]{display:none}
 /* renderer radios drawn as a segmented control */
 .seg.radio label{display:flex;cursor:pointer;border-right:1px solid var(--rule)}
 .seg.radio label:last-child{border-right:0}
