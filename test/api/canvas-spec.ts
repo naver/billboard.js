@@ -688,6 +688,39 @@ describe("API canvas", () => {
 		});
 	});
 
+	it("keeps the zoomed category domain the same as svg over redraws", () => {
+		generateWithOptions({
+			data: {
+				x: "x",
+				columns: [
+					["x", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j"],
+					["data1", 30, 200, 100, 400, 150, 250, 120, 300, 90, 180]
+				],
+				type: bar()
+			},
+			axis: {
+				x: {
+					type: "category"
+				}
+			},
+			zoom: {
+				enabled: zoom()
+			}
+		});
+
+		const {scale} = chart.internal;
+
+		chart.zoom([2, 5]);
+
+		// categories 2 to 5 are shown, as svg does
+		expect(scale.zoom.orgDomain().map(Math.round)).to.deep.equal([2, 6]);
+
+		chart.flush();
+		chart.resize({width: 400});
+
+		expect(scale.zoom.orgDomain().map(Math.round)).to.deep.equal([2, 6]);
+	});
+
 	it("supports subchart type option in canvas mode", () => {
 		generateWithOptions({
 			data: {
