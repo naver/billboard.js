@@ -65,7 +65,8 @@ export default {
 
 		if (state.isCanvasMode) {
 			const zoomScale = $$.scale.zoom;
-			const zoomDomain = zoomScale?.domain();
+			// the domain set to the scale: a category scale reads its end one category further
+			const zoomDomain = zoomScale?.orgDomain?.() ?? zoomScale?.domain();
 
 			zoomScale && ($$.scale.zoom = null);
 			$$.updateScales(initializing, wth.UpdateXDomain);
@@ -73,7 +74,8 @@ export default {
 			if (zoomScale) {
 				zoomScale.range($$.scale.x.range());
 				zoomDomain && zoomScale.domain(zoomDomain);
-				$$.scale.zoom = $$.getCustomizedXScale(zoomScale);
+				// wrap the plain scale: wrapping the customized one again shifts a category domain
+				$$.scale.zoom = $$.getCustomizedXScale(zoomScale.orgScale?.() ?? zoomScale);
 				$$.axis.x.scale($$.scale.zoom);
 				$$.scale.x.domain(config.zoom_rescale ? zoomDomain : $$.org.xDomain);
 				$$.scale.subX.domain($$.org.xDomain);
@@ -223,17 +225,18 @@ export default {
 		needShapeRegen: boolean = true): void {
 		const $$ = this;
 		const {config, state} = $$;
+
+		// subchart first: its initial range narrows the x domain, which sizes the main shapes
+		if (state.hasAxis) {
+			config.subchart_show && $$.redrawSubchart(withSubchart, duration);
+		}
+
 		const shape = needShapeRegen ?
 			$$.getDrawShape() :
 			(state._cachedDrawShape || $$.getDrawShape());
 
 		if (needShapeRegen) {
 			state._cachedDrawShape = shape;
-		}
-
-		if (state.hasAxis) {
-			// subchart
-			config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
 		}
 
 		// generate flow

@@ -636,6 +636,91 @@ describe("API canvas", () => {
 		expect(/^data:image\/png;base64,/.test(dataUrl)).to.be.true;
 	});
 
+	it("widens bars to the spacing of the range selected in the subchart", () => {
+		generateWithOptions({
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400, 150, 250, 120, 300, 90, 180]
+				],
+				type: bar()
+			},
+			subchart: {
+				show: true,
+				init: {
+					range: [2, 5]
+				}
+			}
+		});
+
+		const $$ = chart.internal;
+
+		// 3 of 10 x units, padding included, are shown: the data spacing is 10 / 3 times wider
+		expect($$.getBarW("bar", $$.axis.x, 1) / $$.getBarW("bar", $$.axis.subX, 1))
+			.to.be.closeTo(10 / 3, 0.1);
+	});
+
+	["wheel", "drag"].forEach(type => {
+		it(`widens bars to the spacing of the zoomed range: zoom.type='${type}'`, () => {
+			generateWithOptions({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250, 120, 300, 90, 180]
+					],
+					type: bar()
+				},
+				zoom: {
+					enabled: zoom(),
+					type
+				}
+			});
+
+			const $$ = chart.internal;
+			const width = $$.getBarW("bar", $$.axis.x, 1);
+
+			chart.zoom([2, 5]);
+
+			// 3 of 10 x units, padding included, are shown: the data spacing is 10 / 3 times wider
+			expect($$.getBarW("bar", $$.axis.x, 1) / width).to.be.closeTo(10 / 3, 0.1);
+
+			chart.unzoom();
+
+			expect($$.getBarW("bar", $$.axis.x, 1)).to.be.closeTo(width, 0.5);
+		});
+	});
+
+	it("keeps the zoomed category domain the same as svg over redraws", () => {
+		generateWithOptions({
+			data: {
+				x: "x",
+				columns: [
+					["x", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j"],
+					["data1", 30, 200, 100, 400, 150, 250, 120, 300, 90, 180]
+				],
+				type: bar()
+			},
+			axis: {
+				x: {
+					type: "category"
+				}
+			},
+			zoom: {
+				enabled: zoom()
+			}
+		});
+
+		const {scale} = chart.internal;
+
+		chart.zoom([2, 5]);
+
+		// categories 2 to 5 are shown, as svg does
+		expect(scale.zoom.orgDomain().map(Math.round)).to.deep.equal([2, 6]);
+
+		chart.flush();
+		chart.resize({width: 400});
+
+		expect(scale.zoom.orgDomain().map(Math.round)).to.deep.equal([2, 6]);
+	});
+
 	it("supports subchart type option in canvas mode", () => {
 		generateWithOptions({
 			data: {

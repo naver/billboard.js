@@ -19,6 +19,8 @@ export default {
 	 *  - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
 	 *    - `show: subchart()`
 	 * @property {string} [subchart.type] Set chart type for the subchart. Defaults to data.type.
+	 *  - **NOTE:** When candlestick data is rendered as `bar` in the subchart, the bar height is the `volume` of the data.
+	 *    Without `volume`, it is the close value for a rise and the open value for a fall.
 	 * @property {object} [subchart.types] Set chart type for each data in the subchart. Defaults to data.types.
 	 * @property {boolean} [subchart.brush.enabled=true] Enable subchart brush interaction.
 	 * @property {boolean} [subchart.showHandle=false] Show sub chart's handle.
