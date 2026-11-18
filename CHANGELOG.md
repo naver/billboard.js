@@ -1,3 +1,16 @@
+## [4.1.5](https://github.com/naver/billboard.js/compare/4.1.4...4.1.5) (2026-11-18)
+
+
+### Bug Fixes
+
+* **axis:** split long tick text iteratively ([7aa60a5](https://github.com/naver/billboard.js/commit/7aa60a500006ae0571a42f2ec3852c4f71ea54e5)), closes [#4276](https://github.com/naver/billboard.js/issues/4276)
+* **flow:** keep the focus and tooltip on data flows ([38ab5da](https://github.com/naver/billboard.js/commit/38ab5da2e11d00c00794b9653f4763321e3e59b4)), closes [#4291](https://github.com/naver/billboard.js/issues/4291)
+* **flow:** keep x increasing on consecutive flows of non-timeseries axis ([4522e20](https://github.com/naver/billboard.js/commit/4522e205ea5a19e844ea1fa6fb49df35569e2d3c)), closes [#4282](https://github.com/naver/billboard.js/issues/4282)
+* **flow:** slide shapes and x axis by the flow transition only ([3a08b5f](https://github.com/naver/billboard.js/commit/3a08b5f0040a8fb144862947bf66a991c8dda790)), closes [#4285](https://github.com/naver/billboard.js/issues/4285)
+* **flow:** stop the flow when the chart is destroyed ([4a498ab](https://github.com/naver/billboard.js/commit/4a498ab42610d743dede4276c138338a276c47d4)), closes [#4286](https://github.com/naver/billboard.js/issues/4286)
+* **subchart:** volume bars, shape width on the shown range and category zoom domain ([7fed081](https://github.com/naver/billboard.js/commit/7fed08128200abebd5c6173c63cda58fb71954b7)), closes [#4293](https://github.com/naver/billboard.js/issues/4293) [#4293](https://github.com/naver/billboard.js/issues/4293)
+* **tooltip:** show the values of candlestick and area-range one per line ([3900617](https://github.com/naver/billboard.js/commit/39006172c735fa85878e6d85558d69a288959494)), closes [#4295](https://github.com/naver/billboard.js/issues/4295)
+
 ## [4.1.4](https://github.com/naver/billboard.js/compare/4.1.3...4.1.4) (2026-11-11)
 
 
