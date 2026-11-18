@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.4-nightly-20261112004457
+ * @version 4.1.4-nightly-20261118004548
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.12
@@ -28113,9 +28113,29 @@ class CanvasRenderer {
    * @private
    */
   hasExpandedShapeFocus($$, selectedData) {
-    return !!(selectedData == null ? void 0 : selectedData.some(
-      (d) => d && (isCanvasBarType($$, d) || isCanvasCandlestickType($$, d))
-    ));
+    const isBar = isCanvasBarType.bind(null, $$);
+    let getPoints;
+    return !!(selectedData == null ? void 0 : selectedData.some((d) => {
+      if (!d) {
+        return false;
+      }
+      if (isCanvasCandlestickType($$, d)) {
+        return true;
+      }
+      if (!isBar(d)) {
+        return false;
+      }
+      getPoints = getPoints || $$.generateGetBarPoints(
+        getCanvasShapeIndices($$, $$.state.canvasShape || { indices: {} }, TYPE.BAR, isBar),
+        false
+      );
+      const points = getPoints == null ? void 0 : getPoints(d, d.index);
+      if (!points) {
+        return true;
+      }
+      const rect = getRenderRect($$, points, 0);
+      return ($$.config.axis_rotated ? rect.h : rect.w) >= 1;
+    }));
   }
   /**
    * Draw line strokes on canvas.
@@ -32209,23 +32229,27 @@ function splitTickTextByWidth(text, width, painter) {
     return [text];
   }
   const charWidth = painter.measureText("0").width || 5.5;
-  function split(lines, value) {
+  const lines = [];
+  let start = 0;
+  while (true) {
     let spaceIndex;
-    for (let i = 1; i < value.length; i++) {
-      if (value.charAt(i) === " ") {
+    let splitAt = -1;
+    for (let i = 1; start + i < text.length; i++) {
+      if (text.charAt(start + i) === " ") {
         spaceIndex = i;
       }
       if (width < charWidth * (i + 1)) {
-        const splitIndex = spaceIndex || i;
-        return split(
-          lines.concat(value.slice(0, splitIndex)),
-          value.slice(spaceIndex ? spaceIndex + 1 : i)
-        );
+        splitAt = i;
+        break;
       }
     }
-    return lines.concat(value);
+    if (splitAt === -1) {
+      lines.push(text.slice(start));
+      return lines;
+    }
+    lines.push(text.slice(start, start + (spaceIndex || splitAt)));
+    start += spaceIndex ? spaceIndex + 1 : splitAt;
   }
-  return split([], text);
 }
 function getXTickTextWidth($$, ticks, isRotated, targetScale) {
   var _a, _b;
@@ -37548,6 +37572,7 @@ const $ZOOM = {
    * - `d` is the data clicked and element is the element clicked.
    * - `element` is the current interacting svg element.
    * - In this callback, `this` will be the Chart object.
+   * - For radar type, clicking an axis text calls it once for each data at the axis, with the axis text as the element.
    * @name data․onclick
    * @memberof Options
    * @type {function}
@@ -44683,7 +44708,7 @@ function _getLegendTouchOption($$) {
       shape,
       xv: $$.xv.bind($$)
     });
-    const withTransition = (duration || flowFn) && isTabVisible();
+    const withTransition = !flowFn && duration && isTabVisible();
     const redrawList = $$.getRedrawList(shape, flow, flowFn, withTransition);
     const afterRedraw = () => {
       flowFn && flowFn();
@@ -50655,14 +50680,14 @@ const canvasInternal = {
     const $$ = this;
     const { state } = $$;
     const withMainRedraw = (_b = (_a = $$.canvasRenderer).hasExpandedShapeFocus) == null ? void 0 : _b.call(_a, $$, focusData);
-    if (withMainRedraw) {
+    if (withMainRedraw || state.canvasFocusMainRedraw) {
       const drawShape = state.canvasShape || $$.getDrawShape();
       $$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());
       try {
         $$.canvasRenderer.drawBackground($$);
         $$.canvasAxisRenderer.drawTitle($$);
         state.hasAxis && $$.canvasAxisRenderer.draw($$);
-        $$.canvasRenderer.draw($$, drawShape, focusData);
+        $$.canvasRenderer.draw($$, drawShape, withMainRedraw ? focusData : void 0);
         state.hasAxis && $$.config.grid_lines_front && ((_d = (_c = $$.getCanvasFeature) == null ? void 0 : _c.call($$, "grid")) == null ? void 0 : _d.drawLines.call($$, $$.canvasAxisRenderer));
         (_f = (_e = $$.getCanvasFeature) == null ? void 0 : _e.call($$, "subchart")) == null ? void 0 : _f.draw.call($$, $$.canvasRenderer, drawShape);
         state.hasAxis && ((_h = (_g = $$.getCanvasFeature) == null ? void 0 : _g.call($$, "subchart")) == null ? void 0 : _h.drawXAxis.call($$, $$.canvasAxisRenderer));
@@ -53751,7 +53776,7 @@ let exportApi = () => {
       });
     }
     function _() {
-      var _a, _b, _c;
+      var _a, _b, _c, _d;
       let domain;
       let length = 0;
       let tail = 0;
@@ -53765,6 +53790,12 @@ let exportApi = () => {
       const orgDataCount = $$.getMaxDataCount();
       const targets = $$.convertDataToTargets(data, true);
       const isTimeSeries = $$.axis.isTimeSeries();
+      const isCustomX = !isTimeSeries && $$.axis.isCustomX() && !$$.axis.isCategorized();
+      const hasDataX = isTimeSeries || isCustomX;
+      const firstValue = (_b = $$.data.targets.find((t) => t.values.length)) == null ? void 0 : _b.values[0];
+      const xOffset = firstValue ? firstValue.x - firstValue.index : 0;
+      const getX = (index) => isTimeSeries ? $$.getOtherTargetX(index) : index + xOffset;
+      const flowedXs = [];
       $$.data.targets.forEach((t) => {
         let found = false;
         for (let i = 0; i < targets.length; i++) {
@@ -53777,9 +53808,10 @@ let exportApi = () => {
             length = values.length;
             for (let j = 0; j < length; j++) {
               values[j].index = tail + j;
-              if (!isTimeSeries) {
-                values[j].x = tail + j;
+              if (!hasDataX) {
+                values[j].x = getX(tail + j);
               }
+              flowedXs[j] = values[j].x;
               t.values.push(values[j]);
             }
             targets.splice(i, 1);
@@ -53799,7 +53831,7 @@ let exportApi = () => {
               t.values.push({
                 id: t.id,
                 index: tail + j,
-                x: isTimeSeries ? $$.getOtherTargetX(tail + j) : tail + j,
+                x: isCustomX ? flowedXs[j] : getX(tail + j),
                 value: null
               });
             }
@@ -53808,6 +53840,7 @@ let exportApi = () => {
       });
       if ($$.data.targets.length) {
         targets.forEach((t) => {
+          var _a2;
           const firstIndex = $$.data.targets[0].values[0].index;
           const values = t.values;
           const valueLength = values.length;
@@ -53822,7 +53855,7 @@ let exportApi = () => {
               values[i] = {
                 id: t.id,
                 index,
-                x: isTimeSeries ? $$.getOtherTargetX(index) : index,
+                x: isCustomX ? (_a2 = $$.data.targets[0].values[i]) == null ? void 0 : _a2.x : getX(index),
                 value: null
               };
             }
@@ -53830,8 +53863,8 @@ let exportApi = () => {
           for (let i = missingLength; i < values.length; i++) {
             const v = values[i];
             v.index += tail;
-            if (!isTimeSeries) {
-              v.x += tail;
+            if (!hasDataX) {
+              v.x = getX(v.index);
             }
           }
         });
@@ -53864,7 +53897,7 @@ let exportApi = () => {
       domain && $$.updateXDomain(null, true, true, false, domain);
       if ($$.state.isCanvasMode) {
         const duration = isValue(args.duration) ? args.duration : $$.config.transition_duration;
-        const animated = (_b = $$.animateCanvasFlow) == null ? void 0 : _b.call($$, {
+        const animated = (_c = $$.animateCanvasFlow) == null ? void 0 : _c.call($$, {
           done: args.done,
           duration,
           length,
@@ -53889,7 +53922,7 @@ let exportApi = () => {
           withUpdateXDomain: true
         });
         $$.updateTypesElements();
-        (_c = args.done) == null ? void 0 : _c.call($$.api);
+        (_d = args.done) == null ? void 0 : _d.call($$.api);
         return;
       }
       $$.updateTargets($$.data.targets);
@@ -53897,7 +53930,6 @@ let exportApi = () => {
       $$.state._eventRectFingerprint = null;
       $$.redraw({
         flow: {
-          index: baseValue.index,
           length,
           duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
           done: args.done,
@@ -53928,6 +53960,9 @@ let exportApi = () => {
     const { data, state, $el } = $$;
     return function() {
       var _a;
+      if (!$$.$el) {
+        return;
+      }
       const flowLength = args.flow.length;
       state.flowing = true;
       data.targets.forEach((d) => {
@@ -53973,11 +54008,9 @@ let exportApi = () => {
     const { flow, targets } = args;
     const {
       duration = args.duration,
-      index: flowIndex,
-      length: flowLength,
       orgDataCount
     } = flow;
-    const transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength);
+    const transform = $$.getFlowTransform(targets, orgDataCount);
     const wait = generateWait();
     let n;
     wait.add(Object.keys(elements).map((v) => {
@@ -54005,6 +54038,9 @@ let exportApi = () => {
    */
   cleanUpFlow(elements, args) {
     const $$ = this;
+    if (!$$.$el) {
+      return;
+    }
     const { config, state, $el: { svg } } = $$;
     const isRotated = config.axis_rotated;
     const { flow, shape, xv } = args;
@@ -54058,17 +54094,13 @@ let exportApi = () => {
    * Get flow transform value
    * @param {object} targets target
    * @param {number} orgDataCount original data count
-   * @param {number} flowIndex flow index
-   * @param {number} flowLength flow length
    * @returns {string}
    * @private
    */
-  getFlowTransform(targets, orgDataCount, flowIndex, flowLength) {
+  getFlowTransform(targets, orgDataCount) {
     const $$ = this;
     const { data, scale: { x } } = $$;
     const dataValues = data.targets[0].values;
-    let flowStart = $$.getValueOnIndex(dataValues, flowIndex);
-    let flowEnd = $$.getValueOnIndex(dataValues, flowIndex + flowLength);
     let translateX;
     const orgDomain = x.domain();
     const domain = $$.updateXDomain(targets, true, true);
@@ -54077,17 +54109,15 @@ let exportApi = () => {
         translateX = x(orgDomain[0]) - x(domain[0]);
       } else {
         if ($$.axis.isTimeSeries()) {
-          flowStart = $$.getValueOnIndex(dataValues, 0);
-          flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
+          const flowStart = $$.getValueOnIndex(dataValues, 0);
+          const flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
           translateX = x(flowStart.x) - x(flowEnd.x);
         } else {
           translateX = diffDomain(domain) / 2;
         }
       }
-    } else if (orgDataCount === 1 || (flowStart == null ? void 0 : flowStart.x) === (flowEnd == null ? void 0 : flowEnd.x)) {
-      translateX = x(orgDomain[0]) - x(domain[0]);
     } else {
-      translateX = $$.axis.isTimeSeries() ? x(orgDomain[0]) - x(domain[0]) : x((flowStart == null ? void 0 : flowStart.x) || 0) - x(flowEnd.x);
+      translateX = x(orgDomain[0]) - x(domain[0]);
     }
     const scaleX = diffDomain(orgDomain) / diffDomain(domain);
     return `translate(${translateX},0) scale(${scaleX},1)`;
@@ -58952,7 +58982,7 @@ class AxisRendererHelper {
   transitionise(selection) {
     const { config } = this;
     let transitionSelection = selection;
-    if (config.withoutTransition) {
+    if (config.withoutTransition && !config.transition) {
       transitionSelection = selection.interrupt();
     } else if (config.transition || !this.owner.params.noTransition) {
       try {
@@ -59300,26 +59330,28 @@ class AxisRenderer {
     if (!tickWidth || tickWidth <= 0) {
       tickWidth = isLeftRight ? 95 : params.isCategory ? (params.isInverted ? scale(ticks[0]) - scale(ticks[1]) : scale(ticks[1]) - scale(ticks[0])) - 12 : 110;
     }
-    function split(splitted2, text) {
-      let subtext;
+    const text = String(tickText);
+    const result = [];
+    let start = 0;
+    while (true) {
       let spaceIndex;
-      let textWidth;
-      for (let i = 1; i < text.length; i++) {
-        if (text.charAt(i) === " ") {
+      let splitAt = -1;
+      for (let i = 1; start + i < text.length; i++) {
+        if (text.charAt(start + i) === " ") {
           spaceIndex = i;
         }
-        subtext = text.substr(0, i + 1);
-        textWidth = charWidth * subtext.length;
-        if (tickWidth < textWidth) {
-          return split(
-            splitted2.concat(text.substr(0, spaceIndex || i)),
-            text.slice(spaceIndex ? spaceIndex + 1 : i)
-          );
+        if (tickWidth < charWidth * (i + 1)) {
+          splitAt = i;
+          break;
         }
       }
-      return splitted2.concat(text);
+      if (splitAt === -1) {
+        result.push(text.slice(start));
+        return result;
+      }
+      result.push(text.substr(start, spaceIndex || splitAt));
+      start += spaceIndex ? spaceIndex + 1 : splitAt;
     }
-    return split(splitted, String(tickText));
   }
   scale(x) {
     if (!arguments.length) {
@@ -67154,6 +67186,10 @@ const funnel_customTypeHooks = {
         $$.hideTooltip();
         $$.setOverOut(false, data);
       }
+    }).on("click", (event) => {
+      const { target } = event;
+      const data = /^path$/i.test(target.tagName) ? src_select(target).datum() : null;
+      (data == null ? void 0 : data.id) && config.data_onclick.bind($$.api)(data, target);
     });
   },
   /**
@@ -68070,6 +68106,11 @@ const cacheKeyTextWidth = KEY.radarTextWidth;
       $el.radar.axes = $el.radar.append("g").attr("class", $AXIS.axis);
       $el.radar.shapes = $el.radar.append("g").attr("class", $SHAPE.shapes);
       current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value;
+      config.interaction_enabled && $el.radar.shapes.on("click", (event) => {
+        const { target } = event;
+        const data = /^circle$/i.test(target.tagName) ? src_select(target).datum() : null;
+        (data == null ? void 0 : data.id) && config.data_onclick.bind($$.api)(data, target);
+      });
       if (config.radar_axis_text_show) {
         config.interaction_enabled && $$.bindRadarEvent();
         $$.updateRadarLevel();
@@ -68278,7 +68319,17 @@ const cacheKeyTextWidth = KEY.radarTextWidth;
       const index = $$.getDataIndexFromEvent(event);
       $$.selectRectForSingle(svg.node(), index);
       isMouse ? $$.setOverOut(true, index) : $$.callOverOutForTouch(index);
-    }, isMouse ? void 0 : { passive: true }).on("mouseout", isMouse ? hide : null);
+    }, isMouse ? void 0 : { passive: true }).on("mouseout", isMouse ? hide : null).on("click", (event) => {
+      const index = $$.getDataIndexFromEvent(event);
+      if (isUndefined(index)) {
+        return;
+      }
+      const target = /tspan/i.test(event.target.tagName) ? event.target.parentNode : event.target;
+      $$.filterTargetsToShow($$.data.targets).forEach((t) => {
+        const data = $$.getValueOnIndex(t.values, index);
+        data && config.data_onclick.bind($$.api)(data, target);
+      });
+    });
     if (!isMouse) {
       svg.on("touchstart", hide, { passive: true });
     }
@@ -69063,6 +69114,11 @@ function position(group, root) {
           $$.hideTooltip();
           $$.setOverOut(false, data);
         }
+      }).on("click", (event) => {
+        var _a;
+        const { target } = event;
+        const data = /^rect$/i.test(target.tagName) ? (_a = src_select(target).datum()) == null ? void 0 : _a.data : null;
+        data && config.data_onclick.bind($$.api)(data, target);
       });
     }
   },
@@ -69264,7 +69320,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.1.4-nightly-20261112004457",
+  version: "4.1.4-nightly-20261118004548",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
