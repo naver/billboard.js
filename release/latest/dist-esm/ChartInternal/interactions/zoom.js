@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { window as win } from "../../module/browser.js";
 import { diffDomain, isFunction } from "../../module/util/type-checks.js";

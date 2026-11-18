@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { TYPE } from "../../config/const.js";
 import { isFunction, isNumber, isObjectType, isUndefined, isValue, notEmpty } from "../../module/util/type-checks.js";
@@ -85,7 +85,10 @@ function getSubchartCandlestickShapeValue($$, d, isSub) {
 	if (!isSub || $$.isCandlestickType?.(d) || !$$.isSubchartSourceTypeOf?.(d, TYPE.CANDLESTICK)) return;
 	const value = $$.getCandlestickData?.(d);
 	if (!value) return;
-	if ($$.isBarType(d)) return isNumber(value.open) && isNumber(value.close) ? value._isUp ? value.close : value.open : void 0;
+	if ($$.isBarType(d)) {
+		if (isNumber(value.volume)) return value.volume;
+		return isNumber(value.open) && isNumber(value.close) ? value._isUp ? value.close : value.open : void 0;
+	}
 	return isNumber(value.close) ? value.close : void 0;
 }
 /**
@@ -702,14 +705,15 @@ var shape_default = {
 		const maxDataCount = $$.getMaxDataCount();
 		const isGrouped = type === "bar" && config.data_groups?.length;
 		const configName = `${type}_width`;
-		const { k } = $$.getZoomTransform?.() ?? { k: 1 };
 		const xMinMax = [config.axis_x_min ?? org.xDomain[0], config.axis_x_max ?? org.xDomain[1]].map((v) => $$.axis.isTimeSeries() ? parseDate.call($$, v) : Number(v));
 		let tickInterval = axis.tickInterval(maxDataCount);
-		if (scale.zoom && !$$.axis.isCategorized() && k > 1) {
+		const xScale = scale.zoom ?? scale.x;
+		const getSpan = ([min, max]) => Math.abs(+max - +min);
+		if (axis !== $$.axis.subX && !$$.axis.isCategorized() && getSpan(xScale.domain()) < getSpan(org.xDomain)) {
 			const isSameMinMax = xMinMax.every((v, i) => v === org.xDomain[i]);
 			tickInterval = org.xDomain.map((v, i) => {
 				const value = isSameMinMax ? v : v - Math.abs(xMinMax[i]);
-				return scale.zoom(value);
+				return xScale(value);
 			}).reduce((a, c) => Math.abs(a) + c) / maxDataCount;
 		}
 		const getWidth = (id) => {

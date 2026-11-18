@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { isObject, isUndefined, isValue } from "../../module/util/type-checks.js";
 import { getRandom } from "../../module/util/object.js";
@@ -93,7 +93,7 @@ var point_default = {
 			});
 		});
 	},
-	updateCircle(isSub = false) {
+	updateCircle(isSub = false, withFlow = false) {
 		const $$ = this;
 		const { config, state, $el } = $$;
 		const focusOnly = $$.isPointFocusOnly();
@@ -108,8 +108,9 @@ var point_default = {
 			const pointR = $$.pointR.bind($$);
 			const updateCircleColor = $$.generateUpdateCircleColor();
 			const initialOpacityForCircle = $$.initialOpacityForCircle.bind($$);
-			circles.enter().filter(Boolean).append($$.point("create", this, pointR, updateCircleColor));
-			$root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`).style("stroke", $$.getStylePropValue($$.color)).style("opacity", initialOpacityForCircle);
+			const entered = circles.enter().filter(Boolean).append($$.point("create", this, pointR, updateCircleColor));
+			$root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`).style("stroke", $$.getStylePropValue($$.color));
+			(focusOnly && withFlow ? entered : $root.circle).style("opacity", initialOpacityForCircle);
 		}
 	},
 	/**

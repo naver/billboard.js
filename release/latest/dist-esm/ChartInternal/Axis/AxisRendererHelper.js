@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { isDefined, isValue } from "../../module/util/type-checks.js";
 import { getBBox } from "../../module/util/dom.js";
@@ -111,7 +111,7 @@ var AxisRendererHelper = class {
 	transitionise(selection) {
 		const { config } = this;
 		let transitionSelection = selection;
-		if (config.withoutTransition) transitionSelection = selection.interrupt();
+		if (config.withoutTransition && !config.transition) transitionSelection = selection.interrupt();
 		else if (config.transition || !this.owner.params.noTransition) try {
 			transitionSelection = selection.transition(config.transition);
 		} catch {}

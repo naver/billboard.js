@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 //#region src/config/Store/State.ts
 /**
@@ -53,6 +53,7 @@ var State = class {
 			isCanvasMode: false,
 			canvasShape: null,
 			canvasFocusKey: null,
+			canvasFocusData: null,
 			canvasSubchartBrushDragging: false,
 			canvasSubchartBrushMode: null,
 			canvasSubchartBrushStart: null,

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { getFontSize } from "./util.js";
 import { getAdditionalAxisScale, getAdditionalAxisTickFormat, getAdditionalAxisTickValues, getSubXTickLineValues, getSubXTickValues, getXScale, getXTickLinePosition, getXTickLineValues, getXTickValues, getYGridTickValues, getYTickValues, isSameTickValue, normalizeXValue, normalizeYValue } from "./axisTicks.js";
@@ -250,22 +250,25 @@ function resolveTextOffset(value, fontSize) {
 function splitTickTextByWidth(text, width, painter) {
 	if (!width) return [text];
 	const charWidth = painter.measureText("0").width || 5.5;
-	/**
-	* Split a text fragment recursively.
-	* @param {Array} lines Accumulated text lines
-	* @param {string} value Remaining text fragment
-	* @returns {Array} Text lines
-	* @private
-	*/
-	function split(lines, value) {
+	const lines = [];
+	let start = 0;
+	while (true) {
 		let spaceIndex;
-		for (let i = 1; i < value.length; i++) {
-			if (value.charAt(i) === " ") spaceIndex = i;
-			if (width < charWidth * (i + 1)) return split(lines.concat(value.slice(0, spaceIndex || i)), value.slice(spaceIndex ? spaceIndex + 1 : i));
+		let splitAt = -1;
+		for (let i = 1; start + i < text.length; i++) {
+			if (text.charAt(start + i) === " ") spaceIndex = i;
+			if (width < charWidth * (i + 1)) {
+				splitAt = i;
+				break;
+			}
 		}
-		return lines.concat(value);
+		if (splitAt === -1) {
+			lines.push(text.slice(start));
+			return lines;
+		}
+		lines.push(text.slice(start, start + (spaceIndex || splitAt)));
+		start += spaceIndex ? spaceIndex + 1 : splitAt;
 	}
-	return split([], text);
 }
 /**
 * Get max width for splitting canvas x axis tick text.
@@ -1288,4 +1291,4 @@ var CanvasAxisRenderer = class {
 	}
 };
 //#endregion
-export { CanvasAxisRenderer as default };
+export { CanvasAxisRenderer as default, getXTickTextLines };

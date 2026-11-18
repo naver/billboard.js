@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { callFn } from "../../module/util/object.js";
 import { $SELECT, $SHAPE } from "../../config/classes.js";

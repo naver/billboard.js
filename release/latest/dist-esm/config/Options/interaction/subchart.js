@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 //#region src/config/Options/interaction/subchart.ts
 /**
@@ -23,6 +23,10 @@ var subchart_default = {
 	*  - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
 	*    - `show: subchart()`
 	* @property {string} [subchart.type] Set chart type for the subchart. Defaults to data.type.
+	*  - **NOTE:** When candlestick data is rendered as another type in the subchart, the subchart takes one value of the data:
+	*    - `bar`: the `volume` of the data. Without `volume`, the close value for a rise and the open value for a fall, from zero.
+	*    - other types (`line`, `area`, etc.): the close value.
+	*    - The y axis domain of the subchart follows the taken values. The `volume` is not part of the main chart's y axis domain.
 	* @property {object} [subchart.types] Set chart type for each data in the subchart. Defaults to data.types.
 	* @property {boolean} [subchart.brush.enabled=true] Enable subchart brush interaction.
 	* @property {boolean} [subchart.showHandle=false] Show sub chart's handle.

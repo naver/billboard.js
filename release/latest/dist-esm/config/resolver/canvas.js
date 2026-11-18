@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { window as win } from "../../module/browser.js";
 import { isBoolean, isFunction } from "../../module/util/type-checks.js";
@@ -927,6 +927,16 @@ const canvasInternal = {
 		callCallback && config.subchart_onbrush.bind($$.api)(scale.x.orgDomain());
 	},
 	/**
+	* Show the focus and tooltip of the data the flow moved under the pointer.
+	* @private
+	*/
+	updateCanvasFlowFocus() {
+		const $$ = this;
+		const { state } = $$;
+		state.canvasFocusKey = null;
+		$$.$el.tooltip?.style("display") === "block" && state.event && $$.onCanvasMouseMove(state.event);
+	},
+	/**
 	* Finish a pending canvas flow animation before accepting another flow mutation.
 	* @private
 	*/
@@ -953,6 +963,7 @@ const canvasInternal = {
 		const startDomain = scale.x.domain().slice(0, 2);
 		const startOrgDomain = org.xDomain?.slice?.();
 		const startSubXDomain = scale.subX?.domain?.().slice?.();
+		const focusData = state.canvasFocusKey ? state.canvasFocusData : null;
 		if (!isCanvasFlowDomain(startDomain, isLog)) return false;
 		const removed = data.targets.map((target) => target.values.splice(0, length));
 		$$.updateXDomain($$.filterTargetsToShow(data.targets), true, true);
@@ -997,6 +1008,7 @@ const canvasInternal = {
 			state.canvasFlowFrame = null;
 			state.canvasFlowFinish = null;
 			state.flowing = false;
+			$$.updateCanvasFlowFocus();
 			done.call($$.api);
 		};
 		const render = (timestamp) => {
@@ -1008,7 +1020,7 @@ const canvasInternal = {
 			state._cachedDrawShape = null;
 			state._canvasVisibleRangeCache = null;
 			state._canvasXTickValuesCache = null;
-			$$.renderCanvasFrame(void 0, null, false);
+			$$.renderCanvasFrame(void 0, focusData, false);
 			if (ratio < 1) state.canvasFlowFrame = requestFrame(render);
 			else finish();
 		};
@@ -1018,7 +1030,6 @@ const canvasInternal = {
 		axis.x.scale(scale.x);
 		state.flowing = true;
 		state.cancelClick = true;
-		$$.hideTooltip?.();
 		state.canvasFlowFinish = finish;
 		state.canvasFlowFrame = requestFrame(render);
 		return true;
@@ -2189,6 +2200,7 @@ const canvasInternal = {
 		const $$ = this;
 		const { state } = $$;
 		const withMainRedraw = $$.canvasRenderer.hasExpandedShapeFocus?.($$, focusData);
+		state.canvasFocusData = focusData;
 		if (withMainRedraw) {
 			const drawShape = state.canvasShape || $$.getDrawShape();
 			$$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());

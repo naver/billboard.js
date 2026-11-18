@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { document as doc } from "../../module/browser.js";
 import { isEmpty, isFunction, isObject, isString, isUndefined, isValue } from "../../module/util/type-checks.js";
@@ -21,6 +21,15 @@ import { select } from "d3-selection";
 */
 const RE_WHITESPACE = /(\r?\n|\t)/g;
 const RE_TOOLTIP_TPL = /{{(.*)}}/;
+/**
+* Get the tooltip value of ranged data: one row per value, aligned on the colon of the names
+* @param {Array} values [name, value] pairs
+* @returns {string} html string
+* @private
+*/
+function getRangeValueHtml(values) {
+	return `<div style="display:inline-grid;grid-template-columns:auto auto;gap:0 .3em;text-align:left">${values.map(([name, v]) => `<b style="text-align:right">${name}:</b><span>${v}</span>`).join("")}</div>`;
+}
 var tooltip_default = {
 	/**
 	* Initializes the tooltip
@@ -143,7 +152,11 @@ var tooltip_default = {
 			];
 			if ($$.isAreaRangeType(row)) {
 				const [high, low] = ["high", "low"].map((v) => valueFormat($$.getRangedData(row, v), ...param));
-				value = `<b>Mid:</b> ${valueFormat(getRowValue(row), ...param)} <b>High:</b> ${high} <b>Low:</b> ${low}`;
+				value = getRangeValueHtml([
+					["Mid", valueFormat(getRowValue(row), ...param)],
+					["High", high],
+					["Low", low]
+				]);
 			} else if ($$.isCandlestickType(row)) {
 				const [open, high, low, close, volume] = [
 					"open",
@@ -154,7 +167,13 @@ var tooltip_default = {
 				].map((v) => {
 					return $$.getRangedData(row, v, "candlestick") ? valueFormat($$.getRangedData(row, v, "candlestick"), ...param) : void 0;
 				});
-				value = `<b>Open:</b> ${open} <b>High:</b> ${high} <b>Low:</b> ${low} <b>Close:</b> ${close}${volume ? ` <b>Volume:</b> ${volume}` : ""}`;
+				value = getRangeValueHtml([
+					["Open", open],
+					["High", high],
+					["Low", low],
+					["Close", close],
+					...volume ? [["Volume", volume]] : []
+				]);
 			} else if ($$.isBarRangeType(row)) {
 				const { value: rangeValue, id, index } = row;
 				value = `${valueFormat(rangeValue, void 0, id, index)}`;
@@ -440,7 +459,7 @@ var tooltip_default = {
 	updateTooltipOnRedraw(context, index) {
 		const $$ = this;
 		const { config, $el: { eventRect, svg, tooltip }, state: { event, hasAxis, hasRadar, hasTreemap } } = $$;
-		if ($$.state.isCanvasMode) return;
+		if ($$.state.isCanvasMode || $$.state.flowing) return;
 		if (tooltip?.style("display") === "block" && event) {
 			const rect = context ?? (hasRadar ? svg : eventRect)?.node();
 			if (hasAxis || hasRadar) {

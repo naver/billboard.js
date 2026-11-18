@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { diffDomain } from "../../module/util/type-checks.js";
 import classes_default from "../../config/classes.js";
@@ -24,8 +24,9 @@ var flow_default = {
 	*/
 	generateFlow(args) {
 		const $$ = this;
-		const { data, state, $el } = $$;
+		const { config, data, state, $el } = $$;
 		return function() {
+			if (!$$.$el) return;
 			const flowLength = args.flow.length;
 			state.flowing = true;
 			data.targets.forEach((d) => {
@@ -50,7 +51,12 @@ var flow_default = {
 				if (node && name.length > 1) node = node[name[1]];
 				if (node?.size()) elements[v] = node;
 			});
-			$$.hideGridFocus?.();
+			if (config.axis_rotated) $$.hideGridFocus?.();
+			else {
+				const xFocus = $el.main.selectAll(`line.${classes_default.xgridFocus}:not(.${classes_default.xgridFocusContinuous})`);
+				xFocus.size() && (elements["gridFocus.x"] = xFocus);
+				$el.main.selectAll(`line.${classes_default.ygridFocus}`).style("visibility", "hidden");
+			}
 			$$.setFlowList(elements, args);
 		};
 	},
@@ -63,8 +69,8 @@ var flow_default = {
 	setFlowList(elements, args) {
 		const $$ = this;
 		const { flow, targets } = args;
-		const { duration = args.duration, index: flowIndex, length: flowLength, orgDataCount } = flow;
-		const transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength);
+		const { duration = args.duration, orgDataCount } = flow;
+		const transform = $$.getFlowTransform(targets, orgDataCount);
 		const wait = generateWait();
 		let n;
 		wait.add(Object.keys(elements).map((v) => {
@@ -88,12 +94,14 @@ var flow_default = {
 	*/
 	cleanUpFlow(elements, args) {
 		const $$ = this;
+		if (!$$.$el) return;
 		const { config, state, $el: { svg } } = $$;
 		const isRotated = config.axis_rotated;
 		const { flow, shape, xv } = args;
 		const { cx, cy, xForText, yForText } = shape.pos;
 		const { done = () => {}, length: flowLength } = flow;
 		if (flowLength) {
+			const isFocusCircle = $$.isPointFocusOnly() ? (node) => node.parentElement?.classList.contains(classes_default.circles) : () => false;
 			[
 				"circle",
 				"text",
@@ -102,7 +110,9 @@ var flow_default = {
 			].forEach((v) => {
 				const target = [];
 				for (let i = 0; i < flowLength; i++) target.push(`.${classes_default[v]}-${i}`);
-				svg.selectAll(`.${classes_default[`${v}s`]}`).selectAll(target).remove();
+				svg.selectAll(`.${classes_default[`${v}s`]}`).selectAll(target).filter(function() {
+					return !isFocusCircle(this);
+				}).remove();
 			});
 			svg.select(`.${classes_default.xgrid}`).remove();
 		}
@@ -125,36 +135,33 @@ var flow_default = {
 			} else if (v === "region.list") n.select("rect").filter($$.isRegionOnX).attr("x", $$.regionX.bind($$)).attr("width", $$.regionWidth.bind($$));
 		});
 		config.interaction_enabled && $$.redrawEventRect();
-		done.call($$.api);
 		state.flowing = false;
+		if ($$.$el.tooltip?.style("display") === "block") $$.updateTooltipOnRedraw();
+		else $$.hideGridFocus?.();
+		done.call($$.api);
 	},
 	/**
 	* Get flow transform value
 	* @param {object} targets target
 	* @param {number} orgDataCount original data count
-	* @param {number} flowIndex flow index
-	* @param {number} flowLength flow length
 	* @returns {string}
 	* @private
 	*/
-	getFlowTransform(targets, orgDataCount, flowIndex, flowLength) {
+	getFlowTransform(targets, orgDataCount) {
 		const $$ = this;
 		const { data, scale: { x } } = $$;
 		const dataValues = data.targets[0].values;
-		let flowStart = $$.getValueOnIndex(dataValues, flowIndex);
-		let flowEnd = $$.getValueOnIndex(dataValues, flowIndex + flowLength);
 		let translateX;
 		const orgDomain = x.domain();
 		const domain = $$.updateXDomain(targets, true, true);
 		if (!orgDataCount) {
 			if (dataValues.length !== 1) translateX = x(orgDomain[0]) - x(domain[0]);
 			else if ($$.axis.isTimeSeries()) {
-				flowStart = $$.getValueOnIndex(dataValues, 0);
-				flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
+				const flowStart = $$.getValueOnIndex(dataValues, 0);
+				const flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
 				translateX = x(flowStart.x) - x(flowEnd.x);
 			} else translateX = diffDomain(domain) / 2;
-		} else if (orgDataCount === 1 || flowStart?.x === flowEnd?.x) translateX = x(orgDomain[0]) - x(domain[0]);
-		else translateX = $$.axis.isTimeSeries() ? x(orgDomain[0]) - x(domain[0]) : x(flowStart?.x || 0) - x(flowEnd.x);
+		} else translateX = x(orgDomain[0]) - x(domain[0]);
 		const scaleX = diffDomain(orgDomain) / diffDomain(domain);
 		return `translate(${translateX},0) scale(${scaleX},1)`;
 	}

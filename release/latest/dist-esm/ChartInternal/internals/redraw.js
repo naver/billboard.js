@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { notEmpty } from "../../module/util/type-checks.js";
 import { callFn, capitalize, getOption } from "../../module/util/object.js";
@@ -51,13 +51,13 @@ var redraw_default = {
 		$$.updateSizes(initializing);
 		if (state.isCanvasMode) {
 			const zoomScale = $$.scale.zoom;
-			const zoomDomain = zoomScale?.domain();
+			const zoomDomain = zoomScale?.orgDomain?.() ?? zoomScale?.domain();
 			zoomScale && ($$.scale.zoom = null);
 			$$.updateScales(initializing, wth.UpdateXDomain);
 			if (zoomScale) {
 				zoomScale.range($$.scale.x.range());
 				zoomDomain && zoomScale.domain(zoomDomain);
-				$$.scale.zoom = $$.getCustomizedXScale(zoomScale);
+				$$.scale.zoom = $$.getCustomizedXScale(zoomScale.orgScale?.() ?? zoomScale);
 				$$.axis.x.scale($$.scale.zoom);
 				$$.scale.x.domain(config.zoom_rescale ? zoomDomain : $$.org.xDomain);
 				$$.scale.subX.domain($$.org.xDomain);
@@ -115,7 +115,7 @@ var redraw_default = {
 			treemap && $$.updateTreemap(durationForExit);
 		}
 		if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
-			if (needShapeUpdate) $$.updateCircle();
+			if (needShapeUpdate) $$.updateCircle(false, !!flow);
 		} else if ($$.hasLegendDefsPoint?.()) $$.data.targets.forEach($$.point("create", this));
 		if ($$.hasDataLabel() && !$$.hasArcType(null, ["radar"])) {
 			if (needShapeUpdate) $$.updateText();
@@ -137,9 +137,9 @@ var redraw_default = {
 	generateRedrawList(targets, flow, duration, withSubchart, needShapeRegen = true) {
 		const $$ = this;
 		const { config, state } = $$;
+		if (state.hasAxis) config.subchart_show && $$.redrawSubchart(withSubchart, duration);
 		const shape = needShapeRegen ? $$.getDrawShape() : state._cachedDrawShape || $$.getDrawShape();
 		if (needShapeRegen) state._cachedDrawShape = shape;
-		if (state.hasAxis) config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
 		const flowFn = flow && $$.generateFlow({
 			targets,
 			flow,
@@ -147,7 +147,7 @@ var redraw_default = {
 			shape,
 			xv: $$.xv.bind($$)
 		});
-		const withTransition = (duration || flowFn) && isTabVisible();
+		const withTransition = !flowFn && duration && isTabVisible();
 		const redrawList = $$.getRedrawList(shape, flow, flowFn, withTransition);
 		const afterRedraw = () => {
 			flowFn && flowFn();

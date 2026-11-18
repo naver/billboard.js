@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { window as win } from "../../module/browser.js";
 import { isDefined, isEmpty, notEmpty } from "../../module/util/type-checks.js";
@@ -63,7 +63,7 @@ var chart_default = {
 			if (state.resizing) $$.brush?.updateResize();
 			else $$.axis?.setOrient();
 			zoomResetBtn?.style("display", "none");
-			if ($$.scale.zoom) state.current.zoomDomain = $$.scale.zoom.domain();
+			if ($$.scale.zoom) state.current.zoomDomain = $$.zoom?.getDomain() ?? $$.scale.zoom.domain();
 			$$.scale.zoom = null;
 			if (!state.resizing) state.dirty.data = true;
 			soft ? $$.redraw({

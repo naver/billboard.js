@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { isArray, isFunction, isNumber, isString } from "../../module/util/type-checks.js";
 import { toArray } from "../../module/util/object.js";
@@ -317,19 +317,26 @@ var AxisRenderer = class {
 		if (isArray(tickText)) return tickText;
 		let tickWidth = params.tickWidth;
 		if (!tickWidth || tickWidth <= 0) tickWidth = isLeftRight ? 95 : params.isCategory ? (params.isInverted ? scale(ticks[0]) - scale(ticks[1]) : scale(ticks[1]) - scale(ticks[0])) - 12 : 110;
-		function split(splitted, text) {
-			let subtext;
+		const text = String(tickText);
+		const result = [];
+		let start = 0;
+		while (true) {
 			let spaceIndex;
-			let textWidth;
-			for (let i = 1; i < text.length; i++) {
-				if (text.charAt(i) === " ") spaceIndex = i;
-				subtext = text.substr(0, i + 1);
-				textWidth = charWidth * subtext.length;
-				if (tickWidth < textWidth) return split(splitted.concat(text.substr(0, spaceIndex || i)), text.slice(spaceIndex ? spaceIndex + 1 : i));
+			let splitAt = -1;
+			for (let i = 1; start + i < text.length; i++) {
+				if (text.charAt(start + i) === " ") spaceIndex = i;
+				if (tickWidth < charWidth * (i + 1)) {
+					splitAt = i;
+					break;
+				}
 			}
-			return splitted.concat(text);
+			if (splitAt === -1) {
+				result.push(text.slice(start));
+				return result;
+			}
+			result.push(text.substr(start, spaceIndex || splitAt));
+			start += spaceIndex ? spaceIndex + 1 : splitAt;
 		}
-		return split(splitted, String(tickText));
 	}
 	scale(x) {
 		if (!arguments.length) return this.helper.scale;

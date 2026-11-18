@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { cancelAnimationFrame, cancelIdleCallback, requestAnimationFrame, requestIdleCallback, window as win } from "./browser.js";
 import { isArray, isNumber } from "./util/type-checks.js";

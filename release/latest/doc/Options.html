@@ -34647,7 +34647,16 @@ If the value is not specified, the width of the chart will be calculated by the 
                 </td>
             
 
-            <td class="description last"><p>Set chart type for the subchart. Defaults to data.type.</p></td>
+            <td class="description last"><p>Set chart type for the subchart. Defaults to data.type.</p>
+<ul>
+<li><strong>NOTE:</strong> When candlestick data is rendered as another type in the subchart, the subchart takes one value of the data:
+<ul>
+<li><code>bar</code>: the <code>volume</code> of the data. Without <code>volume</code>, the close value for a rise and the open value for a fall, from zero.</li>
+<li>other types (<code>line</code>, <code>area</code>, etc.): the close value.</li>
+<li>The y axis domain of the subchart follows the taken values. The <code>volume</code> is not part of the main chart's y axis domain.</li>
+</ul>
+</li>
+</ul></td>
         </tr>
 
     

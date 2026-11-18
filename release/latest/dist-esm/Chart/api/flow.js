@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4
+ * @version 4.1.5
 */
 import { isDefined, isValue } from "../../module/util/type-checks.js";
 import { parseDate } from "../../module/util/object.js";
@@ -88,6 +88,12 @@ flow(args) {
 		const orgDataCount = $$.getMaxDataCount();
 		const targets = $$.convertDataToTargets(data, true);
 		const isTimeSeries = $$.axis.isTimeSeries();
+		const isCustomX = !isTimeSeries && $$.axis.isCustomX() && !$$.axis.isCategorized();
+		const hasDataX = isTimeSeries || isCustomX;
+		const firstValue = $$.data.targets.find((t) => t.values.length)?.values[0];
+		const xOffset = firstValue ? firstValue.x - firstValue.index : 0;
+		const getX = (index) => isTimeSeries ? $$.getOtherTargetX(index) : index + xOffset;
+		const flowedXs = [];
 		$$.data.targets.forEach((t) => {
 			let found = false;
 			for (let i = 0; i < targets.length; i++) if (t.id === targets[i].id) {
@@ -97,7 +103,8 @@ flow(args) {
 				length = values.length;
 				for (let j = 0; j < length; j++) {
 					values[j].index = tail + j;
-					if (!isTimeSeries) values[j].x = tail + j;
+					if (!hasDataX) values[j].x = getX(tail + j);
+					flowedXs[j] = values[j].x;
 					t.values.push(values[j]);
 				}
 				targets.splice(i, 1);
@@ -112,7 +119,7 @@ flow(args) {
 				for (let j = 0; j < length; j++) t.values.push({
 					id: t.id,
 					index: tail + j,
-					x: isTimeSeries ? $$.getOtherTargetX(tail + j) : tail + j,
+					x: isCustomX ? flowedXs[j] : getX(tail + j),
 					value: null
 				});
 			}
@@ -130,7 +137,7 @@ flow(args) {
 					values[i] = {
 						id: t.id,
 						index,
-						x: isTimeSeries ? $$.getOtherTargetX(index) : index,
+						x: isCustomX ? $$.data.targets[0].values[i]?.x : getX(index),
 						value: null
 					};
 				}
@@ -138,7 +145,7 @@ flow(args) {
 			for (let i = missingLength; i < values.length; i++) {
 				const v = values[i];
 				v.index += tail;
-				if (!isTimeSeries) v.x += tail;
+				if (!hasDataX) v.x = getX(v.index);
 			}
 		});
 		for (let i = 0; i < targets.length; i++) $$.data.targets.push(targets[i]);
@@ -182,6 +189,7 @@ flow(args) {
 				withUpdateXDomain: true
 			});
 			$$.updateTypesElements();
+			$$.updateCanvasFlowFocus?.();
 			args.done?.call($$.api);
 			return;
 		}
@@ -190,7 +198,6 @@ flow(args) {
 		$$.state._eventRectFingerprint = null;
 		$$.redraw({
 			flow: {
-				index: baseValue.index,
 				length,
 				duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
 				done: args.done,
