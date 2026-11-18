@@ -558,6 +558,9 @@ var demos = {
 							format: function(v, id, i, texts) {
 						return id;
 							}
+						},
+						onclick: function(d, i) {
+							console.log("onclick", d, i);
 						}
 					}
 				}
@@ -907,7 +910,10 @@ var demos = {
 						["data3", 230, 153, 85, 300, 250]
 					],
 					type: "radar",
-					labels: true
+					labels: true,
+					onclick: function(d, i) {
+						console.log("onclick", d, i);
+					}
 				},
 				radar: {
 					axis: {
@@ -1251,6 +1257,9 @@ var demos = {
 						type: "treemap",
 						labels: {
 							colors: "#fff"
+						},
+						onclick: function(d, i) {
+							console.log("onclick", d, i);
 						}
 					},
 					treemap: {

@@ -404,6 +404,16 @@ export default {
 					$$.hideTooltip();
 					$$.setOverOut(false, data);
 				}
+			})
+			// use the clicked path itself: getTarget() takes the tooltip API's receiver for an
+			// untrusted event, and the background path has no data
+			.on("click", event => {
+				const {target} = event;
+				const data = /^path$/i.test(target.tagName) ?
+					d3Select(target).datum() as IDataRow :
+					null;
+
+				data?.id && config.data_onclick.bind($$.api)(data, target);
 			});
 	},
 

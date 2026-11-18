@@ -102,6 +102,16 @@ export default {
 						$$.hideTooltip();
 						$$.setOverOut(false, data);
 					}
+				})
+				// use the clicked tile itself: getTarget() takes the tooltip API's receiver
+				// for an untrusted event
+				.on("click", event => {
+					const {target} = event;
+					const data = /^rect$/i.test(target.tagName) ?
+						(d3Select(target).datum() as {data?: IDataRow})?.data :
+						null;
+
+					data && config.data_onclick.bind($$.api)(data, target);
 				});
 		}
 	},

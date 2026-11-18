@@ -987,6 +987,31 @@ describe("ESM canvas", function() {
 		stroke.mockRestore();
 	});
 
+	it("should call data.onclick with the row of a clicked treemap tile", () => {
+		const onclick = vi.fn();
+
+		// data1 takes almost the whole area, so the center of the chart is on its tile
+		generateWithOptions({
+			data: {
+				columns: [["data1", 1000], ["data2", 1]],
+				type: treemap(),
+				onclick
+			}
+		});
+
+		const canvasEl = container.querySelector(`canvas.${$CANVAS.canvas}`);
+		const rect = canvasEl.getBoundingClientRect();
+
+		canvasEl.dispatchEvent(new MouseEvent("click", {
+			bubbles: true,
+			clientX: rect.left + rect.width / 2,
+			clientY: rect.top + rect.height / 2
+		}));
+
+		expect(onclick).toHaveBeenCalledTimes(1);
+		expect(onclick.mock.calls[0][0].id).to.be.equal("data1");
+	});
+
 	it("should draw treemap tiles on canvas without unsupported warnings", () => {
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 		const fillRect = vi.spyOn(CanvasRenderingContext2D.prototype, "fillRect");

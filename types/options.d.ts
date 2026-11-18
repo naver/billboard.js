@@ -1759,6 +1759,7 @@ export interface Data {
 	 * This callback will be called when each data point clicked and will receive d and element as the arguments.
 	 * - d is the data clicked and element is the element clicked. In canvas mode, element is the shared `<canvas>` element.
 	 * In this callback, this will be the Chart object.
+	 * For radar type, clicking an axis text calls it once for each data at the axis, with the axis text as the element.
 	 */
 	onclick?(this: Chart, d: DataItem, element: DataEventElement): void;
 
