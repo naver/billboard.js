@@ -290,38 +290,52 @@
     var labHolder = $("labChart"), flowToggle = $("flowToggle");
     var LAB = {
         subchart: {
-            hint: "Drag across the strip below to pick a range, then drag the range to move it or its handles to resize it.",
+            hint: "Prices above, the volume of each day as bars below. Drag across the bars to pick a range, then drag the range to move it or its handles to resize it.",
             code: [
                 "bb.generate({",
                 "  bindto: \"#chart\",",
                 "  data: {",
                 "    x: \"x\",",
-                "    type: \"area-spline\",",
+                "    type: \"candlestick\",",
                 "    columns: [",
-                "      [\"x\", /* 365 dates */],",
-                "      [\"visits\", /* 365 values */]",
-                "    ]",
+                "      [\"x\", /* 120 dates */],",
+                "      // [open, high, low, close, volume] per day",
+                "      [\"price\", /* 120 values */]",
+                "    ],",
+                "    colors: {price: \"#22a06b\"}",
                 "  },",
+                "  candlestick: {color: {down: \"#f87070\"}},",
                 "  axis: {x: {type: \"timeseries\"}},",
+                "  // fit the y axis to the selected range",
+                "  zoom: {rescale: true},",
                 "  subchart: {",
-                "    show: true,",
-                "    // handles on both ends of the selected range",
-                "    showHandle: true",
+                "    show: true, showHandle: true,",
+                "    // bars of the volume",
+                "    type: \"bar\"",
                 "  }",
                 "});"
             ],
             options: function () {
-                var x = ["x"], v = ["visits"], val = 320;
-                for (var i = 0; i < 365; i++) {
-                    val = Math.max(60, val + gauss() * 16 + Math.sin(i / 8) * 7);
-                    x.push(new Date(2026, 0, 1 + i));
-                    v.push(Math.round(val));
+                var x = ["x"], price = ["price"], close = 52000;
+                for (var i = 0; i < 120; i++) {
+                    var open = close, move = gauss() * 0.018;
+                    close = Math.round(open * (1 + move + 0.001));
+                    x.push(new Date(2026, 0, 5 + i));
+                    price.push([
+                        open,
+                        Math.round(Math.max(open, close) * (1 + Math.random() * 0.012)),
+                        Math.round(Math.min(open, close) * (1 - Math.random() * 0.012)),
+                        close,
+                        // trading grows on the days of big moves
+                        Math.round((0.6 + Math.random() * 0.8 + Math.abs(move) * 60) * 1e6)
+                    ]);
                 }
                 return {
-                    data: {x: "x", type: "area-spline", columns: [x, v], colors: {visits: C1}},
+                    data: {x: "x", type: "candlestick", columns: [x, price], colors: {price: "#22a06b"}},
+                    candlestick: {color: {down: C2}, width: {ratio: 0.7}},
                     axis: {x: {type: "timeseries", tick: {format: "%b %d", count: 6, fit: false}}},
-                    point: {focus: {only: true}},
-                    subchart: {show: true, showHandle: true, size: {height: 44}},
+                    zoom: {rescale: true},
+                    subchart: {show: true, showHandle: true, type: "bar", size: {height: 44}},
                     legend: {show: false}
                 };
             }
