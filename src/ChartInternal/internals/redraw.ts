@@ -189,7 +189,7 @@ export default {
 
 		if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
 			if (needShapeUpdate) {
-				$$.updateCircle();
+				$$.updateCircle(false, !!flow);
 			}
 		} else if ($$.hasLegendDefsPoint?.()) {
 			$$.data.targets.forEach($$.point("create", this));

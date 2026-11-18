@@ -162,7 +162,7 @@ export default {
 		});
 	},
 
-	updateCircle(isSub = false): void {
+	updateCircle(isSub = false, withFlow = false): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
 		const focusOnly = $$.isPointFocusOnly();
@@ -189,12 +189,15 @@ export default {
 			const updateCircleColor = $$.generateUpdateCircleColor();
 			const initialOpacityForCircle = $$.initialOpacityForCircle.bind($$);
 
-			circles.enter()
+			const entered = circles.enter()
 				.filter(Boolean)
 				.append($$.point("create", this, pointR, updateCircleColor));
 
 			$root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`)
-				.style("stroke", $$.getStylePropValue($$.color))
+				.style("stroke", $$.getStylePropValue($$.color));
+
+			// a flow slides the shown focus with its data and moves it to the pointer at the end
+			(focusOnly && withFlow ? entered : $root.circle)
 				.style("opacity", initialOpacityForCircle);
 		}
 	},

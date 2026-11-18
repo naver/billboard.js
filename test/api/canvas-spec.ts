@@ -374,6 +374,87 @@ describe("API canvas", () => {
 		});
 	}));
 
+	it("keeps the tooltip and shows the data under the pointer after a flow", () => new Promise(done => {
+		generateWithOptions({
+			data: {
+				columns,
+				type: line()
+			}
+		});
+
+		const $$ = chart.internal;
+		const canvas = chart.$.canvas.node();
+		const rect = canvas.getBoundingClientRect();
+		const getValue = () => chart.$.tooltip.select(".bb-tooltip-name-data1 .value").text();
+		const renderCanvasFocus = vi.spyOn($$, "renderCanvasFocus");
+		let tooltipWhileFlowing;
+		let focusWhileFlowing;
+
+		canvas.dispatchEvent(new MouseEvent("mousemove", {
+			clientX: rect.left + $$.state.margin.left + $$.scale.x(1),
+			clientY: rect.top + $$.state.margin.top + ($$.state.height / 2)
+		}));
+		expect(getValue()).to.be.equal("200");
+
+		chart.flow({
+			columns: [
+				["data1", 500],
+				["data2", 60]
+			],
+			// the canvas flow animates only with a duration
+			duration: 100,
+			done() {
+				// the next value slid under the pointer: its focus and tooltip are shown
+				expect(tooltipWhileFlowing).to.be.equal("block");
+				// the focus is drawn on its data in the sliding frames
+				expect(focusWhileFlowing.map(d => d.value)).to.deep.equal([200, 20]);
+				expect($$.state.canvasFocusKey).to.not.be.null;
+				expect(getValue()).to.be.equal("100");
+				done(1);
+			}
+		});
+
+		setTimeout(() => {
+			tooltipWhileFlowing = chart.$.tooltip.style("display");
+			focusWhileFlowing = renderCanvasFocus.mock.lastCall?.[0] ?? [];
+		}, 50);
+	}));
+
+	it("shows the data under the pointer after a flow without animation", () => new Promise(done => {
+		generateWithOptions({
+			data: {
+				columns,
+				type: line()
+			}
+		});
+
+		const $$ = chart.internal;
+		const canvas = chart.$.canvas.node();
+		const rect = canvas.getBoundingClientRect();
+		const getValue = () => chart.$.tooltip.select(".bb-tooltip-name-data1 .value").text();
+
+		canvas.dispatchEvent(new MouseEvent("mousemove", {
+			clientX: rect.left + $$.state.margin.left + $$.scale.x(1),
+			clientY: rect.top + $$.state.margin.top + ($$.state.height / 2)
+		}));
+		expect(getValue()).to.be.equal("200");
+
+		chart.flow({
+			columns: [
+				["data1", 500],
+				["data2", 60]
+			],
+			duration: 0,
+			done() {
+				// the next value slid under the pointer: its focus and tooltip are shown
+				expect($$.state.canvasFocusKey).to.not.be.null;
+				expect(getValue()).to.be.equal("100");
+				done(1);
+			}
+		});
+
+	}));
+
 	it("selects and unselects canvas data through selection APIs", () => {
 		generateWithOptions({
 			data: {
