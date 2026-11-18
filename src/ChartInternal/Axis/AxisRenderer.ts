@@ -545,34 +545,36 @@ export default class AxisRenderer {
 			);
 		}
 
-		// split given text by tick width size
-		// eslint-disable-next-line
-		function split(splitted, text) {
-			let subtext;
-			let spaceIndex;
-			let textWidth;
+		// split given text by tick width size.
+		// iterate rather than recurse per line, so a very long label cannot overflow the stack
+		const text = String(tickText);
+		const result: string[] = [];
+		let start = 0;
 
-			for (let i = 1; i < text.length; i++) {
-				if (text.charAt(i) === " ") {
+		while (true) {
+			let spaceIndex;
+			let splitAt = -1;
+
+			for (let i = 1; start + i < text.length; i++) {
+				if (text.charAt(start + i) === " ") {
 					spaceIndex = i;
 				}
 
-				subtext = text.substr(0, i + 1);
-				textWidth = charWidth * subtext.length;
-
 				// if text width gets over tick width, split by space index or current index
-				if (tickWidth < textWidth) {
-					return split(
-						splitted.concat(text.substr(0, spaceIndex || i)),
-						text.slice(spaceIndex ? spaceIndex + 1 : i)
-					);
+				if (tickWidth < charWidth * (i + 1)) {
+					splitAt = i;
+					break;
 				}
 			}
 
-			return splitted.concat(text);
-		}
+			if (splitAt === -1) {
+				result.push(text.slice(start));
+				return result;
+			}
 
-		return split(splitted, String(tickText));
+			result.push(text.substr(start, spaceIndex || splitAt));
+			start += spaceIndex ? spaceIndex + 1 : splitAt;
+		}
 	}
 
 	scale(x?): AxisRenderer {

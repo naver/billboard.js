@@ -612,6 +612,7 @@ export default {
 	 * - `d` is the data clicked and element is the element clicked.
 	 * - `element` is the current interacting svg element.
 	 * - In this callback, `this` will be the Chart object.
+	 * - For radar type, clicking an axis text calls it once for each data at the axis, with the axis text as the element.
 	 * @name data․onclick
 	 * @memberof Options
 	 * @type {function}

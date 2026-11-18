@@ -1143,6 +1143,27 @@ describe("AXIS", function() {
 			});
 		});
 
+		describe("very long tick text", () => {
+			const tickText = "a".repeat(100000);
+
+			beforeAll(() => {
+				args.axis.x.tick.format = () => tickText;
+			});
+
+			it("should split a very long tick text without exceeding the call stack", () => {
+				const tick = chart.$.main.select(`.${$AXIS.axisX}`).select("g.tick");
+				const lines: string[] = [];
+
+				tick.selectAll("tspan").each(function() {
+					lines.push(this.textContent);
+				});
+
+				expect(lines.length).to.be.above(1);
+				expect(lines.every(v => v.length > 0)).to.be.true;
+				expect(lines.join("")).to.be.equal(tickText);
+			});
+		});
+
 		describe("axis.x.tick.format for category type", () => {
 			const len = 3;
 

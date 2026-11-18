@@ -17,6 +17,7 @@ import {
 	setTextValue,
 	toArray
 } from "../../module/util";
+import type {IDataRow} from "../data/IData";
 
 /**
  * Get the position value
@@ -64,6 +65,16 @@ export default {
 				.attr("class", $SHAPE.shapes);
 
 			current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value;
+
+			// points take clicks even when the axis text is hidden
+			config.interaction_enabled && $el.radar.shapes.on("click", event => {
+				const {target} = event;
+				const data = /^circle$/i.test(target.tagName) ?
+					d3Select(target).datum() as IDataRow :
+					null;
+
+				data?.id && config.data_onclick.bind($$.api)(data, target);
+			});
 
 			if (config.radar_axis_text_show) {
 				config.interaction_enabled && $$.bindRadarEvent();
@@ -374,7 +385,25 @@ export default {
 				$$.selectRectForSingle(svg.node(), index);
 				isMouse ? $$.setOverOut(true, index) : $$.callOverOutForTouch(index);
 			}, isMouse ? undefined : {passive: true})
-			.on("mouseout", isMouse ? hide : null);
+			.on("mouseout", isMouse ? hide : null)
+			// an axis text stands for its index, like the tooltip it shows: every row at it
+			.on("click", event => {
+				const index = $$.getDataIndexFromEvent(event);
+
+				if (isUndefined(index)) {
+					return;
+				}
+
+				const target = /tspan/i.test(event.target.tagName) ?
+					event.target.parentNode :
+					event.target;
+
+				$$.filterTargetsToShow($$.data.targets).forEach(t => {
+					const data = $$.getValueOnIndex(t.values, index);
+
+					data && config.data_onclick.bind($$.api)(data, target);
+				});
+			});
 
 		if (!isMouse) {
 			svg.on("touchstart", hide, {passive: true});

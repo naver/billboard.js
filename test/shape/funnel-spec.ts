@@ -672,4 +672,26 @@ describe("SHAPE FUNNEL", () => {
 			expect(clipPath).to.include("path");
 		});
 	});
+
+	describe("data.onclick", () => {
+		const calls: any[] = [];
+
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [["data1", 30], ["data2", 45], ["data3", 25]],
+					type: "funnel",
+					onclick: (d, el) => calls.push([d.id, d.value, el.tagName])
+				}
+			};
+		});
+
+		it("should call data.onclick with the row and the clicked path", () => {
+			chart.internal.$el.funnel.selectAll("path")
+				.filter(d => d?.id === "data2").node()
+				.dispatchEvent(new MouseEvent("click", {bubbles: true}));
+
+			expect(calls).to.deep.equal([["data2", 45, "path"]]);
+		});
+	});
 });
