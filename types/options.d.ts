@@ -844,6 +844,9 @@ export interface SubchartOptions {
 	 * Set chart type for the subchart.
 	 * If this option is specified, the type will be applied to every data in the subchart.
 	 * This setting can be overwritten by subchart.types.
+	 * When candlestick data is rendered as another type, the subchart takes one value of the data:
+	 * - `bar`: the volume of the data. Without volume, the close value for a rise and the open value for a fall, from zero.
+	 * - other types (`line`, `area`, etc.): the close value.
 	 */
 	type?: ChartTypes;
 
