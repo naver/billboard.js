@@ -223,17 +223,18 @@ export default {
 		needShapeRegen: boolean = true): void {
 		const $$ = this;
 		const {config, state} = $$;
+
+		// subchart first: its initial range narrows the x domain, which sizes the main shapes
+		if (state.hasAxis) {
+			config.subchart_show && $$.redrawSubchart(withSubchart, duration);
+		}
+
 		const shape = needShapeRegen ?
 			$$.getDrawShape() :
 			(state._cachedDrawShape || $$.getDrawShape());
 
 		if (needShapeRegen) {
 			state._cachedDrawShape = shape;
-		}
-
-		if (state.hasAxis) {
-			// subchart
-			config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
 		}
 
 		// generate flow

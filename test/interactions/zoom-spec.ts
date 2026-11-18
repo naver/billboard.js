@@ -1931,4 +1931,65 @@ describe("ZOOM", function() {
 			expect(chart.zoom()).to.be.deep.equal(zoomedDomain);
 		});
 	});
+
+	describe("shape width by the zoomed range", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250, 120, 300, 90, 180],
+						["data2",
+							[10, 20, 5, 12], [12, 19, 8, 18], [18, 22, 14, 16], [16, 21, 12, 20],
+							[20, 25, 18, 22], [22, 24, 15, 17], [17, 20, 11, 19], [19, 26, 18, 25],
+							[25, 27, 20, 21], [21, 23, 16, 22]
+						]
+					],
+					types: {
+						data1: "bar",
+						data2: "candlestick"
+					},
+					axes: {
+						data2: "y2"
+					}
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				},
+				transition: {
+					duration: 0
+				},
+				zoom: {
+					enabled: true
+				}
+			};
+		});
+
+		const checkWidth = () => {
+			const $$ = chart.internal;
+			const getWidth = el => el.node().getBoundingClientRect().width;
+			const bar = getWidth($$.$el.bar);
+			const candlestick = getWidth($$.$el.candlestick.select("path"));
+
+			chart.zoom([2, 5]);
+
+			// 3 of 10 x units, padding included, are shown: the data spacing is 10 / 3 times wider
+			expect(getWidth($$.$el.bar) / bar).to.be.closeTo(10 / 3, 0.1);
+			expect(getWidth($$.$el.candlestick.select("path")) / candlestick).to.be.closeTo(10 / 3, 0.1);
+
+			chart.unzoom();
+
+			expect(getWidth($$.$el.bar)).to.be.closeTo(bar, 0.5);
+			expect(getWidth($$.$el.candlestick.select("path"))).to.be.closeTo(candlestick, 0.5);
+		};
+
+		it("should widen bars and candlesticks on zoom", checkWidth);
+
+		it("set options: zoom.type='drag'", () => {
+			args.zoom.type = "drag";
+		});
+
+		it("should widen bars and candlesticks on drag zoom", checkWidth);
+	});
 });

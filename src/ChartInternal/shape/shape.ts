@@ -1078,7 +1078,6 @@ export default {
 		const maxDataCount = $$.getMaxDataCount();
 		const isGrouped = type === "bar" && config.data_groups?.length;
 		const configName = `${type}_width`;
-		const {k} = $$.getZoomTransform?.() ?? {k: 1};
 		const xMinMax = [
 			config.axis_x_min ?? org.xDomain[0],
 			config.axis_x_max ?? org.xDomain[1]
@@ -1089,13 +1088,21 @@ export default {
 
 		let tickInterval = axis.tickInterval(maxDataCount);
 
-		if (scale.zoom && !$$.axis.isCategorized() && k > 1) {
+		// zoom and drag zoom set 'scale.zoom', the subchart brush narrows 'scale.x'.
+		// Either way, size the width by the data spacing of the range shown.
+		// The subchart always shows the whole range.
+		const xScale = scale.zoom ?? scale.x;
+		const getSpan = ([min, max]) => Math.abs(+max - +min);
+		const isZoomed = axis !== $$.axis.subX && !$$.axis.isCategorized() &&
+			getSpan(xScale.domain()) < getSpan(org.xDomain);
+
+		if (isZoomed) {
 			const isSameMinMax = xMinMax.every((v, i) => v === org.xDomain[i]);
 
 			tickInterval = org.xDomain.map((v, i) => {
 				const value = isSameMinMax ? v : v - Math.abs(xMinMax[i]);
 
-				return scale.zoom(value);
+				return xScale(value);
 			}).reduce((a, c) => Math.abs(a) + c) / maxDataCount;
 		}
 
