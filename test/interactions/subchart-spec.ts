@@ -474,6 +474,52 @@ describe("SUBCHART", () => {
 			};
 		});
 
+		it("should render candlestick source as zero-based volume bars in subchart", () => {
+			const $$ = chart.internal;
+			const {main} = $$.$el.subchart;
+			const [up, down] = $$.data.targets[0].values;
+			const [upValue, downValue, upPoints, downPoints] = $$.withSubchartTypeContext(() => {
+				const indices = $$.getShapeIndices($$.isBarType);
+				const getPoints = $$.generateGetBarPoints(indices, true);
+
+				return [
+					$$.getSubchartCandlestickShapeValue(up, true),
+					$$.getSubchartCandlestickShapeValue(down, true),
+					getPoints(up, 0),
+					getPoints(down, 1)
+				];
+			});
+			const y = $$.getYScaleById("data1", true);
+
+			expect(main.selectAll(`.${$BAR.bar}`).size()).to.be.equal(3);
+			expect($$.scale.subY.domain()[0]).to.be.equal(0);
+			expect(upValue).to.be.equal(1000);
+			expect(downValue).to.be.equal(2000);
+			expect(upPoints[0][1]).to.be.closeTo(y(0), 0.5);
+			expect(upPoints[1][1]).to.be.closeTo(y(1000), 0.5);
+			expect(downPoints[0][1]).to.be.closeTo(y(0), 0.5);
+			expect(downPoints[1][1]).to.be.closeTo(y(2000), 0.5);
+		});
+
+		it("should apply candlestick down color to down-value subchart bars", () => {
+			const bars = chart.internal.$el.subchart.main
+				.selectAll(`.${$BAR.bar}`)
+				.nodes();
+
+			expect(window.getComputedStyle(bars[0]).fill).to.be.equal("rgb(31, 119, 180)");
+			expect(window.getComputedStyle(bars[1]).fill).to.be.equal("rgb(255, 0, 0)");
+		});
+
+		it("set options data without volume", () => {
+			args.data.columns = [
+				["data1",
+					{open: 10, high: 20, low: 5, close: 12},
+					{open: 18, high: 19, low: 8, close: 12},
+					[16, 22, 14, 20]
+				]
+			];
+		});
+
 		it("should render candlestick source as zero-based body value bars in subchart", () => {
 			const $$ = chart.internal;
 			const {main} = $$.$el.subchart;
@@ -499,15 +545,6 @@ describe("SUBCHART", () => {
 			expect(upPoints[1][1]).to.be.closeTo(y(12), 0.5);
 			expect(downPoints[0][1]).to.be.closeTo(y(0), 0.5);
 			expect(downPoints[1][1]).to.be.closeTo(y(18), 0.5);
-		});
-
-		it("should apply candlestick down color to down-value subchart bars", () => {
-			const bars = chart.internal.$el.subchart.main
-				.selectAll(`.${$BAR.bar}`)
-				.nodes();
-
-			expect(window.getComputedStyle(bars[0]).fill).to.be.equal("rgb(31, 119, 180)");
-			expect(window.getComputedStyle(bars[1]).fill).to.be.equal("rgb(255, 0, 0)");
 		});
 
 		it("set options subchart.type='line'", () => {

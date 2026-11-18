@@ -143,6 +143,11 @@ function getSubchartCandlestickShapeValue($$, d, isSub?: boolean) {
 	}
 
 	if ($$.isBarType(d)) {
+		// bars show the volume of the day when given, as stock charts do
+		if (isNumber(value.volume)) {
+			return value.volume;
+		}
+
 		return isNumber(value.open) && isNumber(value.close) ?
 			value._isUp ? value.close : value.open :
 			undefined;
