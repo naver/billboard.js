@@ -5,11 +5,11 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4-nightly-20261118004548
+ * @version 4.1.5-nightly-20261119004530
  * @requires billboard.js
  * @summary billboard.js plugin
 */
-//#region src/module/polygon.ts
+// src/module/polygon.ts
 /**
 * Compute the signed area of a polygon using the Shoelace formula.
 * @param {Array} polygon Array of [x, y] coordinates
@@ -49,8 +49,7 @@ function polygonCentroid(polygon) {
 	k *= 3;
 	return [x / k, y / k];
 }
-//#endregion
-//#region src/module/voronoi.ts
+// src/module/voronoi.ts
 const EPSILON = 1e-9;
 /**
 * Clip a convex polygon by the half-plane of points at least as close to `a` as
@@ -121,12 +120,10 @@ function voronoiCells(points, bounds) {
 		return cell.length > 2 ? [...cell, cell[0]] : null;
 	});
 }
-//#endregion
-//#region src/module/util/type-checks.ts
+// src/module/util/type-checks.ts
 const isDefined = (v) => typeof v !== "undefined";
 const isObjectType = (v) => typeof v === "object";
-//#endregion
-//#region src/config/config.ts
+// src/config/config.ts
 /**
 * Load configuration option
 * @param {object} config User's generation config value
@@ -152,8 +149,7 @@ function loadConfig(config) {
 	});
 	if (this.api) this.state.orgConfig = config;
 }
-//#endregion
-//#region src/Plugin/Plugin.ts
+// src/Plugin/Plugin.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -175,7 +171,7 @@ var Plugin = class {
 	$$;
 	options;
 	config;
-	static version = "4.1.4-nightly-20261118004548";
+	static version = "4.1.5-nightly-20261119004530";
 	/**
 	* Constructor
 	* @param {Any} options config option object
@@ -222,8 +218,7 @@ var Plugin = class {
 		});
 	}
 };
-//#endregion
-//#region src/Plugin/textoverlap/Options.ts
+// src/Plugin/textoverlap/Options.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -274,8 +269,7 @@ var Options = class {
 		};
 	}
 };
-//#endregion
-//#region src/Plugin/textoverlap/index.ts
+// src/Plugin/textoverlap/index.ts
 /**
 * TextOverlap plugin<br>
 * Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram).
@@ -369,5 +363,4 @@ var TextOverlap = class extends Plugin {
 		});
 	}
 };
-//#endregion
 export { TextOverlap as default };

@@ -5,11 +5,11 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4-nightly-20261118004548
+ * @version 4.1.5-nightly-20261119004530
  * @requires billboard.js
  * @summary billboard.js plugin
 */
-//#region src/config/classes.ts
+// src/config/classes.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -27,12 +27,10 @@ const $COMMON = {
 	EXPANDED: "_expanded_",
 	dummy: "_dummy_"
 };
-//#endregion
-//#region src/module/util/type-checks.ts
+// src/module/util/type-checks.ts
 const isDefined = (v) => typeof v !== "undefined";
 const isObjectType = (v) => typeof v === "object";
-//#endregion
-//#region src/module/browser.ts
+// src/module/browser.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -70,8 +68,7 @@ function getFallback(w) {
 const win = getGlobal();
 const doc = win?.document;
 const [requestAnimationFrame, cancelAnimationFrame, requestIdleCallback, cancelIdleCallback] = getFallback(win);
-//#endregion
-//#region src/module/util/dom.ts
+// src/module/util/dom.ts
 /**
 * Get boundingClientRect or BBox with caching.
 * Internal helper for getBoundingRect() and getBBox()
@@ -119,8 +116,7 @@ function getBoundingRect(node, forceEval = false) {
 		};
 	}
 })();
-//#endregion
-//#region src/config/config.ts
+// src/config/config.ts
 /**
 * Load configuration option
 * @param {object} config User's generation config value
@@ -146,8 +142,7 @@ function loadConfig(config) {
 	});
 	if (this.api) this.state.orgConfig = config;
 }
-//#endregion
-//#region src/Plugin/Plugin.ts
+// src/Plugin/Plugin.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -169,7 +164,7 @@ var Plugin = class {
 	$$;
 	options;
 	config;
-	static version = "4.1.4-nightly-20261118004548";
+	static version = "4.1.5-nightly-20261119004530";
 	/**
 	* Constructor
 	* @param {Any} options config option object
@@ -216,8 +211,7 @@ var Plugin = class {
 		});
 	}
 };
-//#endregion
-//#region src/Plugin/sparkline/Options.ts
+// src/Plugin/sparkline/Options.ts
 /**
 * Copyright (c) 2021 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -246,8 +240,7 @@ var Options = class {
 selector: void 0 };
 	}
 };
-//#endregion
-//#region src/Plugin/sparkline/index.ts
+// src/Plugin/sparkline/index.ts
 /**
 * Sparkline plugin.<br>
 * Generates sparkline charts
@@ -439,5 +432,4 @@ var Sparkline = class extends Plugin {
 		});
 	}
 };
-//#endregion
 export { Sparkline as default };

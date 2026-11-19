@@ -5,21 +5,20 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4-nightly-20261118004548
+ * @version 4.1.5-nightly-20261119004530
  * @requires billboard.js
  * @summary billboard.js plugin
 */
 import { interpolateHslLong } from "d3-interpolate";
 import { scaleSequential, scaleSequentialLog, scaleSymlog } from "d3-scale";
 import { axisRight } from "d3-axis";
-//#region src/config/classes.ts
+// src/config/classes.ts
 const $TOOLTIP = {
 	tooltip: "bb-tooltip",
 	tooltipContainer: "bb-tooltip-container",
 	tooltipName: "bb-tooltip-name"
 };
-//#endregion
-//#region src/module/util/type-checks.ts
+// src/module/util/type-checks.ts
 const isFunction = (v) => typeof v === "function";
 const isString = (v) => typeof v === "string";
 const isNumber = (v) => typeof v === "number";
@@ -31,8 +30,7 @@ const isEmptyObject = (obj) => {
 	return true;
 };
 const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && isEmptyObject(o) || isNumber(o) && isNaN(o);
-//#endregion
-//#region src/module/browser.ts
+// src/module/browser.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -101,8 +99,7 @@ function parseDate(date) {
 	if (!parsedDate || isNaN(+parsedDate)) console && console.error && console.error(`Failed to parse x '${date}' to Date object`);
 	return parsedDate;
 }
-//#endregion
-//#region src/module/util/dom.ts
+// src/module/util/dom.ts
 /**
 * Get boundingClientRect or BBox with caching.
 * Internal helper for getBoundingRect() and getBBox()
@@ -150,8 +147,7 @@ function getBBox(node, forceEval = false) {
 		};
 	}
 })();
-//#endregion
-//#region src/config/config.ts
+// src/config/config.ts
 /**
 * Load configuration option
 * @param {object} config User's generation config value
@@ -177,8 +173,7 @@ function loadConfig(config) {
 	});
 	if (this.api) this.state.orgConfig = config;
 }
-//#endregion
-//#region src/Plugin/Plugin.ts
+// src/Plugin/Plugin.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -200,7 +195,7 @@ var Plugin = class {
 	$$;
 	options;
 	config;
-	static version = "4.1.4-nightly-20261118004548";
+	static version = "4.1.5-nightly-20261119004530";
 	/**
 	* Constructor
 	* @param {Any} options config option object
@@ -247,8 +242,7 @@ var Plugin = class {
 		});
 	}
 };
-//#endregion
-//#region src/Plugin/stanford/classes.ts
+// src/Plugin/stanford/classes.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -265,8 +259,7 @@ var classes_default = {
 	stanfordRegion: "bb-stanford-region",
 	stanfordRegions: "bb-stanford-regions"
 };
-//#endregion
-//#region src/Plugin/stanford/util.ts
+// src/Plugin/stanford/util.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -347,8 +340,7 @@ function getCentroid(points) {
 		y: y / f
 	};
 }
-//#endregion
-//#region src/Plugin/stanford/ColorScale.ts
+// src/Plugin/stanford/ColorScale.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -412,8 +404,7 @@ var ColorScale = class {
 		return this.xForColorScale() + this.owner.config.padding_left + 20;
 	}
 };
-//#endregion
-//#region src/Plugin/stanford/Elements.ts
+// src/Plugin/stanford/Elements.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -487,8 +478,7 @@ var Elements = class {
 		return (d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y)(xyValue ? d[xyValue] : $$.getBaseValue(d));
 	}
 };
-//#endregion
-//#region src/Plugin/stanford/Options.ts
+// src/Plugin/stanford/Options.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -633,8 +623,7 @@ var Options = class {
 		};
 	}
 };
-//#endregion
-//#region src/Plugin/stanford/index.ts
+// src/Plugin/stanford/index.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -789,8 +778,8 @@ var Stanford = class extends Plugin {
 		const { config } = this;
 		const target = this.$$.data.targets[0];
 		target.values.sort(compareEpochs);
-		let minEpoch = Infinity;
-		let maxEpoch = -Infinity;
+		let minEpoch = 1e400;
+		let maxEpoch = -1e400;
 		for (let i = 0; i < target.values.length; i++) {
 			const e = target.values[i].epochs;
 			if (e < minEpoch) minEpoch = e;
@@ -840,5 +829,4 @@ var Stanford = class extends Plugin {
 		};
 	}
 };
-//#endregion
 export { Stanford as default };

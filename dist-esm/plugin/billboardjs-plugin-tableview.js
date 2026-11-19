@@ -5,11 +5,11 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.4-nightly-20261118004548
+ * @version 4.1.5-nightly-20261119004530
  * @requires billboard.js
  * @summary billboard.js plugin
 */
-//#region src/module/util/type-checks.ts
+// src/module/util/type-checks.ts
 const isFunction = (v) => typeof v === "function";
 const isString = (v) => typeof v === "string";
 const isNumber = (v) => typeof v === "number";
@@ -23,8 +23,7 @@ const isObjectType = (v) => typeof v === "object";
 * @private
 */
 const isArray = (arr) => Array.isArray(arr);
-//#endregion
-//#region src/module/sanitize.ts
+// src/module/sanitize.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -367,8 +366,7 @@ function sanitize(str) {
 		return match.replace(/</g, "&lt;");
 	});
 }
-//#endregion
-//#region src/module/util/object.ts
+// src/module/util/object.ts
 /**
 * Process the template  & return bound string
 * @param {string} tpl Template string
@@ -379,8 +377,7 @@ function sanitize(str) {
 function tplProcess(tpl, data) {
 	return sanitize(tpl.replace(/\{=([^}]+)\}/g, (_, key) => data[key] ?? ""));
 }
-//#endregion
-//#region src/config/config.ts
+// src/config/config.ts
 /**
 * Load configuration option
 * @param {object} config User's generation config value
@@ -406,8 +403,7 @@ function loadConfig(config) {
 	});
 	if (this.api) this.state.orgConfig = config;
 }
-//#endregion
-//#region src/Plugin/Plugin.ts
+// src/Plugin/Plugin.ts
 /**
 * Copyright (c) 2017 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -429,7 +425,7 @@ var Plugin = class {
 	$$;
 	options;
 	config;
-	static version = "4.1.4-nightly-20261118004548";
+	static version = "4.1.5-nightly-20261119004530";
 	/**
 	* Constructor
 	* @param {Any} options config option object
@@ -476,8 +472,7 @@ var Plugin = class {
 		});
 	}
 };
-//#endregion
-//#region src/Plugin/tableview/const.ts
+// src/Plugin/tableview/const.ts
 const defaultStyle = {
 	id: "__tableview-style__",
 	class: "bb-tableview",
@@ -515,8 +510,7 @@ const tpl = {
 	tbodyHeader: `<th scope="row">{=value}</th>`,
 	tbody: `<td>{=value}</td>`
 };
-//#endregion
-//#region src/Plugin/tableview/Options.ts
+// src/Plugin/tableview/Options.ts
 /**
 * Copyright (c) 2021 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -638,8 +632,7 @@ var Options = class {
 		};
 	}
 };
-//#endregion
-//#region src/Plugin/tableview/index.ts
+// src/Plugin/tableview/index.ts
 /**
 * Copyright (c) 2021 ~ present NAVER Corp.
 * billboard.js project is licensed under the MIT license
@@ -804,5 +797,4 @@ var TableView = class extends Plugin {
 		}
 	}
 };
-//#endregion
 export { TableView as default, isValidTableViewOptions };

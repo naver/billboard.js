@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.4-nightly-20261118004548
+ * @version 4.1.5-nightly-20261119004530
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -4357,6 +4357,17 @@ function syncCanvasFlowYDomains($$) {
 }
 /* harmony default export */ var flow = ({
   /**
+   * Show the focus and tooltip of the data the flow moved under the pointer.
+   * @private
+   */
+  updateCanvasFlowFocus() {
+    var _a;
+    const $$ = this;
+    const { state } = $$;
+    state.canvasFocusKey = null;
+    ((_a = $$.$el.tooltip) == null ? void 0 : _a.style("display")) === "block" && state.event && $$.onCanvasMouseMove(state.event);
+  },
+  /**
    * Finish a pending canvas flow animation before accepting another flow mutation.
    * @private
    */
@@ -4377,7 +4388,7 @@ function syncCanvasFlowYDomains($$) {
    * @private
    */
   animateCanvasFlow(flow) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
     const $$ = this;
     const { axis, data, org, scale, state } = $$;
     const { done = () => {
@@ -4390,6 +4401,7 @@ function syncCanvasFlowYDomains($$) {
     const startDomain = scale.x.domain().slice(0, 2);
     const startOrgDomain = (_d = (_c = org.xDomain) == null ? void 0 : _c.slice) == null ? void 0 : _d.call(_c);
     const startSubXDomain = (_h = (_f = (_e = scale.subX) == null ? void 0 : _e.domain) == null ? void 0 : (_g = _f.call(_e)).slice) == null ? void 0 : _h.call(_g);
+    const focusData = state.canvasFocusKey ? state.canvasFocusData : null;
     if (!isCanvasFlowDomain(startDomain, isLog)) {
       return false;
     }
@@ -4439,6 +4451,7 @@ function syncCanvasFlowYDomains($$) {
       state.canvasFlowFrame = null;
       state.canvasFlowFinish = null;
       state.flowing = false;
+      $$.updateCanvasFlowFocus();
       done.call($$.api);
     };
     const render = (timestamp) => {
@@ -4450,7 +4463,7 @@ function syncCanvasFlowYDomains($$) {
       state._cachedDrawShape = null;
       state._canvasVisibleRangeCache = null;
       state._canvasXTickValuesCache = null;
-      $$.renderCanvasFrame(void 0, null, false);
+      $$.renderCanvasFrame(void 0, focusData, false);
       if (ratio < 1) {
         state.canvasFlowFrame = requestFrame(render);
       } else {
@@ -4463,7 +4476,6 @@ function syncCanvasFlowYDomains($$) {
     axis.x.scale(scale.x);
     state.flowing = true;
     state.cancelClick = true;
-    (_k = $$.hideTooltip) == null ? void 0 : _k.call($$);
     state.canvasFlowFinish = finish;
     state.canvasFlowFrame = requestFrame(render);
     return true;
@@ -10534,6 +10546,7 @@ class State {
       isCanvasMode: false,
       canvasShape: null,
       canvasFocusKey: null,
+      canvasFocusData: null,
       canvasSubchartBrushDragging: false,
       canvasSubchartBrushMode: null,
       canvasSubchartBrushStart: null,
@@ -15119,7 +15132,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
 
 /* harmony default export */ var redraw = ({
   redraw(options = {}) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n;
     const $$ = this;
     const { config, state, $el } = $$;
     const { main, treemap } = $el;
@@ -15155,27 +15168,27 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     $$.updateSizes(initializing);
     if (state.isCanvasMode) {
       const zoomScale = $$.scale.zoom;
-      const zoomDomain = zoomScale == null ? void 0 : zoomScale.domain();
+      const zoomDomain = (_d = (_c = zoomScale == null ? void 0 : zoomScale.orgDomain) == null ? void 0 : _c.call(zoomScale)) != null ? _d : zoomScale == null ? void 0 : zoomScale.domain();
       zoomScale && ($$.scale.zoom = null);
       $$.updateScales(initializing, wth.UpdateXDomain);
       if (zoomScale) {
         zoomScale.range($$.scale.x.range());
         zoomDomain && zoomScale.domain(zoomDomain);
-        $$.scale.zoom = $$.getCustomizedXScale(zoomScale);
+        $$.scale.zoom = $$.getCustomizedXScale((_f = (_e = zoomScale.orgScale) == null ? void 0 : _e.call(zoomScale)) != null ? _f : zoomScale);
         $$.axis.x.scale($$.scale.zoom);
         $$.scale.x.domain(config.zoom_rescale ? zoomDomain : $$.org.xDomain);
         $$.scale.subX.domain($$.org.xDomain);
       }
       state.hasAxis && $$.axis.syncAxisDomains(targetsToShow, wth, flow);
-      state.hasAxis && ((_c = $$.applyCanvasSubchartDomain) == null ? void 0 : _c.call($$));
+      state.hasAxis && ((_g = $$.applyCanvasSubchartDomain) == null ? void 0 : _g.call($$));
       const shape = needShapeUpdate ? $$.getDrawShape() : state._cachedDrawShape || $$.getDrawShape();
       if (needShapeUpdate) {
         state._cachedDrawShape = shape;
       }
       if (config.legend_show && $el.legend && !(config.legend_contents_bindto && config.legend_contents_template)) {
-        (_d = $$.positionHtmlLegend) == null ? void 0 : _d.call($$);
+        (_h = $$.positionHtmlLegend) == null ? void 0 : _h.call($$);
       }
-      (_e = $$.resizeCanvas) == null ? void 0 : _e.call($$);
+      (_i = $$.resizeCanvas) == null ? void 0 : _i.call($$);
       state.canvasFocusKey = null;
       $$.renderCanvasFrame(shape, null, true);
       initializing && $$.updateTypesElements();
@@ -15196,11 +15209,11 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
       $$.updateDimension(true);
     }
     config.data_empty_label_text && main.select(`text.${$TEXT.text}.${$COMMON.empty}`).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null);
-    (_f = $$.redrawTitle) == null ? void 0 : _f.call($$);
+    (_j = $$.redrawTitle) == null ? void 0 : _j.call($$);
     if (state.hasAxis) {
       $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
-      ((_g = $$.hasGrid) == null ? void 0 : _g.call($$)) && $$.updateGrid();
-      config.regions.length && ((_h = $$.updateRegion) == null ? void 0 : _h.call($$));
+      ((_k = $$.hasGrid) == null ? void 0 : _k.call($$)) && $$.updateGrid();
+      config.regions.length && ((_l = $$.updateRegion) == null ? void 0 : _l.call($$));
       ["bar", "candlestick", "line", "area"].forEach((v) => {
         const name = capitalize(v);
         if (/^(line|area)$/.test(v) && $$.hasTypeOf(name) || $$.hasType(v)) {
@@ -15212,7 +15225,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
       $el.text && main.selectAll(`.${$SELECT.selectedCircles}`).filter($$.isBarType.bind($$)).selectAll("circle").remove();
       if (config.interaction_enabled && !flow && wth.EventRect) {
         $$.redrawEventRect();
-        (_i = $$.bindZoomEvent) == null ? void 0 : _i.call($$);
+        (_m = $$.bindZoomEvent) == null ? void 0 : _m.call($$);
       }
     } else {
       $el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
@@ -15223,9 +15236,9 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     }
     if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
       if (needShapeUpdate) {
-        $$.updateCircle();
+        $$.updateCircle(false, !!flow);
       }
-    } else if ((_j = $$.hasLegendDefsPoint) == null ? void 0 : _j.call($$)) {
+    } else if ((_n = $$.hasLegendDefsPoint) == null ? void 0 : _n.call($$)) {
       $$.data.targets.forEach($$.point("create", this));
     }
     if ($$.hasDataLabel() && !$$.hasArcType(null, ["radar"])) {
@@ -15250,12 +15263,12 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
   generateRedrawList(targets, flow, duration, withSubchart, needShapeRegen = true) {
     const $$ = this;
     const { config, state } = $$;
+    if (state.hasAxis) {
+      config.subchart_show && $$.redrawSubchart(withSubchart, duration);
+    }
     const shape = needShapeRegen ? $$.getDrawShape() : state._cachedDrawShape || $$.getDrawShape();
     if (needShapeRegen) {
       state._cachedDrawShape = shape;
-    }
-    if (state.hasAxis) {
-      config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
     }
     const flowFn = flow && $$.generateFlow({
       targets,
@@ -16512,6 +16525,11 @@ function _getCanvasTitleHeight($$) {
 
 const RE_WHITESPACE = /(\r?\n|\t)/g;
 const RE_TOOLTIP_TPL = /{{(.*)}}/;
+function getRangeValueHtml(values) {
+  return `<div style="display:inline-grid;grid-template-columns:auto auto;gap:0 .3em;text-align:left">${values.map(([name, v]) => `<b style="text-align:right">${name}:</b><span>${v}</span>`).join(
+    ""
+  )}</div>`;
+}
 /* harmony default export */ var internals_tooltip = ({
   /**
    * Initializes the tooltip
@@ -16652,7 +16670,7 @@ const RE_TOOLTIP_TPL = /{{(.*)}}/;
           (v) => valueFormat($$.getRangedData(row, v), ...param)
         );
         const mid = valueFormat(getRowValue(row), ...param);
-        value = `<b>Mid:</b> ${mid} <b>High:</b> ${high} <b>Low:</b> ${low}`;
+        value = getRangeValueHtml([["Mid", mid], ["High", high], ["Low", low]]);
       } else if ($$.isCandlestickType(row)) {
         const [open, high, low, close, volume] = ["open", "high", "low", "close", "volume"].map((v) => {
           const value2 = $$.getRangedData(row, v, "candlestick");
@@ -16661,7 +16679,13 @@ const RE_TOOLTIP_TPL = /{{(.*)}}/;
             ...param
           ) : void 0;
         });
-        value = `<b>Open:</b> ${open} <b>High:</b> ${high} <b>Low:</b> ${low} <b>Close:</b> ${close}${volume ? ` <b>Volume:</b> ${volume}` : ""}`;
+        value = getRangeValueHtml([
+          ["Open", open],
+          ["High", high],
+          ["Low", low],
+          ["Close", close],
+          ...volume ? [["Volume", volume]] : []
+        ]);
       } else if ($$.isBarRangeType(row)) {
         const { value: rangeValue, id, index } = row;
         value = `${valueFormat(rangeValue, void 0, id, index)}`;
@@ -17013,7 +17037,7 @@ const RE_TOOLTIP_TPL = /{{(.*)}}/;
       $el: { eventRect, svg, tooltip },
       state: { event, hasAxis, hasRadar, hasTreemap }
     } = $$;
-    if ($$.state.isCanvasMode) {
+    if ($$.state.isCanvasMode || $$.state.flowing) {
       return;
     }
     if ((tooltip == null ? void 0 : tooltip.style("display")) === "block" && event) {
@@ -17521,6 +17545,9 @@ function getSubchartCandlestickShapeValue($$, d, isSub) {
     return void 0;
   }
   if ($$.isBarType(d)) {
+    if (isNumber(value.volume)) {
+      return value.volume;
+    }
     return isNumber(value.open) && isNumber(value.close) ? value._isUp ? value.close : value.open : void 0;
   }
   return isNumber(value.close) ? value.close : void 0;
@@ -18175,23 +18202,25 @@ function updateTargetsForShape(targets, config) {
     return sensitivity;
   },
   getBarW(type, axis, targetsNum) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d;
     const $$ = this;
     const { config, org, scale, state } = $$;
     const maxDataCount = $$.getMaxDataCount();
     const isGrouped = type === "bar" && ((_a = config.data_groups) == null ? void 0 : _a.length);
     const configName = `${type}_width`;
-    const { k } = (_c = (_b = $$.getZoomTransform) == null ? void 0 : _b.call($$)) != null ? _c : { k: 1 };
     const xMinMax = [
-      (_d = config.axis_x_min) != null ? _d : org.xDomain[0],
-      (_e = config.axis_x_max) != null ? _e : org.xDomain[1]
+      (_b = config.axis_x_min) != null ? _b : org.xDomain[0],
+      (_c = config.axis_x_max) != null ? _c : org.xDomain[1]
     ].map((v) => $$.axis.isTimeSeries() ? parseDate.call($$, v) : Number(v));
     let tickInterval = axis.tickInterval(maxDataCount);
-    if (scale.zoom && !$$.axis.isCategorized() && k > 1) {
+    const xScale = (_d = scale.zoom) != null ? _d : scale.x;
+    const getSpan = ([min, max]) => Math.abs(+max - +min);
+    const isZoomed = axis !== $$.axis.subX && !$$.axis.isCategorized() && getSpan(xScale.domain()) < getSpan(org.xDomain);
+    if (isZoomed) {
       const isSameMinMax = xMinMax.every((v, i) => v === org.xDomain[i]);
       tickInterval = org.xDomain.map((v, i) => {
         const value = isSameMinMax ? v : v - Math.abs(xMinMax[i]);
-        return scale.zoom(value);
+        return xScale(value);
       }).reduce((a, c) => Math.abs(a) + c) / maxDataCount;
     }
     const getWidth = (id) => {
@@ -20351,6 +20380,7 @@ const canvasInternal = {
     const $$ = this;
     const { state } = $$;
     const withMainRedraw = (_b = (_a = $$.canvasRenderer).hasExpandedShapeFocus) == null ? void 0 : _b.call(_a, $$, focusData);
+    state.canvasFocusData = focusData;
     if (withMainRedraw || state.canvasFocusMainRedraw) {
       const drawShape = state.canvasShape || $$.getDrawShape();
       $$.canvasEngine.beginFrame(state.current.width, $$.getCanvasSurfaceHeight());
@@ -22000,7 +22030,7 @@ function loadConfig(config) {
    * chart.flush(true);
    */
   flush(soft) {
-    var _a, _b;
+    var _a, _b, _c, _d;
     const $$ = this.internal;
     const { state, $el: { zoomResetBtn } } = $$;
     if (state.rendered) {
@@ -22011,7 +22041,7 @@ function loadConfig(config) {
       }
       zoomResetBtn == null ? void 0 : zoomResetBtn.style("display", "none");
       if ($$.scale.zoom) {
-        state.current.zoomDomain = $$.scale.zoom.domain();
+        state.current.zoomDomain = (_d = (_c = $$.zoom) == null ? void 0 : _c.getDomain()) != null ? _d : $$.scale.zoom.domain();
       }
       $$.scale.zoom = null;
       if (!state.resizing) {
@@ -23447,7 +23477,7 @@ let exportApi = () => {
       });
     }
     function _() {
-      var _a, _b, _c, _d;
+      var _a, _b, _c, _d, _e;
       let domain;
       let length = 0;
       let tail = 0;
@@ -23593,7 +23623,8 @@ let exportApi = () => {
           withUpdateXDomain: true
         });
         $$.updateTypesElements();
-        (_d = args.done) == null ? void 0 : _d.call($$.api);
+        (_d = $$.updateCanvasFlowFocus) == null ? void 0 : _d.call($$);
+        (_e = args.done) == null ? void 0 : _e.call($$.api);
         return;
       }
       $$.updateTargets($$.data.targets);
@@ -23628,7 +23659,7 @@ let exportApi = () => {
    */
   generateFlow(args) {
     const $$ = this;
-    const { data, state, $el } = $$;
+    const { config, data, state, $el } = $$;
     return function() {
       var _a;
       if (!$$.$el) {
@@ -23664,7 +23695,15 @@ let exportApi = () => {
           elements[v] = node;
         }
       });
-      (_a = $$.hideGridFocus) == null ? void 0 : _a.call($$);
+      if (config.axis_rotated) {
+        (_a = $$.hideGridFocus) == null ? void 0 : _a.call($$);
+      } else {
+        const xFocus = $el.main.selectAll(
+          `line.${config_classes.xgridFocus}:not(.${config_classes.xgridFocusContinuous})`
+        );
+        xFocus.size() && (elements["gridFocus.x"] = xFocus);
+        $el.main.selectAll(`line.${config_classes.ygridFocus}`).style("visibility", "hidden");
+      }
       $$.setFlowList(elements, args);
     };
   },
@@ -23708,6 +23747,7 @@ let exportApi = () => {
    * @private
    */
   cleanUpFlow(elements, args) {
+    var _a, _b;
     const $$ = this;
     if (!$$.$el) {
       return;
@@ -23722,12 +23762,18 @@ let exportApi = () => {
       length: flowLength
     } = flow;
     if (flowLength) {
+      const isFocusCircle = $$.isPointFocusOnly() ? (node) => {
+        var _a2;
+        return (_a2 = node.parentElement) == null ? void 0 : _a2.classList.contains(config_classes.circles);
+      } : () => false;
       ["circle", "text", "shape", "eventRect"].forEach((v) => {
         const target = [];
         for (let i = 0; i < flowLength; i++) {
           target.push(`.${config_classes[v]}-${i}`);
         }
-        svg.selectAll(`.${config_classes[`${v}s`]}`).selectAll(target).remove();
+        svg.selectAll(`.${config_classes[`${v}s`]}`).selectAll(target).filter(function() {
+          return !isFocusCircle(this);
+        }).remove();
       });
       svg.select(`.${config_classes.xgrid}`).remove();
     }
@@ -23758,8 +23804,13 @@ let exportApi = () => {
       }
     });
     config.interaction_enabled && $$.redrawEventRect();
-    done.call($$.api);
     state.flowing = false;
+    if (((_a = $$.$el.tooltip) == null ? void 0 : _a.style("display")) === "block") {
+      $$.updateTooltipOnRedraw();
+    } else {
+      (_b = $$.hideGridFocus) == null ? void 0 : _b.call($$);
+    }
+    done.call($$.api);
   },
   /**
    * Get flow transform value
@@ -25612,6 +25663,10 @@ function dispatchSubchartEvent($$, type, event, context) {
    *  - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
    *    - `show: subchart()`
    * @property {string} [subchart.type] Set chart type for the subchart. Defaults to data.type.
+   *  - **NOTE:** When candlestick data is rendered as another type in the subchart, the subchart takes one value of the data:
+   *    - `bar`: the `volume` of the data. Without `volume`, the close value for a rise and the open value for a fall, from zero.
+   *    - other types (`line`, `area`, etc.): the close value.
+   *    - The y axis domain of the subchart follows the taken values. The `volume` is not part of the main chart's y axis domain.
    * @property {object} [subchart.types] Set chart type for each data in the subchart. Defaults to data.types.
    * @property {boolean} [subchart.brush.enabled=true] Enable subchart brush interaction.
    * @property {boolean} [subchart.showHandle=false] Show sub chart's handle.
@@ -27298,7 +27353,7 @@ function getPointBBox(node) {
       });
     });
   },
-  updateCircle(isSub = false) {
+  updateCircle(isSub = false, withFlow = false) {
     const $$ = this;
     const { config, state, $el } = $$;
     const focusOnly = $$.isPointFocusOnly();
@@ -27313,8 +27368,9 @@ function getPointBBox(node) {
       const pointR = $$.pointR.bind($$);
       const updateCircleColor = $$.generateUpdateCircleColor();
       const initialOpacityForCircle = $$.initialOpacityForCircle.bind($$);
-      circles.enter().filter(Boolean).append($$.point("create", this, pointR, updateCircleColor));
-      $root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`).style("stroke", $$.getStylePropValue($$.color)).style("opacity", initialOpacityForCircle);
+      const entered = circles.enter().filter(Boolean).append($$.point("create", this, pointR, updateCircleColor));
+      $root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`).style("stroke", $$.getStylePropValue($$.color));
+      (focusOnly && withFlow ? entered : $root.circle).style("opacity", initialOpacityForCircle);
     }
   },
   /**
@@ -37766,7 +37822,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.1.4-nightly-20261118004548",
+  version: "4.1.5-nightly-20261119004530",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
