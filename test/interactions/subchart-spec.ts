@@ -474,6 +474,52 @@ describe("SUBCHART", () => {
 			};
 		});
 
+		it("should render candlestick source as zero-based volume bars in subchart", () => {
+			const $$ = chart.internal;
+			const {main} = $$.$el.subchart;
+			const [up, down] = $$.data.targets[0].values;
+			const [upValue, downValue, upPoints, downPoints] = $$.withSubchartTypeContext(() => {
+				const indices = $$.getShapeIndices($$.isBarType);
+				const getPoints = $$.generateGetBarPoints(indices, true);
+
+				return [
+					$$.getSubchartCandlestickShapeValue(up, true),
+					$$.getSubchartCandlestickShapeValue(down, true),
+					getPoints(up, 0),
+					getPoints(down, 1)
+				];
+			});
+			const y = $$.getYScaleById("data1", true);
+
+			expect(main.selectAll(`.${$BAR.bar}`).size()).to.be.equal(3);
+			expect($$.scale.subY.domain()[0]).to.be.equal(0);
+			expect(upValue).to.be.equal(1000);
+			expect(downValue).to.be.equal(2000);
+			expect(upPoints[0][1]).to.be.closeTo(y(0), 0.5);
+			expect(upPoints[1][1]).to.be.closeTo(y(1000), 0.5);
+			expect(downPoints[0][1]).to.be.closeTo(y(0), 0.5);
+			expect(downPoints[1][1]).to.be.closeTo(y(2000), 0.5);
+		});
+
+		it("should apply candlestick down color to down-value subchart bars", () => {
+			const bars = chart.internal.$el.subchart.main
+				.selectAll(`.${$BAR.bar}`)
+				.nodes();
+
+			expect(window.getComputedStyle(bars[0]).fill).to.be.equal("rgb(31, 119, 180)");
+			expect(window.getComputedStyle(bars[1]).fill).to.be.equal("rgb(255, 0, 0)");
+		});
+
+		it("set options data without volume", () => {
+			args.data.columns = [
+				["data1",
+					{open: 10, high: 20, low: 5, close: 12},
+					{open: 18, high: 19, low: 8, close: 12},
+					[16, 22, 14, 20]
+				]
+			];
+		});
+
 		it("should render candlestick source as zero-based body value bars in subchart", () => {
 			const $$ = chart.internal;
 			const {main} = $$.$el.subchart;
@@ -499,15 +545,6 @@ describe("SUBCHART", () => {
 			expect(upPoints[1][1]).to.be.closeTo(y(12), 0.5);
 			expect(downPoints[0][1]).to.be.closeTo(y(0), 0.5);
 			expect(downPoints[1][1]).to.be.closeTo(y(18), 0.5);
-		});
-
-		it("should apply candlestick down color to down-value subchart bars", () => {
-			const bars = chart.internal.$el.subchart.main
-				.selectAll(`.${$BAR.bar}`)
-				.nodes();
-
-			expect(window.getComputedStyle(bars[0]).fill).to.be.equal("rgb(31, 119, 180)");
-			expect(window.getComputedStyle(bars[1]).fill).to.be.equal("rgb(255, 0, 0)");
 		});
 
 		it("set options subchart.type='line'", () => {
@@ -751,6 +788,72 @@ describe("SUBCHART", () => {
 			expect(chart.$.grid.main.select(`line.${$FOCUS.xgridFocus}`).style("visibility"))
 				.to.not.be.equal("hidden");
 			expect(subchartLine.style("visibility")).to.be.equal("hidden");
+		});
+	});
+
+	describe("shape width on subchart range selection", () => {
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250, 120, 300, 90, 180],
+						["data2",
+							[10, 20, 5, 12], [12, 19, 8, 18], [18, 22, 14, 16], [16, 21, 12, 20],
+							[20, 25, 18, 22], [22, 24, 15, 17], [17, 20, 11, 19], [19, 26, 18, 25],
+							[25, 27, 20, 21], [21, 23, 16, 22]
+						]
+					],
+					types: {
+						data1: "bar",
+						data2: "candlestick"
+					},
+					axes: {
+						data2: "y2"
+					}
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				},
+				subchart: {
+					show: true,
+					init: {
+						range: [2, 5]
+					}
+				}
+			};
+		});
+
+		it("should widen bars and candlesticks to the spacing of the selected range", () => {
+			const $$ = chart.internal;
+			const full = $$.getBarW("bar", $$.axis.subX, 1);
+			const getWidth = el => el.node().getBoundingClientRect().width;
+
+			// 3 of 10 x units, padding included, are shown: the data spacing is 10 / 3 times wider
+			expect($$.getBarW("bar", $$.axis.x, 1) / full).to.be.closeTo(10 / 3, 0.1);
+			expect($$.getBarW("candlestick", $$.axis.x, 1) / full).to.be.closeTo(10 / 3, 0.1);
+
+			const sub = $$.$el.subchart.main.select(`.${$BAR.bar}`).node().getBoundingClientRect().width;
+
+			// the subchart keeps the width of the whole range
+			expect(sub).to.be.closeTo(full, 1);
+			expect(getWidth($$.$el.bar) / sub).to.be.closeTo(10 / 3, 0.1);
+			expect(getWidth($$.$el.candlestick.select("path")) / sub).to.be.closeTo(10 / 3, 0.1);
+		});
+
+		it("set options axis.x.type='category'", () => {
+			args.axis.x = {type: "category"};
+		});
+
+		it("should widen bars and candlesticks to the spacing of the selected range: category", () => {
+			const $$ = chart.internal;
+			const sub = $$.$el.subchart.main.select(`.${$BAR.bar}`).node().getBoundingClientRect().width;
+			const getWidth = el => el.node().getBoundingClientRect().width;
+
+			// 3 of 10 categories are shown
+			expect(getWidth($$.$el.bar) / sub).to.be.closeTo(10 / 3, 0.1);
+			expect(getWidth($$.$el.candlestick.select("path")) / sub).to.be.closeTo(10 / 3, 0.1);
 		});
 	});
 

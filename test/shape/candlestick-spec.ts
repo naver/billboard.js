@@ -357,10 +357,9 @@ describe("SHAPE CANDLESTICK", () => {
 					this.tooltip.show({x: 0});
 
 					// check if tooltip content shows correct data
-					const str = JSON.stringify(data[0][1])
-						.replace(/[{}\",]/g, "")
-						.replace(/(\d)(?=[a-z])/g, "$1 ")
-						.replace(/(:)(\d)/g, "$1 $2");
+					const str = Object.entries(data[0][1])
+						.map(([name, value]) => `${name}:${value}`)
+						.join("");
 
 					expect(str).to.be.equal(tooltip.select(".value").text().toLowerCase());
 

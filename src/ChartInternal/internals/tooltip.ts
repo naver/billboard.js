@@ -27,6 +27,20 @@ import type {IArcData, IDataRow} from "../data/IData";
 const RE_WHITESPACE = /(\r?\n|\t)/g;
 const RE_TOOLTIP_TPL = /{{(.*)}}/;
 
+/**
+ * Get the tooltip value of ranged data: one row per value, aligned on the colon of the names
+ * @param {Array} values [name, value] pairs
+ * @returns {string} html string
+ * @private
+ */
+function getRangeValueHtml(values: (string | undefined)[][]): string {
+	return `<div style="display:inline-grid;grid-template-columns:auto auto;gap:0 .3em;text-align:left">${
+		values.map(([name, v]) => `<b style="text-align:right">${name}:</b><span>${v}</span>`).join(
+			""
+		)
+	}</div>`;
+}
+
 export default {
 	/**
 	 * Initializes the tooltip
@@ -227,7 +241,7 @@ export default {
 				);
 				const mid = valueFormat(getRowValue(row), ...param as [number, string, number]);
 
-				value = `<b>Mid:</b> ${mid} <b>High:</b> ${high} <b>Low:</b> ${low}`;
+				value = getRangeValueHtml([["Mid", mid], ["High", high], ["Low", low]]);
 			} else if ($$.isCandlestickType(row)) {
 				const [open, high, low, close, volume] = ["open", "high", "low", "close", "volume"]
 					.map(v => {
@@ -241,10 +255,13 @@ export default {
 							undefined;
 					});
 
-				value =
-					`<b>Open:</b> ${open} <b>High:</b> ${high} <b>Low:</b> ${low} <b>Close:</b> ${close}${
-						volume ? ` <b>Volume:</b> ${volume}` : ""
-					}`;
+				value = getRangeValueHtml([
+					["Open", open],
+					["High", high],
+					["Low", low],
+					["Close", close],
+					...(volume ? [["Volume", volume]] : [])
+				]);
 			} else if ($$.isBarRangeType(row)) {
 				const {value: rangeValue, id, index} = row;
 
@@ -706,7 +723,8 @@ export default {
 			state: {event, hasAxis, hasRadar, hasTreemap}
 		} = $$;
 
-		if ($$.state.isCanvasMode) {
+		// the focus slides with a flow and its end updates the tooltip for the data moved in
+		if ($$.state.isCanvasMode || $$.state.flowing) {
 			return;
 		}
 

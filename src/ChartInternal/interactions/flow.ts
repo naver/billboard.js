@@ -15,7 +15,7 @@ export default {
 	 */
 	generateFlow(args): Function {
 		const $$ = this;
-		const {data, state, $el} = $$;
+		const {config, data, state, $el} = $$;
 
 		return function() {
 			// destroy() empties the instance while the redraw transition is waited on
@@ -68,7 +68,18 @@ export default {
 					}
 				});
 
-			$$.hideGridFocus?.();
+			// the focus slides with its data and the flow end moves it to the data under the pointer
+			if (config.axis_rotated) {
+				$$.hideGridFocus?.();
+			} else {
+				const xFocus = $el.main.selectAll(
+					`line.${CLASS.xgridFocus}:not(.${CLASS.xgridFocusContinuous})`
+				);
+
+				xFocus.size() && (elements["gridFocus.x"] = xFocus);
+				$el.main.selectAll(`line.${CLASS.ygridFocus}`).style("visibility", "hidden");
+			}
+
 			$$.setFlowList(elements, args);
 		};
 	},
@@ -143,6 +154,11 @@ export default {
 
 		// Remove flowed elements
 		if (flowLength) {
+			// point.focus.only draws one circle per data series, which the focus moves to any index
+			const isFocusCircle = $$.isPointFocusOnly() ?
+				(node: Element) => node.parentElement?.classList.contains(CLASS.circles) :
+				() => false;
+
 			["circle", "text", "shape", "eventRect"].forEach(v => {
 				const target: string[] = [];
 
@@ -152,6 +168,9 @@ export default {
 
 				svg.selectAll(`.${CLASS[`${v}s`]}`) // circles, shapes, texts, eventRects
 					.selectAll(target)
+					.filter(function() {
+						return !isFocusCircle(this);
+					})
 					.remove();
 			});
 
@@ -200,10 +219,17 @@ export default {
 
 		config.interaction_enabled && $$.redrawEventRect();
 
+		state.flowing = false;
+
+		// other data is under the pointer now: show its focus and tooltip
+		if ($$.$el.tooltip?.style("display") === "block") {
+			$$.updateTooltipOnRedraw();
+		} else {
+			$$.hideGridFocus?.();
+		}
+
 		// callback for end of flow
 		done.call($$.api);
-
-		state.flowing = false;
 	},
 
 	/**
