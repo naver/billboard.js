@@ -197,6 +197,10 @@ export default class AxisRenderer {
 				});
 
 			if (tickShow.tick || tickShow.text) {
+				// resolve the .domain node once: a selector string handed to insert() runs
+				// querySelector for every entering tick, which is O(ticks^2) on dense axes
+				const domainNode = g.select(".domain").node();
+
 				// count of tick data in array
 				const ticks = config.tickValues ||
 					helper.generateTicks(scale1, isLeftRight || params.config.axis_rotated);
@@ -221,7 +225,7 @@ export default class AxisRenderer {
 					// enter selection
 					const tickEnter = tick
 						.enter()
-						.insert("g", ".domain")
+						.insert("g", () => domainNode)
 						.attr("class", "tick");
 
 					// MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.

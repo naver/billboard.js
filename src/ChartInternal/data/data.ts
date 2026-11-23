@@ -840,9 +840,20 @@ export default {
 
 		if (orderAsc || orderDesc) {
 			const reducer = (p, c) => p + Math.abs(c.value);
-			const sum = v => (isNumber(v) ? v : (
-				"values" in v ? v.values.reduce(reducer, 0) : v.value
-			));
+			// sort calls the compare function O(n log n) times, so sum once per target
+			// (the cache lives as long as this compare function)
+			const sums = new WeakMap();
+			const sum = v => {
+				if (isNumber(v)) {
+					return v;
+				}
+
+				if (!sums.has(v)) {
+					sums.set(v, "values" in v ? v.values.reduce(reducer, 0) : v.value);
+				}
+
+				return sums.get(v);
+			};
 
 			fn = (t1: IData | IDataRow, t2: IData | IDataRow) => {
 				const t1Sum = sum(t1);

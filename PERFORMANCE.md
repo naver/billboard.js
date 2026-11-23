@@ -141,6 +141,51 @@ re-run at 40 samples with builds interleaved round-robin:
 Treat a single-run ✗ as a hypothesis, not a finding. Re-measure with builds
 interleaved before acting on it.
 
+## Rendering dense data
+
+Measured in headless Chromium against `dist/billboard.pkgd.min.js`, SVG mode, a
+line chart of 5 series x 20,000 points, `transition.duration: 0`, median of 5 fresh
+pages. The time covers `generate()` plus the layout it forces.
+
+| Setting | generate() | vs default |
+|---|---:|---:|
+| default | 1,291 ms | |
+| `point.show: false` | 635 ms | -51% |
+| `point.focus.only: true` | 566 ms | -53% |
+| `axis.x.tick.count: 10` | 638 ms | -56% |
+| `axis.x.tick.count: 10` + `point.focus.only: true` | 108 ms | -91% |
+| `render.mode: "canvas"` | 264 ms | -80% |
+
+Two kinds of DOM nodes account for nearly all of the SVG cost: one `<circle>` per
+data point and one tick `<g>` per x value. `axis.x.tick.culling` is not a
+substitute for `tick.count`: it hides culled ticks, but the nodes are still
+created (-10% only).
+
+None of these are the default, because each one changes what ends up in the DOM or
+on screen (tick count, point elements, drawn points). Changing them would break
+code that selects those elements. They stay opt-in.
+
+### What does not help
+
+- **`boost.useWorker`.** Data conversion is 1~2% of `generate()` (3 ms of 165 ms at
+  25,000 cells, 45 ms of 5,574 ms at 300,000 cells). Offloading it makes the call
+  return early, but the render that follows blocks the main thread just the same, and
+  the total time grows by 0~20% from cloning the payload. The worker cannot run the
+  DOM work, which is where the time goes.
+- **A larger `"auto"` threshold or a different default.** There is no data size
+  where offloading conversion pays off.
+
+### Quadratic costs removed
+
+- Ticks are inserted before the `.domain` path with a node resolved once.
+  A selector string made `insert()` run `querySelector` per tick (O(ticks^2)).
+  `generate()` with 20,000 ticks: -24%, with 50,000 ticks: -54%.
+- `mergeArray()` pushes into one array instead of `reduce()` + `concat()`, which
+  copied the accumulated array per series. 400 series x 800 points without points:
+  -29% with the `data.order` change below.
+- The `data.order` compare function sums each series once per sort instead of on
+  every comparison.
+
 ## DOM Read/Write Batching
 
 - Axis tick size calculation uses a hidden dummy axis, cached fingerprints, and
