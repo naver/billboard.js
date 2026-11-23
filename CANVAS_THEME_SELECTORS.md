@@ -129,6 +129,8 @@ style generated tick grid lines from `grid.x.show`, `grid.y.show`, or `grid.y.ti
 | `.bb-bullet-target` | `stroke`, `stroke-width` | Bullet comparative target marker |
 | `.bb-bullet-axis text` | `fill`, `font` | Bullet scale axis labels and lines |
 | `.bb-bullet-title` | `fill`, `font` | Bullet row title |
+| `.bb-sankey-link` | `stroke-opacity` | Sankey link opacity (`sankey.link.opacity` overrides it) |
+| `.bb-sankey-label` | `fill`, `font` | Sankey node names |
 
 ### Brushes And Text
 
@@ -163,6 +165,7 @@ direct keys only when a selector alias is not specific enough.
 | `subchartBrush` | `fill`, `opacity`, `handleFill`, `handleOpacity`, `handleStroke`, `handleLineWidth` |
 | `treemap` | `stroke`, `lineWidth` |
 | `bullet` | `targetStroke`, `targetLineWidth`, `rangeMin`, `rangeMax`, `axisFont`, `axisColor`, `titleFont`, `titleColor` |
+| `sankey` | `linkOpacity`, `labelFont`, `labelColor` |
 | `label` | `font`, `color` |
 | `title` | `font`, `color` |
 

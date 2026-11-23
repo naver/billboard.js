@@ -14,5 +14,6 @@ export {line, spline, step} from "./line";
 export {pie} from "./pie";
 export {polar} from "./polar";
 export {radar} from "./radar";
+export {sankey} from "./sankey";
 export {scatter} from "./scatter";
 export {treemap} from "./treemap";

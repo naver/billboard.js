@@ -24,6 +24,7 @@ import bb, {
 	grid,
 	line,
 	regions,
+	sankey,
 	scatter,
 	selection,
 	spline,
@@ -245,6 +246,7 @@ describe("ESM canvas", function() {
 		["scatter", scatter],
 		["bubble", bubble],
 		["bullet", bullet],
+		["sankey", sankey],
 		["candlestick", candlestick, candlestickColumns],
 		["treemap", treemap]
 	];

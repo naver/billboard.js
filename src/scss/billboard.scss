@@ -114,6 +114,30 @@
 	}
 }
 
+/*-- Sankey --*/
+.bb-chart-sankey {
+	.bb-sankey-link {
+		fill: none;
+		// sankey.link.opacity sets the variable
+		stroke-opacity: var(--bb-sankey-link-opacity, 0.4);
+
+		&:hover {
+			stroke-opacity: calc(var(--bb-sankey-link-opacity, 0.4) + 0.3);
+		}
+
+		// focus: the links are not of the target classes
+		&.bb-defocused {
+			opacity: 0.3 !important;
+		}
+	}
+
+	.bb-sankey-label {
+		font-size: 11px;
+		fill: #000;
+		pointer-events: none;
+	}
+}
+
 /*-- Axis --*/
 .bb-axis {
 	shape-rendering: crispEdges;

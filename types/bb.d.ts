@@ -50,6 +50,7 @@ export function line(): "line";
 export function pie(): "pie";
 export function polar(): "polar";
 export function radar(): "radar";
+export function sankey(): "sankey";
 export function scatter(): "scatter";
 export function spline(): "spline";
 export function step(): "step";

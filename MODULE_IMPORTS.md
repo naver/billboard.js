@@ -228,6 +228,7 @@ Import the type(s) you use and pass the return value as `data.type` /
 | `pie` | `"pie"` |
 | `polar` | `"polar"` |
 | `radar` | `"radar"` |
+| `sankey` | `"sankey"` |
 | `scatter` | `"scatter"` |
 | `spline` | `"spline"` |
 | `step` | `"step"` |
