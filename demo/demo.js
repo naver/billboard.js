@@ -928,6 +928,98 @@ var demos = {
 				}
 			}
 		},
+		SankeyChart: [
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "Organic", "Paid", "Referral", "Sign up", "Leave", "Free", "Pro"],
+							["Visit", 420, 260, 120, 0, 0, 0, 0],
+							["Organic", 0, 0, 0, 180, 240, 0, 0],
+							["Paid", 0, 0, 0, 150, 110, 0, 0],
+							["Referral", 0, 0, 0, 90, 30, 0, 0],
+							["Sign up", 0, 0, 0, 0, 0, 300, 120]
+						],
+						type: "sankey",
+						onclick: function(d) {
+							console.log("onclick", d);
+						}
+					},
+					legend: {
+						show: false
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "Electricity", "Heat", "Industry", "Homes", "Transport", "Loss"],
+							["Coal", 120, 40, 0, 0, 0, 0],
+							["Gas", 90, 70, 0, 0, 0, 0],
+							["Oil", 10, 0, 30, 0, 140, 0],
+							["Electricity", 0, 0, 80, 90, 10, 40],
+							["Heat", 0, 0, 50, 60, 0, 0]
+						],
+						type: "sankey",
+						names: {
+							Loss: "Conversion loss"
+						}
+					},
+					sankey: {
+						node: {
+							width: 16,
+							padding: 14,
+							align: "left"
+						},
+						link: {
+							color: "gradient"
+						},
+						label: {
+							format: function(name, value) {
+								return name + " (" + value + ")";
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "Online", "Store", "Profit", "Cost", "Tax"],
+							["Product A", 40, 20, 0, 0, 0],
+							["Product B", 25, 35, 0, 0, 0],
+							["Product C", 15, 10, 0, 0, 0],
+							["Online", 0, 0, 30, 40, 10],
+							["Store", 0, 0, 20, 35, 10]
+						],
+						type: "sankey"
+					},
+					size: {
+						height: 480
+					},
+					sankey: {
+						rotated: true,
+						node: {
+							padding: 30,
+							sort: "desc",
+							border: {
+								width: 1,
+								color: "#fff"
+							}
+						},
+						link: {
+							color: "target",
+							opacity: 0.6
+						}
+					}
+				}
+			}
+		],
 		ScatterPlot: {
 			options: {
 				data: {

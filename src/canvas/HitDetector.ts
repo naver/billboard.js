@@ -20,7 +20,16 @@ import {
 	markCanvasPointOccupancy
 } from "./util";
 
-type HitItem = {x: number, y: number, w?: number, h?: number, sensitivity?: number, data: any};
+// hit: whether a point inside the box is on the shape, for a shape that does not fill its box
+type HitItem = {
+	x: number,
+	y: number,
+	w?: number,
+	h?: number,
+	sensitivity?: number,
+	data: any,
+	hit?: (x: number, y: number) => boolean
+};
 type HitGrid = Map<string, HitItem[]>;
 type PlotArea = {x: number, y: number, w: number, h: number};
 type HitRect = {x: number, y: number, w: number, h: number};
@@ -376,7 +385,8 @@ export default class HitDetector {
 				mx >= item.x &&
 				mx <= item.x + w &&
 				my >= item.y &&
-				my <= item.y + h
+				my <= item.y + h &&
+				(!item.hit || item.hit(mx, my))
 			) {
 				return item.data;
 			}

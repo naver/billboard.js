@@ -576,6 +576,10 @@ function getCanvasTooltipData($$, d): any[] {
 	const {config, state} = $$;
 	const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 	const pointBased = isCanvasPointBasedInteraction($$, d);
+	// a custom type can give the names of its data by itself (a link of sankey: "A → B")
+	const addName = state.customType && $$.customTypeHooks?.namedData ?
+		v => v :
+		v => $$.addName?.(v) || v;
 	const sameXData = config.tooltip_grouped &&
 			!state.customType &&
 			!state.hasTreemap &&
@@ -592,7 +596,7 @@ function getCanvasTooltipData($$, d): any[] {
 					sameXData :
 					targetsToShow.map(target => target.values[d.index]).filter(Boolean)) :
 				[d])))
-		.map(v => $$.addName?.(v) || v);
+		.map(addName);
 }
 
 /**
