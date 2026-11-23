@@ -178,7 +178,7 @@
 		"rolldown": "^1.3.2",
 		"sass": "^1.108.2",
 		"sass-loader": "^17.1.0",
-		"semantic-release": "^25.0.9",
+		"semantic-release": "^26.0.1",
 		"simulant": "^0.2.2",
 		"sinon": "^22.1.0",
 		"storybook": "^10.6.7",
