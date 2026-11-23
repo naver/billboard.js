@@ -1538,3 +1538,26 @@ describe("DATA", () => {
 		}));
 	});
 });
+
+describe("DATA order compare function", () => {
+	it("should sum the values of a target once per sort, not on every comparison", () => {
+		const chart = util.generate({
+			data: {
+				columns: [["data1", 1, 2]],
+				order: "desc"
+			}
+		});
+		const targets = Array.from({length: 40}, (_, i) => {
+			const values = [{value: i}, {value: -(i * 2)}];
+			const reduce = sinon.spy(values.reduce.bind(values));
+
+			return {id: `t${i}`, values: Object.assign(values, {reduce})};
+		});
+		const sorted = targets.slice().sort(chart.internal.getSortCompareFn());
+
+		// "desc" sorts by ascending total, so the smallest total comes first
+		expect(sorted[0].id).to.be.equal("t0");
+		expect(sorted[39].id).to.be.equal("t39");
+		targets.forEach(t => expect(t.values.reduce.callCount).to.be.equal(1));
+	});
+});

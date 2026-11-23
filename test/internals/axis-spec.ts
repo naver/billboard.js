@@ -4432,3 +4432,51 @@ describe("AXIS", function() {
 		});
 	});
 });
+
+describe("AXIS tick insertion order", () => {
+	it("should not run querySelector('.domain') for every entering tick", () => {
+		const spy = sinon.spy(Element.prototype, "querySelector");
+
+		try {
+			util.generate({
+				data: {
+					columns: [["data1", ...Array.from({length: 600}, (_, i) => i % 50)]]
+				}
+			});
+
+			// one lookup per axis is expected, never one per tick (600 ticks)
+			const domainLookups = spy.getCalls().filter(c => c.args[0] === ".domain").length;
+
+			expect(domainLookups).to.be.below(10);
+		} finally {
+			spy.restore();
+		}
+	});
+
+	it("should keep the ticks before the .domain path on render and on load", () => new Promise(done => {
+		const chart = util.generate({
+			data: {
+				columns: [["data1", 30, 200, 100, 400, 150, 250]]
+			}
+		});
+		const check = () => {
+			const axis = chart.$.main.select(`.${$AXIS.axisX}`).node();
+			const children = Array.from(axis.children);
+			const domainIndex = children.findIndex(el => el.classList.contains("domain"));
+
+			expect(domainIndex).to.be.equal(children.length - 1);
+			expect(children.filter(el => el.classList.contains("tick")).length)
+				.to.be.equal(children.length - 1);
+		};
+
+		check();
+
+		chart.load({
+			columns: [["data1", 1, 2, 3, 4, 5, 6, 7, 8, 9]],
+			done() {
+				check();
+				done(1);
+			}
+		});
+	}));
+});

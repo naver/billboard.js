@@ -731,6 +731,25 @@ describe("MODULE coverage helpers", () => {
 			expect(camelize("data_value", "_")).to.be.equal("dataValue");
 			expect(mergeArray([[1], [2, 3]])).to.be.deep.equal([1, 2, 3]);
 			expect(mergeArray([])).to.be.deep.equal([]);
+			expect(mergeArray(null)).to.be.deep.equal([]);
+			// a single item is returned as is
+			const single = [1, 2];
+
+			expect(mergeArray([single])).to.be.equal(single);
+			// non-array items are appended, arrays are flattened one level only
+			expect(mergeArray([[1, [2]], 3, [4]])).to.be.deep.equal([1, [2], 3, 4]);
+			// many items should merge in order
+			expect(mergeArray(Array.from({length: 500}, (_, i) => [i, -i])).length).to.be.equal(1000);
+
+			// must not copy the accumulated array for each item (concat per item is O(n^2))
+			const concatSpy = vi.spyOn(Array.prototype, "concat");
+
+			try {
+				mergeArray(Array.from({length: 200}, (_, i) => [i]));
+				expect(concatSpy).not.toHaveBeenCalled();
+			} finally {
+				concatSpy.mockRestore();
+			}
 		});
 
 		it("deep clones, extends and merges objects without prototype pollution", () => {

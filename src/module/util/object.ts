@@ -202,7 +202,32 @@ function getUnique(data: any[]): any[] {
  * @private
  */
 function mergeArray(arr: any[]): any[] {
-	return arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : [];
+	if (!arr?.length) {
+		return [];
+	}
+
+	// a single item was returned as is by the former reduce()
+	if (arr.length === 1) {
+		return arr[0];
+	}
+
+	// push into one array: reduce() + concat() copied the accumulated array
+	// per item, which is O(items^2) for many series
+	const out: any[] = [];
+
+	for (let i = 0; i < arr.length; i++) {
+		const item = arr[i];
+
+		if (Array.isArray(item)) {
+			for (let j = 0; j < item.length; j++) {
+				out.push(item[j]);
+			}
+		} else {
+			out.push(item);
+		}
+	}
+
+	return out;
 }
 
 /**
