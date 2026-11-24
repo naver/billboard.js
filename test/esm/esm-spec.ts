@@ -96,6 +96,8 @@ describe("ESM build", function() {
                         path = chart.$.main.selectAll("rect").size();
                     } else if (v === "bullet") {
                         path = chart.internal.$el.bullet.selectAll("rect").size();
+                    } else if (v === "heatmap") {
+                        path = chart.internal.$el.heatmap.selectAll("rect").size();
                     } else if (v === "sankey") {
                         path = chart.internal.$el.sankey.selectAll("path").attr("d");
                     } else {

@@ -94,6 +94,24 @@ $button-bg: #404244;
 	}
 }
 
+/*-- Heatmap --*/
+.bb-chart-heatmap {
+	.bb-heatmap-axis {
+		font-size: 10px;
+		fill: #000;
+	}
+
+	.bb-heatmap-label {
+		font-size: 10px;
+		pointer-events: none;
+	}
+
+	// focus: the rows are of the target classes
+	.bb-heatmap-row.bb-defocused {
+		opacity: 0.3;
+	}
+}
+
 /*-- Sankey --*/
 .bb-chart-sankey {
 	.bb-sankey-link {

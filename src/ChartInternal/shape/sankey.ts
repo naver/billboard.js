@@ -70,7 +70,8 @@ export default {
 
 				if (data) {
 					$$.showTooltip([data], $$.$el.svg.node());
-					/^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
+					/^(touchstart|mouseover)$/.test(event.type) &&
+						$$.setOverOut(true, data, event.target);
 				}
 			}, isTouch ? {passive: true} : undefined)
 			.on(isTouch ? "touchend" : "mouseout", event => {
@@ -78,7 +79,7 @@ export default {
 
 				if (config.interaction_onout) {
 					$$.hideTooltip();
-					$$.setOverOut(false, data);
+					$$.setOverOut(false, data, event.target);
 				}
 			})
 			.on("click", event => {

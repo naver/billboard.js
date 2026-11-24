@@ -928,6 +928,123 @@ var demos = {
 				}
 			}
 		},
+		HeatmapChart: [
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+							["9am", 12, 25, 30, 28, 20, 5, 2],
+							["12pm", 45, 60, 72, 65, 50, 15, 8],
+							["3pm", 38, 55, 68, 70, 48, 22, 10],
+							["6pm", 20, 30, 35, 42, 60, 48, 30],
+							["9pm", 5, 8, 10, 15, 35, 40, 25]
+						],
+						type: "heatmap",
+						onclick: function(d) {
+							console.log("onclick", d);
+						}
+					},
+					heatmap: {
+						colorbar: {
+							position: "bottom"
+						}
+					},
+					legend: {
+						show: false
+					}
+				}
+			},
+			{
+				// dense: 7 days x 52 weeks
+				options: (function() {
+					var weeks = ["x"];
+					var days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+					var rows = days.map(function(day) {
+						return [day];
+					});
+
+					for (var w = 0; w < 52; w++) {
+						weeks.push("W" + (w + 1));
+
+						rows.forEach(function(row, d) {
+							// a pseudo random count: deterministic, more on weekdays
+							var n = Math.abs(Math.sin((w + 1) * 12.9898 + (d + 1) * 78.233) * 43758.5453) % 1;
+
+							row.push(Math.round(n * (d < 5 ? 12 : 5)));
+						});
+					}
+
+					return {
+						data: {
+							x: "x",
+							columns: [weeks].concat(rows),
+							type: "heatmap"
+						},
+						heatmap: {
+							color: {
+								ranges: [
+									{to: 0, color: "#ebedf0", name: "0"},
+									{from: 1, to: 3, color: "#9be9a8", name: "1-3"},
+									{from: 4, to: 6, color: "#40c463", name: "4-6"},
+									{from: 7, to: 9, color: "#30a14e", name: "7-9"},
+									{from: 10, color: "#216e39", name: "10+"}
+								]
+							},
+							cell: {
+								ratio: 1,
+								padding: 1,
+								radius: 2
+							},
+							colorbar: {
+								position: "top"
+							}
+						},
+						legend: {
+							show: false
+						}
+					};
+				})()
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "Q1", "Q2", "Q3", "Q4"],
+							["Seoul", 0.2, 0.5, 0.9, 0.4],
+							["Busan", 0.1, 0.4, 0.8, 0.3],
+							["Jeju", null, 0.6, 1, 0.5]
+						],
+						type: "heatmap"
+					},
+					heatmap: {
+						color: {
+							range: ["#ffffcc", "#41b6c4", "#0c2c84"],
+							min: 0,
+							max: 1,
+							none: "#eee"
+						},
+						cell: {
+							padding: 3,
+							radius: 4
+						},
+						label: {
+							show: true,
+							format: function(value) {
+								return Math.round(value * 100) + "%";
+							}
+						},
+						axis: {
+							x: {
+								position: "top"
+							}
+						}
+					}
+				}
+			}
+		],
 		SankeyChart: [
 			{
 				options: {

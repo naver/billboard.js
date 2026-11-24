@@ -650,6 +650,29 @@ describe("SHAPE SANKEY", () => {
 		});
 	});
 
+	describe("onover", () => {
+		beforeAll(() => {
+			args = {
+				data: {x: "x", columns, type: "sankey", onover: vi.fn(), onout: vi.fn()}
+			};
+		});
+
+		it("should give the hovered link or node as the element of onover and onout", () => {
+			const {onover, onout} = args.data;
+			const {sankey} = chart.internal.$el;
+			const link = sankey.select(`path.${$SANKEY.sankeyLink}`).node() as Element;
+			const node = sankey.select(`.${$SANKEY.sankeyNode} rect`).node() as Element;
+
+			link.dispatchEvent(new MouseEvent("mouseover", {bubbles: true}));
+			link.dispatchEvent(new MouseEvent("mouseout", {bubbles: true}));
+			node.dispatchEvent(new MouseEvent("mouseover", {bubbles: true}));
+
+			expect(onover.mock.calls[0][1]).to.be.equal(link);
+			expect(onout.mock.calls[0][1]).to.be.equal(link);
+			expect(onover.mock.calls[1][1]).to.be.equal(node);
+		});
+	});
+
 	describe("canvas", () => {
 		let container;
 

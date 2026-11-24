@@ -224,6 +224,7 @@ Import the type(s) you use and pass the return value as `data.type` /
 | `donut` | `"donut"` |
 | `funnel` | `"funnel"` |
 | `gauge` | `"gauge"` |
+| `heatmap` | `"heatmap"` |
 | `line` | `"line"` |
 | `pie` | `"pie"` |
 | `polar` | `"polar"` |

@@ -46,6 +46,7 @@ export function candlestick(): "candlestick";
 export function donut(): "donut";
 export function funnel(): "funnel";
 export function gauge(): "gauge";
+export function heatmap(): "heatmap";
 export function line(): "line";
 export function pie(): "pie";
 export function polar(): "polar";

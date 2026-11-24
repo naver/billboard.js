@@ -22,6 +22,7 @@ import bb, {
 	exportApi,
 	flow,
 	grid,
+	heatmap,
 	line,
 	regions,
 	sankey,
@@ -247,6 +248,7 @@ describe("ESM canvas", function() {
 		["bubble", bubble],
 		["bullet", bullet],
 		["sankey", sankey],
+	["heatmap", heatmap],
 		["candlestick", candlestick, candlestickColumns],
 		["treemap", treemap]
 	];

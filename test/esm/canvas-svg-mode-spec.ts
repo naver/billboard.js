@@ -5,7 +5,7 @@
 /* eslint-disable */
 // the types of the canvas entry have no part for the svg mode: the error says what is missing
 import {afterEach, describe, expect, it, vi} from "vitest";
-import {bar, bb, bullet, canvas, line, sankey, treemap} from "../../src/index.canvas";
+import {bar, bb, bullet, canvas, heatmap, line, sankey, treemap} from "../../src/index.canvas";
 
 describe("ESM canvas entry modules in the svg mode", () => {
 	let container;
@@ -33,6 +33,7 @@ describe("ESM canvas entry modules in the svg mode", () => {
 		line: ["generatePoint", line],
 		bullet: ["initBullet", bullet],
 		sankey: ["initSankey", sankey],
+	heatmap: ["initHeatmap", heatmap],
 		treemap: ["updateTargetsForTreemap", treemap]
 	};
 

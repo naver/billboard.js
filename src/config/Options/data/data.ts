@@ -95,6 +95,7 @@ export default {
 	 * - donut
 	 * - funnel
 	 * - gauge
+	 * - heatmap
 	 * - line
 	 * - pie
 	 * - polar
@@ -129,6 +130,7 @@ export default {
 	 *   donut,
 	 *   funnel,
 	 *   gauge,
+	 *   heatmap,
 	 *   line,
 	 *   pie,
 	 *   polar,
@@ -152,7 +154,7 @@ export default {
 	/**
 	 * Set chart type for each data.<br>
 	 * This setting overwrites data.type setting.
-	 * - **NOTE:** `radar`, `sankey` and `treemap` type can't be combined with other types.
+	 * - **NOTE:** `heatmap`, `radar`, `sankey` and `treemap` type can't be combined with other types.
 	 * @name data․types
 	 * @memberof Options
 	 * @type {object}
@@ -181,6 +183,7 @@ export default {
 	 *   donut,
 	 *   funnel,
 	 *   gauge,
+	 *   heatmap,
 	 *   line,
 	 *   pie,
 	 *   polar,

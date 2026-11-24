@@ -129,6 +129,8 @@ style generated tick grid lines from `grid.x.show`, `grid.y.show`, or `grid.y.ti
 | `.bb-bullet-target` | `stroke`, `stroke-width` | Bullet comparative target marker |
 | `.bb-bullet-axis text` | `fill`, `font` | Bullet scale axis labels and lines |
 | `.bb-bullet-title` | `fill`, `font` | Bullet row title |
+| `.bb-heatmap-axis` | `fill`, `font` | Heatmap names of the columns, the rows and the color bar |
+| `.bb-heatmap-label` | `font` | Heatmap values in the cells |
 | `.bb-sankey-link` | `stroke-opacity` | Sankey link opacity (`sankey.link.opacity` overrides it) |
 | `.bb-sankey-label` | `fill`, `font` | Sankey node names |
 
@@ -165,6 +167,7 @@ direct keys only when a selector alias is not specific enough.
 | `subchartBrush` | `fill`, `opacity`, `handleFill`, `handleOpacity`, `handleStroke`, `handleLineWidth` |
 | `treemap` | `stroke`, `lineWidth` |
 | `bullet` | `targetStroke`, `targetLineWidth`, `rangeMin`, `rangeMax`, `axisFont`, `axisColor`, `titleFont`, `titleColor` |
+| `heatmap` | `axisFont`, `axisColor`, `labelFont` |
 | `sankey` | `linkOpacity`, `labelFont`, `labelColor` |
 | `label` | `font`, `color` |
 | `title` | `font`, `color` |

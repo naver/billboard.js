@@ -16,6 +16,7 @@ import {
 	DonutOptions,
 	FunnelOptions,
 	GaugeOptions,
+	HeatmapOptions,
 	LineOptions,
 	PieOptions,
 	PolarOptions,
@@ -389,6 +390,7 @@ export interface ChartOptions {
 	polar?: PolarOptions;
 	pie?: PieOptions;
 	radar?: RadarOptions;
+	heatmap?: HeatmapOptions;
 	sankey?: SankeyOptions;
 	scatter?: ScatterOptions;
 	spline?: SplineOptions;
