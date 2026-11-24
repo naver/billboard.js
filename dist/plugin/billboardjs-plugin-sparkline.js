@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.5-nightly-20261119004530
+ * @version 4.1.5-nightly-20261124004158
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -738,7 +738,24 @@ function getUnique(data) {
   return isDate ? d.map((v) => new Date(v)) : d;
 }
 function mergeArray(arr) {
-  return arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : [];
+  if (!(arr == null ? void 0 : arr.length)) {
+    return [];
+  }
+  if (arr.length === 1) {
+    return arr[0];
+  }
+  const out = [];
+  for (let i = 0; i < arr.length; i++) {
+    const item = arr[i];
+    if (Array.isArray(item)) {
+      for (let j = 0; j < item.length; j++) {
+        out.push(item[j]);
+      }
+    } else {
+      out.push(item);
+    }
+  }
+  return out;
 }
 function mergeObj(target, ...objectN) {
   if (!objectN.length || objectN.length === 1 && !objectN[0]) {
@@ -1220,7 +1237,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "4.1.5-nightly-20261119004530");
+__publicField(Plugin, "version", "4.1.5-nightly-20261124004158");
 
 ;// ./src/Plugin/sparkline/Options.ts
 class Options {

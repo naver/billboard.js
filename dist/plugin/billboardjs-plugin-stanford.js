@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.5-nightly-20261119004530
+ * @version 4.1.5-nightly-20261124004158
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -412,7 +412,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "4.1.5-nightly-20261119004530");
+__publicField(Plugin, "version", "4.1.5-nightly-20261124004158");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(6);
@@ -866,7 +866,24 @@ function getUnique(data) {
   return isDate ? d.map((v) => new Date(v)) : d;
 }
 function mergeArray(arr) {
-  return arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : [];
+  if (!(arr == null ? void 0 : arr.length)) {
+    return [];
+  }
+  if (arr.length === 1) {
+    return arr[0];
+  }
+  const out = [];
+  for (let i = 0; i < arr.length; i++) {
+    const item = arr[i];
+    if (Array.isArray(item)) {
+      for (let j = 0; j < item.length; j++) {
+        out.push(item[j]);
+      }
+    } else {
+      out.push(item);
+    }
+  }
+  return out;
 }
 function mergeObj(target, ...objectN) {
   if (!objectN.length || objectN.length === 1 && !objectN[0]) {

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.5-nightly-20261119004530
+ * @version 4.1.5-nightly-20261124004158
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.12
@@ -24673,6 +24673,7 @@ __webpack_require__.d(shape_namespaceObject, {
   pie: function() { return pie_pie; },
   polar: function() { return polar_polar; },
   radar: function() { return radar_radar; },
+  sankey: function() { return sankey_sankey; },
   scatter: function() { return scatter_scatter; },
   spline: function() { return line_spline; },
   step: function() { return line_step; },
@@ -25343,7 +25344,24 @@ function getUnique(data) {
   return isDate ? d.map((v) => new Date(v)) : d;
 }
 function mergeArray(arr) {
-  return arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : [];
+  if (!(arr == null ? void 0 : arr.length)) {
+    return [];
+  }
+  if (arr.length === 1) {
+    return arr[0];
+  }
+  const out = [];
+  for (let i = 0; i < arr.length; i++) {
+    const item = arr[i];
+    if (Array.isArray(item)) {
+      for (let j = 0; j < item.length; j++) {
+        out.push(item[j]);
+      }
+    } else {
+      out.push(item);
+    }
+  }
+  return out;
 }
 function mergeObj(target, ...objectN) {
   if (!objectN.length || objectN.length === 1 && !objectN[0]) {
@@ -28078,6 +28096,7 @@ const TYPE_METHOD_NEEDED = {
   pie: "initArc",
   polar: "initPolar",
   radar: "initCircle",
+  sankey: "getSankeyLayout",
   scatter: "initCircle",
   spline: "initLine",
   step: "initLine",
@@ -37341,6 +37360,123 @@ function drawGrid(renderer, $$) {
   }
 });
 
+;// ./src/canvas/sankey.ts
+const sankeyTheme = {
+  section: "sankey",
+  probe({ probeIn, axisFont, toColor, toNumber }) {
+    const link = probeIn("bb-chart-sankey", "path", "bb-sankey-link", ["stroke-opacity"]);
+    const label = probeIn("bb-chart-sankey", "text", "bb-sankey-label", ["fill", "font"]);
+    return {
+      linkOpacity: toNumber(link["stroke-opacity"], 0.4),
+      labelFont: label.font || axisFont,
+      labelColor: toColor(label.fill, "#000")
+    };
+  },
+  selectors: {
+    ".bb-sankey-link": (style, { readNumberValue }) => ({
+      linkOpacity: readNumberValue(style, "stroke-opacity")
+    }),
+    ".bb-sankey-label": (style, { readColorValue, readFontValue }) => ({
+      labelColor: readColorValue(style, "fill"),
+      labelFont: readFontValue(style)
+    })
+  },
+  normalize(section, { toNumber }) {
+    section.linkOpacity = toNumber(section.linkOpacity, 0.4);
+  }
+};
+/* harmony default export */ var sankey = ({
+  theme: sankeyTheme,
+  /**
+   * Draw the links, the nodes and their names on canvas.
+   * Layout comes from the shared sankey layout, same as SVG rendering.
+   * @param {CanvasRenderer} renderer Canvas renderer
+   * @private
+   */
+  draw(renderer) {
+    var _a;
+    const $$ = this;
+    const { painter, theme: { style: { sankey, shape } } } = renderer;
+    const { config } = $$;
+    const { nodes, links } = $$.getSankeyLayout();
+    const rotated = config.sankey_rotated;
+    const linkOpacity = (_a = config.sankey_link_opacity) != null ? _a : sankey.linkOpacity;
+    const borderWidth = config.sankey_node_border_width;
+    const getAlpha = (d) => $$.isSankeyDefocused(d) ? shape.targetDefocusedOpacity : 1;
+    links.forEach((link) => {
+      const [p0, p1, p2, p3] = $$.getSankeyLinkPoints(link);
+      const [start, end] = $$.getSankeyLinkColors(link);
+      let stroke = start;
+      if (start !== end) {
+        stroke = rotated ? painter.context.createLinearGradient(0, p0[1], 0, p3[1]) : painter.context.createLinearGradient(p0[0], 0, p3[0], 0);
+        stroke.addColorStop(0, start);
+        stroke.addColorStop(1, end);
+      }
+      painter.strokePath((ctx) => {
+        ctx.moveTo(p0[0], p0[1]);
+        ctx.bezierCurveTo(p1[0], p1[1], p2[0], p2[1], p3[0], p3[1]);
+      }, { stroke, lineWidth: Math.max(1, link.width), alpha: linkOpacity * getAlpha(link) });
+    });
+    nodes.forEach((node) => {
+      const alpha = getAlpha(node);
+      const rect = {
+        x: node.x0,
+        y: node.y0,
+        w: Math.max(1, node.x1 - node.x0),
+        h: Math.max(1, node.y1 - node.y0)
+      };
+      painter.fillRect(rect, { fill: node.color, alpha });
+      borderWidth && painter.strokeRect(rect, {
+        stroke: config.sankey_node_border_color,
+        lineWidth: borderWidth,
+        alpha
+      });
+      const label = $$.getSankeyLabel(node);
+      (label == null ? void 0 : label.text) && painter.text(label.text, label.x, label.y, {
+        fill: sankey.labelColor,
+        alpha,
+        font: sankey.labelFont,
+        textAlign: label.align,
+        textBaseline: label.baseline
+      });
+    });
+  },
+  /**
+   * Add the hit items of the nodes, then of the links: a node wins over the links under it,
+   * and a link over the links painted before it.
+   * @param {HitDetector} detector Hit detector
+   * @private
+   */
+  hits(detector) {
+    const $$ = this;
+    const { nodes, links } = $$.getSankeyLayout();
+    nodes.forEach((node) => {
+      detector.addBar({
+        x: node.x0,
+        y: node.y0,
+        w: Math.max(1, node.x1 - node.x0),
+        h: Math.max(1, node.y1 - node.y0),
+        data: $$.getSankeyNodeData(node)
+      });
+    });
+    const rotated = $$.config.sankey_rotated;
+    links.slice().reverse().forEach((link) => {
+      const [[fs, c0], , , [ft, c1]] = $$.getSankeyLinkPoints(link, true);
+      const half = Math.max(1, link.width) / 2;
+      const c = Math.min(c0, c1) - half;
+      const box = { f: fs, c, df: ft - fs, dc: Math.max(c0, c1) + half - c };
+      detector.addBar({
+        x: rotated ? box.c : box.f,
+        y: rotated ? box.f : box.c,
+        w: rotated ? box.dc : box.df,
+        h: rotated ? box.df : box.dc,
+        data: $$.getSankeyLinkData(link),
+        hit: (x, y) => $$.isSankeyLinkHit(link, x, y)
+      });
+    });
+  }
+});
+
 ;// ./node_modules/.pnpm/d3-selection@3.0.1/node_modules/d3-selection/dist/d3-selection.mjs
 // https://d3js.org/d3-selection/ v3.0.1 Copyright 2010-2026 Mike Bostock
 var xhtml = "http://www.w3.org/1999/xhtml";
@@ -39676,7 +39812,7 @@ class HitDetector {
   hitBar(mx, my) {
     for (const item of getGridItems(this.barGrid, mx, my, BAR_CELL_SIZE)) {
       const { w = 0, h = 0 } = item;
-      if (mx >= item.x && mx <= item.x + w && my >= item.y && my <= item.y + h) {
+      if (mx >= item.x && mx <= item.x + w && my >= item.y && my <= item.y + h && (!item.hit || item.hit(mx, my))) {
         return item.data;
       }
     }
@@ -41282,6 +41418,7 @@ const $ZOOM = {
    * - pie
    * - polar
    * - radar
+   * - sankey
    * - scatter
    * - spline
    * - step
@@ -41315,6 +41452,7 @@ const $ZOOM = {
    *   pie,
    *   polar,
    *   radar,
+   *   sankey,
    *   scatter,
    *   spline,
    *   step,
@@ -41332,7 +41470,7 @@ const $ZOOM = {
   /**
    * Set chart type for each data.<br>
    * This setting overwrites data.type setting.
-   * - **NOTE:** `radar` and `treemap` type can't be combined with other types.
+   * - **NOTE:** `radar`, `sankey` and `treemap` type can't be combined with other types.
    * @name data․types
    * @memberof Options
    * @type {object}
@@ -41365,6 +41503,7 @@ const $ZOOM = {
    *   pie,
    *   polar,
    *   radar,
+   *   sankey,
    *   scatter,
    *   spline,
    *   step,
@@ -44325,7 +44464,16 @@ function normalizeTargetIds(targetIds) {
     let fn;
     if (orderAsc || orderDesc) {
       const reducer = (p, c) => p + Math.abs(c.value);
-      const sum = (v) => isNumber(v) ? v : "values" in v ? v.values.reduce(reducer, 0) : v.value;
+      const sums = /* @__PURE__ */ new WeakMap();
+      const sum = (v) => {
+        if (isNumber(v)) {
+          return v;
+        }
+        if (!sums.has(v)) {
+          sums.set(v, "values" in v ? v.values.reduce(reducer, 0) : v.value);
+        }
+        return sums.get(v);
+      };
       fn = (t1, t2) => {
         const t1Sum = sum(t1);
         const t2Sum = sum(t2);
@@ -53129,15 +53277,16 @@ function getCanvasHoverDatumFromPoint($$, point) {
   return $$.hitDetector.findNearest(point[0], point[1]) || (isCanvasXIndexHoverArea($$, point) ? (_b = (_a = $$.hitDetector).findNearestIndexByCoord) == null ? void 0 : _b.call(_a, point[0], point[1]) : null);
 }
 function getCanvasTooltipData($$, d) {
-  var _a;
+  var _a, _b;
   const { config, state } = $$;
   const targetsToShow = $$.filterTargetsToShow($$.data.targets);
   const pointBased = isCanvasPointBasedInteraction($$, d);
-  const sameXData = config.tooltip_grouped && !state.customType && !state.hasTreemap && !pointBased ? (_a = $$.filterByX) == null ? void 0 : _a.call($$, targetsToShow, d.x) : null;
-  return (state.customType || state.hasTreemap ? [d] : pointBased ? [d] : config.tooltip_grouped ? (sameXData == null ? void 0 : sameXData.length) ? sameXData : targetsToShow.map((target) => target.values[d.index]).filter(Boolean) : [d]).map((v) => {
+  const addName = state.customType && ((_a = $$.customTypeHooks) == null ? void 0 : _a.namedData) ? (v) => v : (v) => {
     var _a2;
     return ((_a2 = $$.addName) == null ? void 0 : _a2.call($$, v)) || v;
-  });
+  };
+  const sameXData = config.tooltip_grouped && !state.customType && !state.hasTreemap && !pointBased ? (_b = $$.filterByX) == null ? void 0 : _b.call($$, targetsToShow, d.x) : null;
+  return (state.customType || state.hasTreemap ? [d] : pointBased ? [d] : config.tooltip_grouped ? (sameXData == null ? void 0 : sameXData.length) ? sameXData : targetsToShow.map((target) => target.values[d.index]).filter(Boolean) : [d]).map(addName);
 }
 function getCanvasFocusData($$, d, selectedData) {
   var _a, _b;
@@ -56174,7 +56323,7 @@ extend(api_data_data, {
    * chart.focus();
    */
   focus(targetIdsValue) {
-    var _a;
+    var _a, _b, _c;
     const $$ = this.internal;
     const { state } = $$;
     const targetIds = $$.mapToTargetIds(targetIdsValue);
@@ -56203,6 +56352,7 @@ extend(api_data_data, {
     $$.toggleFocusLegend(targetIds, true);
     state.focusedTargetIds = new Set(targetIds);
     targetIds.forEach((id) => state.defocusedTargetIds.delete(id));
+    (_c = (_b = $$.customTypeHooks) == null ? void 0 : _b.afterFocus) == null ? void 0 : _c.call(_b, $$);
   },
   /**
    * This API fades out specified targets and reverts the others.<br><br>
@@ -56222,7 +56372,7 @@ extend(api_data_data, {
    * chart.defocus();
    */
   defocus(targetIdsValue) {
-    var _a;
+    var _a, _b, _c;
     const $$ = this.internal;
     const { state } = $$;
     const targetIds = $$.mapToTargetIds(targetIdsValue);
@@ -56245,6 +56395,7 @@ extend(api_data_data, {
     $$.toggleFocusLegend(targetIds, false);
     targetIds.forEach((id) => state.focusedTargetIds.delete(id));
     state.defocusedTargetIds = new Set(targetIds);
+    (_c = (_b = $$.customTypeHooks) == null ? void 0 : _b.afterFocus) == null ? void 0 : _c.call(_b, $$);
   },
   /**
    * Revert focused or defocused state to initial state.<br><br>
@@ -56264,7 +56415,7 @@ extend(api_data_data, {
    * chart.revert();
    */
   revert(targetIdsValue) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d, _e;
     const $$ = this.internal;
     const { config, state, $el } = $$;
     const targetIds = $$.mapToTargetIds(targetIdsValue);
@@ -56290,6 +56441,7 @@ extend(api_data_data, {
     resetLegend();
     state.focusedTargetIds = /* @__PURE__ */ new Set();
     state.defocusedTargetIds = /* @__PURE__ */ new Set();
+    (_e = (_d = $$.customTypeHooks) == null ? void 0 : _d.afterFocus) == null ? void 0 : _e.call(_d, $$);
   }
 });
 
@@ -62712,6 +62864,7 @@ class AxisRenderer {
         return isTopBottom ? `M${range[0]},${outerTickSized}V0H${range[1]}V${outerTickSized}` : `M${outerTickSized},${range[0]}H0V${range[1]}H${outerTickSized}`;
       });
       if (tickShow.tick || tickShow.text) {
+        const domainNode = g2.select(".domain").node();
         const ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight || params.config.axis_rotated);
         ctx.generatedTicks = ticks;
         let tick = g2.selectAll(".tick");
@@ -62725,7 +62878,7 @@ class AxisRenderer {
           tickTransform(tick, scale1);
         } else {
           tick = tick.data(ticks, scale1);
-          const tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick");
+          const tickEnter = tick.enter().insert("g", () => domainNode).attr("class", "tick");
           const tickExit = tick.exit().remove();
           tick = tickEnter.merge(tick);
           tickShow.tick && tickEnter.append("line");
@@ -71906,6 +72059,793 @@ let radar_radar = () => (extendArc(
   [common_point, shape_radar, { axis_x_categories: options.optAxis.axis_x_categories }]
 ), (radar_radar = () => TYPE.RADAR)());
 
+;// ./src/ChartInternal/shape/core/sankey.ts
+var sankey_pow = Math.pow;
+
+const $SANKEY = {
+  chartSankey: "bb-chart-sankey",
+  sankeyLinks: "bb-sankey-links",
+  sankeyLink: "bb-sankey-link",
+  sankeyNodes: "bb-sankey-nodes",
+  sankeyNode: "bb-sankey-node",
+  sankeyLabel: "bb-sankey-label"
+};
+const ALIGN = {
+  left: (node) => node.depth,
+  right: (node, n) => n - 1 - node.height,
+  justify: (node, n) => node.sourceLinks.length ? node.depth : n - 1,
+  center: (node) => node.targetLinks.length ? node.depth : node.sourceLinks.length ? Math.min(...node.sourceLinks.map((l) => l.target.depth)) - 1 : 0
+};
+const sankey_own = (obj, key) => obj && Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : void 0;
+const sankey_sum = (list) => list.reduce((acc, l) => acc + l.value, 0);
+const byBreadth = (a, b) => a.y0 - b.y0;
+const bySourceBreadth = (a, b) => byBreadth(a.source, b.source) || a.index - b.index;
+const byTargetBreadth = (a, b) => byBreadth(a.target, b.target) || a.index - b.index;
+const _isLinkValue = (value) => value > 0 && Number.isFinite(value);
+function _getGraph() {
+  const $$ = this;
+  const { config } = $$;
+  const targets = $$.data.targets.filter($$.isSankeyType.bind($$));
+  const nodeMap = /* @__PURE__ */ new Map();
+  const nodes = [];
+  const links = [];
+  targets.forEach((t) => $$.color(t.id));
+  targets.forEach(
+    (t) => t.values.forEach((v) => _isLinkValue(Number(v.value)) && $$.color(String(v.x)))
+  );
+  const getNode = (id) => {
+    var _a;
+    let node = nodeMap.get(id);
+    if (!node) {
+      node = {
+        id,
+        name: String((_a = sankey_own(config.data_names, id)) != null ? _a : id),
+        index: nodes.length,
+        value: 0,
+        color: $$.color(id),
+        sourceLinks: [],
+        targetLinks: [],
+        depth: 0,
+        height: 0,
+        layer: 0,
+        x0: 0,
+        x1: 0,
+        y0: 0,
+        y1: 0
+      };
+      nodeMap.set(id, node);
+      nodes.push(node);
+    }
+    return node;
+  };
+  targets.filter((t) => $$.isTargetToShow(t.id)).forEach((t) => {
+    t.values.forEach((v) => {
+      const value = Number(v.value);
+      if (!_isLinkValue(value) || !$$.isTargetToShow(String(v.x))) {
+        return;
+      }
+      const source = getNode(t.id);
+      const target = getNode(String(v.x));
+      const link = { source, target, value, index: links.length, width: 0, y0: 0, y1: 0 };
+      source.sourceLinks.push(link);
+      target.targetLinks.push(link);
+      links.push(link);
+    });
+  });
+  nodes.forEach((node) => {
+    node.value = Math.max(sankey_sum(node.sourceLinks), sankey_sum(node.targetLinks));
+  });
+  return { nodes, links };
+}
+function _setDepth(nodes, key) {
+  const linksKey = key === "depth" ? "sourceLinks" : "targetLinks";
+  const nodeKey = key === "depth" ? "target" : "source";
+  let current = new Set(nodes);
+  let x = 0;
+  while (current.size) {
+    const next = /* @__PURE__ */ new Set();
+    current.forEach((node) => {
+      node[key] = x;
+      node[linksKey].forEach((link) => next.add(link[nodeKey]));
+    });
+    if (++x > nodes.length) {
+      return false;
+    }
+    current = next;
+  }
+  return true;
+}
+function _getNodeSort() {
+  var _a;
+  const $$ = this;
+  const sort = $$.config.sankey_node_sort;
+  const byIndex = (a, b) => a.index - b.index;
+  if (isFunction(sort)) {
+    return (a, b) => sort.call($$.api, $$.getSankeyNodeData(a), $$.getSankeyNodeData(b)) || byIndex(a, b);
+  }
+  return (_a = sankey_own({
+    data: byIndex,
+    asc: (a, b) => a.value - b.value || byIndex(a, b),
+    desc: (a, b) => b.value - a.value || byIndex(a, b)
+  }, sort)) != null ? _a : null;
+}
+function _layout(nodes, links, area) {
+  var _a;
+  const $$ = this;
+  const { config } = $$;
+  const x0 = area.left;
+  const y0 = area.top;
+  const x1 = x0 + area.width;
+  const y1 = y0 + area.height;
+  const dx = config.sankey_node_width;
+  const align = (_a = ALIGN[config.sankey_node_align]) != null ? _a : ALIGN.justify;
+  const sort = _getNodeSort.call($$);
+  const n = Math.max(...nodes.map((d) => d.depth)) + 1;
+  const kx = n > 1 ? (x1 - x0 - dx) / (n - 1) : 0;
+  const columns = Array.from({ length: n }, () => []);
+  nodes.forEach((node) => {
+    const i = Math.max(0, Math.min(n - 1, Math.floor(align(node, n))));
+    node.layer = i;
+    node.x0 = x0 + i * kx;
+    node.x1 = node.x0 + dx;
+    columns[i].push(node);
+  });
+  sort && columns.forEach((column) => column.sort(sort));
+  const maxLength = Math.max(...columns.map((c) => c.length));
+  const py = Math.min(
+    config.sankey_node_padding,
+    maxLength > 1 ? (y1 - y0) / (maxLength - 1) : Infinity
+  );
+  const reorderLinks = (node) => {
+    node.sourceLinks.sort(byTargetBreadth);
+    node.targetLinks.sort(bySourceBreadth);
+  };
+  const reorderNodeLinks = (node) => {
+    node.targetLinks.forEach((l) => l.source.sourceLinks.sort(byTargetBreadth));
+    node.sourceLinks.forEach((l) => l.target.targetLinks.sort(bySourceBreadth));
+  };
+  const ky = Math.min(...columns.map(
+    (c) => (y1 - y0 - (c.length - 1) * py) / c.reduce((acc, d) => acc + d.value, 0)
+  ));
+  columns.forEach((column) => {
+    let y = y0;
+    column.forEach((node) => {
+      node.y0 = y;
+      node.y1 = y + node.value * ky;
+      y = node.y1 + py;
+      node.sourceLinks.forEach((link) => {
+        link.width = link.value * ky;
+      });
+    });
+    const offset = (y1 - y + py) / (column.length + 1);
+    column.forEach((node, i) => {
+      node.y0 += offset * (i + 1);
+      node.y1 += offset * (i + 1);
+    });
+    column.forEach(reorderLinks);
+  });
+  const move = (node, dy) => {
+    node.y0 += dy;
+    node.y1 += dy;
+  };
+  const toBottom = (column, y, i, alpha) => {
+    for (; i < column.length; i++) {
+      const node = column[i];
+      const dy = (y - node.y0) * alpha;
+      dy > 1e-6 && move(node, dy);
+      y = node.y1 + py;
+    }
+  };
+  const toTop = (column, y, i, alpha) => {
+    for (; i >= 0; i--) {
+      const node = column[i];
+      const dy = (node.y1 - y) * alpha;
+      dy > 1e-6 && move(node, -dy);
+      y = node.y0 - py;
+    }
+  };
+  const resolveCollisions = (column, alpha) => {
+    const i = column.length >> 1;
+    const subject = column[i];
+    toTop(column, subject.y0 - py, i - 1, alpha);
+    toBottom(column, subject.y1 + py, i + 1, alpha);
+    toTop(column, y1, column.length - 1, alpha);
+    toBottom(column, y0, 0, alpha);
+  };
+  const targetTop = (source, target) => {
+    let y = source.y0 - (source.sourceLinks.length - 1) * py / 2;
+    for (const { target: node, width } of source.sourceLinks) {
+      if (node === target) {
+        break;
+      }
+      y += width + py;
+    }
+    for (const { source: node, width } of target.targetLinks) {
+      if (node === source) {
+        break;
+      }
+      y -= width;
+    }
+    return y;
+  };
+  const sourceTop = (source, target) => {
+    let y = target.y0 - (target.targetLinks.length - 1) * py / 2;
+    for (const { source: node, width } of target.targetLinks) {
+      if (node === source) {
+        break;
+      }
+      y += width + py;
+    }
+    for (const { target: node, width } of source.sourceLinks) {
+      if (node === target) {
+        break;
+      }
+      y -= width;
+    }
+    return y;
+  };
+  const relax = (column, toRight, alpha, beta) => {
+    column.forEach((node) => {
+      let y = 0;
+      let w = 0;
+      (toRight ? node.targetLinks : node.sourceLinks).forEach((link) => {
+        const v = link.value * (link.target.layer - link.source.layer);
+        y += (toRight ? targetTop(link.source, node) : sourceTop(node, link.target)) * v;
+        w += v;
+      });
+      if (w > 0) {
+        move(node, (y / w - node.y0) * alpha);
+        reorderNodeLinks(node);
+      }
+    });
+    sort || column.sort(byBreadth);
+    resolveCollisions(column, beta);
+  };
+  const iterations = config.sankey_iterations;
+  for (let i = 0; i < iterations; i++) {
+    const alpha = sankey_pow(0.99, i);
+    const beta = Math.max(1 - alpha, (i + 1) / iterations);
+    for (let c = columns.length - 2; c >= 0; c--) {
+      relax(columns[c], false, alpha, beta);
+    }
+    for (let c = 1; c < columns.length; c++) {
+      relax(columns[c], true, alpha, beta);
+    }
+  }
+  nodes.forEach((node) => {
+    let ys = node.y0;
+    let yt = node.y0;
+    node.sourceLinks.forEach((link) => {
+      link.y0 = ys + link.width / 2;
+      ys += link.width;
+    });
+    node.targetLinks.forEach((link) => {
+      link.y1 = yt + link.width / 2;
+      yt += link.width;
+    });
+  });
+}
+function sankey_getArea() {
+  var _a;
+  const $$ = this;
+  const { config, state: { current: { width, height }, isCanvasMode, isLegendRight } } = $$;
+  const padding = $$.getCurrentPadding();
+  const legendHeight = config.legend_show && config.legend_position === "bottom" ? (isCanvasMode ? 0 : $$.getLegendHeight()) + 10 : 0;
+  const legendRight = config.legend_show && isLegendRight ? $$.getLegendWidth() + (((_a = config.padding) == null ? void 0 : _a.mode) === "fit" ? 0 : 20) : 0;
+  const surfaceHeight = isCanvasMode ? $$.getCanvasSurfaceHeight() : height;
+  return {
+    left: padding.left,
+    top: padding.top,
+    width: Math.max(0, width - padding.left - padding.right - legendRight),
+    height: Math.max(0, surfaceHeight - padding.top - padding.bottom - legendHeight)
+  };
+}
+function _transpose(area) {
+  return { left: area.top, top: area.left, width: area.height, height: area.width };
+}
+function _transposeNode(node) {
+  const { x0, x1, y0, y1 } = node;
+  Object.assign(node, { x0: y0, x1: y1, y0: x0, y1: x1 });
+}
+function _getLinkPointAt(points, width, f) {
+  const [[fs, c0], [fm], , [ft, c1]] = points;
+  const bf = (t2) => sankey_pow(1 - t2, 3) * fs + 3 * (1 - t2) * t2 * fm + sankey_pow(t2, 3) * ft;
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 20; i++) {
+    const mid = (lo + hi) / 2;
+    bf(mid) < f === fs < ft ? lo = mid : hi = mid;
+  }
+  const t = (lo + hi) / 2;
+  const df = 3 * sankey_pow(1 - t, 2) * (fm - fs) + 3 * sankey_pow(t, 2) * (ft - fm);
+  const dc = 6 * t * (1 - t) * (c1 - c0);
+  const slope = df ? dc / df : 0;
+  return {
+    c: c0 + (c1 - c0) * (3 * sankey_pow(t, 2) - 2 * sankey_pow(t, 3)),
+    half: width / 2 * Math.sqrt(1 + slope * slope)
+  };
+}
+const sankey_customTypeHooks = {
+  // the data of the nodes and the links have their names (data.names applied, "A → B")
+  namedData: true,
+  // svg: the links and the target only nodes are not of the target classes focus() finds
+  afterFocus($$) {
+    var _a;
+    (_a = $$.updateSankeyFocus) == null ? void 0 : _a.call($$);
+  },
+  // the names of the nodes are drawn by the type: there are no data labels of the values
+  labelData() {
+    return [];
+  },
+  // the tooltip of a node, addressed by its id (tooltip.show({data: {id}})) or by its index
+  tooltipTarget($$, args) {
+    var _a;
+    const { nodes } = $$.getSankeyLayout();
+    const node = ((_a = args.data) == null ? void 0 : _a.id) ? nodes.find((d) => d.id === args.data.id) : nodes[args.index];
+    const data = node ? [$$.getSankeyNodeData(node)] : [];
+    const point = node && ($$.config.sankey_rotated ? [(node.x0 + node.x1) / 2, node.y1] : [node.x1, (node.y0 + node.y1) / 2]);
+    return { data, point };
+  }
+};
+/* harmony default export */ var core_sankey = ({
+  /**
+   * Whether the data belongs to the sankey type.
+   * @param {object} d Data object
+   * @returns {boolean}
+   * @private
+   */
+  isSankeyType(d) {
+    return this.isTypeOf(d, "sankey");
+  },
+  /**
+   * Get the layout of the nodes and the links, in chart coordinates.
+   * Shared by the SVG and the canvas renderer.
+   * @returns {object} Sankey layout
+   * @private
+   */
+  getSankeyLayout() {
+    const $$ = this;
+    const area = sankey_getArea.call($$);
+    const { nodes, links } = _getGraph.call($$);
+    if (nodes.length) {
+      if (_setDepth(nodes, "depth") && _setDepth(nodes, "height")) {
+        const rotated = $$.config.sankey_rotated;
+        _layout.call($$, nodes, links, rotated ? _transpose(area) : area);
+        rotated && nodes.forEach(_transposeNode);
+      } else {
+        console.error(
+          "[billboard.js] The links of the sankey chart make a cycle: it can't be drawn."
+        );
+        return { nodes: [], links: [], area };
+      }
+    }
+    return { nodes, links, area };
+  },
+  /**
+   * Get the points of a link: the same curve as d3-shape linkHorizontal (linkVertical when rotated).
+   * @param {object} link Link
+   * @param {boolean} [flow=false] Whether to get them as [along the flow, across it], for any rotation
+   * @returns {Array} Start, control 1, control 2 and end point
+   * @private
+   */
+  getSankeyLinkPoints(link, flow = false) {
+    const rotated = this.config.sankey_rotated;
+    const fs = rotated ? link.source.y1 : link.source.x1;
+    const ft = rotated ? link.target.y0 : link.target.x0;
+    const fm = (fs + ft) / 2;
+    const points = [[fs, link.y0], [fm, link.y0], [fm, link.y1], [
+      ft,
+      link.y1
+    ]];
+    return rotated && !flow ? points.map(([f, c]) => [c, f]) : points;
+  },
+  /**
+   * Get the SVG path of a link.
+   * @param {object} link Link
+   * @returns {string} Path
+   * @private
+   */
+  getSankeyLinkPath(link) {
+    const [p0, p1, p2, p3] = this.getSankeyLinkPoints(link);
+    return `M${p0}C${p1},${p2},${p3}`;
+  },
+  /**
+   * Whether the point is on the link.
+   * @param {object} link Link
+   * @param {number} x X coordinate
+   * @param {number} y Y coordinate
+   * @returns {boolean}
+   * @private
+   */
+  isSankeyLinkHit(link, x, y) {
+    const points = this.getSankeyLinkPoints(link, true);
+    const [f, c] = this.config.sankey_rotated ? [y, x] : [x, y];
+    if (f < points[0][0] || f > points[3][0]) {
+      return false;
+    }
+    const point = _getLinkPointAt(points, Math.max(1, link.width), f);
+    return Math.abs(c - point.c) <= point.half;
+  },
+  /**
+   * Get the label of a node: its name, or the text of sankey.label.format.
+   * @param {object} node Node
+   * @returns {object|null} Text, position and alignment, null when it is not shown
+   * @private
+   */
+  getSankeyLabel(node) {
+    var _a;
+    const $$ = this;
+    const { config } = $$;
+    if (!config.sankey_label_show) {
+      return null;
+    }
+    const format = config.sankey_label_format;
+    const text = String(
+      (_a = isFunction(format) ? format.call($$.api, node.name, node.value, node.id) : node.name) != null ? _a : ""
+    );
+    const area = sankey_getArea.call($$);
+    if (config.sankey_rotated) {
+      const isEnd2 = node.y0 > area.top + area.height / 2;
+      return {
+        text,
+        x: (node.x0 + node.x1) / 2,
+        y: isEnd2 ? node.y0 - 6 : node.y1 + 6,
+        align: "center",
+        baseline: isEnd2 ? "bottom" : "top"
+      };
+    }
+    const isEnd = node.x0 > area.left + area.width / 2;
+    return {
+      text,
+      x: isEnd ? node.x0 - 6 : node.x1 + 6,
+      y: (node.y0 + node.y1) / 2,
+      align: isEnd ? "right" : "left",
+      baseline: "middle"
+    };
+  },
+  /**
+   * Get the colors a link is painted with, by the sankey.link.color option.
+   * @param {object} link Link
+   * @returns {Array} The color at the source end and the color at the target end
+   * @private
+   */
+  getSankeyLinkColors(link) {
+    const { source: { color: source }, target: { color: target } } = link;
+    return {
+      source: [source, source],
+      target: [target, target],
+      gradient: [source, target]
+    }[this.config.sankey_link_color] || [source, source];
+  },
+  /**
+   * Check whether a node or a link is defocused by focus(), defocus() or a legend hover.
+   * A link follows its source series. A target only node has no series, so it is defocused
+   * when all the links coming to it are.
+   * @param {object} d Node or link
+   * @returns {boolean} Whether it is defocused
+   * @private
+   */
+  isSankeyDefocused(d) {
+    const $$ = this;
+    const ids = $$.state.defocusedTargetIds;
+    if (!(ids == null ? void 0 : ids.size)) {
+      return false;
+    }
+    if ("source" in d) {
+      return ids.has(d.source.id);
+    }
+    return ids.has(d.id) || d.targetLinks.length > 0 && !$$.data.targets.some((t) => t.id === d.id) && d.targetLinks.every((link) => ids.has(link.source.id));
+  },
+  /**
+   * Get the data of a node, for the tooltip and the events.
+   * @param {object} node Node
+   * @returns {object} Data
+   * @private
+   */
+  getSankeyNodeData(node) {
+    return { id: node.id, index: node.index, value: node.value, name: node.name };
+  },
+  /**
+   * Get the data of a link, for the tooltip and the events.
+   * It is of the series of the source: the name tells the source and the target.
+   * @param {object} link Link
+   * @returns {object} Data
+   * @private
+   */
+  getSankeyLinkData(link) {
+    const { source, target, value, index } = link;
+    return {
+      id: source.id,
+      x: target.id,
+      index,
+      value,
+      name: `${source.name} \u2192 ${target.name}`,
+      source: source.id,
+      target: target.id
+    };
+  },
+  /**
+   * The data labels of the values are not drawn for the sankey (see customTypeHooks.labelData).
+   * The shared data label code asks the points of every type, so it is there.
+   * @returns {function} Point getter
+   * @private
+   */
+  generateGetSankeyPoints() {
+    return () => void 0;
+  }
+});
+
+;// ./src/ChartInternal/shape/sankey.ts
+var sankey_defProp = Object.defineProperty;
+var sankey_defProps = Object.defineProperties;
+var sankey_getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var sankey_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var sankey_hasOwnProp = Object.prototype.hasOwnProperty;
+var sankey_propIsEnum = Object.prototype.propertyIsEnumerable;
+var sankey_defNormalProp = (obj, key, value) => key in obj ? sankey_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var sankey_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (sankey_hasOwnProp.call(b, prop))
+      sankey_defNormalProp(a, prop, b[prop]);
+  if (sankey_getOwnPropSymbols)
+    for (var prop of sankey_getOwnPropSymbols(b)) {
+      if (sankey_propIsEnum.call(b, prop))
+        sankey_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var sankey_spreadProps = (a, b) => sankey_defProps(a, sankey_getOwnPropDescs(b));
+
+
+
+/* harmony default export */ var shape_sankey = (sankey_spreadProps(sankey_spreadValues({}, core_sankey), {
+  /**
+   * Initialize sankey
+   * @private
+   */
+  initSankey() {
+    const $$ = this;
+    const { $el } = $$;
+    $el.sankey = $el.main.select(`.${$COMMON.chart}`).append("g").classed($SANKEY.chartSankey, true);
+    $el.sankey.append("defs");
+    $el.sankey.append("g").classed($SANKEY.sankeyLinks, true);
+    $el.sankey.append("g").classed($SANKEY.sankeyNodes, true);
+    $$.bindSankeyEvent();
+  },
+  /**
+   * Bind events
+   * @private
+   */
+  bindSankeyEvent() {
+    const $$ = this;
+    const { $el: { sankey }, config, state } = $$;
+    if (!config.interaction_enabled) {
+      return;
+    }
+    const getTarget = (event) => {
+      var _a, _b;
+      const target = event.target === sankey.node() ? (_b = (_a = state.eventReceiver.rect) == null ? void 0 : _a.node) == null ? void 0 : _b.call(_a) : event.target;
+      if (target && /^(rect|path)$/i.test(target.tagName)) {
+        const datum = d3_selection_select(target).datum();
+        if (datum == null ? void 0 : datum.sourceLinks) {
+          state.event = event;
+          return $$.getSankeyNodeData(datum);
+        } else if (datum == null ? void 0 : datum.source) {
+          state.event = event;
+          return $$.getSankeyLinkData(datum);
+        }
+      }
+    };
+    const isTouch = state.inputType === "touch";
+    sankey.on(isTouch ? "touchstart" : "mouseover mousemove", (event) => {
+      const data = getTarget(event);
+      if (data) {
+        $$.showTooltip([data], $$.$el.svg.node());
+        /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
+      }
+    }, isTouch ? { passive: true } : void 0).on(isTouch ? "touchend" : "mouseout", (event) => {
+      const data = getTarget(event);
+      if (config.interaction_onout) {
+        $$.hideTooltip();
+        $$.setOverOut(false, data);
+      }
+    }).on("click", (event) => {
+      const data = getTarget(event);
+      data && config.data_onclick.bind($$.api)(data, event.target);
+    });
+  },
+  /**
+   * Update targets for sankey.
+   * The nodes and the links are made from all the series together, on redraw.
+   * @private
+   */
+  updateTargetsForSankey() {
+    const $$ = this;
+    !$$.$el.sankey && $$.initSankey();
+  },
+  /**
+   * Set the defocused class of the links and the nodes, from the focus state.
+   * @private
+   */
+  updateSankeyFocus() {
+    var _a;
+    const $$ = this;
+    const isDefocused = (d) => $$.isSankeyDefocused(d);
+    (_a = $$.$el.sankey) == null ? void 0 : _a.selectAll(`.${$SANKEY.sankeyLink}, .${$SANKEY.sankeyNode}`).classed($FOCUS.defocused, isDefocused);
+  },
+  /**
+   * Render sankey
+   * @param {boolean} withTransition Whether to transit
+   * @private
+   */
+  redrawSankey(withTransition) {
+    var _a;
+    const $$ = this;
+    const { $el: { sankey }, config, state } = $$;
+    const { nodes, links } = $$.getSankeyLayout();
+    const rotated = config.sankey_rotated;
+    const borderWidth = config.sankey_node_border_width;
+    const linkKey = (d) => `${d.source.id}\0${d.target.id}\0${d.index}`;
+    const nodeKey = (d) => d.id;
+    const gradientId = (d) => `${state.datetimeId}-sankey-link-${d.index}`;
+    sankey.style("--bb-sankey-link-opacity", (_a = config.sankey_link_opacity) != null ? _a : null);
+    const link = sankey.select(`.${$SANKEY.sankeyLinks}`).selectAll(`.${$SANKEY.sankeyLink}`).data(links, linkKey);
+    link.exit().remove();
+    const linkMerge = link.enter().append("path").style("opacity", "0").merge(link).attr("class", (d) => $$.generateClass($SANKEY.sankeyLink, d.source.id)).style("stroke", (d) => {
+      const [start, end] = $$.getSankeyLinkColors(d);
+      return start === end ? start : `url(#${gradientId(d)})`;
+    });
+    const gradient = sankey.select("defs").selectAll("linearGradient").data(links.filter((d) => {
+      const [start, end] = $$.getSankeyLinkColors(d);
+      return start !== end;
+    }));
+    gradient.exit().remove();
+    gradient.enter().append("linearGradient").attr("gradientUnits", "userSpaceOnUse").call((g) => {
+      g.append("stop").attr("offset", "0");
+      g.append("stop").attr("offset", "1");
+    }).merge(gradient).attr("id", (d) => gradientId(d)).each(function(d) {
+      const [[start], , , [end]] = $$.getSankeyLinkPoints(d, true);
+      const [along, across] = rotated ? ["y", "x"] : ["x", "y"];
+      const colors = $$.getSankeyLinkColors(d);
+      d3_selection_select(this).attr(`${along}1`, start).attr(`${along}2`, end).attr(`${across}1`, 0).attr(`${across}2`, 0).selectAll("stop").attr("stop-color", (_, j) => colors[j]);
+    });
+    $$.$T(linkMerge, withTransition).attr("d", (d) => $$.getSankeyLinkPath(d)).style("stroke-width", (d) => `${Math.max(1, d.width)}px`).style("opacity", null);
+    const node = sankey.select(`.${$SANKEY.sankeyNodes}`).selectAll(`.${$SANKEY.sankeyNode}`).data(nodes, nodeKey);
+    node.exit().remove();
+    const nodeEnter = node.enter().append("g");
+    nodeEnter.append("rect").attr("class", $SHAPE.shape);
+    nodeEnter.append("text").attr("class", $SANKEY.sankeyLabel);
+    const nodeMerge = nodeEnter.merge(node).attr("class", (d) => $SANKEY.sankeyNode + $$.classTarget(d.id));
+    nodeMerge.select("rect").datum((d) => d).style("fill", (d) => d.color).style("stroke", borderWidth ? config.sankey_node_border_color : null).style("stroke-width", borderWidth ? `${borderWidth}px` : null).call((sel) => {
+      $$.$T(sel, withTransition).attr("x", (d) => d.x0).attr("y", (d) => d.y0).attr("width", (d) => Math.max(1, d.x1 - d.x0)).attr("height", (d) => Math.max(1, d.y1 - d.y0));
+    });
+    nodeMerge.select("text").datum((d) => d).each(function(d) {
+      const label = $$.getSankeyLabel(d);
+      const text = d3_selection_select(this);
+      if (label) {
+        text.text(label.text).attr("dy", { middle: ".35em", top: ".71em", bottom: "0" }[label.baseline]).style(
+          "text-anchor",
+          { left: "start", right: "end", center: "middle" }[label.align]
+        );
+        $$.$T(text, withTransition).attr("x", label.x).attr("y", label.y);
+      } else {
+        text.text(null);
+      }
+    });
+    $$.updateSankeyFocus();
+  }
+}));
+
+;// ./src/config/Options/shape/sankey.ts
+/* harmony default export */ var Options_shape_sankey = ({
+  /**
+   * Set sankey options.<br>
+   * A data series is a source node: its values are the links to the nodes named by `data.x`.
+   * A node can be a source and a target at once, which makes a flow of many steps.
+   * - **NOTE:** The links can't make a cycle (A → B → A). When they do, an error is logged and nothing is drawn.
+   * - **NOTE:** `data.x` is required. Without it, the target nodes are named by their indexes.
+   * - **NOTE:** The legend shows the source nodes only. A node that is only a target can't be toggled from the legend.
+   *
+   * The interactions:
+   * - [data.onover](#.data․onover), [data.onout](#.data․onout) and [data.onclick](#.data․onclick) are called with the data of a node `{id, index, value, name}`,
+   *  or of a link `{id, x, index, value, name, source, target}`, where `id` is the source node, `x` the target node and `name` is "source → target".
+   * - `.hide(id)` removes the node and all the links of it, the incoming links included.
+   * - `.focus(id)` and the legend hover dim the other nodes and their links.
+   *  A node that is only a target is dimmed when all the links coming to it are.
+   * @name sankey
+   * @memberof Options
+   * @type {object}
+   * @property {object} sankey Sankey object
+   * @property {boolean} [sankey.rotated=false] Make the flow go down instead of to the right.
+   *  The nodes of a step are then in a row, and the steps go from the top to the bottom.
+   * @property {number} [sankey.node.width=20] The thickness of the nodes along the flow in pixels: the height of the nodes when rotated.
+   * @property {number} [sankey.node.padding=10] The space between the nodes of a step in pixels.
+   * @property {string} [sankey.node.align="justify"] How the nodes are placed in the columns.
+   *  - **justify**: as `left`, and the nodes without outgoing links go to the last column
+   *  - **left**: by the number of the links from the sources
+   *  - **right**: by the number of the links to the last nodes
+   *  - **center**: as `left`, and the nodes without incoming links go next to their targets
+   * @property {string} [sankey.link.color="source"] The color of the links.
+   *  - **source**: the color of the source node
+   *  - **target**: the color of the target node
+   *  - **gradient**: a gradient from the color of the source node to the color of the target node
+   * @property {number} [sankey.link.opacity] The opacity of the links, from 0 to 1.
+   *  When it isn't set, the opacity is of the stylesheet (0.4 by the default themes). In SVG, a hovered link is 0.3 more opaque.
+   * @property {string|function} [sankey.node.sort="auto"] The order of the nodes in a step.
+   *  - **auto**: the layout orders them, to have less crossing links
+   *  - **data**: the order the nodes appear in the data: a series, then the nodes of its links, then the next series
+   *  - **asc**, **desc**: by the value of the nodes
+   *  - **function(a, b)**: a comparator of the data of two nodes `{id, index, value, name}`, as for `Array.sort()`
+   *  - **NOTE:** A set order (other than "auto") is kept: the layout moves the nodes, but doesn't change their order.
+   * @property {number} [sankey.node.border.width=0] The width of the border of the nodes in pixels.
+   * @property {string} [sankey.node.border.color="#000"] The color of the border of the nodes.
+   * @property {number} [sankey.iterations=6] The number of the passes to place the nodes vertically.
+   * @property {boolean} [sankey.label.show=true] Show the names of the nodes.
+   * @property {function} [sankey.label.format] Set the formatter of the node names.
+   *  - **NOTE:** The arguments are the name, the value and the id of the node.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.SankeyChart)
+   * @example
+   *  data: {
+   *      x: "x",
+   *      columns: [
+   *          // the target nodes
+   *          ["x", "B", "C", "D"],
+   *          // the links of the source node A: A → B 5, A → C 3
+   *          ["A", 5, 3, 0],
+   *          // B is a target and a source
+   *          ["B", 0, 2, 4]
+   *      ],
+   *      type: "sankey"  // for ESM, import {sankey} from "billboard.js" and do type: sankey()
+   *  },
+   *  sankey: {
+   *      node: {
+   *          width: 20,
+   *          padding: 15,
+   *          align: "left",
+   *          sort: "desc",
+   *          border: {
+   *              width: 1,
+   *              color: "#fff"
+   *          }
+   *      },
+   *      rotated: true,
+   *      link: {
+   *          color: "gradient",
+   *          opacity: 0.6
+   *      },
+   *      iterations: 10,
+   *      label: {
+   *          show: true,
+   *          format: function(name, value, id) {
+   *              return name + " (" + value + ")";
+   *          }
+   *      }
+   *  }
+   */
+  sankey_rotated: false,
+  sankey_node_width: 20,
+  sankey_node_padding: 10,
+  sankey_node_align: "justify",
+  sankey_node_sort: "auto",
+  sankey_node_border_width: 0,
+  sankey_node_border_color: "#000",
+  sankey_link_color: "source",
+  sankey_link_opacity: void 0,
+  sankey_iterations: 6,
+  sankey_label_show: true,
+  sankey_label_format: void 0
+});
+
+;// ./src/config/resolver/shape/sankey.ts
+
+
+
+
+
+
+
+let sankey_sankey = () => (extend(ChartInternal.prototype, [shape_sankey]), Options.setOptions([Options_shape_sankey]), registerCustomType("sankey", { hooks: sankey_customTypeHooks }), (sankey_sankey = () => "sankey")());
+
 ;// ./src/config/Options/shape/scatter.ts
 /* harmony default export */ var scatter = ({
   /**
@@ -73696,6 +74636,7 @@ let treemap_treemap = () => (extendAxis([shape_treemap], [Options_shape_treemap]
 
 
 
+
 ;// ./src/core.ts
 
 
@@ -73708,7 +74649,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.1.5-nightly-20261119004530",
+  version: "4.1.5-nightly-20261124004158",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
@@ -73922,6 +74863,7 @@ const bb = {
 
 
 
+
 Object.keys(shape_namespaceObject).forEach((v) => shape_namespaceObject[v]());
 Object.keys(interaction_namespaceObject).forEach((v) => interaction_namespaceObject[v]());
 exportApi();
@@ -73937,6 +74879,7 @@ regions_regions();
 category_category();
 canvas();
 registerCustomType("bullet", { canvas: bullet });
+registerCustomType("sankey", { canvas: sankey });
 registerCanvasType("treemap", treemap);
 
 
