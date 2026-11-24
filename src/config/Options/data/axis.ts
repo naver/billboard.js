@@ -86,6 +86,25 @@ export default {
 	data_xSort: true,
 
 	/**
+	 * Reduce the rows to at most this number with the
+	 * [Largest-Triangle-Three-Buckets](https://github.com/sveinn-steinarsson/flot-downsample) algorithm,
+	 * to render dense data faster. `0` disables it.
+	 * - **NOTE:**
+	 *   - Works for line/spline/step/area/scatter types sharing one x. It is skipped for other types, `data.xs` and `append` loading.
+	 *   - The reduced rows are what the chart holds: tooltip, `data()` API and zoom use them as is. The data isn't resampled on zoom.
+	 *   - x is regarded as evenly spaced.
+	 * @name data․downsample
+	 * @memberof Options
+	 * @type {number}
+	 * @default 0
+	 * @example
+	 * data: {
+	 *   downsample: 2000
+	 * }
+	 */
+	data_downsample: 0,
+
+	/**
 	 * Set y axis the data related to. y and y2 can be used.
 	 * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
 	 * @name data․axes

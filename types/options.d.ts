@@ -1386,6 +1386,12 @@ export interface Data {
 	xSort?: boolean;
 
 	/**
+	 * Reduce the rows to at most this number by the Largest-Triangle-Three-Buckets algorithm.
+	 * `0` disables it.
+	 */
+	downsample?: number;
+
+	/**
 	 * Set custom data name.
 	 */
 	names?: { [key: string]: string|null };

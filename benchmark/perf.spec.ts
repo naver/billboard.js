@@ -41,6 +41,7 @@ interface ScenarioParams {
 	showXTicks?: boolean;
 	tickCulling?: boolean;
 	tickTextShow?: boolean;
+	downsample?: number;
 	flow?: FlowParams;
 }
 
@@ -62,6 +63,15 @@ const SCENARIOS: ScenarioParams[] = [
 	},
 	{label: "5x1000 line", mode: "svg", type: "line", series: 5, size: 1000},
 	{label: "5x1000 area", mode: "svg", type: "area", series: 5, size: 1000},
+	{label: "SVG 5x20000 line", mode: "svg", type: "line", series: 5, size: 20_000},
+	{
+		label: "SVG 5x20000 line downsample 2000",
+		mode: "svg",
+		type: "line",
+		series: 5,
+		size: 20_000,
+		downsample: 2000
+	},
 	...["bar", "line", "area"].flatMap(type =>
 		[1000, 5000, 10000].flatMap(size =>
 			(size === 1000 ? [
@@ -184,6 +194,7 @@ test("performance benchmark", async ({page}) => {
 			showXTicks,
 			tickCulling,
 			tickTextShow,
+			downsample,
 			flow
 		} = scenario;
 
@@ -237,7 +248,8 @@ test("performance benchmark", async ({page}) => {
 							data: {
 								columns,
 								type: params.type,
-								...(params.groups ? {groups: params.groups} : {})
+								...(params.groups ? {groups: params.groups} : {}),
+								...(params.downsample ? {downsample: params.downsample} : {})
 							},
 							transition: {duration: 0},
 							point: {focus: {only: true}},
@@ -331,6 +343,7 @@ test("performance benchmark", async ({page}) => {
 				series,
 				size,
 				groups: groups ?? null,
+				downsample: downsample ?? null,
 				showXTicks: !!showXTicks,
 				tickCulling: tickCulling ?? null,
 				tickTextShow: tickTextShow ?? null,

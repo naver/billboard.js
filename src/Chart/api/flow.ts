@@ -89,10 +89,12 @@ export default {
 			// timeseries and custom x take x from the data; otherwise x follows the index
 			const isCustomX = !isTimeSeries && $$.axis.isCustomX() && !$$.axis.isCategorized();
 			const hasDataX = isTimeSeries || isCustomX;
-			const firstValue = $$.data.targets.find(t => t.values.length)?.values[0];
+			const lastValues = $$.data.targets.find(t => t.values.length)?.values;
+			const lastValue = lastValues?.[lastValues.length - 1];
 			// updateDataIndexByX() renumbers the index from 0 after each flow while x keeps
-			// moving on, so the gap between them carries x forward
-			const xOffset = firstValue ? firstValue.x - firstValue.index : 0;
+			// moving on, so the gap between them carries x forward. It is read at the last
+			// value, because rows dropped by data.downsample leave a gap in the middle.
+			const xOffset = lastValue ? lastValue.x - lastValue.index : 0;
 			const getX = (
 				index: number
 			) => (isTimeSeries ? $$.getOtherTargetX(index) : index + xOffset);

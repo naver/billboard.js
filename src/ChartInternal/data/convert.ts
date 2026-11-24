@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {TYPE} from "../../config/const";
 import {
 	isArray,
 	isDefined,
@@ -24,6 +25,146 @@ import {columns, json, rows, url} from "./convert.helper";
  * @private
  */
 const WORKER_CELL_THRESHOLD = 5000;
+
+/**
+ * Chart types whose rows can be thinned out without changing what they show.
+ * @private
+ */
+const DOWNSAMPLE_TYPES: string[] = [
+	TYPE.LINE,
+	TYPE.SPLINE,
+	TYPE.STEP,
+	TYPE.AREA,
+	TYPE.AREA_SPLINE,
+	TYPE.AREA_STEP,
+	TYPE.SCATTER
+];
+
+/**
+ * Select rows with the Largest-Triangle-Three-Buckets algorithm over all series at once.
+ * x is the row index. The area of a triangle is the sum of each series' area, scaled by
+ * the value range of that series, so that every series has the same weight.
+ * @param {Array} ys Values of each series (null allowed)
+ * @param {number} threshold Number of rows to select
+ * @returns {number[]} Selected indices in ascending order
+ * @private
+ */
+function _lttb(ys: (number | null)[][], threshold: number): number[] {
+	const len = ys[0].length;
+	const bucketSize = (len - 2) / (threshold - 2);
+	const scales = ys.map(y => {
+		let min = Infinity;
+		let max = -Infinity;
+
+		y.forEach(v => {
+			if (v !== null) {
+				min = Math.min(min, v);
+				max = Math.max(max, v);
+			}
+		});
+
+		return max > min ? 1 / (max - min) : 1;
+	});
+	const picked = [0];
+	let a = 0;
+
+	for (let b = 0; b < threshold - 2; b++) {
+		// average of the next bucket
+		const nextStart = Math.floor((b + 1) * bucketSize) + 1;
+		const nextEnd = Math.min(Math.floor((b + 2) * bucketSize) + 1, len);
+		const count = nextEnd - nextStart;
+		const avgX = (nextStart + nextEnd - 1) / 2;
+		const avgY = ys.map(y => {
+			let sum = 0;
+
+			for (let i = nextStart; i < nextEnd; i++) {
+				sum += y[i] ?? 0;
+			}
+
+			return sum / count;
+		});
+
+		// the row of the current bucket making the largest triangle
+		const start = Math.floor(b * bucketSize) + 1;
+		let maxArea = -1;
+		let maxIndex = start;
+
+		for (let i = start; i < nextStart; i++) {
+			let area = 0;
+
+			for (let k = 0; k < ys.length; k++) {
+				const y = ys[k];
+				const ya = y[a] ?? 0;
+
+				area += Math.abs(
+					(a - avgX) * ((y[i] ?? 0) - ya) - (a - i) * (avgY[k] - ya)
+				) * scales[k];
+			}
+
+			if (area > maxArea) {
+				maxArea = area;
+				maxIndex = i;
+			}
+		}
+
+		picked.push(maxIndex);
+		a = maxIndex;
+	}
+
+	picked.push(len - 1);
+
+	return picked;
+}
+
+/**
+ * Select rows to keep by LTTB, keeping series aligned on the same rows.
+ * Every kept row keeps the original value of every series. Rows where a series
+ * enters or leaves null are kept in addition, to preserve gaps.
+ * @param {object[]} data Rows
+ * @param {string[]} ids Series ids
+ * @param {number} threshold Maximum number of rows to keep
+ * @returns {number[]|null} Indices of the rows to keep, or null when they can't be reduced
+ * @private
+ */
+function _downsample(
+	data: Record<string, any>[],
+	ids: string[],
+	threshold: number
+): number[] | null {
+	const len = data.length;
+
+	if (threshold < 3 || len <= threshold || !ids.length) {
+		return null;
+	}
+
+	const keep = new Uint8Array(len);
+	const ys: (number | null)[][] = [];
+
+	for (const id of ids) {
+		const y: (number | null)[] = new Array(len);
+
+		for (let i = 0; i < len; i++) {
+			const v = data[i][id];
+
+			if (v !== null && v !== undefined && typeof v !== "number") {
+				return null;
+			}
+
+			y[i] = v ?? null;
+
+			if (i && (y[i] === null) !== (y[i - 1] === null)) {
+				keep[i] = keep[i - 1] = 1;
+			}
+		}
+
+		ys.push(y);
+	}
+
+	// rows null in every series are kept only where a gap starts or ends (above)
+	_lttb(ys, threshold).forEach(i => ys.some(y => y[i] !== null) && (keep[i] = 1));
+
+	return Array.from({length: len}, (_, i) => i).filter(i => keep[i]);
+}
 
 /**
  * Estimate the number of data cells to be converted.
@@ -71,6 +212,7 @@ function _getDataKeyForJson(keysParam, config) {
  * @param {string[]} ids Ids to set xs
  * @param {object[]} data Data to set xs from
  * @param {object} params Parameters for setting xs
+ * @param {(i: number) => number} params.rowIndex Position of a row in the original rows
  * @param {boolean} params.appendXs Whether to append xs
  * @param {string[]} params.xs X keys to set xs from
  * @param {boolean} params.categorized Whether the axis is categorized
@@ -81,7 +223,14 @@ function _getDataKeyForJson(keysParam, config) {
 function _setXS(
 	ids: string[],
 	data: Record<string, number | null>[],
-	params: {appendXs, xs, categorized: boolean, timeSeries: boolean, customX: boolean}
+	params: {
+		rowIndex: (i: number) => number,
+		appendXs,
+		xs,
+		categorized: boolean,
+		timeSeries: boolean,
+		customX: boolean
+	}
 ): void {
 	const $$ = this;
 	const {config} = $$;
@@ -97,7 +246,9 @@ function _setXS(
 					.concat(
 						data.map((d, i) => {
 							const rawX = d[xKey];
-							return isValue(rawX) ? $$.generateTargetX(rawX, id, i) : false;
+							return isValue(rawX) ?
+								$$.generateTargetX(rawX, id, params.rowIndex(i)) :
+								false;
 						}).filter(v => v !== false)
 					);
 			} else if (config.data_x) {
@@ -109,7 +260,7 @@ function _setXS(
 			}
 			// MEMO: if no x included, use same x of current will be used
 		} else {
-			xsData = data.map((d, i) => i);
+			xsData = data.map((d, i) => params.rowIndex(i));
 		}
 
 		if (xsData) {
@@ -210,7 +361,27 @@ export default {
 			}, {ids: [] as string[], xs: [] as string[]}) :
 			{ids: [], xs: []};
 
+		// thin out dense rows for lineish types, when series share the same x
+		let rowIndex = (i: number): number => i;
+		const downsample = config.data_downsample;
+
+		if (
+			downsample && !appendXs && !(data as any).__append__ && xs.length < 2 &&
+			[chartType, ...Object.values(config.data_types)].every(v =>
+				!v || DOWNSAMPLE_TYPES.includes(v)
+			)
+		) {
+			const kept = _downsample(data, ids, downsample);
+
+			if (kept) {
+				// x of an indexed axis is the position in the original rows
+				rowIndex = i => kept[i];
+				data = kept.map(i => data[i]);
+			}
+		}
+
 		const params = {
+			rowIndex,
 			appendXs,
 			xs,
 			categorized: axis?.isCategorized(),
@@ -275,7 +446,7 @@ export default {
 							categoryIndexMap?.set(rawXStr, x);
 						}
 					} else {
-						x = $$.generateTargetX(rawX, id, xIndex + i);
+						x = $$.generateTargetX(rawX, id, xIndex + rowIndex(i));
 					}
 
 					// mark as x = undefined if value is undefined and filter to remove after mapped

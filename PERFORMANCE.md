@@ -161,6 +161,20 @@ data point and one tick `<g>` per x value. `axis.x.tick.culling` is not a
 substitute for `tick.count`: it hides culled ticks, but the nodes are still
 created (-10% only).
 
+`data.downsample` reduces the rows themselves. `benchmark/perf.spec.ts` ("SVG 5x20000
+line", `point.focus.only: true`, x ticks hidden, 800x400, 5 runs after 2 warm-ups)
+measured `generate()` at 350.7 ms and `load()` at 266.2 ms. With
+`data.downsample: 2000`, they took 32.3 ms and 22.7 ms (-91% and -91%). These runs hide
+ticks and draw one point per series, so the saving is the data handling alone. A chart
+that draws every point and tick also saves the DOM nodes of the dropped rows.
+
+Rows are chosen by LTTB (Largest-Triangle-Three-Buckets) over all series at once, so at
+most the given number of rows is kept, plus the rows where a series enters or leaves
+null. Every kept row has the original value of every series. The chart holds the
+reduced rows: the tooltip, the `data()` API and zoom see only those, and zoom does not
+resample the original data. It applies to line, spline, step, area and scatter types
+sharing one x, and treats x as evenly spaced.
+
 None of these are the default, because each one changes what ends up in the DOM or
 on screen (tick count, point elements, drawn points). Changing them would break
 code that selects those elements. They stay opt-in.
