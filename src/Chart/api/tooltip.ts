@@ -84,9 +84,9 @@ const tooltip = {
 		// a custom type addresses its data by id: resolve the given index to it.
 		// canvas resolves it by itself below
 		if (customType && !isCanvasMode && !args.data) {
-			const id = $$.customTypeHooks?.tooltipTarget?.($$, args).data[0]?.id;
+			const found = $$.customTypeHooks?.tooltipTarget?.($$, args).data[0];
 
-			id && (args = {...args, data: {id}});
+			found && (args = {...args, data: {id: found.id}, index: args.index ?? found.index});
 		}
 
 		// determine mouse position on the chart
@@ -102,9 +102,22 @@ const tooltip = {
 			if ((customType || hasTreemap) && data.id) {
 				// canvas has no shape elements: the tooltip is resolved from the data below
 				if (!isCanvasMode) {
-					eventReceiver.rect = $el.main.select(
-						$$.selectorTarget(data.id, undefined, `.${$SHAPE.shape}`)
-					);
+					const shape = `.${$SHAPE.shape}`;
+					// a shape of the type can be of the given index too: `bb-shape-{index}`
+					// the index of the data, or of the given x for a type that names its columns
+					const at = args.index ?? data.index ??
+						(isDefined(args.x) ?
+							$$.customTypeHooks?.tooltipTarget?.($$, args).data[0]?.index :
+							undefined);
+					const byIndex = isDefined(at) ?
+						$el.main.select(
+							$$.selectorTarget(data.id, undefined, `${shape}${shape}-${at}`)
+						) :
+						null;
+
+					eventReceiver.rect = byIndex?.node() ?
+						byIndex :
+						$el.main.select($$.selectorTarget(data.id, undefined, shape));
 				}
 			} else if ($$.isMultipleX()) {
 				// if multiple xs, target point will be determined by mouse

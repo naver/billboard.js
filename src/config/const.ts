@@ -101,6 +101,7 @@ export const TYPE_METHOD_NEEDED: Record<string, string> = {
 	pie: "initArc",
 	polar: "initPolar",
 	radar: "initCircle",
+	heatmap: "getHeatmapLayout",
 	sankey: "getSankeyLayout",
 	scatter: "initCircle",
 	spline: "initLine",
