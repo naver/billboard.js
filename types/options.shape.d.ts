@@ -1192,6 +1192,90 @@ export interface PolarOptions {
 	startAngle?: number;
 }
 
+export interface SankeyNodeData {
+	id: string;
+	index: number;
+	value: number;
+	name: string;
+}
+
+export interface SankeyOptions {
+	/**
+	 * Make the flow go down instead of to the right.
+	 */
+	rotated?: boolean;
+
+	node?: {
+		/**
+		 * The thickness of the nodes along the flow in pixels.
+		 */
+		width?: number;
+
+		/**
+		 * The space between the nodes of a step in pixels.
+		 */
+		padding?: number;
+
+		/**
+		 * How the nodes are placed in the columns.
+		 */
+		align?: "justify" | "left" | "right" | "center";
+
+		/**
+		 * The order of the nodes in a step.
+		 * - auto: the layout orders them, to have less crossing links
+		 * - data: the order the nodes appear in the data
+		 * - asc, desc: by the value of the nodes
+		 * - function: a comparator of the data of two nodes
+		 */
+		sort?: "auto" | "data" | "asc" | "desc" | ((this: Chart, a: SankeyNodeData, b: SankeyNodeData) => number);
+
+		border?: {
+			/**
+			 * The width of the border of the nodes in pixels.
+			 */
+			width?: number;
+
+			/**
+			 * The color of the border of the nodes.
+			 */
+			color?: string;
+		};
+	};
+
+	link?: {
+		/**
+		 * The color of the links.
+		 * - source: the color of the source node
+		 * - target: the color of the target node
+		 * - gradient: a gradient from the color of the source node to the color of the target node
+		 */
+		color?: "source" | "target" | "gradient";
+
+		/**
+		 * The opacity of the links, from 0 to 1. When it isn't set, the opacity is of the stylesheet.
+		 */
+		opacity?: number;
+	};
+
+	/**
+	 * The number of the passes to place the nodes vertically.
+	 */
+	iterations?: number;
+
+	label?: {
+		/**
+		 * Show the names of the nodes.
+		 */
+		show?: boolean;
+
+		/**
+		 * Set the formatter of the node names.
+		 */
+		format?: (this: Chart, name: string, value: number, id: string) => string;
+	};
+}
+
 export interface RadarOptions {
 	axis?: {
 		/**

@@ -20,6 +20,7 @@ export {
 	bubble,
 	candlestick,
 	line,
+	sankey,
 	scatter,
 	spline,
 	step,

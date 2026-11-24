@@ -99,6 +99,7 @@ export default {
 	 * - pie
 	 * - polar
 	 * - radar
+	 * - sankey
 	 * - scatter
 	 * - spline
 	 * - step
@@ -132,6 +133,7 @@ export default {
 	 *   pie,
 	 *   polar,
 	 *   radar,
+	 *   sankey,
 	 *   scatter,
 	 *   spline,
 	 *   step,
@@ -150,7 +152,7 @@ export default {
 	/**
 	 * Set chart type for each data.<br>
 	 * This setting overwrites data.type setting.
-	 * - **NOTE:** `radar` and `treemap` type can't be combined with other types.
+	 * - **NOTE:** `radar`, `sankey` and `treemap` type can't be combined with other types.
 	 * @name data․types
 	 * @memberof Options
 	 * @type {object}
@@ -183,6 +185,7 @@ export default {
 	 *   pie,
 	 *   polar,
 	 *   radar,
+	 *   sankey,
 	 *   scatter,
 	 *   spline,
 	 *   step,

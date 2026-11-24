@@ -21,6 +21,7 @@ import {
 	PolarOptions,
 	RadarOptions,
 	RadialGradientOptions,
+	SankeyOptions,
 	ScatterOptions,
 	SplineOptions,
 	TreemapOptions
@@ -388,6 +389,7 @@ export interface ChartOptions {
 	polar?: PolarOptions;
 	pie?: PieOptions;
 	radar?: RadarOptions;
+	sankey?: SankeyOptions;
 	scatter?: ScatterOptions;
 	spline?: SplineOptions;
 	treemap?: TreemapOptions;

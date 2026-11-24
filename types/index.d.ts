@@ -27,6 +27,7 @@ export {
 	pie,
 	polar,
 	radar,
+	sankey,
 	scatter,
 	spline,
 	step,
