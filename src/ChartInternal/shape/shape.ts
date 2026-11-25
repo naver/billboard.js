@@ -311,7 +311,7 @@ export default {
 		const {hasRadar, hasTreemap} = $$.state;
 		const shape = {type: <TShape>{}, indices: <TShape>{}, pos: {}};
 
-		!hasTreemap && ["bar", "candlestick", "line", "area"].forEach(v => {
+		!hasTreemap && ["bar", "candlestick", "line", "area", ...$$.getAxisTypes()].forEach(v => {
 			const name = capitalize(v);
 
 			if (

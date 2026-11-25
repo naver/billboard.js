@@ -8,6 +8,7 @@
 import "./Chart/api/stubs";
 
 // canvas shape modules
+export {boxplot} from "./config/resolver/canvasBoxplot";
 export {bullet} from "./config/resolver/canvasBullet";
 export {heatmap} from "./config/resolver/canvasHeatmap";
 export {sankey} from "./config/resolver/canvasSankey";

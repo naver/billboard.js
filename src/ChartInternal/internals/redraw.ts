@@ -151,7 +151,7 @@ export default {
 			// rect for regions (optional module — updateRegion installed by regions resolver)
 			config.regions.length && $$.updateRegion?.();
 
-			["bar", "candlestick", "line", "area"].forEach(v => {
+			["bar", "candlestick", "line", "area", ...$$.getAxisTypes()].forEach(v => {
 				const name = capitalize(v);
 
 				if ((/^(line|area)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {

@@ -92,6 +92,7 @@ export const TYPE_METHOD_NEEDED: Record<string, string> = {
 	"area-step-range": "initArea",
 	bar: "initBar",
 	bubble: "initCircle",
+	boxplot: "initBoxplot",
 	bullet: "getBulletData",
 	candlestick: "initCandlestick",
 	donut: "initArc",

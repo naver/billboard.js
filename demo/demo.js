@@ -204,6 +204,143 @@ var demos = {
 				}
 			}
 		],
+		BoxplotChart: [
+			{
+				options: {
+					data: {
+						columns: [
+							// min, q1, median, q3, max, [outliers], mean
+							["Group A", [12, 25, 33, 41, 58, [75, 80], 35], [15, 28, 37, 45, 60, [], 38], [10, 22, 30, 39, 52, [3], 31]],
+							["Group B", [20, 31, 40, 52, 70, [], 43], [18, 30, 42, 55, 68, [90], 44], [25, 35, 46, 58, 74, [], 48]]
+						],
+						type: "boxplot"
+					},
+					boxplot: {
+						mean: {
+							show: true
+						},
+						outlier: {
+							r: 4
+						}
+					},
+					axis: {
+						x: {
+							type: "category",
+							categories: ["Mon", "Tue", "Wed"]
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							// the samples: the quartiles, the whiskers and the outliers are calculated
+							["Response time",
+								[82, 95, 110, 120, 130, 140, 150, 155, 170, 185, 190, 260, 420],
+								[70, 85, 100, 110, 118, 125, 140, 150, 165, 175, 180, 230],
+								[90, 105, 125, 140, 160, 170, 185, 200, 220, 240, 250, 310, 330, 520],
+								[60, 75, 90, 100, 110, 120, 130, 140, 150, 160, 165, 200]
+							]
+						],
+						colors: {
+							"Response time": "#e8590c"
+						},
+						type: "boxplot"
+					},
+					boxplot: {
+						samples: true,
+						width: 24,
+						whisker: {
+							iqr: 1.5,
+							width: 0.3
+						},
+						outlier: {
+							r: 4
+						}
+					},
+					axis: {
+						rotated: true,
+						x: {
+							type: "category",
+							categories: ["API", "Web", "Batch", "Cache"]
+						},
+						y: {
+							min: 0,
+							max: 600,
+							tick: {
+								values: [0, 100, 200, 300, 400, 500, 600],
+								format: function(v) {
+									return v + "ms";
+								}
+							}
+						}
+					},
+					grid: {
+						y: {
+							show: true
+						}
+					},
+					legend: {
+						show: false
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "2026-01-01", "2026-02-01", "2026-03-01", "2026-04-01", "2026-05-01"],
+							["Seoul", [-9, -4, 1, 5, 12, [-14], 1.5], [-6, -1, 4, 8, 14, [], 4.5], [-1, 3, 8, 13, 19, [], 8], [6, 10, 14, 19, 25, [30], 14.5], [12, 16, 20, 24, 30, [], 20]],
+							["Busan", [-4, 0, 4, 8, 13, [], 4.5], [-2, 2, 6, 9, 14, [], 6], [2, 6, 10, 14, 18, [], 10], [8, 11, 15, 19, 23, [], 15], [13, 16, 19, 22, 27, [31], 19.5]]
+						],
+						type: "boxplot"
+					},
+					boxplot: {
+						width: {
+							Seoul: {
+								ratio: 0.4,
+								max: 36
+							},
+							Busan: {
+								ratio: 0.4,
+								max: 20
+							}
+						},
+						whisker: {
+							width: 1
+						},
+						mean: {
+							show: true,
+							r: 3
+						},
+						outlier: {
+							show: true,
+							r: 2
+						}
+					},
+					axis: {
+						x: {
+							type: "timeseries",
+							tick: {
+								format: "%b"
+							}
+						}
+					},
+					legend: {
+						position: "right"
+					},
+					tooltip: {
+						format: {
+							value: function(v) {
+								return v + "°C";
+							}
+						}
+					}
+				}
+			}
+		],
 		BubbleChart: {
 			options: {
 				data: {

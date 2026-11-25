@@ -17,6 +17,7 @@ export {
 	areaStep,
 	areaStepRange,
 	bar,
+	boxplot,
 	bubble,
 	candlestick,
 	heatmap,
