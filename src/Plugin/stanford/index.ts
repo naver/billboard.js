@@ -13,33 +13,6 @@ import Options from "./Options";
 import {compareEpochs, isEmpty, isFunction, pointInRegion} from "./util";
 
 /**
- * HSL color object compatible with d3-interpolate
- */
-interface HSLColor {
-	h: number;
-	s: number;
-	l: number;
-	opacity: number;
-}
-
-/**
- * Creates an HSL color object.
- * @param {number} h Hue (0-360)
- * @param {number} s Saturation (0-1)
- * @param {number} l Lightness (0-1)
- * @param {number} opacity Opacity (0-1), defaults to 1
- * @returns {HSLColor} HSL color object
- */
-function hsl(h: number, s: number, l: number, opacity: number = 1): HSLColor {
-	return {
-		h: +h,
-		s: +s,
-		l: +l,
-		opacity: +opacity
-	};
-}
-
-/**
  * Stanford diagram plugin
  * - **NOTE:**
  *   - Plugins aren't built-in. Need to be loaded or imported to be used.
@@ -216,7 +189,7 @@ export default class Stanford extends Plugin {
 
 		target.colors = isFunction(config.colors) ?
 			config.colors :
-			d3InterpolateHslLong(hsl(250, 1, 0.5), hsl(0, 1, 0.5));
+			d3InterpolateHslLong("hsl(250, 100%, 50%)", "hsl(0, 100%, 50%)");
 
 		target.colorscale = d3ScaleSequentialLog(target.colors)
 			.domain([target.minEpochs, target.maxEpochs]);
