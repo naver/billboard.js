@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.5-nightly-20261124004158
+ * @version 4.1.5-nightly-20261125004611
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.12
@@ -24669,6 +24669,7 @@ __webpack_require__.d(shape_namespaceObject, {
   donut: function() { return donut_donut; },
   funnel: function() { return funnel_funnel; },
   gauge: function() { return gauge_gauge; },
+  heatmap: function() { return heatmap_heatmap; },
   line: function() { return line_line; },
   pie: function() { return pie_pie; },
   polar: function() { return polar_polar; },
@@ -28096,6 +28097,7 @@ const TYPE_METHOD_NEEDED = {
   pie: "initArc",
   polar: "initPolar",
   radar: "initCircle",
+  heatmap: "getHeatmapLayout",
   sankey: "getSankeyLayout",
   scatter: "initCircle",
   spline: "initLine",
@@ -37360,6 +37362,125 @@ function drawGrid(renderer, $$) {
   }
 });
 
+;// ./src/canvas/heatmap.ts
+var heatmap_defProp = Object.defineProperty;
+var heatmap_defProps = Object.defineProperties;
+var heatmap_getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var heatmap_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var heatmap_hasOwnProp = Object.prototype.hasOwnProperty;
+var heatmap_propIsEnum = Object.prototype.propertyIsEnumerable;
+var heatmap_defNormalProp = (obj, key, value) => key in obj ? heatmap_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var heatmap_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (heatmap_hasOwnProp.call(b, prop))
+      heatmap_defNormalProp(a, prop, b[prop]);
+  if (heatmap_getOwnPropSymbols)
+    for (var prop of heatmap_getOwnPropSymbols(b)) {
+      if (heatmap_propIsEnum.call(b, prop))
+        heatmap_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var heatmap_spreadProps = (a, b) => heatmap_defProps(a, heatmap_getOwnPropDescs(b));
+const heatmapTheme = {
+  section: "heatmap",
+  probe({ probeIn, axisFont, toColor }) {
+    const axis = probeIn("bb-chart-heatmap", "text", "bb-heatmap-axis", ["fill", "font"]);
+    const label = probeIn("bb-chart-heatmap", "text", "bb-heatmap-label", ["font"]);
+    return {
+      axisFont: axis.font || axisFont,
+      axisColor: toColor(axis.fill, "#000"),
+      labelFont: label.font || axisFont
+    };
+  },
+  selectors: {
+    ".bb-heatmap-axis": (style, { readColorValue, readFontValue }) => ({
+      axisColor: readColorValue(style, "fill"),
+      axisFont: readFontValue(style)
+    }),
+    ".bb-heatmap-label": (style, { readFontValue }) => ({
+      labelFont: readFontValue(style)
+    })
+  }
+};
+const BASELINE_DY = { middle: 0.35, top: 0.71, bottom: 0 };
+function drawText(renderer, d, style) {
+  var _a, _b;
+  const size = parseFloat((_b = (_a = /(\d+(?:\.\d+)?)px/.exec(style.font)) == null ? void 0 : _a[1]) != null ? _b : "10");
+  renderer.painter.text(d.text, d.x, d.y + BASELINE_DY[d.baseline] * size, heatmap_spreadProps(heatmap_spreadValues({}, style), {
+    textAlign: d.align,
+    textBaseline: "alphabetic"
+  }));
+}
+/* harmony default export */ var heatmap = ({
+  theme: heatmapTheme,
+  /**
+   * Draw the cells, the names and the color bar on canvas.
+   * Layout comes from the shared heatmap layout, same as SVG rendering.
+   * @param {CanvasRenderer} renderer Canvas renderer
+   * @private
+   */
+  draw(renderer) {
+    const $$ = this;
+    const { painter, theme: { style: { heatmap, shape } } } = renderer;
+    const { config } = $$;
+    const { cells, axisX, axisY, colorbar } = $$.getHeatmapLayout();
+    const radius = config.heatmap_cell_radius;
+    const borderWidth = config.heatmap_cell_border_width;
+    cells.forEach((d) => {
+      const rect = {
+        x: d.x0,
+        y: d.y0,
+        w: Math.max(0, d.x1 - d.x0),
+        h: Math.max(0, d.y1 - d.y0)
+      };
+      const alpha = $$.isHeatmapDefocused(d.id) ? shape.targetDefocusedOpacity : 1;
+      painter.fillRoundRect(rect, radius, { fill: d.color, alpha });
+      borderWidth && painter.strokeRoundRect(rect, radius, {
+        stroke: config.heatmap_cell_border_color,
+        lineWidth: borderWidth,
+        alpha
+      });
+      const text = $$.getHeatmapLabel(d);
+      text && drawText(renderer, {
+        text,
+        x: (d.x0 + d.x1) / 2,
+        y: (d.y0 + d.y1) / 2,
+        align: "center",
+        baseline: "middle"
+      }, { fill: $$.getHeatmapLabelColor(d), alpha, font: heatmap.labelFont });
+    });
+    const drawName = (d) => drawText(renderer, d, { fill: heatmap.axisColor, font: heatmap.axisFont });
+    axisX.forEach(drawName);
+    axisY.forEach(drawName);
+    if (colorbar) {
+      const { x, y, width, height, stops, horizontal } = colorbar;
+      const gradient = horizontal ? painter.context.createLinearGradient(x, 0, x + width, 0) : painter.context.createLinearGradient(0, y, 0, y + height);
+      stops.forEach(([offset, color]) => gradient.addColorStop(offset, color));
+      painter.fillRect({ x, y, w: width, h: height }, { fill: gradient });
+      colorbar.labels.forEach(drawName);
+    }
+    $$.fitHeatmapHeight();
+  },
+  /**
+   * Add the hit items of the cells that have a value.
+   * @param {HitDetector} detector Hit detector
+   * @private
+   */
+  hits(detector) {
+    const $$ = this;
+    $$.getHeatmapLayout().cells.forEach((d) => {
+      d.value !== null && detector.addBar({
+        x: d.x0,
+        y: d.y0,
+        w: Math.max(1, d.x1 - d.x0),
+        h: Math.max(1, d.y1 - d.y0),
+        data: $$.getHeatmapCellData(d)
+      });
+    });
+  }
+});
+
 ;// ./src/canvas/sankey.ts
 const sankeyTheme = {
   section: "sankey",
@@ -41414,6 +41535,7 @@ const $ZOOM = {
    * - donut
    * - funnel
    * - gauge
+   * - heatmap
    * - line
    * - pie
    * - polar
@@ -41448,6 +41570,7 @@ const $ZOOM = {
    *   donut,
    *   funnel,
    *   gauge,
+   *   heatmap,
    *   line,
    *   pie,
    *   polar,
@@ -41470,7 +41593,7 @@ const $ZOOM = {
   /**
    * Set chart type for each data.<br>
    * This setting overwrites data.type setting.
-   * - **NOTE:** `radar`, `sankey` and `treemap` type can't be combined with other types.
+   * - **NOTE:** `heatmap`, `radar`, `sankey` and `treemap` type can't be combined with other types.
    * @name data․types
    * @memberof Options
    * @type {object}
@@ -41499,6 +41622,7 @@ const $ZOOM = {
    *   donut,
    *   funnel,
    *   gauge,
+   *   heatmap,
    *   line,
    *   pie,
    *   polar,
@@ -45509,9 +45633,10 @@ function drag() {
    * Handle data.onover/out callback options
    * @param {boolean} isOver Over or not
    * @param {number|object} d data object
+   * @param {Element} [element] The element hovered, when it isn't the first shape of the data
    * @private
    */
-  setOverOut(isOver, d) {
+  setOverOut(isOver, d, element) {
     const $$ = this;
     const { config, state: { customType, hasRadar, hasTreemap }, $el: { main } } = $$;
     const isArcishData = isObject(d);
@@ -45521,7 +45646,7 @@ function drag() {
       if (isArcishData) {
         const suffix = $$.getTargetSelectorSuffix(d.id);
         const selector = customType || hasTreemap ? `${$COMMON.target + suffix} .${$SHAPE.shape}` : $ARC.arc + suffix;
-        callback(d, main.select(`.${selector}`).node());
+        callback(d, element != null ? element : main.select(`.${selector}`).node());
       } else if (!config.tooltip_grouped) {
         const last = $$.cache.get(KEY.setOverOut) || [];
         const shapesAtIndex = main.selectAll(`.${$SHAPE.shape}-${d}`).filter(function(d2) {
@@ -48317,10 +48442,11 @@ function _getFormat($$, typeValue, v) {
 const LEGEND_TOUCH_TAP_THRESHOLD = 10;
 const LEGEND_TOUCH_CLICK_TIMEOUT = 750;
 function _getLegendColor(id) {
+  var _a, _b, _c;
   const $$ = this;
   const data = $$.getDataById(id);
   const color = $$.levelColor ? $$.levelColor(data.values[0].value) : $$.color(data);
-  return color;
+  return (_c = (_b = (_a = $$.customTypeHooks) == null ? void 0 : _a.legendColor) == null ? void 0 : _b.call(_a, $$, data)) != null ? _c : color;
 }
 function _getFormattedText(id, formatted = true) {
   var _a;
@@ -49329,17 +49455,17 @@ function _getLegendTouchOption($$) {
     return $$.config.size_width || $$.getParentRectValue("width");
   },
   getCurrentHeight() {
-    var _a, _b;
+    var _a, _b, _c, _d;
     const $$ = this;
     const { config, state, $el } = $$;
-    let h = config.size_height;
+    let h = config.size_height || ((_b = (_a = $$.customTypeHooks) == null ? void 0 : _a.currentHeight) == null ? void 0 : _b.call(_a, $$));
     if (!h) {
-      const chartNode = state.isCanvasMode ? (_a = $el.chart) == null ? void 0 : _a.node() : null;
+      const chartNode = state.isCanvasMode ? (_c = $el.chart) == null ? void 0 : _c.node() : null;
       const minHeight = chartNode == null ? void 0 : chartNode.style.minHeight;
       minHeight && (chartNode.style.minHeight = "");
       h = $$.getParentHeight();
       minHeight && (chartNode.style.minHeight = minHeight);
-      const surface = chartNode ? parseFloat((_b = $$.canvasEngine) == null ? void 0 : _b.canvas.style.height) || 0 : 0;
+      const surface = chartNode ? parseFloat((_d = $$.canvasEngine) == null ? void 0 : _d.canvas.style.height) || 0 : 0;
       const reserve = state.current.height - surface;
       if (reserve > 0 && Math.round(h) === Math.round(surface)) {
         h += reserve;
@@ -50472,6 +50598,7 @@ function _getCanvasTitleHeight($$) {
 
 
 
+const TOOLTIP_GAP = 15;
 const RE_WHITESPACE = /(\r?\n|\t)/g;
 const RE_TOOLTIP_TPL = /{{(.*)}}/;
 function getRangeValueHtml(values) {
@@ -50564,7 +50691,11 @@ function getRangeValueHtml(values) {
     };
     const order = config.tooltip_order;
     const getRowValue = (row2) => $$.axis && $$.isBubbleZType(row2) ? $$.getBubbleZData(row2.value, "z") : $$.getBaseValue(row2);
-    const getBgColor = $$.levelColor ? (row2) => $$.levelColor(row2.value) : (row2) => color(row2);
+    const getBaseColor = $$.levelColor ? (row2) => $$.levelColor(row2.value) : (row2) => color(row2);
+    const getBgColor = (row2) => {
+      var _a2, _b, _c;
+      return (_c = (_b = (_a2 = $$.customTypeHooks) == null ? void 0 : _a2.tooltipColor) == null ? void 0 : _b.call(_a2, $$, row2)) != null ? _c : getBaseColor(row2);
+    };
     const contents = config.tooltip_contents;
     const tplStr = contents.template;
     const targetIds = $$.mapToTargetIds();
@@ -50749,12 +50880,13 @@ function getRangeValueHtml(values) {
     const ctm = getTransformCTM(target, x, y, false);
     const rect = getBoundingRect(target);
     const size = getTransformCTM(target, 20, 0, false).x;
+    const gap = getTransformCTM(target, TOOLTIP_GAP, 0, false).x;
     let top = ctm.y;
     let left = ctm.x + tWidth / 2 + size;
     if (hasArcType) {
       if (state.customType || state.hasTreemap || state.hasRadar) {
         left -= tWidth / 2 + size;
-        top += tHeight;
+        top += gap;
       } else {
         top += rect.height / 2;
         left += rect.width / 2 - (tWidth - size);
@@ -50764,7 +50896,7 @@ function getRangeValueHtml(values) {
       left = rect.width - tWidth - size;
     }
     if (top + tHeight > rect.height) {
-      top -= tHeight * 2;
+      top -= hasArcType && (state.customType || state.hasTreemap || state.hasRadar) ? tHeight + gap * 2 : tHeight * 2;
     }
     return {
       top,
@@ -50811,10 +50943,10 @@ function getRangeValueHtml(values) {
           titlePadding += 10;
         }
         x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
-        y += (hasGauge ? height : height / 2 + tHeight) + titlePadding;
+        y += (hasGauge ? height : height / 2) + titlePadding + TOOLTIP_GAP;
       }
     } else if (customType || hasTreemap) {
-      y += tHeight;
+      y += TOOLTIP_GAP;
     } else {
       const padding = {
         top: $$.getCurrentPaddingByDirection("top", true),
@@ -50833,8 +50965,7 @@ function getRangeValueHtml(values) {
       x -= tWidth + (customType || hasTreemap || hasArcType ? 0 : isRotated ? size * 2 : 38);
     }
     if (y + tHeight > current.height) {
-      const gap = hasTreemap ? tHeight + 10 : 30;
-      y -= hasGauge ? tHeight * 1.5 : tHeight + gap;
+      y -= hasGauge ? tHeight * 1.5 + TOOLTIP_GAP : tHeight + TOOLTIP_GAP * 2;
     }
     const pos = { top: y, left: x };
     if (pos.top < 0) pos.top = 0;
@@ -56951,7 +57082,7 @@ const tooltip_tooltip = {
    *  });
    */
   show: function(args) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v;
     const $$ = this.internal;
     const {
       $el,
@@ -56961,8 +57092,8 @@ const tooltip_tooltip = {
     let index;
     let mouse;
     if (customType && !isCanvasMode && !args.data) {
-      const id = (_c = (_b = (_a = $$.customTypeHooks) == null ? void 0 : _a.tooltipTarget) == null ? void 0 : _b.call(_a, $$, args).data[0]) == null ? void 0 : _c.id;
-      id && (args = tooltip_spreadProps(tooltip_spreadValues({}, args), { data: { id } }));
+      const found = (_b = (_a = $$.customTypeHooks) == null ? void 0 : _a.tooltipTarget) == null ? void 0 : _b.call(_a, $$, args).data[0];
+      found && (args = tooltip_spreadProps(tooltip_spreadValues({}, args), { data: { id: found.id }, index: (_c = args.index) != null ? _c : found.index }));
     }
     if (args.mouse) {
       mouse = args.mouse;
@@ -56972,9 +57103,12 @@ const tooltip_tooltip = {
       const y = (_d = $$.getYScaleById(data.id)) == null ? void 0 : _d(data.value);
       if ((customType || hasTreemap) && data.id) {
         if (!isCanvasMode) {
-          eventReceiver.rect = $el.main.select(
-            $$.selectorTarget(data.id, void 0, `.${$SHAPE.shape}`)
-          );
+          const shape = `.${$SHAPE.shape}`;
+          const at = (_i = (_e = args.index) != null ? _e : data.index) != null ? _i : isDefined(args.x) ? (_h = (_g = (_f = $$.customTypeHooks) == null ? void 0 : _f.tooltipTarget) == null ? void 0 : _g.call(_f, $$, args).data[0]) == null ? void 0 : _h.index : void 0;
+          const byIndex = isDefined(at) ? $el.main.select(
+            $$.selectorTarget(data.id, void 0, `${shape}${shape}-${at}`)
+          ) : null;
+          eventReceiver.rect = (byIndex == null ? void 0 : byIndex.node()) ? byIndex : $el.main.select($$.selectorTarget(data.id, void 0, shape));
         }
       } else if ($$.isMultipleX()) {
         mouse = [$$.xx(data), y];
@@ -56982,7 +57116,7 @@ const tooltip_tooltip = {
         if (!config.tooltip_grouped) {
           mouse = [0, y];
         }
-        index = (_f = data.index) != null ? _f : $$.hasArcType() && data.id ? (_e = $$.getArcElementByIdOrIndex(data.id)) == null ? void 0 : _e.datum().index : $$.getIndexByX(data.x);
+        index = (_k = data.index) != null ? _k : $$.hasArcType() && data.id ? (_j = $$.getArcElementByIdOrIndex(data.id)) == null ? void 0 : _j.datum().index : $$.getIndexByX(data.x);
       }
     } else if (isDefined(args.x)) {
       index = $$.getIndexByX(args.x);
@@ -56990,13 +57124,13 @@ const tooltip_tooltip = {
       index = args.index;
     }
     if ($$.state.isCanvasMode) {
-      const targets = ((_g = $$.filterTargetsToShow) == null ? void 0 : _g.call($$)) || $$.data.targets;
-      const custom = customType ? (_i = (_h = $$.customTypeHooks) == null ? void 0 : _h.tooltipTarget) == null ? void 0 : _i.call(_h, $$, args) : null;
-      const selectedData = custom ? custom.data : ((_j = args.data) == null ? void 0 : _j.id) && !config.tooltip_grouped ? targets.filter((target) => target.id === args.data.id).map((target) => target.values[index != null ? index : args.data.index]).filter(Boolean) : targets.map((target) => target.values[index]).filter(Boolean);
-      const canvas = (_l = (_k = $el.canvas) == null ? void 0 : _k.node) == null ? void 0 : _l.call(_k);
-      const shape = $$.state.canvasShape || ((_m = $$.getDrawShape) == null ? void 0 : _m.call($$));
+      const targets = ((_l = $$.filterTargetsToShow) == null ? void 0 : _l.call($$)) || $$.data.targets;
+      const custom = customType ? (_n = (_m = $$.customTypeHooks) == null ? void 0 : _m.tooltipTarget) == null ? void 0 : _n.call(_m, $$, args) : null;
+      const selectedData = custom ? custom.data : ((_o = args.data) == null ? void 0 : _o.id) && !config.tooltip_grouped ? targets.filter((target) => target.id === args.data.id).map((target) => target.values[index != null ? index : args.data.index]).filter(Boolean) : targets.map((target) => target.values[index]).filter(Boolean);
+      const canvas = (_q = (_p = $el.canvas) == null ? void 0 : _p.node) == null ? void 0 : _q.call(_p);
+      const shape = $$.state.canvasShape || ((_r = $$.getDrawShape) == null ? void 0 : _r.call($$));
       const first = selectedData[0];
-      const point = mouse || (custom ? custom.point : first && ((_n = shape == null ? void 0 : shape.pos) == null ? void 0 : _n.cx) && ((_o = shape == null ? void 0 : shape.pos) == null ? void 0 : _o.cy) ? [
+      const point = mouse || (custom ? custom.point : first && ((_s = shape == null ? void 0 : shape.pos) == null ? void 0 : _s.cx) && ((_t = shape == null ? void 0 : shape.pos) == null ? void 0 : _t.cy) ? [
         $$.state.margin.left + shape.pos.cx(first),
         $$.state.margin.top + shape.pos.cy(first)
       ] : void 0);
@@ -57008,8 +57142,8 @@ const tooltip_tooltip = {
         $$.state.event = { clientX: rect.left + point[0], clientY: rect.top + point[1] };
       }
       $$.state.canvasFocusKey = selectedData.map((v) => `${v.id}:${v.index}`).join("|");
-      (_p = $$.renderCanvasFocus) == null ? void 0 : _p.call($$, selectedData, point);
-      (_q = $$.showTooltip) == null ? void 0 : _q.call($$, selectedData, canvas);
+      (_u = $$.renderCanvasFocus) == null ? void 0 : _u.call($$, selectedData, point);
+      (_v = $$.showTooltip) == null ? void 0 : _v.call($$, selectedData, canvas);
       return;
     }
     (inputType === "mouse" ? ["mouseover", "mousemove"] : ["touchstart"]).forEach((eventName) => {
@@ -62627,6 +62761,7 @@ var AxisRendererHelper_defNormalProp = (obj, key, value) => key in obj ? AxisRen
 var AxisRendererHelper_publicField = (obj, key, value) => AxisRendererHelper_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 
+const charSizeCache = /* @__PURE__ */ new WeakMap();
 class AxisRendererHelper {
   constructor(owner) {
     AxisRendererHelper_publicField(this, "owner");
@@ -62652,6 +62787,7 @@ class AxisRendererHelper {
    * @private
    */
   getSizeFor1Char(orient, text, memoize = true) {
+    var _a;
     const size = {
       w: 5.5,
       h: 11.5
@@ -62659,17 +62795,38 @@ class AxisRendererHelper {
     if (this.charSize[orient] && memoize) {
       return this.charSize[orient];
     }
-    !text.empty() && text.text("0").call((el) => {
+    const node = text.node();
+    if (node) {
+      const chart = this.owner.params.owner;
+      const style = window.getComputedStyle(node);
+      const key = [
+        orient,
+        style.fontStyle,
+        style.fontWeight,
+        style.fontSize,
+        style.fontFamily,
+        style.letterSpacing
+      ].join(" ");
+      const cache = (_a = charSizeCache.get(chart)) != null ? _a : {};
+      const cached = cache[key];
+      charSizeCache.set(chart, cache);
       try {
-        const { width, height } = getBBox(el.node(), true);
-        if (width && height) {
-          size.w = width;
-          size.h = height;
+        if (cached) {
+          size.w = cached.w;
+          size.h = cached.h;
+        } else {
+          node.textContent = "0";
+          const { width, height } = getBBox(node, true);
+          if (width && height) {
+            size.w = width;
+            size.h = height;
+            cache[key] = { w: width, h: height };
+          }
         }
       } finally {
-        el.text("");
+        text.text("");
       }
-    });
+    }
     this.charSize[orient] = size;
     return size;
   }
@@ -62925,7 +63082,9 @@ class AxisRenderer {
               return split.map((splitted) => ({ index, splitted }));
             });
             tspan.exit().remove();
-            tspan = tspan.enter().append("tspan").merge(tspan).text((d) => d.splitted);
+            tspan = tspan.enter().append("tspan").merge(tspan).each(function(d) {
+              this.textContent !== d.splitted && (this.textContent = d.splitted);
+            });
             tspan.attr("x", isTopBottom ? 0 : tickLength * sign).attr("dx", (() => {
               let dx = 0;
               if (/(top|bottom)/.test(orient) && rotate) {
@@ -71249,6 +71408,734 @@ Object.assign(config_classes, $FUNNEL), registerCustomType("funnel", { hooks: fu
 
 let gauge_gauge = () => (extendArc([gauge], [arc, shape_gauge]), (gauge_gauge = () => TYPE.GAUGE)());
 
+;// ./src/ChartInternal/shape/core/heatmap.ts
+
+
+
+const $HEATMAP = {
+  chartHeatmap: "bb-chart-heatmap",
+  heatmapRows: "bb-heatmap-rows",
+  heatmapRow: "bb-heatmap-row",
+  heatmapCell: "bb-heatmap-cell",
+  heatmapLabel: "bb-heatmap-label",
+  heatmapNames: "bb-heatmap-names",
+  heatmapAxis: "bb-heatmap-axis",
+  heatmapColorbar: "bb-heatmap-colorbar"
+};
+const AXIS_X_SIZE = 18;
+const AXIS_GAP = 6;
+const BAR_WIDTH = 12;
+const BAR_GAP = 10;
+const BAR_LABEL = 16;
+const LINE_HEIGHT = 11;
+const heatmap_own = (obj, key) => obj && Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : void 0;
+const heatmap_isValue = (value) => value !== null && value !== void 0 && value !== "" && Number.isFinite(Number(value));
+function heatmap_getArea() {
+  var _a, _b;
+  const $$ = this;
+  const { config, state: { current: { width, height }, isCanvasMode, isLegendRight } } = $$;
+  const padding = $$.getCurrentPadding();
+  const legendHeight = config.legend_show && config.legend_position === "bottom" ? (isCanvasMode ? 0 : $$.getLegendHeight()) + 10 : 0;
+  const legendRight = config.legend_show && isLegendRight ? $$.getLegendWidth() + (((_a = config.padding) == null ? void 0 : _a.mode) === "fit" ? 6 : 20) : 0;
+  const surfaceHeight = isCanvasMode ? $$.getCanvasSurfaceHeight() : height;
+  const areaHeight = Math.max(0, surfaceHeight - padding.top - padding.bottom - legendHeight);
+  const domLegend = isCanvasMode && legendHeight ? ((_b = $$.getCanvasBottomLegendHeight) == null ? void 0 : _b.call($$)) || 0 : 0;
+  return {
+    left: padding.left,
+    top: padding.top,
+    width: Math.max(0, width - padding.left - padding.right - legendRight),
+    height: areaHeight,
+    // what the chart has besides the area: the paddings and the legend
+    chrome: padding.top + padding.bottom + legendHeight + domLegend
+  };
+}
+function _getTextWidth(texts) {
+  const $$ = this;
+  const { cache, state: { isCanvasMode }, $el } = $$;
+  const key = `heatmap-text-${isCanvasMode}-${texts.join("\0")}`;
+  let width = cache.get(key) || 0;
+  if (!width && isCanvasMode && $$.canvasRenderer) {
+    const { ctx } = $$.canvasRenderer;
+    ctx.save();
+    ctx.font = $$.canvasTheme.style.heatmap.axisFont;
+    width = texts.reduce((w, v) => Math.max(w, ctx.measureText(v).width), 0);
+    ctx.restore();
+  } else if (!width && !isCanvasMode && $el.heatmap) {
+    const text = $el.heatmap.append("text").attr("class", $HEATMAP.heatmapAxis).style("visibility", "hidden");
+    texts.forEach((v) => {
+      var _a, _b;
+      width = Math.max(width, ((_b = (_a = text.text(v).node()).getComputedTextLength) == null ? void 0 : _b.call(_a)) || 0);
+    });
+    text.remove();
+  }
+  if (width) {
+    cache.add(key, width);
+  } else {
+    width = texts.reduce((n, v) => Math.max(n, v.length), 0) * 6.5;
+  }
+  return Math.ceil(width);
+}
+function _getColorScale(domain) {
+  const ranges = this.config.heatmap_color_ranges;
+  if (ranges == null ? void 0 : ranges.length) {
+    return (value) => {
+      var _a;
+      return (_a = ranges.find((r) => {
+        var _a2, _b;
+        return value >= ((_a2 = r.from) != null ? _a2 : -Infinity) && value <= ((_b = r.to) != null ? _b : Infinity);
+      })) == null ? void 0 : _a.color;
+    };
+  }
+  const range = this.config.heatmap_color_range;
+  const [min, max] = domain;
+  const last = range.length - 1;
+  if (last < 1) {
+    return () => range[0];
+  }
+  return d3_scale_linear().domain(range.map((_, i) => min + (max - min) * i / last)).range(range).interpolate(rgb).clamp(true);
+}
+function _getContrastColor(color) {
+  const m = /^rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(color);
+  let rgb = [0, 0, 0];
+  if (m) {
+    rgb = [+m[1], +m[2], +m[3]];
+  } else if (/^#[0-9a-f]{6}$/i.test(color)) {
+    rgb = [1, 3, 5].map((i) => parseInt(color.slice(i, i + 2), 16));
+  } else if (/^#[0-9a-f]{3}$/i.test(color)) {
+    rgb = [1, 2, 3].map((i) => parseInt(color[i] + color[i], 16));
+  }
+  return (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1e3 > 140 ? "#000" : "#fff";
+}
+function _getNames(names, step, size, gap = 4) {
+  const skip = Math.max(1, Math.ceil((size + gap) / (step || 1)));
+  return names.map((v, i) => [v, i]).filter(([, i]) => i % skip === 0);
+}
+const heatmap_customTypeHooks = {
+  // the legend is placed beside its own plot, not by the size of an arc
+  ownLegendLayout: true,
+  // with a cell ratio, the chart is as high as its cells need, when the height is not set
+  currentHeight($$) {
+    var _a, _b;
+    if (!($$.config.heatmap_cell_ratio > 0) || !((_b = (_a = $$.data) == null ? void 0 : _a.targets) == null ? void 0 : _b.length)) {
+      return void 0;
+    }
+    const { height } = $$.getHeatmapLayout(true);
+    return Number.isFinite(height) ? Math.ceil(height) : void 0;
+  },
+  // the name of a cell tells its row and its column ("Noon / Wed"): the tooltip has no title of the x
+  namedData: true,
+  // the names and the values are drawn by the type: there are no data labels of the values
+  labelData() {
+    return [];
+  },
+  // the swatch of the legend: the color of the mean value of the row, as the color of the cells
+  legendColor($$, data) {
+    var _a, _b;
+    const values = data.values.filter((v) => heatmap_isValue(v.value));
+    return values.length ? (_b = (_a = $$.getHeatmapScale().scale(
+      values.reduce((sum, v) => sum + Number(v.value), 0) / values.length
+    )) != null ? _a : $$.config.heatmap_color_none) != null ? _b : void 0 : void 0;
+  },
+  // the swatch of the tooltip: the color of the cell
+  tooltipColor($$, row) {
+    var _a, _b;
+    return heatmap_isValue(row.value) ? (_b = (_a = $$.getHeatmapScale().scale(Number(row.value))) != null ? _a : $$.config.heatmap_color_none) != null ? _b : void 0 : void 0;
+  },
+  // the tooltip of a cell, addressed by its row (tooltip.show({data: {id}, index: column}))
+  tooltipTarget($$, args) {
+    var _a, _b, _c, _d, _e;
+    const { cells } = $$.getHeatmapLayout();
+    const id = (_a = args.data) == null ? void 0 : _a.id;
+    const index = (_c = args.index) != null ? _c : (_b = args.data) == null ? void 0 : _b.index;
+    const x = (_e = args.x) != null ? _e : (_d = args.data) == null ? void 0 : _d.x;
+    const cell = cells.find(
+      (d) => (id === void 0 || d.id === id) && (index !== void 0 ? d.index === index : x !== void 0 ? d.x === String(x) : true) && d.value !== null
+    );
+    return {
+      data: cell ? [$$.getHeatmapCellData(cell)] : [],
+      point: cell && [(cell.x0 + cell.x1) / 2, (cell.y0 + cell.y1) / 2]
+    };
+  }
+};
+const invalid = /* @__PURE__ */ new WeakSet();
+const fitting = /* @__PURE__ */ new WeakMap();
+/* harmony default export */ var core_heatmap = ({
+  /**
+   * Fit the height of the chart (heatmap.cell.ratio) after a draw.
+   * The first height is made before the legend and the other parts are there to measure: it is fit
+   * again once they are, as the resize of the window does. At most 3 times for a width.
+   * @private
+   */
+  fitHeatmapHeight() {
+    const $$ = this;
+    const { width, height } = $$.state.current;
+    const fit = heatmap_customTypeHooks.currentHeight($$);
+    let state = fitting.get($$);
+    if (!state || state.width !== width) {
+      fitting.set($$, state = { width, count: 0 });
+    }
+    if (fit && Math.abs(fit - height) > 1 && state.count++ < 3) {
+      $$.resizeFunction();
+    }
+  },
+  /**
+   * Whether the data belongs to the heatmap type.
+   * @param {object} d Data object
+   * @returns {boolean}
+   * @private
+   */
+  isHeatmapType(d) {
+    return this.isTypeOf(d, "heatmap");
+  },
+  /**
+   * Get the layout of the cells, the names and the color bar, in chart coordinates.
+   * Shared by the SVG and the canvas renderer.
+   * @returns {object} Heatmap layout
+   * @private
+   */
+  getHeatmapLayout(fit = false) {
+    const $$ = this;
+    const { config } = $$;
+    const targets = $$.data.targets.filter($$.isHeatmapType.bind($$));
+    const area = heatmap_getArea.call($$);
+    fit && (area.height = Infinity);
+    const longest = targets.reduce((a, t) => t.values.length > a.length ? t.values : a, []);
+    const columns = longest.map((v) => String(v.x));
+    const { domain, scale } = $$.getHeatmapScale();
+    const shown = targets.filter((t) => $$.isTargetToShow(t.id));
+    const rows = shown.map((t) => t.id);
+    const names = shown.map((t) => {
+      var _a;
+      return String((_a = heatmap_own(config.data_names, t.id)) != null ? _a : t.id);
+    });
+    const showX = config.heatmap_axis_x_show && columns.length > 0;
+    const showY = config.heatmap_axis_y_show && rows.length > 0;
+    const axisYWidth = showY ? _getTextWidth.call($$, names) + AXIS_GAP : 0;
+    const axisXHeight = showX ? AXIS_X_SIZE : 0;
+    const onTop = config.heatmap_axis_x_position === "top";
+    const format = config.heatmap_colorbar_format;
+    const fmt = (v) => v === void 0 ? "" : String(isFunction(format) ? format.call($$.api, v) : v);
+    const ranges = config.heatmap_color_ranges || [];
+    let barLabels = [];
+    if (config.heatmap_colorbar_show) {
+      barLabels = ranges.length ? ranges.map((r, i) => {
+        var _a;
+        return {
+          text: (_a = r.name) != null ? _a : r.from === void 0 ? `\u2264 ${fmt(r.to)}` : r.to === void 0 ? `\u2265 ${fmt(r.from)}` : `${fmt(r.from)} - ${fmt(r.to)}`,
+          pos: (i + 0.5) / ranges.length,
+          edge: false
+        };
+      }) : domain.map((v, i) => ({ text: fmt(v), pos: i, edge: true }));
+    }
+    const barPosition = config.heatmap_colorbar_position;
+    const isBarSide = barPosition !== "top" && barPosition !== "bottom";
+    const hasBar = barLabels.length > 0;
+    const barSpace = hasBar && isBarSide ? BAR_GAP + BAR_WIDTH + 4 + _getTextWidth.call($$, barLabels.map((d) => d.text)) : 0;
+    const barLine = hasBar && !isBarSide ? BAR_GAP + BAR_WIDTH + BAR_LABEL : 0;
+    const barOnTop = barPosition === "top";
+    const plot = {
+      left: area.left + axisYWidth,
+      top: area.top + (onTop ? axisXHeight : 0) + (barOnTop ? barLine : 0),
+      width: Math.max(0, area.width - axisYWidth - barSpace),
+      height: Math.max(0, area.height - axisXHeight - barLine)
+    };
+    let cw = columns.length ? plot.width / columns.length : 0;
+    let ch = rows.length ? plot.height / rows.length : 0;
+    const ratio = config.heatmap_cell_ratio;
+    if (ratio > 0 && cw && ch) {
+      cw = Math.min(cw, ch * ratio);
+      ch = cw / ratio;
+      plot.width = cw * columns.length;
+      plot.height = ch * rows.length;
+    }
+    const pad = config.heatmap_cell_padding / 2;
+    const none = config.heatmap_color_none;
+    const cells = [];
+    shown.forEach((t, row) => {
+      t.values.forEach((v, index) => {
+        var _a;
+        const hasValue = heatmap_isValue(v.value);
+        const color = hasValue ? (_a = scale(Number(v.value))) != null ? _a : none : none;
+        if (!color) {
+          return;
+        }
+        cells.push({
+          id: t.id,
+          name: names[row],
+          x: columns[index],
+          index,
+          row,
+          value: hasValue ? Number(v.value) : null,
+          color,
+          x0: plot.left + index * cw + pad,
+          y0: plot.top + row * ch + pad,
+          x1: plot.left + (index + 1) * cw - pad,
+          y1: plot.top + (row + 1) * ch - pad
+        });
+      });
+    });
+    const axisX = showX ? _getNames(columns, cw, _getTextWidth.call($$, columns)).map(([text, i]) => ({
+      text,
+      x: plot.left + (i + 0.5) * cw,
+      y: onTop ? plot.top - AXIS_GAP : plot.top + plot.height + AXIS_GAP,
+      align: "center",
+      baseline: onTop ? "bottom" : "top"
+    })) : [];
+    const axisY = showY ? _getNames(names, ch, LINE_HEIGHT, 0).map(([text, i]) => ({
+      text,
+      x: plot.left - AXIS_GAP,
+      y: plot.top + (i + 0.5) * ch,
+      align: "right",
+      baseline: "middle"
+    })) : [];
+    let colorbar = null;
+    if (hasBar) {
+      const colors = ranges.length ? ranges.map((r) => r.color) : config.heatmap_color_range;
+      const last = colors.length - 1;
+      const stops = [];
+      colors.forEach((c, i) => {
+        if (ranges.length) {
+          stops.push([i / colors.length, c], [(i + 1) / colors.length, c]);
+        } else {
+          stops.push([last ? i / last : 0, c]);
+        }
+      });
+      if (isBarSide) {
+        const x = plot.left + plot.width + BAR_GAP;
+        colorbar = {
+          horizontal: false,
+          x,
+          y: plot.top,
+          width: BAR_WIDTH,
+          height: plot.height,
+          // the max is on the top
+          stops: stops.map(([o, c]) => [1 - o, c]).reverse(),
+          labels: barLabels.map((d) => ({
+            text: d.text,
+            x: x + BAR_WIDTH + 4,
+            y: plot.top + plot.height * (1 - d.pos),
+            align: "left",
+            baseline: d.edge ? d.pos ? "top" : "bottom" : "middle"
+          }))
+        };
+      } else {
+        const y = barOnTop ? area.top + BAR_LABEL : plot.top + plot.height + (onTop ? 0 : axisXHeight) + BAR_GAP;
+        const labelY = barOnTop ? y - 4 : y + BAR_WIDTH + 4;
+        const baseline = barOnTop ? "bottom" : "top";
+        colorbar = {
+          horizontal: true,
+          x: plot.left,
+          y,
+          width: plot.width,
+          height: BAR_WIDTH,
+          stops,
+          labels: barLabels.map((d) => ({
+            text: d.text,
+            x: plot.left + plot.width * d.pos,
+            y: labelY,
+            align: d.edge ? d.pos ? "right" : "left" : "center",
+            baseline
+          }))
+        };
+      }
+    }
+    return {
+      cells,
+      rows,
+      columns,
+      plot,
+      axisX,
+      axisY,
+      colorbar,
+      domain,
+      height: plot.height + axisXHeight + barLine + area.chrome
+    };
+  },
+  /**
+   * Get the domain of the values and the color function of them.
+   * The colors of the cells do not depend on what is hidden: all the series are counted.
+   * @returns {object} Domain and color getter
+   * @private
+   */
+  getHeatmapScale() {
+    const $$ = this;
+    const { config } = $$;
+    let min = Infinity;
+    let max = -Infinity;
+    $$.data.targets.filter($$.isHeatmapType.bind($$)).forEach((t) => {
+      $$.color(t.id);
+      t.values.forEach((v) => {
+        if (heatmap_isValue(v.value)) {
+          const value = Number(v.value);
+          min = Math.min(min, value);
+          max = Math.max(max, value);
+        }
+      });
+    });
+    let low = config.heatmap_color_min;
+    let high = config.heatmap_color_max;
+    if (low > high) {
+      if (!invalid.has($$)) {
+        invalid.add($$);
+        console.error(
+          `[billboard.js] heatmap.color.min (${low}) is bigger than heatmap.color.max (${high}): both are ignored.`
+        );
+      }
+      low = high = void 0;
+    }
+    const domain = [
+      low != null ? low : min === Infinity ? 0 : min,
+      high != null ? high : max === -Infinity ? 1 : max
+    ];
+    return { domain, scale: _getColorScale.call($$, domain) };
+  },
+  /**
+   * Get the text color of a cell: heatmap.label.color, or the one to read on the cell.
+   * @param {object} cell Cell
+   * @returns {string} Color
+   * @private
+   */
+  getHeatmapLabelColor(cell) {
+    return this.config.heatmap_label_color || _getContrastColor(cell.color);
+  },
+  /**
+   * Get the label of a cell: its value, or the text of heatmap.label.format.
+   * @param {object} cell Cell
+   * @returns {string} Text, empty when it is not shown
+   * @private
+   */
+  getHeatmapLabel(cell) {
+    var _a;
+    const $$ = this;
+    const { config } = $$;
+    if (!config.heatmap_label_show || cell.value === null) {
+      return "";
+    }
+    const format = config.heatmap_label_format;
+    return String(
+      (_a = isFunction(format) ? format.call($$.api, cell.value, cell.x, cell.id) : cell.value) != null ? _a : ""
+    );
+  },
+  /**
+   * Check whether a row is defocused by focus(), defocus() or a legend hover.
+   * @param {string} id Row id
+   * @returns {boolean} Whether it is defocused
+   * @private
+   */
+  isHeatmapDefocused(id) {
+    var _a;
+    return !!((_a = this.state.defocusedTargetIds) == null ? void 0 : _a.has(id));
+  },
+  /**
+   * Get the data of a cell, for the tooltip and the events.
+   * @param {object} cell Cell
+   * @returns {object} Data
+   * @private
+   */
+  getHeatmapCellData(cell) {
+    return {
+      id: cell.id,
+      x: cell.x,
+      index: cell.index,
+      value: cell.value,
+      name: `${cell.name} / ${cell.x}`
+    };
+  },
+  /**
+   * The data labels of the values are not drawn for the heatmap (see customTypeHooks.labelData).
+   * The shared data label code asks the points of every type, so it is there.
+   * @returns {function} Point getter
+   * @private
+   */
+  generateGetHeatmapPoints() {
+    return () => void 0;
+  }
+});
+
+;// ./src/ChartInternal/shape/heatmap.ts
+var shape_heatmap_defProp = Object.defineProperty;
+var shape_heatmap_defProps = Object.defineProperties;
+var shape_heatmap_getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var shape_heatmap_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var shape_heatmap_hasOwnProp = Object.prototype.hasOwnProperty;
+var shape_heatmap_propIsEnum = Object.prototype.propertyIsEnumerable;
+var shape_heatmap_defNormalProp = (obj, key, value) => key in obj ? shape_heatmap_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var shape_heatmap_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (shape_heatmap_hasOwnProp.call(b, prop))
+      shape_heatmap_defNormalProp(a, prop, b[prop]);
+  if (shape_heatmap_getOwnPropSymbols)
+    for (var prop of shape_heatmap_getOwnPropSymbols(b)) {
+      if (shape_heatmap_propIsEnum.call(b, prop))
+        shape_heatmap_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var shape_heatmap_spreadProps = (a, b) => shape_heatmap_defProps(a, shape_heatmap_getOwnPropDescs(b));
+
+
+
+const ANCHOR = { left: "start", right: "end", center: "middle" };
+const DY = { middle: ".35em", top: ".71em", bottom: "0" };
+/* harmony default export */ var shape_heatmap = (shape_heatmap_spreadProps(shape_heatmap_spreadValues({}, core_heatmap), {
+  /**
+   * Initialize heatmap
+   * @private
+   */
+  initHeatmap() {
+    const $$ = this;
+    const { $el } = $$;
+    $el.heatmap = $el.main.select(`.${$COMMON.chart}`).append("g").classed($HEATMAP.chartHeatmap, true);
+    $el.heatmap.append("defs");
+    $el.heatmap.append("g").classed($HEATMAP.heatmapRows, true);
+    $el.heatmap.append("g").classed($HEATMAP.heatmapNames, true);
+    $el.heatmap.append("g").classed($HEATMAP.heatmapColorbar, true);
+    $$.bindHeatmapEvent();
+  },
+  /**
+   * Bind events
+   * @private
+   */
+  bindHeatmapEvent() {
+    const $$ = this;
+    const { $el: { heatmap }, config, state } = $$;
+    if (!config.interaction_enabled) {
+      return;
+    }
+    const getTarget = (event) => {
+      var _a, _b;
+      const target = event.target === heatmap.node() ? (_b = (_a = state.eventReceiver.rect) == null ? void 0 : _a.node) == null ? void 0 : _b.call(_a) : event.target;
+      if (target && /^rect$/i.test(target.tagName)) {
+        const datum = d3_selection_select(target).datum();
+        if ((datum == null ? void 0 : datum.id) !== void 0 && datum.value !== void 0 && datum.value !== null) {
+          state.event = event;
+          return $$.getHeatmapCellData(datum);
+        }
+      }
+    };
+    const isTouch = state.inputType === "touch";
+    heatmap.on(isTouch ? "touchstart" : "mouseover mousemove", (event) => {
+      const data = getTarget(event);
+      if (data) {
+        $$.showTooltip([data], $$.$el.svg.node());
+        /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data, event.target);
+      }
+    }, isTouch ? { passive: true } : void 0).on(isTouch ? "touchend" : "mouseout", (event) => {
+      const data = getTarget(event);
+      if (config.interaction_onout) {
+        $$.hideTooltip();
+        $$.setOverOut(false, data, event.target);
+      }
+    }).on("click", (event) => {
+      const data = getTarget(event);
+      data && config.data_onclick.bind($$.api)(data, event.target);
+    });
+  },
+  /**
+   * Update targets for heatmap.
+   * The cells are made from all the series together, on redraw.
+   * @private
+   */
+  updateTargetsForHeatmap() {
+    const $$ = this;
+    !$$.$el.heatmap && $$.initHeatmap();
+  },
+  /**
+   * Draw a text of the axis or of the color bar
+   * @param {d3Selection} sel Text selection
+   * @param {boolean} withTransition Whether to transit
+   * @private
+   */
+  setHeatmapText(sel, withTransition) {
+    const $$ = this;
+    sel.each(function(d) {
+      d3_selection_select(this).attr("class", $HEATMAP.heatmapAxis).text(d.text).attr("dy", DY[d.baseline]).style("text-anchor", ANCHOR[d.align]);
+    });
+    $$.$T(sel, withTransition).attr("x", (d) => d.x).attr("y", (d) => d.y);
+  },
+  /**
+   * Render heatmap
+   * @param {boolean} withTransition Whether to transit
+   * @private
+   */
+  redrawHeatmap(withTransition) {
+    const $$ = this;
+    const { $el: { heatmap }, config, state } = $$;
+    const { cells, rows, axisX, axisY, colorbar } = $$.getHeatmapLayout();
+    const radius = config.heatmap_cell_radius;
+    const borderWidth = config.heatmap_cell_border_width;
+    const byRow = new Map(rows.map((id) => [id, []]));
+    cells.forEach((d) => {
+      var _a;
+      return (_a = byRow.get(d.id)) == null ? void 0 : _a.push(d);
+    });
+    const row = heatmap.select(`.${$HEATMAP.heatmapRows}`).selectAll(`.${$HEATMAP.heatmapRow}`).data(rows, (d) => d);
+    row.exit().remove();
+    const rowMerge = row.enter().append("g").merge(row).attr("class", (id) => $HEATMAP.heatmapRow + $$.classTarget(id));
+    rowMerge.each(function(id) {
+      const g = d3_selection_select(this);
+      const rowCells = byRow.get(id);
+      const cell = g.selectAll(`.${$HEATMAP.heatmapCell}`).data(rowCells, (d) => d.index);
+      cell.exit().remove();
+      const cellMerge = cell.enter().append("rect").style("opacity", "0").merge(cell).attr(
+        "class",
+        (d) => `${$SHAPE.shape} ${$SHAPE.shape}-${d.index} ${$HEATMAP.heatmapCell}`
+      ).style("fill", (d) => d.color).style("stroke", borderWidth ? config.heatmap_cell_border_color : null).style("stroke-width", borderWidth ? `${borderWidth}px` : null).attr("rx", radius || null);
+      $$.$T(cellMerge, withTransition).attr("x", (d) => d.x0).attr("y", (d) => d.y0).attr("width", (d) => Math.max(0, d.x1 - d.x0)).attr("height", (d) => Math.max(0, d.y1 - d.y0)).style("opacity", null);
+      const label = g.selectAll(`.${$HEATMAP.heatmapLabel}`).data(
+        config.heatmap_label_show ? rowCells.filter((d) => d.value !== null) : [],
+        (d) => d.index
+      );
+      label.exit().remove();
+      label.enter().append("text").merge(label).attr("class", $HEATMAP.heatmapLabel).attr("x", (d) => (d.x0 + d.x1) / 2).attr("y", (d) => (d.y0 + d.y1) / 2).attr("dy", ".35em").style("text-anchor", "middle").style("fill", (d) => $$.getHeatmapLabelColor(d)).text((d) => $$.getHeatmapLabel(d));
+    });
+    const axis = heatmap.select(`.${$HEATMAP.heatmapNames}`).selectAll("text").data(axisX.concat(axisY), (d) => `${d.align}${d.text}`);
+    axis.exit().remove();
+    $$.setHeatmapText(axis.enter().append("text").merge(axis), withTransition);
+    const bar = heatmap.select(`.${$HEATMAP.heatmapColorbar}`);
+    const gradientId = `${state.datetimeId}-heatmap-colorbar`;
+    bar.selectAll("*").remove();
+    heatmap.select("defs").selectAll("*").remove();
+    if (colorbar) {
+      heatmap.select("defs").append("linearGradient").attr("id", gradientId).attr("x1", 0).attr("x2", colorbar.horizontal ? 1 : 0).attr("y1", 0).attr(
+        "y2",
+        colorbar.horizontal ? 0 : 1
+      ).selectAll("stop").data(colorbar.stops).enter().append("stop").attr("offset", (d) => d[0]).attr("stop-color", (d) => d[1]);
+      bar.append("rect").attr("x", colorbar.x).attr("y", colorbar.y).attr("width", colorbar.width).attr("height", colorbar.height).style("fill", `url(#${gradientId})`);
+      $$.setHeatmapText(bar.selectAll("text").data(colorbar.labels).enter().append("text"));
+    }
+    $$.fitHeatmapHeight();
+    heatmap.selectAll(`.${$HEATMAP.heatmapRow}`).classed($FOCUS.defocused, (id) => $$.isHeatmapDefocused(id));
+  }
+}));
+
+;// ./src/config/Options/shape/heatmap.ts
+/* harmony default export */ var Options_shape_heatmap = ({
+  /**
+   * Set heatmap options.<br>
+   * The data is a matrix: `data.x` names the columns, a data series is a row, and its values are the cells.
+   * The cells are colored by their value: the colors of `heatmap.color.range` are spread from the min to the max value.
+   * - **NOTE:** `data.colors` doesn't color the cells (the legend shows the color of the rows).
+   * - **NOTE:** The first series is the top row. A `null` value is a cell of `heatmap.color.none`.
+   * - **NOTE:** With `heatmap.cell.ratio`, the chart height is set automatically from its width, so the cells keep the ratio and no space is left under them.
+   *  It follows the width on resize. Set `size.height` to fix the height: the cells are then the biggest of the ratio that fit in it.
+   * - **NOTE:** `.hide(id)` removes the row: the other cells keep their colors. The names that don't fit are skipped.
+   *
+   * The interactions:
+   * - [data.onover](#.data․onover), [data.onout](#.data․onout) and [data.onclick](#.data․onclick) are called with the data of a cell `{id, x, index, value, name}`,
+   *  where `id` is the row, `x` the name of the column, `index` the index of the column and `name` is "row / column".
+   * - `.focus(id)` and the legend hover dim the other rows.
+   * @name heatmap
+   * @memberof Options
+   * @type {object}
+   * @property {object} heatmap Heatmap object
+   * @property {Array} [heatmap.color.range=["#f6efa6","#d88273","#bf444c"]] The colors from the min to the max value (two or more).
+   * @property {Array} [heatmap.color.ranges] The colors by the ranges of the values, instead of a color range spread on the values: `[{from, to, color, name}]`.
+   *  The first range that has the value (`from` <= value <= `to`) is used. Without `from` or `to`, the range has no lower or upper limit.
+   *  A value in no range is of `heatmap.color.none`. The color bar has a band for each range, with its `name` (or `from - to`).
+   * @property {number} [heatmap.color.min] The value of the first color. When it isn't set, the min value of the data is used.
+   * @property {number} [heatmap.color.max] The value of the last color. When it isn't set, the max value of the data is used.
+   * @property {string} [heatmap.color.none="#ebedf0"] The color of a cell without a value. Set `null` to draw nothing there.
+   * @property {number} [heatmap.cell.ratio] The ratio of the width to the height of the cells: `1` makes them squares, `2` twice as wide as high.
+   *  The chart is as high as the cells need, from its width, so no space is left (and follows the width on resize).
+   *  When `size.height` is set, the cells are the biggest of the ratio that fit in it, and the space left is empty. When the ratio isn't set, the cells fill the chart.
+   * @property {number} [heatmap.cell.padding=0] The gap between the cells in pixels.
+   * @property {number} [heatmap.cell.radius=0] The radius of the corners of the cells in pixels.
+   * @property {number} [heatmap.cell.border.width=0] The width of the border of the cells in pixels.
+   * @property {string} [heatmap.cell.border.color="#fff"] The color of the border of the cells.
+   * @property {boolean} [heatmap.label.show=false] Show the values in the cells.
+   * @property {function} [heatmap.label.format] Set the formatter of the values in the cells.
+   *  - **NOTE:** The arguments are the value, the name of the column and the id of the row.
+   * @property {string} [heatmap.label.color] The color of the values. When it isn't set, black or white is used to read on the cell.
+   * @property {boolean} [heatmap.axis.x.show=true] Show the names of the columns.
+   * @property {string} [heatmap.axis.x.position="bottom"] The position of the names of the columns: "bottom" or "top".
+   * @property {boolean} [heatmap.axis.y.show=true] Show the names of the rows.
+   * @property {boolean} [heatmap.colorbar.show=true] Show the color bar, with the min and the max value, at the right of the cells.
+   * @property {string} [heatmap.colorbar.position="right"] The position of the color bar: "right" (vertical), "bottom" or "top" (horizontal, the min value at the left).
+   * @property {function} [heatmap.colorbar.format] Set the formatter of the values of the color bar.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.HeatmapChart)
+   * @example
+   *  data: {
+   *      x: "x",
+   *      columns: [
+   *          // the columns
+   *          ["x", "Mon", "Tue", "Wed"],
+   *          // the rows
+   *          ["Morning", 3, 8, 5],
+   *          ["Evening", 9, null, 1]
+   *      ],
+   *      type: "heatmap"  // for ESM, import {heatmap} from "billboard.js" and do type: heatmap()
+   *  },
+   *  heatmap: {
+   *      color: {
+   *          range: ["#ffffcc", "#41b6c4", "#0c2c84"],
+   *          min: 0,
+   *          max: 10,
+   *          none: "#eee",
+   *          // or by the ranges of the values
+   *          ranges: [
+   *              {to: 0, color: "#ebedf0", name: "none"},
+   *              {from: 1, to: 9, color: "#9be9a8"},
+   *              {from: 10, color: "#216e39", name: "10+"}
+   *          ]
+   *      },
+   *      cell: {
+   *          ratio: 1,
+   *          padding: 2,
+   *          radius: 3,
+   *          border: {
+   *              width: 1,
+   *              color: "#fff"
+   *          }
+   *      },
+   *      label: {
+   *          show: true,
+   *          format: function(value, x, id) {
+   *              return value + "%";
+   *          }
+   *      },
+   *      axis: {
+   *          x: {
+   *              position: "top"
+   *          }
+   *      },
+   *      colorbar: {
+   *          show: true,
+   *          position: "bottom"
+   *      }
+   *  }
+   */
+  heatmap_color_range: ["#f6efa6", "#d88273", "#bf444c"],
+  heatmap_color_ranges: void 0,
+  heatmap_color_min: void 0,
+  heatmap_color_max: void 0,
+  heatmap_color_none: "#ebedf0",
+  heatmap_cell_ratio: void 0,
+  heatmap_cell_padding: 0,
+  heatmap_cell_radius: 0,
+  heatmap_cell_border_width: 0,
+  heatmap_cell_border_color: "#fff",
+  heatmap_label_show: false,
+  heatmap_label_format: void 0,
+  heatmap_label_color: void 0,
+  heatmap_axis_x_show: true,
+  heatmap_axis_x_position: "bottom",
+  heatmap_axis_y_show: true,
+  heatmap_colorbar_show: true,
+  heatmap_colorbar_position: "right",
+  heatmap_colorbar_format: void 0
+});
+
+;// ./src/config/resolver/shape/heatmap.ts
+
+
+
+
+
+
+
+let heatmap_heatmap = () => (extend(ChartInternal.prototype, [shape_heatmap]), Options.setOptions([Options_shape_heatmap]), registerCustomType("heatmap", { hooks: heatmap_customTypeHooks }), (heatmap_heatmap = () => "heatmap")());
+
 ;// ./src/config/resolver/shape/line.ts
 
 
@@ -72641,13 +73528,13 @@ var sankey_spreadProps = (a, b) => sankey_defProps(a, sankey_getOwnPropDescs(b))
       const data = getTarget(event);
       if (data) {
         $$.showTooltip([data], $$.$el.svg.node());
-        /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
+        /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data, event.target);
       }
     }, isTouch ? { passive: true } : void 0).on(isTouch ? "touchend" : "mouseout", (event) => {
       const data = getTarget(event);
       if (config.interaction_onout) {
         $$.hideTooltip();
-        $$.setOverOut(false, data);
+        $$.setOverOut(false, data, event.target);
       }
     }).on("click", (event) => {
       const data = getTarget(event);
@@ -74637,6 +75524,7 @@ let treemap_treemap = () => (extendAxis([shape_treemap], [Options_shape_treemap]
 
 
 
+
 ;// ./src/core.ts
 
 
@@ -74649,7 +75537,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.1.5-nightly-20261124004158",
+  version: "4.1.5-nightly-20261125004611",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
@@ -74864,6 +75752,7 @@ const bb = {
 
 
 
+
 Object.keys(shape_namespaceObject).forEach((v) => shape_namespaceObject[v]());
 Object.keys(interaction_namespaceObject).forEach((v) => interaction_namespaceObject[v]());
 exportApi();
@@ -74879,6 +75768,7 @@ regions_regions();
 category_category();
 canvas();
 registerCustomType("bullet", { canvas: bullet });
+registerCustomType("heatmap", { canvas: heatmap });
 registerCustomType("sankey", { canvas: sankey });
 registerCanvasType("treemap", treemap);
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.5-nightly-20261124004158
+ * @version 4.1.5-nightly-20261125004611
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -29013,7 +29013,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "4.1.5-nightly-20261124004158");
+__publicField(Plugin, "version", "4.1.5-nightly-20261125004611");
 
 ;// ./node_modules/.pnpm/d3-axis@3.0.1/node_modules/d3-axis/dist/d3-axis.mjs
 // https://d3js.org/d3-axis/ v3.0.1 Copyright 2010-2026 Mike Bostock

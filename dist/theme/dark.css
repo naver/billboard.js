@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.5-nightly-20261124004158
+ * @version 4.1.5-nightly-20261125004611
  */
 /*-- Dark Theme --*/
 /*-- Default color pattern --*/
@@ -81,6 +81,19 @@
 }
 .bb-chart-bullets + .bb-chart-texts text {
   fill: #fff;
+}
+
+/*-- Heatmap --*/
+.bb-chart-heatmap .bb-heatmap-axis {
+  font-size: 10px;
+  fill: #fff;
+}
+.bb-chart-heatmap .bb-heatmap-label {
+  font-size: 10px;
+  pointer-events: none;
+}
+.bb-chart-heatmap .bb-heatmap-row.bb-defocused {
+  opacity: 0.5;
 }
 
 /*-- Sankey --*/
