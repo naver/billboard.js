@@ -19,6 +19,7 @@ export {
 	bar,
 	bubble,
 	candlestick,
+	heatmap,
 	line,
 	sankey,
 	scatter,

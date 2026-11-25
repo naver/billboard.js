@@ -7,6 +7,12 @@ import type {d3Selection} from "../../../types/types";
 import {getBBox, isDefined, isValue} from "../../module/util";
 import {getScale} from "../internals/scale";
 
+/**
+ * Size of one character per chart and font
+ * @private
+ */
+const charSizeCache = new WeakMap<object, Record<string, {w: number, h: number}>>();
+
 export default class AxisRendererHelper {
 	private owner;
 	private config;
@@ -49,20 +55,48 @@ export default class AxisRendererHelper {
 			return this.charSize[orient];
 		}
 
-		!text.empty() && text
-			.text("0")
-			.call((el: d3Selection) => {
-				try {
-					const {width, height} = getBBox(el.node(), true);
+		const node = text.node();
+
+		if (node) {
+			// A new renderer is made per redraw, so the size is kept per chart. It depends on
+			// the font only, which the key tells apart when the style changes.
+			const chart = this.owner.params.owner;
+			const style = window.getComputedStyle(node);
+			const key = [
+				orient,
+				style.fontStyle,
+				style.fontWeight,
+				style.fontSize,
+				style.fontFamily,
+				style.letterSpacing
+			].join(" ");
+			const cache = charSizeCache.get(chart) ?? {};
+			const cached = cache[key];
+
+			charSizeCache.set(chart, cache);
+
+			try {
+				if (cached) {
+					size.w = cached.w;
+					size.h = cached.h;
+				} else {
+					// only the first node is measured, so write "0" to it alone
+					node.textContent = "0";
+
+					const {width, height} = getBBox(node, true);
 
 					if (width && height) {
 						size.w = width;
 						size.h = height;
+						cache[key] = {w: width, h: height};
 					}
-				} finally {
-					el.text("");
 				}
-			});
+			} finally {
+				// every node is emptied, as the callers rebuild their content
+				// (and a leftover <title> would stay)
+				text.text("");
+			}
+		}
 
 		this.charSize[orient] = size;
 

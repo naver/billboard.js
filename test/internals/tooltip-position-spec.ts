@@ -744,10 +744,10 @@ describe("TOOLTIP Position", function() {
 			
 			setTimeout(() => {
 			  util.hoverChart(chart, "mousemove", {clientX: 250, clientY: 170}, path);
-			  checkPos(tooltip, [198.5, 249.5]);
+			  checkPos(tooltip, [190.5, 249.5]);
 	  
 			  util.hoverChart(chart, "mousemove", {clientX: 630, clientY: 470}, path);
-			  checkPos(tooltip, [445.5, 524.5]);
+			  checkPos(tooltip, [437.5, 524.5]);
 	  
 			  done(1);
 			}, 350)
@@ -791,10 +791,10 @@ describe("TOOLTIP Position", function() {
 			  });
 	  
 			util.hoverChart(chart, "mousemove", {clientX: 100, clientY: 170}, treemap.node());
-			checkPos(tooltip, [198, 100]);
+			checkPos(tooltip, [190, 100]);
 	  
 			util.hoverChart(chart, "mousemove", {clientX: 100, clientY: 470}, treemap.node());
-			checkPos(tooltip, [442, 100]);
+			checkPos(tooltip, [437, 100]);
 		  });
 		});
 	  

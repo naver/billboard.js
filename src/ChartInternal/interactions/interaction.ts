@@ -59,9 +59,10 @@ export default {
 	 * Handle data.onover/out callback options
 	 * @param {boolean} isOver Over or not
 	 * @param {number|object} d data object
+	 * @param {Element} [element] The element hovered, when it isn't the first shape of the data
 	 * @private
 	 */
-	setOverOut(isOver: boolean, d: number | IArcDataRow): void {
+	setOverOut(isOver: boolean, d: number | IArcDataRow, element?: Element): void {
 		const $$ = this;
 		const {config, state: {customType, hasRadar, hasTreemap}, $el: {main}} = $$;
 		const isArcishData = isObject(d);
@@ -78,7 +79,8 @@ export default {
 					`${$COMMON.target + suffix} .${$SHAPE.shape}` :
 					$ARC.arc + suffix;
 
-				callback(d, main.select(`.${selector}`).node());
+				// the element the type gives (the hovered cell, link...), or the first shape of the data
+				callback(d, element ?? main.select(`.${selector}`).node());
 			} else if (!config.tooltip_grouped) {
 				const last = $$.cache.get(KEY.setOverOut) || [];
 

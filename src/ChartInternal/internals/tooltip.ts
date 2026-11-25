@@ -24,6 +24,9 @@ import {
 import type {IArcData, IDataRow} from "../data/IData";
 
 // Hoisted to module level to avoid recompilation on every getTooltipContentTemplate() call
+// the gap between the pointer and the tooltip of the types that have no axis, in px
+const TOOLTIP_GAP = 15;
+
 const RE_WHITESPACE = /(\r?\n|\t)/g;
 const RE_TOOLTIP_TPL = /{{(.*)}}/;
 
@@ -162,7 +165,9 @@ export default {
 			row => ($$.axis && $$.isBubbleZType(row) ?
 				$$.getBubbleZData(row.value, "z") :
 				$$.getBaseValue(row));
-		const getBgColor = $$.levelColor ? row => $$.levelColor(row.value) : row => color(row);
+		const getBaseColor = $$.levelColor ? row => $$.levelColor(row.value) : row => color(row);
+		// a chart type of its own can give the color of the swatch
+		const getBgColor = row => $$.customTypeHooks?.tooltipColor?.($$, row) ?? getBaseColor(row);
 		const contents = config.tooltip_contents;
 		const tplStr = contents.template;
 		const targetIds = $$.mapToTargetIds();
@@ -423,6 +428,7 @@ export default {
 		const ctm = getTransformCTM(target, x, y, false);
 		const rect = getBoundingRect(target);
 		const size = getTransformCTM(target, 20, 0, false).x;
+		const gap = getTransformCTM(target, TOOLTIP_GAP, 0, false).x;
 
 		let top = ctm.y;
 		let left = ctm.x + (tWidth / 2) + size;
@@ -430,7 +436,7 @@ export default {
 		if (hasArcType) {
 			if (state.customType || state.hasTreemap || state.hasRadar) {
 				left -= (tWidth / 2) + size;
-				top += tHeight;
+				top += gap;
 			} else {
 				top += rect.height / 2;
 				left += (rect.width / 2) - (tWidth - size);
@@ -442,7 +448,10 @@ export default {
 		}
 
 		if (top + tHeight > rect.height) {
-			top -= tHeight * 2;
+			// above the pointer: the same gap as under it, where the type has one
+			top -= hasArcType && (state.customType || state.hasTreemap || state.hasRadar) ?
+				tHeight + gap * 2 :
+				tHeight * 2;
 		}
 
 		return {
@@ -497,10 +506,10 @@ export default {
 				}
 
 				x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
-				y += (hasGauge ? height : (height / 2) + tHeight) + titlePadding;
+				y += (hasGauge ? height : height / 2) + titlePadding + TOOLTIP_GAP;
 			}
 		} else if (customType || hasTreemap) {
-			y += tHeight;
+			y += TOOLTIP_GAP;
 		} else {
 			const padding = {
 				top: $$.getCurrentPaddingByDirection("top", true),
@@ -524,9 +533,8 @@ export default {
 		}
 
 		if (y + tHeight > current.height) {
-			const gap = hasTreemap ? tHeight + 10 : 30;
-
-			y -= hasGauge ? tHeight * 1.5 : tHeight + gap;
+			// above the pointer: the same gap as under it
+			y -= hasGauge ? tHeight * 1.5 + TOOLTIP_GAP : tHeight + TOOLTIP_GAP * 2;
 		}
 
 		const pos = {top: y, left: x};

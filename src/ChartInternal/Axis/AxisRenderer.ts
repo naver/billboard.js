@@ -289,7 +289,10 @@ export default class AxisRenderer {
 							.enter()
 							.append("tspan")
 							.merge(tspan)
-							.text(d => d.splitted);
+							.each(function(d) {
+								// assigning textContent replaces the text node even for the same string
+								this.textContent !== d.splitted && (this.textContent = d.splitted);
+							});
 
 						// set <tspan>'s position
 						tspan

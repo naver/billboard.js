@@ -22,6 +22,7 @@ export {
 	donut,
 	funnel,
 	gauge,
+	heatmap,
 	line,
 	pie,
 	polar,

@@ -43,6 +43,7 @@ var billboardDemo = {
 			"bubble",
 			"bullet",
 			"candlestick",
+			"heatmap",
 			"line",
 			"sankey",
 			"scatter",
@@ -514,7 +515,7 @@ var billboardDemo = {
 
 		// UMD
 		code.data = code.data.join("")
-			.replace(/"(area|area-line-range|area-spline|area-spline-range|area-step|area-step-range|bar|bubble|bullet|candlestick|canvas|donut|funnel|gauge|line|pie|polar|radar|sankey|scatter|spline|step|treemap|selection|subchart|zoom)(\(\))?",?/g, function(match, p1, p2, p3, offset, string) {
+			.replace(/"(area|area-line-range|area-spline|area-spline-range|area-step|area-step-range|bar|bubble|bullet|candlestick|canvas|donut|funnel|gauge|heatmap|line|pie|polar|radar|sankey|scatter|spline|step|treemap|selection|subchart|zoom)(\(\))?",?/g, function(match, p1, p2, p3, offset, string) {
 				var module = camelize(p1);
 		
 				code.esm.indexOf(module) === -1 &&

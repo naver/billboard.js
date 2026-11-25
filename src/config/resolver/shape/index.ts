@@ -10,6 +10,7 @@ export {candlestick} from "./candlestick";
 export {donut} from "./donut";
 export {funnel} from "./funnel";
 export {gauge} from "./gauge";
+export {heatmap} from "./heatmap";
 export {line, spline, step} from "./line";
 export {pie} from "./pie";
 export {polar} from "./polar";

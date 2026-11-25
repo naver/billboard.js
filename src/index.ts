@@ -5,6 +5,7 @@
 import canvasBullet from "./canvas/bullet";
 import canvasFlow from "./canvas/flow";
 import canvasGrid from "./canvas/grid";
+import canvasHeatmap from "./canvas/heatmap";
 import canvasSankey from "./canvas/sankey";
 import canvasSelection, {selectionDraw} from "./canvas/selection";
 import canvasSubchart, {subchartDraw} from "./canvas/subchart";
@@ -46,6 +47,9 @@ canvas();
 
 // the canvas drawing of bullet, which shape resolvers do not carry
 registerCustomType("bullet", {canvas: canvasBullet});
+
+// the canvas drawing of heatmap, which the svg shape resolver does not carry
+registerCustomType("heatmap", {canvas: canvasHeatmap});
 
 // the canvas drawing of sankey, which the svg shape resolver does not carry
 registerCustomType("sankey", {canvas: canvasSankey});

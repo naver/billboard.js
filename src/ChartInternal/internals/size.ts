@@ -37,7 +37,8 @@ export default {
 	getCurrentHeight(): number {
 		const $$ = this;
 		const {config, state, $el} = $$;
-		let h = config.size_height;
+		// a chart type of its own can make the chart as high as it needs, from the width
+		let h = config.size_height || $$.customTypeHooks?.currentHeight?.($$);
 
 		if (!h) {
 			// The min-height reserved for the canvas surface is this element's own

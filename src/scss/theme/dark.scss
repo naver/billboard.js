@@ -97,6 +97,24 @@ $font-family: Helvetica, Arial, sans-serif, "nanumgothic", "Dotum";
 	}
 }
 
+/*-- Heatmap --*/
+.bb-chart-heatmap {
+	.bb-heatmap-axis {
+		font-size: 10px;
+		fill: #fff;
+	}
+
+	.bb-heatmap-label {
+		font-size: 10px;
+		pointer-events: none;
+	}
+
+	// focus: the rows are of the target classes
+	.bb-heatmap-row.bb-defocused {
+		opacity: 0.5;
+	}
+}
+
 /*-- Sankey --*/
 .bb-chart-sankey {
 	.bb-sankey-link {

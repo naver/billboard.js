@@ -1192,6 +1192,129 @@ export interface PolarOptions {
 	startAngle?: number;
 }
 
+export interface HeatmapCellData {
+	id: string;
+	x: string;
+	index: number;
+	value: number | null;
+	name: string;
+}
+
+export interface HeatmapOptions {
+	color?: {
+		/**
+		 * The colors from the min to the max value (two or more).
+		 */
+		range?: string[];
+
+		/**
+		 * The colors by the ranges of the values, instead of a color range spread on the values.
+		 * The first range that has the value is used. A value in no range is of `none`.
+		 */
+		ranges?: {from?: number; to?: number; color: string; name?: string}[];
+
+		/**
+		 * The value of the first color. When it isn't set, the min value of the data is used.
+		 */
+		min?: number;
+
+		/**
+		 * The value of the last color. When it isn't set, the max value of the data is used.
+		 */
+		max?: number;
+
+		/**
+		 * The color of a cell without a value. Set `null` to draw nothing there.
+		 */
+		none?: string | null;
+	};
+
+	cell?: {
+		/**
+		 * The ratio of the width to the height of the cells: 1 makes them squares.
+		 * The chart is as high as the cells need, from its width. When `size.height` is set, the cells are the biggest of the ratio that fit in it. When it isn't set, the cells fill the chart.
+		 */
+		ratio?: number;
+
+		/**
+		 * The gap between the cells in pixels.
+		 */
+		padding?: number;
+
+		/**
+		 * The radius of the corners of the cells in pixels.
+		 */
+		radius?: number;
+
+		border?: {
+			/**
+			 * The width of the border of the cells in pixels.
+			 */
+			width?: number;
+
+			/**
+			 * The color of the border of the cells.
+			 */
+			color?: string;
+		};
+	};
+
+	label?: {
+		/**
+		 * Show the values in the cells.
+		 */
+		show?: boolean;
+
+		/**
+		 * Set the formatter of the values in the cells.
+		 */
+		format?: (this: Chart, value: number, x: string, id: string) => string;
+
+		/**
+		 * The color of the values. When it isn't set, black or white is used to read on the cell.
+		 */
+		color?: string;
+	};
+
+	axis?: {
+		x?: {
+			/**
+			 * Show the names of the columns.
+			 */
+			show?: boolean;
+
+			/**
+			 * The position of the names of the columns.
+			 */
+			position?: "bottom" | "top";
+		};
+
+		y?: {
+			/**
+			 * Show the names of the rows.
+			 */
+			show?: boolean;
+		};
+	};
+
+	colorbar?: {
+		/**
+		 * Show the color bar, with the min and the max value.
+		 */
+		show?: boolean;
+
+		/**
+		 * The position of the color bar: right (vertical), bottom or top (horizontal).
+		 */
+		position?: "right" | "bottom" | "top";
+
+		/**
+		 * Set the formatter of the values of the color bar.
+		 */
+		format?: (this: Chart, value: number) => string;
+	};
+}
+
 export interface SankeyNodeData {
 	id: string;
 	index: number;
