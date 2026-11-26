@@ -348,6 +348,7 @@ export default {
 	/**
 	 * Get the layout of the cells, the names and the color bar, in chart coordinates.
 	 * Shared by the SVG and the canvas renderer.
+	 * @param {boolean} [fit=false] Set true to lay out the cells without the height limit, to get the height they need
 	 * @returns {object} Heatmap layout
 	 * @private
 	 */

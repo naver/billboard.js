@@ -41,6 +41,9 @@ const BASELINE_DY = {middle: 0.35, top: 0.71, bottom: 0};
  * @param {CanvasRenderer} renderer Canvas renderer
  * @param {object} d Text with its position, alignment and baseline
  * @param {object} style Font, color and alpha
+ * @param {string} style.font Font of the text
+ * @param {string} style.fill Color of the text
+ * @param {number} [style.alpha] Opacity of the text
  * @private
  */
 function drawText(renderer: CanvasRenderer, d,
