@@ -51,6 +51,7 @@ import apiTooltip from "./api/tooltip";
  * @property {object} $.bar Bar element object
  * @property {d3.selection} $.bar.bars Bar elements
  * @property {d3.selection} $.candlestick Candlestick elements
+ * @property {d3.selection} $.boxplot Boxplot elements
  * @property {object} $.line Line element object
  * @property {d3.selection} $.line.lines Line elements
  * @property {d3.selection} $.line.areas Areas elements

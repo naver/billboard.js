@@ -204,6 +204,143 @@ var demos = {
 				}
 			}
 		],
+		BoxplotChart: [
+			{
+				options: {
+					data: {
+						columns: [
+							// min, q1, median, q3, max, [outliers], mean
+							["Group A", [12, 25, 33, 41, 58, [75, 80], 35], [15, 28, 37, 45, 60, [], 38], [10, 22, 30, 39, 52, [3], 31]],
+							["Group B", [20, 31, 40, 52, 70, [], 43], [18, 30, 42, 55, 68, [90], 44], [25, 35, 46, 58, 74, [], 48]]
+						],
+						type: "boxplot"
+					},
+					boxplot: {
+						mean: {
+							show: true
+						},
+						outlier: {
+							r: 4
+						}
+					},
+					axis: {
+						x: {
+							type: "category",
+							categories: ["Mon", "Tue", "Wed"]
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							// the samples: the quartiles, the whiskers and the outliers are calculated
+							["Response time",
+								[82, 95, 110, 120, 130, 140, 150, 155, 170, 185, 190, 260, 420],
+								[70, 85, 100, 110, 118, 125, 140, 150, 165, 175, 180, 230],
+								[90, 105, 125, 140, 160, 170, 185, 200, 220, 240, 250, 310, 330, 520],
+								[60, 75, 90, 100, 110, 120, 130, 140, 150, 160, 165, 200]
+							]
+						],
+						colors: {
+							"Response time": "#e8590c"
+						},
+						type: "boxplot"
+					},
+					boxplot: {
+						samples: true,
+						width: 24,
+						whisker: {
+							iqr: 1.5,
+							width: 0.3
+						},
+						outlier: {
+							r: 4
+						}
+					},
+					axis: {
+						rotated: true,
+						x: {
+							type: "category",
+							categories: ["API", "Web", "Batch", "Cache"]
+						},
+						y: {
+							min: 0,
+							max: 600,
+							tick: {
+								values: [0, 100, 200, 300, 400, 500, 600],
+								format: function(v) {
+									return v + "ms";
+								}
+							}
+						}
+					},
+					grid: {
+						y: {
+							show: true
+						}
+					},
+					legend: {
+						show: false
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "2026-01-01", "2026-02-01", "2026-03-01", "2026-04-01", "2026-05-01"],
+							["Seoul", [-9, -4, 1, 5, 12, [-14], 1.5], [-6, -1, 4, 8, 14, [], 4.5], [-1, 3, 8, 13, 19, [], 8], [6, 10, 14, 19, 25, [30], 14.5], [12, 16, 20, 24, 30, [], 20]],
+							["Busan", [-4, 0, 4, 8, 13, [], 4.5], [-2, 2, 6, 9, 14, [], 6], [2, 6, 10, 14, 18, [], 10], [8, 11, 15, 19, 23, [], 15], [13, 16, 19, 22, 27, [31], 19.5]]
+						],
+						type: "boxplot"
+					},
+					boxplot: {
+						width: {
+							Seoul: {
+								ratio: 0.4,
+								max: 36
+							},
+							Busan: {
+								ratio: 0.4,
+								max: 20
+							}
+						},
+						whisker: {
+							width: 1
+						},
+						mean: {
+							show: true,
+							r: 3
+						},
+						outlier: {
+							show: true,
+							r: 2
+						}
+					},
+					axis: {
+						x: {
+							type: "timeseries",
+							tick: {
+								format: "%b"
+							}
+						}
+					},
+					legend: {
+						position: "right"
+					},
+					tooltip: {
+						format: {
+							value: function(v) {
+								return v + "°C";
+							}
+						}
+					}
+				}
+			}
+		],
 		BubbleChart: {
 			options: {
 				data: {
@@ -288,46 +425,46 @@ var demos = {
 						columns: [
 							["data1",
 								// open, high, low, close, volume (optional)
-								[1327,1369,1289,1348],
-								[1348,1371,1314,1320],
-								[1320,1412,1314,1394],
-								[1394,1458,1393,1453],
-								[1453,1501,1448,1500],
-								[1500,1510,1492,1496],
-								[1496,1496,1448,1448],
-								[1448,1490,1433,1490],
-								[1490,1544,1490,1537],
-								[1537,1563,1534,1544],
-								[1544,1550,1511,1525],
-								[1525,1609,1517,1604],
-								[1604,1614,1585,1592],
-								[1592,1632,1586,1620],
-								[1620,1633,1609,1622],
-								[1622,1697,1620,1687],
-								[1687,1691,1624,1648],
-								[1648,1689,1640,1671],
-								[1671,1702,1671,1695],
-								[1695,1727,1689,1724],
-								[1724,1733,1691,1696],
-								[1696,1733,1696,1731],
-								[1731,1756,1716,1748],
-								[1748,1769,1734,1762],
-								[1762,1792,1752,1778],
-								[1778,1783,1763,1769],
-								[1769,1791,1740,1755],
-								[1755,1755,1711,1725],
-								[1725,1739,1683,1701],
-								[1701,1731,1694,1730],
-								[1730,1739,1703,1715],
-								[1715,1745,1710,1731],
-								[1731,1732,1643,1643],
-								[1643,1662,1608,1615],
-								[1615,1667,1615,1665],
-								[1665,1689,1663,1671],
-								[1671,1671,1587,1588],
-								[1588,1599,1521,1533],
-								[1533,1554,1476,1490],
-								[1490,1494,1432,1443]
+								[1327,1369,1289,1348,3650],
+								[1348,1371,1314,1320,3100],
+								[1320,1412,1314,1394,5060],
+								[1394,1458,1393,1453,3880],
+								[1453,1501,1448,1500,3380],
+								[1500,1510,1492,1496,1720],
+								[1496,1496,1448,1448,3320],
+								[1448,1490,1433,1490,3540],
+								[1490,1544,1490,1537,3560],
+								[1537,1563,1534,1544,2240],
+								[1544,1550,1511,1525,2360],
+								[1525,1609,1517,1604,4890],
+								[1604,1614,1585,1592,2030],
+								[1592,1632,1586,1620,2820],
+								[1620,1633,1609,1622,1800],
+								[1622,1697,1620,1687,4380],
+								[1687,1691,1624,1648,3720],
+								[1648,1689,1640,1671,2980],
+								[1671,1702,1671,1695,2490],
+								[1695,1727,1689,1724,2820],
+								[1724,1733,1691,1696,2960],
+								[1696,1733,1696,1731,2550],
+								[1731,1756,1716,1748,2410],
+								[1748,1769,1734,1762,2250],
+								[1762,1792,1752,1778,2460],
+								[1778,1783,1763,1769,1800],
+								[1769,1791,1740,1755,2840],
+								[1755,1755,1711,1725,2910],
+								[1725,1739,1683,1701,3210],
+								[1701,1731,1694,1730,2760],
+								[1730,1739,1703,1715,2550],
+								[1715,1745,1710,1731,2570],
+								[1731,1732,1643,1643,4910],
+								[1643,1662,1608,1615,3000],
+								[1615,1667,1615,1665,3300],
+								[1665,1689,1663,1671,1900],
+								[1671,1671,1587,1588,4830],
+								[1588,1599,1521,1533,4270],
+								[1533,1554,1476,1490,4130],
+								[1490,1494,1432,1443,3740]
 							]
 						],
 						type: "candlestick",
@@ -475,6 +612,73 @@ var demos = {
 				];
 			}
 		},
+		BulletChart: [
+			{
+				options: {
+					title: {
+						text: "Horizontal Bullet"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet",
+						labels: true
+					},
+					bullet: {
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Horizontal Bullet with Dot"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet",
+						labels: true
+					},
+					bullet: {
+						type: "dot",
+						marker: {
+							size: 6
+						},
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Vertical Bullet"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet",
+						labels: true
+					},
+					bullet: {
+						rotated: true,
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			}
+		],
 		FunnelChart: [
 			{
 				options: {
@@ -491,6 +695,9 @@ var demos = {
 							format: function(v, id, i, texts) {
 						return id;
 							}
+						},
+						onclick: function(d, i) {
+							console.log("onclick", d, i);
 						}
 					}
 				}
@@ -840,7 +1047,10 @@ var demos = {
 						["data3", 230, 153, 85, 300, 250]
 					],
 					type: "radar",
-					labels: true
+					labels: true,
+					onclick: function(d, i) {
+						console.log("onclick", d, i);
+					}
 				},
 				radar: {
 					axis: {
@@ -855,6 +1065,215 @@ var demos = {
 				}
 			}
 		},
+		HeatmapChart: [
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+							["9am", 12, 25, 30, 28, 20, 5, 2],
+							["12pm", 45, 60, 72, 65, 50, 15, 8],
+							["3pm", 38, 55, 68, 70, 48, 22, 10],
+							["6pm", 20, 30, 35, 42, 60, 48, 30],
+							["9pm", 5, 8, 10, 15, 35, 40, 25]
+						],
+						type: "heatmap",
+						onclick: function(d) {
+							console.log("onclick", d);
+						}
+					},
+					heatmap: {
+						colorbar: {
+							position: "bottom"
+						}
+					},
+					legend: {
+						show: false
+					}
+				}
+			},
+			{
+				// dense: 7 days x 52 weeks
+				options: (function() {
+					var weeks = ["x"];
+					var days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+					var rows = days.map(function(day) {
+						return [day];
+					});
+
+					for (var w = 0; w < 52; w++) {
+						weeks.push("W" + (w + 1));
+
+						rows.forEach(function(row, d) {
+							// a pseudo random count: deterministic, more on weekdays
+							var n = Math.abs(Math.sin((w + 1) * 12.9898 + (d + 1) * 78.233) * 43758.5453) % 1;
+
+							row.push(Math.round(n * (d < 5 ? 12 : 5)));
+						});
+					}
+
+					return {
+						data: {
+							x: "x",
+							columns: [weeks].concat(rows),
+							type: "heatmap"
+						},
+						heatmap: {
+							color: {
+								ranges: [
+									{to: 0, color: "#ebedf0", name: "0"},
+									{from: 1, to: 3, color: "#9be9a8", name: "1-3"},
+									{from: 4, to: 6, color: "#40c463", name: "4-6"},
+									{from: 7, to: 9, color: "#30a14e", name: "7-9"},
+									{from: 10, color: "#216e39", name: "10+"}
+								]
+							},
+							cell: {
+								ratio: 1,
+								padding: 1,
+								radius: 2
+							},
+							colorbar: {
+								position: "top"
+							}
+						},
+						legend: {
+							show: false
+						}
+					};
+				})()
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "Q1", "Q2", "Q3", "Q4"],
+							["Seoul", 0.2, 0.5, 0.9, 0.4],
+							["Busan", 0.1, 0.4, 0.8, 0.3],
+							["Jeju", null, 0.6, 1, 0.5]
+						],
+						type: "heatmap"
+					},
+					heatmap: {
+						color: {
+							range: ["#ffffcc", "#41b6c4", "#0c2c84"],
+							min: 0,
+							max: 1,
+							none: "#eee"
+						},
+						cell: {
+							padding: 3,
+							radius: 4
+						},
+						label: {
+							show: true,
+							format: function(value) {
+								return Math.round(value * 100) + "%";
+							}
+						},
+						axis: {
+							x: {
+								position: "top"
+							}
+						}
+					}
+				}
+			}
+		],
+		SankeyChart: [
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "Organic", "Paid", "Referral", "Sign up", "Leave", "Free", "Pro"],
+							["Visit", 420, 260, 120, 0, 0, 0, 0],
+							["Organic", 0, 0, 0, 180, 240, 0, 0],
+							["Paid", 0, 0, 0, 150, 110, 0, 0],
+							["Referral", 0, 0, 0, 90, 30, 0, 0],
+							["Sign up", 0, 0, 0, 0, 0, 300, 120]
+						],
+						type: "sankey",
+						onclick: function(d) {
+							console.log("onclick", d);
+						}
+					},
+					legend: {
+						show: false
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "Electricity", "Heat", "Industry", "Homes", "Transport", "Loss"],
+							["Coal", 120, 40, 0, 0, 0, 0],
+							["Gas", 90, 70, 0, 0, 0, 0],
+							["Oil", 10, 0, 30, 0, 140, 0],
+							["Electricity", 0, 0, 80, 90, 10, 40],
+							["Heat", 0, 0, 50, 60, 0, 0]
+						],
+						type: "sankey",
+						names: {
+							Loss: "Conversion loss"
+						}
+					},
+					sankey: {
+						node: {
+							width: 16,
+							padding: 14,
+							align: "left"
+						},
+						link: {
+							color: "gradient"
+						},
+						label: {
+							format: function(name, value) {
+								return name + " (" + value + ")";
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "Online", "Store", "Profit", "Cost", "Tax"],
+							["Product A", 40, 20, 0, 0, 0],
+							["Product B", 25, 35, 0, 0, 0],
+							["Product C", 15, 10, 0, 0, 0],
+							["Online", 0, 0, 30, 40, 10],
+							["Store", 0, 0, 20, 35, 10]
+						],
+						type: "sankey"
+					},
+					size: {
+						height: 480
+					},
+					sankey: {
+						rotated: true,
+						node: {
+							padding: 30,
+							sort: "desc",
+							border: {
+								width: 1,
+								color: "#fff"
+							}
+						},
+						link: {
+							color: "target",
+							opacity: 0.6
+						}
+					}
+				}
+			}
+		],
 		ScatterPlot: {
 			options: {
 				data: {
@@ -1184,6 +1603,9 @@ var demos = {
 						type: "treemap",
 						labels: {
 							colors: "#fff"
+						},
+						onclick: function(d, i) {
+							console.log("onclick", d, i);
 						}
 					},
 					treemap: {
@@ -4028,54 +4450,54 @@ var demos = {
 			}
 		},
 		CandlestickSubchartBar: {
-			description: "Render the main chart as candlestick and the subchart overview as zero-based body value bars.",
+			description: "Render the main chart as candlestick and the subchart overview as bars of the volume. Without volume, the bars show the body value from zero.",
 			options: {
 				data: {
 					x: "x",
 					columns: [
 						["x", "2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05", "2024-01-06", "2024-01-07", "2024-01-08", "2024-01-09", "2024-01-10", "2024-01-11", "2024-01-12", "2024-01-13", "2024-01-14", "2024-01-15", "2024-01-16", "2024-01-17", "2024-01-18", "2024-01-19", "2024-01-20", "2024-01-21", "2024-01-22", "2024-01-23", "2024-01-24", "2024-01-25", "2024-01-26", "2024-01-27", "2024-01-28", "2024-01-29", "2024-01-30", "2024-01-31", "2024-02-01", "2024-02-02", "2024-02-03", "2024-02-04", "2024-02-05", "2024-02-06", "2024-02-07", "2024-02-08", "2024-02-09"],
 						["data1",
-							// open, high, low, close
-							[1327, 1369, 1289, 1348],
-							[1348, 1371, 1314, 1320],
-							[1320, 1412, 1314, 1394],
-							[1394, 1458, 1393, 1453],
-							[1453, 1501, 1448, 1500],
-							[1500, 1510, 1492, 1496],
-							[1496, 1496, 1448, 1448],
-							[1448, 1490, 1433, 1490],
-							[1490, 1544, 1490, 1537],
-							[1537, 1563, 1534, 1544],
-							[1544, 1550, 1511, 1525],
-							[1525, 1609, 1517, 1604],
-							[1604, 1614, 1585, 1592],
-							[1592, 1632, 1586, 1620],
-							[1620, 1633, 1609, 1622],
-							[1622, 1697, 1620, 1687],
-							[1687, 1691, 1624, 1648],
-							[1648, 1689, 1640, 1671],
-							[1671, 1702, 1671, 1695],
-							[1695, 1727, 1689, 1724],
-							[1724, 1733, 1691, 1696],
-							[1696, 1733, 1696, 1731],
-							[1731, 1756, 1716, 1748],
-							[1748, 1769, 1734, 1762],
-							[1762, 1792, 1752, 1778],
-							[1778, 1783, 1763, 1769],
-							[1769, 1791, 1740, 1755],
-							[1755, 1755, 1711, 1725],
-							[1725, 1739, 1683, 1701],
-							[1701, 1731, 1694, 1730],
-							[1730, 1739, 1703, 1715],
-							[1715, 1745, 1710, 1731],
-							[1731, 1732, 1643, 1643],
-							[1643, 1662, 1608, 1615],
-							[1615, 1667, 1615, 1665],
-							[1665, 1689, 1663, 1671],
-							[1671, 1671, 1587, 1588],
-							[1588, 1599, 1521, 1533],
-							[1533, 1554, 1476, 1490],
-							[1490, 1494, 1432, 1443]
+							// open, high, low, close, volume
+							[1327, 1369, 1289, 1348, 3650],
+							[1348, 1371, 1314, 1320, 3100],
+							[1320, 1412, 1314, 1394, 5060],
+							[1394, 1458, 1393, 1453, 3880],
+							[1453, 1501, 1448, 1500, 3380],
+							[1500, 1510, 1492, 1496, 1720],
+							[1496, 1496, 1448, 1448, 3320],
+							[1448, 1490, 1433, 1490, 3540],
+							[1490, 1544, 1490, 1537, 3560],
+							[1537, 1563, 1534, 1544, 2240],
+							[1544, 1550, 1511, 1525, 2360],
+							[1525, 1609, 1517, 1604, 4890],
+							[1604, 1614, 1585, 1592, 2030],
+							[1592, 1632, 1586, 1620, 2820],
+							[1620, 1633, 1609, 1622, 1800],
+							[1622, 1697, 1620, 1687, 4380],
+							[1687, 1691, 1624, 1648, 3720],
+							[1648, 1689, 1640, 1671, 2980],
+							[1671, 1702, 1671, 1695, 2490],
+							[1695, 1727, 1689, 1724, 2820],
+							[1724, 1733, 1691, 1696, 2960],
+							[1696, 1733, 1696, 1731, 2550],
+							[1731, 1756, 1716, 1748, 2410],
+							[1748, 1769, 1734, 1762, 2250],
+							[1762, 1792, 1752, 1778, 2460],
+							[1778, 1783, 1763, 1769, 1800],
+							[1769, 1791, 1740, 1755, 2840],
+							[1755, 1755, 1711, 1725, 2910],
+							[1725, 1739, 1683, 1701, 3210],
+							[1701, 1731, 1694, 1730, 2760],
+							[1730, 1739, 1703, 1715, 2550],
+							[1715, 1745, 1710, 1731, 2570],
+							[1731, 1732, 1643, 1643, 4910],
+							[1643, 1662, 1608, 1615, 3000],
+							[1615, 1667, 1615, 1665, 3300],
+							[1665, 1689, 1663, 1671, 1900],
+							[1671, 1671, 1587, 1588, 4830],
+							[1588, 1599, 1521, 1533, 4270],
+							[1533, 1554, 1476, 1490, 4130],
+							[1490, 1494, 1432, 1443, 3740]
 						]
 					],
 					type: "candlestick",
@@ -6191,6 +6613,182 @@ d3.select(".chart_area")
 				}
 			}
 		}
+	},
+	BulletChartOptions: {
+		BulletAxis: [
+			{
+				options: {
+					title: {
+						text: "Bullet with Shared Axis and Ticks"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet",
+						labels: true
+					},
+					bullet: {
+						// min and max make the bullets share the same scale
+						axis: {
+							min: 0,
+							max: 300,
+							tick: {
+								values: [0, 100, 200, 300],
+								format: function(value) {
+									return value + "k";
+								}
+							}
+						},
+						target: 250
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Bullet with Negative Values"
+					},
+					data: {
+						columns: [
+							["Profit change", -15],
+							["Cash flow", 38],
+							["Budget variance", -22]
+						],
+						type: "bullet",
+						labels: true
+					},
+					bullet: {
+						// the scale includes 0, and the measure is drawn from the 0 position
+						ranges: [-25, 25, 50],
+						target: 30
+					}
+				}
+			}
+		],
+		BulletTarget: [
+			{
+				options: {
+					title: {
+						text: "Bullet with Multiple Targets"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet",
+						labels: true
+					},
+					bullet: {
+						ranges: [150, 225, 300],
+
+						// an Array draws a marker for each value: warning and error lines
+						target: [200, 260]
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Bullet with Colors by Value"
+					},
+					data: {
+						columns: [
+							["Revenue", 275],
+							["Profit", 55],
+							["Orders", 180]
+						],
+						type: "bullet",
+						labels: true,
+
+						// the color of the measure follows its value
+						color: function(color, d) {
+							// the legend asks for the color of the id: keep the series color
+							if (d.value === undefined) {
+								return color;
+							}
+
+							return d.value >= 250 ? "#2ca02c" : d.value >= 100 ? "#ff7f0e" : "#d62728";
+						}
+					},
+					bullet: {
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			}
+		],
+		BulletTitle: [
+			{
+				options: {
+					title: {
+						text: "Bullet with Titles"
+					},
+					data: {
+						columns: [
+							["revenue", 275],
+							["profit", 55],
+							["orders", 180]
+						],
+						names: {
+							revenue: "Revenue",
+							profit: "Profit",
+							orders: "Orders"
+						},
+						type: "bullet",
+						labels: true
+					},
+					legend: {
+						show: false
+					},
+					bullet: {
+						// each bullet is told by its title, without the legend
+						title: {
+							show: true
+						},
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Vertical Titles"
+					},
+					data: {
+						columns: [
+							["revenue", 275],
+							["profit", 55],
+							["orders", 180]
+						],
+						names: {
+							revenue: "Revenue",
+							profit: "Profit",
+							orders: "Orders"
+						},
+						type: "bullet",
+						labels: true
+					},
+					legend: {
+						show: false
+					},
+					bullet: {
+						rotated: true,
+						// each bullet is told by its title, without the legend
+						title: {
+							show: true
+						},
+						ranges: [150, 225, 300],
+						target: 250
+					}
+				}
+			}
+		]
 	},
 	ChartOptions: {
 		Background: [

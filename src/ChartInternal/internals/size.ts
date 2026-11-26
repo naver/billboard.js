@@ -37,7 +37,8 @@ export default {
 	getCurrentHeight(): number {
 		const $$ = this;
 		const {config, state, $el} = $$;
-		let h = config.size_height;
+		// a chart type of its own can make the chart as high as it needs, from the width
+		let h = config.size_height || $$.customTypeHooks?.currentHeight?.($$);
 
 		if (!h) {
 			// The min-height reserved for the canvas surface is this element's own
@@ -441,7 +442,7 @@ export default {
 		const $$ = this;
 		const {config, state, $el: {legend}} = $$;
 		const isRotated = config.axis_rotated;
-		const isNonAxis = $$.hasArcType() || state.hasFunnel || state.hasTreemap;
+		const isNonAxis = $$.hasArcType() || state.customType || state.hasTreemap;
 		const isFitPadding = config.padding?.mode === "fit";
 
 		!isInit && $$.setContainerSize();
@@ -579,7 +580,8 @@ export default {
 			$$.updateRadius?.();
 		}
 
-		if (state.isLegendRight && isNonAxis) {
+		// arc types center their legend by the arc size: a custom type can place it beside its own plot
+		if (state.isLegendRight && isNonAxis && !$$.customTypeHooks?.ownLegendLayout) {
 			state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
 		}
 	}

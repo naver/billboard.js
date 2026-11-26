@@ -9,10 +9,16 @@ import {describe, expect, it, vi} from "vitest";
 
 import ChartInternal from "../../src/ChartInternal/ChartInternal";
 import {canvas as canvasMode} from "../../src/config/resolver/canvas";
+import {flow as canvasFlowMode} from "../../src/config/resolver/canvasFlow";
+import {selection as canvasSelectionMode} from "../../src/config/resolver/canvasSelection";
+import {subchart as canvasSubchartMode} from "../../src/config/resolver/canvasSubchart";
 import {TYPE} from "../../src/config/const";
 import {window} from "../../src/module/browser";
 
 canvasMode();
+canvasFlowMode();
+canvasSubchartMode();
+canvasSelectionMode();
 
 const proto = ChartInternal.prototype as any;
 
@@ -124,7 +130,8 @@ function makeContext(overrides = {}) {
 			drawBackground: vi.fn(),
 			drawEmptyLabel: vi.fn(),
 			drawFocus: vi.fn(),
-			drawSelectionDragArea: vi.fn(),
+			painter: {fillRect: vi.fn()},
+			theme: {style: {zoomBrush: {fill: "#000", opacity: 0.2}}},
 			drawSubchart: vi.fn(),
 			drawZoomBrush: vi.fn(),
 			hasExpandedShapeFocus: () => false,
@@ -974,15 +981,37 @@ describe("ESM canvas internal coverage", () => {
 		})).to.be.false;
 		tooLarge.$el.chart.node().remove();
 
+		const gridFeature = {drawLines: vi.fn()};
+
+		ctx.getCanvasFeature = name => name === "grid" ? gridFeature : undefined;
 		call("renderCanvasFrame", ctx, null, [ctx.data.targets[0].values[0]], true);
 		expect(ctx.hitDetector.rebuild).toHaveBeenCalled();
-		expect(ctx.canvasAxisRenderer.drawGridLines).toHaveBeenCalled();
+		expect(gridFeature.drawLines).toHaveBeenCalledWith(ctx.canvasAxisRenderer);
 
 		ctx.canvasRenderer.hasExpandedShapeFocus = () => true;
 		call("renderCanvasFocus", ctx, [ctx.data.targets[0].values[0]], [20, 30]);
 		expect(ctx.state.canvasFocusMainRedraw).to.be.true;
 		call("clearCanvasFocus", ctx);
 		expect(ctx.callbacks.render.at(-1).rebuildHit).to.be.false;
+
+		// moving from an expanded focus to a cheap one redraws a clean frame once
+		const {beginFrame} = ctx.canvasEngine;
+		const {draw} = ctx.canvasRenderer;
+
+		call("renderCanvasFocus", ctx, [ctx.data.targets[0].values[0]], [20, 30]);
+		ctx.canvasRenderer.hasExpandedShapeFocus = () => false;
+		beginFrame.mockClear();
+		draw.mockClear();
+		call("renderCanvasFocus", ctx, [ctx.data.targets[0].values[1]], [30, 30]);
+		expect(beginFrame).toHaveBeenCalledTimes(1);
+		expect(draw.mock.calls[0][2]).to.be.undefined;
+		expect(ctx.state.canvasFocusMainRedraw).to.be.false;
+
+		beginFrame.mockClear();
+		call("renderCanvasFocus", ctx, [ctx.data.targets[0].values[0]], [20, 30]);
+		expect(beginFrame).not.toHaveBeenCalled();
+		ctx.canvasRenderer.hasExpandedShapeFocus = () => true;
+		call("clearCanvasFocus", ctx);
 
 		call("renderCanvasZoomBrush", ctx, 10, 20);
 		call("clearCanvasZoomBrush", ctx);

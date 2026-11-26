@@ -740,6 +740,98 @@ describe("TREEMAP", () => {
 				treemap.destroy();
 				container.remove();
 			});
+
+			it("should keep single-line label position on redraw", () => new Promise(done => {
+				const treemap = util.generate({
+					data: {
+						columns: [
+							["A", 660], ["B", 377], ["C", 368], ["D", 240], ["E", 105]
+						],
+						type: "treemap",
+						labels: {
+							centered: true
+						}
+					},
+					transition: {
+						duration: 0
+					},
+					treemap: {
+						tile: "binary",
+						label: {
+							format: (value, ratio, id) => id
+						}
+					}
+				});
+				const getY = () => treemap.$.text.texts.nodes().map(t => t.getAttribute("y"));
+				const expected = getY();
+
+				treemap.flush();
+
+				setTimeout(() => {
+					expect(getY()).to.be.deep.equal(expected);
+
+					treemap.destroy();
+					done(1);
+				}, 100);
+			}));
+
+			it("should not keep the position of the previous line count on redraw", () => new Promise(done => {
+				let multiLine = true;
+				const columns = [["A", 660], ["B", 377], ["C", 368], ["D", 240], ["E", 105]];
+				const options = () => ({
+					data: {
+						columns,
+						type: "treemap",
+						labels: {
+							centered: true
+						}
+					},
+					transition: {
+						duration: 0
+					},
+					treemap: {
+						tile: "binary",
+						label: {
+							format: (value, ratio, id) => multiLine ? `${id}\n${value}` : id
+						}
+					}
+				});
+				// where the labels are really drawn, relative to the chart
+				const getRects = target => {
+					const {left, top} = target.$.svg.node().getBoundingClientRect();
+
+					return [...target.$.svg.node().querySelectorAll("text.bb-text")].map(t => {
+						const r = t.getBoundingClientRect();
+
+						return [Math.round(r.left - left), Math.round(r.top - top)];
+					});
+				};
+				const treemap = util.generate(options());
+
+				// two lines -> one line
+				multiLine = false;
+				treemap.load({columns});
+
+				setTimeout(() => {
+					const fresh = util.generate({...options(), bindto: "#chart2"});
+
+					expect(getRects(treemap)).to.be.deep.equal(getRects(fresh));
+
+					// one line -> two lines
+					multiLine = true;
+					treemap.load({columns});
+					fresh.load({columns});
+
+					setTimeout(() => {
+						expect(getRects(treemap)).to.be.deep.equal(getRects(fresh));
+
+						treemap.destroy();
+						fresh.destroy();
+						document.getElementById("chart2")?.remove();
+						done(1);
+					}, 100);
+				}, 100);
+			}));
 		});
 
 		describe("with centered labels disabled", () => {
@@ -936,6 +1028,28 @@ describe("TREEMAP", () => {
 					expect(bbox1.y).to.be.lessThanOrEqual(0);
 				});
 			});
+		});
+	});
+
+	describe("data.onclick", () => {
+		const calls: any[] = [];
+
+		beforeAll(() => {
+			args = {
+				data: {
+					columns: [["data1", 130], ["data2", 200], ["data3", 500]],
+					type: "treemap",
+					onclick: (d, el) => calls.push([d.id, d.value, el.tagName])
+				}
+			};
+		});
+
+		it("should call data.onclick with the row and the clicked tile", () => {
+			chart.internal.$el.treemap.selectAll("rect")
+				.filter(d => d.data.id === "data2").node()
+				.dispatchEvent(new MouseEvent("click", {bubbles: true}));
+
+			expect(calls).to.deep.equal([["data2", 200, "rect"]]);
 		});
 	});
 });

@@ -34,7 +34,58 @@ export default {
 	 * @private
 	 */
 	isValidChartType(type: string): boolean {
-		return !!(type && Object.values(TYPE).indexOf(type) > -1);
+		// the type of a custom type module is valid too
+		return !!(type &&
+			(Object.values(TYPE).indexOf(type) > -1 || type === this.state.customType ||
+				this.axisTypes?.[type]));
+	},
+
+	/**
+	 * Get the names of the chart types of their own modules that are drawn on the axes
+	 * @returns {Array} Type names
+	 * @private
+	 */
+	getAxisTypes(): string[] {
+		return Object.keys(this.axisTypes || {});
+	},
+
+	/**
+	 * Get what the modules of the axis types registered
+	 * @returns {Array} Parts of the types
+	 * @private
+	 */
+	getAxisTypeParts(): any[] {
+		return Object.values(this.axisTypes || {});
+	},
+
+	/**
+	 * Check if the chart has a type of its own module that is drawn like a bar: it has the room of
+	 * the half of a shape at each end of the x axis, as the bar does
+	 * @returns {boolean}
+	 * @private
+	 */
+	hasAxisTypePadding(): boolean {
+		const types = this.axisTypes;
+
+		return !!types && Object.keys(types).some(name => types[name].padded && this.hasType(name));
+	},
+
+	/**
+	 * Get what the module of an axis type registered, when the data belongs to that type
+	 * @param {object|string} d Data object or id
+	 * @returns {object|undefined} Hooks of the type
+	 * @private
+	 */
+	getAxisTypeHooks(d) {
+		const types = this.axisTypes;
+
+		if (types) {
+			for (const name in types) {
+				if (this.isTypeOf(d, name)) {
+					return types[name];
+				}
+			}
+		}
 	},
 
 	/**
@@ -161,10 +212,12 @@ export default {
 	 */
 	updateTypesElements(): void {
 		const $$ = this;
-		const {state: {current}} = $$;
+		const {state: {current, customType}} = $$;
+		const types = Object.values(TYPE);
 
-		Object.keys(TYPE).forEach(v => {
-			const t = TYPE[v];
+		customType && types.push(customType);
+
+		types.forEach(t => {
 			const has = $$.hasType(t, null, true);
 			const idx = current.types.indexOf(t);
 
@@ -292,6 +345,44 @@ export default {
 		return this.isTypeOf(d, "bubble");
 	},
 
+	/**
+	 * Get the name of the chart type of its own module that the chart has.
+	 * The modules register their types by name (registerCustomType()): a bundle can have more than
+	 * one of them, and a chart has one at most.
+	 * @returns {string|null} Type name
+	 * @private
+	 */
+	getCustomType(): string | null {
+		const types = this.customTypes;
+
+		return types && Object.keys(types).find(name => this.hasType(name)) || null;
+	},
+
+	/**
+	 * Get what the module of the custom type of the chart has registered: hooks and canvas parts.
+	 * @returns {object|undefined} Parts of the type
+	 * @private
+	 */
+	getCustomTypeParts() {
+		const {customType} = this.state;
+
+		return customType ? this.customTypes?.[customType] : undefined;
+	},
+
+	/**
+	 * Get the hooks of the module of a custom type, when the data belongs to that type.
+	 * @param {object} d Data object
+	 * @returns {object|null} Hooks
+	 * @private
+	 */
+	getCustomTypeHooks(d) {
+		const {customType} = this.state;
+
+		return customType && this.isTypeOf(d, customType) ?
+			this.getCustomTypeParts()?.hooks ?? null :
+			null;
+	},
+
 	isCandlestickType(d): boolean {
 		return this.isTypeOf(d, "candlestick");
 	},
@@ -306,10 +397,6 @@ export default {
 
 	isPieType(d): boolean {
 		return this.isTypeOf(d, "pie");
-	},
-
-	isFunnelType(d): boolean {
-		return this.isTypeOf(d, "funnel");
 	},
 
 	isGaugeType(d): boolean {
@@ -365,12 +452,17 @@ export default {
 	 * @private
 	 */
 	labelishData(d) {
+		const custom = this.getCustomTypeHooks(d);
+
+		if (custom) {
+			return custom.labelData?.(this, d) ?? [];
+		}
+
 		return this.isBarType(d) ||
 				this.isLineType(d) ||
 				this.isScatterType(d) ||
 				this.isBubbleType(d) ||
 				this.isCandlestickType(d) ||
-				this.isFunnelType(d) ||
 				this.isRadarType(d) ||
 				this.isTreemapType(d) ?
 			d.values.filter(v => isNumber(v.value) || Boolean(v.value)) :

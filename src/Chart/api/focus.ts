@@ -66,6 +66,7 @@ export default {
 
 		state.focusedTargetIds = new Set(targetIds);
 		targetIds.forEach(id => state.defocusedTargetIds.delete(id));
+		$$.customTypeHooks?.afterFocus?.($$);
 	},
 
 	/**
@@ -118,6 +119,7 @@ export default {
 
 		targetIds.forEach(id => state.focusedTargetIds.delete(id));
 		state.defocusedTargetIds = new Set(targetIds);
+		$$.customTypeHooks?.afterFocus?.($$);
 	},
 
 	/**
@@ -173,5 +175,6 @@ export default {
 
 		state.focusedTargetIds = new Set();
 		state.defocusedTargetIds = new Set();
+		$$.customTypeHooks?.afterFocus?.($$);
 	}
 };

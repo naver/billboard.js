@@ -24,8 +24,25 @@ import {
 import type {IArcData, IDataRow} from "../data/IData";
 
 // Hoisted to module level to avoid recompilation on every getTooltipContentTemplate() call
+// the gap between the pointer and the tooltip of the types that have no axis, in px
+const TOOLTIP_GAP = 15;
+
 const RE_WHITESPACE = /(\r?\n|\t)/g;
 const RE_TOOLTIP_TPL = /{{(.*)}}/;
+
+/**
+ * Get the tooltip value of ranged data: one row per value, aligned on the colon of the names
+ * @param {Array} values [name, value] pairs
+ * @returns {string} html string
+ * @private
+ */
+function getRangeValueHtml(values: (string | undefined)[][]): string {
+	return `<div style="display:inline-grid;grid-template-columns:auto auto;gap:0 .3em;text-align:left">${
+		values.map(([name, v]) => `<b style="text-align:right">${name}:</b><span>${v}</span>`).join(
+			""
+		)
+	}</div>`;
+}
 
 export default {
 	/**
@@ -148,7 +165,9 @@ export default {
 			row => ($$.axis && $$.isBubbleZType(row) ?
 				$$.getBubbleZData(row.value, "z") :
 				$$.getBaseValue(row));
-		const getBgColor = $$.levelColor ? row => $$.levelColor(row.value) : row => color(row);
+		const getBaseColor = $$.levelColor ? row => $$.levelColor(row.value) : row => color(row);
+		// a chart type of its own can give the color of the swatch
+		const getBgColor = row => $$.customTypeHooks?.tooltipColor?.($$, row) ?? getBaseColor(row);
 		const contents = config.tooltip_contents;
 		const tplStr = contents.template;
 		const targetIds = $$.mapToTargetIds();
@@ -227,7 +246,7 @@ export default {
 				);
 				const mid = valueFormat(getRowValue(row), ...param as [number, string, number]);
 
-				value = `<b>Mid:</b> ${mid} <b>High:</b> ${high} <b>Low:</b> ${low}`;
+				value = getRangeValueHtml([["Mid", mid], ["High", high], ["Low", low]]);
 			} else if ($$.isCandlestickType(row)) {
 				const [open, high, low, close, volume] = ["open", "high", "low", "close", "volume"]
 					.map(v => {
@@ -241,10 +260,17 @@ export default {
 							undefined;
 					});
 
-				value =
-					`<b>Open:</b> ${open} <b>High:</b> ${high} <b>Low:</b> ${low} <b>Close:</b> ${close}${
-						volume ? ` <b>Volume:</b> ${volume}` : ""
-					}`;
+				value = getRangeValueHtml([
+					["Open", open],
+					["High", high],
+					["Low", low],
+					["Close", close],
+					...(volume ? [["Volume", volume]] : [])
+				]);
+			} else if ($$.getAxisTypeHooks(row)?.tooltipRows) {
+				value = getRangeValueHtml(
+					$$.getAxisTypeHooks(row).tooltipRows($$, row, valueFormat, param)
+				);
 			} else if ($$.isBarRangeType(row)) {
 				const {value: rangeValue, id, index} = row;
 
@@ -392,7 +418,7 @@ export default {
 		const {$el: {eventRect, svg}, config, state} = $$;
 
 		const isRotated = config.axis_rotated;
-		const hasArcType = $$.hasArcType() || state.hasFunnel || state.hasTreemap;
+		const hasArcType = $$.hasArcType() || state.customType || state.hasTreemap;
 		const target = (hasArcType ? svg : eventRect)?.node() ?? state.event.target;
 
 		let {x, y} = currPos;
@@ -406,14 +432,15 @@ export default {
 		const ctm = getTransformCTM(target, x, y, false);
 		const rect = getBoundingRect(target);
 		const size = getTransformCTM(target, 20, 0, false).x;
+		const gap = getTransformCTM(target, TOOLTIP_GAP, 0, false).x;
 
 		let top = ctm.y;
 		let left = ctm.x + (tWidth / 2) + size;
 
 		if (hasArcType) {
-			if (state.hasFunnel || state.hasTreemap || state.hasRadar) {
+			if (state.customType || state.hasTreemap || state.hasRadar) {
 				left -= (tWidth / 2) + size;
-				top += tHeight;
+				top += gap;
 			} else {
 				top += rect.height / 2;
 				left += (rect.width / 2) - (tWidth - size);
@@ -425,7 +452,10 @@ export default {
 		}
 
 		if (top + tHeight > rect.height) {
-			top -= tHeight * 2;
+			// above the pointer: the same gap as under it, where the type has one
+			top -= hasArcType && (state.customType || state.hasTreemap || state.hasRadar) ?
+				tHeight + gap * 2 :
+				tHeight * 2;
 		}
 
 		return {
@@ -446,8 +476,16 @@ export default {
 		currPos: Record<string, number>): {top: number, left: number} {
 		const $$ = this;
 		const {config, scale, state} = $$;
-		const {width, height, current, hasFunnel, hasRadar, hasTreemap, isLegendRight, inputType} =
-			state;
+		const {
+			width,
+			height,
+			current,
+			customType,
+			hasRadar,
+			hasTreemap,
+			isLegendRight,
+			inputType
+		} = state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const isRotated = config.axis_rotated;
 		const hasArcType = $$.hasArcType();
@@ -472,10 +510,10 @@ export default {
 				}
 
 				x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
-				y += (hasGauge ? height : (height / 2) + tHeight) + titlePadding;
+				y += (hasGauge ? height : height / 2) + titlePadding + TOOLTIP_GAP;
 			}
-		} else if (hasFunnel || hasTreemap) {
-			y += tHeight;
+		} else if (customType || hasTreemap) {
+			y += TOOLTIP_GAP;
 		} else {
 			const padding = {
 				top: $$.getCurrentPaddingByDirection("top", true),
@@ -494,13 +532,13 @@ export default {
 
 		// when tooltip left + tWidth > chart's width
 		if ((x + tWidth + 15) > chartRight) {
-			x -= tWidth + (hasFunnel || hasTreemap || hasArcType ? 0 : (isRotated ? size * 2 : 38));
+			x -= tWidth +
+				(customType || hasTreemap || hasArcType ? 0 : (isRotated ? size * 2 : 38));
 		}
 
 		if (y + tHeight > current.height) {
-			const gap = hasTreemap ? tHeight + 10 : 30;
-
-			y -= hasGauge ? tHeight * 1.5 : tHeight + gap;
+			// above the pointer: the same gap as under it
+			y -= hasGauge ? tHeight * 1.5 + TOOLTIP_GAP : tHeight + TOOLTIP_GAP * 2;
 		}
 
 		const pos = {top: y, left: x};
@@ -697,7 +735,8 @@ export default {
 			state: {event, hasAxis, hasRadar, hasTreemap}
 		} = $$;
 
-		if ($$.state.isCanvasMode) {
+		// the focus slides with a flow and its end updates the tooltip for the data moved in
+		if ($$.state.isCanvasMode || $$.state.flowing) {
 			return;
 		}
 

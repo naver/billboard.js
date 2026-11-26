@@ -70,7 +70,8 @@ export default {
 
 			// keep current zoom domain
 			if ($$.scale.zoom) {
-				state.current.zoomDomain = $$.scale.zoom.domain();
+				// in the range of .zoom(): a category scale reads its end one category further
+				state.current.zoomDomain = $$.zoom?.getDomain() ?? $$.scale.zoom.domain();
 			}
 
 			$$.scale.zoom = null;

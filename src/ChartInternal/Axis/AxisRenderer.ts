@@ -197,6 +197,10 @@ export default class AxisRenderer {
 				});
 
 			if (tickShow.tick || tickShow.text) {
+				// resolve the .domain node once: a selector string handed to insert() runs
+				// querySelector for every entering tick, which is O(ticks^2) on dense axes
+				const domainNode = g.select(".domain").node();
+
 				// count of tick data in array
 				const ticks = config.tickValues ||
 					helper.generateTicks(scale1, isLeftRight || params.config.axis_rotated);
@@ -221,7 +225,7 @@ export default class AxisRenderer {
 					// enter selection
 					const tickEnter = tick
 						.enter()
-						.insert("g", ".domain")
+						.insert("g", () => domainNode)
 						.attr("class", "tick");
 
 					// MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.
@@ -285,7 +289,10 @@ export default class AxisRenderer {
 							.enter()
 							.append("tspan")
 							.merge(tspan)
-							.text(d => d.splitted);
+							.each(function(d) {
+								// assigning textContent replaces the text node even for the same string
+								this.textContent !== d.splitted && (this.textContent = d.splitted);
+							});
 
 						// set <tspan>'s position
 						tspan
@@ -545,34 +552,36 @@ export default class AxisRenderer {
 			);
 		}
 
-		// split given text by tick width size
-		// eslint-disable-next-line
-		function split(splitted, text) {
-			let subtext;
-			let spaceIndex;
-			let textWidth;
+		// split given text by tick width size.
+		// iterate rather than recurse per line, so a very long label cannot overflow the stack
+		const text = String(tickText);
+		const result: string[] = [];
+		let start = 0;
 
-			for (let i = 1; i < text.length; i++) {
-				if (text.charAt(i) === " ") {
+		while (true) {
+			let spaceIndex;
+			let splitAt = -1;
+
+			for (let i = 1; start + i < text.length; i++) {
+				if (text.charAt(start + i) === " ") {
 					spaceIndex = i;
 				}
 
-				subtext = text.substr(0, i + 1);
-				textWidth = charWidth * subtext.length;
-
 				// if text width gets over tick width, split by space index or current index
-				if (tickWidth < textWidth) {
-					return split(
-						splitted.concat(text.substr(0, spaceIndex || i)),
-						text.slice(spaceIndex ? spaceIndex + 1 : i)
-					);
+				if (tickWidth < charWidth * (i + 1)) {
+					splitAt = i;
+					break;
 				}
 			}
 
-			return splitted.concat(text);
-		}
+			if (splitAt === -1) {
+				result.push(text.slice(start));
+				return result;
+			}
 
-		return split(splitted, String(tickText));
+			result.push(text.substr(start, spaceIndex || splitAt));
+			start += spaceIndex ? spaceIndex + 1 : splitAt;
+		}
 	}
 
 	scale(x?): AxisRenderer {

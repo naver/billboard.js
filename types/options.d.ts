@@ -10,16 +10,20 @@ import {
 	ArcOptions,
 	AreaOptions,
 	BarOptions,
+	BoxplotOptions,
 	BubbleOptions,
+	BulletOptions,
 	CandlestickOptions,
 	DonutOptions,
 	FunnelOptions,
 	GaugeOptions,
+	HeatmapOptions,
 	LineOptions,
 	PieOptions,
 	PolarOptions,
 	RadarOptions,
 	RadialGradientOptions,
+	SankeyOptions,
 	ScatterOptions,
 	SplineOptions,
 	TreemapOptions
@@ -377,7 +381,9 @@ export interface ChartOptions {
 	arc?: ArcOptions;
 	area?: AreaOptions;
 	bar?: BarOptions;
+	boxplot?: BoxplotOptions;
 	bubble?: BubbleOptions;
+	bullet?: BulletOptions;
 	candlestick?: CandlestickOptions;
 	donut?: DonutOptions;
 	funnel?: FunnelOptions;
@@ -386,6 +392,8 @@ export interface ChartOptions {
 	polar?: PolarOptions;
 	pie?: PieOptions;
 	radar?: RadarOptions;
+	heatmap?: HeatmapOptions;
+	sankey?: SankeyOptions;
 	scatter?: ScatterOptions;
 	spline?: SplineOptions;
 	treemap?: TreemapOptions;
@@ -844,6 +852,9 @@ export interface SubchartOptions {
 	 * Set chart type for the subchart.
 	 * If this option is specified, the type will be applied to every data in the subchart.
 	 * This setting can be overwritten by subchart.types.
+	 * When candlestick data is rendered as another type, the subchart takes one value of the data:
+	 * - `bar`: the volume of the data. Without volume, the close value for a rise and the open value for a fall, from zero.
+	 * - other types (`line`, `area`, etc.): the close value.
 	 */
 	type?: ChartTypes;
 
@@ -1411,7 +1422,7 @@ export interface Data {
 	/**
 	 * Set chart type at once.
 	 * If this option is specified, the type will be applied to every data. This setting can be overwritten by data.types.
-	 * - Available Values: area, area-line-range, area-spline, area-spline-range, area-step, area-step-range, bar, bubble, candlestick, donut, gauge, line, pie, radar, scatter, spline, step
+	 * - Available Values: area, area-line-range, area-spline, area-spline-range, area-step, area-step-range, bar, boxplot, bubble, candlestick, donut, gauge, line, pie, radar, scatter, spline, step
 	 */
 	type?: ChartTypes;
 
@@ -1757,6 +1768,7 @@ export interface Data {
 	 * This callback will be called when each data point clicked and will receive d and element as the arguments.
 	 * - d is the data clicked and element is the element clicked. In canvas mode, element is the shared `<canvas>` element.
 	 * In this callback, this will be the Chart object.
+	 * For radar type, clicking an axis text calls it once for each data at the axis, with the axis text as the element.
 	 */
 	onclick?(this: Chart, d: DataItem, element: DataEventElement): void;
 

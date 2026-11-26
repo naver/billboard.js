@@ -25,12 +25,13 @@ export default {
 	 * Get class string
 	 * @param {string} type Shape type
 	 * @param {boolean} withShape Get with shape prefix
+	 * @param {boolean} useId Use the id of the data as the key of the class, as the types of the group
 	 * @returns {string} Class string
 	 * @private
 	 */
-	getClass(type: string, withShape: boolean): Function {
+	getClass(type: string, withShape: boolean, useId?: boolean): Function {
 		const isPlural = /s$/.test(type);
-		const useIdKey = /^(area|arc|line|funnel|treemap)s?$/.test(type);
+		const useIdKey = useId ?? /^(area|arc|line|treemap)s?$/.test(type);
 		const key = isPlural ? "id" : "index";
 
 		return (d): string => {

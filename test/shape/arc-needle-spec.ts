@@ -35,7 +35,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 			}
 		},
 		transition: {
-			duration: 200
+			duration: 0
 		}
 	};
 
@@ -180,6 +180,9 @@ describe("SHAPE ARC: NEEDLE option", () => {
 					needle: {
 						show: true
 					}
+				},
+				transition: {
+					duration: 0
 				}
 			};
 		});
@@ -316,6 +319,9 @@ describe("SHAPE ARC: NEEDLE option", () => {
 					needle: {
 						show: true
 					}
+				},
+				transition: {
+					duration: 0
 				}
 			};
 		});
@@ -353,6 +359,9 @@ describe("SHAPE ARC: NEEDLE option", () => {
 						show: true,
 						value: 50
 					}
+				},
+				transition: {
+					duration: 0
 				}
 			};
 		});

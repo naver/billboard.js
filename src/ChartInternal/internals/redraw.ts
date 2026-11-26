@@ -65,7 +65,8 @@ export default {
 
 		if (state.isCanvasMode) {
 			const zoomScale = $$.scale.zoom;
-			const zoomDomain = zoomScale?.domain();
+			// the domain set to the scale: a category scale reads its end one category further
+			const zoomDomain = zoomScale?.orgDomain?.() ?? zoomScale?.domain();
 
 			zoomScale && ($$.scale.zoom = null);
 			$$.updateScales(initializing, wth.UpdateXDomain);
@@ -73,7 +74,8 @@ export default {
 			if (zoomScale) {
 				zoomScale.range($$.scale.x.range());
 				zoomDomain && zoomScale.domain(zoomDomain);
-				$$.scale.zoom = $$.getCustomizedXScale(zoomScale);
+				// wrap the plain scale: wrapping the customized one again shifts a category domain
+				$$.scale.zoom = $$.getCustomizedXScale(zoomScale.orgScale?.() ?? zoomScale);
 				$$.axis.x.scale($$.scale.zoom);
 				$$.scale.x.domain(config.zoom_rescale ? zoomDomain : $$.org.xDomain);
 				$$.scale.subX.domain($$.org.xDomain);
@@ -149,7 +151,7 @@ export default {
 			// rect for regions (optional module — updateRegion installed by regions resolver)
 			config.regions.length && $$.updateRegion?.();
 
-			["bar", "candlestick", "line", "area"].forEach(v => {
+			["bar", "candlestick", "line", "area", ...$$.getAxisTypes()].forEach(v => {
 				const name = capitalize(v);
 
 				if ((/^(line|area)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {
@@ -180,8 +182,8 @@ export default {
 			// polar
 			$el.polar && $$.redrawPolar();
 
-			// funnel
-			$el.funnel && $$.redrawFunnel();
+			// custom type
+			state.customType && $$[`redraw${capitalize(state.customType)}`](wth.Transition);
 
 			// treemap
 			treemap && $$.updateTreemap(durationForExit);
@@ -189,7 +191,7 @@ export default {
 
 		if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
 			if (needShapeUpdate) {
-				$$.updateCircle();
+				$$.updateCircle(false, !!flow);
 			}
 		} else if ($$.hasLegendDefsPoint?.()) {
 			$$.data.targets.forEach($$.point("create", this));
@@ -223,17 +225,18 @@ export default {
 		needShapeRegen: boolean = true): void {
 		const $$ = this;
 		const {config, state} = $$;
+
+		// subchart first: its initial range narrows the x domain, which sizes the main shapes
+		if (state.hasAxis) {
+			config.subchart_show && $$.redrawSubchart(withSubchart, duration);
+		}
+
 		const shape = needShapeRegen ?
 			$$.getDrawShape() :
 			(state._cachedDrawShape || $$.getDrawShape());
 
 		if (needShapeRegen) {
 			state._cachedDrawShape = shape;
-		}
-
-		if (state.hasAxis) {
-			// subchart
-			config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
 		}
 
 		// generate flow
@@ -244,7 +247,10 @@ export default {
 			shape,
 			xv: $$.xv.bind($$)
 		});
-		const withTransition = (duration || flowFn) && isTabVisible();
+		// A flow slides the shapes itself, so they take their new data at once: a chart
+		// transition interpolated the paths between different point counts first, which
+		// bent them and held back the slide until it ended.
+		const withTransition = !flowFn && duration && isTabVisible();
 
 		// redraw list
 		const redrawList = $$.getRedrawList(shape, flow, flowFn, withTransition);

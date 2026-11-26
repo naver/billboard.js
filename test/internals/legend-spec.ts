@@ -1086,6 +1086,51 @@ describe("LEGEND", () => {
 		});
 	});
 
+	describe("legend template with text nodes", () => {
+		let legendElement: HTMLElement;
+
+		beforeAll(() => {
+			legendElement = document.createElement("div");
+			legendElement.id = "legend-text-node";
+			document.body.appendChild(legendElement);
+
+			args = {
+				data: {
+					columns: [
+						["data1", 100],
+						["data2", 200]
+					]
+				},
+				legend: {
+					contents: {
+						bindto: "#legend-text-node",
+						template: "{=TITLE}"
+					}
+				}
+			};
+		});
+
+		afterAll(() => {
+			legendElement.parentNode?.removeChild(legendElement);
+		});
+
+		it("should render text only template without error", () => {
+			expect(legendElement.textContent).to.be.equal("data1data2");
+		});
+
+		it("set options: whitespace between template elements", () => {
+			args.legend.contents.template = "<span>{=TITLE}</span> ";
+		});
+
+		it("should bind legend items to elements only", () => {
+			const items = legendElement.querySelectorAll(`.${$LEGEND.legendItem}`);
+
+			expect(items.length).to.be.equal(2);
+			expect(items[0].classList.contains(`${$LEGEND.legendItem}-data1`)).to.be.true;
+			expect(items[1].classList.contains(`${$LEGEND.legendItem}-data2`)).to.be.true;
+		});
+	});
+
 	describe("XSS prevention", () => {
 		describe("legend.contents.template as function", () => {
 			let legendElement: HTMLElement;
@@ -1160,6 +1205,107 @@ describe("LEGEND", () => {
 
 				expect(html).to.not.include("<script>");
 				expect(html).to.not.include("</script>");
+			});
+		});
+
+		describe("tag split across multiple data ids", () => {
+			let legendElement: HTMLElement;
+
+			beforeAll(() => {
+				legendElement = document.createElement("div");
+				legendElement.id = "legend-xss-test3";
+				document.body.appendChild(legendElement);
+
+				args = {
+					data: {
+						columns: [
+							["<img src=x onerror=window.__pwned=1 ", 100],
+							[" >", 200]
+						]
+					},
+					legend: {
+						contents: {
+							bindto: "#legend-xss-test3",
+							// unclosed tag after {=TITLE}, so the next item can complete the split tag
+							template: "<span>{=TITLE}"
+						}
+					}
+				};
+			});
+
+			afterAll(() => {
+				legendElement.parentNode?.removeChild(legendElement);
+			});
+
+			it("should not form a live tag from concatenated legend items", () => {
+				expect(legendElement.querySelector("img")).to.be.null;
+				expect(legendElement.innerHTML).to.not.include("onerror=\"");
+			});
+		});
+	});
+
+	describe("legend text position of the canvas mode", () => {
+		// distance of the text from the top of each legend item
+		const offsets = (id: string, isCanvas: boolean) =>
+			Array.from(document.querySelectorAll(`${id} .bb-legend-item`)).map((item: Element) => {
+				const textEl = item.querySelector(isCanvas ? ".bb-legend-item-title" : "text") as Element;
+				const range = document.createRange();
+
+				range.selectNodeContents(textEl);
+
+				const text = (isCanvas ? range : textEl).getBoundingClientRect();
+				// the box of the svg item grows with its text: its event rect is the item itself
+				const top = (isCanvas ? item : item.querySelector(".bb-legend-item-event") as Element)
+					.getBoundingClientRect().top;
+
+				return {top: text.top - top, bottom: text.bottom - top};
+			});
+		const layouts = {
+			bottom: {position: "bottom"},
+			right: {position: "right"},
+			inset: {position: "inset", inset: {anchor: "top-left", x: 10, y: 10}},
+			"bottom, equally": {position: "bottom", equally: true}
+		};
+
+		["bar", "bullet"].forEach(type => {
+			Object.keys(layouts).forEach(name => {
+				[12, 16].forEach(fontSize => {
+					it(`should place the text where the SVG legend has it (${type}, ${name}, ${fontSize}px)`, () => {
+						// the test stylesheet sets the size of the svg texts: give both modes the same size
+						const style = document.createElement("style");
+
+						// (the canvas legend measures its items with svg texts)
+						style.textContent = `
+							#legend-svg .bb-legend-item text,
+							#legend-canvas .bb-legend-item text,
+							#legend-canvas .bb-legend-item { font-size: ${fontSize}px; }
+						`;
+						document.head.appendChild(style);
+
+						const generate = (bindto, mode) => util.generate({
+							bindto,
+							render: {mode},
+							data: {columns: [["data1", 30], ["data2", 20], ["data3", 10]], type},
+							legend: layouts[name],
+							size: {width: 320, height: 240}
+						});
+						const svgChart = generate("#legend-svg", "svg");
+						const canvasChart = generate("#legend-canvas", "canvas");
+						const svg = offsets("#legend-svg", false);
+						const canvas = offsets("#legend-canvas", true);
+
+						svgChart.destroy();
+						canvasChart.destroy();
+						style.remove();
+
+						expect(canvas.length).to.be.equal(3);
+						expect(canvas.length).to.be.equal(svg.length);
+						canvas.forEach((v, i) => {
+							expect(v.top).to.be.closeTo(svg[i].top, 0.5);
+							expect(v.bottom).to.be.closeTo(svg[i].bottom, 0.5);
+						});
+					});
+				});
 			});
 		});
 	});

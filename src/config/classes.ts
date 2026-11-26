@@ -217,7 +217,6 @@ export default {
 	...$LINE,
 	...$EVENT,
 	...$FOCUS,
-	...$FUNNEL,
 	...$GRID,
 	...$LEVEL,
 	...$RADAR,

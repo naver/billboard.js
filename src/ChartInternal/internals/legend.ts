@@ -33,7 +33,8 @@ function _getLegendColor(id: string): string {
 	const data = $$.getDataById(id);
 	const color = $$.levelColor ? $$.levelColor(data.values[0].value) : $$.color(data);
 
-	return color;
+	// a chart type of its own can give the color of the swatch
+	return $$.customTypeHooks?.legendColor?.($$, data) ?? color;
 }
 
 /**
@@ -321,9 +322,10 @@ export default {
 				}
 			});
 
-			const legendItem = wrapper.html(html)
+			// sanitize the concatenated html, as each item's content can form a tag when joined
+			const legendItem = wrapper.html(sanitize(html))
 				.selectAll(function() {
-					return this.childNodes;
+					return this.children;
 				})
 				.data(ids);
 

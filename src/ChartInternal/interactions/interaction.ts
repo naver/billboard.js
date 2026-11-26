@@ -59,11 +59,12 @@ export default {
 	 * Handle data.onover/out callback options
 	 * @param {boolean} isOver Over or not
 	 * @param {number|object} d data object
+	 * @param {Element} [element] The element hovered, when it isn't the first shape of the data
 	 * @private
 	 */
-	setOverOut(isOver: boolean, d: number | IArcDataRow): void {
+	setOverOut(isOver: boolean, d: number | IArcDataRow, element?: Element): void {
 		const $$ = this;
-		const {config, state: {hasFunnel, hasRadar, hasTreemap}, $el: {main}} = $$;
+		const {config, state: {customType, hasRadar, hasTreemap}, $el: {main}} = $$;
 		const isArcishData = isObject(d);
 
 		// Call event handler
@@ -74,11 +75,12 @@ export default {
 
 			if (isArcishData) {
 				const suffix = $$.getTargetSelectorSuffix((d as IArcDataRow).id);
-				const selector = hasFunnel || hasTreemap ?
+				const selector = customType || hasTreemap ?
 					`${$COMMON.target + suffix} .${$SHAPE.shape}` :
 					$ARC.arc + suffix;
 
-				callback(d, main.select(`.${selector}`).node());
+				// the element the type gives (the hovered cell, link...), or the first shape of the data
+				callback(d, element ?? main.select(`.${selector}`).node());
 			} else if (!config.tooltip_grouped) {
 				const last = $$.cache.get(KEY.setOverOut) || [];
 
@@ -187,14 +189,14 @@ export default {
 			state: {
 				eventReceiver,
 				hasAxis,
-				hasFunnel,
+				customType,
 				hasRadar,
 				hasTreemap
 			},
-			$el: {eventRect, funnel, radar, svg, treemap}
+			$el: {eventRect, radar, svg, treemap}
 		} = $$;
 		let element = (
-			((hasFunnel || hasTreemap) && eventReceiver.rect) ||
+			((customType || hasTreemap) && eventReceiver.rect) ||
 			(hasRadar && radar.axes.select(`.${$AXIS.axis}-${index} text`)) || (
 				eventRect || $$.getArcElementByIdOrIndex?.(index)
 			)
@@ -242,9 +244,9 @@ export default {
 				bubbles: hasRadar // radar type needs to bubble up event
 			};
 
-			// for funnel and treemap event bound to <g> node
-			if (hasFunnel || hasTreemap) {
-				element = (funnel ?? treemap).node();
+			// for custom type and treemap event bound to <g> node
+			if (customType || hasTreemap) {
+				element = ($$.$el[customType as string] ?? treemap).node();
 			}
 
 			emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](
@@ -283,7 +285,8 @@ export default {
 	 */
 	unbindAllEvents(): void {
 		const $$ = this;
-		const {$el: {arcs, eventRect, legend, region, svg, treemap}, brush} = $$;
+		const {$el: {arcs, eventRect, legend, region, svg, treemap}, brush, state: {customType}} =
+			$$;
 		const list = [
 			"wheel",
 			"click",
@@ -311,6 +314,7 @@ export default {
 			brush?.getSelection(),
 			arcs?.selectAll("path"),
 			legend?.selectAll("g"),
+			$$.$el[customType as string],
 			treemap
 		]
 			.forEach(v => v?.on(list, null));

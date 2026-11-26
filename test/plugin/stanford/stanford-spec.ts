@@ -292,6 +292,61 @@ describe("PLUGIN: STANFORD", () => {
 		});
 	});
 
+	describe("colors", () => {
+		const colorArgs = (colors?) => ({
+			data: {
+				x: "HPE",
+				columns: [
+					["HPE", 2.5, 2.5, 3.5],
+					["HPL", 24.5, 24, 67.5]
+				],
+				type: "scatter"
+			},
+			plugins: [
+				new Stanford({
+					epochs: [1, 103, 10000],
+					...(colors ? {colors} : {}),
+					scale: {
+						min: 1,
+						max: 10000
+					}
+				})
+			]
+		});
+
+		it("should color the color bar and the points by the default palette", () => {
+			args = colorArgs();
+			chart = util.generate(args);
+
+			const fills = new Set<string>();
+
+			chart.$.svg.selectAll(`.${CLASS.colorScale} rect`).each(function() {
+				fills.add(this.style.fill || this.getAttribute("fill"));
+			});
+
+			// a gradient: neither one color nor the black of an invalid color
+			expect(fills.size).to.be.greaterThan(1);
+			expect(fills.has("rgb(0, 0, 0)")).to.be.false;
+
+			const stanford = chart.plugins[0];
+			const target = chart.internal.data.targets[0];
+
+			// the lowest epochs is blue, the highest red
+			expect(stanford.getStanfordPointColor.call(chart.internal, {epochs: 1})).to.be.equal("rgb(43, 0, 255)");
+			expect(stanford.getStanfordPointColor.call(chart.internal, {epochs: 10000})).to.be.equal("rgb(255, 0, 0)");
+			expect(target.colors(0.5)).to.not.be.equal("rgb(0, 0, 0)");
+		});
+
+		it("should use the function of the colors option", () => {
+			args = colorArgs(() => "rgb(1, 2, 3)");
+			chart = util.generate(args);
+
+			const stanford = chart.plugins[0];
+
+			expect(stanford.getStanfordPointColor.call(chart.internal, {epochs: 103})).to.be.equal("rgb(1, 2, 3)");
+		});
+	});
+
 	describe("check options", () => {
 		beforeAll(() => {
 			args = {

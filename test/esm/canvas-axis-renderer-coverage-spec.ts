@@ -6,7 +6,9 @@
 // @ts-nocheck
 import {describe, expect, it, vi} from "vitest";
 
-import CanvasAxisRenderer from "../../src/canvas/CanvasAxisRenderer";
+import CanvasAxisRenderer, {getXTickTextLines} from "../../src/canvas/CanvasAxisRenderer";
+import {subchartDraw} from "../../src/canvas/subchart";
+import canvasGrid from "../../src/canvas/grid";
 
 function makeScale(initialDomain = [0, 10], initialRange = [0, 100]) {
 	let domain = initialDomain.slice();
@@ -237,13 +239,32 @@ function makeContext(overrides = {}) {
 }
 
 describe("ESM canvas axis renderer coverage", () => {
+	it("splits a very long x tick text without exceeding the call stack", () => {
+		const tickText = "a".repeat(100000);
+		const $$ = {config: {axis_x_tick_multiline: true}};
+		const painter = {measureText: () => ({width: 7})};
+		const lines = getXTickTextLines($$, painter as any, null, tickText, [], false, null, 110);
+
+		expect(lines.length).to.be.above(1);
+		expect(lines.every(v => v.length > 0)).to.be.true;
+		expect(lines.join("")).to.be.equal(tickText);
+	});
+
+	it("splits x tick text at the last space within the width", () => {
+		const $$ = {config: {axis_x_tick_multiline: true}};
+		const painter = {measureText: () => ({width: 10})};
+
+		expect(getXTickTextLines($$, painter as any, null, "aa bb cc", [], false, null, 50))
+			.to.deep.equal(["aa bb", "cc"]);
+	});
+
 	it("draws axes, title, regions, grid lines and focused x ticks", () => {
 		const {renderer} = makeAxisRenderer();
 		const ctx = makeContext();
 
 		renderer.draw(ctx);
 		renderer.drawTitle(ctx);
-		renderer.drawSubXAxis(ctx);
+		subchartDraw.drawXAxis.call(ctx, renderer);
 		renderer.drawFocusedXAxisTick(ctx, [{x: 2}]);
 		renderer.drawAxisTooltip(ctx, [70, 60]);
 
@@ -295,7 +316,7 @@ describe("ESM canvas axis renderer coverage", () => {
 
 		renderer.draw(ctx);
 		renderer.drawTitle(ctx);
-		renderer.drawSubXAxis(ctx);
+		subchartDraw.drawXAxis.call(ctx, renderer);
 		renderer.drawFocusedXAxisTick(ctx, [{x: "b"}]);
 		renderer.drawAxisTooltip(ctx, [80, 70]);
 		renderer.drawAxisTooltip(ctx, [-10, -10]);
@@ -328,9 +349,9 @@ describe("ESM canvas axis renderer coverage", () => {
 			}
 		});
 
-		renderer.drawGrid(ctx);
-		renderer.drawGridLines(ctx);
-		renderer.drawSubXAxis(ctx);
+		canvasGrid.draw.call(ctx, renderer);
+		canvasGrid.drawLines.call(ctx, renderer);
+		subchartDraw.drawXAxis.call(ctx, renderer);
 		renderer.drawTitle(ctx);
 		renderer.drawFocusedXAxisTick(ctx, []);
 		renderer.drawAxisTooltip(ctx, null);

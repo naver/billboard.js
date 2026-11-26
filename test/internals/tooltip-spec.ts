@@ -889,7 +889,7 @@ describe("TOOLTIP", function() {
 
 			let value = chart.$.tooltip.select(`.${$TOOLTIP.tooltipName}-data1 .value`).text();
 
-			expect(value).to.be.equal("Mid: 135 High: 160 Low: 120");
+			expect(value).to.be.equal("Mid:135High:160Low:120");
 
 			value = +chart.$.tooltip.select(`.${$TOOLTIP.tooltipName}-data2 .value`).text();
 
@@ -1285,8 +1285,13 @@ describe("TOOLTIP", function() {
 		it("should display tooltip", () => {
 			util.hoverChart(chart, "mousemove", {clientX: 180, clientY: 130});
 
-			expect(chart.$.tooltip.select(".value").html())
-				.to.be.equal(`<b>Open:</b> 1300 <b>High:</b> 1369 <b>Low:</b> 1200 <b>Close:</b> 1339 <b>Volume:</b> 100`);
+			const value = chart.$.tooltip.select(".value div");
+			const text = (selector: string) => value.selectAll(selector).nodes().map(v => v.textContent);
+
+			// names and values are in two columns of a grid
+			expect(value.style("display")).to.be.equal("inline-grid");
+			expect(text("b")).to.be.deep.equal(["Open:", "High:", "Low:", "Close:", "Volume:"]);
+			expect(text("span")).to.be.deep.equal(["1300", "1369", "1200", "1339", "100"]);
 		});
 	});
 

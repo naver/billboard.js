@@ -6,7 +6,7 @@
 import {beforeEach, beforeAll, afterEach, describe, expect, it} from "vitest";
 import sinon from "sinon";
 import util from "../assets/util";
-import {$AXIS, $GRID, $LINE, $TEXT} from "../../src/config/classes";
+import {$AXIS, $CIRCLE, $FOCUS, $GRID, $LINE, $TEXT} from "../../src/config/classes";
 import {window} from "../../src/module/browser";
 
 describe("API flow", () => {
@@ -217,6 +217,151 @@ describe("API flow", () => {
 				}
 			});
 		}));
+
+		// flow twice and return each series' [x, value] pairs
+		function flowTwice(options, flows): Promise<{[id: string]: number[][]}> {
+			const chart = util.generate({...options, transition: {duration: 0}});
+
+			return new Promise(resolve => {
+				chart.flow({
+					...flows[0],
+					duration: 10,
+					done() {
+						this.flow({
+							...flows[1],
+							duration: 10,
+							done() {
+								const res = {};
+
+								this.data().forEach(t => {
+									res[t.id] = t.values.map(v => [v.x, v.value]);
+								});
+
+								this.destroy();
+								resolve(res);
+							}
+						});
+					}
+				});
+			});
+		}
+
+		it("Indexed axis: x should keep increasing on consecutive flows", async () => {
+			const res = await flowTwice({
+				data: {
+					columns: [["data1", 0, 1, 2, 3]]
+				}
+			}, [
+				{columns: [["data1", 4]]},
+				{columns: [["data1", 5]]}
+			]);
+
+			expect(res.data1).to.deep.equal([[2, 2], [3, 3], [4, 4], [5, 5]]);
+		});
+
+		it("Indexed axis: a series missing from the flow data should get null on the next x", async () => {
+			const res = await flowTwice({
+				data: {
+					columns: [["data1", 0, 1, 2, 3], ["data2", 10, 11, 12, 13]]
+				}
+			}, [
+				{columns: [["data1", 4], ["data2", 14]]},
+				{columns: [["data1", 5]]}
+			]);
+
+			expect(res.data1).to.deep.equal([[2, 2], [3, 3], [4, 4], [5, 5]]);
+			expect(res.data2).to.deep.equal([[2, 12], [3, 13], [4, 14], [5, null]]);
+		});
+
+		it("Category axis: x should keep increasing on consecutive flows", async () => {
+			const res = await flowTwice({
+				data: {
+					x: "x",
+					columns: [["x", "a", "b", "c"], ["data", 20, 30, 40]]
+				},
+				axis: {x: {type: "category"}}
+			}, [
+				{columns: [["x", "d"], ["data", 50]]},
+				{columns: [["x", "e"], ["data", 60]]}
+			]);
+
+			expect(res.data).to.deep.equal([[2, 40], [3, 50], [4, 60]]);
+		});
+
+		it("Indexed axis: each flow should slide by the same distance", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [["data1", 0, 1, 2, 3, 4]]
+				},
+				transition: {duration: 0}
+			});
+			const $$ = chart.internal;
+			const getFlowTransform = $$.getFlowTransform;
+			const moved: number[] = [];
+
+			$$.getFlowTransform = function(...args) {
+				const transform = getFlowTransform.apply(this, args);
+
+				moved.push(+transform.match(/translate\(([-\d.]+)/)[1]);
+
+				return transform;
+			};
+
+			const flow = (value, next) => chart.flow({columns: [["data1", value]], duration: 10, done: next});
+
+			flow(5, () => flow(6, () => flow(7, () => {
+				expect(moved.length).to.be.equal(3);
+				moved.forEach(v => expect(v).to.be.closeTo(moved[0], 0.5));
+				expect(moved[0]).to.be.below(0);
+
+				chart.destroy();
+				done(1);
+			})));
+		}));
+
+		it("Custom x: should keep the given x values", async () => {
+			const res = await flowTwice({
+				data: {
+					x: "x",
+					columns: [["x", 0, 10, 20], ["data", 20, 30, 40]]
+				}
+			}, [
+				{columns: [["x", 30], ["data", 50]]},
+				{columns: [["x", 40], ["data", 60]]}
+			]);
+
+			expect(res.data).to.deep.equal([[20, 40], [30, 50], [40, 60]]);
+		});
+
+		it("Custom x: a series missing from the flow data should get null on the given x", async () => {
+			const res = await flowTwice({
+				data: {
+					x: "x",
+					columns: [["x", 0, 10, 20], ["d1", 1, 2, 3], ["d2", 4, 5, 6]]
+				}
+			}, [
+				{columns: [["x", 30], ["d1", 7], ["d2", 8]]},
+				{columns: [["x", 40], ["d1", 9]]}
+			]);
+
+			expect(res.d1).to.deep.equal([[20, 3], [30, 7], [40, 9]]);
+			expect(res.d2).to.deep.equal([[20, 6], [30, 8], [40, null]]);
+		});
+
+		it("Custom x: a new series should get null on the existing x", async () => {
+			const res = await flowTwice({
+				data: {
+					x: "x",
+					columns: [["x", 0, 10, 20], ["d1", 1, 2, 3]]
+				}
+			}, [
+				{columns: [["x", 30], ["d1", 7]]},
+				{columns: [["x", 40], ["d1", 9], ["d2", 5]]}
+			]);
+
+			expect(res.d1).to.deep.equal([[20, 3], [30, 7], [40, 9]]);
+			expect(res.d2).to.deep.equal([[20, null], [30, null], [40, 5]]);
+		});
 	});
 
 	describe("check options", () => {
@@ -463,6 +608,190 @@ describe("API flow", () => {
 					done(1);
 				}
 			});
+		}));
+	});
+
+	describe("destroy while flowing", () => {
+		// destroy() at the given time after flow() and collect the errors thrown after it
+		function destroyDuringFlow(destroyAfter: number): Promise<string[]> {
+			const errors: string[] = [];
+			const onError = (e: ErrorEvent) => {
+				errors.push(e.message);
+				e.preventDefault();
+			};
+			const chart = util.generate({
+				data: {
+					columns: [["data1", 30, 200, 100, 400, 150, 250]],
+					type: "area"
+				},
+				transition: {duration: 200}
+			});
+
+			window.addEventListener("error", onError);
+
+			chart.flow({
+				columns: [["data1", 120]],
+				duration: 200
+			});
+
+			setTimeout(() => chart.destroy(), destroyAfter);
+
+			return new Promise(resolve => {
+				setTimeout(() => {
+					window.removeEventListener("error", onError);
+					resolve(errors);
+				}, 800);
+			});
+		}
+
+		it("should not throw when destroyed before the slide starts", async () => {
+			expect(await destroyDuringFlow(50)).to.deep.equal([]);
+		});
+
+		it("should not throw when destroyed while sliding", async () => {
+			expect(await destroyDuringFlow(300)).to.deep.equal([]);
+		});
+	});
+
+	describe("flow animation", () => {
+		// the translate of an element's transform attribute, or null
+		const getTranslateX = node => {
+			const m = (node.getAttribute("transform") || "").match(/translate\(\s*([-\d.e]+)/);
+
+			return m ? +m[1] : null;
+		};
+
+		it("should start sliding at once when the chart has a transition duration", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [["data1", 30, 200, 100, 400, 150, 250]],
+					type: "area"
+				},
+				transition: {duration: 300}
+			});
+			const path = chart.$.main.select(`.${$LINE.line}-data1`).node();
+			let points;
+			let translateX;
+
+			chart.flow({
+				columns: [["data1", 120]],
+				duration: 300,
+				done() {
+					// the shapes get their new path at once: the chart transition used to
+					// interpolate them first, which bent the area, and delayed the slide
+					expect(points).to.be.equal(7);
+					expect(translateX).to.be.below(0);
+
+					this.destroy();
+					done(1);
+				}
+			});
+
+			setTimeout(() => {
+				points = path.getAttribute("d").match(/[-\d.]+,[-\d.]+/g).length;
+				translateX = getTranslateX(path);
+			}, 100);
+		}));
+
+		it("should slide the x axis ticks when the chart transition is off", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [["data1", 30, 200, 100, 400, 150, 250, 300, 200, 100, 50]]
+				},
+				transition: {duration: 0}
+			});
+			const getTickX = value => {
+				let x = null;
+
+				chart.$.main.selectAll(`.${$AXIS.axisX} .tick`).each(function() {
+					if (this.textContent === String(value)) {
+						x = getTranslateX(this);
+					}
+				});
+
+				return x;
+			};
+			const start = getTickX(5);
+			let middle;
+
+			chart.flow({
+				columns: [["data1", 120]],
+				duration: 300,
+				done() {
+					const end = getTickX(5);
+
+					// the flow passes its own transition, so the ticks move with the shapes
+					// instead of jumping to the end position when the flow finishes
+					expect(middle).to.be.below(start - 1);
+					expect(middle).to.be.above(end + 1);
+
+					this.destroy();
+					done(1);
+				}
+			});
+
+			setTimeout(() => {
+				middle = getTickX(5);
+			}, 150);
+		}));
+
+		it("should show the focus and tooltip of the data under the pointer after the flow", () => new Promise(done => {
+			const chart = util.generate({
+				data: {
+					columns: [["data1", 30, 200, 100, 400, 150, 250]]
+				},
+				point: {
+					focus: {
+						only: true
+					}
+				},
+				transition: {duration: 0}
+			});
+			const {$el, scale} = chart.internal;
+			const rect = $el.eventRect.node().getBoundingClientRect();
+			const getFocused = () => chart.$.main.selectAll(`.${$CIRCLE.circle}`)
+				.filter(function() {
+					return this.style.visibility !== "hidden" && this.style.opacity !== "0";
+				});
+			const getTooltipValue = () => chart.$.tooltip.select(".value").text();
+			const focusLine = chart.$.main.select(`line.${$FOCUS.xgridFocus}`).node();
+			let whileFlowing;
+
+			util.hoverChart(chart, "mousemove", {clientX: rect.left + scale.x(3), clientY: rect.top + 50});
+			expect(getTooltipValue()).to.be.equal("400");
+
+			chart.flow({
+				columns: [["data1", 120]],
+				duration: 100,
+				done() {
+					const focused = getFocused();
+					const d = focused.datum();
+
+					// the focus stays on its data and slides with the shapes
+					expect(whileFlowing.focused).to.be.equal(1);
+					expect(whileFlowing.circleX).to.be.below(0);
+					expect(whileFlowing.lineX).to.be.closeTo(whileFlowing.circleX, 0.1);
+
+					// the next value slid under the pointer: its point is on the line and in the tooltip
+					expect(focused.size()).to.be.equal(1);
+					expect(d.value).to.be.equal(150);
+					expect(+focused.attr("cx")).to.be.closeTo(scale.x(d.x), 1);
+					expect(getTooltipValue()).to.be.equal("150");
+
+					this.destroy();
+					done(1);
+				}
+			});
+
+			setTimeout(() => {
+				const focused = getFocused();
+
+				whileFlowing = {
+					focused: focused.size(),
+					circleX: getTranslateX(focused.node()),
+					lineX: getTranslateX(focusLine)
+				};
+			}, 50);
 		}));
 	});
 });

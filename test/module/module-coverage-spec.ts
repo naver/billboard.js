@@ -5,11 +5,12 @@
 /* eslint-disable */
 // @ts-nocheck
 import {select} from "d3-selection";
-import {afterEach, describe, expect, it, vi} from "vitest";
+import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
+import {TYPE_METHOD_NEEDED} from "../../src/config/const";
 import Cache from "../../src/module/Cache";
 import {csvParse, csvParseRows, tsvParse, tsvParseRows} from "../../src/module/dsv";
-import {checkApiModuleImport, checkModuleImport, logError} from "../../src/module/error";
+import {checkApiModuleImport, checkModuleImport, getTypeMethod, logError} from "../../src/module/error";
 import {generateResize, generateWait} from "../../src/module/generator";
 import {polygonArea, polygonCentroid} from "../../src/module/polygon";
 import {window} from "../../src/module/browser";
@@ -610,26 +611,106 @@ describe("MODULE coverage helpers", () => {
 
 	describe("error helpers", () => {
 		it("throws module import errors with formatted module names", () => {
-			vi.spyOn(window.console, "error").mockImplementation(() => {});
-			vi.spyOn(window.console, "info").mockImplementation(() => {});
-
 			expect(() => checkApiModuleImport("export")).to.throw("'exportApi'");
 			expect(() => logError("Please, make sure if %cline", "tail", "info")).to.throw("'line'");
 		});
 
-		it("checks missing chart type module imports", () => {
+		it("logs the styled message and the link to the console, and throws the plain message", () => {
+			const error = vi.spyOn(window.console, "error").mockImplementation(() => {});
+			const info = vi.spyOn(window.console, "info").mockImplementation(() => {});
+			let message = "";
+
+			try {
+				logError("Please, make sure if %cline", "tail", "https://doc");
+			} catch (e) {
+				message = e.message;
+			}
+
+			expect(message).to.be.equal("[billboard.js] Please, make sure if 'line' tail");
+			expect(error.mock.calls[0][0]).to.contain("Please, make sure if %cline");
+			expect(error.mock.calls[0]).to.include("tail");
+			expect(info.mock.calls[0]).to.include("https://doc");
+			expect(() => logError("Header only")).to.throw("[billboard.js] Header only");
+		});
+
+		it("tells the missing method and the mode when a part of a type module is not there", () => {
 			vi.spyOn(window.console, "error").mockImplementation(() => {});
 			vi.spyOn(window.console, "info").mockImplementation(() => {});
 
+			const ctx = {config: {render_mode: "svg"}, present: () => {}};
+
+			expect(getTypeMethod(ctx, "present")).to.be.equal(ctx.present);
+			expect(() => getTypeMethod(ctx, "updateTargetsForBar"))
+				.to.throw("'updateTargetsForBar' is imported for render.mode='svg'");
+			expect(() => getTypeMethod(ctx, "updateTargetsForBar"))
+				.to.throw("billboard.js/canvas");
+		});
+
+		it("checks missing chart type module imports", () => {
 			expect(() => checkModuleImport({
-				config: {data_type: null, data_types: null},
-				hasType: () => false
+				config: {data_type: null, data_types: null}
 			})).to.throw("'line'");
 
 			expect(() => checkModuleImport({
-				config: {data_type: "bar", data_types: null},
-				hasType: type => type === "bar"
+				config: {data_type: "bar", data_types: null}
 			})).to.throw("'bar'");
+		});
+	});
+
+	describe("module import hint of every type", () => {
+		// the types built in, and the types of their own module: one table
+		Object.keys(TYPE_METHOD_NEEDED).forEach(type => {
+			const method = TYPE_METHOD_NEEDED[type];
+			const ctx = (imported: boolean) => ({
+				config: {data_type: type, data_types: {}},
+				...(imported ? {[method]: () => {}} : {})
+			});
+
+			it(`${type}: reports it when the module is not there`, () => {
+				expect(() => checkModuleImport(ctx(false))).to.throw("module has been imported");
+			});
+
+			it(`${type}: is silent when the module is there`, () => {
+				expect(() => checkModuleImport(ctx(true))).to.not.throw();
+			});
+		});
+	});
+
+	describe("module import hint, by the types that are given", () => {
+		// the modules that are there: initLine and initBar
+		const check = (config, imported = ["initLine", "initBar"]) => () => checkModuleImport({
+			config,
+			...Object.fromEntries(imported.map(name => [name, () => {}]))
+		});
+
+		it("reports a type whose module is not there, from data.type or data.types", () => {
+			expect(check({data_type: "bullet", data_types: {}})).to.throw("'bullet'");
+			expect(check({data_type: "line", data_types: {data1: "bullet"}})).to.throw("'bullet'");
+			expect(check({data_type: "funnel", data_types: {}})).to.throw("'funnel'");
+		});
+
+		it("does not report it when its module is there", () => {
+			const imported = ["initLine", "getBulletData"];
+
+			expect(check({data_type: "bullet", data_types: {}}, imported)).to.not.throw();
+			expect(check({data_type: "line", data_types: {data1: "bullet"}}, imported)).to.not.throw();
+		});
+
+		it("does not report a name that is not in the table, a typo for example", () => {
+			expect(check({data_type: "buble", data_types: {}})).to.not.throw();
+			expect(check({data_type: "bulet", data_types: {data1: "lin"}})).to.not.throw();
+			expect(check({data_type: "BULLET", data_types: {}})).to.not.throw();
+		});
+
+		it("takes data.types before data.type, as the chart does", () => {
+			// bar is the default type, but every id is given its own: the bar module is not needed
+			expect(check({data_type: "bar", data_types: {data1: "line"}}, ["initLine"])).to.not.throw();
+			expect(check({data_type: "line", data_types: {data1: "bar"}}, ["initLine"])).to.throw("'bar'");
+		});
+
+		it("reports the first of the given types whose module is not there", () => {
+			expect(check({data_type: "line", data_types: {a: "bar", b: "funnel", c: "bullet"}}, ["initBar"]))
+				.to.throw("'funnel'");
 		});
 	});
 
@@ -650,6 +731,25 @@ describe("MODULE coverage helpers", () => {
 			expect(camelize("data_value", "_")).to.be.equal("dataValue");
 			expect(mergeArray([[1], [2, 3]])).to.be.deep.equal([1, 2, 3]);
 			expect(mergeArray([])).to.be.deep.equal([]);
+			expect(mergeArray(null)).to.be.deep.equal([]);
+			// a single item is returned as is
+			const single = [1, 2];
+
+			expect(mergeArray([single])).to.be.equal(single);
+			// non-array items are appended, arrays are flattened one level only
+			expect(mergeArray([[1, [2]], 3, [4]])).to.be.deep.equal([1, [2], 3, 4]);
+			// many items should merge in order
+			expect(mergeArray(Array.from({length: 500}, (_, i) => [i, -i])).length).to.be.equal(1000);
+
+			// must not copy the accumulated array for each item (concat per item is O(n^2))
+			const concatSpy = vi.spyOn(Array.prototype, "concat");
+
+			try {
+				mergeArray(Array.from({length: 200}, (_, i) => [i]));
+				expect(concatSpy).not.toHaveBeenCalled();
+			} finally {
+				concatSpy.mockRestore();
+			}
 		});
 
 		it("deep clones, extends and merges objects without prototype pollution", () => {
@@ -829,14 +929,16 @@ describe("MODULE coverage helpers", () => {
 			const state = {pendingRaf: null};
 			let calls = 0;
 
+			// first call runs synchronously, the following one is deferred to the next frame
 			scheduleRAFUpdate(state, () => calls++);
-			scheduleRAFUpdate(state, () => calls++);
+			expect(calls).to.be.equal(1);
 
-			setTimeout(() => {
+			scheduleRAFUpdate(state, () => {
+				calls++;
 				expect(calls).to.be.equal(2);
 				svg.remove();
 				done(1);
-			}, 30);
+			});
 		}));
 
 		it("emulates mouse and touch events", () => {

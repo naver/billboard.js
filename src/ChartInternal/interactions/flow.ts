@@ -15,9 +15,14 @@ export default {
 	 */
 	generateFlow(args): Function {
 		const $$ = this;
-		const {data, state, $el} = $$;
+		const {config, data, state, $el} = $$;
 
 		return function() {
+			// destroy() empties the instance while the redraw transition is waited on
+			if (!$$.$el) {
+				return;
+			}
+
 			const flowLength = args.flow.length;
 
 			// set flag
@@ -63,7 +68,18 @@ export default {
 					}
 				});
 
-			$$.hideGridFocus?.();
+			// the focus slides with its data and the flow end moves it to the data under the pointer
+			if (config.axis_rotated) {
+				$$.hideGridFocus?.();
+			} else {
+				const xFocus = $el.main.selectAll(
+					`line.${CLASS.xgridFocus}:not(.${CLASS.xgridFocusContinuous})`
+				);
+
+				xFocus.size() && (elements["gridFocus.x"] = xFocus);
+				$el.main.selectAll(`line.${CLASS.ygridFocus}`).style("visibility", "hidden");
+			}
+
 			$$.setFlowList(elements, args);
 		};
 	},
@@ -79,12 +95,10 @@ export default {
 		const {flow, targets} = args;
 		const {
 			duration = args.duration,
-			index: flowIndex,
-			length: flowLength,
 			orgDataCount
 		} = flow;
 
-		const transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength);
+		const transform = $$.getFlowTransform(targets, orgDataCount);
 		const wait = generateWait();
 		let n;
 
@@ -121,6 +135,13 @@ export default {
 	 */
 	cleanUpFlow(elements, args): void {
 		const $$ = this;
+
+		// destroy() interrupts the flow transition, which the wait counts as ended,
+		// and empties the instance before this runs
+		if (!$$.$el) {
+			return;
+		}
+
 		const {config, state, $el: {svg}} = $$;
 		const isRotated = config.axis_rotated;
 
@@ -133,6 +154,11 @@ export default {
 
 		// Remove flowed elements
 		if (flowLength) {
+			// point.focus.only draws one circle per data series, which the focus moves to any index
+			const isFocusCircle = $$.isPointFocusOnly() ?
+				(node: Element) => node.parentElement?.classList.contains(CLASS.circles) :
+				() => false;
+
 			["circle", "text", "shape", "eventRect"].forEach(v => {
 				const target: string[] = [];
 
@@ -142,6 +168,9 @@ export default {
 
 				svg.selectAll(`.${CLASS[`${v}s`]}`) // circles, shapes, texts, eventRects
 					.selectAll(target)
+					.filter(function() {
+						return !isFocusCircle(this);
+					})
 					.remove();
 			});
 
@@ -190,28 +219,31 @@ export default {
 
 		config.interaction_enabled && $$.redrawEventRect();
 
+		state.flowing = false;
+
+		// other data is under the pointer now: show its focus and tooltip
+		if ($$.$el.tooltip?.style("display") === "block") {
+			$$.updateTooltipOnRedraw();
+		} else {
+			$$.hideGridFocus?.();
+		}
+
 		// callback for end of flow
 		done.call($$.api);
-
-		state.flowing = false;
 	},
 
 	/**
 	 * Get flow transform value
 	 * @param {object} targets target
 	 * @param {number} orgDataCount original data count
-	 * @param {number} flowIndex flow index
-	 * @param {number} flowLength flow length
 	 * @returns {string}
 	 * @private
 	 */
-	getFlowTransform(targets, orgDataCount, flowIndex, flowLength): string {
+	getFlowTransform(targets, orgDataCount): string {
 		const $$ = this;
 		const {data, scale: {x}} = $$;
 		const dataValues = data.targets[0].values;
 
-		let flowStart = $$.getValueOnIndex(dataValues, flowIndex);
-		let flowEnd = $$.getValueOnIndex(dataValues, flowIndex + flowLength);
 		let translateX;
 
 		// update x domain to generate axis elements for flow
@@ -224,19 +256,18 @@ export default {
 				translateX = x(orgDomain[0]) - x(domain[0]);
 			} else {
 				if ($$.axis.isTimeSeries()) {
-					flowStart = $$.getValueOnIndex(dataValues, 0);
-					flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
+					const flowStart = $$.getValueOnIndex(dataValues, 0);
+					const flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
+
 					translateX = x(flowStart.x) - x(flowEnd.x);
 				} else {
 					translateX = diffDomain(domain) / 2;
 				}
 			}
-		} else if (orgDataCount === 1 || flowStart?.x === flowEnd?.x) {
-			translateX = x(orgDomain[0]) - x(domain[0]);
 		} else {
-			translateX = $$.axis.isTimeSeries() ?
-				x(orgDomain[0]) - x(domain[0]) :
-				x(flowStart?.x || 0) - x(flowEnd.x);
+			// The flowed-out head is already spliced from the data, so the slide is
+			// measured by how far the domain start moved.
+			translateX = x(orgDomain[0]) - x(domain[0]);
 		}
 
 		const scaleX = diffDomain(orgDomain) / diffDomain(domain);

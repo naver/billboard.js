@@ -463,9 +463,16 @@ export function sanitize(str: string): string {
 
 	// Single pass: sanitize allowed tags, escape disallowed ones
 	// Also match orphaned fragments like "ipt>" from broken tags
+	// and a trailing unterminated tag like "<img src=x onerror=..."
 	return str.replace(
-		/<\/?[^>]*>|[^<>\s]+>/g,
+		/<\/?[^>]*>|<[^>]*$|[^<>\s]+>/g,
 		match => {
+			// Unterminated tag at the end → escape '<', so it can't be completed
+			// by content concatenated afterward
+			if (match.startsWith("<") && !match.endsWith(">")) {
+				return match.replace(/</g, "&lt;");
+			}
+
 			// Remove HTML comments
 			if (match.startsWith("<!--")) {
 				return "";

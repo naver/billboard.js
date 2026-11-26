@@ -763,11 +763,17 @@ export default {
 
 		targets.forEach(t => {
 			const data: any[] = [];
+			// a type of its own module that has the values of a row to cover by itself
+			const axisDomain = $$.getAxisTypeHooks?.(t)?.domainValues;
 
 			t.values
 				.filter(({value}) => isValue(value) || value === null)
 				.forEach(v => {
 					let {value} = v;
+
+					if (axisDomain) {
+						value = axisDomain($$, v);
+					}
 
 					// exclude 'volume' value to correct mis domain calculation
 					if (value !== null && $$.isCandlestickType(v)) {
@@ -840,9 +846,20 @@ export default {
 
 		if (orderAsc || orderDesc) {
 			const reducer = (p, c) => p + Math.abs(c.value);
-			const sum = v => (isNumber(v) ? v : (
-				"values" in v ? v.values.reduce(reducer, 0) : v.value
-			));
+			// sort calls the compare function O(n log n) times, so sum once per target
+			// (the cache lives as long as this compare function)
+			const sums = new WeakMap();
+			const sum = v => {
+				if (isNumber(v)) {
+					return v;
+				}
+
+				if (!sums.has(v)) {
+					sums.set(v, "values" in v ? v.values.reduce(reducer, 0) : v.value);
+				}
+
+				return sums.get(v);
+			};
 
 			fn = (t1: IData | IDataRow, t2: IData | IDataRow) => {
 				const t1Sum = sum(t1);
@@ -1217,9 +1234,13 @@ export default {
 
 			const isBar = $$.isBarType(v.id);
 			const isCandle = $$.isCandlestickType(v.id);
+			// the selector of the shape of a type of its own module drawn on the axes
+			const axisHit = $$.getAxisTypeHooks(v.id)?.hit;
 
-			if (isBar || isCandle) {
-				const selector = isBar ?
+			if (isBar || isCandle || axisHit) {
+				const selector = axisHit ?
+					axisHit($$, v) :
+					isBar ?
 					`.${$BAR.chartBar}.${$COMMON.target}${
 						$$.getTargetSelectorSuffix(v.id)
 					} .${$BAR.bar}-${v.index}` :

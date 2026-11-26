@@ -54,7 +54,7 @@ Package manager: `pnpm@10.16.0` (corepack)
   - `data/` — data conversion, loading
   - `interactions/` — drag, eventrect, flow, subchart, zoom
   - `internals/` — redraw, scale, domain, size, color, legend, tooltip, format, text, title, style, type, class, category, transform
-  - `shape/` — rendering logic per chart type (arc, area, bar, bubble, candlestick, funnel, gauge, line, point, polar, radar, treemap)
+  - `shape/` — rendering logic per chart type (arc, area, bar, bubble, bullet, candlestick, funnel, gauge, line, point, polar, radar, treemap)
 
 ### Module Resolution System
 

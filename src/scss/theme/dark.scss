@@ -58,6 +58,87 @@ $font-family: Helvetica, Arial, sans-serif, "nanumgothic", "Dotum";
 	}
 }
 
+/*-- Bullet --*/
+.bb-chart-bullets {
+	// darker bands, so that the data labels and the axis (light on dark) stay readable
+	--bb-bullet-range-min: 16%;
+	--bb-bullet-range-max: 34%;
+
+	.bb-bullet-range {
+		stroke: none;
+		fill: hsl(0, 0%, calc(var(--bb-bullet-range-min) + var(--bb-t, 0) * (var(--bb-bullet-range-max) - var(--bb-bullet-range-min))));
+	}
+
+	.bb-bullet-target {
+		stroke: #fff;
+		stroke-width: 2px;
+	}
+
+	.bb-bullet-title {
+		font-size: 11px;
+		fill: #fff;
+	}
+
+	.bb-bullet-axis {
+		shape-rendering: crispEdges;
+		font-size: 10px;
+
+		text {
+			fill: #fff;
+		}
+
+		path, line {
+			stroke: #fff;
+		}
+	}
+
+	+ .bb-chart-texts text {
+		fill: #fff;
+	}
+}
+
+/*-- Heatmap --*/
+.bb-chart-heatmap {
+	.bb-heatmap-axis {
+		font-size: 10px;
+		fill: #fff;
+	}
+
+	.bb-heatmap-label {
+		font-size: 10px;
+		pointer-events: none;
+	}
+
+	// focus: the rows are of the target classes
+	.bb-heatmap-row.bb-defocused {
+		opacity: 0.5;
+	}
+}
+
+/*-- Sankey --*/
+.bb-chart-sankey {
+	.bb-sankey-link {
+		fill: none;
+		// sankey.link.opacity sets the variable
+		stroke-opacity: var(--bb-sankey-link-opacity, 0.4);
+
+		&:hover {
+			stroke-opacity: calc(var(--bb-sankey-link-opacity, 0.4) + 0.3);
+		}
+
+		// focus: the links are not of the target classes
+		&.bb-defocused {
+			opacity: 0.5 !important;
+		}
+	}
+
+	.bb-sankey-label {
+		font-size: 11px;
+		fill: #fff;
+		pointer-events: none;
+	}
+}
+
 /*-- Axis --*/
 .bb-axis {
     shape-rendering: crispEdges;
@@ -156,6 +237,35 @@ rect.bb-circle, use.bb-circle {
 	&._expanded_ {
 		fill-opacity: 0.75;
 	}
+}
+
+/*-- Boxplot --*/
+.bb-boxplot-box {
+	stroke-width: 1px;
+	fill-opacity: 0.7;
+}
+
+.bb-boxplot-whisker {
+	stroke-width: 1px;
+}
+
+.bb-boxplot-median {
+	stroke-width: 2px;
+}
+
+.bb-boxplot-outlier {
+	fill: none;
+	stroke-width: 1px;
+}
+
+// under the chart: the rule of the theme for paths (`svg path`) is more specific than a class
+.bb-chart-boxplot .bb-boxplot-mean {
+	fill: #fff;
+	stroke-width: 1px;
+}
+
+.bb-boxplot._expanded_ .bb-boxplot-box {
+	fill-opacity: 0.9;
 }
 
 /*-- Focus --*/

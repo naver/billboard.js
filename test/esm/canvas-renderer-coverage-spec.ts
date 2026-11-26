@@ -6,7 +6,10 @@
 // @ts-nocheck
 import {describe, expect, it, vi} from "vitest";
 
+import {selectionDraw} from "../../src/canvas/selection";
+import {subchartDraw} from "../../src/canvas/subchart";
 import CanvasRenderer from "../../src/canvas/CanvasRenderer";
+import canvasTreemap from "../../src/canvas/treemap";
 import {TYPE} from "../../src/config/const";
 
 function makeRow(id, index, value = index) {
@@ -184,8 +187,8 @@ describe("ESM canvas renderer coverage", () => {
 		};
 
 		ctx.canvasTheme = renderer.theme;
-		renderer.drawSubchart(ctx, shape);
-		renderer.drawSelections(ctx, shape);
+		subchartDraw.draw.call(ctx, renderer, shape);
+		selectionDraw.draw.call(ctx, renderer, shape);
 
 		expect(renderer.ctx).to.not.be.null;
 	});
@@ -198,14 +201,14 @@ describe("ESM canvas renderer coverage", () => {
 
 		// default (focus.only off): selected point draws both ring and data point
 		ctx.isPointFocusOnly = () => false;
-		renderer.drawSelections(ctx, shape);
+		selectionDraw.draw.call(ctx, renderer, shape);
 		const normalCalls = pointSpy.mock.calls.length;
 
 		pointSpy.mockClear();
 
 		// focus.only on: the data point is hidden, so only the ring is drawn
 		ctx.isPointFocusOnly = () => true;
-		renderer.drawSelections(ctx, shape);
+		selectionDraw.draw.call(ctx, renderer, shape);
 		const focusOnlyCalls = pointSpy.mock.calls.length;
 
 		expect(focusOnlyCalls).to.be.greaterThan(0);
@@ -217,17 +220,17 @@ describe("ESM canvas renderer coverage", () => {
 		const ctx = makeContext();
 
 		ctx.config.axis_rotated = true;
-		renderer.drawSubchartBrush(ctx);
-		renderer.drawSubchartBrushHandle(ctx, 15, "start");
-		renderer.drawSubchartBrushHandle(ctx, 35, "end");
+		subchartDraw.drawBrush.call(ctx, renderer);
+		subchartDraw.drawBrushHandle.call(ctx, renderer, 15, "start");
+		subchartDraw.drawBrushHandle.call(ctx, renderer, 35, "end");
 
 		ctx.config.subchart_show = false;
-		renderer.drawSubchart(ctx, {indices: {}, pos: {}});
-		renderer.drawSubchartBrush(ctx);
+		subchartDraw.draw.call(ctx, renderer, {indices: {}, pos: {}});
+		subchartDraw.drawBrush.call(ctx, renderer);
 
 		ctx.config.subchart_show = true;
 		ctx.state.domain = [1, 1];
-		renderer.drawSubchartBrush(ctx);
+		subchartDraw.drawBrush.call(ctx, renderer);
 
 		expect(renderer.ctx).to.not.be.null;
 	});
@@ -242,9 +245,8 @@ describe("ESM canvas renderer coverage", () => {
 		renderer.drawLines = () => calls.push("lines");
 		renderer.drawAreas = () => calls.push("areas");
 		renderer.drawCircles = () => calls.push("circles");
-		renderer.drawSelections = () => calls.push("selections");
+		ctx.getCanvasFeature = name => name === "selection" ? {draw: () => calls.push("selections")} : undefined;
 		renderer.drawLabels = () => calls.push("labels");
-		renderer.drawTreemaps = () => calls.push("treemaps");
 
 		renderer.draw(ctx, {indices: {}, pos: {}});
 		expect(calls).to.deep.equal(["bars", "candles", "areas", "lines", "circles", "selections", "labels"]);
@@ -255,10 +257,12 @@ describe("ESM canvas renderer coverage", () => {
 		renderer.draw(ctx, {indices: {}, pos: {}});
 		expect(calls).to.deep.equal(["candles", "lines", "areas", "circles", "bars", "selections", "labels"]);
 
+		// a type that is the whole chart is drawn by the canvas part of its module, alone
 		calls.length = 0;
-		ctx.state.hasTreemap = true;
+		ctx.getCanvasTypeParts = () => [{exclusive: true, draw: () => calls.push("treemaps")}];
 		renderer.draw(ctx, {indices: {}, pos: {}});
 		expect(calls).to.deep.equal(["treemaps"]);
+		expect(canvasTreemap.exclusive).to.be.true;
 	});
 
 	it("draws background, empty label and brush overlays", () => {
@@ -310,8 +314,8 @@ describe("ESM canvas renderer coverage", () => {
 		renderer.drawEmptyLabel(ctx);
 		renderer.drawZoomBrush(ctx, 10, 30);
 		renderer.drawZoomBrush(ctx, 10, 10);
-		renderer.drawSelectionDragArea(ctx, {x: 0, y: 0, w: 50, h: 50});
-		renderer.drawSelectionDragArea(ctx, {x: -100, y: -100, w: 1, h: 1});
+		selectionDraw.drawDragArea.call(ctx, renderer, {x: 0, y: 0, w: 50, h: 50});
+		selectionDraw.drawDragArea.call(ctx, renderer, {x: -100, y: -100, w: 1, h: 1});
 
 		ctx.config.axis_rotated = true;
 		renderer.drawZoomBrush(ctx, 5, 15);
@@ -443,7 +447,28 @@ describe("ESM canvas renderer coverage", () => {
 		expect(renderer.hasExpandedShapeFocus(ctx, [ctx.data.targets[0].values[0]])).to.be.true;
 		expect(renderer.hasExpandedShapeFocus(ctx, [ctx.data.targets[1].values[0]])).to.be.true;
 
+		// a bar thinner than a pixel skips the full redraw
+		const getBarPoints = ctx.generateGetBarPoints;
+
+		ctx.generateGetBarPoints = () => (d, i) => [
+			[i * 20, 0],
+			[i * 20, 20],
+			[i * 20 + 0.4, 20],
+			[i * 20 + 0.4, 0]
+		];
+		expect(renderer.hasExpandedShapeFocus(ctx, [ctx.data.targets[0].values[0]])).to.be.false;
+		ctx.generateGetBarPoints = getBarPoints;
+
 		ctx.config.axis_rotated = true;
+		// rotated, the bar thickness is its render height: a bar 0.4px long and 20px thick still redraws
+		ctx.generateGetBarPoints = () => (d, i) => [
+			[0, i * 20],
+			[20, i * 20],
+			[20, i * 20 + 0.4],
+			[0, i * 20 + 0.4]
+		];
+		expect(renderer.hasExpandedShapeFocus(ctx, [ctx.data.targets[0].values[0]])).to.be.true;
+		ctx.generateGetBarPoints = getBarPoints;
 		ctx.config.point_show = false;
 		renderer.drawCircles(ctx, shape);
 		renderer.drawFocus(ctx, [ctx.data.targets[2].values[1]]);
@@ -596,7 +621,7 @@ describe("ESM canvas renderer coverage", () => {
 		ctx.generateGetBarPoints = () => null;
 		ctx.generateGetCandlestickPoints = () => null;
 		ctx.updateCircleY = () => null;
-		renderer.drawSubchart(ctx, shape);
+		subchartDraw.draw.call(ctx, renderer, shape);
 
 		ctx.generateGetBarPoints = () => (d, i) => [
 			[i * 12, 0],
@@ -610,7 +635,7 @@ describe("ESM canvas renderer coverage", () => {
 		ctx.getCandlestickData = () => null;
 		ctx.subxx = null;
 		ctx.updateCircleY = () => (d, i) => i * 5;
-		renderer.drawSubchart(ctx, shape);
+		subchartDraw.draw.call(ctx, renderer, shape);
 
 		expect(renderer.ctx).to.not.be.null;
 	});
@@ -690,6 +715,7 @@ describe("ESM canvas renderer coverage", () => {
 		const focus = ctx.data.targets[2].values[0];
 
 		ctx.config.axis_rotated = true;
+		ctx.getCanvasFeature = () => subchartDraw;
 		ctx.config.axis_tooltip = false;
 		ctx.config.color_onover = "#ff00ff";
 		ctx.config.grid_focus_edge = true;
@@ -727,7 +753,7 @@ describe("ESM canvas renderer coverage", () => {
 		ctx.scale.x = value => value * 20;
 		ctx.scale.y = value => value * 15;
 
-		renderer.drawTreemaps(ctx);
+		canvasTreemap.draw.call(ctx, renderer);
 
 		expect(renderer.ctx).to.not.be.null;
 	});
@@ -737,8 +763,9 @@ describe("ESM canvas renderer coverage", () => {
 		const ctx = makeContext();
 		const focus = ctx.data.targets[2].values[1];
 		const traceLine = vi.spyOn(renderer.painter, "traceLine");
-		const drawSubchartFocus = vi.spyOn(renderer, "drawSubchartFocus");
+		const drawSubchartFocus = vi.fn();
 
+		ctx.getCanvasFeature = () => ({drawFocus: drawSubchartFocus});
 		ctx.config.axis_tooltip = false;
 		ctx.config.subchart_grid_focus_continuous = true;
 		ctx.config.grid_focus_show = true;
@@ -760,8 +787,9 @@ describe("ESM canvas renderer coverage", () => {
 		const ctx = makeContext();
 		const focus = ctx.data.targets[2].values[1];
 		const traceLine = vi.spyOn(renderer.painter, "traceLine");
-		const drawSubchartFocus = vi.spyOn(renderer, "drawSubchartFocus");
+		const drawSubchartFocus = vi.fn();
 
+		ctx.getCanvasFeature = () => ({drawFocus: drawSubchartFocus});
 		ctx.config.axis_tooltip = false;
 		ctx.config.grid_focus_show = true;
 		ctx.config.subchart_grid_focus = false;
@@ -839,7 +867,7 @@ describe("ESM canvas renderer coverage", () => {
 		ctx.scale.x = value => value * 20;
 		ctx.scale.y = value => value * 10;
 
-		renderer.drawTreemaps(ctx);
+		canvasTreemap.draw.call(ctx, renderer);
 
 		const nonCentered = records.find(record => record.text === "tile");
 		const nonCenteredSecondLine = records.find(record => record.text === "80%");
@@ -852,7 +880,7 @@ describe("ESM canvas renderer coverage", () => {
 
 		records.length = 0;
 		ctx.config.data_labels.centered = true;
-		renderer.drawTreemaps(ctx);
+		canvasTreemap.draw.call(ctx, renderer);
 
 		const centered = records.find(record => record.text === "tile");
 		const centeredSecondLine = records.find(record => record.text === "80%");

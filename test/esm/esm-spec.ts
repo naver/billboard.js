@@ -63,6 +63,8 @@ describe("ESM build", function() {
                 } else {
                     if (v === "candlestick") {
                         args.data.columns = candlestickData;
+                    } else if (v === "boxplot") {
+                        args.data.columns = [["data1", [1, 3, 5, 7, 9], [2, 4, 6, 8, 10]]];
                     }
 
                     chart = bb.bb.generate(args);
@@ -86,6 +88,8 @@ describe("ESM build", function() {
                             expect(this.querySelector("line")).to.not.be.null;
                         });
 
+                    } else if (v === "boxplot") {
+                        expect(chart.internal.$el.boxplot.size()).to.be.equal(2);
                     } else if (v === "funnel") {
                         path = chart.internal.$el.funnel.selectAll("path").size();
 
@@ -94,6 +98,12 @@ describe("ESM build", function() {
                     
                     } else if (v === "treemap") {
                         path = chart.$.main.selectAll("rect").size();
+                    } else if (v === "bullet") {
+                        path = chart.internal.$el.bullet.selectAll("rect").size();
+                    } else if (v === "heatmap") {
+                        path = chart.internal.$el.heatmap.selectAll("rect").size();
+                    } else if (v === "sankey") {
+                        path = chart.internal.$el.sankey.selectAll("path").attr("d");
                     } else {
                         // donut, gauge, pie
                         path = chart.$.arc.selectAll("path").attr("d");

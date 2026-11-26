@@ -67,6 +67,53 @@ export interface CanvasThemeStyle {
 	treemap: {stroke: string, lineWidth: number};
 	label: {font: string, color: string};
 	title: {font: string, color: string};
+	// the section of a type added by a module (see CanvasThemeExtension), by its name
+	[custom: string]: any;
+}
+
+/**
+ * Helpers to read the styles of a theme section from the stylesheet.
+ */
+export interface CanvasThemeProbe {
+	// style values of the element, with the given parents
+	probeIn(parentCls: string, tag: string, cls: string, props: string[]): Record<string, string>;
+	probeInNested(
+		parentCls: string,
+		groupCls: string,
+		tag: string,
+		cls: string,
+		props: string[]
+	): Record<string, string>;
+	// default font of the axis text
+	axisFont: string;
+	toColor(value: string | null | undefined, fallback: string): string;
+	toNumber(value: string | number | null | undefined, fallback: number): number;
+}
+
+/**
+ * Reads the value of a theme selector declaration.
+ */
+export interface CanvasThemeSelectorReader {
+	readColorValue(style: CanvasThemeSelectorStyle, prop: string): string | undefined;
+	readNumberValue(style: CanvasThemeSelectorStyle, prop: string): number | undefined;
+	readFontValue(style: CanvasThemeSelectorStyle): string | undefined;
+}
+
+/**
+ * Theme section of a type that is added by its own module, so that the theme carries nothing of it.
+ */
+export interface CanvasThemeExtension {
+	// name of the section in the style
+	section: string;
+	// default values of the section, from the stylesheet
+	probe(helpers: CanvasThemeProbe): Record<string, any>;
+	// values of the section for the theme selectors it handles
+	selectors?: Record<
+		string,
+		(style: CanvasThemeSelectorStyle, reader: CanvasThemeSelectorReader) => Record<string, any>
+	>;
+	// last touch on the section, after the overrides were applied
+	normalize?(section: Record<string, any>, helpers: Pick<CanvasThemeProbe, "toNumber">): void;
 }
 
 type CanvasThemeDeepPartial<T> = {
@@ -361,6 +408,13 @@ function mergeThemeSection(
 		target[section] = mergeObj(target[section] ?? {}, override);
 	}
 }
+
+// handed to the selector handlers of a theme extension
+const themeSelectorReader: CanvasThemeSelectorReader = {
+	readColorValue,
+	readNumberValue,
+	readFontValue
+};
 
 /**
  * Normalize a supported SVG selector for canvas theme matching.
@@ -810,17 +864,27 @@ function applySelectorStyle(
 /**
  * Convert selector based canvas theme overrides to renderer theme slots.
  * @param {object} selectors Selector style declarations
+ * @param {object} extension Theme section of a type added by a module
  * @returns {object} Canvas theme override
  * @private
  */
 function getSelectorThemeOverride(
-	selectors?: CanvasThemeSelectorMap
+	selectors?: CanvasThemeSelectorMap,
+	extension?: CanvasThemeExtension
 ): CanvasThemeDeepPartial<CanvasThemeStyle> {
 	const override: CanvasThemeDeepPartial<CanvasThemeStyle> = {};
 
 	Object.keys(selectors ?? {}).forEach(selector => {
 		normalizeThemeSelectors(selector).forEach(normalizedSelector => {
 			applySelectorStyle(override, normalizedSelector, selectors![selector]);
+
+			const handler = extension?.selectors?.[normalizedSelector];
+
+			handler && mergeThemeSection(
+				override,
+				extension!.section,
+				handler(selectors![selector], themeSelectorReader)
+			);
 		});
 	});
 
@@ -830,11 +894,13 @@ function getSelectorThemeOverride(
 /**
  * Resolve user canvas theme override.
  * @param {object} userOverride Canvas theme override
+ * @param {object} extension Theme section of a type added by a module
  * @returns {object} Canvas theme override
  * @private
  */
 function getThemeOverride(
-	userOverride?: CanvasThemeOverride
+	userOverride?: CanvasThemeOverride,
+	extension?: CanvasThemeExtension
 ): CanvasThemeDeepPartial<CanvasThemeStyle> {
 	if (!userOverride) {
 		return {};
@@ -842,7 +908,7 @@ function getThemeOverride(
 
 	const {selectors, ...styleOverride} = userOverride;
 
-	return mergeObj({}, getSelectorThemeOverride(selectors), styleOverride);
+	return mergeObj({}, getSelectorThemeOverride(selectors, extension), styleOverride);
 }
 
 /**
@@ -877,15 +943,23 @@ export default class CanvasTheme {
 	private cacheKey: string | null = null;
 	private gridLineSelectorOverrides: CanvasGridLineSelectorOverride[] = [];
 	private directGridOverrideKeys = new Set<keyof CanvasThemeStyle["grid"]>();
+	private extension?: CanvasThemeExtension;
 
 	/**
 	 * Read theme values from temporary SVG probes.
 	 * @param {HTMLElement} container Chart container
 	 * @param {object} userOverride Canvas theme override
+	 * @param {object} extension Theme section of a type added by a module
 	 * @private
 	 */
-	load(container: HTMLElement, userOverride?: CanvasThemeOverride): void {
+	load(
+		container: HTMLElement,
+		userOverride?: CanvasThemeOverride,
+		extension?: CanvasThemeExtension
+	): void {
 		const svg = document.createElementNS(SVG_NS, "svg");
+
+		extension && (this.extension = extension);
 
 		this.gridLineSelectorOverrides = getGridLineSelectorOverrides(userOverride?.selectors);
 		this.directGridOverrideKeys = new Set(
@@ -1110,7 +1184,7 @@ export default class CanvasTheme {
 			toOptionalNumber(subchartBrushExtent.opacity, 1) ??
 			zoomBrushOpacity;
 		const subchartBrushHandleStroke = toColor(subchartBrushHandle.stroke, "transparent");
-		const defaultStyle = {
+		const defaultStyle: Record<string, any> = {
 			axis: {
 				lineColor: toColor(axisLine.stroke, "#000"),
 				lineWidth: toNumber(axisLine["stroke-width"], 1),
@@ -1218,7 +1292,18 @@ export default class CanvasTheme {
 				color: toColor(title.fill, "#000")
 			}
 		};
-		const themeOverride = getThemeOverride(userOverride);
+		const ext = this.extension;
+
+		// the section of a type that is added by a module
+		ext && (defaultStyle[ext.section] = ext.probe({
+			probeIn,
+			probeInNested,
+			axisFont: axisText.font || "10px sans-serif",
+			toColor,
+			toNumber
+		}));
+
+		const themeOverride = getThemeOverride(userOverride, ext);
 		const style = mergeObj(defaultStyle, themeOverride);
 		const userAxisOverride = userOverride?.axis as
 			| CanvasThemeDeepPartial<CanvasThemeStyle["axis"]>
@@ -1320,6 +1405,7 @@ export default class CanvasTheme {
 			defaultStyle.subchartBrush.handleLineWidth
 		);
 		style.treemap.lineWidth = toNumber(style.treemap.lineWidth, defaultStyle.treemap.lineWidth);
+		ext?.normalize?.(style[ext.section], {toNumber});
 
 		this.style = style;
 		this.cacheContainer = container;

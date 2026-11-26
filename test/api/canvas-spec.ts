@@ -374,6 +374,87 @@ describe("API canvas", () => {
 		});
 	}));
 
+	it("keeps the tooltip and shows the data under the pointer after a flow", () => new Promise(done => {
+		generateWithOptions({
+			data: {
+				columns,
+				type: line()
+			}
+		});
+
+		const $$ = chart.internal;
+		const canvas = chart.$.canvas.node();
+		const rect = canvas.getBoundingClientRect();
+		const getValue = () => chart.$.tooltip.select(".bb-tooltip-name-data1 .value").text();
+		const renderCanvasFocus = vi.spyOn($$, "renderCanvasFocus");
+		let tooltipWhileFlowing;
+		let focusWhileFlowing;
+
+		canvas.dispatchEvent(new MouseEvent("mousemove", {
+			clientX: rect.left + $$.state.margin.left + $$.scale.x(1),
+			clientY: rect.top + $$.state.margin.top + ($$.state.height / 2)
+		}));
+		expect(getValue()).to.be.equal("200");
+
+		chart.flow({
+			columns: [
+				["data1", 500],
+				["data2", 60]
+			],
+			// the canvas flow animates only with a duration
+			duration: 100,
+			done() {
+				// the next value slid under the pointer: its focus and tooltip are shown
+				expect(tooltipWhileFlowing).to.be.equal("block");
+				// the focus is drawn on its data in the sliding frames
+				expect(focusWhileFlowing.map(d => d.value)).to.deep.equal([200, 20]);
+				expect($$.state.canvasFocusKey).to.not.be.null;
+				expect(getValue()).to.be.equal("100");
+				done(1);
+			}
+		});
+
+		setTimeout(() => {
+			tooltipWhileFlowing = chart.$.tooltip.style("display");
+			focusWhileFlowing = renderCanvasFocus.mock.lastCall?.[0] ?? [];
+		}, 50);
+	}));
+
+	it("shows the data under the pointer after a flow without animation", () => new Promise(done => {
+		generateWithOptions({
+			data: {
+				columns,
+				type: line()
+			}
+		});
+
+		const $$ = chart.internal;
+		const canvas = chart.$.canvas.node();
+		const rect = canvas.getBoundingClientRect();
+		const getValue = () => chart.$.tooltip.select(".bb-tooltip-name-data1 .value").text();
+
+		canvas.dispatchEvent(new MouseEvent("mousemove", {
+			clientX: rect.left + $$.state.margin.left + $$.scale.x(1),
+			clientY: rect.top + $$.state.margin.top + ($$.state.height / 2)
+		}));
+		expect(getValue()).to.be.equal("200");
+
+		chart.flow({
+			columns: [
+				["data1", 500],
+				["data2", 60]
+			],
+			duration: 0,
+			done() {
+				// the next value slid under the pointer: its focus and tooltip are shown
+				expect($$.state.canvasFocusKey).to.not.be.null;
+				expect(getValue()).to.be.equal("100");
+				done(1);
+			}
+		});
+
+	}));
+
 	it("selects and unselects canvas data through selection APIs", () => {
 		generateWithOptions({
 			data: {
@@ -555,6 +636,91 @@ describe("API canvas", () => {
 		expect(/^data:image\/png;base64,/.test(dataUrl)).to.be.true;
 	});
 
+	it("widens bars to the spacing of the range selected in the subchart", () => {
+		generateWithOptions({
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400, 150, 250, 120, 300, 90, 180]
+				],
+				type: bar()
+			},
+			subchart: {
+				show: true,
+				init: {
+					range: [2, 5]
+				}
+			}
+		});
+
+		const $$ = chart.internal;
+
+		// 3 of 10 x units, padding included, are shown: the data spacing is 10 / 3 times wider
+		expect($$.getBarW("bar", $$.axis.x, 1) / $$.getBarW("bar", $$.axis.subX, 1))
+			.to.be.closeTo(10 / 3, 0.1);
+	});
+
+	["wheel", "drag"].forEach(type => {
+		it(`widens bars to the spacing of the zoomed range: zoom.type='${type}'`, () => {
+			generateWithOptions({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250, 120, 300, 90, 180]
+					],
+					type: bar()
+				},
+				zoom: {
+					enabled: zoom(),
+					type
+				}
+			});
+
+			const $$ = chart.internal;
+			const width = $$.getBarW("bar", $$.axis.x, 1);
+
+			chart.zoom([2, 5]);
+
+			// 3 of 10 x units, padding included, are shown: the data spacing is 10 / 3 times wider
+			expect($$.getBarW("bar", $$.axis.x, 1) / width).to.be.closeTo(10 / 3, 0.1);
+
+			chart.unzoom();
+
+			expect($$.getBarW("bar", $$.axis.x, 1)).to.be.closeTo(width, 0.5);
+		});
+	});
+
+	it("keeps the zoomed category domain the same as svg over redraws", () => {
+		generateWithOptions({
+			data: {
+				x: "x",
+				columns: [
+					["x", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j"],
+					["data1", 30, 200, 100, 400, 150, 250, 120, 300, 90, 180]
+				],
+				type: bar()
+			},
+			axis: {
+				x: {
+					type: "category"
+				}
+			},
+			zoom: {
+				enabled: zoom()
+			}
+		});
+
+		const {scale} = chart.internal;
+
+		chart.zoom([2, 5]);
+
+		// categories 2 to 5 are shown, as svg does
+		expect(scale.zoom.orgDomain().map(Math.round)).to.deep.equal([2, 6]);
+
+		chart.flush();
+		chart.resize({width: 400});
+
+		expect(scale.zoom.orgDomain().map(Math.round)).to.deep.equal([2, 6]);
+	});
+
 	it("supports subchart type option in canvas mode", () => {
 		generateWithOptions({
 			data: {
@@ -578,7 +744,7 @@ describe("API canvas", () => {
 		expect($$.getSubchartTargetType("data1")).to.be.equal("bar");
 		expect($$.getSubchartTargetType("data2")).to.be.equal("line");
 		expect(chart.config("data.type")).to.be.equal("line");
-		expect(() => $$.canvasRenderer.drawSubchart($$, $$.getDrawShape())).to.not.throw();
+		expect(() => $$.getCanvasFeature("subchart").draw.call($$, $$.canvasRenderer, $$.getDrawShape())).to.not.throw();
 		expect(chart.config("data.type")).to.be.equal("line");
 	});
 
@@ -603,7 +769,11 @@ describe("API canvas", () => {
 				lineTos.push([x, y]);
 			});
 
-		chart.internal.canvasRenderer.drawSubchart(chart.internal, chart.internal.getDrawShape());
+		chart.internal.getCanvasFeature("subchart").draw.call(
+			chart.internal,
+			chart.internal.canvasRenderer,
+			chart.internal.getDrawShape()
+		);
 
 		const yValues = lineTos.map(([, y]) => y).filter(Number.isFinite);
 
@@ -644,7 +814,7 @@ describe("API canvas", () => {
 		});
 
 		const $$ = chart.internal;
-		const drawSubYAxes = vi.spyOn($$.canvasAxisRenderer, "drawSubYAxes");
+		const drawSubYAxes = vi.spyOn($$.getCanvasFeature("subchart"), "drawYAxes");
 		const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText");
 
 		expect($$.scale.subY).to.not.be.undefined;
@@ -653,7 +823,7 @@ describe("API canvas", () => {
 		expect(drawSubYAxes).toHaveBeenCalled();
 
 		fillText.mockClear();
-		$$.canvasAxisRenderer.drawSubYAxes($$);
+		$$.getCanvasFeature("subchart").drawYAxes.call($$, $$.canvasAxisRenderer);
 
 		expect(fillText).toHaveBeenCalledTimes(7);
 	});
@@ -754,17 +924,17 @@ describe("API canvas", () => {
 
 		const $$ = chart.internal;
 		const focusData = [$$.data.targets[0].values[1]];
-		const drawSubchartFocus = vi.spyOn($$.canvasRenderer, "drawSubchartFocus");
+		const drawSubchartFocus = vi.spyOn($$.getCanvasFeature("subchart"), "drawFocus");
 		const canvas = chart.$.canvas.node();
 		const rect = canvas.getBoundingClientRect();
 
 		expect($$.startCanvasSubchartBrush(new MouseEvent("mousedown"))).to.be.false;
 		expect($$.updateCanvasSubchartCursor(new MouseEvent("mousemove"))).to.be.false;
-		expect(() => $$.canvasRenderer.drawSubchartBrush($$)).to.not.throw();
+		expect(() => $$.getCanvasFeature("subchart").drawBrush.call($$, $$.canvasRenderer)).to.not.throw();
 
 		$$.renderCanvasFocus(focusData);
 
-		expect(drawSubchartFocus).toHaveBeenCalledWith($$, focusData);
+		expect(drawSubchartFocus).toHaveBeenCalledWith($$.canvasRenderer, focusData);
 
 		canvas.dispatchEvent(new MouseEvent("mousemove", {
 			clientX: rect.left + $$.state.margin2.left + $$.scale.subX(1),

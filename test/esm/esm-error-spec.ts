@@ -29,8 +29,8 @@ describe("ESM-ERROR check", function() {
             args.onbeforeinit = function() {
                 proto = Object.getPrototypeOf(this.internal);
 
-                fn = proto[TYPE_METHOD_NEEDED.LINE];
-                delete proto[TYPE_METHOD_NEEDED.LINE];
+                fn = proto[TYPE_METHOD_NEEDED.line];
+                delete proto[TYPE_METHOD_NEEDED.line];
             };
 
             bb.generate(args);        
@@ -41,7 +41,7 @@ describe("ESM-ERROR check", function() {
             expect(message.indexOf("[billboard.js]") > -1).to.be.true;
             expect(message.indexOf(type) > -1).to.be.true;
 
-            proto[TYPE_METHOD_NEEDED.LINE] = fn;
+            proto[TYPE_METHOD_NEEDED.line] = fn;
         }
     });
 
@@ -53,7 +53,7 @@ describe("ESM-ERROR check", function() {
         types.forEach(type => {
             try {
                 args.data.type = TYPE[type];
-                const m = TYPE_METHOD_NEEDED[type];
+                const m = TYPE_METHOD_NEEDED[TYPE[type]];
 
                 args.onbeforeinit = function() {
                     const proto = Object.getPrototypeOf(this.internal);

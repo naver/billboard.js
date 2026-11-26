@@ -227,8 +227,8 @@ export default {
 		// Remove targets
 		$$.data.targets = $$.data.targets.filter(t => !unloadIds.has(t.id));
 
-		// since treemap uses different data types, it needs to be transformed
-		state.hasFunnel && $$.updateFunnel($$.data.targets);
+		// a type of its own module can need its data to be transformed
+		$$.customTypeHooks?.afterUnload?.($$);
 
 		// since treemap uses different data types, it needs to be transformed
 		state.hasTreemap && $$.updateTargetsForTreemap($$.data.targets);

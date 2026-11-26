@@ -9,6 +9,7 @@ const Types = {
         "bar",
         "grouped-bar",
         "bubble",
+        "bullet",
         "line",
         "scatter",
         "spline",
@@ -199,6 +200,26 @@ const Types = {
                     ["data1", 50],
                     ["data2", 30]
                 ];
+
+                options.padding = {
+                    top: 30,
+                    left: 10,
+                    right: 10
+                };
+
+            } else if (type === "bullet") {
+                options.data.columns = [
+                    ["data0", 275],
+                    ["data1", 55],
+                    ["data2", 180]
+                ];
+
+                options.data.labels = true;
+
+                options.bullet = {
+                    ranges: [150, 225, 300],
+                    target: 250
+                };
 
                 options.padding = {
                     top: 30,

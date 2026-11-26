@@ -89,15 +89,19 @@ export default {
 	 * - area-step
 	 * - area-step-range
 	 * - bar
+	 * - boxplot
 	 * - bubble
+	 * - bullet
 	 * - candlestick
 	 * - donut
 	 * - funnel
 	 * - gauge
+	 * - heatmap
 	 * - line
 	 * - pie
 	 * - polar
 	 * - radar
+	 * - sankey
 	 * - scatter
 	 * - spline
 	 * - step
@@ -121,15 +125,19 @@ export default {
 	 *   areaStep,
 	 *   areaStepRange,
 	 *   bar,
+	 *   boxplot,
 	 *   bubble,
+	 *   bullet,
 	 *   candlestick,
 	 *   donut,
 	 *   funnel,
 	 *   gauge,
+	 *   heatmap,
 	 *   line,
 	 *   pie,
 	 *   polar,
 	 *   radar,
+	 *   sankey,
 	 *   scatter,
 	 *   spline,
 	 *   step,
@@ -148,7 +156,7 @@ export default {
 	/**
 	 * Set chart type for each data.<br>
 	 * This setting overwrites data.type setting.
-	 * - **NOTE:** `radar` and `treemap` type can't be combined with other types.
+	 * - **NOTE:** `heatmap`, `radar`, `sankey` and `treemap` type can't be combined with other types.
 	 * @name data․types
 	 * @memberof Options
 	 * @type {object}
@@ -171,15 +179,19 @@ export default {
 	 *   areaStep,
 	 *   areaStepRange,
 	 *   bar,
+	 *   boxplot,
 	 *   bubble,
+	 *   bullet,
 	 *   candlestick,
 	 *   donut,
 	 *   funnel,
 	 *   gauge,
+	 *   heatmap,
 	 *   line,
 	 *   pie,
 	 *   polar,
 	 *   radar,
+	 *   sankey,
 	 *   scatter,
 	 *   spline,
 	 *   step,
@@ -609,6 +621,7 @@ export default {
 	 * - `d` is the data clicked and element is the element clicked.
 	 * - `element` is the current interacting svg element.
 	 * - In this callback, `this` will be the Chart object.
+	 * - For radar type, clicking an axis text calls it once for each data at the axis, with the axis text as the element.
 	 * @name data․onclick
 	 * @memberof Options
 	 * @type {function}
@@ -882,6 +895,18 @@ export default {
 	 *   ],
 	 *   type: "candlestick"
 	 * }
+	 *
+	 * // for 'boxplot' type, data should contain:
+	 * // - an array of [min, q1, median, q3, max, [outliers](optional), mean(optional)] data following the order
+	 * // - or the list of the samples, when the 'boxplot.samples' option is set
+	 * data: {
+	 *   rows: [
+	 *      ["data1", "data2"],
+	 *      [[1, 3, 5, 7, 9], [2, 4, 6, 8, 10]],
+	 *      [[2, 4, 6, 8, 12, [15]], [1, 3, 4, 6, 9, [], 4.5]]
+	 *   ],
+	 *   type: "boxplot"
+	 * }
 	 */
 	data_rows: <(string | number)[][] | undefined>undefined,
 
@@ -951,6 +976,27 @@ export default {
 	 *      ]
 	 *   ],
 	 *   type: "candlestick"
+	 * }
+	 *
+	 * // for 'boxplot' type, data should contain:
+	 * // - an array of [min, q1, median, q3, max, [outliers](optional), mean(optional)] data following the order
+	 * // - or the list of the samples, when the 'boxplot.samples' option is set
+	 * data: {
+	 *   columns: [
+	 *      ["data1",
+	 *          [1, 3, 5, 7, 9],
+	 *          [2, 4, 6, 8, 12, [15], 5.5]  // with the outliers and the mean
+	 *      ]
+	 *   ],
+	 *   type: "boxplot"
+	 * }
+	 *
+	 * // for 'boxplot' type with the 'boxplot.samples' option
+	 * data: {
+	 *   columns: [
+	 *      ["data1", [3, 5, 6, 7, 7, 8, 9, 12, 30], [2, 4, 4, 5, 6, 8, 20]]
+	 *   ],
+	 *   type: "boxplot"
 	 * }
 	 */
 	data_columns: <(string | number)[][] | undefined>undefined,

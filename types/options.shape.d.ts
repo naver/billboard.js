@@ -294,6 +294,74 @@ export interface BubbleOptions {
 	zerobased?: boolean;
 }
 
+export interface BoxplotOptions {
+	/**
+	 * Set true to give the samples as the data value, instead of the five-number summary.
+	 * The chart calculates the quartiles, the whiskers, the outliers and the mean.
+	 */
+	samples?: boolean;
+
+	whisker?: {
+		/**
+		 * Width of the cap at the end of the whiskers, by the ratio of the width of the box.
+		 */
+		width?: number;
+
+		/**
+		 * How far the whiskers reach, by the multiple of the interquartile range.
+		 * Applied when `samples` is set.
+		 */
+		iqr?: number;
+	};
+
+	outlier?: {
+		/**
+		 * Show the outliers.
+		 */
+		show?: boolean;
+
+		/**
+		 * Radius of the outliers.
+		 */
+		r?: number;
+	};
+
+	mean?: {
+		/**
+		 * Show the mean.
+		 */
+		show?: boolean;
+
+		/**
+		 * Size of the mean marker.
+		 */
+		r?: number;
+	};
+
+	/**
+	 * Change the width of the box. If ratio is specified, change the width by ratio.
+	 */
+	width?: number | {
+		/**
+		 * Set the width of each box by ratio
+		 */
+		ratio: number;
+
+		/**
+		 * Set max width of each box
+		 */
+		max?: number;
+	} | {
+		/**
+		 * Set the width option for specific dataset
+		 */
+		[key: string]: number | {
+			ratio: number;
+			max: number;
+		}
+	};
+}
+
 export interface CandlestickOptions {
 	/**
 	 * Change the width of bar chart. If ratio is specified, change the width of bar chart by ratio.
@@ -471,6 +539,162 @@ export interface DonutOptions {
 	 * Set title of donut chart.
 	 */
 	title?: string;
+}
+
+export interface BulletOptions {
+	/**
+	 * Set bullet orientation.
+	 * When `false` (default), bullets are rendered horizontally (measure grows to the right).
+	 * When `true`, bullets are rendered vertically (measure grows upward).
+	 */
+	rotated?: boolean;
+
+	/**
+	 * Set how the measure value is rendered.
+	 * - `bar`: render the measure as a solid bar growing from the baseline.
+	 * - `dot`: render the measure as a dot marker positioned at the measure value.
+	 */
+	type?: "bar" | "dot";
+
+	/**
+	 * Set the dot radius (in px) used when `type="dot"`.
+	 * When `0`, the radius is derived from the bullet thickness.
+	 */
+	marker?: {
+		size?: number;
+	};
+
+	/**
+	 * Set the qualitative range band thresholds.
+	 * - `Array`: shared ascending thresholds applied to every bullet.
+	 * - `object`: per-data-id thresholds.
+	 * - `Function`: callback returning thresholds per bullet.
+	 * When omitted, three bands are generated automatically from the measure/target domain.
+	 */
+	ranges?: number[] | {[key: string]: number[]} | ((id: string, value: number) => number[]);
+
+	/**
+	 * Set the comparative target marker value.
+	 * Can be given as a `number` or an `Array` of numbers, an `object` keyed by data id, or a `Function`.
+	 * An `Array` draws more than one marker for a bullet. All the markers share the same style.
+	 */
+	target?:
+		| number
+		| number[]
+		| {[key: string]: number | number[]}
+		| ((id: string, value: number) => number | number[]);
+
+	/**
+	 * Set the thickness of the measure and the length of the target marker.
+	 */
+	width?: {
+		/**
+		 * Set the measure thickness as a ratio (0~1) of the bullet band.
+		 */
+		ratio?: number;
+
+		/**
+		 * Set the target marker length.
+		 */
+		target?: {
+			/**
+			 * Set the target marker length as a ratio (0~1) of the bullet band.
+			 * @default 0.6
+			 */
+			ratio?: number;
+		};
+	};
+
+	/**
+	 * Set the qualitative range band colors.
+	 * - `Array`: color strings ordered from the smallest to the largest band.
+	 * - `Function`: callback returning a color per band.
+	 * When omitted, the grayscale of the theme is used. Its lightness is set by the CSS variables
+	 * `--bb-bullet-range-min` and `--bb-bullet-range-max` of `.bb-chart-bullets`.
+	 */
+	range?: {
+		colors?: string[] | ((index: number, length: number) => string);
+	};
+
+	/**
+	 * Set the padding (in px) between each bullet band.
+	 */
+	padding?: number;
+
+	/**
+	 * Set the quantitative scale axis drawn under (beside, when rotated) each bullet.
+	 */
+	axis?: {
+		/**
+		 * Show or hide the axis.
+		 * @default true
+		 */
+		show?: boolean;
+
+		/**
+		 * Set the min value of the scale of every bullet.
+		 * When not given, the scale of each bullet is calculated from its values and ranges.
+		 * Set both `min` and `max` to make the bullets share the same scale.
+		 */
+		min?: number;
+
+		/**
+		 * Set the max value of the scale of every bullet. See `min`.
+		 */
+		max?: number;
+
+		tick?: {
+			/**
+			 * Set the approximate number of the ticks.
+			 */
+			count?: number;
+
+			/**
+			 * Set the values of the ticks. It takes precedence over `count`.
+			 */
+			values?: number[];
+
+			/**
+			 * Set the format of the tick labels.
+			 */
+			format?: (value: number) => string | number;
+		};
+	};
+
+	/**
+	 * Set the title of each bullet. It is drawn on the left of the bullet (under the column, when rotated).
+	 */
+	title?: {
+		/**
+		 * Show or hide the title.
+		 * @default false
+		 */
+		show?: boolean;
+
+		/**
+		 * Set the text of the title. By default it is the data name, or the data id.
+		 * Can be given as an `object` keyed by data id, or a `Function`.
+		 */
+		text?: {[key: string]: string} | ((id: string, value: number) => string);
+	};
+
+	/**
+	 * Set the measure value label.
+	 * The label is a data label: it is drawn when `data.labels` is set.
+	 */
+	label?: {
+		/**
+		 * Show or hide the measure value label.
+		 * @default true
+		 */
+		show?: boolean;
+
+		/**
+		 * Set a formatter for the measure value label.
+		 * Takes precedence over `data.labels.format`.
+		 */
+		format?: (value: number, id: string) => string | number;
+	};
 }
 
 export interface FunnelOptions {
@@ -1034,6 +1258,213 @@ export interface PolarOptions {
 	 * Set starting angle where data draws.
 	 */
 	startAngle?: number;
+}
+
+export interface HeatmapCellData {
+	id: string;
+	x: string;
+	index: number;
+	value: number | null;
+	name: string;
+}
+
+export interface HeatmapOptions {
+	color?: {
+		/**
+		 * The colors from the min to the max value (two or more).
+		 */
+		range?: string[];
+
+		/**
+		 * The colors by the ranges of the values, instead of a color range spread on the values.
+		 * The first range that has the value is used. A value in no range is of `none`.
+		 */
+		ranges?: {from?: number; to?: number; color: string; name?: string}[];
+
+		/**
+		 * The value of the first color. When it isn't set, the min value of the data is used.
+		 */
+		min?: number;
+
+		/**
+		 * The value of the last color. When it isn't set, the max value of the data is used.
+		 */
+		max?: number;
+
+		/**
+		 * The color of a cell without a value. Set `null` to draw nothing there.
+		 */
+		none?: string | null;
+	};
+
+	cell?: {
+		/**
+		 * The ratio of the width to the height of the cells: 1 makes them squares.
+		 * The chart is as high as the cells need, from its width. When `size.height` is set, the cells are the biggest of the ratio that fit in it. When it isn't set, the cells fill the chart.
+		 */
+		ratio?: number;
+
+		/**
+		 * The gap between the cells in pixels.
+		 */
+		padding?: number;
+
+		/**
+		 * The radius of the corners of the cells in pixels.
+		 */
+		radius?: number;
+
+		border?: {
+			/**
+			 * The width of the border of the cells in pixels.
+			 */
+			width?: number;
+
+			/**
+			 * The color of the border of the cells.
+			 */
+			color?: string;
+		};
+	};
+
+	label?: {
+		/**
+		 * Show the values in the cells.
+		 */
+		show?: boolean;
+
+		/**
+		 * Set the formatter of the values in the cells.
+		 */
+		format?: (this: Chart, value: number, x: string, id: string) => string;
+
+		/**
+		 * The color of the values. When it isn't set, black or white is used to read on the cell.
+		 */
+		color?: string;
+	};
+
+	axis?: {
+		x?: {
+			/**
+			 * Show the names of the columns.
+			 */
+			show?: boolean;
+
+			/**
+			 * The position of the names of the columns.
+			 */
+			position?: "bottom" | "top";
+		};
+
+		y?: {
+			/**
+			 * Show the names of the rows.
+			 */
+			show?: boolean;
+		};
+	};
+
+	colorbar?: {
+		/**
+		 * Show the color bar, with the min and the max value.
+		 */
+		show?: boolean;
+
+		/**
+		 * The position of the color bar: right (vertical), bottom or top (horizontal).
+		 */
+		position?: "right" | "bottom" | "top";
+
+		/**
+		 * Set the formatter of the values of the color bar.
+		 */
+		format?: (this: Chart, value: number) => string;
+	};
+}
+
+export interface SankeyNodeData {
+	id: string;
+	index: number;
+	value: number;
+	name: string;
+}
+
+export interface SankeyOptions {
+	/**
+	 * Make the flow go down instead of to the right.
+	 */
+	rotated?: boolean;
+
+	node?: {
+		/**
+		 * The thickness of the nodes along the flow in pixels.
+		 */
+		width?: number;
+
+		/**
+		 * The space between the nodes of a step in pixels.
+		 */
+		padding?: number;
+
+		/**
+		 * How the nodes are placed in the columns.
+		 */
+		align?: "justify" | "left" | "right" | "center";
+
+		/**
+		 * The order of the nodes in a step.
+		 * - auto: the layout orders them, to have less crossing links
+		 * - data: the order the nodes appear in the data
+		 * - asc, desc: by the value of the nodes
+		 * - function: a comparator of the data of two nodes
+		 */
+		sort?: "auto" | "data" | "asc" | "desc" | ((this: Chart, a: SankeyNodeData, b: SankeyNodeData) => number);
+
+		border?: {
+			/**
+			 * The width of the border of the nodes in pixels.
+			 */
+			width?: number;
+
+			/**
+			 * The color of the border of the nodes.
+			 */
+			color?: string;
+		};
+	};
+
+	link?: {
+		/**
+		 * The color of the links.
+		 * - source: the color of the source node
+		 * - target: the color of the target node
+		 * - gradient: a gradient from the color of the source node to the color of the target node
+		 */
+		color?: "source" | "target" | "gradient";
+
+		/**
+		 * The opacity of the links, from 0 to 1. When it isn't set, the opacity is of the stylesheet.
+		 */
+		opacity?: number;
+	};
+
+	/**
+	 * The number of the passes to place the nodes vertically.
+	 */
+	iterations?: number;
+
+	label?: {
+		/**
+		 * Show the names of the nodes.
+		 */
+		show?: boolean;
+
+		/**
+		 * Set the formatter of the node names.
+		 */
+		format?: (this: Chart, name: string, value: number, id: string) => string;
+	};
 }
 
 export interface RadarOptions {
