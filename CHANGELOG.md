@@ -1,3 +1,46 @@
+# [4.2.0-next.1](https://github.com/naver/billboard.js/compare/4.1.5...4.2.0-next.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* **api:** Fix to return indexed categories ([55c17c6](https://github.com/naver/billboard.js/commit/55c17c6c99fcdaca0ba2a323506709ab3d44e41a)), closes [#3365](https://github.com/naver/billboard.js/issues/3365)
+* **axis:** split long tick text iteratively ([2a94649](https://github.com/naver/billboard.js/commit/2a94649837f5ca394ac871f8604c5fa1bfe4749c)), closes [#4276](https://github.com/naver/billboard.js/issues/4276)
+* **bar:** Fix stacking bar position on multiple xs ([216da62](https://github.com/naver/billboard.js/commit/216da626bf5e774575513122e0816f60a64f042a)), closes [#3372](https://github.com/naver/billboard.js/issues/3372)
+* **candlestick:** Fix rendering on rotated axis ([17f5058](https://github.com/naver/billboard.js/commit/17f5058a3a6b2acfd5c9ee9c4c9f1d13be102693)), closes [#3387](https://github.com/naver/billboard.js/issues/3387)
+* **clip:** Fix x axis hide on title.bottom ([beec1bb](https://github.com/naver/billboard.js/commit/beec1bbdf3f6962dad02ac775a2d13d3b2fbb8eb)), closes [#3364](https://github.com/naver/billboard.js/issues/3364)
+* **flow:** keep the focus and tooltip on data flows ([271a663](https://github.com/naver/billboard.js/commit/271a6636c0e3388bd624be1a6364611294f2bca7)), closes [#4291](https://github.com/naver/billboard.js/issues/4291)
+* **flow:** keep x increasing on consecutive flows of non-timeseries axis ([de7623e](https://github.com/naver/billboard.js/commit/de7623e093b376cb85b9f562cc5b7b5072e93a9c)), closes [#4282](https://github.com/naver/billboard.js/issues/4282)
+* **flow:** slide shapes and x axis by the flow transition only ([541f7ff](https://github.com/naver/billboard.js/commit/541f7ffc99ebdaca465ebc986eaf11d2543ae067)), closes [#4285](https://github.com/naver/billboard.js/issues/4285)
+* **flow:** stop the flow when the chart is destroyed ([a6ade0f](https://github.com/naver/billboard.js/commit/a6ade0f86834a2f271883753050537926b79a7db)), closes [#4286](https://github.com/naver/billboard.js/issues/4286)
+* **option:** Fix inconsistency of padding ([0c1ce81](https://github.com/naver/billboard.js/commit/0c1ce8180122b51924077039d928bdbbf677ff87)), closes [#3426](https://github.com/naver/billboard.js/issues/3426)
+* **shape:** Fix circleY() undefined error ([f4ac3f1](https://github.com/naver/billboard.js/commit/f4ac3f1cb8e1f87c9bbd998ab66ff97b61080d51)), closes [#3388](https://github.com/naver/billboard.js/issues/3388)
+* **stanford:** fix the default color scale rendered in black ([aacec77](https://github.com/naver/billboard.js/commit/aacec7700ac0abeb6a322cbaf46b3f89fe89b347)), closes [#4091](https://github.com/naver/billboard.js/issues/4091) [#4310](https://github.com/naver/billboard.js/issues/4310)
+* **subchart, zoom:** Fix returning domain value ([90338ec](https://github.com/naver/billboard.js/commit/90338eced7c9545f2ceb443bebbd857ac58a674c)), closes [#3347](https://github.com/naver/billboard.js/issues/3347)
+* **subchart:** Fix handlebar position ([b897cbb](https://github.com/naver/billboard.js/commit/b897cbbcecc43f460566f2eb88fe9a5ee985bcaf)), closes [#3358](https://github.com/naver/billboard.js/issues/3358)
+* **subchart:** volume bars, shape width on the shown range and category zoom domain ([36926cc](https://github.com/naver/billboard.js/commit/36926cc8878307f8fb307e649d991c072b03e8b6)), closes [#4293](https://github.com/naver/billboard.js/issues/4293) [#4293](https://github.com/naver/billboard.js/issues/4293)
+* **title:** fix title text center align ([b254a61](https://github.com/naver/billboard.js/commit/b254a61533620bd7c55648499b1dd8cc22795336)), closes [#3363](https://github.com/naver/billboard.js/issues/3363)
+* **tooltip:** Fix tooltip.format.value call ([f7d587d](https://github.com/naver/billboard.js/commit/f7d587de26c6ceb026110328ef6d605f42fa563b)), closes [#3371](https://github.com/naver/billboard.js/issues/3371)
+* **tooltip:** Fix tootip display on tooltip.init ([98e6f8b](https://github.com/naver/billboard.js/commit/98e6f8b29d63544ba01fd37564fe2b40d9a04214)), closes [#3369](https://github.com/naver/billboard.js/issues/3369)
+* **tooltip:** show the values of candlestick and area-range one per line ([08bff4b](https://github.com/naver/billboard.js/commit/08bff4bec68d1ea191fa263d98b622a45bc31022)), closes [#4295](https://github.com/naver/billboard.js/issues/4295)
+
+
+### Features
+
+* **api:** Intent to ship subchart method ([976f04a](https://github.com/naver/billboard.js/commit/976f04a93df40bb756bba87c0f0afa5411ac12ba)), closes [#3342](https://github.com/naver/billboard.js/issues/3342)
+* **boxplot:** add the boxplot chart type for svg and canvas ([93c7eb2](https://github.com/naver/billboard.js/commit/93c7eb2ebbbd73bd076bb11a26ed10b6555163ed)), closes [#4312](https://github.com/naver/billboard.js/issues/4312)
+* **bullet:** add bullet chart type ([cfb84c7](https://github.com/naver/billboard.js/commit/cfb84c7bb4219b41bf80c8214348b329f208de57)), closes [#4268](https://github.com/naver/billboard.js/issues/4268)
+* **data:** call data.onclick on funnel, treemap and radar ([87c6982](https://github.com/naver/billboard.js/commit/87c6982a2f559eb1d917bdf00b59bf0c48e7611b)), closes [#4269](https://github.com/naver/billboard.js/issues/4269)
+* **heatmap:** add the heatmap chart type for svg and canvas ([6b93c64](https://github.com/naver/billboard.js/commit/6b93c64c59f2834a66a3a806fed57ed04c9cc622)), closes [#4308](https://github.com/naver/billboard.js/issues/4308)
+* **module:** Support dual CJS/ESM package ([437c007](https://github.com/naver/billboard.js/commit/437c007eabc7c7f82ce35eb7f3a2f6bb44438409)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
+* **plugin:** Intent to ship TableView plugin ([215b611](https://github.com/naver/billboard.js/commit/215b611fe68ea37360e8939e9902d489aa502b75)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
+* **regions:** Intent to ship regions.label ([b4e3bc2](https://github.com/naver/billboard.js/commit/b4e3bc29f2e78d6547ce695f9ecc6aadf90c22a9)), closes [#3319](https://github.com/naver/billboard.js/issues/3319)
+* **sankey:** add the sankey chart type for svg and canvas ([f65602e](https://github.com/naver/billboard.js/commit/f65602e6eeb69decbe8612b214832e0a8523b05b)), closes [#4298](https://github.com/naver/billboard.js/issues/4298)
+
+
+### Performance Improvements
+
+* **render:** remove quadratic costs on dense data and document tuning ([#4300](https://github.com/naver/billboard.js/issues/4300)) ([6c44794](https://github.com/naver/billboard.js/commit/6c44794913908e67d36b9a3e4d4b83b217fdc39f))
+
 ## [4.1.5](https://github.com/naver/billboard.js/compare/4.1.4...4.1.5) (2026-11-18)
 
 
