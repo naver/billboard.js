@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 4.1.5-nightly-20261125004611
+ * @version 4.1.5-nightly-20261126004504
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -195,7 +195,7 @@ var Plugin = class {
 	$$;
 	options;
 	config;
-	static version = "4.1.5-nightly-20261125004611";
+	static version = "4.1.5-nightly-20261126004504";
 	/**
 	* Constructor
 	* @param {Any} options config option object
@@ -629,22 +629,6 @@ var Options = class {
 * billboard.js project is licensed under the MIT license
 */
 /**
-* Creates an HSL color object.
-* @param {number} h Hue (0-360)
-* @param {number} s Saturation (0-1)
-* @param {number} l Lightness (0-1)
-* @param {number} opacity Opacity (0-1), defaults to 1
-* @returns {HSLColor} HSL color object
-*/
-function hsl(h, s, l, opacity = 1) {
-	return {
-		h: +h,
-		s: +s,
-		l: +l,
-		opacity: +opacity
-	};
-}
-/**
 * Stanford diagram plugin
 * - **NOTE:**
 *   - Plugins aren't built-in. Need to be loaded or imported to be used.
@@ -787,7 +771,7 @@ var Stanford = class extends Plugin {
 		}
 		target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : minEpoch;
 		target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : maxEpoch;
-		target.colors = isFunction(config.colors) ? config.colors : interpolateHslLong(hsl(250, 1, .5), hsl(0, 1, .5));
+		target.colors = isFunction(config.colors) ? config.colors : interpolateHslLong("hsl(250, 100%, 50%)", "hsl(0, 100%, 50%)");
 		target.colorscale = scaleSequentialLog(target.colors).domain([target.minEpochs, target.maxEpochs]);
 	}
 	getStanfordPointColor(d) {

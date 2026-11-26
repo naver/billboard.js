@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.5-nightly-20261125004611
+ * @version 4.1.5-nightly-20261126004504
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -29013,7 +29013,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "4.1.5-nightly-20261125004611");
+__publicField(Plugin, "version", "4.1.5-nightly-20261126004504");
 
 ;// ./node_modules/.pnpm/d3-axis@3.0.1/node_modules/d3-axis/dist/d3-axis.mjs
 // https://d3js.org/d3-axis/ v3.0.1 Copyright 2010-2026 Mike Bostock
@@ -31413,14 +31413,6 @@ var stanford_publicField = (obj, key, value) => stanford_defNormalProp(obj, type
 
 
 
-function stanford_hsl(h, s, l, opacity = 1) {
-  return {
-    h: +h,
-    s: +s,
-    l: +l,
-    opacity: +opacity
-  };
-}
 class Stanford extends Plugin {
   constructor(options) {
     super(options);
@@ -31491,7 +31483,7 @@ class Stanford extends Plugin {
     }
     target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : minEpoch;
     target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : maxEpoch;
-    target.colors = isFunction(config.colors) ? config.colors : hslLong(stanford_hsl(250, 1, 0.5), stanford_hsl(0, 1, 0.5));
+    target.colors = isFunction(config.colors) ? config.colors : hslLong("hsl(250, 100%, 50%)", "hsl(0, 100%, 50%)");
     target.colorscale = sequentialLog(target.colors).domain([target.minEpochs, target.maxEpochs]);
   }
   getStanfordPointColor(d) {

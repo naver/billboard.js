@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.5-nightly-20261125004611
+ * @version 4.1.5-nightly-20261126004504
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -412,7 +412,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "4.1.5-nightly-20261125004611");
+__publicField(Plugin, "version", "4.1.5-nightly-20261126004504");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(6);
@@ -1635,14 +1635,6 @@ var stanford_publicField = (obj, key, value) => stanford_defNormalProp(obj, type
 
 
 
-function hsl(h, s, l, opacity = 1) {
-  return {
-    h: +h,
-    s: +s,
-    l: +l,
-    opacity: +opacity
-  };
-}
 class Stanford extends Plugin {
   constructor(options) {
     super(options);
@@ -1713,7 +1705,7 @@ class Stanford extends Plugin {
     }
     target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : minEpoch;
     target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : maxEpoch;
-    target.colors = isFunction(config.colors) ? config.colors : (0,external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_.interpolateHslLong)(hsl(250, 1, 0.5), hsl(0, 1, 0.5));
+    target.colors = isFunction(config.colors) ? config.colors : (0,external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_.interpolateHslLong)("hsl(250, 100%, 50%)", "hsl(0, 100%, 50%)");
     target.colorscale = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSequentialLog)(target.colors).domain([target.minEpochs, target.maxEpochs]);
   }
   getStanfordPointColor(d) {
