@@ -227,6 +227,35 @@ rect.bb-circle, use.bb-circle {
 	}
 }
 
+/*-- Boxplot --*/
+.bb-boxplot-box {
+	stroke-width: 1px;
+	fill-opacity: 0.7;
+}
+
+.bb-boxplot-whisker {
+	stroke-width: 1px;
+}
+
+.bb-boxplot-median {
+	stroke-width: 2px;
+}
+
+.bb-boxplot-outlier {
+	fill: none;
+	stroke-width: 1px;
+}
+
+// under the chart: the rule of the theme for paths (`svg path`) is more specific than a class
+.bb-chart-boxplot .bb-boxplot-mean {
+	fill: #fff;
+	stroke-width: 1px;
+}
+
+.bb-boxplot._expanded_ .bb-boxplot-box {
+	fill-opacity: 0.9;
+}
+
 /*-- Focus --*/
 .bb-target, .bb-circles {
     &.bb-focused {

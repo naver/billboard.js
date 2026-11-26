@@ -294,6 +294,74 @@ export interface BubbleOptions {
 	zerobased?: boolean;
 }
 
+export interface BoxplotOptions {
+	/**
+	 * Set true to give the samples as the data value, instead of the five-number summary.
+	 * The chart calculates the quartiles, the whiskers, the outliers and the mean.
+	 */
+	samples?: boolean;
+
+	whisker?: {
+		/**
+		 * Width of the cap at the end of the whiskers, by the ratio of the width of the box.
+		 */
+		width?: number;
+
+		/**
+		 * How far the whiskers reach, by the multiple of the interquartile range.
+		 * Applied when `samples` is set.
+		 */
+		iqr?: number;
+	};
+
+	outlier?: {
+		/**
+		 * Show the outliers.
+		 */
+		show?: boolean;
+
+		/**
+		 * Radius of the outliers.
+		 */
+		r?: number;
+	};
+
+	mean?: {
+		/**
+		 * Show the mean.
+		 */
+		show?: boolean;
+
+		/**
+		 * Size of the mean marker.
+		 */
+		r?: number;
+	};
+
+	/**
+	 * Change the width of the box. If ratio is specified, change the width by ratio.
+	 */
+	width?: number | {
+		/**
+		 * Set the width of each box by ratio
+		 */
+		ratio: number;
+
+		/**
+		 * Set max width of each box
+		 */
+		max?: number;
+	} | {
+		/**
+		 * Set the width option for specific dataset
+		 */
+		[key: string]: number | {
+			ratio: number;
+			max: number;
+		}
+	};
+}
+
 export interface CandlestickOptions {
 	/**
 	 * Change the width of bar chart. If ratio is specified, change the width of bar chart by ratio.

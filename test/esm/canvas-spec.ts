@@ -37,7 +37,7 @@ import bb, {
 import {$CANVAS} from "../../src/canvas/classes";
 import CanvasTheme from "../../src/canvas/CanvasTheme";
 import {$AXIS, $COMMON, $FOCUS, $LEGEND} from "../../src/config/classes";
-import {AXIS_TICK_PADDING, AXIS_TICK_SIZE, TYPE} from "../../src/config/const";
+import {AXIS_TICK_LENGTH, AXIS_TICK_PADDING, AXIS_TICK_SIZE, TYPE} from "../../src/config/const";
 import {funnel, pie} from "../../src/config/resolver/shape";
 
 /**
@@ -3580,17 +3580,18 @@ describe("ESM canvas", function() {
 	});
 
 	it("should place rotated canvas y/y2 tick text next to tick lines", () => {
-		const records: Array<{text: string, textBaseline: string, absY: number}> = [];
+		const records: Array<{text: string, textBaseline: string, absY: number, fontSize: number}> = [];
 		const originalFillText = CanvasRenderingContext2D.prototype.fillText;
 		const fillText = vi.spyOn(CanvasRenderingContext2D.prototype, "fillText")
 			.mockImplementation(function(text, x, y, ...args) {
 				const transform = this.getTransform();
 
-				if (this.textAlign === "center" && /^(top|bottom)$/.test(this.textBaseline)) {
+				if (this.textAlign === "center" && /^(alphabetic|bottom)$/.test(this.textBaseline)) {
 					records.push({
 						text: String(text),
 						textBaseline: this.textBaseline,
-						absY: transform.b * Number(x) + transform.d * Number(y) + transform.f
+						absY: transform.b * Number(x) + transform.d * Number(y) + transform.f,
+						fontSize: parseFloat(/(\d+(?:\.\d+)?)px/.exec(this.font)?.[1] ?? "0")
 					});
 				}
 
@@ -3615,13 +3616,14 @@ describe("ESM canvas", function() {
 			const axisLineWidth = chart.internal.canvasTheme.style.axis.lineWidth;
 			const yAxisLine = getCrisp(margin.top + height, axisLineWidth);
 			const y2AxisLine = getCrisp(margin.top - 1, axisLineWidth);
-			const yTicks = records.filter(({textBaseline}) => textBaseline === "top");
+			const yTicks = records.filter(({textBaseline}) => textBaseline === "alphabetic");
 			const y2Ticks = records.filter(({textBaseline}) => textBaseline === "bottom");
 
 			expect(yTicks.length).to.be.greaterThan(0);
 			expect(y2Ticks.length).to.be.greaterThan(0);
-			expect(yTicks.every(({absY}) =>
-				Math.abs(absY - (yAxisLine + AXIS_TICK_SIZE)) < 0.01
+			// the baseline is tick length + .71em below the axis line, as the SVG tick text
+			expect(yTicks.every(({absY, fontSize}) =>
+				Math.abs(absY - (yAxisLine + AXIS_TICK_LENGTH + (0.71 * fontSize))) < 0.01
 			)).to.be.true;
 			expect(y2Ticks.every(({absY}) =>
 				Math.abs(absY - (y2AxisLine - AXIS_TICK_SIZE)) < 0.01

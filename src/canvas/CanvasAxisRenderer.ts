@@ -5,7 +5,7 @@
 import type {AxisTickFormat, AxisTickValue} from "../../types/axis";
 import type {RegionOptions} from "../../types/options";
 import type {AxisType} from "../../types/types";
-import {AXIS_TICK_PADDING, AXIS_TICK_SIZE} from "../config/const";
+import {AXIS_TICK_LENGTH, AXIS_TICK_PADDING, AXIS_TICK_SIZE} from "../config/const";
 import {
 	getAdditionalAxisScale,
 	getAdditionalAxisTickFormat,
@@ -1258,9 +1258,10 @@ export default class CanvasAxisRenderer {
 		if (isRotated) {
 			textX = x + ((AXIS_TICK_SIZE + AXIS_TICK_PADDING) * tickTextDirection) +
 				(tickTextPosition.x || 0);
-			textY = ty + (tickTextPosition.y || 0);
+			// SVG puts the baseline of the first line 3px below the tick, moved up by half of the other lines
+			textY = ty + (tickTextPosition.y || 0) + 3 - ((lines.length - 1) * lineHeight / 2);
 			ctx.textAlign = getXTickTextAlign($$, options);
-			ctx.textBaseline = "middle";
+			ctx.textBaseline = "alphabetic";
 		} else if (tickRotate) {
 			const fontSize = getFontSize(tickFont);
 			const firstDy = tickTextPosition.y ?
@@ -1422,7 +1423,18 @@ export default class CanvasAxisRenderer {
 
 			if (tickTextShow) {
 				for (const {tick, tx, ty} of drawableTicks) {
-					if (isRotated) {
+					if (isRotated && tickTextDirection > 0) {
+						// SVG puts the baseline of the bottom tick text at tickLength + dy (.71em)
+						ctx.textBaseline = "alphabetic";
+						painter.text(
+							formatTick(format, tick),
+							tx + (tickTextPosition.x || 0),
+							y + (AXIS_TICK_LENGTH * tickTextDirection) +
+								(tickTextPosition.y ?
+									resolveTextOffset(tickTextPosition.y, getFontSize(tickFont)) :
+									0.71 * getFontSize(tickFont))
+						);
+					} else if (isRotated) {
 						painter.text(
 							formatTick(format, tick),
 							tx + (tickTextPosition.x || 0),

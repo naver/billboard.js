@@ -267,6 +267,10 @@ export default {
 					["Close", close],
 					...(volume ? [["Volume", volume]] : [])
 				]);
+			} else if ($$.getAxisTypeHooks(row)?.tooltipRows) {
+				value = getRangeValueHtml(
+					$$.getAxisTypeHooks(row).tooltipRows($$, row, valueFormat, param)
+				);
 			} else if ($$.isBarRangeType(row)) {
 				const {value: rangeValue, id, index} = row;
 

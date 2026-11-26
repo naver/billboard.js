@@ -218,6 +218,7 @@ Import the type(s) you use and pass the return value as `data.type` /
 | `areaStep` | `"area-step"` |
 | `areaStepRange` | `"area-step-range"` |
 | `bar` | `"bar"` |
+| `boxplot` | `"boxplot"` |
 | `bubble` | `"bubble"` |
 | `bullet` | `"bullet"` |
 | `candlestick` | `"candlestick"` |

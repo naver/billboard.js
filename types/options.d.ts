@@ -10,6 +10,7 @@ import {
 	ArcOptions,
 	AreaOptions,
 	BarOptions,
+	BoxplotOptions,
 	BubbleOptions,
 	BulletOptions,
 	CandlestickOptions,
@@ -380,6 +381,7 @@ export interface ChartOptions {
 	arc?: ArcOptions;
 	area?: AreaOptions;
 	bar?: BarOptions;
+	boxplot?: BoxplotOptions;
 	bubble?: BubbleOptions;
 	bullet?: BulletOptions;
 	candlestick?: CandlestickOptions;
@@ -1420,7 +1422,7 @@ export interface Data {
 	/**
 	 * Set chart type at once.
 	 * If this option is specified, the type will be applied to every data. This setting can be overwritten by data.types.
-	 * - Available Values: area, area-line-range, area-spline, area-spline-range, area-step, area-step-range, bar, bubble, candlestick, donut, gauge, line, pie, radar, scatter, spline, step
+	 * - Available Values: area, area-line-range, area-spline, area-spline-range, area-step, area-step-range, bar, boxplot, bubble, candlestick, donut, gauge, line, pie, radar, scatter, spline, step
 	 */
 	type?: ChartTypes;
 

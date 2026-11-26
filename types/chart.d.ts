@@ -82,6 +82,11 @@ export interface Chart {
 		 */
 		candlestick: d3Selection;
 
+		/**
+		 * Boxplot elements
+		 */
+		boxplot: d3Selection;
+
 		line: {
 			/**
 			 * Line elements
