@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 4.1.5-nightly-20261126004504
+ * @version 4.1.5-nightly-20261127004604
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.12
@@ -24663,6 +24663,7 @@ __webpack_require__.d(shape_namespaceObject, {
   areaStep: function() { return areaStep; },
   areaStepRange: function() { return areaStepRange; },
   bar: function() { return bar_bar; },
+  boxplot: function() { return boxplot_boxplot; },
   bubble: function() { return bubble_bubble; },
   bullet: function() { return bullet_bullet; },
   candlestick: function() { return candlestick_candlestick; },
@@ -24680,6 +24681,99 @@ __webpack_require__.d(shape_namespaceObject, {
   step: function() { return line_step; },
   treemap: function() { return treemap_treemap; }
 });
+
+;// ./src/ChartInternal/shape/core/geometry.ts
+function getRenderPoint($$, point) {
+  return $$.config.axis_rotated ? [point[1], point[0]] : [point[0], point[1]];
+}
+function getRenderRect($$, points, minSize = 1) {
+  const renderPoints = points.map((point) => getRenderPoint($$, point));
+  const xs = renderPoints.map(([x]) => x);
+  const ys = renderPoints.map(([, y]) => y);
+  const rawX = Math.min(...xs);
+  const rawY = Math.min(...ys);
+  const rawW = Math.max(...xs) - rawX;
+  const rawH = Math.max(...ys) - rawY;
+  const w = Math.max(minSize, rawW);
+  const h = Math.max(minSize, rawH);
+  return {
+    x: rawX - (w - rawW) / 2,
+    y: rawY - (h - rawH) / 2,
+    w,
+    h
+  };
+}
+function getRenderDataPoint($$, d) {
+  var _a, _b;
+  const value = ((_a = $$.isGrouped) == null ? void 0 : _a.call($$, d.id)) && $$.circleY ? $$.circleY(d, d.index) : $$.getYScaleById(d.id)($$.getBaseValue(d));
+  const index = (_b = $$.xx(d)) != null ? _b : NaN;
+  return $$.config.axis_rotated ? { x: value, y: index } : { x: index, y: value };
+}
+function getShapePoint(pos, d, i) {
+  return {
+    x: pos.cx(d, i),
+    y: pos.cy(d, i)
+  };
+}
+function getCandlestickGeometry($$, points) {
+  return {
+    body: getRenderRect($$, [points[0], points[1]]),
+    wickStart: getRenderPoint($$, [points[2][0], points[2][1]]),
+    wickEnd: getRenderPoint($$, [points[2][0], points[2][2]])
+  };
+}
+function getTreemapNodeRect($$, node, root, clamp = false) {
+  if (node === root) {
+    return {
+      x: 0,
+      y: 0,
+      w: $$.state.width,
+      h: 0
+    };
+  }
+  const { scale: { x, y } } = $$;
+  const left = x(node.x0);
+  const top = y(node.y0);
+  const w = x(node.x1) - left;
+  const h = y(node.y1) - top;
+  return {
+    x: left,
+    y: top,
+    w: clamp ? Math.max(0, w) : w,
+    h: clamp ? Math.max(0, h) : h
+  };
+}
+function getTreemapLabelText($$, data, width, height) {
+  const { config } = $$;
+  const { id, value, ratio = 0 } = data;
+  const format = config.treemap_label_format;
+  const text = typeof format === "function" ? format.bind($$.api)(value, ratio, id, { width, height }) : `${id}
+${(ratio * 100).toFixed(2)}%`;
+  return text === null || text === void 0 ? null : String(text);
+}
+
+;// ./src/ChartInternal/internals/subchart.util.ts
+function isContinuousGridFocusEnabled($$) {
+  const { config, state } = $$;
+  return !!(config.subchart_grid_focus_continuous && config.subchart_grid_focus !== false && config.subchart_show && config.subchart_brush_enabled === false && state.width2 > 0 && state.height2 > 0);
+}
+function getMainCoordFromSubchartCoord($$, subCoord) {
+  var _a;
+  const { config, scale, state } = $$;
+  const mainX = scale.zoom || scale.x;
+  const subX = scale.subX;
+  if (!mainX || !subX) {
+    return null;
+  }
+  const subLength = config.axis_rotated ? state.height2 : state.width2;
+  const mainLength = config.axis_rotated ? state.height : state.width;
+  const domainValue = (_a = subX.invert) == null ? void 0 : _a.call(subX, subCoord);
+  let mainCoord = domainValue == null ? NaN : mainX(domainValue);
+  if (!Number.isFinite(mainCoord) && subLength > 0) {
+    mainCoord = Math.max(0, Math.min(1, subCoord / subLength)) * mainLength;
+  }
+  return Number.isFinite(mainCoord) ? Math.max(0, Math.min(mainLength, mainCoord)) : null;
+}
 
 ;// ./src/module/util/type-checks.ts
 const isValue = (v) => v || v === 0;
@@ -24706,29 +24800,6 @@ const notEmpty = (o) => !isEmpty(o);
 const isArray = (arr) => Array.isArray(arr);
 const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
 
-
-;// ./src/ChartInternal/internals/subchart.util.ts
-function isContinuousGridFocusEnabled($$) {
-  const { config, state } = $$;
-  return !!(config.subchart_grid_focus_continuous && config.subchart_grid_focus !== false && config.subchart_show && config.subchart_brush_enabled === false && state.width2 > 0 && state.height2 > 0);
-}
-function getMainCoordFromSubchartCoord($$, subCoord) {
-  var _a;
-  const { config, scale, state } = $$;
-  const mainX = scale.zoom || scale.x;
-  const subX = scale.subX;
-  if (!mainX || !subX) {
-    return null;
-  }
-  const subLength = config.axis_rotated ? state.height2 : state.width2;
-  const mainLength = config.axis_rotated ? state.height : state.width;
-  const domainValue = (_a = subX.invert) == null ? void 0 : _a.call(subX, subCoord);
-  let mainCoord = domainValue == null ? NaN : mainX(domainValue);
-  if (!Number.isFinite(mainCoord) && subLength > 0) {
-    mainCoord = Math.max(0, Math.min(1, subCoord / subLength)) * mainLength;
-  }
-  return Number.isFinite(mainCoord) ? Math.max(0, Math.min(mainLength, mainCoord)) : null;
-}
 
 ;// ./src/ChartInternal/shape/core/barRadius.ts
 
@@ -25555,76 +25626,6 @@ function getLineRegionSegments($$, values, x, y, regions) {
     });
   }
   return segments;
-}
-
-;// ./src/ChartInternal/shape/core/geometry.ts
-function getRenderPoint($$, point) {
-  return $$.config.axis_rotated ? [point[1], point[0]] : [point[0], point[1]];
-}
-function getRenderRect($$, points, minSize = 1) {
-  const renderPoints = points.map((point) => getRenderPoint($$, point));
-  const xs = renderPoints.map(([x]) => x);
-  const ys = renderPoints.map(([, y]) => y);
-  const rawX = Math.min(...xs);
-  const rawY = Math.min(...ys);
-  const rawW = Math.max(...xs) - rawX;
-  const rawH = Math.max(...ys) - rawY;
-  const w = Math.max(minSize, rawW);
-  const h = Math.max(minSize, rawH);
-  return {
-    x: rawX - (w - rawW) / 2,
-    y: rawY - (h - rawH) / 2,
-    w,
-    h
-  };
-}
-function getRenderDataPoint($$, d) {
-  var _a, _b;
-  const value = ((_a = $$.isGrouped) == null ? void 0 : _a.call($$, d.id)) && $$.circleY ? $$.circleY(d, d.index) : $$.getYScaleById(d.id)($$.getBaseValue(d));
-  const index = (_b = $$.xx(d)) != null ? _b : NaN;
-  return $$.config.axis_rotated ? { x: value, y: index } : { x: index, y: value };
-}
-function getShapePoint(pos, d, i) {
-  return {
-    x: pos.cx(d, i),
-    y: pos.cy(d, i)
-  };
-}
-function getCandlestickGeometry($$, points) {
-  return {
-    body: getRenderRect($$, [points[0], points[1]]),
-    wickStart: getRenderPoint($$, [points[2][0], points[2][1]]),
-    wickEnd: getRenderPoint($$, [points[2][0], points[2][2]])
-  };
-}
-function getTreemapNodeRect($$, node, root, clamp = false) {
-  if (node === root) {
-    return {
-      x: 0,
-      y: 0,
-      w: $$.state.width,
-      h: 0
-    };
-  }
-  const { scale: { x, y } } = $$;
-  const left = x(node.x0);
-  const top = y(node.y0);
-  const w = x(node.x1) - left;
-  const h = y(node.y1) - top;
-  return {
-    x: left,
-    y: top,
-    w: clamp ? Math.max(0, w) : w,
-    h: clamp ? Math.max(0, h) : h
-  };
-}
-function getTreemapLabelText($$, data, width, height) {
-  const { config } = $$;
-  const { id, value, ratio = 0 } = data;
-  const format = config.treemap_label_format;
-  const text = typeof format === "function" ? format.bind($$.api)(value, ratio, id, { width, height }) : `${id}
-${(ratio * 100).toFixed(2)}%`;
-  return text === null || text === void 0 ? null : String(text);
 }
 
 ;// ./node_modules/.pnpm/d3-path@3.1.1/node_modules/d3-path/dist/d3-path.mjs
@@ -28088,6 +28089,7 @@ const TYPE_METHOD_NEEDED = {
   "area-step-range": "initArea",
   bar: "initBar",
   bubble: "initCircle",
+  boxplot: "initBoxplot",
   bullet: "getBulletData",
   candlestick: "initCandlestick",
   donut: "initArc",
@@ -30217,16 +30219,20 @@ class CanvasRenderer {
       this.drawCircles($$, shape, focusData);
     };
     const drawContent = () => {
-      var _a2, _b2;
+      var _a2, _b2, _c2;
       if (!$$.config.bar_front) {
         this.drawBars($$, shape, focusData);
       }
       this.drawCandlesticks($$, shape, focusData);
+      (_a2 = $$.getAxisTypeParts) == null ? void 0 : _a2.call($$).forEach((part) => {
+        var _a3, _b3;
+        return (_b3 = (_a3 = part.canvas) == null ? void 0 : _a3.draw) == null ? void 0 : _b3.call($$, this, shape);
+      });
       drawLineLayers();
       if ($$.config.bar_front) {
         this.drawBars($$, shape, focusData);
       }
-      (_b2 = (_a2 = $$.getCanvasFeature) == null ? void 0 : _a2.call($$, "selection")) == null ? void 0 : _b2.draw.call($$, this, shape);
+      (_c2 = (_b2 = $$.getCanvasFeature) == null ? void 0 : _b2.call($$, "selection")) == null ? void 0 : _c2.draw.call($$, this, shape);
       this.drawLabels($$, shape);
     };
     $$.config.clipPath === false ? drawContent() : this.painter.clipRect(
@@ -30880,6 +30886,185 @@ class CanvasRenderer {
     });
   }
 }
+
+;// ./src/canvas/boxplot.ts
+
+
+
+const boxplotTheme = {
+  section: "boxplot",
+  probe({ probeIn, toColor, toNumber }) {
+    const box = probeIn("bb-chart-boxplot", "path", "bb-boxplot-box", [
+      "stroke",
+      "stroke-width",
+      "fill-opacity"
+    ]);
+    const whisker = probeIn("bb-chart-boxplot", "path", "bb-boxplot-whisker", ["stroke-width"]);
+    const median = probeIn("bb-chart-boxplot", "path", "bb-boxplot-median", ["stroke-width"]);
+    const outlier = probeIn("bb-chart-boxplot", "path", "bb-boxplot-outlier", [
+      "stroke-width"
+    ]);
+    const mean = probeIn("bb-chart-boxplot", "path", "bb-boxplot-mean", ["fill"]);
+    return {
+      stroke: toColor(box.stroke, "#000"),
+      boxLineWidth: toNumber(box["stroke-width"], 1),
+      boxOpacity: toNumber(box["fill-opacity"], 0.7),
+      whiskerLineWidth: toNumber(whisker["stroke-width"], 1),
+      medianLineWidth: toNumber(median["stroke-width"], 2),
+      outlierLineWidth: toNumber(outlier["stroke-width"], 1),
+      meanFill: toColor(mean.fill, "#fff")
+    };
+  },
+  selectors: {
+    ".bb-boxplot-box": (style, { readColorValue, readNumberValue }) => ({
+      stroke: readColorValue(style, "stroke"),
+      boxLineWidth: readNumberValue(style, "stroke-width"),
+      boxOpacity: readNumberValue(style, "fill-opacity")
+    }),
+    ".bb-boxplot-whisker": (style, { readNumberValue }) => ({
+      whiskerLineWidth: readNumberValue(style, "stroke-width")
+    }),
+    ".bb-boxplot-median": (style, { readNumberValue }) => ({
+      medianLineWidth: readNumberValue(style, "stroke-width")
+    }),
+    ".bb-boxplot-outlier": (style, { readNumberValue }) => ({
+      outlierLineWidth: readNumberValue(style, "stroke-width")
+    }),
+    ".bb-boxplot-mean": (style, { readColorValue }) => ({
+      meanFill: readColorValue(style, "fill")
+    })
+  }
+};
+function getGeometry($$, getPoints, d, i) {
+  const points = getPoints(d, i);
+  if (!points) {
+    return null;
+  }
+  const [[x0, q1], [x1, q3], [xc, min, max], [median], outliers, mean] = points;
+  const R = (x, y) => getRenderPoint($$, [x, y]);
+  const cap = (x1 - x0) * $$.config.boxplot_whisker_width / 2;
+  const m = $$.config.boxplot_mean_r;
+  return {
+    box: getRenderRect($$, [[x0, q1], [x1, q3]]),
+    median: [R(x0, median), R(x1, median)],
+    whisker: [
+      [R(xc, max), R(xc, q3)],
+      [R(xc, q1), R(xc, min)],
+      ...cap > 0 ? [
+        [R(xc - cap, max), R(xc + cap, max)],
+        [R(xc - cap, min), R(xc + cap, min)]
+      ] : []
+    ],
+    outliers: outliers.map((v) => R(xc, v)),
+    mean: mean.map((v) => [R(xc - m, v), R(xc, v - m), R(xc + m, v), R(xc, v + m)])
+  };
+}
+/* harmony default export */ var boxplot = ({
+  theme: boxplotTheme,
+  /**
+   * Draw the boxes on canvas.
+   * @param {CanvasRenderer} renderer Canvas renderer
+   * @param {object} shape Cached draw shape object
+   * @private
+   */
+  draw(renderer, shape) {
+    const $$ = this;
+    const { ctx, painter, theme: { style: { boxplot } } } = renderer;
+    const { margin } = $$.state;
+    const r = $$.config.boxplot_outlier_r;
+    const isBoxplot = $$.isBoxplotType.bind($$);
+    const getPoints = $$.generateGetBoxplotPoints(
+      getCanvasShapeIndices($$, shape, "boxplot", isBoxplot),
+      false
+    );
+    painter.withTranslation(margin.left, margin.top, () => {
+      $$.filterTargetsToShow().filter(isBoxplot).filter((target) => isCanvasRenderableTarget($$, target)).forEach((target) => {
+        const range = getCanvasTargetVisibleRange($$, target);
+        const alpha = getCanvasTargetFocusOpacity($$, target);
+        for (let i = range.start; i < range.end; i++) {
+          const d = target.values[i];
+          const geometry = getGeometry($$, getPoints, d, i);
+          if (!geometry) {
+            continue;
+          }
+          const stroke = boxplot.stroke;
+          ctx.strokeStyle = stroke;
+          ctx.globalAlpha = alpha;
+          boxplot.whiskerLineWidth > 0 && painter.strokePath(() => {
+            geometry.whisker.forEach(
+              ([a2, b2]) => painter.traceLine(a2[0], a2[1], b2[0], b2[1])
+            );
+          }, { lineWidth: boxplot.whiskerLineWidth, stroke, alpha });
+          painter.fillRect(geometry.box, {
+            fill: $$.color(d),
+            alpha: boxplot.boxOpacity * alpha
+          });
+          boxplot.boxLineWidth > 0 && painter.strokeRect(geometry.box, {
+            stroke,
+            lineWidth: boxplot.boxLineWidth,
+            alpha
+          });
+          const [a, b] = geometry.median;
+          painter.strokePath(() => painter.traceLine(a[0], a[1], b[0], b[1]), {
+            lineWidth: boxplot.medianLineWidth,
+            stroke,
+            alpha
+          });
+          geometry.outliers.length && painter.strokePath(() => {
+            geometry.outliers.forEach(([x, y]) => {
+              ctx.moveTo(x + r, y);
+              ctx.arc(x, y, r, 0, Math.PI * 2);
+            });
+          }, { lineWidth: boxplot.outlierLineWidth, stroke, alpha });
+          geometry.mean.forEach(([p0, p1, p2, p3]) => {
+            ctx.beginPath();
+            ctx.moveTo(p0[0], p0[1]);
+            [p1, p2, p3].forEach((p) => ctx.lineTo(p[0], p[1]));
+            ctx.closePath();
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = boxplot.meanFill;
+            ctx.fill();
+            ctx.strokeStyle = stroke;
+            ctx.lineWidth = boxplot.boxLineWidth;
+            ctx.stroke();
+          });
+        }
+        ctx.globalAlpha = 1;
+      });
+    });
+  },
+  /**
+   * Add the hit items of the boxes.
+   * @param {HitDetector} detector Hit detector
+   * @param {object} context Shape, targets, margin and the index registration of the detector
+   * @param {object} context.shape Shape helpers of the chart
+   * @param {Array} context.targets Data targets
+   * @param {object} context.margin Margin of the chart
+   * @param {function} context.addIndex Register the index of a hit item
+   * @private
+   */
+  hits(detector, { shape, targets, margin, addIndex }) {
+    const $$ = this;
+    const isBoxplot = $$.isBoxplotType.bind($$);
+    const getPoints = $$.generateGetBoxplotPoints(
+      getCanvasShapeIndices($$, shape, "boxplot", isBoxplot),
+      false
+    );
+    targets.filter(isBoxplot).forEach((target) => {
+      const range = getCanvasTargetVisibleRange($$, target);
+      for (let i = range.start; i < range.end; i++) {
+        const d = target.values[i];
+        const geometry = getGeometry($$, getPoints, d, i);
+        if (!geometry) {
+          continue;
+        }
+        const { x, y, w, h } = geometry.box;
+        detector.addBar({ x: margin.left + x, y: margin.top + y, w, h, data: d });
+        addIndex(margin.left + x + w / 2, margin.top + y + h / 2, d);
+      }
+    });
+  }
+});
 
 ;// ./src/canvas/bullet.ts
 
@@ -36958,9 +37143,9 @@ class CanvasAxisRenderer {
     let textY;
     if (isRotated) {
       textX = x + (AXIS_TICK_SIZE + AXIS_TICK_PADDING) * tickTextDirection + (tickTextPosition.x || 0);
-      textY = ty + (tickTextPosition.y || 0);
+      textY = ty + (tickTextPosition.y || 0) + 3 - (lines.length - 1) * lineHeight / 2;
       ctx.textAlign = getXTickTextAlign($$, options);
-      ctx.textBaseline = "middle";
+      ctx.textBaseline = "alphabetic";
     } else if (tickRotate) {
       const fontSize = getFontSize(tickFont);
       const firstDy = tickTextPosition.y ? resolveTextOffset(tickTextPosition.y, fontSize) : 0.71 * fontSize;
@@ -37086,7 +37271,14 @@ class CanvasAxisRenderer {
       }
       if (tickTextShow) {
         for (const { tick, tx, ty } of drawableTicks) {
-          if (isRotated) {
+          if (isRotated && tickTextDirection > 0) {
+            ctx.textBaseline = "alphabetic";
+            painter.text(
+              formatTick(format, tick),
+              tx + (tickTextPosition.x || 0),
+              y + AXIS_TICK_LENGTH * tickTextDirection + (tickTextPosition.y ? resolveTextOffset(tickTextPosition.y, getFontSize(tickFont)) : 0.71 * getFontSize(tickFont))
+            );
+          } else if (isRotated) {
             painter.text(
               formatTick(format, tick),
               tx + (tickTextPosition.x || 0),
@@ -39791,7 +39983,7 @@ class HitDetector {
    * @private
    */
   rebuild($$, shape) {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
     const { current, margin, width, height } = $$.state;
     const targets = $$.filterTargetsToShow();
     this.bars = [];
@@ -39887,6 +40079,12 @@ class HitDetector {
         });
       }
     }
+    (_h = $$.getAxisTypeParts) == null ? void 0 : _h.call($$).forEach(
+      (part) => {
+        var _a2, _b2;
+        return (_b2 = (_a2 = part.canvas) == null ? void 0 : _a2.hits) == null ? void 0 : _b2.call($$, this, { shape, targets, margin, addIndex });
+      }
+    );
     const { cx, cy } = shape.pos;
     if (cx && cy) {
       targets.filter(isCanvasPointType.bind(null, $$)).filter((target) => isCanvasTargetSupported($$, target, HIT_GROUPED_TYPE_FILTERS)).forEach((target) => {
@@ -41529,6 +41727,7 @@ const $ZOOM = {
    * - area-step
    * - area-step-range
    * - bar
+   * - boxplot
    * - bubble
    * - bullet
    * - candlestick
@@ -41564,6 +41763,7 @@ const $ZOOM = {
    *   areaStep,
    *   areaStepRange,
    *   bar,
+   *   boxplot,
    *   bubble,
    *   bullet,
    *   candlestick,
@@ -41616,6 +41816,7 @@ const $ZOOM = {
    *   areaStep,
    *   areaStepRange,
    *   bar,
+   *   boxplot,
    *   bubble,
    *   bullet,
    *   candlestick,
@@ -42286,6 +42487,18 @@ const $ZOOM = {
    *   ],
    *   type: "candlestick"
    * }
+   *
+   * // for 'boxplot' type, data should contain:
+   * // - an array of [min, q1, median, q3, max, [outliers](optional), mean(optional)] data following the order
+   * // - or the list of the samples, when the 'boxplot.samples' option is set
+   * data: {
+   *   rows: [
+   *      ["data1", "data2"],
+   *      [[1, 3, 5, 7, 9], [2, 4, 6, 8, 10]],
+   *      [[2, 4, 6, 8, 12, [15]], [1, 3, 4, 6, 9, [], 4.5]]
+   *   ],
+   *   type: "boxplot"
+   * }
    */
   data_rows: void 0,
   /**
@@ -42354,6 +42567,27 @@ const $ZOOM = {
    *      ]
    *   ],
    *   type: "candlestick"
+   * }
+   *
+   * // for 'boxplot' type, data should contain:
+   * // - an array of [min, q1, median, q3, max, [outliers](optional), mean(optional)] data following the order
+   * // - or the list of the samples, when the 'boxplot.samples' option is set
+   * data: {
+   *   columns: [
+   *      ["data1",
+   *          [1, 3, 5, 7, 9],
+   *          [2, 4, 6, 8, 12, [15], 5.5]  // with the outliers and the mean
+   *      ]
+   *   ],
+   *   type: "boxplot"
+   * }
+   *
+   * // for 'boxplot' type with the 'boxplot.samples' option
+   * data: {
+   *   columns: [
+   *      ["data1", [3, 5, 6, 7, 7, 8, 9, 12, 30], [2, 4, 4, 5, 6, 8, 20]]
+   *   ],
+   *   type: "boxplot"
    * }
    */
   data_columns: void 0,
@@ -44528,9 +44762,14 @@ function normalizeTargetIds(targetIds) {
       }
     }
     targets.forEach((t) => {
+      var _a, _b;
       const data = [];
+      const axisDomain = (_b = (_a = $$.getAxisTypeHooks) == null ? void 0 : _a.call($$, t)) == null ? void 0 : _b.domainValues;
       t.values.filter(({ value }) => isValue(value) || value === null).forEach((v) => {
         let { value } = v;
+        if (axisDomain) {
+          value = axisDomain($$, v);
+        }
         if (value !== null && $$.isCandlestickType(v)) {
           value = isArray(value) ? value.slice(0, 4) : [value.open, value.high, value.low, value.close];
         }
@@ -44867,6 +45106,7 @@ function normalizeTargetIds(targetIds) {
     return $$.findClosest(candidates, pos, false);
   },
   findClosest(values, pos, useSortedIndex = true) {
+    var _a;
     const $$ = this;
     const { $el: { main } } = $$;
     const data = $$.getClosestCandidates(values, pos, useSortedIndex);
@@ -44879,8 +45119,9 @@ function normalizeTargetIds(targetIds) {
       }
       const isBar = $$.isBarType(v.id);
       const isCandle = $$.isCandlestickType(v.id);
-      if (isBar || isCandle) {
-        const selector = isBar ? `.${$BAR.chartBar}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$BAR.bar}-${v.index}` : `.${$CANDLESTICK.chartCandlestick}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$CANDLESTICK.candlestick}-${v.index} path`;
+      const axisHit = (_a = $$.getAxisTypeHooks(v.id)) == null ? void 0 : _a.hit;
+      if (isBar || isCandle || axisHit) {
+        const selector = axisHit ? axisHit($$, v) : isBar ? `.${$BAR.chartBar}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$BAR.bar}-${v.index}` : `.${$CANDLESTICK.chartCandlestick}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$CANDLESTICK.candlestick}-${v.index} path`;
         if (!closest && $$.isWithinBar(main.select(selector).node())) {
           closest = v;
         }
@@ -47903,21 +48144,22 @@ function updateMinMaxFromValues(minMax, values) {
   }
 }
 function getTargetValueMinMax($$, targets) {
-  var _a, _b, _c, _d;
+  var _a, _b, _c, _d, _e, _f;
   const minMax = { min: void 0, max: void 0 };
   const hasAxis = $$.state.hasAxis;
   for (let i = 0; i < targets.length; i++) {
     const target = targets[i];
     const isCandlestick = (_a = $$.isCandlestickType) == null ? void 0 : _a.call($$, target);
     const isSubchartCandlestick = !isCandlestick && !!((_b = $$.isSubchartSourceTypeOf) == null ? void 0 : _b.call($$, target, TYPE.CANDLESTICK));
+    const axisDomain = (_d = (_c = $$.getAxisTypeHooks) == null ? void 0 : _c.call($$, target)) == null ? void 0 : _d.domainValues;
     const { values } = target;
     for (let j = 0; j < values.length; j++) {
       const row = values[j];
-      let value = row.value;
+      let value = axisDomain ? axisDomain($$, row) : row.value;
       if (!(isValue(value) || value === null)) {
         continue;
       }
-      const subchartCandlestickValue = isSubchartCandlestick ? (_c = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _c.call($$, row, true) : void 0;
+      const subchartCandlestickValue = isSubchartCandlestick ? (_e = $$.getSubchartCandlestickShapeValue) == null ? void 0 : _e.call($$, row, true) : void 0;
       if (isNumber(subchartCandlestickValue)) {
         value = subchartCandlestickValue;
       } else if (value !== null && (isCandlestick || isSubchartCandlestick)) {
@@ -47927,7 +48169,7 @@ function getTargetValueMinMax($$, targets) {
         updateMinMaxFromValues(minMax, value);
       } else if (isObject(value) && "high" in value) {
         updateMinMaxFromValues(minMax, Object.values(value));
-      } else if ((_d = $$.isBubbleZType) == null ? void 0 : _d.call($$, row)) {
+      } else if ((_f = $$.isBubbleZType) == null ? void 0 : _f.call($$, row)) {
         updateMinMax(minMax, hasAxis && $$.getBubbleZData(value, "y"));
       } else {
         updateMinMax(minMax, value);
@@ -48173,6 +48415,7 @@ function getTargetXMinMax(targets, type) {
    * @private
    */
   getXDomainPadding(domain, tickCount) {
+    var _a;
     const $$ = this;
     const { axis, config } = $$;
     const padding = config.axis_x_padding;
@@ -48181,7 +48424,7 @@ function getTargetXMinMax(targets, type) {
     let defaultValue;
     if (axis.isCategorized() || isTimeSeriesTickCount) {
       defaultValue = 0;
-    } else if ($$.hasType("bar")) {
+    } else if ($$.hasType("bar") || ((_a = $$.hasAxisTypePadding) == null ? void 0 : _a.call($$))) {
       const maxDataCount = $$.getMaxDataCount();
       defaultValue = maxDataCount > 1 ? diff / (maxDataCount - 1) / 2 : 0.5;
     } else {
@@ -49289,7 +49532,7 @@ function _getLegendTouchOption($$) {
       $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
       ((_k = $$.hasGrid) == null ? void 0 : _k.call($$)) && $$.updateGrid();
       config.regions.length && ((_l = $$.updateRegion) == null ? void 0 : _l.call($$));
-      ["bar", "candlestick", "line", "area"].forEach((v) => {
+      ["bar", "candlestick", "line", "area", ...$$.getAxisTypes()].forEach((v) => {
         const name = capitalize(v);
         if (/^(line|area)$/.test(v) && $$.hasTypeOf(name) || $$.hasType(v)) {
           if (needShapeUpdate) {
@@ -50669,7 +50912,7 @@ function getRangeValueHtml(values) {
    * @private
    */
   getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
-    var _a;
+    var _a, _b;
     const $$ = this;
     const { api, config, state, $el } = $$;
     const titleFn = config.tooltip_format_title;
@@ -50693,8 +50936,8 @@ function getRangeValueHtml(values) {
     const getRowValue = (row2) => $$.axis && $$.isBubbleZType(row2) ? $$.getBubbleZData(row2.value, "z") : $$.getBaseValue(row2);
     const getBaseColor = $$.levelColor ? (row2) => $$.levelColor(row2.value) : (row2) => color(row2);
     const getBgColor = (row2) => {
-      var _a2, _b, _c;
-      return (_c = (_b = (_a2 = $$.customTypeHooks) == null ? void 0 : _a2.tooltipColor) == null ? void 0 : _b.call(_a2, $$, row2)) != null ? _c : getBaseColor(row2);
+      var _a2, _b2, _c;
+      return (_c = (_b2 = (_a2 = $$.customTypeHooks) == null ? void 0 : _a2.tooltipColor) == null ? void 0 : _b2.call(_a2, $$, row2)) != null ? _c : getBaseColor(row2);
     };
     const contents = config.tooltip_contents;
     const tplStr = contents.template;
@@ -50766,6 +51009,10 @@ function getRangeValueHtml(values) {
           ["Close", close],
           ...volume ? [["Volume", volume]] : []
         ]);
+      } else if ((_a = $$.getAxisTypeHooks(row)) == null ? void 0 : _a.tooltipRows) {
+        value = getRangeValueHtml(
+          $$.getAxisTypeHooks(row).tooltipRows($$, row, valueFormat, param)
+        );
       } else if ($$.isBarRangeType(row)) {
         const { value: rangeValue, id, index } = row;
         value = `${valueFormat(rangeValue, void 0, id, index)}`;
@@ -50776,7 +51023,7 @@ function getRangeValueHtml(values) {
         if (row.name === null) {
           continue;
         }
-        const name = nameFormat((_a = row.name) != null ? _a : row.id, ...param);
+        const name = nameFormat((_b = row.name) != null ? _b : row.id, ...param);
         const color2 = getBgColor(row);
         const contentValue = {
           CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
@@ -51262,7 +51509,50 @@ const INTERPOLATION_TYPES = /* @__PURE__ */ new Set([
    * @private
    */
   isValidChartType(type) {
-    return !!(type && (Object.values(TYPE).indexOf(type) > -1 || type === this.state.customType));
+    var _a;
+    return !!(type && (Object.values(TYPE).indexOf(type) > -1 || type === this.state.customType || ((_a = this.axisTypes) == null ? void 0 : _a[type])));
+  },
+  /**
+   * Get the names of the chart types of their own modules that are drawn on the axes
+   * @returns {Array} Type names
+   * @private
+   */
+  getAxisTypes() {
+    return Object.keys(this.axisTypes || {});
+  },
+  /**
+   * Get what the modules of the axis types registered
+   * @returns {Array} Parts of the types
+   * @private
+   */
+  getAxisTypeParts() {
+    return Object.values(this.axisTypes || {});
+  },
+  /**
+   * Check if the chart has a type of its own module that is drawn like a bar: it has the room of
+   * the half of a shape at each end of the x axis, as the bar does
+   * @returns {boolean}
+   * @private
+   */
+  hasAxisTypePadding() {
+    const types = this.axisTypes;
+    return !!types && Object.keys(types).some((name) => types[name].padded && this.hasType(name));
+  },
+  /**
+   * Get what the module of an axis type registered, when the data belongs to that type
+   * @param {object|string} d Data object or id
+   * @returns {object|undefined} Hooks of the type
+   * @private
+   */
+  getAxisTypeHooks(d) {
+    const types = this.axisTypes;
+    if (types) {
+      for (const name in types) {
+        if (this.isTypeOf(d, name)) {
+          return types[name];
+        }
+      }
+    }
   },
   /**
    * Get the chart type to use for the subchart target.
@@ -51703,7 +51993,7 @@ function updateTargetsForShape(targets, config) {
     const isRotated = $$.config.axis_rotated;
     const { hasRadar, hasTreemap } = $$.state;
     const shape = { type: {}, indices: {}, pos: {} };
-    !hasTreemap && ["bar", "candlestick", "line", "area"].forEach((v) => {
+    !hasTreemap && ["bar", "candlestick", "line", "area", ...$$.getAxisTypes()].forEach((v) => {
       const name = capitalize(v);
       if ($$.hasType(v) || $$.hasTypeOf(name) || v === "line" && ($$.hasType("bubble") || $$.hasType("scatter"))) {
         const indices = $$.getShapeIndices($$[`is${name}Type`]);
@@ -52853,7 +53143,7 @@ class ChartInternal {
     const { hasAxis, hasRadar, hasTreemap } = $$.state;
     const types = [];
     if (hasAxis) {
-      const shapes = ["bar", "bubble", "candlestick", "line"];
+      const shapes = ["bar", "bubble", "candlestick", "line", ...$$.getAxisTypes()];
       if ($$.config.bar_front) {
         shapes.push(shapes.shift());
       }
@@ -52968,7 +53258,7 @@ class ChartInternal {
     );
     $$.updateTargetsForText(targets);
     if (hasAxis) {
-      const shapes = ["bar", "candlestick", "line"];
+      const shapes = ["bar", "candlestick", "line", ...$$.getAxisTypes()];
       for (const shape2 of shapes) {
         const name = capitalize(shape2);
         if (shape2 === "line" && $$.hasTypeOf(name) || $$.hasType(shape2)) {
@@ -53584,7 +53874,7 @@ const canvasInternal = {
    * @private
    */
   initCanvas() {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f, _g;
     const $$ = this;
     const { config, state, $el } = $$;
     const container = $el.chart.node();
@@ -53601,13 +53891,16 @@ const canvasInternal = {
     $$.canvasTheme.load(
       container,
       config.canvas_theme,
-      (_c = (_b = (_a = $$.getCustomTypeParts) == null ? void 0 : _a.call($$)) == null ? void 0 : _b.canvas) == null ? void 0 : _c.theme
+      (_f = (_c = (_b = (_a = $$.getCustomTypeParts) == null ? void 0 : _a.call($$)) == null ? void 0 : _b.canvas) == null ? void 0 : _c.theme) != null ? _f : (_e = (_d = $$.getAxisTypeParts) == null ? void 0 : _d.call($$).find((part) => {
+        var _a2;
+        return (_a2 = part.canvas) == null ? void 0 : _a2.theme;
+      })) == null ? void 0 : _e.canvas.theme
     );
     $$.canvasAxisRenderer = new CanvasAxisRenderer($$.canvasEngine, $$.canvasTheme);
     $$.canvasRenderer = new CanvasRenderer($$.canvasEngine, $$.canvasTheme);
     $$.hitDetector = new HitDetector();
     $$.bindCanvasEvents();
-    config.zoom_enabled && ((_d = $$.bindZoomEvent) == null ? void 0 : _d.call($$));
+    config.zoom_enabled && ((_g = $$.bindZoomEvent) == null ? void 0 : _g.call($$));
   },
   /**
    * Warn about options that canvas mode does not support yet.
@@ -57265,6 +57558,11 @@ var customType_spreadValues = (a, b) => {
 function registerCustomType(name, parts) {
   const proto = ChartInternal.prototype;
   const types = proto.customTypes || (proto.customTypes = {});
+  types[name] = customType_spreadValues(customType_spreadValues({}, types[name]), parts);
+}
+function registerAxisType(name, parts) {
+  const proto = ChartInternal.prototype;
+  const types = proto.axisTypes || (proto.axisTypes = {});
   types[name] = customType_spreadValues(customType_spreadValues({}, types[name]), parts);
 }
 
@@ -67869,6 +68167,410 @@ function _getConnectLineType(id) {
 
 let bar_bar = () => (extendAxis([bar, core_point], [shape_bar, common_point]), (bar_bar = () => TYPE.BAR)());
 
+;// ./src/ChartInternal/shape/core/boxplot.ts
+
+const $BOXPLOT = {
+  boxplot: "bb-boxplot",
+  boxplotBox: "bb-boxplot-box",
+  boxplotMean: "bb-boxplot-mean",
+  boxplotMedian: "bb-boxplot-median",
+  boxplotOutlier: "bb-boxplot-outlier",
+  boxplotWhisker: "bb-boxplot-whisker",
+  chartBoxplot: "bb-chart-boxplot",
+  chartBoxplots: "bb-chart-boxplots"
+};
+function boxplot_quantile(sorted, p) {
+  const pos = (sorted.length - 1) * p;
+  const base = Math.floor(pos);
+  const rest = pos - base;
+  return sorted[base] + (rest && sorted[base + 1] !== void 0 ? rest * (sorted[base + 1] - sorted[base]) : 0);
+}
+function fromSamples(samples, iqr) {
+  const sorted = samples.filter(isNumber).sort((a, b) => a - b);
+  if (!sorted.length) {
+    return null;
+  }
+  const q1 = boxplot_quantile(sorted, 0.25);
+  const q3 = boxplot_quantile(sorted, 0.75);
+  const range = (q3 - q1) * iqr;
+  const inside = sorted.filter((v) => v >= q1 - range && v <= q3 + range);
+  return {
+    min: inside[0],
+    q1,
+    median: boxplot_quantile(sorted, 0.5),
+    q3,
+    max: inside[inside.length - 1],
+    outliers: sorted.filter((v) => v < q1 - range || v > q3 + range),
+    mean: sorted.reduce((a, c) => a + c, 0) / sorted.length
+  };
+}
+/* harmony default export */ var core_boxplot = ({
+  /**
+   * Check if the data belongs to the boxplot type
+   * @param {object|string} d Data object or id
+   * @returns {boolean}
+   * @private
+   */
+  isBoxplotType(d) {
+    return this.isTypeOf(d, "boxplot");
+  },
+  /**
+   * Get boxplot data as object.
+   * The value is `[min, q1, median, q3, max, outliers?, mean?]`, or the samples when
+   * `boxplot.samples` is set.
+   * @param {object} param Data row
+   * @param {Array} param.value Data value
+   * @returns {object|null} Parsed value, null when the value isn't valid
+   * @private
+   */
+  getBoxplotData({ value }) {
+    var _a;
+    if (!isArray(value)) {
+      return null;
+    }
+    const { config } = this;
+    const parsed = (_a = this.boxplotParsed) != null ? _a : this.boxplotParsed = /* @__PURE__ */ new WeakMap();
+    let data = parsed.get(value);
+    if (data === void 0) {
+      const { boxplot_outlier_show: showOutlier, boxplot_mean_show: showMean } = config;
+      if (config.boxplot_samples) {
+        data = fromSamples(value, config.boxplot_whisker_iqr);
+      } else if (value.length >= 5 && value.slice(0, 5).every(isNumber)) {
+        const [min, q1, median, q3, max, outliers, mean] = value;
+        data = {
+          min,
+          q1,
+          median,
+          q3,
+          max,
+          outliers: isArray(outliers) ? outliers.filter(isNumber) : [],
+          mean: isNumber(mean) ? mean : void 0
+        };
+      } else {
+        data = null;
+      }
+      if (data) {
+        !showOutlier && (data.outliers = []);
+        !showMean && (data.mean = void 0);
+      }
+      parsed.set(value, data);
+    }
+    return data;
+  },
+  /**
+   * Get the values the y domain has to cover, of a data row
+   * @param {object} row Data row
+   * @returns {Array} Values
+   * @private
+   */
+  getBoxplotDomainValues(row) {
+    const data = this.getBoxplotData(row);
+    return data ? [data.min, data.max, ...data.outliers] : [];
+  },
+  /**
+   * Generate shape drawing points
+   * @param {object} indices Indice data
+   * @param {boolean} isSub Subchart draw
+   * @returns {function}
+   * @private
+   */
+  generateGetBoxplotPoints(indices, isSub = false) {
+    const $$ = this;
+    const axis = isSub ? $$.axis.subX : $$.axis.x;
+    const targetsNum = $$.getIndicesMax(indices) + 1;
+    const barW = $$.getBarW("boxplot", axis, targetsNum);
+    if (isObject(barW)) {
+      const ids = $$.getTargetsToShow().map((v) => v.id);
+      ids.forEach((id) => {
+        var _a;
+        (_a = barW[id]) != null ? _a : barW[id] = barW._$width;
+      });
+      barW._$total = ids.map((id) => barW[id]);
+    }
+    const x = $$.getShapeX(barW, indices, !!isSub);
+    const y = $$.getShapeY(!!isSub);
+    return (d) => {
+      const value = $$.getBoxplotData(d);
+      if (!value) {
+        return null;
+      }
+      const width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
+      const x0 = x(d);
+      return [
+        [x0, y(value.q1)],
+        [x0 + width, y(value.q3)],
+        [x0 + width / 2, y(value.min), y(value.max)],
+        [y(value.median)],
+        value.outliers.map((v) => y(v)),
+        isNumber(value.mean) ? [y(value.mean)] : []
+      ];
+    };
+  },
+  /**
+   * Get the name and the formatted value of each part of the box, for the tooltip
+   * @param {object} row Data row
+   * @param {function} format Value formatter
+   * @param {Array} param Parameters of the formatter
+   * @returns {Array} [name, value] pairs
+   * @private
+   */
+  getBoxplotTooltipRows(row, format, param) {
+    const value = this.getBoxplotData(row);
+    if (!value) {
+      return [];
+    }
+    const f = (v) => format(v, ...param);
+    const shown = value.outliers.slice(0, 5).map(f).join(", ");
+    const rows = [
+      ["Max", f(value.max)],
+      ["Q3", f(value.q3)],
+      ["Median", f(value.median)],
+      ["Q1", f(value.q1)],
+      ["Min", f(value.min)]
+    ];
+    isNumber(value.mean) && rows.splice(3, 0, ["Mean", f(value.mean)]);
+    value.outliers.length && rows.push([
+      "Outliers",
+      shown + (value.outliers.length > 5 ? `, ... (${value.outliers.length})` : "")
+    ]);
+    return rows;
+  }
+});
+
+;// ./src/ChartInternal/shape/boxplot.ts
+var boxplot_defProp = Object.defineProperty;
+var boxplot_defProps = Object.defineProperties;
+var boxplot_getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var boxplot_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var boxplot_hasOwnProp = Object.prototype.hasOwnProperty;
+var boxplot_propIsEnum = Object.prototype.propertyIsEnumerable;
+var boxplot_defNormalProp = (obj, key, value) => key in obj ? boxplot_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var boxplot_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (boxplot_hasOwnProp.call(b, prop))
+      boxplot_defNormalProp(a, prop, b[prop]);
+  if (boxplot_getOwnPropSymbols)
+    for (var prop of boxplot_getOwnPropSymbols(b)) {
+      if (boxplot_propIsEnum.call(b, prop))
+        boxplot_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var boxplot_spreadProps = (a, b) => boxplot_defProps(a, boxplot_getOwnPropDescs(b));
+
+
+
+
+/* harmony default export */ var shape_boxplot = (boxplot_spreadProps(boxplot_spreadValues({}, core_boxplot), {
+  /**
+   * Initialize the container of the boxplot elements
+   * @private
+   */
+  initBoxplot() {
+    const $$ = this;
+    const { $el } = $$;
+    $el.boxplot = $el.main.select(`.${$COMMON.chart}`).append("g").attr("class", $BOXPLOT.chartBoxplots);
+  },
+  /**
+   * Update targets by its data
+   * @param {Array} targets Filtered target by type
+   * @private
+   */
+  updateTargetsForBoxplot(targets) {
+    const $$ = this;
+    const { $el } = $$;
+    !$$.$el.boxplot && $$.initBoxplot();
+    const update = $el.main.select(`.${$BOXPLOT.chartBoxplots}`).selectAll(`.${$BOXPLOT.chartBoxplot}`).data($$.filterNullish(targets)).attr("class", (d) => $BOXPLOT.chartBoxplot + $$.classTarget(d.id));
+    update.enter().append("g").attr("class", (d) => $BOXPLOT.chartBoxplot + $$.classTarget(d.id)).style("pointer-events", "none");
+  },
+  /**
+   * Generate/Update elements
+   * @param {boolean} withTransition Transition for exit elements
+   * @private
+   */
+  updateBoxplot(withTransition) {
+    const $$ = this;
+    const { $el, $T } = $$;
+    const boxplot = $el.main.selectAll(`.${$BOXPLOT.chartBoxplot}`).selectAll(`.${$BOXPLOT.boxplot}`).data((d) => $$.getBoxplotRows(d));
+    $T(boxplot.exit(), withTransition).style("opacity", "0").remove();
+    const enter = boxplot.enter().append("g").attr("class", (d) => $$.generateClass($BOXPLOT.boxplot, d.index).trim());
+    enter.append("path").attr("class", $BOXPLOT.boxplotWhisker);
+    enter.append("path").attr("class", $BOXPLOT.boxplotBox);
+    enter.append("path").attr("class", $BOXPLOT.boxplotMedian);
+    $el.boxplot = boxplot.merge(enter).attr("class", (d) => $$.generateClass($BOXPLOT.boxplot, d.index).trim()).style("opacity", $$.initialOpacity.bind($$));
+  },
+  /**
+   * Get the rows of a target that have a boxplot value
+   * @param {object} d Target
+   * @returns {Array} Data rows
+   * @private
+   */
+  getBoxplotRows(d) {
+    return this.isBoxplotType(d) ? d.values.filter((v) => this.getBoxplotData(v)) : [];
+  },
+  /**
+   * Get draw function
+   * @param {object} indices Indice data
+   * @param {boolean} isSub Subchart draw
+   * @returns {function}
+   * @private
+   */
+  generateDrawBoxplot(indices, isSub) {
+    const $$ = this;
+    const getPoints = $$.generateGetBoxplotPoints(indices, isSub);
+    const P = $$.config.axis_rotated ? (i, v) => `${v},${i}` : (i, v) => `${i},${v}`;
+    return (d, i, g) => {
+      const points = getPoints(d, i);
+      if (!points) {
+        return;
+      }
+      const { config } = $$;
+      const [[x0, q1], [x1, q3], [xc, min, max], [median], outliers, mean] = points;
+      const cap = (x1 - x0) * config.boxplot_whisker_width / 2;
+      const capPath = cap > 0 ? `M${P(xc - cap, max)}L${P(xc + cap, max)}M${P(xc - cap, min)}L${P(xc + cap, min)}` : "";
+      g.select(`.${$BOXPLOT.boxplotBox}`).attr("d", `M${P(x0, q1)}L${P(x1, q1)}L${P(x1, q3)}L${P(x0, q3)}z`).style("fill", $$.color(d));
+      g.select(`.${$BOXPLOT.boxplotMedian}`).attr("d", `M${P(x0, median)}L${P(x1, median)}`);
+      g.select(`.${$BOXPLOT.boxplotWhisker}`).attr("d", `M${P(xc, max)}L${P(xc, q3)}M${P(xc, q1)}L${P(xc, min)}${capPath}`);
+      const el = d3_selection_select(g.node());
+      const r = config.boxplot_outlier_r;
+      const m = config.boxplot_mean_r;
+      el.selectAll(`.${$BOXPLOT.boxplotOutlier}`).data(outliers).join("path").attr("class", $BOXPLOT.boxplotOutlier).attr("d", (v) => {
+        const [cx, cy] = config.axis_rotated ? [v, xc] : [xc, v];
+        return `M${cx - r},${cy}a${r},${r} 0 1,0 ${2 * r},0a${r},${r} 0 1,0 ${-2 * r},0`;
+      });
+      el.selectAll(`.${$BOXPLOT.boxplotMean}`).data(mean).join("path").attr("class", $BOXPLOT.boxplotMean).attr(
+        "d",
+        (v) => `M${P(xc - m, v)}L${P(xc, v - m)}L${P(xc + m, v)}L${P(xc, v + m)}z`
+      );
+    };
+  },
+  /**
+   * Redraw function
+   * @param {function} drawFn Returned function from .generateDrawBoxplot()
+   * @param {boolean} withTransition With or without transition
+   * @returns {Array}
+   * @private
+   */
+  redrawBoxplot(drawFn, withTransition) {
+    const $$ = this;
+    const { $el, $T } = $$;
+    const rand = getRandom(true);
+    return [
+      $el.boxplot.each(function(d, i) {
+        drawFn(d, i, $T(d3_selection_select(this), withTransition, rand));
+      }).style("opacity", null)
+    ];
+  }
+}));
+
+;// ./src/config/Options/shape/boxplot.ts
+/* harmony default export */ var Options_shape_boxplot = ({
+  /**
+   * Set boxplot options
+   * - **NOTE:**
+   *   - Each data value is the five-number summary: `[min, q1, median, q3, max]`. The list can have
+   *     the outliers (array) and the mean (number) after them: `[min, q1, median, q3, max, [outliers], mean]`.
+   *   - When `boxplot.samples` is set, each data value is the list of the samples instead, and the
+   *     chart calculates the quartiles (linear interpolation, the default method of Plotly), the whiskers,
+   *     the outliers and the mean from it.
+   *   - The color of the box is the color of the data (`data.colors`, `color.pattern`). The stroke and
+   *     the opacity of the parts are set by CSS (`.bb-boxplot-box`, `.bb-boxplot-median`, `.bb-boxplot-whisker`,
+   *     `.bb-boxplot-outlier`, `.bb-boxplot-mean`), or by the canvas theme when the chart is rendered on canvas.
+   *   - The data labels, the subchart and the object form of the value are not supported.
+   * @name boxplot
+   * @memberof Options
+   * @type {object}
+   * @property {object} boxplot Boxplot object
+   * @property {boolean} [boxplot.samples=false] Set true to give the samples as the data value, instead of the five-number summary.
+   * @property {number} [boxplot.width] Change the width.
+   * @property {number} [boxplot.width.ratio=0.6] Change the width by ratio.
+   * @property {number} [boxplot.width.max] The maximum width value for ratio.
+   * @property {number} [boxplot.width.dataname] Change the width for indicated dataset only.
+   * @property {number} [boxplot.width.dataname.ratio=0.6] Change the width of the dataset by ratio.
+   * @property {number} [boxplot.width.dataname.max] The maximum width value for ratio.
+   * @property {number} [boxplot.whisker.width=0.5] Set the width of the cap at the end of the whiskers, by the ratio of the width of the box. 0 hides the caps.
+   * @property {number} [boxplot.whisker.iqr=1.5] Set how far the whiskers reach, by the multiple of the interquartile range. A sample out of it is an outlier. Applied when `boxplot.samples` is set.
+   * @property {boolean} [boxplot.outlier.show=true] Show the outliers.
+   * @property {number} [boxplot.outlier.r=3] Set the radius of the outliers.
+   * @property {boolean} [boxplot.mean.show=false] Show the mean.
+   * @property {number} [boxplot.mean.r=4] Set the size of the mean marker.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.BoxplotChart)
+   * @example
+   *  data: {
+   *      columns: [
+   *          // min, q1, median, q3, max
+   *          ["data1", [1, 3, 5, 7, 9], [2, 4, 6, 8, 10]],
+   *
+   *          // with the outliers and the mean: min, q1, median, q3, max, [outliers], mean
+   *          ["data2", [1, 3, 5, 7, 9, [14, 15], 5.5], [2, 4, 6, 8, 10, [], 6.1]]
+   *      ],
+   *      type: "boxplot"
+   *  },
+   *  boxplot: {
+   *      // give the samples, and get the quartiles calculated
+   *      samples: false,
+   *
+   *      width: 10,
+   *
+   *      // or
+   *      width: {
+   *         	ratio: 0.2,
+   *         	max: 20
+   *      },
+   *
+   *      // or specify width per dataset
+   *      width: {
+   *         	data1: 20,
+   *         	data2: {
+   *         	    ratio: 0.2,
+   *         		max: 20
+   *         	}
+   *      },
+   *
+   *      whisker: {
+   *          width: 0.5,
+   *          iqr: 1.5
+   *      },
+   *      outlier: {
+   *          show: true,
+   *          r: 3
+   *      },
+   *      mean: {
+   *          show: false,
+   *          r: 4
+   *      }
+   *  }
+   */
+  boxplot_samples: false,
+  boxplot_width: void 0,
+  boxplot_width_ratio: 0.6,
+  boxplot_width_max: void 0,
+  boxplot_whisker_width: 0.5,
+  boxplot_whisker_iqr: 1.5,
+  boxplot_outlier_show: true,
+  boxplot_outlier_r: 3,
+  boxplot_mean_show: false,
+  boxplot_mean_r: 4
+});
+
+;// ./src/config/resolver/shape/boxplot.ts
+
+
+
+
+
+
+
+
+const boxplotAxisType = {
+  padded: true,
+  domainValues: ($$, row) => core_boxplot.getBoxplotDomainValues.call($$, row),
+  // the box of the shape: the pointer is on the data when it is within the box
+  hit: ($$, d) => `.${$BOXPLOT.chartBoxplot}.${$COMMON.target}${$$.getTargetSelectorSuffix(d.id)} .${$BOXPLOT.boxplot}-${d.index} .${$BOXPLOT.boxplotBox}`,
+  tooltipRows: ($$, row, format, param) => core_boxplot.getBoxplotTooltipRows.call($$, row, format, param)
+};
+let boxplot_boxplot = () => (extendAxis([shape_boxplot, core_point], [Options_shape_boxplot, common_point]), registerAxisType("boxplot", boxplotAxisType), (boxplot_boxplot = () => "boxplot")());
+
 ;// ./src/ChartInternal/shape/core/bubble.ts
 
 
@@ -71590,6 +72292,7 @@ const fitting = /* @__PURE__ */ new WeakMap();
   /**
    * Get the layout of the cells, the names and the color bar, in chart coordinates.
    * Shared by the SVG and the canvas renderer.
+   * @param {boolean} [fit=false] Set true to lay out the cells without the height limit, to get the height they need
    * @returns {object} Heatmap layout
    * @private
    */
@@ -75525,6 +76228,7 @@ let treemap_treemap = () => (extendAxis([shape_treemap], [Options_shape_treemap]
 
 
 
+
 ;// ./src/core.ts
 
 
@@ -75537,7 +76241,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "4.1.5-nightly-20261126004504",
+  version: "4.1.5-nightly-20261127004604",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possibility of ***throwing an error***, during the generation when:
@@ -75753,6 +76457,7 @@ const bb = {
 
 
 
+
 Object.keys(shape_namespaceObject).forEach((v) => shape_namespaceObject[v]());
 Object.keys(interaction_namespaceObject).forEach((v) => interaction_namespaceObject[v]());
 exportApi();
@@ -75767,6 +76472,7 @@ registerCanvasFeature("selection", selectionDraw);
 regions_regions();
 category_category();
 canvas();
+registerAxisType("boxplot", { canvas: boxplot });
 registerCustomType("bullet", { canvas: bullet });
 registerCustomType("heatmap", { canvas: heatmap });
 registerCustomType("sankey", { canvas: sankey });
