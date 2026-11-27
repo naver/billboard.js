@@ -36,7 +36,56 @@ export default {
 	isValidChartType(type: string): boolean {
 		// the type of a custom type module is valid too
 		return !!(type &&
-			(Object.values(TYPE).indexOf(type) > -1 || type === this.state.customType));
+			(Object.values(TYPE).indexOf(type) > -1 || type === this.state.customType ||
+				this.axisTypes?.[type]));
+	},
+
+	/**
+	 * Get the names of the chart types of their own modules that are drawn on the axes
+	 * @returns {Array} Type names
+	 * @private
+	 */
+	getAxisTypes(): string[] {
+		return Object.keys(this.axisTypes || {});
+	},
+
+	/**
+	 * Get what the modules of the axis types registered
+	 * @returns {Array} Parts of the types
+	 * @private
+	 */
+	getAxisTypeParts(): any[] {
+		return Object.values(this.axisTypes || {});
+	},
+
+	/**
+	 * Check if the chart has a type of its own module that is drawn like a bar: it has the room of
+	 * the half of a shape at each end of the x axis, as the bar does
+	 * @returns {boolean}
+	 * @private
+	 */
+	hasAxisTypePadding(): boolean {
+		const types = this.axisTypes;
+
+		return !!types && Object.keys(types).some(name => types[name].padded && this.hasType(name));
+	},
+
+	/**
+	 * Get what the module of an axis type registered, when the data belongs to that type
+	 * @param {object|string} d Data object or id
+	 * @returns {object|undefined} Hooks of the type
+	 * @private
+	 */
+	getAxisTypeHooks(d) {
+		const types = this.axisTypes;
+
+		if (types) {
+			for (const name in types) {
+				if (this.isTypeOf(d, name)) {
+					return types[name];
+				}
+			}
+		}
 	},
 
 	/**

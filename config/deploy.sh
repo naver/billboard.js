@@ -7,11 +7,8 @@ setup() {
 	# Current branch
 	CUR_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-	# folder to be pushed
-	DIST_FOLDER=release
-
-	# destination folder
-	DEST_FOLDER=release
+	# folder to be pushed (copied to the root of gh-pages: release/, demo/)
+	DIST_FOLDER=deploy
 
 	# destination remote name
 	# use GH environment variable "CI" to determine the run
@@ -41,15 +38,27 @@ build() {
 	echo "*** Releasing docs for ${VERSION} on ${CUR_BRANCH} --> ${DEST_REMOTE} ***"
 
 	# create release directory
-	rm -rf release && mkdir -p release/$VERSION
+	rm -rf $DIST_FOLDER && mkdir -p $DIST_FOLDER/release/$VERSION
 
 	# build & copy to release path
 	pnpm run build && pnpm run jsdoc
-	cp -r doc dist* release/$VERSION/
+	cp -r doc dist* $DIST_FOLDER/release/$VERSION/
 
 	# copy built files to dist_tag folder
-	mkdir release/$DIST_TAG
-	cp -r doc dist* release/$DIST_TAG
+	mkdir $DIST_FOLDER/release/$DIST_TAG
+	cp -r doc dist* $DIST_FOLDER/release/$DIST_TAG
+
+	# copy the demo files (demo.js, chart.js, ...)
+	cp -r demo $DIST_FOLDER/demo && rm -rf $DIST_FOLDER/demo/work
+
+	# demo/index.html loads the build from the local gh-pages checkout (for the local dev),
+	# on gh-pages it has to load the release build next to it
+	sed -i.bak 's#\.\./\.\./gh-pages/release/latest/dist/#../release/latest/dist/#' $DIST_FOLDER/demo/index.html
+	rm $DIST_FOLDER/demo/index.html.bak
+	grep -q '"../release/latest/dist/"' $DIST_FOLDER/demo/index.html || {
+		echo "demo/index.html: the build path was not replaced"
+		exit 1
+	}
 }
 
 push() {
@@ -62,7 +71,7 @@ push() {
 	fi
 
 	# push to github pages
-	pnpm dlx gh-pages --dist $DIST_FOLDER --dest $DEST_FOLDER --add --remote $DEST_REMOTE --message $COMMIT_MESSAGE
+	pnpm dlx gh-pages --dist $DIST_FOLDER --add --remote $DEST_REMOTE --message $COMMIT_MESSAGE
 }
 
 setup

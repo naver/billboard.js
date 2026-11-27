@@ -314,6 +314,11 @@ export default class HitDetector {
 			}
 		}
 
+		// the types of their own modules drawn on the axes
+		$$.getAxisTypeParts?.().forEach(part =>
+			part.canvas?.hits?.call($$, this, {shape, targets, margin, addIndex})
+		);
+
 		const {cx, cy} = shape.pos;
 
 		if (cx && cy) {

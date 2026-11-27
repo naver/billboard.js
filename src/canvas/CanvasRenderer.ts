@@ -1157,6 +1157,9 @@ export default class CanvasRenderer {
 			}
 
 			this.drawCandlesticks($$, shape, focusData);
+
+			// the types of their own modules drawn on the axes
+			$$.getAxisTypeParts?.().forEach(part => part.canvas?.draw?.call($$, this, shape));
 			drawLineLayers();
 
 			if ($$.config.bar_front) {

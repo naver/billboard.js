@@ -904,7 +904,8 @@ const canvasInternal = {
 
 		$$.canvasTheme = new CanvasTheme();
 		$$.canvasTheme.load(container, config.canvas_theme,
-			$$.getCustomTypeParts?.()?.canvas?.theme);
+			$$.getCustomTypeParts?.()?.canvas?.theme ??
+				$$.getAxisTypeParts?.().find(part => part.canvas?.theme)?.canvas.theme);
 
 		$$.canvasAxisRenderer = new CanvasAxisRenderer($$.canvasEngine, $$.canvasTheme);
 		$$.canvasRenderer = new CanvasRenderer($$.canvasEngine, $$.canvasTheme);

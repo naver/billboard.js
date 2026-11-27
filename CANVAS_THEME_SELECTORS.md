@@ -116,6 +116,11 @@ style generated tick grid lines from `grid.x.show`, `grid.y.show`, or `grid.y.ti
 | `.bb-bar._expanded_` | `opacity`, `fill-opacity` | Focused bars |
 | `.bb-candlestick` | `stroke-width` | Candlesticks |
 | `.bb-candlestick._expanded_` | `opacity`, `fill-opacity` | Focused candlesticks |
+| `.bb-boxplot-box` | `stroke`, `stroke-width`, `fill-opacity` | Boxplot boxes |
+| `.bb-boxplot-whisker` | `stroke-width` | Boxplot whiskers |
+| `.bb-boxplot-median` | `stroke-width` | Boxplot median lines |
+| `.bb-boxplot-outlier` | `stroke-width` | Boxplot outliers |
+| `.bb-boxplot-mean` | `fill` | Boxplot mean marker |
 | `.bb-line` | `stroke`, `stroke-width` | Lines and bar connect lines |
 | `.bb-target.bb-focused .bb-line` | `stroke-width` | Focused lines |
 | `.bb-target.bb-focused path.bb-line` | `stroke-width` | Focused lines |
@@ -166,6 +171,7 @@ direct keys only when a selector alias is not specific enough.
 | `zoomBrush` | `fill`, `opacity` |
 | `subchartBrush` | `fill`, `opacity`, `handleFill`, `handleOpacity`, `handleStroke`, `handleLineWidth` |
 | `treemap` | `stroke`, `lineWidth` |
+| `boxplot` | `stroke`, `boxLineWidth`, `boxOpacity`, `whiskerLineWidth`, `medianLineWidth`, `outlierLineWidth`, `meanFill` |
 | `bullet` | `targetStroke`, `targetLineWidth`, `rangeMin`, `rangeMax`, `axisFont`, `axisColor`, `titleFont`, `titleColor` |
 | `heatmap` | `axisFont`, `axisColor`, `labelFont` |
 | `sankey` | `linkOpacity`, `labelFont`, `labelColor` |

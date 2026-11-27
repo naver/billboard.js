@@ -683,7 +683,7 @@ export default class ChartInternal {
 		const types: string[] = [];
 
 		if (hasAxis) {
-			const shapes = ["bar", "bubble", "candlestick", "line"];
+			const shapes = ["bar", "bubble", "candlestick", "line", ...$$.getAxisTypes()];
 
 			if ($$.config.bar_front) {
 				shapes.push(shapes.shift() as string);
@@ -821,7 +821,7 @@ export default class ChartInternal {
 		$$.updateTargetsForText(targets);
 
 		if (hasAxis) {
-			const shapes = ["bar", "candlestick", "line"];
+			const shapes = ["bar", "candlestick", "line", ...$$.getAxisTypes()];
 			for (const shape of shapes) {
 				const name = capitalize(shape);
 				if ((shape === "line" && $$.hasTypeOf(name)) || $$.hasType(shape)) {

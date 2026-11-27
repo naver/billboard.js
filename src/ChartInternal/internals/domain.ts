@@ -120,11 +120,13 @@ function getTargetValueMinMax($$, targets: IData[]): DomainMinMax {
 		// asking per row made every main-chart domain pass walk the subchart type chain
 		const isSubchartCandlestick = !isCandlestick &&
 			!!$$.isSubchartSourceTypeOf?.(target, TYPE.CANDLESTICK);
+		// a type of its own module that has the values of a row to cover by itself
+		const axisDomain = $$.getAxisTypeHooks?.(target)?.domainValues;
 		const {values} = target;
 
 		for (let j = 0; j < values.length; j++) {
 			const row = values[j];
-			let value: any = row.value;
+			let value: any = axisDomain ? axisDomain($$, row) : row.value;
 
 			if (!(isValue(value) || value === null)) {
 				continue;
@@ -521,7 +523,7 @@ export default {
 		// determine default padding value
 		if (axis.isCategorized() || isTimeSeriesTickCount) {
 			defaultValue = 0;
-		} else if ($$.hasType("bar")) {
+		} else if ($$.hasType("bar") || $$.hasAxisTypePadding?.()) {
 			const maxDataCount = $$.getMaxDataCount();
 
 			defaultValue = maxDataCount > 1 ? (diff / (maxDataCount - 1)) / 2 : 0.5;

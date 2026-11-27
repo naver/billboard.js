@@ -4,6 +4,7 @@
  */
 export {area, areaLineRange, areaSpline, areaSplineRange, areaStep, areaStepRange} from "./area";
 export {bar} from "./bar";
+export {boxplot} from "./boxplot";
 export {bubble} from "./bubble";
 export {bullet} from "./bullet";
 export {candlestick} from "./candlestick";

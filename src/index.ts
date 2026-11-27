@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
  */
+import canvasBoxplot from "./canvas/boxplot";
 import canvasBullet from "./canvas/bullet";
 import canvasFlow from "./canvas/flow";
 import canvasGrid from "./canvas/grid";
@@ -14,7 +15,7 @@ import ChartInternal from "./ChartInternal/ChartInternal";
 import {canvas} from "./config/resolver/canvas";
 import {registerCanvasFeature, registerCanvasType} from "./config/resolver/canvasType";
 import {category} from "./config/resolver/category";
-import {registerCustomType} from "./config/resolver/customType";
+import {registerAxisType, registerCustomType} from "./config/resolver/customType";
 import {exportApi} from "./config/resolver/export";
 import {flow} from "./config/resolver/flow";
 import {grid} from "./config/resolver/grid";
@@ -44,6 +45,9 @@ registerCanvasFeature("selection", selectionDraw);
 regions();
 category();
 canvas();
+
+// the canvas drawing of boxplot, which the svg shape resolver does not carry
+registerAxisType("boxplot", {canvas: canvasBoxplot});
 
 // the canvas drawing of bullet, which shape resolvers do not carry
 registerCustomType("bullet", {canvas: canvasBullet});
